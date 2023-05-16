@@ -104,7 +104,8 @@ public class ProgramBuilder {
     program.setCoverFileId(domainEntity.getCoverFileId());
     program.setCoverUrl(coverUrl);
     program.setOwners(domainEntity.getOwners());
-    program.setRulesTotalScore(getRulesTotalScoreByDomain(ruleDAO, domainEntity.getId()));
+    program.setRulesTotalScore(domainEntity.isDeleted()
+        || !domainEntity.isEnabled() ? 0 : getRulesTotalScoreByDomain(ruleDAO, domainEntity.getId()));
     return program;
   }
 

@@ -17,6 +17,10 @@
 
 package io.meeds.gamification.storage.cached;
 
+import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
+import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
+import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -25,6 +29,9 @@ import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.cache.ExoCache;
+import org.exoplatform.services.listener.Event;
+import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.upload.UploadService;
 
 import io.meeds.gamification.constant.EntityStatusType;
@@ -48,10 +55,11 @@ public class ProgramCachedStorage extends ProgramStorage {
   private FutureExoCache<Serializable, Object, CacheKey> domainFutureCache;
 
   public ProgramCachedStorage(FileService fileService,
-                             UploadService uploadService,
-                             ProgramDAO programDAO,
-                             RuleDAO ruleDAO,
-                             CacheService cacheService) {
+                              UploadService uploadService,
+                              ProgramDAO programDAO,
+                              RuleDAO ruleDAO,
+                              CacheService cacheService,
+                              ListenerService listenerService) {
     super(fileService, uploadService, programDAO, ruleDAO);
     ExoCache<Serializable, Object> domainCache = cacheService.getCacheInstance(DOMAIN_CACHE_NAME);
     Loader<Serializable, Object, CacheKey> domainLoader = new Loader<Serializable, Object, CacheKey>() {
@@ -60,7 +68,9 @@ public class ProgramCachedStorage extends ProgramStorage {
         if (context.getContext() == DOMAIN_ID_CONTEXT) {
           return ProgramCachedStorage.super.getDomainById(context.getId());
         } else if (context.getContext() == ALL_DOMAIN_CONTEXT) {
-          return ProgramCachedStorage.super.getDomainsByFilter(context.getDomainFilter(), context.getOffset(), context.getLimit());
+          return ProgramCachedStorage.super.getDomainsByFilter(context.getDomainFilter(),
+                                                               context.getOffset(),
+                                                               context.getLimit());
         } else if (context.getContext() == DOMAIN_ENABLED_CONTEXT) {
           return ProgramCachedStorage.super.getEnabledDomains();
         } else {
@@ -69,6 +79,9 @@ public class ProgramCachedStorage extends ProgramStorage {
       }
     };
     this.domainFutureCache = new FutureExoCache<>(domainLoader, domainCache);
+    listenerService.addListener(POST_CREATE_RULE_EVENT, new RuleUpdatedListener());
+    listenerService.addListener(POST_DELETE_RULE_EVENT, new RuleUpdatedListener());
+    listenerService.addListener(POST_UPDATE_RULE_EVENT, new RuleUpdatedListener());
   }
 
   @Override
@@ -100,6 +113,13 @@ public class ProgramCachedStorage extends ProgramStorage {
   @Override
   public void clearCache() {
     domainFutureCache.clear();
+  }
+
+  public class RuleUpdatedListener extends Listener<Object, String> {
+    @Override
+    public void onEvent(Event<Object, String> event) throws Exception {
+      clearCache();
+    }
   }
 
 }

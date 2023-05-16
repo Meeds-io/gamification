@@ -152,10 +152,6 @@ public class ProgramServiceImpl implements ProgramService {
     if (aclIdentity == null || !isProgramOwner(program.getId(), aclIdentity.getUserId())) {
       throw new IllegalAccessException("The user is not authorized to update domain " + program);
     }
-    if (program.equals(storedProgram)) {
-      // No changes so no modifications needed
-      return storedProgram;
-    }
     program.setLastModifiedBy(aclIdentity.getUserId());
     program.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
 
@@ -174,7 +170,7 @@ public class ProgramServiceImpl implements ProgramService {
     } else {
       broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, program, aclIdentity.getUserId());
     }
-    return program;
+    return getProgramById(program.getId());
   }
 
   @Override

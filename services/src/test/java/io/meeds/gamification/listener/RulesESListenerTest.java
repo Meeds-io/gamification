@@ -42,9 +42,9 @@ public class RulesESListenerTest extends AbstractServiceTest {
   @Test
   public void testIndexingRule() throws Exception {
     RuleDTO rule = newRuleDTO();
-    RulesESListener rulesESListener = new RulesESListener(getContainer(), indexingService, ruleService);
+    RulesESListener rulesESListener = new RulesESListener(indexingService, ruleService);
 
-    Event event = new Event<>(Utils.POST_CREATE_RULE_EVENT, rule.getId(), null);
+    Event<Object, String> event = new Event<>(Utils.POST_CREATE_RULE_EVENT, rule.getId(), null);
     rulesESListener.onEvent(event);
     verify(indexingService, times(1)).reindex(anyString(), anyString());
     verify(indexingService, times(0)).unindex(anyString(), anyString());
