@@ -223,7 +223,6 @@ public class RealizationServiceImpl implements RealizationService {
       throw new IllegalArgumentException("Realization is mandatory");
     }
     long realizationId = realization.getId();
-
     if (realizationId <= 0) {
       throw new IllegalArgumentException("Realization id has to be positive integer");
     }
@@ -419,7 +418,8 @@ public class RealizationServiceImpl implements RealizationService {
       fileName += formatter.format(new Date());
       File temp;
       if (SystemUtils.IS_OS_UNIX) {
-        FileAttribute<Set<PosixFilePermission>> tempFileAttributes = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
+        FileAttribute<Set<PosixFilePermission>> tempFileAttributes =
+                                                                   PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
         temp = Files.createTempFile(fileName, ".xlsx", tempFileAttributes).toFile();
       } else {
         temp = Files.createTempFile(fileName, ".xlsx").toFile();
@@ -540,7 +540,7 @@ public class RealizationServiceImpl implements RealizationService {
   private boolean isDomainsMember(List<Long> domainIds, Identity userAclIdentity) {
     return domainIds.stream()
                     .allMatch(domainId -> programService.isProgramMember(domainId,
-                                                                       userAclIdentity));
+                                                                         userAclIdentity));
   }
 
   private List<StandardLeaderboard> filterAuthorizedSpaces(List<StandardLeaderboard> result,

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
@@ -19,6 +18,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.En
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public class AnnouncementStorage {
 
@@ -34,45 +34,40 @@ public class AnnouncementStorage {
     this.ruleStorage = ruleStorage;
   }
 
-  public Announcement saveAnnouncement(Announcement announcement) {
-    if (announcement == null) {
-      throw new IllegalArgumentException("Announcement argument is null");
-    }
+  public Announcement createAnnouncement(Announcement announcement) {
     RuleDTO rule = ruleStorage.findRuleById(announcement.getChallengeId());
-
     RealizationDTO announcementRealization = toRealization(announcement, rule);
-    if (announcementRealization.getId() == null
-        && StringUtils.isNotBlank(rule.getEndDate())
-        && StringUtils.isNotBlank(rule.getStartDate())) {
-      Date endDate = Utils.parseSimpleDate(rule.getEndDate());
-      Date startDate = Utils.parseSimpleDate(rule.getStartDate());
-      Date nextToEndDate = new Date(endDate.getTime() + MILLIS_IN_A_DAY);
-      Date createdDate = new Date();
-      if (!createdDate.before(nextToEndDate)) {
-        throw new IllegalStateException("announcement is not allowed when rule has ended");
-      }
-      if (!createdDate.after(startDate)) {
-        throw new IllegalStateException("announcement is not allowed when rule hasn't started yet");
-      }
-    }
     if (announcement.getActivityId() != null) {
       announcementRealization.setObjectType(ACTIVITY_OBJECT_TYPE);
       announcementRealization.setObjectId(String.valueOf(announcement.getActivityId()));
     }
-    if (announcementRealization.getId() == null) {
-      announcementRealization = realizationStorage.createRealization(announcementRealization);
-    } else {
-      announcementRealization = realizationStorage.updateRealization(announcementRealization);
-    }
-    return fromRealization(announcementRealization);
+    announcementRealization = realizationStorage.createRealization(announcementRealization);
+    announcement.setId(announcementRealization.getId());
+    return announcement;
   }
 
-  public Announcement deleteAnnouncement(Announcement announcement) {
-    if (announcement == null) {
-      throw new IllegalArgumentException("Announcement argument is null");
+  public Announcement updateAnnouncementComment(long announcementId, String comment) throws ObjectNotFoundException {
+    RealizationDTO realization = realizationStorage.getRealizationById(announcementId);
+    if (realization == null) {
+      throw new ObjectNotFoundException("Announcement does not exist");
     }
-    RuleDTO rule = ruleStorage.findRuleById(announcement.getChallengeId());
-    RealizationDTO announcementRealization = toRealization(announcement, rule);
+    realization.setComment(comment);
+    realizationStorage.updateRealization(realization);
+    return fromRealization(realization);
+  }
+
+  public Announcement updateAnnouncementActivityId(long announcementId, long activityId) throws ObjectNotFoundException {
+    RealizationDTO realization = realizationStorage.getRealizationById(announcementId);
+    if (realization == null) {
+      throw new ObjectNotFoundException("Announcement does not exist");
+    }
+    realization.setActivityId(activityId);
+    realizationStorage.updateRealization(realization);
+    return fromRealization(realization);
+  }
+
+  public Announcement deleteAnnouncement(long announcementId) {
+    RealizationDTO announcementRealization = realizationStorage.getRealizationById(announcementId);
     announcementRealization.setStatus(HistoryStatus.CANCELED.name());
     announcementRealization.setActivityId(null);
     announcementRealization.setObjectId(null);
@@ -104,11 +99,11 @@ public class AnnouncementStorage {
     return fromAnnouncementEntities(announcementEntities);
   }
 
-  public Long countAnnouncements(long ruleId) {
+  public int countAnnouncements(long ruleId) {
     return realizationStorage.countRealizationsByRuleId(ruleId);
   }
 
-  public Long countAnnouncements(long ruleId, IdentityType earnerType) {
+  public int countAnnouncements(long ruleId, IdentityType earnerType) {
     return realizationStorage.countRealizationsByRuleIdAndEarnerType(ruleId, earnerType);
   }
 
