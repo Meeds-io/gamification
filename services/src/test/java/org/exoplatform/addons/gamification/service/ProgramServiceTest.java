@@ -256,7 +256,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
     assertTrue(storedDomain.isEnabled());
 
     programService.deleteProgramById(storedDomain.getId(), adminAclIdentity);
-    assertThrows(IllegalAccessException.class, () -> programService.updateProgram(updatedDomain, regularAclIdentity));
+    assertThrows(ObjectNotFoundException.class, () -> programService.updateProgram(updatedDomain, regularAclIdentity));
   }
 
   @Test
@@ -343,13 +343,13 @@ public class ProgramServiceTest extends AbstractServiceTest {
   @Test
   public void testCanUpdateDomain() throws IllegalAccessException, ObjectNotFoundException {
     ProgramDTO domain = newProgram();
-    assertFalse(programService.isProgramOwner(domain.getId(), regularAclIdentity));
-    assertTrue(programService.isProgramOwner(domain.getId(), adminAclIdentity));
-    assertFalse(programService.isProgramOwner(0, regularAclIdentity));
+    assertFalse(programService.isProgramOwner(domain.getId(), regularAclIdentity.getUserId()));
+    assertTrue(programService.isProgramOwner(domain.getId(), adminAclIdentity.getUserId()));
+    assertFalse(programService.isProgramOwner(0, regularAclIdentity.getUserId()));
     String identityId = identityManager.getOrCreateUserIdentity(regularAclIdentity.getUserId()).getId();
     domain.setOwners(Collections.singleton(Long.parseLong(identityId)));
     programService.updateProgram(domain, adminAclIdentity);
-    assertTrue(programService.isProgramOwner(domain.getId(), regularAclIdentity));
+    assertTrue(programService.isProgramOwner(domain.getId(), regularAclIdentity.getUserId()));
   }
 
   @Test

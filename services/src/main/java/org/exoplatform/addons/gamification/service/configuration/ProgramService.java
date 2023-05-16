@@ -144,8 +144,9 @@ public interface ProgramService {
    * 
    * @param  programId
    * @param  username
-   * @return           found {@link ProgramDTO}
-   * @throws IllegalAccessException  when user is not authorized to access program
+   * @return                         found {@link ProgramDTO}
+   * @throws IllegalAccessException  when user is not authorized to access
+   *                                   program
    * @throws ObjectNotFoundException program not found
    */
   ProgramDTO getProgramById(long programId, String username) throws IllegalAccessException, ObjectNotFoundException;
@@ -183,21 +184,21 @@ public interface ProgramService {
   /**
    * Check whether user can add programs or not
    * 
-   * @param  programId   technical identifier of program
-   * @param  aclIdentity Security identity of user
-   * @return             true if user has enough privileges to create a program,
-   *                     else false
+   * @param  programId technical identifier of program
+   * @param  username  user name
+   * @return           true if user has enough privileges to create a program,
+   *                   else false
    */
-  boolean isProgramOwner(long programId, Identity aclIdentity);
+  boolean isProgramOwner(long programId, String username);
 
   /**
    * Check whether user is member of program or not
    * 
-   * @param  programId   technical identifier of program
-   * @param  aclIdentity Security identity of user
-   * @return             true if user has enough privileges to see a program,
-   *                     else false
+   * @param  programId technical identifier of program
+   * @param  username  user name
+   * @return           true if user has enough privileges to see a program, else
+   *                   false
    */
-  boolean isProgramMember(long programId, Identity aclIdentity);
+  boolean isProgramMember(long programId, String username);
 
 }
