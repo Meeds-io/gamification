@@ -182,6 +182,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               @click="updateDateCondition">
               {{ $t('rule.form.label.duration') }}
             </v-chip>
+            <v-chip
+              class="ma-2"
+              :color="recurrenceCondition && 'primary' || ''"
+              :outlined="!recurrenceCondition"
+              :dark="recurrenceCondition"
+              @click="updateRecurrenceCondition">
+              {{ $t('rule.form.label.recurrence') }}
+            </v-chip>
             <v-tooltip bottom>
               <template #activator="{ on, attrs }">
                 <v-chip
@@ -190,18 +198,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   v-bind="attrs"
                   v-on="on">
                   {{ $t('rule.form.label.action') }}
-                </v-chip>
-              </template>
-              <span>{{ $t('challenges.label.comingSoon') }}</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template #activator="{ on, attrs }">
-                <v-chip
-                  class="ma-2"
-                  outlined
-                  v-bind="attrs"
-                  v-on="on">
-                  {{ $t('rule.form.label.recurrence') }}
                 </v-chip>
               </template>
               <span>{{ $t('challenges.label.comingSoon') }}</span>
@@ -245,6 +241,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 class="flex-grow-1 my-auto"
                 @input="updateRuleEndDate" />
             </v-card-text>
+          </div>
+          <div v-if="recurrenceCondition">
+            <engagement-center-rule-recurrence-input v-model="rule.recurrence" />
           </div>
         </v-stepper-content>
       </v-stepper>
@@ -317,6 +316,7 @@ export default {
     disabledStartDate: false,
     disabledEndDate: false,
     durationCondition: false,
+    recurrenceCondition: false,
     durationFilter: 'BEFORE',
     programEvents: [],
   }),
@@ -386,8 +386,11 @@ export default {
     durationValid() {
       return !this.durationCondition || (this.durationCondition && (this.ruleStartDate != null || this.ruleEndDate != null));
     },
+    recurrenceValid() {
+      return !this.recurrenceCondition || this.rule.recurrence;
+    },
     disableSaveButton() {
-      return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.durationValid || !this.isValidForm;
+      return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.durationValid || !this.recurrenceValid || !this.isValidForm;
     },
     drawerTitle() {
       return this.ruleId ? this.$t('rule.form.label.edit') : this.$t('rule.form.label.add');
@@ -428,6 +431,7 @@ export default {
         this.program = this.rule?.program;
       }
       this.durationCondition = this.rule.startDate || this.rule.endDate;
+      this.recurrenceCondition = this.rule.recurrence;
       this.durationFilter = this.rule.startDate && 'AFTER' || 'BEFORE';
       this.startDate = this.rule.startDate ? new Date(this.rule.startDate).getTime() : null;
       this.endDate = this.rule.endDate ? new Date(this.rule.endDate).getTime() : null;
@@ -555,6 +559,10 @@ export default {
       this.durationCondition = !this.durationCondition;
       this.$set(this.rule,'startDate', null);
       this.$set(this.rule,'endDate', null);
+    },
+    updateRecurrenceCondition() {
+      this.recurrenceCondition = !this.recurrenceCondition;
+      this.$set(this.rule,'recurrence', null);
     },
     displayAlert(message, type) {
       document.dispatchEvent(new CustomEvent('notification-alert', {detail: {
