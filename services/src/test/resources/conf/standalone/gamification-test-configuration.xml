@@ -23,30 +23,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <!-- Badges Service Layer-->
     <component>
-        <key>org.exoplatform.addons.gamification.service.configuration.BadgeService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.BadgeService</type>
+        <type>io.meeds.gamification.service.BadgeService</type>
     </component>
 
     <!-- DOmains Service Layer-->
 
     <component>
-        <key>org.exoplatform.addons.gamification.service.configuration.ProgramService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.ProgramServiceImpl</type>
+        <key>io.meeds.gamification.service.ProgramService</key>
+        <type>io.meeds.gamification.service.impl.ProgramServiceImpl</type>
     </component>
     <!-- Domains storage Layer-->
     <component>
-        <key>org.exoplatform.addons.gamification.storage.ProgramStorage</key>
-        <type>org.exoplatform.addons.gamification.storage.cached.ProgramCachedStorage</type>
+        <key>io.meeds.gamification.storage.ProgramStorage</key>
+        <type>io.meeds.gamification.storage.cached.ProgramCachedStorage</type>
     </component>
 
     <component>
         <key>org.exoplatform.social.core.manager.IdentityManager</key>
-        <type>org.exoplatform.addons.gamification.mock.IdentityManagerMock</type>
+        <type>io.meeds.gamification.mock.IdentityManagerMock</type>
     </component>
 
     <component>
       <key>org.exoplatform.services.security.IdentityRegistry</key>
-      <type>org.exoplatform.addons.gamification.mock.IdentityRegistryMock</type>
+      <type>io.meeds.gamification.mock.IdentityRegistryMock</type>
     </component>
 
     <component>
@@ -56,61 +55,61 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <component>
         <key>org.exoplatform.social.core.space.spi.SpaceService</key>
-        <type>org.exoplatform.addons.gamification.mock.SpaceServiceMock</type>
+        <type>io.meeds.gamification.mock.SpaceServiceMock</type>
     </component>
 
     <!-- Rules Service Layer-->
     <component>
-        <key>org.exoplatform.addons.gamification.service.configuration.RuleService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.RuleServiceImpl</type>
+        <key>io.meeds.gamification.service.RuleService</key>
+        <type>io.meeds.gamification.service.impl.RuleServiceImpl</type>
     </component>
 
     <component>
-        <key>org.exoplatform.addons.gamification.storage.RuleStorage</key>
-        <type>org.exoplatform.addons.gamification.storage.cached.RuleCachedStorage</type>
+        <key>io.meeds.gamification.storage.RuleStorage</key>
+        <type>io.meeds.gamification.storage.cached.RuleCachedStorage</type>
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.RealizationDAO</type>
+        <type>io.meeds.gamification.dao.RealizationDAO</type>
     </component>
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.BadgeDAO</type>
-    </component>
-
-    <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.ProgramDAO</type>
+        <type>io.meeds.gamification.dao.BadgeDAO</type>
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.RuleDAO</type>
+        <type>io.meeds.gamification.dao.ProgramDAO</type>
     </component>
 
     <component>
-        <key>org.exoplatform.addons.gamification.service.RealizationService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.RealizationServiceImpl</type>
-    </component>
-    <component>
-        <type>org.exoplatform.addons.gamification.storage.RealizationStorage</type>
+        <type>io.meeds.gamification.dao.RuleDAO</type>
     </component>
 
     <component>
-        <key>org.exoplatform.addons.gamification.storage.AnnouncementStorage</key>
-        <type>org.exoplatform.addons.gamification.storage.cached.AnnouncementCachedStorage</type>
+        <key>io.meeds.gamification.service.RealizationService</key>
+        <type>io.meeds.gamification.service.impl.RealizationServiceImpl</type>
     </component>
     <component>
-        <type>org.exoplatform.addons.gamification.rest.RuleRest</type>
-    </component>
-    <component>
-        <type>org.exoplatform.addons.gamification.rest.AnnouncementRest</type>
+        <type>io.meeds.gamification.storage.RealizationStorage</type>
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.rest.GamificationRestEndpoint</type>
+        <key>io.meeds.gamification.storage.AnnouncementStorage</key>
+        <type>io.meeds.gamification.storage.cached.AnnouncementCachedStorage</type>
+    </component>
+    <component>
+        <type>io.meeds.gamification.rest.RuleRest</type>
+    </component>
+    <component>
+        <type>io.meeds.gamification.rest.AnnouncementRest</type>
     </component>
 
     <component>
-        <key>org.exoplatform.addons.gamification.service.AnnouncementService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.AnnouncementServiceImpl</type>
+        <type>io.meeds.gamification.rest.GamificationRestEndpoint</type>
+    </component>
+
+    <component>
+        <key>io.meeds.gamification.service.AnnouncementService</key>
+        <type>io.meeds.gamification.service.impl.AnnouncementServiceImpl</type>
     </component>
 
     <component>
@@ -122,7 +121,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.search.RuleSearchConnector</type>
+        <type>io.meeds.gamification.search.RuleSearchConnector</type>
         <init-params>
             <value-param>
                 <name>query.file.path</name>
@@ -158,7 +157,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector</type>
+        <type>io.meeds.gamification.search.RuleIndexingServiceConnector</type>
         <init-params>
             <value-param>
                 <name>mapping.file.path</name>
