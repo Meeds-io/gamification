@@ -20,8 +20,6 @@ import static org.exoplatform.addons.gamification.utils.Utils.POST_CREATE_RULE_E
 import static org.exoplatform.addons.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
 import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +38,7 @@ public class RuleServiceImpl implements RuleService {
 
   private static final String   USERNAME_IS_MANDATORY_MESSAGE = "Username is mandatory";
 
-  private final ProgramService   programService;
+  private final ProgramService  programService;
 
   private final RuleStorage     ruleStorage;
 
@@ -76,13 +74,16 @@ public class RuleServiceImpl implements RuleService {
     }
     RuleDTO rule = findRuleById(ruleId);
     if (rule == null) {
-      throw new ObjectNotFoundException(USERNAME_IS_MANDATORY_MESSAGE);
+      throw new ObjectNotFoundException("Rule doesn't exist");
+    }
+    if (rule.isDeleted()) {
+      throw new ObjectNotFoundException("Rule has been deleted");
     }
     if (!Utils.isRuleManager(programService, rule, username)
         && (!rule.isEnabled()
             || rule.getProgram() == null
             || !Utils.isSpaceMember(rule.getProgram().getAudienceId(), username))) {
-      throw new IllegalAccessException(USERNAME_IS_MANDATORY_MESSAGE);
+      throw new IllegalAccessException("Rule isn't accessible");
     }
     return rule;
   }
@@ -107,16 +108,6 @@ public class RuleServiceImpl implements RuleService {
     return rule;
   }
 
-  public RuleDTO findRuleByEventAndDomain(String ruleTitle, long domainId) throws IllegalArgumentException {
-    if (StringUtils.isBlank(ruleTitle)) {
-      throw new IllegalArgumentException("Rule title is mandatory");
-    }
-    if (domainId < 0) {
-      throw new IllegalArgumentException("Domain id must be positive");
-    }
-    return ruleStorage.findRuleByEventAndDomain(ruleTitle, domainId);
-  }
-
   @Override
   public List<RuleDTO> findAllRules(int offset, int limit) {
     List<Long> rulesIds = ruleStorage.findAllRulesIds(offset, limit);
@@ -136,10 +127,6 @@ public class RuleServiceImpl implements RuleService {
 
   public List<String> getAllEvents() {
     return ruleStorage.getAllEvents();
-  }
-
-  public long getRulesTotalScoreByDomain(long domainId) {
-    return ruleStorage.getRulesTotalScoreByDomain(domainId);
   }
 
   @Override
@@ -179,8 +166,9 @@ public class RuleServiceImpl implements RuleService {
     checkPermissionAndDates(rule, username);
     rule.setCreatedBy(username);
     rule.setLastModifiedBy(username);
+    rule.setDeleted(false);
     long domainId = rule.getProgram().getId();
-    RuleDTO similarRule = ruleStorage.findRuleByEventAndDomain(rule.getEvent(), domainId);
+    RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndDomain(rule.getEvent(), domainId);
     if (similarRule != null && !similarRule.isDeleted()) {
       throw new ObjectAlreadyExistsException("Rule with same event and domain already exist");
     }
@@ -204,7 +192,10 @@ public class RuleServiceImpl implements RuleService {
     }
     RuleDTO oldRule = ruleStorage.findRuleById(rule.getId());
     if (oldRule == null) {
-      throw new ObjectNotFoundException("Rule does not exist");
+      throw new ObjectNotFoundException("Rule doesn't exist");
+    }
+    if (oldRule.isDeleted()) {
+      throw new ObjectNotFoundException("Rule with id '" + oldRule.getId() + "' was deleted");
     }
     if (!Utils.isRuleManager(programService, oldRule, username)) {
       throw new IllegalAccessException("The user is not authorized to update a rule");
@@ -245,7 +236,7 @@ public class RuleServiceImpl implements RuleService {
     ProgramDTO program = rule.getProgram();
     if (program != null) {
       long domainId = rule.getProgram().getId();
-      RuleDTO similarRule = ruleStorage.findRuleByEventAndDomain(rule.getEvent(), domainId);
+      RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndDomain(rule.getEvent(), domainId);
       if (similarRule != null && !similarRule.getId().equals(rule.getId()) && !similarRule.isDeleted()) {
         throw new IllegalStateException("Rule with same event and domain already exist");
       }

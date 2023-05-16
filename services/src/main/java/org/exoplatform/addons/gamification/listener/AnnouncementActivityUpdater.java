@@ -19,9 +19,9 @@ package org.exoplatform.addons.gamification.listener;
 import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.RealizationService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -59,14 +59,10 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
       return;
     }
     long announcementId = Long.parseLong(activity.getTemplateParams().get(ANNOUNCEMENT_ID_PARAM));
-    Announcement announcement = announcementService.getAnnouncementById(announcementId);
-    if (announcement != null) {
-      try {
-        announcement.setComment(activity.getTitle());
-        announcementService.updateAnnouncement(announcement);
-      } catch (ObjectNotFoundException e) {
-        LOG.warn("Announcement with id {} wasn't found, only the activity message will be updated", announcementId, e);
-      }
+    try {
+      announcementService.updateAnnouncementComment(announcementId, activity.getTitle());
+    } catch (ObjectNotFoundException e) {
+      LOG.warn("Announcement with id {} wasn't found, only the activity message will be updated", announcementId, e);
     }
     if (activity.getTemplateParams().containsKey(ANNOUNCEMENT_COMMENT_PARAM)) {
       activity.getTemplateParams().put(ANNOUNCEMENT_COMMENT_PARAM, null);

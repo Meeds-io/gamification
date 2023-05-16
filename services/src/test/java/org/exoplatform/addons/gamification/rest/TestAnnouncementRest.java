@@ -209,7 +209,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                                                  1L,
                                                  date,
                                                  null);
-    announcementService.createAnnouncement(announcement, new HashMap<>(), "root1", false);
+    announcementService.createAnnouncement(announcement, new HashMap<>(), "root1");
     String restPath = "/gamification/announcements?ruleId=1&offset=1&limit=-10";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);

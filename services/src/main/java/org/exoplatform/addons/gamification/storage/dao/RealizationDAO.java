@@ -416,19 +416,19 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     return query.getResultList();
   }
 
-  public Long countRealizationsByRuleId(long ruleId) {
+  public int countRealizationsByRuleId(long ruleId) {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("RealizationEntity.countRealizationsByRuleId",
                                                                  Long.class);
     query.setParameter(RULE_ID_PARAM_NAME, ruleId);
     try {
       Long count = query.getSingleResult();
-      return count == null ? 0l : count.longValue();
+      return count == null ? 0 : count.intValue();
     } catch (NoResultException e) {
-      return 0l;
+      return 0;
     }
   }
 
-  public Long countRealizationsByRuleIdAndEarnerType(long ruleId, IdentityType earnerType) {
+  public int countRealizationsByRuleIdAndEarnerType(long ruleId, IdentityType earnerType) {
     TypedQuery<Long> query =
                            getEntityManager().createNamedQuery("RealizationEntity.countRealizationsByRuleIdAndEarnerType",
                                                                Long.class);
@@ -436,9 +436,9 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     try {
       Long count = query.getSingleResult();
-      return count == null ? 0L : count;
+      return count == null ? 0 : count.intValue();
     } catch (NoResultException e) {
-      return 0L;
+      return 0;
     }
   }
 
