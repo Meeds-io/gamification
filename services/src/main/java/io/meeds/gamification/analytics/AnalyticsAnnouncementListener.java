@@ -15,18 +15,15 @@
  */
 package io.meeds.gamification.analytics;
 
-import static org.exoplatform.addons.gamification.utils.Utils.POST_CREATE_ANNOUNCEMENT_EVENT;
-import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_ANNOUNCEMENT_EVENT;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_ANNOUNCEMENT_SUBMODULE;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_CREATE_ANNOUNCE_OPERATION;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_UPDATE_ANNOUNCE_OPERATION;
-import static org.exoplatform.addons.gamification.utils.Utils.addAnnouncementStatisticParameters;
+import static io.meeds.gamification.utils.Utils.POST_CREATE_ANNOUNCEMENT_EVENT;
+import static io.meeds.gamification.utils.Utils.POST_UPDATE_ANNOUNCEMENT_EVENT;
+import static io.meeds.gamification.utils.Utils.STATISTICS_ANNOUNCEMENT_SUBMODULE;
+import static io.meeds.gamification.utils.Utils.STATISTICS_CREATE_ANNOUNCE_OPERATION;
+import static io.meeds.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
+import static io.meeds.gamification.utils.Utils.STATISTICS_UPDATE_ANNOUNCE_OPERATION;
+import static io.meeds.gamification.utils.Utils.addAnnouncementStatisticParameters;
 import static org.exoplatform.analytics.utils.AnalyticsUtils.addStatisticData;
 
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.analytics.model.StatisticData;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.services.listener.Asynchronous;
@@ -34,6 +31,10 @@ import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
+
+import io.meeds.gamification.model.Announcement;
+import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.service.RuleService;
 
 @Asynchronous
 public class AnalyticsAnnouncementListener extends Listener<Announcement, Long> {
