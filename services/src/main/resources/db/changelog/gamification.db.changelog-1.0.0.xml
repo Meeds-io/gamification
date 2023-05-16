@@ -498,13 +498,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <changeSet author="exo-gamification" id="1.0.0-45">
         <dropColumn tableName="GAMIFICATION_ACTIONS_HISTORY" columnName="ACTION_DATE" />
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-46" dbms="mysql">
-        <customChange class="org.exoplatform.addons.gamification.liquibase.ResetMySQLAutoIncrement">
+    <changeSet author="exo-gamification" id="1.0.0-46" dbms="mysql" runOnChange="false">
+        <validCheckSum>8:838df4aed9ef150c3019a013ea51b8ae</validCheckSum>
+        <validCheckSum>8:ebc37f633e51a0094174dff9c9d568f7</validCheckSum>
+        <customChange class="io.meeds.gamification.liquibase.ResetMySQLAutoIncrement">
             <param name="tableName">GAMIFICATION_RULE</param>
         </customChange>
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-47" dbms="mysql">
-        <customChange class="org.exoplatform.addons.gamification.liquibase.ResetMySQLAutoIncrement">
+    <changeSet author="exo-gamification" id="1.0.0-47" dbms="mysql" runOnChange="false">
+        <validCheckSum>8:0be65207d849e2287a7e448142c2d597</validCheckSum>
+        <validCheckSum>8:eed8881e8a2ea40970be122e0ec40b70</validCheckSum>
+        <customChange class="io.meeds.gamification.liquibase.ResetMySQLAutoIncrement">
             <param name="tableName">GAMIFICATION_DOMAIN</param>
         </customChange>
     </changeSet>
@@ -647,5 +651,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="OBJECT_TYPE" type="NVARCHAR(100)">
             </column>
         </addColumn>
+    </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-57">
+      <addColumn tableName="GAMIFICATION_RULE">
+        <column name="RECURRENCE" type="INT" defaultValueNumeric="0"></column>
+      </addColumn>
     </changeSet>
 </databaseChangeLog>
