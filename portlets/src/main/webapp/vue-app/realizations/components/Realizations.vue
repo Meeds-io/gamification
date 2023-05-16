@@ -56,7 +56,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </div>
     </div>
     <v-progress-linear
-      v-if="loading"
+      v-if="!initialized"
       indeterminate
       height="2"
       color="primary" />
@@ -175,6 +175,7 @@ export default {
     pageSize: 25,
     totalSize: 0,
     loading: true,
+    initialized: false,
     sortBy: 'date',
     sortDescending: true,
     limitReached: false,
@@ -352,11 +353,12 @@ export default {
       return this.getRealizations()
         .finally(() => {
           this.loading = false;
+          this.initialized = true;
           this.$root.$applicationLoaded();
         });
     },
     getRealizations() {
-      return this.$realizationService.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1, this.searchList)
+      return this.$realizationService.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit, this.searchList)
         .then(realizations => {
           this.realizations = realizations?.realizations || [];
           this.totalSize = realizations?.size || this.totalSize;

@@ -199,10 +199,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (CollectionUtils.isNotEmpty(filter.getExcludedRuleIds())) {
       query.setParameter("excludedIds", filter.getExcludedRuleIds());
     }
-    EntityStatusType entityStatusType = filter.getEntityStatusType();
     DateFilterType dateFilterType = filter.getDateFilterType();
-    if ((dateFilterType != null && dateFilterType != DateFilterType.ALL)
-        || (entityStatusType != null && entityStatusType != EntityStatusType.ALL)) {
+    if (dateFilterType != null && dateFilterType != DateFilterType.ALL) {
       query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
     }
     EntityFilterType entityFilterType = filter.getEntityFilterType();
@@ -264,7 +262,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
     applyDateFilter(suffixes, predicates, dateFilterType);
     applyTypeFilter(suffixes, predicates, entityFilterType);
-    applyStatusFilter(suffixes, predicates, entityStatusType, dateFilterType == null || dateFilterType == DateFilterType.ALL);
+    applyStatusFilter(suffixes, predicates, entityStatusType);
   }
 
   private void applyTypeFilter(List<String> suffixes, List<String> predicates, EntityFilterType entityFilterType) {
@@ -299,36 +297,13 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   private void applyStatusFilter(List<String> suffixes,
                                  List<String> predicates,
-                                 EntityStatusType entityStatusType,
-                                 boolean applyDateFilter) {
+                                 EntityStatusType entityStatusType) {
     if (entityStatusType == null || entityStatusType == EntityStatusType.ALL) {
       return;
     }
     boolean filterEnabledRules = entityStatusType == EntityStatusType.ENABLED;
     suffixes.add(filterEnabledRules ? "StatusEnabled" : "StatusDisabled");
-
-    if (applyDateFilter) {
-      switch (entityStatusType) {
-      case ENABLED:
-        predicates.add("r.isEnabled = true");
-        predicates.add("(r.startDate IS NULL OR r.startDate <= :date)");
-        predicates.add("(r.endDate IS NULL OR r.endDate >= :date)");
-        break;
-      case DISABLED:
-        predicates.add("""
-            (
-              r.isEnabled = false
-              OR (r.startDate IS NOT NULL AND r.startDate > :date)
-              OR (r.endDate IS NOT NULL AND r.endDate < :date)
-            )
-            """);
-        break;
-      default:
-        break;
-      }
-    } else {
-      predicates.add("r.isEnabled = " + filterEnabledRules);
-    }
+    predicates.add("r.isEnabled = " + filterEnabledRules);
   }
 
 }
