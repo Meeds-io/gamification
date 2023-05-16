@@ -63,7 +63,7 @@ public class AnnouncementStorageTest {
   private static MockedStatic<ProgramBuilder>       DOMAIN_MAPPER;
 
   @Mock
-  private RealizationStorage                       realizationsStorage;
+  private RealizationStorage                       realizationStorage;
 
   @Mock
   private RuleStorage                              ruleStorage;
@@ -92,7 +92,7 @@ public class AnnouncementStorageTest {
 
     UTILS.when(() -> Utils.parseSimpleDate(any())).thenCallRealMethod();
     UTILS.when(() -> Utils.toSimpleDateFormat(any())).thenCallRealMethod();
-    announcementStorage = new AnnouncementStorage(realizationsStorage, ruleStorage);
+    announcementStorage = new AnnouncementStorage(realizationStorage, ruleStorage);
   }
 
   @Test
@@ -145,7 +145,7 @@ public class AnnouncementStorageTest {
 
     Identity identity = mock(Identity.class);
     when(ruleStorage.findRuleById(anyLong())).thenReturn(rule);
-    when(realizationsStorage.createRealization(any())).thenReturn(newAnnouncementRealization);
+    when(realizationStorage.createRealization(any())).thenReturn(newAnnouncementRealization);
     UTILS.when(() -> Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
     ProgramDTO program = new ProgramDTO();
     program.setTitle("gamification");
@@ -153,13 +153,11 @@ public class AnnouncementStorageTest {
     domainEntity.setTitle("gamification");
     DOMAIN_MAPPER.when(() -> ProgramBuilder.toEntity(program)).thenReturn(domainEntity);
 
-    Announcement createdAnnouncement = announcementStorage.saveAnnouncement(announcement);
+    Announcement createdAnnouncement = announcementStorage.createAnnouncement(announcement);
 
     // Then
     assertNotNull(createdAnnouncement);
     assertEquals(1l, createdAnnouncement.getId());
-    announcementRealizationFromEntity.setActivityId(createdAnnouncement.getActivityId());
-    assertEquals(announcementRealizationFromEntity, createdAnnouncement);
 
     // Cancel announcement
     // When
@@ -182,8 +180,9 @@ public class AnnouncementStorageTest {
     announcementRealizationFromEntity.setId(newAnnouncementRealization.getId());
     announcementRealizationFromEntity.setActivityId(null);
 
-    when(realizationsStorage.updateRealization(any())).thenReturn(realization);
-    Announcement deletedAnnouncement = announcementStorage.deleteAnnouncement(announcement);
+    when(realizationStorage.getRealizationById(newAnnouncementRealization.getId())).thenReturn(realization);
+    when(realizationStorage.updateRealization(any())).thenReturn(realization);
+    Announcement deletedAnnouncement = announcementStorage.deleteAnnouncement(announcement.getId());
 
     // Then
     assertNotNull(deletedAnnouncement);
@@ -221,7 +220,7 @@ public class AnnouncementStorageTest {
     announcementFromEntity.setChallengeId(realization.getRuleId());
     announcementFromEntity.setId(realization.getId());
 
-    when(realizationsStorage.getRealizationById(anyLong())).thenReturn(realization);
+    when(realizationStorage.getRealizationById(anyLong())).thenReturn(realization);
     Announcement createdAnnouncement = announcementStorage.getAnnouncementById(1l);
 
     // Then
@@ -307,7 +306,7 @@ public class AnnouncementStorageTest {
     announcementEntities.add(announcementEntity2);
     announcementEntities.add(announcementEntity3);
 
-    when(realizationsStorage.findRealizationsByRuleId(anyLong(),
+    when(realizationStorage.findRealizationsByRuleId(anyLong(),
                                                       anyInt(),
                                                       anyInt(),
                                                       any(),

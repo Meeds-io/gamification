@@ -59,8 +59,8 @@ public class RuleStorage {
     return RuleBuilder.ruleToRuleDTO(programStorage, ruleDAO.findRuleByTitle(ruleTitle));
   }
 
-  public RuleDTO findRuleByEventAndDomain(String event, long domainId) {
-    return RuleBuilder.ruleToRuleDTO(programStorage, ruleDAO.findRuleByEventAndDomain(event, domainId));
+  public RuleDTO findActiveRuleByEventAndDomain(String event, long domainId) {
+    return RuleBuilder.ruleToRuleDTO(programStorage, ruleDAO.findActiveRuleByEventAndDomain(event, domainId));
   }
 
   public List<Long> findRulesIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {
@@ -81,10 +81,6 @@ public class RuleStorage {
 
   public List<String> getAllEvents() {
     return ruleDAO.getAllEvents();
-  }
-
-  public long getRulesTotalScoreByDomain(long domainId) {
-    return ruleDAO.getRulesTotalScoreByDomain(domainId);
   }
 
   public RuleDTO deleteRuleById(long ruleId, String userId) throws ObjectNotFoundException {
