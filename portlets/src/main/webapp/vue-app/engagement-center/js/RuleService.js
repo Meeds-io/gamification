@@ -113,6 +113,10 @@ export function deleteRule(ruleId) {
   });
 }
 export function updateRule(rule) {
+  rule = Object.assign({}, rule);
+  if (!rule.recurrence) {
+    delete rule.recurrence;
+  }
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules`, {
     method: 'PUT',
     credentials: 'include',
@@ -130,6 +134,9 @@ export function updateRule(rule) {
 }
 export function createRule(rule, domain) {
   rule = Object.assign({}, rule);
+  if (!rule.recurrence) {
+    delete rule.recurrence;
+  }
   rule.program = JSON.parse(JSON.stringify(domain));
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules`, {
     method: 'POST',
