@@ -42,6 +42,7 @@ import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.model.ProgramDTO;
+import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.test.AbstractServiceTest;
 
@@ -276,6 +277,24 @@ public class ProgramServiceTest extends AbstractServiceTest {
     programService.deleteProgramById(domain.getId(), adminAclIdentity);
     ProgramEntity domainEntity = programDAO.find(domain.getId());
     assertTrue(domainEntity.isDeleted());
+  }
+
+  @Test
+  public void testDisableProgramReturnsNoPoints() throws Exception {
+    RuleDTO rule = newRuleDTO();
+    ProgramDTO program = rule.getProgram();
+
+    assertEquals(rule.getScore(), program.getRulesTotalScore());
+
+    program.setEnabled(false);
+    program = programService.updateProgram(program, adminAclIdentity);
+    assertEquals(0, program.getRulesTotalScore());
+
+    program.setEnabled(true);
+    program = programService.updateProgram(program, adminAclIdentity);
+    assertEquals(rule.getScore(), program.getRulesTotalScore());
+    program = programService.getProgramById(program.getId(), adminAclIdentity.getUserId());
+    assertEquals(rule.getScore(), program.getRulesTotalScore());
   }
 
   @Test
