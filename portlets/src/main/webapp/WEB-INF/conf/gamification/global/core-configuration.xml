@@ -19,66 +19,66 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd" xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
 
   <component>
-    <type>org.exoplatform.addons.gamification.rest.ProgramRest</type>
+    <type>io.meeds.gamification.rest.ProgramRest</type>
   </component>
 
   <component>
-    <type>org.exoplatform.addons.gamification.rest.RuleRest</type>
+    <type>io.meeds.gamification.rest.RuleRest</type>
   </component>
 
   <component>
-    <type>org.exoplatform.addons.gamification.rest.AnnouncementRest</type>
+    <type>io.meeds.gamification.rest.AnnouncementRest</type>
   </component>
 
   <component>
-    <type>org.exoplatform.addons.gamification.rest.RealizationRest</type>
+    <type>io.meeds.gamification.rest.RealizationRest</type>
   </component>
 
   <component>
-    <type>org.exoplatform.addons.gamification.rest.BadgeRest</type>
+    <type>io.meeds.gamification.rest.BadgeRest</type>
   </component>
 
   <component>
-    <type>org.exoplatform.addons.gamification.rest.UserReputationEndpoint</type>
+    <type>io.meeds.gamification.rest.UserReputationEndpoint</type>
   </component>
 
   <component>
-    <type>org.exoplatform.addons.gamification.rest.LeaderboardEndpoint</type>
+    <type>io.meeds.gamification.rest.LeaderboardEndpoint</type>
   </component>
 
   <component>
-    <type>org.exoplatform.addons.gamification.rest.SpaceLeaderboardEndpoint</type>
+    <type>io.meeds.gamification.rest.SpaceLeaderboardEndpoint</type>
   </component>
 
   <component>
-    <type>org.exoplatform.addons.gamification.rest.GamificationInformationsEndpoint</type>
+    <type>io.meeds.gamification.rest.GamificationInformationsEndpoint</type>
   </component>
 
   <component>
-    <type>org.exoplatform.addons.gamification.rest.GamificationRestEndpoint</type>
+    <type>io.meeds.gamification.rest.GamificationRestEndpoint</type>
   </component>
 
   <component>
-    <key>org.exoplatform.addons.gamification.service.AnnouncementService</key>
-    <type>org.exoplatform.addons.gamification.service.configuration.AnnouncementServiceImpl</type>
+    <key>io.meeds.gamification.service.AnnouncementService</key>
+    <type>io.meeds.gamification.service.impl.AnnouncementServiceImpl</type>
   </component>
 
   <component>
-    <key>org.exoplatform.addons.gamification.service.RealizationService</key>
-    <type>org.exoplatform.addons.gamification.service.configuration.RealizationServiceImpl</type>
+    <key>io.meeds.gamification.service.RealizationService</key>
+    <type>io.meeds.gamification.service.impl.RealizationServiceImpl</type>
   </component>
 
   <component>
-    <type>org.exoplatform.addons.gamification.storage.RealizationStorage</type>
+    <type>io.meeds.gamification.storage.RealizationStorage</type>
   </component>
 
   <component>
-    <key>org.exoplatform.addons.gamification.storage.AnnouncementStorage</key>
-    <type>org.exoplatform.addons.gamification.storage.cached.AnnouncementCachedStorage</type>
+    <key>io.meeds.gamification.storage.AnnouncementStorage</key>
+    <type>io.meeds.gamification.storage.cached.AnnouncementCachedStorage</type>
   </component>
 
   <component>
-    <type>org.exoplatform.addons.gamification.search.RuleSearchConnector</type>
+    <type>io.meeds.gamification.search.RuleSearchConnector</type>
     <init-params>
       <value-param>
         <name>query.file.path</name>
@@ -97,7 +97,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component-plugin>
       <name>AnnouncementActivityPreProcessor</name>
       <set-method>addProcessorPlugin</set-method>
-      <type>org.exoplatform.addons.gamification.activity.processor.AnnouncementActivityPreProcessor</type>
+      <type>io.meeds.gamification.activity.processor.AnnouncementActivityPreProcessor</type>
       <init-params>
         <value-param>
           <name>priority</name>
@@ -109,7 +109,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component-plugin>
       <name>AnnouncementActivityProcessor</name>
       <set-method>addProcessorPlugin</set-method>
-      <type>org.exoplatform.addons.gamification.activity.processor.AnnouncementActivityProcessor</type>
+      <type>io.meeds.gamification.activity.processor.AnnouncementActivityProcessor</type>
       <init-params>
         <value-param>
           <name>priority</name>
@@ -121,16 +121,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component-plugin>
       <name>AnnouncementActivityUpdaterListener</name>
       <set-method>addActivityEventListener</set-method>
-      <type>org.exoplatform.addons.gamification.listener.AnnouncementActivityUpdater</type>
+      <type>io.meeds.gamification.listener.AnnouncementActivityUpdater</type>
       <description>update announcement activity listener</description>
-    </component-plugin>
-  </external-component-plugins>
-  <external-component-plugins>
-    <target-component>org.exoplatform.commons.api.settings.ExoFeatureService</target-component>
-    <component-plugin>
-      <name>gamification</name>
-      <set-method>addFeaturePlugin</set-method>
-      <type>org.exoplatform.addons.gamification.plugin.GamificationFeaturePlugin</type>
     </component-plugin>
   </external-component-plugins>
   <external-component-plugins>
@@ -138,7 +130,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component-plugin>
       <name>RuleIndexingServiceConnector</name>
       <set-method>addConnector</set-method>
-      <type>org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector</type>
+      <type>io.meeds.gamification.search.RuleIndexingServiceConnector</type>
       <description>Rule ElasticSearch Indexing Connector</description>
       <init-params>
         <value-param>
@@ -159,17 +151,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component-plugin>
       <name>rule.created</name>
       <set-method>addListener</set-method>
-      <type>org.exoplatform.addons.gamification.listener.es.RulesESListener</type>
+      <type>io.meeds.gamification.listener.RulesESListener</type>
     </component-plugin>
     <component-plugin>
       <name>rule.updated</name>
       <set-method>addListener</set-method>
-      <type>org.exoplatform.addons.gamification.listener.es.RulesESListener</type>
+      <type>io.meeds.gamification.listener.RulesESListener</type>
     </component-plugin>
     <component-plugin>
       <name>rule.deleted</name>
       <set-method>addListener</set-method>
-      <type>org.exoplatform.addons.gamification.listener.es.RulesESListener</type>
+      <type>io.meeds.gamification.listener.RulesESListener</type>
     </component-plugin>
   </external-component-plugins>
 
@@ -178,7 +170,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component-plugin>
       <name>GamificationRuleIndexingUpgradePlugin</name>
       <set-method>addUpgradePlugin</set-method>
-      <type>org.exoplatform.addons.gamification.upgrade.RuleIndexingUpgradePlugin</type>
+      <type>io.meeds.gamification.upgrade.RuleIndexingUpgradePlugin</type>
       <description>Index old rules</description>
       <init-params>
         <value-param>

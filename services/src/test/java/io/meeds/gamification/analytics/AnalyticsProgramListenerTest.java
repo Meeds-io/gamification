@@ -17,24 +17,24 @@
  */
 package io.meeds.gamification.analytics;
 
-import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_CREATE_LISTENER;
-import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_DELETE_LISTENER;
-import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_DISABLE_LISTENER;
-import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_ENABLE_LISTENER;
-import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_UPDATE_LISTENER;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_CREATE_PROGRAM_OPERATION;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_DELETE_PROGRAM_OPERATION;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_DISABLE_PROGRAM_OPERATION;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_ENABLE_PROGRAM_OPERATION;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_BUDGET_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_COVERFILEID_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_ID_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_OWNERS_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_SUBMODULE;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_TITLE_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_TYPE_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_UPDATE_PROGRAM_OPERATION;
+import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_CREATE_LISTENER;
+import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_DELETE_LISTENER;
+import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_DISABLE_LISTENER;
+import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_ENABLE_LISTENER;
+import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_UPDATE_LISTENER;
+import static io.meeds.gamification.utils.Utils.STATISTICS_CREATE_PROGRAM_OPERATION;
+import static io.meeds.gamification.utils.Utils.STATISTICS_DELETE_PROGRAM_OPERATION;
+import static io.meeds.gamification.utils.Utils.STATISTICS_DISABLE_PROGRAM_OPERATION;
+import static io.meeds.gamification.utils.Utils.STATISTICS_ENABLE_PROGRAM_OPERATION;
+import static io.meeds.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_BUDGET_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_COVERFILEID_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_ID_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_OWNERS_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_SUBMODULE;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_TITLE_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_TYPE_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_UPDATE_PROGRAM_OPERATION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,14 +54,15 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.analytics.utils.AnalyticsUtils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+
+import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.model.ProgramDTO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnalyticsProgramListenerTest {
