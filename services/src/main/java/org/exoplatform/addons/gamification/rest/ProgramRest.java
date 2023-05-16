@@ -41,6 +41,7 @@ import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -309,16 +310,16 @@ public class ProgramRest implements ResourceContainer {
                                      String token) throws IOException {
     boolean isDefault = StringUtils.equals(Utils.DEFAULT_IMAGE_REMOTE_ID, domainId);
     String lastUpdated = null;
-    ProgramDTO domain = null;
+    ProgramDTO program = null;
     if (isDefault) {
       lastUpdated = Utils.toRFC3339Date(new Date(DEFAULT_COVER_LAST_MODIFIED));
     } else {
-      domain = programService.getProgramById(Long.valueOf(domainId));
-      if (domain == null) {
+      program = programService.getProgramById(Long.valueOf(domainId));
+      if (program == null) {
         return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
       }
-      isDefault = domain.getCoverFileId() == 0 ;
-      lastUpdated = domain.getLastModifiedDate();
+      isDefault = program.getCoverFileId() == 0 ;
+      lastUpdated = program.getLastModifiedDate();
     }
 
     try {
@@ -347,25 +348,34 @@ public class ProgramRest implements ResourceContainer {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("{domainId}")
+  @Path("{programId}")
   @RolesAllowed("users")
-  @Operation(summary = "Retrieves a domain by its id", method = "GET")
-  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+  @Operation(summary = "Retrieves a program by its technical identifier", method = "GET")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "404", description = "Not found"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response getDomainById(@Parameter(description = "domain id", required = true)
-                                @PathParam("domainId")
-                                long domainId) {
-    if (domainId == 0) {
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+  })
+  public Response getProgramById(
+                                 @Parameter(description = "Program technical identifier", required = true)
+                                 @PathParam("programId")
+                                 long programId) {
+    if (programId == 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("DomainId must be not null").build();
     }
     String currentUser = Utils.getCurrentUser();
-    ProgramDTO domain = programService.getProgramById(domainId);
-    if (domain == null) {
-      return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
+    try {
+      ProgramDTO domain = programService.getProgramById(programId, currentUser);
+      return Response.ok(EntityBuilder.toRestEntity(programService, domain, currentUser)).build();
+    } catch (IllegalArgumentException e) {
+      return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Status.UNAUTHORIZED).entity(e.getMessage()).build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Status.NOT_FOUND).entity(e.getMessage()).build();
     }
-    return Response.ok(EntityBuilder.toRestEntity(programService, domain, currentUser)).build();
   }
 
   private List<ProgramRestEntity> getDomainsRestEntitiesByFilter(ProgramFilter filter, int offset, int limit, String currentUser) throws IllegalAccessException {
