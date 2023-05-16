@@ -99,7 +99,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :can-manage-rule="canManageRule"
               :keyword="keyword"
               @keyword-changed="keyword = $event"
-              @filter-changed="status = $event" />
+              @filter-changed="updateFilter" />
             <v-list-item-subtitle class="text-color pt-4">
               <v-data-table
                 :headers="rulesHeaders"
@@ -292,8 +292,6 @@ export default {
   created() {
     this.$root.$on('challenge-delete-confirm', this.confirmDelete);
     this.$root.$on('program-rules-refresh', this.retrieveProgramRules);
-    this.$root.$on('program-rules-update-status', this.setStatus);
-    this.$root.$on('program-rules-update-date-filter', this.setDateFilter);
     this.$root.$on('program-deleted', this.backToProgramList);
     this.$root.$on('program-updated', this.programUpdated);
     window.addEventListener('popstate', () => {
@@ -332,11 +330,8 @@ export default {
         this.program = program;
       }
     },
-    setStatus(status) {
+    updateFilter(status, dateFilter) {
       this.status = status;
-      this.retrieveProgramRules();
-    },
-    setDateFilter(dateFilter) {
       this.dateFilter = dateFilter;
       this.retrieveProgramRules();
     },
@@ -351,8 +346,8 @@ export default {
       return this.$ruleService.getRules({
         term: this.keyword,
         domainId: this.programId,
-        status: this.canManageRule && this.status || 'ENABLED',
-        dateFilter: this.canManageRule && 'ALL' || this.dateFilter,
+        status: this.status,
+        dateFilter: this.dateFilter,
         offset,
         limit: itemsPerPage,
         announcementsLimit: this.announcementsPerChallenge,
