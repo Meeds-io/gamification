@@ -22,28 +22,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
     <!-- Badges storage (JPA) -->
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.BadgeDAO</type>
+        <type>io.meeds.gamification.dao.BadgeDAO</type>
     </component>
     <!-- Badges Service Layer-->
     <component>
-        <type>org.exoplatform.addons.gamification.service.configuration.BadgeService</type>
+        <type>io.meeds.gamification.service.BadgeService</type>
     </component>
 
     <!-- Gamification Settings : Badge -->
     <component>
-        <key>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</key>
-        <type>org.exoplatform.addons.gamification.service.setting.badge.impl.BadgeRegistryImpl</type>
+        <key>io.meeds.gamification.service.BadgeRegistry</key>
+        <type>io.meeds.gamification.service.impl.BadgeRegistryImpl</type>
     </component>
 
     <!-- ############################################################################################ -->
     <!-- #################### Gamification Badge Config : Social FLOW ############################### -->
     <!-- ############################################################################################ -->
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <target-component>io.meeds.gamification.service.BadgeRegistry</target-component>
         <component-plugin>
             <name>badge.SocialNovice</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <type>io.meeds.gamification.plugin.BadgeConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>badge-title</name>
@@ -69,11 +69,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <target-component>io.meeds.gamification.service.BadgeRegistry</target-component>
         <component-plugin>
             <name>badge.Sociable</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <type>io.meeds.gamification.plugin.BadgeConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>badge-title</name>
@@ -99,11 +99,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <target-component>io.meeds.gamification.service.BadgeRegistry</target-component>
         <component-plugin>
             <name>badge.Networker</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <type>io.meeds.gamification.plugin.BadgeConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>badge-title</name>
@@ -129,11 +129,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <target-component>io.meeds.gamification.service.BadgeRegistry</target-component>
         <component-plugin>
             <name>badge.Influencer</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <type>io.meeds.gamification.plugin.BadgeConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>badge-title</name>
@@ -159,11 +159,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <target-component>io.meeds.gamification.service.BadgeRegistry</target-component>
         <component-plugin>
             <name>badge.Guru</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <type>io.meeds.gamification.plugin.BadgeConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>badge-title</name>
@@ -189,11 +189,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <target-component>io.meeds.gamification.service.BadgeRegistry</target-component>
         <component-plugin>
             <name>badge.Legend</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <type>io.meeds.gamification.plugin.BadgeConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>badge-title</name>
@@ -222,11 +222,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <!-- #################### Gamification Badge Config : Knowldge FLOW ############################### -->
     <!-- ############################################################################################ -->
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <target-component>io.meeds.gamification.service.BadgeRegistry</target-component>
         <component-plugin>
             <name>badge.Freshman</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <type>io.meeds.gamification.plugin.BadgeConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>badge-title</name>
@@ -252,11 +252,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <target-component>io.meeds.gamification.service.BadgeRegistry</target-component>
         <component-plugin>
             <name>badge.Apprentice</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <type>io.meeds.gamification.plugin.BadgeConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>badge-title</name>
@@ -282,11 +282,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <target-component>io.meeds.gamification.service.BadgeRegistry</target-component>
         <component-plugin>
             <name>badge.Knowledgeable</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <type>io.meeds.gamification.plugin.BadgeConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>badge-title</name>
@@ -312,11 +312,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <target-component>io.meeds.gamification.service.BadgeRegistry</target-component>
         <component-plugin>
             <name>badge.Distinguished</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <type>io.meeds.gamification.plugin.BadgeConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>badge-title</name>
@@ -342,11 +342,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <target-component>io.meeds.gamification.service.BadgeRegistry</target-component>
         <component-plugin>
             <name>badge.Erudite</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <type>io.meeds.gamification.plugin.BadgeConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>badge-title</name>
@@ -372,11 +372,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <target-component>io.meeds.gamification.service.BadgeRegistry</target-component>
         <component-plugin>
             <name>badge.Encyclopedia</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <type>io.meeds.gamification.plugin.BadgeConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>badge-title</name>
