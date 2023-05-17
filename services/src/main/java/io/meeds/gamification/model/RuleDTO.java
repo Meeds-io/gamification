@@ -41,29 +41,31 @@ public class RuleDTO implements Serializable {
 
   protected int             score;
 
-  private ProgramDTO        program;
+  protected ProgramDTO      program;
 
   protected boolean         enabled;
 
   protected boolean         deleted;
 
-  private String            createdBy;
+  protected String          createdBy;
 
-  private String            createdDate;
+  protected String          createdDate;
 
-  private String            lastModifiedBy;
+  protected String          lastModifiedBy;
 
-  private String            event;
+  protected String          event;
 
-  private String            lastModifiedDate;
+  protected String          lastModifiedDate;
 
-  private String            startDate;
+  protected String          startDate;
 
-  private String            endDate;
+  protected String          endDate;
 
-  private EntityType        type;
+  protected Set<Long>       prerequisiteRuleIds;                    // NOSONAR
 
-  private RecurrenceType    recurrence;
+  protected EntityType      type;
+
+  protected RecurrenceType  recurrence;
 
   public long getAudienceId() {
     return program == null ? 0 : program.getAudienceId();
@@ -77,4 +79,24 @@ public class RuleDTO implements Serializable {
     return program == null ? Collections.emptySet() : program.getOwners();
   }
 
+  @Override
+  public RuleDTO clone() { // NOSONAR
+    return new RuleDTO(id,
+                       title,
+                       description,
+                       score,
+                       program,
+                       enabled,
+                       deleted,
+                       createdBy,
+                       createdDate,
+                       lastModifiedBy,
+                       event,
+                       lastModifiedDate,
+                       startDate,
+                       endDate,
+                       prerequisiteRuleIds,
+                       type,
+                       recurrence);
+  }
 }

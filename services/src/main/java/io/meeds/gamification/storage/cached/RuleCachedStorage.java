@@ -76,8 +76,7 @@ public class RuleCachedStorage extends RuleStorage {
       if (EntityType.MANUAL.equals(ruleDTO.getType())) {
         this.ruleFutureCache.clear();
       } else {
-        this.ruleFutureCache.remove(new CacheKey(RULE_ID_CONTEXT, ruleDTO.getId()).hashCode());
-        this.ruleFutureCache.remove(new CacheKey(RULE_TITLE_CONTEXT, ruleDTO.getTitle()).hashCode());
+        clearCache(ruleDTO);
       }
     }
   }
@@ -85,25 +84,32 @@ public class RuleCachedStorage extends RuleStorage {
   @Override
   public RuleDTO findRuleById(Long id) {
     CacheKey key = new CacheKey(RULE_ID_CONTEXT, id);
-    return (RuleDTO) this.ruleFutureCache.get(key, key.hashCode());
+    RuleDTO ruleDTO = (RuleDTO) this.ruleFutureCache.get(key, key.hashCode());
+    return ruleDTO == null ? null : ruleDTO.clone();
   }
 
   @Override
   public RuleDTO findRuleByTitle(String title) {
     CacheKey key = new CacheKey(RULE_TITLE_CONTEXT, title);
-    return (RuleDTO) this.ruleFutureCache.get(key, key.hashCode());
+    RuleDTO ruleDTO = (RuleDTO) this.ruleFutureCache.get(key, key.hashCode());
+    return ruleDTO == null ? null : ruleDTO.clone();
   }
 
   @Override
   public RuleDTO deleteRuleById(long ruleId, String userId, boolean force) throws ObjectNotFoundException {
     RuleDTO rule = super.deleteRuleById(ruleId, userId, force);
-    this.ruleFutureCache.remove(new CacheKey(RULE_ID_CONTEXT, rule.getId()).hashCode());
-    this.ruleFutureCache.remove(new CacheKey(RULE_TITLE_CONTEXT, rule.getTitle()).hashCode());
+    clearCache(rule);
     return rule;
   }
 
   @Override
   public void clearCache() {
     this.ruleFutureCache.clear();
+  }
+
+  @Override
+  public void clearCache(RuleDTO rule) {
+    this.ruleFutureCache.remove(new CacheKey(RULE_ID_CONTEXT, rule.getId()).hashCode());
+    this.ruleFutureCache.remove(new CacheKey(RULE_TITLE_CONTEXT, rule.getTitle()).hashCode());
   }
 }

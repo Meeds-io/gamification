@@ -28,6 +28,8 @@ import ProgramSuggester from './components/common/ProgramSuggester.vue';
 import EngagementCenter from './components/EngagementCenter.vue';
 import NoResultFound from './components/common/NoResultFound.vue';
 import ResultNotFound from './components/common/ResultNotFound.vue';
+import ButtonGroupItem from './components/common/ButtonGroupItem.vue';
+import RuleSuggester from './components/common/RuleSuggester.vue';
 
 import Programs from './components/programs/Programs.vue';
 import ProgramCard from './components/programs/ProgramCard.vue';
@@ -41,7 +43,7 @@ import RuleTitle from './components/rules/RuleTitle.vue';
 import RuleItem from './components/rules/RuleItem.vue';
 import RuleFormDrawer from './components/rules/RuleFormDrawer.vue';
 import RuleRecurrenceInput from './components/rules/form/RuleRecurrenceInput.vue';
-import ButtonGroupItem from './components/rules/form/ButtonGroupItem.vue';
+import RuleLockInput from './components/rules/form/RuleLockInput.vue';
 import RuleDetailDrawer from './components/rules/RuleDetailDrawer.vue';
 import RulesToolbar from './components/rules/RulesToolbar.vue';
 import NoRuleFound from './components/rules/NoRuleFound.vue';
@@ -62,6 +64,7 @@ const components = {
   'domain-challenges-list': DomainChallengesList,
   'challenge-date-picker': ChallengeDatePicker,
   'program-suggester': ProgramSuggester,
+  'rule-suggester': RuleSuggester,
   'engagement-center-no-results': NoResultFound,
   'engagement-center-result-not-found': ResultNotFound,
   'engagement-center': EngagementCenter,
@@ -76,6 +79,7 @@ const components = {
   'engagement-center-rule-item': RuleItem,
   'engagement-center-rule-form-drawer': RuleFormDrawer,
   'engagement-center-rule-recurrence-input': RuleRecurrenceInput,
+  'engagement-center-rule-lock-input': RuleLockInput,
   'engagement-center-button-group-item': ButtonGroupItem,
   'engagement-center-rule-detail-drawer': RuleDetailDrawer,
   'engagement-center-rules-toolbar': RulesToolbar,

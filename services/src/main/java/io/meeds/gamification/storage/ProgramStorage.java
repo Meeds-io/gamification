@@ -61,62 +61,58 @@ public class ProgramStorage {
     this.ruleDAO = ruleDAO;
   }
 
-  public ProgramDTO saveDomain(ProgramDTO program) {
-    ProgramEntity domainEntity = ProgramBuilder.toEntity(program);
+  public ProgramDTO saveProgram(ProgramDTO program) {
+    ProgramEntity programEntity = ProgramBuilder.toEntity(program);
     if (StringUtils.isNotBlank(program.getCoverUploadId())) {
-      Long coverFileId = saveDomainCover(program.getCoverUploadId());
-      domainEntity.setCoverFileId(coverFileId);
+      Long coverFileId = saveProgramCover(program.getCoverUploadId());
+      programEntity.setCoverFileId(coverFileId);
     }
-    if (CollectionUtils.isEmpty(domainEntity.getOwners())) {
-      domainEntity.setOwners(new HashSet<>());
+    if (CollectionUtils.isEmpty(programEntity.getOwners())) {
+      programEntity.setOwners(new HashSet<>());
     } else {
       // Make Set modifiable to avoid Hibernate exception
       // which expects to have a modifiable collection
-      domainEntity.setOwners(new HashSet<>(domainEntity.getOwners()));
+      programEntity.setOwners(new HashSet<>(programEntity.getOwners()));
     }
-    if (domainEntity.getId() == null || domainEntity.getId() == 0) {
-      domainEntity.setId(null);
-      domainEntity = programDAO.create(domainEntity);
+    if (programEntity.getId() == null || programEntity.getId() == 0) {
+      programEntity.setId(null);
+      programEntity = programDAO.create(programEntity);
     } else {
-      domainEntity = programDAO.update(domainEntity);
+      programEntity = programDAO.update(programEntity);
     }
-    return ProgramBuilder.fromEntity(ruleDAO, domainEntity);
+    return ProgramBuilder.fromEntity(ruleDAO, programEntity);
   }
 
-  public ProgramDTO getProgramByTitle(String domainTitle) {
-    return ProgramBuilder.fromEntity(ruleDAO, programDAO.getDomainByTitle(domainTitle));
+  public ProgramDTO getProgramByTitle(String programTitle) {
+    return ProgramBuilder.fromEntity(ruleDAO, programDAO.getProgramByTitle(programTitle));
   }
 
-  public List<Long> findHighestBudgetDomainIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
+  public List<Long> findHighestBudgetProgramIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
     if (CollectionUtils.isNotEmpty(spacesIds)) {
-      return ruleDAO.findHighestBudgetDomainIdsBySpacesIds(spacesIds, offset, limit);
+      return ruleDAO.findHighestBudgetProgramIdsBySpacesIds(spacesIds, offset, limit);
     } else {
-      return ruleDAO.findHighestBudgetDomainIds(offset, limit);
+      return ruleDAO.findHighestBudgetProgramIds(offset, limit);
     }
   }
 
-  public List<Long> getDomainsByFilter(ProgramFilter filter, int offset, int limit) {
-    return programDAO.getDomainsByFilter(offset, limit, filter);
+  public List<Long> getProgramsByFilter(ProgramFilter filter, int offset, int limit) {
+    return programDAO.getProgramsByFilter(offset, limit, filter);
   }
 
-  public int countDomains(ProgramFilter domainFilter) {
-    return programDAO.countDomains(domainFilter);
+  public int countPrograms(ProgramFilter programFilter) {
+    return programDAO.countPrograms(programFilter);
   }
 
-  public List<ProgramDTO> getEnabledDomains() {
-    return ProgramBuilder.fromEntities(ruleDAO, programDAO.getEnabledDomains());
-  }
-
-  public ProgramDTO getDomainById(Long id) {
-    ProgramEntity domainEntity = programDAO.find(id);
-    return ProgramBuilder.fromEntity(ruleDAO, domainEntity);
+  public ProgramDTO getProgramById(Long id) {
+    ProgramEntity programEntity = programDAO.find(id);
+    return ProgramBuilder.fromEntity(ruleDAO, programEntity);
   }
 
   public void clearCache() {// NOSONAR
     // implemented in cached storage
   }
 
-  private Long saveDomainCover(String uploadId) {
+  private Long saveProgramCover(String uploadId) {
     if (uploadId == null || uploadId.isBlank()) {
       throw new IllegalArgumentException("uploadId is mandatory");
     }
@@ -138,7 +134,7 @@ public class ProgramStorage {
       fileItem = fileService.writeFile(fileItem);
       return fileItem != null && fileItem.getFileInfo() != null ? fileItem.getFileInfo().getId() : null;
     } catch (Exception e) {
-      throw new IllegalStateException("Error while saving domain cover file", e);
+      throw new IllegalStateException("Error while saving Program cover file", e);
     } finally {
       uploadService.removeUploadResource(uploadResource.getUploadId());
     }

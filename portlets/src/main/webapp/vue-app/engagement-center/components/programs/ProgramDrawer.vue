@@ -108,7 +108,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-model="audience"
             :items="audience && [audience] || []"
             :search-options="audienceSearchOptions"
-            :labels="spaceSuggesterLabels"
+            :labels="suggesterLabels"
             :width="220"
             include-spaces />
           <div class="mt-4">
@@ -224,7 +224,7 @@ export default {
     audienceId() {
       return Number(this.audience?.spaceId) || 0;
     },
-    spaceSuggesterLabels() {
+    suggesterLabels() {
       return {
         searchPlaceholder: this.$t('programs.label.spaces.noDataLabel'),
         placeholder: this.$t('programs.label.spaces.placeholder'),

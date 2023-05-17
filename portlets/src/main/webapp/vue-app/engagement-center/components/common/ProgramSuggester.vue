@@ -113,7 +113,7 @@ export default {
   },
   data() {
     return {
-      id: `AutoComplete${parseInt(Math.random() * 10000)}`,
+      id: `ProgramSuggester${parseInt(Math.random() * 10000)}`,
       domains: [],
       program: null,
       searchTerm: null,
