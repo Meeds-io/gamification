@@ -259,6 +259,7 @@ public class RuleRest implements ResourceContainer {
       String[] expandFieldsArray = StringUtils.split(expand, ",");
       List<String> expandFields = expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
       RuleRestEntity ruleEntity = EntityBuilder.toRestEntity(programService,
+                                                             ruleService,
                                                              announcementService,
                                                              rule,
                                                              expandFields,
@@ -377,6 +378,7 @@ public class RuleRest implements ResourceContainer {
     List<RuleDTO> rules = ruleService.getRules(filter, offset, limit);
     return rules.stream()
                 .map(rule -> EntityBuilder.toRestEntity(programService,
+                                                        ruleService,
                                                         announcementService,
                                                         rule,
                                                         expandFields,
@@ -388,6 +390,7 @@ public class RuleRest implements ResourceContainer {
 
   private RuleRestEntity toRestEntity(RuleDTO rule) {
     return EntityBuilder.toRestEntity(programService,
+                                      ruleService,
                                       announcementService,
                                       rule,
                                       null,

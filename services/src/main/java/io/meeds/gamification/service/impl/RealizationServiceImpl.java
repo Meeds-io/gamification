@@ -63,17 +63,17 @@ import io.meeds.gamification.utils.Utils;
 
 public class RealizationServiceImpl implements RealizationService {
 
-  private static final Log    LOG                        = ExoLogger.getLogger(RealizationServiceImpl.class);
+  private static final Log    LOG       = ExoLogger.getLogger(RealizationServiceImpl.class);
 
   // Delimiters that must be in the CSV file
-  private static final String DELIMITER                  = ",";
+  private static final String DELIMITER = ",";
 
-  private static final String SEPARATOR                  = "\n";
+  private static final String SEPARATOR = "\n";
 
   // File header
-  private static final String HEADER                     = "Date,Grantee,Action type,Program label,Action label,Points,Status";
+  private static final String HEADER    = "Date,Grantee,Action type,Program label,Action label,Points,Status";
 
-  private static final String SHEETNAME                  = "Achivements Report";
+  private static final String SHEETNAME = "Achivements Report";
 
   private ProgramService      programService;
 
@@ -252,22 +252,22 @@ public class RealizationServiceImpl implements RealizationService {
       return Collections.emptyList();
     }
     return rules.stream()
-                   .map(rule -> realizationStorage.findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(rule.getTitle(),
-                                                                                                                 rule.getProgram()
-                                                                                                                     .getId(),
-                                                                                                                 earnerIdentityId,
-                                                                                                                 receiverIdentityId,
-                                                                                                                 objectId,
-                                                                                                                 objectType))
-                   .filter(Objects::nonNull)
-                   .filter(realization -> !HistoryStatus.CANCELED.name().equals(realization.getStatus()))
-                   .map(realization -> {
-                     realization.setStatus(HistoryStatus.CANCELED.name());
-                     realization.setActivityId(null);
-                     realization.setObjectId(null);
-                     return realizationStorage.updateRealization(realization);
-                   })
-                   .toList();
+                .map(rule -> realizationStorage.findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(rule.getTitle(),
+                                                                                                              rule.getProgram()
+                                                                                                                  .getId(),
+                                                                                                              earnerIdentityId,
+                                                                                                              receiverIdentityId,
+                                                                                                              objectId,
+                                                                                                              objectType))
+                .filter(Objects::nonNull)
+                .filter(realization -> !HistoryStatus.CANCELED.name().equals(realization.getStatus()))
+                .map(realization -> {
+                  realization.setStatus(HistoryStatus.CANCELED.name());
+                  realization.setActivityId(null);
+                  realization.setObjectId(null);
+                  return realizationStorage.updateRealization(realization);
+                })
+                .toList();
   }
 
   @Override
@@ -589,7 +589,8 @@ public class RealizationServiceImpl implements RealizationService {
         || rule.isDeleted()
         || !rule.isEnabled()
         || !isValidProgram(rule.getProgram())
-        || !isRecurrenceValid(rule, earnerIdentityId)) {
+        || !isRecurrenceValid(rule, earnerIdentityId)
+        || !isPrerequisiteRulesValid(rule, earnerIdentityId)) {
       return false;
     }
     if (checkPermissions) {
@@ -614,8 +615,19 @@ public class RealizationServiceImpl implements RealizationService {
         || hasNoRealizationInPeriod(earnerIdentityId, rule.getId(), rule.getRecurrence().getPeriodStartDate());
   }
 
+  private boolean isPrerequisiteRulesValid(RuleDTO rule, String earnerIdentityId) {
+    return CollectionUtils.isEmpty(rule.getPrerequisiteRuleIds())
+        || hadRealizedPrerequisiteRules(earnerIdentityId, ruleService.getPrerequisiteRules(rule.getId()));
+  }
+
+  private boolean hadRealizedPrerequisiteRules(String earnerIdentityId, List<RuleDTO> prerequisiteRules) {
+    return prerequisiteRules.stream()
+                            .allMatch(rule -> realizationStorage.countRealizationsByRuleIdAndEarnerId(earnerIdentityId,
+                                                                                                      rule.getId()) > 0);
+  }
+
   private boolean hasNoRealizationInPeriod(String earnerIdentityId, Long ruleId, Date sinceDate) {
-    return realizationStorage.countRealizationsEarnerIdSinceDate(earnerIdentityId, ruleId, sinceDate) == 0;
+    return realizationStorage.countRealizationsByRuleIdAndEarnerIdSinceDate(earnerIdentityId, ruleId, sinceDate) == 0;
   }
 
 }

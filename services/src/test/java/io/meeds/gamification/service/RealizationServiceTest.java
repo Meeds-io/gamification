@@ -256,7 +256,7 @@ public class RealizationServiceTest extends AbstractServiceTest {
     assertTrue(CollectionUtils.isNotEmpty(realizations));
   }
 
-  public void testSaveActionHistory() {
+  public void testCreateRealizations() {
     List<RealizationEntity> realizationEntities = realizationDAO.findAll();
     assertEquals(realizationEntities.size(), 0);
     RuleDTO ruleDTO = newRuleDTO();

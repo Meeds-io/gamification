@@ -21,11 +21,9 @@ import static org.junit.Assert.assertThrows;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -374,19 +372,5 @@ public class ProgramServiceTest extends AbstractServiceTest {
     domain.setOwners(Collections.singleton(Long.parseLong(identityId)));
     programService.updateProgram(domain, adminAclIdentity);
     assertTrue(programService.isProgramOwner(domain.getId(), regularAclIdentity.getUserId()));
-  }
-
-  @Test
-  public void testGetEnabledDomains() throws IllegalAccessException, ObjectNotFoundException {
-    List<ProgramDTO> domains = programService.getEnabledPrograms();
-    assertTrue(CollectionUtils.isEmpty(domains));
-    ProgramDTO domain = newProgram();
-    domains = programService.getEnabledPrograms();
-    assertEquals(1, domains.size());
-    domain.setEnabled(false);
-    programService.updateProgram(domain, adminAclIdentity);
-
-    domains = programService.getEnabledPrograms();
-    assertEquals(0, domains.size());
   }
 }

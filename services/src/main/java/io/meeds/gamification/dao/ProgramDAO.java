@@ -58,7 +58,7 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     }
   }
 
-  public ProgramEntity getDomainByTitle(String domainTitle) {
+  public ProgramEntity getProgramByTitle(String domainTitle) {
     TypedQuery<ProgramEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findDomainByTitle",
                                                                          ProgramEntity.class);
     query.setParameter(DOMAIN_TITLE, domainTitle);
@@ -66,7 +66,7 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     return !domainEntities.isEmpty() ? domainEntities.get(0) : null;
   }
 
-  public List<Long> getDomainsByFilter(int offset, int limit, ProgramFilter filter) {
+  public List<Long> getProgramsByFilter(int offset, int limit, ProgramFilter filter) {
     TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, false);
     if (offset > 0) {
       query.setFirstResult(offset);
@@ -77,15 +77,9 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     return query.getResultList();
   }
 
-  public int countDomains(ProgramFilter filter) {
+  public int countPrograms(ProgramFilter filter) {
     TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, true);
     return query.getSingleResult().intValue();
-  }
-
-  public List<ProgramEntity> getEnabledDomains() {
-    TypedQuery<ProgramEntity> query = getEntityManager().createNamedQuery("GamificationDomain.getEnabledDomains",
-                                                                         ProgramEntity.class);
-    return query.getResultList();
   }
 
   private <T> TypedQuery<T> buildQueryFromFilter(ProgramFilter filter, Class<T> clazz, boolean count) {
