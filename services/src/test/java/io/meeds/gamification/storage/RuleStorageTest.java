@@ -133,7 +133,7 @@ public class RuleStorageTest extends AbstractServiceTest {
 
     ProgramDTO domain2 = newProgram("domain2");
     domain2.setAudienceId(2l);
-    domainStorage.saveDomain(domain2);
+    domainStorage.saveProgram(domain2);
 
     RuleFilter filter = new RuleFilter();
     filter.setDomainId(domain1.getId());
@@ -220,7 +220,7 @@ public class RuleStorageTest extends AbstractServiceTest {
 
     ProgramDTO domain2 = newProgram("domain2");
     domain2.setAudienceId(2l);
-    domainStorage.saveDomain(domain2);
+    domainStorage.saveProgram(domain2);
 
     RuleFilter filter = new RuleFilter();
     filter.setDomainId(domain1.getId());

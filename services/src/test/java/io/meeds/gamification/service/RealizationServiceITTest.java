@@ -21,7 +21,9 @@ import static io.meeds.gamification.constant.GamificationConstant.ACTIVITY_OBJEC
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -197,6 +199,74 @@ public class RealizationServiceITTest extends AbstractServiceTest {
   public void testCreateRealizationOnMonthlyRule() throws ObjectNotFoundException {
     makeRecurrenceTypeChecks(RecurrenceType.DAILY);
     assertEquals(2, realizationDAO.count().intValue());
+  }
+
+  public void testCreateRealizationWithPrerequisiteRule() throws ObjectNotFoundException, IllegalAccessException {
+    List<RealizationEntity> realizationEntities = realizationDAO.findAll();
+    assertEquals(0, realizationEntities.size());
+    RuleDTO rule = newRuleDTO();
+
+    RuleDTO prerequisiteRule1 = newRuleDTO();
+    prerequisiteRule1.setEvent("prerequisiteEvent1");
+    prerequisiteRule1 = ruleService.updateRule(prerequisiteRule1);
+
+    RuleDTO prerequisiteRule2 = newRuleDTO();
+    prerequisiteRule2.setEvent("prerequisiteEvent2");
+    prerequisiteRule2 = ruleService.updateRule(prerequisiteRule2);
+
+    rule.setPrerequisiteRuleIds(new HashSet<>(Arrays.asList(prerequisiteRule1.getId(), prerequisiteRule2.getId())));
+    rule = ruleService.updateRule(rule);
+
+    realizationService.createRealizations(rule.getEvent(),
+                                          TEST_USER_EARNER,
+                                          TEST_USER_RECEIVER,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(0, realizationDAO.count().intValue());
+
+    realizationService.createRealizations(prerequisiteRule1.getEvent(),
+                                          TEST_USER_EARNER,
+                                          TEST_USER_RECEIVER,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(1, realizationDAO.count().intValue());
+
+    realizationService.createRealizations(rule.getEvent(),
+                                          TEST_USER_EARNER,
+                                          TEST_USER_RECEIVER,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(1, realizationDAO.count().intValue());
+
+    realizationService.createRealizations(prerequisiteRule2.getEvent(),
+                                          TEST_USER_EARNER,
+                                          TEST_USER_RECEIVER,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(2, realizationDAO.count().intValue());
+
+    realizationService.createRealizations(rule.getEvent(),
+                                          TEST_USER_EARNER,
+                                          TEST_USER_RECEIVER,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(3, realizationDAO.count().intValue());
+
+    ruleService.deleteRuleById(prerequisiteRule2.getId(), "root1");
+    realizationService.createRealizations(rule.getEvent(),
+                                          TEST_USER_EARNER,
+                                          TEST_USER_RECEIVER,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(4, realizationDAO.count().intValue());
+
+    ruleService.deleteRuleById(prerequisiteRule1.getId(), "root1");
+    realizationService.createRealizations(rule.getEvent(),
+                                          TEST_USER_EARNER,
+                                          TEST_USER_RECEIVER,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(5, realizationDAO.count().intValue());
   }
 
   public void testComputeTotalScore() {

@@ -97,12 +97,19 @@ import io.meeds.gamification.constant.IdentityType;
 @NamedQuery(name = "RealizationEntity.countRealizationsByRuleId", query = "SELECT COUNT(a) FROM RealizationEntity a where a.ruleEntity.id = :ruleId")
 @NamedQuery(name = "RealizationEntity.countRealizationsByRuleIdAndEarnerType", query = "SELECT COUNT(a) FROM RealizationEntity a where a.ruleEntity.id = :ruleId AND a.earnerType = :earnerType")
 @NamedQuery(
-  name = "RealizationEntity.countRealizationsEarnerIdSinceDate",
+  name = "RealizationEntity.countRealizationsByRuleIdAndEarnerIdSinceDate",
   query = "SELECT COUNT(a) FROM RealizationEntity a"
       + " WHERE a.ruleEntity.id = :ruleId"
       + " AND a.earnerId = :earnerId"
       + " AND a.status = :status"
       + " AND a.createdDate >= :date"
+)
+@NamedQuery(
+  name = "RealizationEntity.countRealizationsByRuleIdAndEarnerId",
+  query = "SELECT COUNT(a) FROM RealizationEntity a"
+      + " WHERE a.ruleEntity.id = :ruleId"
+      + " AND a.earnerId = :earnerId"
+      + " AND a.status = :status"
 )
 @NamedQuery(name = "RealizationEntity.findRealizationsByRuleId", query = "SELECT a FROM RealizationEntity a where a.ruleEntity.id = :ruleId order by a.id desc")
 @NamedQuery(name = "RealizationEntity.findRealizationsByRuleIdAndEarnerType", query = "SELECT a FROM RealizationEntity a where a.ruleEntity.id = :ruleId AND a.earnerType = :earnerType order by a.id desc")

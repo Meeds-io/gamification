@@ -194,18 +194,6 @@ public class TestGamificationRestEndpoint extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetDomains() throws Exception {
-    String restPath = "/gamification/api/v1/domains";
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
-    assertNotNull(response);
-    assertEquals(200, response.getStatus());
-  }
-
-  @Test
   public void testGetAllEvents() throws Exception {
     String restPath = "/gamification/api/v1/events";
     EnvironmentContext envctx = new EnvironmentContext();
