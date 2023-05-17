@@ -17,66 +17,86 @@
 
 package io.meeds.gamification.rest.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.List;
 import java.util.Set;
 
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.model.ProgramDTO;
+import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.UserInfo;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-public class RuleRestEntity implements Cloneable {
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class RuleRestEntity extends RuleDTO {
 
-  protected Long                       id;
-
-  protected String                     title;
-
-  protected String                     description;
-
-  protected int                        score;
-
-  private ProgramDTO                   program;
-
-  protected boolean                    enabled;
-
-  protected boolean                    deleted;
-
-  private String                       createdBy;
-
-  private String                       createdDate;
-
-  private String                       lastModifiedBy;
-
-  private String                       event;
-
-  private String                       lastModifiedDate;
+  private static final long            serialVersionUID = 5177522303947816474L;
 
   private long                         audience;
 
-  private String                       startDate;
-
-  private String                       endDate;
-
-  private EntityType                   type;
-
-  private RecurrenceType               recurrence;
-
   private Set<Long>                    managers;
 
-  private List<AnnouncementRestEntity> announcements;
+  private List<AnnouncementRestEntity> announcements;                          // NOSONAR
 
   private long                         announcementsCount;
 
-  private UserInfo                     userInfo;
+  private UserInfo                     userInfo;                               // NOSONAR
+
+  private List<RuleDTO>                prerequisiteRules;
+
+  public RuleRestEntity(Long id, // NOSONAR
+                        String title,
+                        String description,
+                        int score,
+                        ProgramDTO program,
+                        boolean enabled,
+                        boolean deleted,
+                        String createdBy,
+                        String createdDate,
+                        String lastModifiedBy,
+                        String event,
+                        String lastModifiedDate,
+                        String startDate,
+                        String endDate,
+                        Set<Long> prerequisiteRuleIds,
+                        EntityType type,
+                        RecurrenceType recurrence,
+                        long audience,
+                        Set<Long> managers,
+                        List<AnnouncementRestEntity> announcements,
+                        long announcementsCount,
+                        UserInfo userInfo,
+                        List<RuleDTO> prerequisiteRules) {
+    super(id,
+          title,
+          description,
+          score,
+          program,
+          enabled,
+          deleted,
+          createdBy,
+          createdDate,
+          lastModifiedBy,
+          event,
+          lastModifiedDate,
+          startDate,
+          endDate,
+          prerequisiteRuleIds,
+          type,
+          recurrence);
+    this.audience = audience;
+    this.managers = managers;
+    this.announcements = announcements;
+    this.announcementsCount = announcementsCount;
+    this.userInfo = userInfo;
+    this.prerequisiteRules = prerequisiteRules;
+  }
 
   @Override
   public RuleRestEntity clone() { // NOSONAR
@@ -92,15 +112,17 @@ public class RuleRestEntity implements Cloneable {
                               lastModifiedBy,
                               event,
                               lastModifiedDate,
-                              audience,
                               startDate,
                               endDate,
+                              prerequisiteRuleIds,
                               type,
                               recurrence,
+                              audience,
                               managers,
                               announcements,
                               announcementsCount,
-                              userInfo);
+                              userInfo,
+                              prerequisiteRules);
   }
 
 }

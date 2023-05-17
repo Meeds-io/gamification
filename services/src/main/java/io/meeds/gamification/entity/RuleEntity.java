@@ -18,11 +18,15 @@ package io.meeds.gamification.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -159,5 +163,10 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "RECURRENCE", nullable = false)
   private RecurrenceType    recurrence;
+
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "GAMIFICATION_PREREQUISITE_RULES", joinColumns = @JoinColumn(name = "RULE_ID"))
+  @Column(name = "PREREQUISITE_RULE_ID")
+  private Set<Long>         prerequisiteRules;
 
 }
