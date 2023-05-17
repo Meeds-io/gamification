@@ -20,9 +20,12 @@ import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.ObjectAlreadyExistsException;
@@ -224,6 +227,26 @@ public class RuleServiceImpl implements RuleService {
   @Override
   public RuleDTO updateRule(RuleDTO ruleDTO) throws ObjectNotFoundException {
     return updateRuleAndBroadcast(ruleDTO, null);
+  }
+
+  @Override
+  public List<RuleDTO> getPrerequisiteRules(long ruleId) {
+    RuleDTO rule = findRuleById(ruleId);
+    if (rule != null && CollectionUtils.isNotEmpty(rule.getPrerequisiteRuleIds())) {
+      return rule.getPrerequisiteRuleIds().stream().map(id -> {
+        RuleDTO r = findRuleById(id);
+        if (r == null
+            || r.getProgram() == null
+            || !r.isEnabled()
+            || r.isDeleted()) {
+          return null;
+        } else {
+          return r;
+        }
+      }).filter(Objects::nonNull).toList();
+    } else {
+      return Collections.emptyList();
+    }
   }
 
   private void checkPermissionAndDates(RuleDTO rule, String username) throws IllegalAccessException {

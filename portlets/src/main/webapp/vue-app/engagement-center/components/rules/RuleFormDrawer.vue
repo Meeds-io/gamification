@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     right
     allow-expand
     @opened="stepper = 1"
-    @closed="stepper = 0">
+    @closed="clear">
     <template slot="title">
       {{ drawerTitle }}
     </template>
@@ -194,13 +194,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <template #activator="{ on, attrs }">
                 <v-chip
                   class="ma-2"
-                  outlined
+                  :color="prerequisiteRuleCondition && 'primary' || ''"
+                  :outlined="!prerequisiteRuleCondition"
+                  :dark="prerequisiteRuleCondition"
                   v-bind="attrs"
-                  v-on="on">
+                  v-on="on"
+                  @click="updatePrerequisiteRuleCondition">
                   {{ $t('rule.form.label.action') }}
                 </v-chip>
               </template>
-              <span>{{ $t('challenges.label.comingSoon') }}</span>
+              <span>{{ $t('rule.form.label.actionTooltip') }}</span>
             </v-tooltip>
           </div>
           <div v-if="durationCondition">
@@ -243,7 +246,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-card-text>
           </div>
           <div v-if="recurrenceCondition">
-            <engagement-center-rule-recurrence-input v-model="rule.recurrence" />
+            <engagement-center-rule-recurrence-input
+              v-model="rule.recurrence" />
+          </div>
+          <div v-if="prerequisiteRuleCondition">
+            <engagement-center-rule-lock-input
+              v-model="rule.prerequisiteRules"
+              :program-id="programId"
+              :excluded-ids="excludedRuleIds" />
           </div>
         </v-stepper-content>
       </v-stepper>
@@ -265,7 +275,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-btn>
         <v-btn
           v-if="stepper === 1"
-          :disabled="disableSaveButton"
+          :disabled="disableNextButton"
           class="btn btn-primary"
           @click="nextStep">
           {{ $t('rule.form.label.button.next') }}
@@ -317,6 +327,7 @@ export default {
     disabledEndDate: false,
     durationCondition: false,
     recurrenceCondition: false,
+    prerequisiteRuleCondition: false,
     durationFilter: 'BEFORE',
     programEvents: [],
   }),
@@ -371,6 +382,9 @@ export default {
     ruleId() {
       return this.rule?.id;
     },
+    excludedRuleIds() {
+      return this.ruleId && [this.ruleId] || [];
+    },
     ruleTitleValid() {
       return this.ruleTitle?.length > 0;
     },
@@ -389,8 +403,14 @@ export default {
     recurrenceValid() {
       return !this.recurrenceCondition || this.rule.recurrence;
     },
+    prerequisiteRuleValid() {
+      return !this.prerequisiteRuleCondition || this.rule.prerequisiteRules?.length;
+    },
+    disableNextButton() {
+      return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.isValidForm;
+    },
     disableSaveButton() {
-      return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.durationValid || !this.recurrenceValid || !this.isValidForm;
+      return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.durationValid || !this.recurrenceValid || !this.prerequisiteRuleValid || !this.isValidForm;
     },
     drawerTitle() {
       return this.ruleId ? this.$t('rule.form.label.edit') : this.$t('rule.form.label.add');
@@ -430,8 +450,9 @@ export default {
       if (!this.program) {
         this.program = this.rule?.program;
       }
-      this.durationCondition = this.rule.startDate || this.rule.endDate;
-      this.recurrenceCondition = this.rule.recurrence;
+      this.durationCondition = !!this.rule.startDate || !!this.rule.endDate;
+      this.recurrenceCondition = !!this.rule.recurrence;
+      this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
       this.durationFilter = this.rule.startDate && 'AFTER' || 'BEFORE';
       this.startDate = this.rule.startDate ? new Date(this.rule.startDate).getTime() : null;
       this.endDate = this.rule.endDate ? new Date(this.rule.endDate).getTime() : null;
@@ -454,12 +475,19 @@ export default {
       this.retrieveProgramRules();
     },
     close() {
-      this.$refs.ruleDescription.destroyCKEditor();
+      this.$refs.ruleDescription?.destroyCKEditor();
       this.$refs.ruleFormDrawer.close();
+    },
+    clear() {
+      this.$refs.ruleDescription?.destroyCKEditor();
+      this.stepper = 0;
       this.rule.enabled = true;
       this.rule.event = null;
       this.startDate = null;
       this.endDate = null;
+      this.durationCondition = false;
+      this.recurrenceCondition = false;
+      this.prerequisiteRuleCondition = false;
       this.$set(this.rule,'title','');
       this.rule.description = '';
       this.value = {};
@@ -563,6 +591,10 @@ export default {
     updateRecurrenceCondition() {
       this.recurrenceCondition = !this.recurrenceCondition;
       this.$set(this.rule,'recurrence', null);
+    },
+    updatePrerequisiteRuleCondition() {
+      this.prerequisiteRuleCondition = !this.prerequisiteRuleCondition;
+      this.$set(this.rule,'prerequisiteRules', []);
     },
     displayAlert(message, type) {
       document.dispatchEvent(new CustomEvent('notification-alert', {detail: {

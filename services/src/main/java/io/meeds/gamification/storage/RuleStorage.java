@@ -108,4 +108,8 @@ public class RuleStorage {
     // implemented in cached storage
   }
 
+  public void clearCache(RuleDTO rule) {
+    // implemented in cached storage
+  }
+
 }

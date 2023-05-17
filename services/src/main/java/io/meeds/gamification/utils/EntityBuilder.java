@@ -38,6 +38,7 @@ import io.meeds.gamification.rest.model.ProgramRestEntity;
 import io.meeds.gamification.rest.model.RuleRestEntity;
 import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.ProgramService;
+import io.meeds.gamification.service.RuleService;
 
 public class EntityBuilder {
   private static final Log LOG = ExoLogger.getLogger(EntityBuilder.class);
@@ -54,7 +55,8 @@ public class EntityBuilder {
     }
   }
 
-  public static RuleRestEntity toRestEntity(ProgramService programService,
+  public static RuleRestEntity toRestEntity(ProgramService programService, // NOSONAR
+                                            RuleService ruleService,
                                             AnnouncementService announcementService,
                                             RuleDTO rule,
                                             List<String> expandFields,
@@ -78,6 +80,14 @@ public class EntityBuilder {
                                                                                                    IdentityType.USER)
                                                    : 0;
     }
+
+    List<RuleDTO> prerequisiteRules = ruleService.getPrerequisiteRules(rule.getId())
+                                                 .stream()
+                                                 .map(r -> {
+                                                   r.setProgram(null);
+                                                   return r;
+                                                 })
+                                                 .toList();
     ProgramDTO program = noDomain ? null : rule.getProgram();
     UserInfo userInfo = Utils.toUserInfo(programService, rule.getDomainId(), Utils.getCurrentUser());
 
@@ -93,15 +103,17 @@ public class EntityBuilder {
                               rule.getLastModifiedBy(),
                               rule.getEvent(),
                               rule.getLastModifiedDate(),
-                              rule.getAudienceId(),
                               rule.getStartDate(),
                               rule.getEndDate(),
+                              rule.getPrerequisiteRuleIds(),
                               rule.getType(),
                               rule.getRecurrence(),
+                              rule.getAudienceId(),
                               rule.getManagers(),
                               announcementEntities,
                               announcementsCount,
-                              userInfo);
+                              userInfo,
+                              prerequisiteRules);
   }
 
   public static ProgramRestEntity toRestEntity(ProgramService programService, ProgramDTO program, String username) {
