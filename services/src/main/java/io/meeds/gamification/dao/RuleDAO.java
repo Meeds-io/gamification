@@ -56,7 +56,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   private Map<String, Boolean> filterNamedQueries        = new HashMap<>();
 
-  public List<Long> findHighestBudgetDomainIds(int offset, int limit) {
+  public List<Long> findHighestBudgetProgramIds(int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIds", Tuple.class);
     query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
     List<Tuple> result = query.getResultList();
@@ -74,7 +74,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  public List<Long> findHighestBudgetDomainIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
+  public List<Long> findHighestBudgetProgramIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIdsBySpacesIds", Tuple.class);
     query.setParameter("spacesIds", spacesIds);
     query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
@@ -122,8 +122,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findActiveRuleByEventAndDomain", RuleEntity.class)
                                                      .setParameter(EVENT_PARAM_NAME, event)
                                                      .setParameter(DOMAIN_ID_PARAM_NAME, domainId)
-                                                     .setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
-    query.setParameter("type", EntityType.AUTOMATIC);
+                                                     .setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime())
+                                                     .setParameter("type", EntityType.AUTOMATIC);
     try {
       List<RuleEntity> ruleEntities = query.getResultList();
       return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null;
