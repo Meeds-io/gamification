@@ -46,19 +46,23 @@ import io.meeds.gamification.rest.model.AnnouncementRestEntity;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 
-public class TestAnnouncementRest extends AbstractServiceTest {
+public class TestAnnouncementRest extends AbstractServiceTest { // NOSONAR
 
   protected Class<?> getComponentClass() {
     return AnnouncementRest.class;
   }
 
-  private static final long   MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                                                            // NOSONAR
+  private static final long   MILLIS_IN_A_DAY              = 1000 * 60 * 60 * 24;                                        // NOSONAR
 
-  private static final String startDate       = Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 3 * MILLIS_IN_A_DAY));
+  private static final String START_DATE                   =
+                                         Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 3 * MILLIS_IN_A_DAY));
 
-  private static final String endDate         = Utils.toRFC3339Date(new Date(System.currentTimeMillis() + 3 * MILLIS_IN_A_DAY));
+  private static final String END_DATE                     =
+                                       Utils.toRFC3339Date(new Date(System.currentTimeMillis() + 3 * MILLIS_IN_A_DAY));
 
-  private static final String date            = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
+  private static final String DATE                         = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
+
+  private static final String ANNOUNCEMENTS_REST_BASE_PATH = "/gamification/announcements";                              // NOSONAR
 
   @Override
   @Before
@@ -74,20 +78,21 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     long identityId = Long.parseLong(identity.getId());
 
     ConversationState conversationState = startSessionAs("root1");
-    ProgramDTO domain = newProgram();
-    domain.setOwners(Collections.singleton(identityId));
-    programService.updateProgram(domain, conversationState.getIdentity());
 
-    RuleDTO rule = new RuleDTO();
+    RuleDTO rule = newRuleDTO();
+
+    ProgramDTO program = rule.getProgram();
+    program.setOwners(Collections.singleton(identityId));
+    programService.updateProgram(program, conversationState.getIdentity());
+
     rule.setTitle("update challenge");
     rule.setDescription("challenge description");
-    rule.setStartDate(startDate);
-    rule.setEndDate(endDate);
-    rule.setProgram(domain);
+    rule.setStartDate(START_DATE);
+    rule.setEndDate(END_DATE);
     rule.setEnabled(true);
     rule.setScore(10);
-    rule = ruleService.createRule(rule);
-    String restPath = "/gamification/announcements";
+    rule = ruleService.updateRule(rule);
+    String restPath = ANNOUNCEMENTS_REST_BASE_PATH;
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -108,7 +113,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
               .key("creator")
               .value("root1")
               .key("createdDate")
-              .value(date)
+              .value(DATE)
               .key("templateParams")
               .value(new HashMap<>())
               .endObject();
@@ -150,7 +155,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
               .key("creator")
               .value("root1")
               .key("createdDate")
-              .value(date)
+              .value(DATE)
               .key("templateParams")
               .value(new HashMap<>())
               .endObject();
@@ -178,7 +183,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
               .key("creator")
               .value("root1")
               .key("createdDate")
-              .value(date)
+              .value(DATE)
               .key("templateParams")
               .value(new HashMap<>())
               .endObject();
@@ -193,14 +198,22 @@ public class TestAnnouncementRest extends AbstractServiceTest {
 
   @Test
   public void testGetAllAnnouncementByChallenge() throws Exception {
-    startSessionAs("root1");
-    ProgramDTO domain = newProgram();
-    RuleDTO rule = new RuleDTO();
+    Identity identity = identityManager.getOrCreateUserIdentity("root1");
+    long identityId = Long.parseLong(identity.getId());
+
+    ConversationState conversationState = startSessionAs("root1");
+
+    RuleDTO rule = newRuleDTO();
+
+    ProgramDTO program = rule.getProgram();
+    program.setOwners(Collections.singleton(identityId));
+    programService.updateProgram(program, conversationState.getIdentity());
+
     rule.setTitle("update challenge");
     rule.setDescription("challenge description");
-    rule.setStartDate(startDate);
-    rule.setEndDate(endDate);
-    rule.setProgram(domain);
+    rule.setStartDate(START_DATE);
+    rule.setEndDate(END_DATE);
+    rule.setProgram(program);
     rule.setEnabled(true);
     rule = ruleService.createRule(rule);
     Announcement announcement = new Announcement(0,
@@ -209,10 +222,10 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                                                  1L,
                                                  "announcement comment",
                                                  1L,
-                                                 date,
+                                                 DATE,
                                                  null);
     announcementService.createAnnouncement(announcement, new HashMap<>(), "root1");
-    String restPath = "/gamification/announcements?ruleId=1&offset=1&limit=-10";
+    String restPath = ANNOUNCEMENTS_REST_BASE_PATH + "?ruleId=1&offset=1&limit=-10";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -223,7 +236,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    restPath = "/gamification/announcements?ruleId=1&offset=-1&limit=10";
+    restPath = ANNOUNCEMENTS_REST_BASE_PATH + "?ruleId=1&offset=-1&limit=10";
     envctx = new EnvironmentContext();
     httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -232,7 +245,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    restPath = "/gamification/announcements?ruleId=-1&offset=1&limit=10";
+    restPath = ANNOUNCEMENTS_REST_BASE_PATH + "?ruleId=-1&offset=1&limit=10";
     envctx = new EnvironmentContext();
     httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -241,7 +254,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    restPath = "/gamification/announcements?ruleId=" + rule.getId() + "&offset=0&limit=10";
+    restPath = ANNOUNCEMENTS_REST_BASE_PATH + "?ruleId=" + rule.getId() + "&offset=0&limit=10";
     envctx = new EnvironmentContext();
     httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);

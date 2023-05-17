@@ -26,116 +26,132 @@ import io.meeds.gamification.model.filter.RuleFilter;
 
 public interface RuleService {
 
-    /**
-     * Get RuleEntity by id
-     * @param id : rule's id param
-     * @return an instance of RuleDTO
-     */
-    RuleDTO findRuleById (long id);
+  /**
+   * Get RuleEntity by id
+   * 
+   * @param  id : rule's id param
+   * @return    an instance of RuleDTO
+   */
+  RuleDTO findRuleById(long id);
 
-    /**
-     * 
-     * @param id rule technical identifier
-     * @param username user accessing rule
-     * @return {@link RuleDTO}
-     * @throws IllegalAccessException when user doesn't have enough privileges to access rule
-     * @throws ObjectNotFoundException when rule with id isn't enabled or isn't found
-     */
-    RuleDTO findRuleById(long id, String username) throws IllegalAccessException, ObjectNotFoundException;
+  /**
+   * @param  id                      rule technical identifier
+   * @param  username                user accessing rule
+   * @return                         {@link RuleDTO}
+   * @throws IllegalAccessException  when user doesn't have enough privileges to
+   *                                   access rule
+   * @throws ObjectNotFoundException when rule with id isn't enabled or isn't
+   *                                   found
+   */
+  RuleDTO findRuleById(long id, String username) throws IllegalAccessException, ObjectNotFoundException;
 
-    /**
-     * Find enable RuleEntity by title
-     * @param ruleTitle : rule's title param
-     * @return an instance of RuleDTO
-     */
-     List<RuleDTO> findActiveRulesByEvent (String ruleTitle);
+  /**
+   * Find enable RuleEntity by title
+   * 
+   * @param  ruleTitle : rule's title param
+   * @return           an instance of RuleDTO
+   */
+  List<RuleDTO> findActiveRulesByEvent(String ruleTitle);
 
-    /**
-     * Find a RuleEntity by title
-     * @param ruleTitle : rule's title param
-     * @return an instance of RuleDTO
-     */
-     RuleDTO findRuleByTitle (String ruleTitle);
+  /**
+   * Find a RuleEntity by title
+   * 
+   * @param  ruleTitle : rule's title param
+   * @return           an instance of RuleDTO
+   */
+  RuleDTO findRuleByTitle(String ruleTitle);
 
-    /**
-     * Get all Rules using offset and limit.
-     * 
-     * @param offset Offset of result
-     * @param limit Limit of result
-     * @return {@link List} of {@link RuleDTO}
-     */
-    List<RuleDTO> findAllRules(int offset, int limit) ;
+  /**
+   * Get all Rules using offset and limit.
+   * 
+   * @param  offset Offset of result
+   * @param  limit  Limit of result
+   * @return        {@link List} of {@link RuleDTO}
+   */
+  List<RuleDTO> findAllRules(int offset, int limit);
 
-    /**
-     * Get Rules by filter using offset and limit.
-     *
-     * @param ruleFilter {@link RuleFilter} used to filter rules
-     * @param offset Offset of result
-     * @param limit Limit of result
-     * @return {@link List} of {@link RuleDTO}
-     */
-    List<RuleDTO> getRules(RuleFilter ruleFilter, int offset, int limit) ;
+  /**
+   * Get Rules by filter using offset and limit.
+   *
+   * @param  ruleFilter {@link RuleFilter} used to filter rules
+   * @param  offset     Offset of result
+   * @param  limit      Limit of result
+   * @return            {@link List} of {@link RuleDTO}
+   */
+  List<RuleDTO> getRules(RuleFilter ruleFilter, int offset, int limit);
 
-    /**
-     * @param ruleFilter {@link RuleFilter} used to count associated rules
-     * @return count rules by filter
-     */
-    int countRules(RuleFilter ruleFilter);
+  /**
+   * @param  ruleFilter {@link RuleFilter} used to count associated rules
+   * @return            count rules by filter
+   */
+  int countRules(RuleFilter ruleFilter);
 
-    /**
-     * Get all Events from rules
-     * @return RuleDTO list
-     */
-     List<String> getAllEvents();
+  /**
+   * Get all Events from rules
+   * 
+   * @return RuleDTO list
+   */
+  List<String> getAllEvents();
 
-     /**
-      * Deletes an existing rule
-      *
-      * @param ruleId Rule technical identifier to delete
-      * @param username User name of user attempting to delete a rule
-      * @return deleted {@link RuleDTO}
-      * @throws IllegalAccessException when user is not authorized to delete the
-      *           rule
-      * @throws ObjectNotFoundException when the rule identified by its technical
-      *           identifier is not found
-      */
-     RuleDTO deleteRuleById(Long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException;
+  /**
+   * Deletes an existing rule
+   *
+   * @param  ruleId                  Rule technical identifier to delete
+   * @param  username                User name of user attempting to delete a
+   *                                   rule
+   * @return                         deleted {@link RuleDTO}
+   * @throws IllegalAccessException  when user is not authorized to delete the
+   *                                   rule
+   * @throws ObjectNotFoundException when the rule identified by its technical
+   *                                   identifier is not found
+   */
+  RuleDTO deleteRuleById(Long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException;
 
-    /**
-     * Add Rule to DB
-     * @param ruleDTO {@link RuleDTO} to create
-     * @param username User name of user attempting to create a rule
-     * @return created {@link RuleDTO}
-     * @throws IllegalAccessException when user is not authorized to create a rule
-     * @throws ObjectAlreadyExistsException when rule already exists
-     */
-     RuleDTO createRule (RuleDTO ruleDTO, String username) throws IllegalAccessException, ObjectAlreadyExistsException;
+  /**
+   * Add Rule to DB
+   * 
+   * @param  ruleDTO                      {@link RuleDTO} to create
+   * @param  username                     User name of user attempting to create
+   *                                        a rule
+   * @return                              created {@link RuleDTO}
+   * @throws IllegalAccessException       when user is not authorized to create
+   *                                        a rule
+   * @throws ObjectAlreadyExistsException when rule already exists
+   * @throws ObjectNotFoundException      when program doesn't exists
+   */
+  RuleDTO createRule(RuleDTO ruleDTO, String username) throws IllegalAccessException, ObjectAlreadyExistsException,
+                                                       ObjectNotFoundException;
 
-     /**
-     * Add Rule to DB
-     * @param ruleDTO {@link RuleDTO} to create
-     * @return created {@link RuleDTO}
-     */
-     RuleDTO createRule (RuleDTO ruleDTO);
+  /**
+   * Add Rule to DB
+   * 
+   * @param  ruleDTO {@link RuleDTO} to create
+   * @return         created {@link RuleDTO}
+   */
+  RuleDTO createRule(RuleDTO ruleDTO);
 
-    /**
-     * Update Rule to DB
-     * @param ruleDTO {@link RuleDTO} to update
-     * @param username User name of user attempting to update a rule
-     * @return updated {@link RuleDTO}
-     * @throws ObjectNotFoundException when rule doesn't exists
-     * @throws IllegalAccessException when user sin't allowed to update chosen rule
-     */
-    RuleDTO updateRule(RuleDTO ruleDTO, String username) throws ObjectNotFoundException, IllegalAccessException;
+  /**
+   * Update Rule to DB
+   * 
+   * @param  ruleDTO                 {@link RuleDTO} to update
+   * @param  username                User name of user attempting to update a
+   *                                   rule
+   * @return                         updated {@link RuleDTO}
+   * @throws ObjectNotFoundException when rule doesn't exists
+   * @throws IllegalAccessException  when user sin't allowed to update chosen
+   *                                   rule
+   */
+  RuleDTO updateRule(RuleDTO ruleDTO, String username) throws ObjectNotFoundException, IllegalAccessException;
 
-    /**
-     * Update Rule to DB
-     * @param ruleDTO {@link RuleDTO} to update
-     * @return updated {@link RuleDTO}
-     * @throws ObjectNotFoundException when rule doesn't exists
-     */
-    default RuleDTO updateRule(RuleDTO ruleDTO) throws ObjectNotFoundException {
-      return null;
-    }
+  /**
+   * Update Rule to DB
+   * 
+   * @param  ruleDTO                 {@link RuleDTO} to update
+   * @return                         updated {@link RuleDTO}
+   * @throws ObjectNotFoundException when rule doesn't exists
+   */
+  default RuleDTO updateRule(RuleDTO ruleDTO) throws ObjectNotFoundException {
+    return null;
+  }
 
 }
