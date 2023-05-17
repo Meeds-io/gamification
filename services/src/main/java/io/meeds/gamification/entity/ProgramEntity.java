@@ -31,7 +31,6 @@ import io.meeds.gamification.constant.EntityType;
 @ExoEntity
 @Table(name = "GAMIFICATION_DOMAIN")
 @NamedQuery(name = "GamificationDomain.getAllDomains", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.isDeleted = false")
-@NamedQuery(name = "GamificationDomain.getEnabledDomains", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.isDeleted = false AND domain.isEnabled = true ")
 @NamedQuery(name = "GamificationDomain.findByIdWithOwners", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.id = :id")
 @NamedQuery(name = "GamificationDomain.findDomainByTitle", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.title = :domainTitle")
 @NamedQuery(name = "GamificationDomain.deleteDomainByTitle", query = "DELETE FROM GamificationDomain domain WHERE domain.title = :domainTitle")
