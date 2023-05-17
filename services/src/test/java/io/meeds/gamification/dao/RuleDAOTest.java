@@ -110,19 +110,19 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleDAO.update(r32);
     r33.setScore(2);
     ruleDAO.update(r33);
-    assertEquals(thirdDomain.getId(), ruleDAO.findHighestBudgetDomainIds(0, 1).get(0));
-    assertEquals(secondDomain.getId(), ruleDAO.findHighestBudgetDomainIds(1, 1).get(0));
-    assertEquals(firstDomain.getId(), ruleDAO.findHighestBudgetDomainIds(2, 1).get(0));
+    assertEquals(thirdDomain.getId(), ruleDAO.findHighestBudgetProgramIds(0, 1).get(0));
+    assertEquals(secondDomain.getId(), ruleDAO.findHighestBudgetProgramIds(1, 1).get(0));
+    assertEquals(firstDomain.getId(), ruleDAO.findHighestBudgetProgramIds(2, 1).get(0));
     r32.setEnabled(false);
     ruleDAO.update(r32);
-    assertEquals(secondDomain.getId(), ruleDAO.findHighestBudgetDomainIds(0, 1).get(0));
-    assertEquals(firstDomain.getId(), ruleDAO.findHighestBudgetDomainIds(1, 1).get(0));
-    assertEquals(thirdDomain.getId(), ruleDAO.findHighestBudgetDomainIds(2, 1).get(0));
+    assertEquals(secondDomain.getId(), ruleDAO.findHighestBudgetProgramIds(0, 1).get(0));
+    assertEquals(firstDomain.getId(), ruleDAO.findHighestBudgetProgramIds(1, 1).get(0));
+    assertEquals(thirdDomain.getId(), ruleDAO.findHighestBudgetProgramIds(2, 1).get(0));
 
     // find highest budget domain Ids by spaces Ids
-    assertTrue(ruleDAO.findHighestBudgetDomainIdsBySpacesIds(new ArrayList<>(Collections.singleton(10L)), 0, 3).isEmpty());
+    assertTrue(ruleDAO.findHighestBudgetProgramIdsBySpacesIds(new ArrayList<>(Collections.singleton(10L)), 0, 3).isEmpty());
     assertEquals(secondDomain.getId(),
-                 ruleDAO.findHighestBudgetDomainIdsBySpacesIds(new ArrayList<>(Collections.singleton(1L)), 0, 3).get(0));
+                 ruleDAO.findHighestBudgetProgramIdsBySpacesIds(new ArrayList<>(Collections.singleton(1L)), 0, 3).get(0));
   }
 
   @Test

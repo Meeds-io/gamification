@@ -37,7 +37,7 @@ public class RealizationMapper {
                               realizationEntity.getGlobalScore(),
                               realizationEntity.getActionTitle(),
                               realizationEntity.getDomainEntity() == null ? null
-                                                                          : programStorage.getDomainById(realizationEntity.getDomainEntity()
+                                                                          : programStorage.getProgramById(realizationEntity.getDomainEntity()
                                                                                                                          .getId()),
                               realizationEntity.getDomain(),
                               realizationEntity.getContext(),
