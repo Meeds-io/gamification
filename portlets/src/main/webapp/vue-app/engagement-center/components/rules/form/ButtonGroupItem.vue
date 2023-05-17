@@ -20,7 +20,7 @@
 -->
 <template>
   <div>
-    <v-tooltip :value="title" bottom>
+    <v-tooltip bottom>
       <template #activator="{ on }">
         <v-btn
           :disabled="disabled"
@@ -35,7 +35,7 @@
           <slot></slot>
         </v-btn>
       </template>
-      <span>{{ title }}</span>
+      <span v-if="title && !isMobile">{{ title }}</span>
     </v-tooltip>
   </div>
 </template>
@@ -93,6 +93,9 @@ export default {
     },
     borderClass() {
       return this.isSelected && `${this.contextualColor}-border-color` || 'border-color';
+    },
+    isMobile() {
+      return this.$vuetify.breakpoint.xsOnly;
     },
   },
 };

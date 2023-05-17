@@ -82,6 +82,9 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
   private RuleService                ruleService;
 
   @Mock
+  private RealizationService         realizationService;
+
+  @Mock
   private ListenerService            listenerService;
 
   @Mock
@@ -111,6 +114,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     UTILS.reset();
     announcementService = new AnnouncementServiceImpl(announcementStorage,
                                                       ruleService,
+                                                      realizationService,
                                                       spaceService,
                                                       identityManager,
                                                       activityManager,
@@ -207,6 +211,10 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     UTILS.when(() -> Utils.canAnnounce(any(), anyString()))
          .thenReturn(true);
 
+    assertThrows(IllegalAccessException.class,
+                 () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
+
+    when(realizationService.canCreateRealization(rule, identity.getId())).thenReturn(true);
     Announcement newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root");
     assertNotNull(newAnnouncement);
     assertEquals(1l, newAnnouncement.getId());
@@ -306,9 +314,9 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
       when(activityManager.getActivity(activityId)).thenReturn(activity);
       return null;
     }).when(activityManager).saveActivityNoReturn(any(), any());
+    when(realizationService.canCreateRealization(rule, userIdentity.getId())).thenReturn(true);
 
-    Announcement newAnnouncement = null;
-    newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root");
+    Announcement newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root");
     assertNotNull(newAnnouncement);
     assertEquals(announcementId, newAnnouncement.getId());
 
