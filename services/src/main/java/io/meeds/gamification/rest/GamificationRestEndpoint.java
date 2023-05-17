@@ -50,7 +50,6 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.model.StandardLeaderboard;
-import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 
@@ -65,8 +64,6 @@ public class GamificationRestEndpoint implements ResourceContainer {
 
   private IdentityManager     identityManager;
 
-  private ProgramService      programService;
-
   private RuleService         ruleService;
 
   private static final String DATETIMEFORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -75,14 +72,12 @@ public class GamificationRestEndpoint implements ResourceContainer {
 
   public GamificationRestEndpoint(RealizationService realizationService,
                                   IdentityManager identityManager,
-                                  ProgramService programService,
                                   RuleService ruleService) {
     this.cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
     cacheControl.setNoStore(true);
     this.realizationService = realizationService;
     this.identityManager = identityManager;
-    this.programService = programService;
     this.ruleService = ruleService;
   }
 
@@ -256,19 +251,6 @@ public class GamificationRestEndpoint implements ResourceContainer {
                                                .message("Gamification API is called successfully"))
                    .build();
 
-  }
-
-  /**
-   * Return enabled domains
-   *
-   * @return : list of enabled domains
-   */
-  @Path("domains")
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @RolesAllowed("users")
-  public Response getDomains() {
-    return Response.ok(programService.getEnabledPrograms()).build();
   }
 
   /**
