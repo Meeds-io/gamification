@@ -82,18 +82,13 @@ public class ProgramServiceImpl implements ProgramService {
                                           int limit) throws IllegalAccessException {
     if (computeUserSpaces(domainFilter, username)) {
       if (domainFilter.isSortByBudget()) {
-        return programStorage.findHighestBudgetDomainIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
+        return programStorage.findHighestBudgetProgramIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
       } else {
-        return programStorage.getDomainsByFilter(domainFilter, offset, limit);
+        return programStorage.getProgramsByFilter(domainFilter, offset, limit);
       }
     } else {
       return Collections.emptyList();
     }
-  }
-
-  @Override
-  public List<ProgramDTO> getEnabledPrograms() {
-    return programStorage.getEnabledDomains();
   }
 
   @Override
@@ -107,7 +102,7 @@ public class ProgramServiceImpl implements ProgramService {
   @Override
   public int countPrograms(ProgramFilter domainFilter, String username) throws IllegalAccessException {
     if (computeUserSpaces(domainFilter, username)) {
-      return programStorage.countDomains(domainFilter);
+      return programStorage.countPrograms(domainFilter);
     } else {
       return 0;
     }
@@ -142,7 +137,7 @@ public class ProgramServiceImpl implements ProgramService {
   @Override
   public ProgramDTO updateProgram(ProgramDTO program, Identity aclIdentity) throws IllegalAccessException,
                                                                             ObjectNotFoundException {
-    ProgramDTO storedProgram = programStorage.getDomainById(program.getId());
+    ProgramDTO storedProgram = programStorage.getProgramById(program.getId());
     if (storedProgram == null) {
       throw new ObjectNotFoundException("Program doesn't exist");
     }
@@ -162,7 +157,7 @@ public class ProgramServiceImpl implements ProgramService {
     program.setDeleted(storedProgram.isDeleted());
     program.setCoverFileId(storedProgram.getCoverFileId());
 
-    program = programStorage.saveDomain(program);
+    program = programStorage.saveProgram(program);
     if (storedProgram.isEnabled() && !program.isEnabled()) {
       broadcast(GAMIFICATION_DOMAIN_DISABLE_LISTENER, program, aclIdentity.getUserId());
     } else if (!storedProgram.isEnabled() && program.isEnabled()) {
@@ -177,7 +172,7 @@ public class ProgramServiceImpl implements ProgramService {
   public ProgramDTO deleteProgramById(long domainId, Identity aclIdentity) throws IllegalAccessException,
                                                                            ObjectNotFoundException {
     String date = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
-    ProgramDTO domain = programStorage.getDomainById(domainId);
+    ProgramDTO domain = programStorage.getProgramById(domainId);
     if (domain == null) {
       throw new ObjectNotFoundException("domain doesn't exist");
     }
@@ -186,7 +181,7 @@ public class ProgramServiceImpl implements ProgramService {
     }
     domain.setDeleted(true);
     domain.setLastModifiedDate(date);
-    domain = programStorage.saveDomain(domain);
+    domain = programStorage.saveProgram(domain);
     broadcast(GAMIFICATION_DOMAIN_DELETE_LISTENER, domain, aclIdentity.getUserId());
     return domain;
   }
@@ -215,12 +210,12 @@ public class ProgramServiceImpl implements ProgramService {
     if (programId <= 0) {
       throw new IllegalArgumentException("Program id is mandatory");
     }
-    return programStorage.getDomainById(programId);
+    return programStorage.getProgramById(programId);
   }
 
   @Override
   public InputStream getFileDetailAsStream(long domainId) throws ObjectNotFoundException {
-    ProgramDTO domain = programStorage.getDomainById(domainId);
+    ProgramDTO domain = programStorage.getProgramById(domainId);
     if (domain == null) {
       throw new ObjectNotFoundException("Domain with id " + domainId + " doesn't exist");
     }
@@ -248,7 +243,7 @@ public class ProgramServiceImpl implements ProgramService {
     if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
       return false;
     }
-    ProgramDTO domain = programStorage.getDomainById(domainId);
+    ProgramDTO domain = programStorage.getProgramById(domainId);
     if (domain == null || domain.isDeleted()) {
       return false;
     }
@@ -261,7 +256,7 @@ public class ProgramServiceImpl implements ProgramService {
     if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
       return false;
     }
-    ProgramDTO program = programStorage.getDomainById(domainId);
+    ProgramDTO program = programStorage.getProgramById(domainId);
     if (program == null) {
       return false;
     }
@@ -323,7 +318,7 @@ public class ProgramServiceImpl implements ProgramService {
     domain.setCreatedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
     domain.setLastModifiedBy(username);
     domain.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
-    return programStorage.saveDomain(domain);
+    return programStorage.saveProgram(domain);
   }
 
 }

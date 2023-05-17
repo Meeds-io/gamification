@@ -50,7 +50,7 @@ public class BadgeBuilder {
     badgeDTO.setLastModifiedBy(badgeEntity.getLastModifiedBy());
     badgeDTO.setLastModifiedDate(formatDate(badgeEntity.getLastModifiedDate()));
     badgeDTO.setProgram((badgeEntity.getDomainEntity() == null) ? null
-                                                                  : programStorage.getDomainById(badgeEntity.getDomainEntity()
+                                                                  : programStorage.getProgramById(badgeEntity.getDomainEntity()
                                                                                                            .getId()));
     badgeDTO.setIconFileId(badgeEntity.getIconFileId());
     return badgeDTO;
