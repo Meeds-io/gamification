@@ -30,6 +30,7 @@ import io.meeds.gamification.constant.PeriodType;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.service.AnnouncementService;
+import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.AnnouncementStorage;
 import io.meeds.gamification.utils.Utils;
@@ -48,17 +49,21 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
   private RuleService         ruleService;
 
+  private RealizationService  realizationService;
+
   private AnnouncementStorage announcementStorage;
 
   private ListenerService     listenerService;
 
   public AnnouncementServiceImpl(AnnouncementStorage announcementStorage,
                                  RuleService ruleService,
+                                 RealizationService realizationService,
                                  SpaceService spaceService,
                                  IdentityManager identityManager,
                                  ActivityManager activityManager,
                                  ListenerService listenerService) {
     this.ruleService = ruleService;
+    this.realizationService = realizationService;
     this.announcementStorage = announcementStorage;
     this.spaceService = spaceService;
     this.activityManager = activityManager;
@@ -99,10 +104,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         && Utils.parseSimpleDate(rule.getEndDate()).getTime() < System.currentTimeMillis()) {
       throw new IllegalAccessException("Rule with id '" + announcement.getChallengeId() + "' has ended");
     }
-
     Identity assigneeIdentity = identityManager.getIdentity(assignee.toString());
     if (assigneeIdentity == null || assigneeIdentity.isDeleted() || !assigneeIdentity.isEnable()) {
       throw new ObjectNotFoundException("Assignee with id " + assignee + " does not exist");
+    }
+    if (!realizationService.canCreateRealization(rule, assigneeIdentity.getId())) {
+      throw new IllegalAccessException("user " + username + " is not allowed to announce a challenge again on rule " + rule.getId());
     }
 
     if (!Utils.canAnnounce(String.valueOf(rule.getAudienceId()), username)) {

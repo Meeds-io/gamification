@@ -205,6 +205,16 @@ public interface RealizationService {
   List<RealizationDTO> deleteRealizations(String objectId, String objectType);
 
   /**
+   * Checks whether earner can create a realization on a designated rule at this
+   * moment or not
+   * 
+   * @param  rule {@link RuleDTO}
+   * @param  earnerIdentityId {@link org.exoplatform.social.core.identity.model.Identity} id
+   * @return true if can create a new realization, else false
+   */
+  boolean canCreateRealization(RuleDTO rule, String earnerIdentityId);
+
+  /**
    * Retrieves latest Achievement made by an
    * {@link org.exoplatform.social.core.identity.model.Identity} designated by
    * its id
