@@ -154,4 +154,13 @@ public interface RuleService {
     return null;
   }
 
+  /**
+   * Retrieve prerequisite rules to achieve in order to be gamified for a given
+   * rule by an earner
+   * 
+   * @param  ruleId {@link RuleDTO} identifier
+   * @return        {@link List} of {@link RuleDTO}
+   */
+  List<RuleDTO> getPrerequisiteRules(long ruleId);
+
 }
