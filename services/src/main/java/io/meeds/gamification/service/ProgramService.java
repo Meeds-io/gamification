@@ -66,13 +66,6 @@ public interface ProgramService {
                                    int limit) throws IllegalAccessException;
 
   /**
-   * Return enabled Programs within the DB
-   *
-   * @return A {@link List &lt;ProgramDTO&gt;} object
-   */
-  List<ProgramDTO> getEnabledPrograms();
-
-  /**
    * Find a Program by title
    * 
    * @param  programTitle : Program title

@@ -44,6 +44,7 @@ public class RuleBuilder {
     ruleEntity.setDeleted(rule.isDeleted());
     ruleEntity.setEvent(rule.getEvent());
     ruleEntity.setCreatedBy(rule.getCreatedBy());
+    ruleEntity.setPrerequisiteRules(rule.getPrerequisiteRuleIds());
     if (rule.getStartDate() != null) {
       ruleEntity.setStartDate(Utils.parseSimpleDate(rule.getStartDate()));
     }
@@ -81,6 +82,7 @@ public class RuleBuilder {
       rule.setDeleted(ruleEntity.isDeleted());
       rule.setEvent(ruleEntity.getEvent());
       rule.setCreatedBy(ruleEntity.getCreatedBy());
+      rule.setPrerequisiteRuleIds(ruleEntity.getPrerequisiteRules());
       if (ruleEntity.getStartDate() != null) {
         rule.setStartDate(Utils.toSimpleDateFormat(ruleEntity.getStartDate()));
       }
@@ -96,7 +98,7 @@ public class RuleBuilder {
       rule.setLastModifiedDate(Utils.toRFC3339Date(ruleEntity.getLastModifiedDate()));
       rule.setLastModifiedBy(ruleEntity.getLastModifiedBy());
       rule.setProgram(ruleEntity.getDomainEntity() == null ? null
-                                                           : programStorage.getDomainById(ruleEntity.getDomainEntity().getId()));
+                                                           : programStorage.getProgramById(ruleEntity.getDomainEntity().getId()));
       rule.setRecurrence(ruleEntity.getRecurrence());
       if (ruleEntity.getRecurrence() == RecurrenceType.NONE) {
         rule.setRecurrence(null);
