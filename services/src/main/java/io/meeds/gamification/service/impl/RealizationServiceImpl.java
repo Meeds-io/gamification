@@ -182,7 +182,7 @@ public class RealizationServiceImpl implements RealizationService {
       return Collections.emptyList();
     }
     return rules.stream()
-                .filter(rule -> isValidRule(rule, earnerIdentityId))
+                .filter(rule -> canCreateRealization(rule, earnerIdentityId, false))
                 .map(ruleDto -> RealizationBuilder.toRealization(this,
                                                                  identityManager,
                                                                  ruleDto,
@@ -284,6 +284,11 @@ public class RealizationServiceImpl implements RealizationService {
       }
     });
     return realizations;
+  }
+
+  @Override
+  public boolean canCreateRealization(RuleDTO rule, String earnerIdentityId) {
+    return canCreateRealization(rule, earnerIdentityId, true);
   }
 
   @Override
@@ -577,12 +582,26 @@ public class RealizationServiceImpl implements RealizationService {
     }
   }
 
-  private boolean isValidRule(RuleDTO rule, String earnerIdentityId) {
-    return rule != null
-        && !rule.isDeleted()
-        && rule.isEnabled()
-        && isValidProgram(rule.getProgram())
-        && isRecurrenceValid(rule, earnerIdentityId);
+  private boolean canCreateRealization(RuleDTO rule,
+                                       String earnerIdentityId,
+                                       boolean checkPermissions) {
+    if (rule == null
+        || rule.isDeleted()
+        || !rule.isEnabled()
+        || !isValidProgram(rule.getProgram())
+        || !isRecurrenceValid(rule, earnerIdentityId)) {
+      return false;
+    }
+    if (checkPermissions) {
+      org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId);
+      if (identity == null || identity.isDeleted() || !identity.isEnable()) {
+        return false;
+      }
+      if (identity.isUser() && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId())) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private boolean isValidProgram(ProgramDTO program) {

@@ -153,7 +153,9 @@ public class RuleServiceImpl implements RuleService {
   }
 
   @Override
-  public RuleDTO createRule(RuleDTO rule, String username) throws IllegalAccessException, ObjectAlreadyExistsException {
+  public RuleDTO createRule(RuleDTO rule, String username) throws IllegalAccessException,
+                                                           ObjectAlreadyExistsException,
+                                                           ObjectNotFoundException {
     if (rule == null) {
       throw new IllegalArgumentException("rule object is mandatory");
     }
@@ -163,12 +165,15 @@ public class RuleServiceImpl implements RuleService {
     if (rule.getId() != null) {
       throw new IllegalArgumentException("domain id must be equal to 0");
     }
+    long programId = rule.getProgram().getId();
+    ProgramDTO program = programService.getProgramById(programId, username);
+    rule.setProgram(program);
+
     checkPermissionAndDates(rule, username);
     rule.setCreatedBy(username);
     rule.setLastModifiedBy(username);
     rule.setDeleted(false);
-    long domainId = rule.getProgram().getId();
-    RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndDomain(rule.getEvent(), domainId);
+    RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndDomain(rule.getEvent(), programId);
     if (similarRule != null && !similarRule.isDeleted()) {
       throw new ObjectAlreadyExistsException("Rule with same event and domain already exist");
     }
@@ -193,6 +198,14 @@ public class RuleServiceImpl implements RuleService {
     RuleDTO oldRule = ruleStorage.findRuleById(rule.getId());
     if (oldRule == null) {
       throw new ObjectNotFoundException("Rule doesn't exist");
+    }
+    if (rule.getProgram() == null) {
+      throw new IllegalArgumentException("Program is mandatory");
+    }
+    ProgramDTO program = programService.getProgramById(rule.getProgram().getId());
+    rule.setProgram(program);
+    if (rule.getProgram() == null) {
+      throw new IllegalArgumentException("Program with id " + rule.getProgram().getId() + " wasn't found");
     }
     if (oldRule.isDeleted()) {
       throw new ObjectNotFoundException("Rule with id '" + oldRule.getId() + "' was deleted");
