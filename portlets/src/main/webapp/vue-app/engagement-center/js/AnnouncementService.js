@@ -17,7 +17,17 @@
  */
 
 export function getAnnouncements(ruleId, earnerType, offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcements?ruleId=${ruleId}&type=${earnerType || ''}&offset=${offset || 0}&limit=${limit || 10}`, {
+  const formData = new FormData();
+  formData.append('offset', offset || 0);
+  formData.append('limit', limit || 0);
+  if (earnerType) {
+    formData.append('type', earnerType);
+  }
+  if (ruleId) {
+    formData.append('ruleId', ruleId);
+  }
+  const params = new URLSearchParams(formData).toString();
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcements?${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

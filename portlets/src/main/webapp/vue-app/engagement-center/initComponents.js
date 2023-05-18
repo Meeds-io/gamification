@@ -47,6 +47,15 @@ import RuleLockInput from './components/rules/form/RuleLockInput.vue';
 import RuleDetailDrawer from './components/rules/RuleDetailDrawer.vue';
 import RulesToolbar from './components/rules/RulesToolbar.vue';
 import NoRuleFound from './components/rules/NoRuleFound.vue';
+import RuleAnnouncements from './components/rules/detail/RuleAnnouncements.vue';
+import RuleProgram from './components/rules/detail/RuleProgram.vue';
+import RuleAnnouncementForm from './components/rules/detail/RuleAnnouncementForm.vue';
+import RuleDates from './components/rules/detail/RuleDates.vue';
+import RuleHeader from './components/rules/detail/RuleHeader.vue';
+import RuleDescription from './components/rules/detail/RuleDescription.vue';
+import RuleRecurrence from './components/rules/detail/RuleRecurrence.vue';
+import RulePrerequisites from './components/rules/detail/RulePrerequisites.vue';
+import RulePrerequisiteItem from './components/rules/detail/RulePrerequisiteItem.vue';
 
 import Assignment from './components/common/Assignment.vue';
 import AvatarsList from './components/common/AvatarsList.vue';
@@ -80,6 +89,15 @@ const components = {
   'engagement-center-rule-form-drawer': RuleFormDrawer,
   'engagement-center-rule-recurrence-input': RuleRecurrenceInput,
   'engagement-center-rule-lock-input': RuleLockInput,
+  'engagement-center-rule-announcements': RuleAnnouncements,
+  'engagement-center-rule-program': RuleProgram,
+  'engagement-center-rule-announcement-form': RuleAnnouncementForm,
+  'engagement-center-rule-dates': RuleDates,
+  'engagement-center-rule-header': RuleHeader,
+  'engagement-center-rule-description': RuleDescription,
+  'engagement-center-rule-recurrence': RuleRecurrence,
+  'engagement-center-rule-prerequisites': RulePrerequisites,
+  'engagement-center-rule-prerequisite-item': RulePrerequisiteItem,
   'engagement-center-button-group-item': ButtonGroupItem,
   'engagement-center-rule-detail-drawer': RuleDetailDrawer,
   'engagement-center-rules-toolbar': RulesToolbar,
