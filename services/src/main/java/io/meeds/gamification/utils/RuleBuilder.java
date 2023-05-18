@@ -16,19 +16,103 @@
  */
 package io.meeds.gamification.utils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.social.rest.api.RestUtils;
+
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.PeriodType;
 import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.entity.RuleEntity;
+import io.meeds.gamification.model.Announcement;
+import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.model.UserInfoContext;
+import io.meeds.gamification.rest.model.AnnouncementRestEntity;
+import io.meeds.gamification.rest.model.RuleRestEntity;
+import io.meeds.gamification.service.AnnouncementService;
+import io.meeds.gamification.service.ProgramService;
+import io.meeds.gamification.service.RealizationService;
+import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.ProgramStorage;
 
 public class RuleBuilder {
 
+  private static final Log LOG = ExoLogger.getLogger(RuleBuilder.class);
+
   private RuleBuilder() {
     // Class with static methods
+  }
+
+  public static RuleRestEntity toRestEntity(ProgramService programService, // NOSONAR
+                                            RuleService ruleService,
+                                            RealizationService realizationService,
+                                            AnnouncementService announcementService,
+                                            RuleDTO rule,
+                                            List<String> expandFields,
+                                            int announcementsLimit,
+                                            boolean noDomain,
+                                            PeriodType periodType) {
+    if (rule == null) {
+      return null;
+    }
+    boolean isManual = rule.getType() == EntityType.MANUAL;
+    boolean retrieveAnnouncements = announcementsLimit > 0;
+    List<AnnouncementRestEntity> announcementEntities = null;
+    if (isManual && retrieveAnnouncements) {
+      List<Announcement> announcements = getAnnouncements(announcementService,
+                                                          rule,
+                                                          announcementsLimit,
+                                                          periodType == null ? PeriodType.ALL : periodType);
+      announcementEntities = AnnouncementBuilder.fromAnnouncementList(announcements);
+    }
+
+    boolean countAnnouncements = retrieveAnnouncements || (expandFields != null && expandFields.contains("countAnnouncements"));
+    long announcementsCount = 0;
+    if (isManual && countAnnouncements) {
+      announcementsCount = Utils.countAnnouncementsByRuleIdAndEarnerType(announcementService,
+                                                                         rule.getId(),
+                                                                         IdentityType.USER);
+    }
+    List<RuleDTO> prerequisiteRules = ruleService.getPrerequisiteRules(rule.getId())
+                                                 .stream()
+                                                 .map(r -> {
+                                                   r.setProgram(null);
+                                                   return r;
+                                                 })
+                                                 .toList();
+    ProgramDTO program = noDomain ? null : rule.getProgram();
+    UserInfoContext userContext = Utils.toUserContext(realizationService,
+                                                      rule,
+                                                      Utils.getCurrentUser());
+    return new RuleRestEntity(rule.getId(),
+                              rule.getTitle(),
+                              rule.getDescription(),
+                              rule.getScore(),
+                              program,
+                              rule.isEnabled(),
+                              rule.isDeleted(),
+                              rule.getCreatedBy(),
+                              rule.getCreatedDate(),
+                              rule.getLastModifiedBy(),
+                              rule.getEvent(),
+                              rule.getLastModifiedDate(),
+                              rule.getStartDate(),
+                              rule.getEndDate(),
+                              rule.getPrerequisiteRuleIds(),
+                              rule.getType(),
+                              rule.getRecurrence(),
+                              rule.getAudienceId(),
+                              rule.getManagers(),
+                              announcementEntities,
+                              announcementsCount,
+                              userContext,
+                              prerequisiteRules);
   }
 
   public static RuleEntity toEntity(RuleDTO rule) {
@@ -113,6 +197,30 @@ public class RuleBuilder {
                 .filter(Objects::nonNull)
                 .map(entity -> fromEntity(programStorage, entity))
                 .toList();
+  }
+
+  private static List<Announcement> getAnnouncements(AnnouncementService announcementService,
+                                                     RuleDTO rule,
+                                                     int limit,
+                                                     PeriodType period) {
+    if (limit > 0) {
+      try {
+        return announcementService.findAnnouncements(rule.getId(),
+                                                     0,
+                                                     limit,
+                                                     period,
+                                                     null,
+                                                     RestUtils.getCurrentUser());
+      } catch (Exception e) {
+        LOG.warn("Error while retrieving announcements list on rule {} for user {}. Returning empty list",
+                 rule.getId(),
+                 Utils.getCurrentUser(),
+                 e);
+        return Collections.emptyList();
+      }
+    } else {
+      return Collections.emptyList();
+    }
   }
 
 }

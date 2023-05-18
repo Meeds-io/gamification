@@ -15,15 +15,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import ChallengesOverview from './components/ChallengesOverview.vue';
-import RuleDetailDrawer from '../engagement-center/components/rules/RuleDetailDrawer.vue';
 import AvatarsList from '../engagement-center/components/common/AvatarsList.vue';
-import DescriptionEditor from '../engagement-center/components/common/DescriptionEditor.vue';
 
 const components = {
   'gamification-overview-challenges': ChallengesOverview,
-  'rule-details-drawer': RuleDetailDrawer,
   'engagement-center-avatars-list': AvatarsList,
-  'engagement-center-description-editor': DescriptionEditor,
 };
 
 for (const key in components) {

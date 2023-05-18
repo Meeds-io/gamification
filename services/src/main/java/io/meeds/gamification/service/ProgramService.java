@@ -48,8 +48,10 @@ public interface ProgramService {
    * @throws IllegalAccessException when user is not authorized to get another
    *                                  owner's programs list
    */
-  List<ProgramDTO> getProgramsByFilter(ProgramFilter programFilter, String username, int offset,
-                                       int limit) throws IllegalAccessException;
+  List<ProgramDTO> getPrograms(ProgramFilter programFilter,
+                               String username,
+                               int offset,
+                               int limit) throws IllegalAccessException;
 
   /**
    * Gets Program Ids by filter.
@@ -62,8 +64,22 @@ public interface ProgramService {
    * @throws IllegalAccessException when user is not authorized to get another
    *                                  owner's Programs list
    */
-  List<Long> getProgramIdsByFilter(ProgramFilter programFilter, String username, int offset,
-                                   int limit) throws IllegalAccessException;
+  List<Long> getProgramIds(ProgramFilter programFilter,
+                           String username,
+                           int offset,
+                           int limit) throws IllegalAccessException;
+
+  /**
+   * Gets Program Ids by filter.
+   *
+   * @param  programFilter {@link ProgramFilter} used to filter results
+   * @param  offset        index of the search
+   * @param  limit         limit of results to return
+   * @return               A {@link List &lt;ProgramDTO&gt;} object
+   */
+  List<Long> getProgramIds(ProgramFilter programFilter,
+                           int offset,
+                           int limit);
 
   /**
    * Find a Program by title
@@ -156,6 +172,14 @@ public interface ProgramService {
    *                                  owner's Programs list
    */
   int countPrograms(ProgramFilter programFilter, String username) throws IllegalAccessException;
+
+  /**
+   * Count all Programs by filter
+   *
+   * @param  programFilter {@link ProgramFilter} used to filter Programs
+   * @return               Programs count
+   */
+  int countPrograms(ProgramFilter programFilter);
 
   /**
    * Retrieves a cover identified by Program technical identifier.

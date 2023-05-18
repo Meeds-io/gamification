@@ -16,11 +16,10 @@
  */
 import './initComponents.js';
 import './services.js';
-import './extensions.js';
 
 // get overridden components if exists
 if (extensionRegistry) {
-  const components = extensionRegistry.loadComponents('Challenges');
+  const components = extensionRegistry.loadComponents('EngagementCenter');
   if (components && components.length > 0) {
     components.forEach(cmp => {
       Vue.component(cmp.componentName, cmp.componentOptions);
@@ -45,6 +44,11 @@ export function init(isAdministrator) {
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
+      computed: {
+        isMobile() {
+          return this.$vuetify.breakpoint.xsOnly;
+        },
+      },
       template: `<engagement-center id="${appId}" :is-administrator="${isAdministrator}"/>`,
       vuetify,
       i18n

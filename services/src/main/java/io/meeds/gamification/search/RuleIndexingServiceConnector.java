@@ -109,8 +109,8 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     } else {
       document.addField("domainId", String.valueOf(program.getId()));
       document.addField("audience", String.valueOf(program.getAudienceId()));
-      if (CollectionUtils.isNotEmpty(program.getOwners())) {
-        document.addListField("managers", program.getOwners().stream().map(String::valueOf).toList());
+      if (CollectionUtils.isNotEmpty(program.getOwnerIds())) {
+        document.addListField("managers", program.getOwnerIds().stream().map(String::valueOf).toList());
       } else {
         document.addListField("managers", Collections.emptyList());
       }
