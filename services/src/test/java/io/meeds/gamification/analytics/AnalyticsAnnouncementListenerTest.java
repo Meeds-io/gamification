@@ -208,7 +208,7 @@ public class AnalyticsAnnouncementListenerTest {
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_TYPE_PARAM)));
       assertEquals(String.valueOf(ruleDTO.getProgram().getCoverFileId()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_COVERFILEID_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getProgram().getOwners()),
+      assertEquals(String.valueOf(ruleDTO.getProgram().getOwnerIds()),
                    String.valueOf(statisticData.getListParameters().get(STATISTICS_PROGRAM_OWNERS_PARAM)));
       assertEquals(String.valueOf(announcement.getId()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_ANNOUNCE_ID_PARAM)));
@@ -246,7 +246,7 @@ public class AnalyticsAnnouncementListenerTest {
     program.setAudienceId(AUDIENCE_ID);
     HashSet<Long> owners = new HashSet<Long>();
     owners.add(1L);
-    program.setOwners(owners);
+    program.setOwnerIds(owners);
     return program;
   }
 

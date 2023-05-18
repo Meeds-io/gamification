@@ -72,7 +72,7 @@ public class AnnouncementRest implements ResourceContainer {
                                            @Parameter(description = "Rule technical identifier", required = true)
                                            @QueryParam("ruleId")
                                            long ruleId,
-                                           @Parameter(description = "earner type, user or space", required = false)
+                                           @Parameter(description = "Earner type, either USER or SPACE", required = false)
                                            @DefaultValue("USER")
                                            @QueryParam("type")
                                            IdentityType earnerType,

@@ -76,7 +76,7 @@ public class RuleDTO implements Serializable {
   }
 
   public Set<Long> getManagers() {
-    return program == null ? Collections.emptySet() : program.getOwners();
+    return program == null ? Collections.emptySet() : program.getOwnerIds();
   }
 
   @Override

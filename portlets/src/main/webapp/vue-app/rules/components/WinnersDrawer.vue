@@ -19,17 +19,37 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     id="EngagementCenterWinnersDetails"
     ref="winnersDetails"
     v-model="drawer"
+    allow-expand
     right
     @closed="close">
     <template slot="title">
       <div>
-        <i
-          v-if="back"
-          class="uiIcon uiArrowBAckIcon"
-          @click="close"></i>  <span class="pb-2"> {{ $t('challenges.winners.details') }} </span>
+        <v-btn
+          v-if="backIcon"
+          icon
+          class="ms-n2 mt-n2 position-absolute"
+          @click="close">
+          <v-icon
+            size="16"
+            class="mx-1 ps-1">
+            {{ $vuetify.rtl && 'fa fa-arrow-right' || 'fa fa-arrow-left' }}
+          </v-icon>
+        </v-btn>
+        <span :class="backIcon && 'ms-8' || 'pb-2'">
+          {{ $t('challenges.winners.details') }}
+        </span>
       </div>
     </template>
     <template slot="content">
+      <engagement-center-rule-header
+        :rule="rule"
+        :action-value-extensions="actionValueExtensions"
+        class="pa-4" />
+      <v-list-item>
+        <v-list-item-title>
+          {{ $t('rules.latestAnnouncements') }}
+        </v-list-item-title>
+      </v-list-item>
       <v-list-item
         v-for="winner in listWinners"
         :key="winner.user">
@@ -50,31 +70,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </exo-user-avatar>
         </v-list-item-content>
         <v-list-item-action>
-          <v-tooltip v-if="!winner.noActivityId" bottom>
+          <v-tooltip :disabled="$root.isMobile" bottom>
             <template #activator="{ on }">
-              <a v-on="on">
-                <span>
+              <div v-on="on">
+                <v-btn
+                  :href="`${basePath}/activity?id=${winner.activityId}`"
+                  :disabled="winner.noActivityId"
+                  icon>
                   <v-icon
                     size="16"
-                    color="dark-grey"
-                    @click="redirectToLinkActivity(winner.activityId)">fas fa-eye</v-icon>
-                </span>
-              </a>
+                    color="dark-grey">
+                    fas fa-eye
+                  </v-icon>
+                </v-btn>
+              </div>
             </template>
-            <span>{{ $t('program.winner.label.checkActivity') }}</span>
-          </v-tooltip>
-          <v-tooltip v-else bottom>
-            <template #activator="{ on }">
-              <a v-on="on">
-                <span>
-                  <v-icon
-                    size="16"
-                    color="grey"
-                    class="not-clickable ">fas fa-eye</v-icon>
-                </span>
-              </a>
-            </template>
-            <span>{{ noActivityLabel }}</span>
+            <span>{{ winner.noActivityId && noActivityLabel || $t('program.winner.label.checkActivity') }}</span>
           </v-tooltip>
         </v-list-item-action>
       </v-list-item>
@@ -92,15 +103,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </template>
   </exo-drawer>
 </template>
-
 <script>
-
 export default {
+  props: {
+    actionValueExtensions: {
+      type: Object,
+      default: function() {
+        return null;
+      },
+    },
+  },
   data() {
     return {
-      isAutomaticType: false,
       drawer: false,
-      challengeId: false,
+      backIcon: false,
+      rule: null,
       showLoadMoreButton: false,
       announcementTotalCount: 0,
       page: 1,
@@ -109,6 +126,29 @@ export default {
       listWinners: [],
       earnerType: 'USER'
     };
+  },
+  computed: {
+    basePath() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}`;
+    },
+    paginationPageCount() {
+      return Math.ceil(this.announcementTotalCount / this.announcementPerPage);
+    },
+    showPagination() {
+      return this.announcementTotalCount >= this.announcementPerPage;
+    },
+    announcementPerPage() {
+      return Math.round((this.$vuetify.breakpoint.height - 122) / 70);
+    },
+    noActivityLabel() {
+      return this.$t(`program.winner.label.${this.automaticRule ? 'noActivity' : 'activityDeleted'}`);
+    },
+    automaticRule() {
+      return this.rule?.type === 'AUTOMATIC';
+    },
+    ruleId() {
+      return this.rule?.id;
+    },
   },
   watch: {
     loading() {
@@ -127,36 +167,19 @@ export default {
   created() {
     this.$root.$on('open-winners-drawer', this.open);
   },
-  computed: {
-    paginationPageCount() {
-      return Math.ceil(this.announcementTotalCount / this.announcementPerPage);
-    },
-    showPagination() {
-      return this.announcementTotalCount >= this.announcementPerPage;
-    },
-    announcementPerPage() {
-      return Math.round((this.$vuetify.breakpoint.height - 122) / 70);
-    },
-    noActivityLabel() {
-      return this.$t(`program.winner.label.${this.isAutomaticType ? 'noActivity' : 'activityDeleted'}`);
-    }
-  },
   methods: {
     getLinkActivity(id) {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${id}`;
-    },
-    redirectToLinkActivity(id) {
-      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${id}`;
     },
     close() {
       this.$refs.winnersDetails.close();
       this.page = 1;
     },
-    open(challenge) {
-      this.announcementTotalCount = challenge?.announcementsCount;
-      this.isAutomaticType = challenge.type === 'AUTOMATIC';
+    open(rule, backIcon) {
+      this.announcementTotalCount = rule?.announcementsCount;
       this.listWinners = [];
-      this.challengeId = challenge?.id;
+      this.rule = rule;
+      this.backIcon = backIcon;
       this.$refs.winnersDetails.open();
       this.retrieveAnnouncements(this.earnerType);
     },
@@ -164,10 +187,11 @@ export default {
       this.retrieveAnnouncements();
     },
     retrieveAnnouncements(earnerType) {
-      this.loading = true;
       const offset = (this.page - 1) * this.announcementPerPage;
       this.listWinners = [];
-      this.$ruleService.getRuleAnnouncementsById(this.challengeId, earnerType, offset, this.announcementPerPage)
+
+      this.loading = true;
+      this.$announcementService.getAnnouncements(this.ruleId, earnerType, offset, this.announcementPerPage)
         .then(announcements => {
           if (announcements.length > 0) {
             announcements.filter(announce => announce.assignee).map(announce => {
