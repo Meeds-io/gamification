@@ -14,11 +14,14 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -41,6 +44,10 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import io.meeds.gamification.constant.DateFilterType;
+import io.meeds.gamification.constant.EntityFilterType;
+import io.meeds.gamification.constant.EntityStatusType;
+import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.HistoryStatus;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
@@ -54,11 +61,12 @@ import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.LeaderboardFilter;
 import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.model.filter.RealizationFilter;
+import io.meeds.gamification.model.filter.RuleFilter;
+import io.meeds.gamification.rest.model.RealizationValidityContext;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.RealizationStorage;
-import io.meeds.gamification.utils.RealizationBuilder;
 import io.meeds.gamification.utils.Utils;
 
 public class RealizationServiceImpl implements RealizationService {
@@ -177,19 +185,25 @@ public class RealizationServiceImpl implements RealizationService {
                                                  String receiverIdentityId,
                                                  String objectId,
                                                  String objectType) {
-    List<RuleDTO> rules = ruleService.findActiveRulesByEvent(event);
+    org.exoplatform.social.core.identity.model.Identity earnerIdentity = identityManager.getIdentity(earnerIdentityId);
+    if (earnerIdentity == null
+        || earnerIdentity.isDeleted()
+        || !earnerIdentity.isEnable()
+        || Utils.isUserMemberOfGroupOrUser(earnerIdentity.getRemoteId(), Utils.BLACK_LIST_GROUP)) {
+      return Collections.emptyList();
+    }
+
+    List<RuleDTO> rules = findActiveRulesByEventAndEarner(event, earnerIdentity);
     if (CollectionUtils.isEmpty(rules)) {
       return Collections.emptyList();
     }
     return rules.stream()
-                .filter(rule -> canCreateRealization(rule, earnerIdentityId, false))
-                .map(ruleDto -> RealizationBuilder.toRealization(this,
-                                                                 identityManager,
-                                                                 ruleDto,
-                                                                 earnerIdentityId,
-                                                                 receiverIdentityId,
-                                                                 objectId,
-                                                                 objectType))
+                .filter(rule -> getRealizationValidityContext(rule, earnerIdentityId).isValid())
+                .map(ruleDto -> toRealization(ruleDto,
+                                              earnerIdentity,
+                                              receiverIdentityId,
+                                              objectId,
+                                              objectType))
                 .filter(Objects::nonNull)
                 .map(realizationStorage::createRealization)
                 .toList();
@@ -247,7 +261,7 @@ public class RealizationServiceImpl implements RealizationService {
                                                  String receiverIdentityId,
                                                  String objectId,
                                                  String objectType) {
-    List<RuleDTO> rules = ruleService.findActiveRulesByEvent(event);
+    List<RuleDTO> rules = findActiveRulesByEvent(event);
     if (CollectionUtils.isEmpty(rules)) {
       return Collections.emptyList();
     }
@@ -287,8 +301,59 @@ public class RealizationServiceImpl implements RealizationService {
   }
 
   @Override
-  public boolean canCreateRealization(RuleDTO rule, String earnerIdentityId) {
-    return canCreateRealization(rule, earnerIdentityId, true);
+  public RealizationValidityContext getRealizationValidityContext(RuleDTO rule, String earnerIdentityId) { // NOSONAR
+    RealizationValidityContext realizationRestriction = new RealizationValidityContext();
+
+    org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId);
+    if (identity == null
+        || identity.isDeleted()
+        || !identity.isEnable()
+        || (identity.isUser()
+            && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId()))) {
+      realizationRestriction.setValidIdentity(false);
+    } else if (rule == null
+        || rule.isDeleted()
+        || !rule.isEnabled()) {
+      realizationRestriction.setValidRule(false);
+    } else if (!isValidProgram(rule.getProgram())) {
+      realizationRestriction.setValidProgram(false);
+    } else {
+      if (!isValidDates(rule)) {
+        realizationRestriction.setValidDates(false);
+      }
+      if (!isRecurrenceValid(rule, earnerIdentityId)) {
+        realizationRestriction.setValidRecurrence(false);
+        RecurrenceType recurrence = rule.getRecurrence();
+        if (recurrence == RecurrenceType.DAILY) {
+          realizationRestriction.setNextOccurenceDaysLeft(1);
+        } else if (recurrence == RecurrenceType.WEEKLY || recurrence == RecurrenceType.MONTHLY) {
+          Instant now = Instant.now();
+          Instant nextDate = recurrence.getNextPeriodStartDate().toInstant();
+          realizationRestriction.setNextOccurenceDaysLeft(ChronoUnit.DAYS.between(now, nextDate));
+        }
+      }
+      if (CollectionUtils.isNotEmpty(rule.getPrerequisiteRuleIds())) {
+        realizationRestriction.setValidPrerequisites(new HashMap<>());
+        rule.getPrerequisiteRuleIds().forEach(prerequisiteRuleId -> {
+          boolean prerequisiteRealized = realizationStorage.countRealizationsByRuleIdAndEarnerId(earnerIdentityId,
+                                                                                                 prerequisiteRuleId) > 0;
+          // Rule Id made as string due to JsonGeneratorImpl which needs a
+          // String as key
+          realizationRestriction.getValidPrerequisites().put(String.valueOf(prerequisiteRuleId), prerequisiteRealized);
+        });
+      }
+    }
+    if (realizationRestriction.isValid() && rule.getType() == EntityType.MANUAL) { // NOSONAR
+      Space space = spaceService.getSpaceById(String.valueOf(rule.getAudienceId()));
+      if (space == null) {
+        realizationRestriction.setValidAudience(false);
+      } else if (!spaceService.canRedactOnSpace(space, Utils.getUserAclIdentity(identity.getRemoteId()))) { // NOSONAR
+        realizationRestriction.setValidRedactor(false);
+      } else if (Utils.isUserMemberOfGroupOrUser(identity.getRemoteId(), Utils.BLACK_LIST_GROUP)) {
+        realizationRestriction.setValidWhitelist(false);
+      }
+    }
+    return realizationRestriction;
   }
 
   @Override
@@ -540,7 +605,7 @@ public class RealizationServiceImpl implements RealizationService {
     } else {
       domainFilter.setSpacesIds(managedSpaceIds.stream().map(Long::parseLong).toList());
     }
-    return programService.getProgramIdsByFilter(domainFilter, userIdentity.getRemoteId(), 0, -1);
+    return programService.getProgramIds(domainFilter, userIdentity.getRemoteId(), 0, -1);
   }
 
   private boolean isDomainsOwner(List<Long> domainIds, String username) {
@@ -582,52 +647,69 @@ public class RealizationServiceImpl implements RealizationService {
     }
   }
 
-  private boolean canCreateRealization(RuleDTO rule,
-                                       String earnerIdentityId,
-                                       boolean checkPermissions) {
-    if (rule == null
-        || rule.isDeleted()
-        || !rule.isEnabled()
-        || !isValidProgram(rule.getProgram())
-        || !isRecurrenceValid(rule, earnerIdentityId)
-        || !isPrerequisiteRulesValid(rule, earnerIdentityId)) {
-      return false;
-    }
-    if (checkPermissions) {
-      org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId);
-      if (identity == null || identity.isDeleted() || !identity.isEnable()) {
-        return false;
-      }
-      if (identity.isUser() && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId())) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  private boolean isValidProgram(ProgramDTO program) {
-    return program != null && program.isEnabled() && !program.isDeleted();
-  }
-
   private boolean isRecurrenceValid(RuleDTO rule, String earnerIdentityId) {
     return rule.getRecurrence() == null
         || rule.getRecurrence() == RecurrenceType.NONE
         || hasNoRealizationInPeriod(earnerIdentityId, rule.getId(), rule.getRecurrence().getPeriodStartDate());
   }
 
-  private boolean isPrerequisiteRulesValid(RuleDTO rule, String earnerIdentityId) {
-    return CollectionUtils.isEmpty(rule.getPrerequisiteRuleIds())
-        || hadRealizedPrerequisiteRules(earnerIdentityId, ruleService.getPrerequisiteRules(rule.getId()));
-  }
-
-  private boolean hadRealizedPrerequisiteRules(String earnerIdentityId, List<RuleDTO> prerequisiteRules) {
-    return prerequisiteRules.stream()
-                            .allMatch(rule -> realizationStorage.countRealizationsByRuleIdAndEarnerId(earnerIdentityId,
-                                                                                                      rule.getId()) > 0);
-  }
-
   private boolean hasNoRealizationInPeriod(String earnerIdentityId, Long ruleId, Date sinceDate) {
     return realizationStorage.countRealizationsByRuleIdAndEarnerIdSinceDate(earnerIdentityId, ruleId, sinceDate) == 0;
+  }
+
+  private RealizationDTO toRealization(RuleDTO ruleDto,
+                                       org.exoplatform.social.core.identity.model.Identity earnerIdentity,
+                                       String receiverIdentityId,
+                                       String objectId,
+                                       String objectType) {
+    // Build only an entry when a rule enable and exist
+    RealizationDTO realization = new RealizationDTO();
+    realization.setActionScore(ruleDto.getScore());
+    realization.setGlobalScore(getScoreByIdentityId(earnerIdentity.getId()) + ruleDto.getScore());
+    realization.setEarnerId(earnerIdentity.getId());
+    realization.setEarnerType(earnerIdentity.getProviderId());
+    realization.setActionTitle(ruleDto.getTitle());
+    realization.setRuleId(ruleDto.getId());
+    if (ruleDto.getProgram() != null) {
+      realization.setProgram(ruleDto.getProgram());
+    }
+    realization.setReceiver(receiverIdentityId);
+    realization.setObjectId(objectId);
+    realization.setObjectType(objectType);
+    realization.setStatus(HistoryStatus.ACCEPTED.name());
+    realization.setType(ruleDto.getType());
+    return realization;
+  }
+
+  private boolean isValidProgram(ProgramDTO program) {
+    return program != null && program.isEnabled() && !program.isDeleted();
+  }
+
+  private boolean isValidDates(RuleDTO rule) {
+    Date startDate = Utils.parseSimpleDate(rule.getStartDate());
+    Date endDate = Utils.parseSimpleDate(rule.getEndDate());
+    return (startDate == null
+        || startDate.getTime() < System.currentTimeMillis())
+        && (endDate == null
+            || endDate.getTime() > System.currentTimeMillis());
+  }
+
+  private List<RuleDTO> findActiveRulesByEvent(String eventName) {
+    return findActiveRulesByEventAndEarner(eventName, null);
+  }
+
+  private List<RuleDTO> findActiveRulesByEventAndEarner(String eventName,
+                                                        org.exoplatform.social.core.identity.model.Identity earnerIdentity) {
+    RuleFilter ruleFilter = new RuleFilter();
+    ruleFilter.setDateFilterType(DateFilterType.STARTED);
+    ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
+    ruleFilter.setEventName(eventName);
+    if (earnerIdentity != null && earnerIdentity.isUser()) {
+      return ruleService.getRules(ruleFilter, earnerIdentity.getRemoteId(), 0, -1);
+    } else {
+      return ruleService.getRules(ruleFilter, 0, -1);
+    }
   }
 
 }

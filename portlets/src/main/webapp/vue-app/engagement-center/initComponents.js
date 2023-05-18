@@ -23,13 +23,14 @@ import ChallengeCard from './components/challenges/ChallengeCard.vue';
 import ChallengesList from './components/challenges/ChallengesList.vue';
 import DomainChallengesList from './components/challenges/DomainChallengesList.vue';
 import ChallengeDatePicker from './components/challenges/ChallengeDatePicker.vue';
-import WinnersDrawer from './components/challenges/WinnersDrawer.vue';
 import ProgramSuggester from './components/common/ProgramSuggester.vue';
 import EngagementCenter from './components/EngagementCenter.vue';
 import NoResultFound from './components/common/NoResultFound.vue';
 import ResultNotFound from './components/common/ResultNotFound.vue';
-import ButtonGroupItem from './components/common/ButtonGroupItem.vue';
-import RuleSuggester from './components/common/RuleSuggester.vue';
+import RulesToolbar from './components/programs/RulesToolbar.vue';
+import NoRuleFound from './components/programs/NoRuleFound.vue';
+import RuleTitle from './components/programs/RuleTitle.vue';
+import RuleItem from './components/programs/RuleItem.vue';
 
 import Programs from './components/programs/Programs.vue';
 import ProgramCard from './components/programs/ProgramCard.vue';
@@ -39,18 +40,8 @@ import ProgramOwnersDrawer from './components/programs/ProgramOwnersDrawer.vue';
 import ProgramDetail from './components/programs/ProgramDetail.vue';
 import ProgramOwnerAssignment from './components/programs/ProgramOwnerAssignment.vue';
 
-import RuleTitle from './components/rules/RuleTitle.vue';
-import RuleItem from './components/rules/RuleItem.vue';
-import RuleFormDrawer from './components/rules/RuleFormDrawer.vue';
-import RuleRecurrenceInput from './components/rules/form/RuleRecurrenceInput.vue';
-import RuleLockInput from './components/rules/form/RuleLockInput.vue';
-import RuleDetailDrawer from './components/rules/RuleDetailDrawer.vue';
-import RulesToolbar from './components/rules/RulesToolbar.vue';
-import NoRuleFound from './components/rules/NoRuleFound.vue';
-
 import Assignment from './components/common/Assignment.vue';
 import AvatarsList from './components/common/AvatarsList.vue';
-import DescriptionEditor from './components/common/DescriptionEditor.vue';
 import ImageSelector from './components/common/ImageSelector.vue';
 import WelcomeMessage from './components/common/WelcomeMessage.vue';
 
@@ -64,7 +55,6 @@ const components = {
   'domain-challenges-list': DomainChallengesList,
   'challenge-date-picker': ChallengeDatePicker,
   'program-suggester': ProgramSuggester,
-  'rule-suggester': RuleSuggester,
   'engagement-center-no-results': NoResultFound,
   'engagement-center-result-not-found': ResultNotFound,
   'engagement-center': EngagementCenter,
@@ -75,19 +65,12 @@ const components = {
   'engagement-center-program-owners-drawer': ProgramOwnersDrawer,
   'engagement-center-program-detail': ProgramDetail,
   'engagement-center-program-owner-assignment': ProgramOwnerAssignment,
-  'engagement-center-rule-title': RuleTitle,
-  'engagement-center-rule-item': RuleItem,
-  'engagement-center-rule-form-drawer': RuleFormDrawer,
-  'engagement-center-rule-recurrence-input': RuleRecurrenceInput,
-  'engagement-center-rule-lock-input': RuleLockInput,
-  'engagement-center-button-group-item': ButtonGroupItem,
-  'engagement-center-rule-detail-drawer': RuleDetailDrawer,
   'engagement-center-rules-toolbar': RulesToolbar,
+  'engagement-center-rule-item': RuleItem,
+  'engagement-center-rule-title': RuleTitle,
   'engagement-center-no-rule-found': NoRuleFound,
-  'engagement-center-winners-details': WinnersDrawer,
   'engagement-center-assignment': Assignment,
   'engagement-center-avatars-list': AvatarsList,
-  'engagement-center-description-editor': DescriptionEditor,
   'engagement-center-image-selector': ImageSelector,
   'engagement-center-welcome-message': WelcomeMessage,
   'rule-action-value': RuleActionValue,

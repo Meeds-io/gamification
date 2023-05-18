@@ -190,7 +190,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               @click="updateRecurrenceCondition">
               {{ $t('rule.form.label.recurrence') }}
             </v-chip>
-            <v-tooltip bottom>
+            <v-tooltip :disabled="$root.isMobile" bottom>
               <template #activator="{ on, attrs }">
                 <v-chip
                   class="ma-2"

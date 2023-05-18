@@ -62,7 +62,7 @@ import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.rest.model.ProgramList;
 import io.meeds.gamification.rest.model.ProgramRestEntity;
 import io.meeds.gamification.service.ProgramService;
-import io.meeds.gamification.utils.EntityBuilder;
+import io.meeds.gamification.utils.ProgramBuilder;
 import io.meeds.gamification.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -206,7 +206,7 @@ public class ProgramRest implements ResourceContainer {
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
       program = programService.createProgram(program, identity);
-      return Response.ok(EntityBuilder.toRestEntity(programService, program, identity.getUserId())).build();
+      return Response.ok(ProgramBuilder.toRestEntity(program, identity.getUserId())).build();
     } catch (IllegalAccessException e) {
       LOG.debug("Unauthorized user {} attempts to create a domain", identity.getUserId());
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
@@ -239,7 +239,7 @@ public class ProgramRest implements ResourceContainer {
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
       program = programService.updateProgram(program, identity);
-      return Response.ok(EntityBuilder.toRestEntity(programService, program, identity.getUserId())).build();
+      return Response.ok(ProgramBuilder.toRestEntity(program, identity.getUserId())).build();
     } catch (IllegalAccessException e) {
       LOG.warn("Unauthorized user {} attempts to update the domain {}", identity.getUserId(), program.getId());
       return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to update a domain").build();
@@ -368,8 +368,8 @@ public class ProgramRest implements ResourceContainer {
     }
     String currentUser = Utils.getCurrentUser();
     try {
-      ProgramDTO domain = programService.getProgramById(programId, currentUser);
-      return Response.ok(EntityBuilder.toRestEntity(programService, domain, currentUser)).build();
+      ProgramDTO program = programService.getProgramById(programId, currentUser);
+      return Response.ok(ProgramBuilder.toRestEntity(program, currentUser)).build();
     } catch (IllegalArgumentException e) {
       return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
     } catch (IllegalAccessException e) {
@@ -380,8 +380,8 @@ public class ProgramRest implements ResourceContainer {
   }
 
   private List<ProgramRestEntity> getDomainsRestEntitiesByFilter(ProgramFilter filter, int offset, int limit, String currentUser) throws IllegalAccessException {
-    List<ProgramDTO> domains = programService.getProgramsByFilter(filter, currentUser, offset, limit);
-    return EntityBuilder.toRestEntities(programService, domains, currentUser);
+    List<ProgramDTO> programs = programService.getPrograms(filter, currentUser, offset, limit);
+    return ProgramBuilder.toRestEntities(programs, currentUser);
   }
 
   public InputStream getDefaultCoverInputStream() throws IOException {

@@ -95,8 +95,8 @@ public class ProgramStorage {
     }
   }
 
-  public List<Long> getProgramsByFilter(ProgramFilter filter, int offset, int limit) {
-    return programDAO.getProgramsByFilter(offset, limit, filter);
+  public List<Long> getProgramIdsByFilter(ProgramFilter filter, int offset, int limit) {
+    return programDAO.getProgramIdsByFilter(offset, limit, filter);
   }
 
   public int countPrograms(ProgramFilter programFilter) {
