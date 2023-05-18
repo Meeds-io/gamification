@@ -180,11 +180,6 @@ export default {
     focus() {
       this.$refs.selectAutoComplete.focus();
     },
-    clear() {
-      this.rules = [];
-      this.value = null;
-      this.$refs.selectAutoComplete.cachedItems = [];
-    },
     searchRules() {
       if (this.searchTerm && this.searchTerm.length) {
         this.focus();

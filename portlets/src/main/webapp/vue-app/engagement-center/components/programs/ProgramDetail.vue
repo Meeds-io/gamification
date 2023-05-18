@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <div id="engagementCenterProgramDetail" class="pa-2 pa-sm-5">
     <div v-if="!isDeleted">
       <div class="py-2 py-sm-5 d-flex">
-        <v-tooltip bottom>
+        <v-tooltip :disabled="$root.isMobile" bottom>
           <template #activator="{ on }">
             <div
               v-on="on"
@@ -196,7 +196,7 @@ export default {
       dateFilter: 'STARTED',
       status: 'ENABLED',
       keyword: null,
-      expand: 'userAnnouncements',
+      announcementsLimit: 3,
       programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`
     };
   },
@@ -259,7 +259,7 @@ export default {
       }));
     },
     addedOwners() {
-      return (this.program?.owners || []).filter(owner => owner.domainOwner && !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
+      return (this.program?.owners || []).filter(owner => !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
         userName: owner.remoteId
       }));
     },
@@ -294,6 +294,7 @@ export default {
     this.$root.$on('program-rules-refresh', this.retrieveProgramRules);
     this.$root.$on('program-deleted', this.backToProgramList);
     this.$root.$on('program-updated', this.programUpdated);
+    this.$root.$on('announcement-added', this.retrieveProgramRules);
     window.addEventListener('popstate', () => {
       this.backToProgramList();
     });
@@ -337,10 +338,7 @@ export default {
     },
     retrieveProgramRules() {
       const page = this.options && this.options.page;
-      let itemsPerPage = this.options && this.options.itemsPerPage;
-      if (itemsPerPage <= 0) {
-        itemsPerPage = this.totalSize || 10;
-      }
+      const itemsPerPage = this.options?.itemsPerPage || 10;
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;
       return this.$ruleService.getRules({
@@ -350,10 +348,7 @@ export default {
         dateFilter: this.dateFilter,
         offset,
         limit: itemsPerPage,
-        announcementsLimit: this.announcementsPerChallenge,
-        orderByRealizations: this.orderByRealizations,
-        excludedRuleIds: this.realizedChallenges,
-        expand: this.expand,
+        announcementsLimit: this.announcementsLimit,
       })
         .then((data) => {
           this.programRules = data.rules || [];

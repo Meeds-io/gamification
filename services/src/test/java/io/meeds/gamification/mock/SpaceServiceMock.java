@@ -16,6 +16,7 @@
  */
 package io.meeds.gamification.mock;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,6 +39,22 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 @SuppressWarnings("all")
 public class SpaceServiceMock implements SpaceService {
 
+  private static final String       SPACE_PRETTY_NAME  = "test_space";
+
+  private static final String       SPACE_DISPLAY_NAME = "test space";
+
+  private static final String       SPACE_ID           = "1";
+
+  private static final List<String> SPACE_MEMBERS      = Arrays.asList(new String[] {
+      "root10",
+      "root1"
+  });
+
+  private static final List<String> SPACE_MANAGERS     = Arrays.asList(new String[] {
+      "root",
+      "root1"
+  });
+
   public Space getSpaceByDisplayName(String spaceDisplayName) {
     throw new UnsupportedOperationException();
   }
@@ -48,29 +65,17 @@ public class SpaceServiceMock implements SpaceService {
 
   public Space getSpaceByGroupId(String groupId) {
     if (groupId.equals("/spaces/test_space")) {
-      Space space = new Space();
-      space.setId("1");
-      space.setPrettyName("test_space");
-      space.setDisplayName("test space");
-      space.setGroupId("/spaces/test_space");
-      return space;
+      return getSpace();
     } else {
       throw new UnsupportedOperationException();
     }
   }
 
   public Space getSpaceById(String spaceId) {
-    if(!"1".equals(spaceId)){
+    if (!SPACE_ID.equals(spaceId)) {
       return null;
     }
-    Space space = new Space();
-    space.setId("1");
-    space.setPrettyName("test_space");
-    space.setDisplayName("test space");
-    space.setGroupId("/spaces/test_space");
-    space.setManagers(new String[]{"root"});
-    space.setMembers(new String[]{"root10"});
-    return space;
+    return getSpace();
   }
 
   public boolean isRedactor(Space space, String userId) {
@@ -79,7 +84,7 @@ public class SpaceServiceMock implements SpaceService {
 
   @Override
   public boolean hasRedactor(Space space) {
-    return "test_space".equals(space.getPrettyName());
+    return SPACE_PRETTY_NAME.equals(space.getPrettyName());
   }
 
   @Override
@@ -90,9 +95,8 @@ public class SpaceServiceMock implements SpaceService {
     if (space == null) {
       throw new IllegalStateException("Space is mandatory");
     }
-    return !"test_space".equals(space.getPrettyName())
-        || StringUtils.equals(viewer.getUserId(), "root1")
-        || StringUtils.equals(viewer.getUserId(), "root");
+    return !SPACE_PRETTY_NAME.equals(space.getPrettyName())
+        || SPACE_MANAGERS.contains(viewer.getUserId());
   }
 
   public Space getSpaceByUrl(String spaceUrl) {
@@ -107,30 +111,25 @@ public class SpaceServiceMock implements SpaceService {
     throw new UnsupportedOperationException();
   }
 
-  public ListAccess<Space> getMemberSpaces(String userId) {
-    if(userId.equals("root1")){
-      Space space = new Space();
-      space.setId("1");
-      space.setPrettyName("test_space");
-      space.setDisplayName("test space");
-      space.setGroupId("/spaces/test_space");
-      return new ListAccessImpl(Space.class, Collections.singletonList(space));
+  public ListAccess<Space> getMemberSpaces(String username) {
+    if (SPACE_MEMBERS.contains(username)) {
+      return new ListAccessImpl(Space.class, Collections.singletonList(getSpace()));
     } else {
       return new ListAccessImpl(Space.class, Collections.emptyList());
     }
   }
 
   public List<String> getMemberSpacesIds(String username, int offset, int limit) {
-    if (username.equals("root1")) {
-      return Collections.singletonList("1");
+    if (SPACE_MEMBERS.contains(username)) {
+      return Collections.singletonList(SPACE_ID);
     } else {
       return Collections.emptyList();
     }
   }
 
   public List<String> getManagerSpacesIds(String username, int offset, int limit) {
-    if (username.equals("root1")) {
-      return Collections.singletonList("1");
+    if (SPACE_MANAGERS.contains(username)) {
+      return Collections.singletonList(SPACE_ID);
     } else {
       return Collections.emptyList();
     }
@@ -247,7 +246,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isMember(Space space, String userId) {
-    return userId.equals("root1") || userId.equals("root10");
+    return SPACE_MEMBERS.contains(userId);
   }
 
   public void setManager(Space space, String userId, boolean isManager) {
@@ -256,7 +255,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isManager(Space space, String userId) {
-    return userId.equals("root1");
+    return SPACE_MANAGERS.contains(userId);
   }
 
   public boolean isOnlyManager(Space space, String userId) {
@@ -641,7 +640,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isSuperManager(String userId) {
-    if("root".equals(userId)) {
+    if ("root".equals(userId)) {
       return true;
     } else {
       return false;
@@ -658,6 +657,19 @@ public class SpaceServiceMock implements SpaceService {
 
   public void removeSuperManagersMembership(String permissionExpression) {
     throw new UnsupportedOperationException();
+  }
+
+  private Space getSpace() {
+    Space space = new Space();
+    space.setId(SPACE_ID);
+    space.setPrettyName(SPACE_PRETTY_NAME);
+    space.setDisplayName(SPACE_DISPLAY_NAME);
+    space.setGroupId("/spaces/" + SPACE_PRETTY_NAME);
+    space.setManagers(new String[] {
+        "root1",
+    });
+    space.setMembers(SPACE_MEMBERS.toArray(new String[0]));
+    return space;
   }
 
 }

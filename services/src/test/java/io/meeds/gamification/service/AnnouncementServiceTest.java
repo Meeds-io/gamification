@@ -60,12 +60,14 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.PeriodType;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.AnnouncementActivity;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.rest.model.RealizationValidityContext;
 import io.meeds.gamification.service.impl.AnnouncementServiceImpl;
 import io.meeds.gamification.storage.AnnouncementStorage;
 import io.meeds.gamification.utils.Utils;
@@ -134,16 +136,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                  Utils.toSimpleDateFormat(new Date()),
                                                  null);
 
-    Announcement announcementWithoutAssignee = new Announcement(0,
-                                                                rule.getId(),
-                                                                rule.getTitle(),
-
-                                                                null,
-                                                                "announcement comment",
-                                                                1L,
-                                                                Utils.toSimpleDateFormat(new Date()),
-                                                                null);
-
     Announcement createdAnnouncement = new Announcement(1,
                                                         rule.getId(),
                                                         rule.getTitle(),
@@ -198,23 +190,20 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
 
     when(ruleService.findRuleById(rule.getId(), "root")).thenReturn(rule);
-    assertThrows(IllegalArgumentException.class,
-                 () -> announcementService.createAnnouncement(announcementWithoutAssignee, templateParams, "root"));
 
-    UTILS.when(() -> Utils.canAnnounce(any(), anyString()))
-         .thenReturn(false);
-    assertThrows(ObjectNotFoundException.class,
+    assertThrows(IllegalStateException.class,
+                 () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
+    rule.setType(EntityType.MANUAL);
+    RealizationValidityContext validityContext = new RealizationValidityContext();
+    validityContext.setValidAudience(false);
+    when(realizationService.getRealizationValidityContext(rule, identity.getId())).thenReturn(validityContext);
+    assertThrows(IllegalAccessException.class,
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
     when(identityManager.getIdentity("1")).thenReturn(identity);
     assertThrows(IllegalAccessException.class,
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
-    UTILS.when(() -> Utils.canAnnounce(any(), anyString()))
-         .thenReturn(true);
 
-    assertThrows(IllegalAccessException.class,
-                 () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
-
-    when(realizationService.canCreateRealization(rule, identity.getId())).thenReturn(true);
+    validityContext.setValidAudience(true);
     Announcement newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root");
     assertNotNull(newAnnouncement);
     assertEquals(1l, newAnnouncement.getId());
@@ -228,6 +217,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     int announcementId = 56;
 
     RuleDTO rule = newRule();
+    rule.setType(EntityType.MANUAL);
+    ruleService.updateRule(rule);
 
     Identity userIdentity = new Identity();
     userIdentity.setId(userIdentityId);
@@ -279,9 +270,9 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     Map<String, String> templateParams = new HashMap<>();
 
     when(ruleService.findRuleById(anyLong())).thenReturn(rule);
-    UTILS.when(() -> Utils.canAnnounce(any(), anyString())).thenReturn(false);
+    UTILS.when(() -> Utils.canAcquireAchievement(any(), any(), any(), anyString())).thenReturn(false);
     when(identityManager.getIdentity("1")).thenReturn(identity);
-    UTILS.when(() -> Utils.canAnnounce(any(), anyString())).thenReturn(true);
+    UTILS.when(() -> Utils.canAcquireAchievement(any(), any(), any(), anyString())).thenReturn(true);
     UTILS.when(() -> Utils.buildActivityParams(any(), any())).thenCallRealMethod();
     when(announcementStorage.getAnnouncementById(announcementId)).thenReturn(announcement);
     when(spaceService.getSpaceById(spaceId)).thenReturn(space);
@@ -314,7 +305,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
       when(activityManager.getActivity(activityId)).thenReturn(activity);
       return null;
     }).when(activityManager).saveActivityNoReturn(any(), any());
-    when(realizationService.canCreateRealization(rule, userIdentity.getId())).thenReturn(true);
+    when(realizationService.getRealizationValidityContext(rule,
+                                                          userIdentity.getId())).thenReturn(new RealizationValidityContext());
 
     Announcement newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root");
     assertNotNull(newAnnouncement);
@@ -375,7 +367,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
-    UTILS.when(() -> Utils.canAnnounce(any(), anyString()))
+    UTILS.when(() -> Utils.canAcquireAchievement(any(), any(), any(), anyString()))
          .thenReturn(true);
     Identity identity = mock(Identity.class);
     when(identity.isEnable()).thenReturn(true);
@@ -405,7 +397,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identity.isEnable()).thenReturn(true);
     UTILS.when(() -> Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
     when(identity.getId()).thenReturn("1");
-    UTILS.when(() -> Utils.canAnnounce(any(), anyString())).thenReturn(true);
+    UTILS.when(() -> Utils.canAcquireAchievement(any(), any(), any(), anyString())).thenReturn(true);
     Identity rootIdentity = new Identity();
     rootIdentity.setId("1");
     rootIdentity.setProviderId("organization");
@@ -599,7 +591,12 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
   }
 
   private ProgramDTO newProgram() {
-    return new ProgramDTO(1, "gamification", null, 0, 1l, null, null, null, null, true, true, 0, null, 0, null, null, 0);
+    ProgramDTO program = new ProgramDTO();
+    program.setId(1l);
+    program.setTitle("gamification");
+    program.setAudienceId(1l);
+    program.setEnabled(true);
+    return program;
   }
 
 }
