@@ -284,6 +284,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setDeleted(false);
       rule.setEvent(RULE_NAME);
       rule.setCreatedBy(TEST_USER_EARNER);
+      rule.setCreatedDate(new Date());
       rule.setLastModifiedBy(TEST_USER_EARNER);
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain());
@@ -306,6 +307,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setDeleted(false);
       rule.setEvent(name);
       rule.setCreatedBy(TEST_USER_EARNER);
+      rule.setCreatedDate(new Date());
       rule.setLastModifiedBy(TEST_USER_EARNER);
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(domainEntity);
@@ -318,29 +320,30 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RuleEntity newManualRule(String name, long domainId) {
     ProgramEntity domainEntity = programDAO.find(domainId);
-    RuleEntity challenge = ruleDAO.findActiveRuleByEventAndDomain(name, domainId);
-    if (challenge == null) {
-      challenge = new RuleEntity();
-      challenge.setScore(Integer.parseInt(TEST__SCORE));
-      challenge.setTitle(name);
-      challenge.setDescription("Description");
-      challenge.setEnabled(true);
-      challenge.setDeleted(false);
-      challenge.setEvent(name);
-      challenge.setCreatedBy(TEST_USER_EARNER);
-      challenge.setLastModifiedBy(TEST_USER_EARNER);
-      challenge.setLastModifiedDate(new Date());
-      challenge.setDomainEntity(domainEntity);
-      challenge.setType(EntityType.MANUAL);
-      challenge.setRecurrence(RecurrenceType.NONE);
-      challenge.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
+    RuleEntity rule = ruleDAO.findActiveRuleByEventAndDomain(name, domainId);
+    if (rule == null) {
+      rule = new RuleEntity();
+      rule.setScore(Integer.parseInt(TEST__SCORE));
+      rule.setTitle(name);
+      rule.setDescription("Description");
+      rule.setEnabled(true);
+      rule.setDeleted(false);
+      rule.setEvent(name);
+      rule.setCreatedBy(TEST_USER_EARNER);
+      rule.setCreatedDate(new Date());
+      rule.setLastModifiedBy(TEST_USER_EARNER);
+      rule.setLastModifiedDate(new Date());
+      rule.setDomainEntity(domainEntity);
+      rule.setType(EntityType.MANUAL);
+      rule.setRecurrence(RecurrenceType.NONE);
+      rule.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
           + 2 * MILLIS_IN_A_DAY))));
-      challenge.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
+      rule.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
           - 2 * MILLIS_IN_A_DAY))));
-      challenge = ruleDAO.create(challenge);
+      rule = ruleDAO.create(rule);
       restartTransaction();
     }
-    return challenge;
+    return rule;
   }
 
   protected RuleEntity newRule(String name, String domain, Boolean isEnabled) {
@@ -358,6 +361,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setDeleted(false);
       rule.setEvent(name);
       rule.setCreatedBy(TEST_USER_EARNER);
+      rule.setCreatedDate(new Date());
       rule.setLastModifiedBy(TEST_USER_EARNER);
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain(domain));

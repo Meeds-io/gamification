@@ -18,92 +18,75 @@
 package io.meeds.gamification.rest.model;
 
 import java.util.List;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.Set;
 
 import org.exoplatform.social.core.space.model.Space;
 
+import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.UserInfo;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-public class ProgramRestEntity {
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class ProgramRestEntity extends ProgramDTO {
 
-  private Long           id;
+  private static final long serialVersionUID = -5995118028928360591L;
 
-  private String         title;
+  private Space             space;                                   // NOSONAR
 
-  private String         description;
+  private UserInfo          userInfo;                                // NOSONAR
 
-  private Space          space;
+  private List<UserInfo>    owners;                                  // NOSONAR
 
-  private int            priority;
-
-  private String         createdBy;
-
-  private String         createdDate;
-
-  private String         lastModifiedBy;
-
-  private String         lastModifiedDate;
-
-  private boolean        enabled;
-
-  private boolean        deleted;
-
-  private Long           budget;
-
-  private String         type;
-
-  private String         coverUrl;
-
-  private String         coverUploadId;
-
-  private Long           rulesTotalScore;
-
-  private List<UserInfo> owners;
-
-  private UserInfo       userInfo;
-
-  public ProgramRestEntity(Long id, // NOSONAR
-                          String title,
-                          String description,
-                          Space space,
-                          int priority,
-                          String createdBy,
-                          String createdDate,
-                          String lastModifiedBy,
-                          String lastModifiedDate,
-                          boolean enabled,
-                          boolean deleted,
-                          Long budget,
-                          String type,
-                          String coverUrl,
-                          Long rulesTotalScore,
-                          List<UserInfo> owners,
-                          UserInfo userInfo) {
-    this.id = id;
-    this.title = title;
-    this.description = description;
+  public ProgramRestEntity(long id, // NOSONAR
+                           String title,
+                           String description,
+                           long audienceId,
+                           int priority,
+                           String createdBy,
+                           String createdDate,
+                           String lastModifiedBy,
+                           String lastModifiedDate,
+                           boolean deleted,
+                           boolean enabled,
+                           long budget,
+                           String type,
+                           String coverUploadId,
+                           long coverFileId,
+                           String coverUrl,
+                           Set<Long> ownerIds,
+                           long rulesTotalScore,
+                           Space space,
+                           UserInfo userInfo,
+                           List<UserInfo> owners) {
+    super(id,
+          title,
+          description,
+          audienceId,
+          priority,
+          createdBy,
+          createdDate,
+          lastModifiedBy,
+          lastModifiedDate,
+          deleted,
+          enabled,
+          budget,
+          type,
+          coverUploadId,
+          coverFileId,
+          coverUrl,
+          ownerIds,
+          rulesTotalScore);
     this.space = space;
-    this.priority = priority;
-    this.createdBy = createdBy;
-    this.createdDate = createdDate;
-    this.lastModifiedBy = lastModifiedBy;
-    this.lastModifiedDate = lastModifiedDate;
-    this.enabled = enabled;
-    this.deleted = deleted;
-    this.budget = budget;
-    this.type = type;
-    this.coverUrl = coverUrl;
-    this.rulesTotalScore = rulesTotalScore;
-    this.owners = owners;
     this.userInfo = userInfo;
+    this.owners = owners;
   }
 
 }

@@ -69,8 +69,8 @@ public class ProgramBuilder {
     } else {
       domain.setType(EntityType.valueOf(program.getType()));
     }
-    if (program.getOwners() != null) {
-      domain.setOwners(program.getOwners());
+    if (program.getOwnerIds() != null) {
+      domain.setOwners(program.getOwnerIds());
     } else {
       domain.setOwners(Collections.emptySet());
     }
@@ -103,7 +103,7 @@ public class ProgramBuilder {
     program.setType(domainEntity.getType().name());
     program.setCoverFileId(domainEntity.getCoverFileId());
     program.setCoverUrl(coverUrl);
-    program.setOwners(domainEntity.getOwners());
+    program.setOwnerIds(domainEntity.getOwners());
     program.setRulesTotalScore(domainEntity.isDeleted()
         || !domainEntity.isEnabled() ? 0 : getRulesTotalScoreByDomain(ruleDAO, domainEntity.getId()));
     return program;

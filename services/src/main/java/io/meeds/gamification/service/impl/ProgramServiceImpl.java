@@ -247,7 +247,7 @@ public class ProgramServiceImpl implements ProgramService {
     if (domain == null || domain.isDeleted()) {
       return false;
     }
-    return Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
+    return Utils.isProgramOwner(domain.getAudienceId(), domain.getOwnerIds(), userIdentity);
   }
 
   @Override

@@ -163,7 +163,7 @@ export default {
         return this.$t('challenges.label.over');
       } else if (this.startDate?.getTime() > Date.now()) {
         const days = Math.round((this.startDate?.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
-        return this.$t('challenges.label.openIn', {0: days});
+        return this.$t('challenges.label.opensIn', {0: days});
       } else {
         const days = Math.round((this.endDate?.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('challenges.label.daysLeft', {0: days});

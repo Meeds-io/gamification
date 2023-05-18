@@ -59,6 +59,7 @@ import io.meeds.gamification.rest.model.RuleList;
 import io.meeds.gamification.rest.model.RuleRestEntity;
 import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.ProgramService;
+import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.utils.EntityBuilder;
 import io.meeds.gamification.utils.Utils;
@@ -80,12 +81,15 @@ public class RuleRest implements ResourceContainer {
 
   protected RuleService         ruleService;
 
+  protected RealizationService  realizationService;
+
   protected AnnouncementService announcementService;
 
   protected IdentityManager     identityManager;
 
   public RuleRest(ProgramService programService,
                   RuleService ruleService,
+                  RealizationService realizationService,
                   AnnouncementService announcementService,
                   IdentityManager identityManager) {
     cacheControl = new CacheControl();
@@ -93,6 +97,7 @@ public class RuleRest implements ResourceContainer {
     cacheControl.setNoStore(true);
     this.programService = programService;
     this.ruleService = ruleService;
+    this.realizationService = realizationService;
     this.announcementService = announcementService;
     this.identityManager = identityManager;
   }
@@ -260,6 +265,7 @@ public class RuleRest implements ResourceContainer {
       List<String> expandFields = expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
       RuleRestEntity ruleEntity = EntityBuilder.toRestEntity(programService,
                                                              ruleService,
+                                                             realizationService,
                                                              announcementService,
                                                              rule,
                                                              expandFields,
@@ -379,6 +385,7 @@ public class RuleRest implements ResourceContainer {
     return rules.stream()
                 .map(rule -> EntityBuilder.toRestEntity(programService,
                                                         ruleService,
+                                                        realizationService,
                                                         announcementService,
                                                         rule,
                                                         expandFields,
@@ -391,6 +398,7 @@ public class RuleRest implements ResourceContainer {
   private RuleRestEntity toRestEntity(RuleDTO rule) {
     return EntityBuilder.toRestEntity(programService,
                                       ruleService,
+                                      realizationService,
                                       announcementService,
                                       rule,
                                       null,

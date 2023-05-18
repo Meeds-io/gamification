@@ -17,6 +17,7 @@
 
 package io.meeds.gamification.model;
 
+import io.meeds.gamification.rest.model.RealizationValidityContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,29 +27,20 @@ import lombok.NoArgsConstructor;
 @Data
 public class UserInfo implements Cloneable {
 
-  private String  id;
+  private String id;
 
-  private String  remoteId;
+  private String remoteId;
 
-  private String  fullName;
+  private String fullName;
 
-  private String  avatarUrl;
-
-  private boolean canEdit;
-
-  private boolean canAnnounce;
-
-  private boolean isMember;
-
-  private boolean isRedactor;
-
-  private boolean isManager;
-
-  private boolean isDomainOwner;
+  private String avatarUrl;
 
   @Override
-  protected UserInfo clone() { //NOSONAR
-    return new UserInfo(id, remoteId, fullName, avatarUrl, canEdit, canAnnounce, isMember, isRedactor, isManager, isDomainOwner);
+  protected UserInfo clone() { // NOSONAR
+    return new UserInfo(id,
+                        remoteId,
+                        fullName,
+                        avatarUrl);
   }
 
 }

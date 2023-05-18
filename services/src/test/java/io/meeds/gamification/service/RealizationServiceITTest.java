@@ -39,46 +39,9 @@ import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.LeaderboardFilter;
 import io.meeds.gamification.test.AbstractServiceTest;
-import io.meeds.gamification.utils.RealizationBuilder;
 import io.meeds.gamification.utils.Utils;
 
 public class RealizationServiceITTest extends AbstractServiceTest {
-
-  public void testBuildHistory() {
-    // root11 is not a member of domain audience
-    RuleDTO ruleDTO = newRuleDTO();
-    RealizationDTO realization = RealizationBuilder.toRealization(realizationService,
-                                                                  identityManager,
-                                                                  ruleDTO,
-                                                                  "11",
-                                                                  TEST_USER_RECEIVER,
-                                                                  ACTIVITY_ID,
-                                                                  ACTIVITY_OBJECT_TYPE);
-    assertNull(realization);
-
-    // case of deleted domain
-    ProgramDTO program = newProgram();
-    program.setDeleted(true);
-    ruleDTO.setProgram(program);
-    realization = RealizationBuilder.toRealization(realizationService,
-                                                   identityManager,
-                                                   ruleDTO,
-                                                   TEST_USER_EARNER,
-                                                   TEST_USER_RECEIVER,
-                                                   ACTIVITY_ID,
-                                                   ACTIVITY_OBJECT_TYPE);
-    assertNull(realization);
-
-    ruleDTO = newRuleDTO();
-    realization = RealizationBuilder.toRealization(realizationService,
-                                                   identityManager,
-                                                   ruleDTO,
-                                                   TEST_USER_EARNER,
-                                                   TEST_USER_RECEIVER,
-                                                   ACTIVITY_ID,
-                                                   ACTIVITY_OBJECT_TYPE);
-    assertNotNull(realization);
-  }
 
   public void testCreateRealizations() {
     List<RealizationEntity> realizations = realizationDAO.findAll();

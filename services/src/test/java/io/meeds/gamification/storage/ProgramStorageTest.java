@@ -50,7 +50,7 @@ public class ProgramStorageTest extends AbstractServiceTest {
     domain.setType(EntityType.AUTOMATIC.name());
     domain.setCreatedDate(Utils.toRFC3339Date(new Date()));
     domain.setBudget(20L);
-    domain.setOwners(Collections.singleton(1L));
+    domain.setOwnerIds(Collections.singleton(1L));
     domain.setCoverFileId(1L);
     ProgramDTO savedDomain = domainStorage.saveProgram(domain);
     assertNotNull(savedDomain);
