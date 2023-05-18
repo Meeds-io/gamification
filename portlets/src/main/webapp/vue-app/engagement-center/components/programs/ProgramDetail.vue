@@ -259,7 +259,7 @@ export default {
       }));
     },
     addedOwners() {
-      return (this.program?.owners || []).filter(owner => owner.domainOwner && !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
+      return (this.program?.owners || []).filter(owner => !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
         userName: owner.remoteId
       }));
     },
@@ -294,6 +294,7 @@ export default {
     this.$root.$on('program-rules-refresh', this.retrieveProgramRules);
     this.$root.$on('program-deleted', this.backToProgramList);
     this.$root.$on('program-updated', this.programUpdated);
+    this.$root.$on('announcement-added', this.retrieveProgramRules);
     window.addEventListener('popstate', () => {
       this.backToProgramList();
     });

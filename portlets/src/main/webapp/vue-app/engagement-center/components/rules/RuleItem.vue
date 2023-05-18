@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         cols="2"
         class="align-center no-border-bottom">
         <div v-if="hover || isMobile" class="d-flex">
-          <div v-if="!automaticRule && enabledRule" class="align-center d-none d-sm-block">
+          <div v-if="canAnnounce" class="align-center d-none d-sm-block">
             <v-btn
               icon
               class="me-2"
@@ -171,7 +171,10 @@ export default {
     },
     enabledRule() {
       return this.rule?.enabled;
-    }
+    },
+    canAnnounce() {
+      return this.rule?.type === 'MANUAL' && this.rule?.userInfo?.allowedToRealize;
+    },
   },
   methods: {
     closeMenu() {

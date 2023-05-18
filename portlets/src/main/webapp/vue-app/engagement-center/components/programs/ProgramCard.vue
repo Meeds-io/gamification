@@ -99,7 +99,7 @@ export default {
       return this.program?.rulesTotalScore || 0;
     },
     addedOwnersList() {
-      return (this.program?.owners || []).filter(owner => owner.domainOwner && !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
+      return (this.program?.owners || []).filter(owner => !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
         userName: owner.remoteId
       }));
     },

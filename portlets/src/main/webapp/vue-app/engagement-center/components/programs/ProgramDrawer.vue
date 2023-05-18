@@ -274,7 +274,7 @@ export default {
         enabled: true,
         owners: []
       };
-      this.programOwners = this.program?.owners?.filter(owner => owner.domainOwner).slice() || [];
+      this.programOwners = this.program?.owners?.slice() || [];
 
       if (this.program?.id && this.program?.space) {
         const space = this.program?.space;
@@ -316,10 +316,15 @@ export default {
       }
       this.program.type = 'MANUAL';
       this.loading = true;
+
+      const programToSave = JSON.parse(JSON.stringify(this.program));
+      programToSave.ownerIds = this.programOwners?.map(owner => owner.id).filter(id => !!id);
+      programToSave.audienceId = this.audienceId;
+      delete programToSave.space;
+      delete programToSave.owners;
+      delete programToSave.userInfo;
+
       if (this.program?.id) {
-        const programToSave = JSON.parse(JSON.stringify(this.program));
-        programToSave.owners = this.programOwners?.map(owner => owner.id).filter(id => !!id);
-        programToSave.audienceId = this.audienceId;
         this.$programService.updateProgram(programToSave)
           .then((program) => {
             this.close();
@@ -331,10 +336,7 @@ export default {
           })
           .finally(() => this.loading = false);
       } else {
-        const programToSave = JSON.parse(JSON.stringify(this.program));
-        programToSave.owners = this.programOwners?.map(owner => owner.id).filter(id => !!id);
-        programToSave.audienceId = this.audienceId;
-        this.$programService.saveProgram(programToSave)
+        this.$programService.createProgram(programToSave)
           .then((program) => {
             this.$root.$emit('program-added', program);
             this.close();

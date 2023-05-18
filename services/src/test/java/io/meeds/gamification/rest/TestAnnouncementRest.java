@@ -39,6 +39,7 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 import org.exoplatform.social.core.identity.model.Identity;
 
+import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
@@ -82,7 +83,7 @@ public class TestAnnouncementRest extends AbstractServiceTest { // NOSONAR
     RuleDTO rule = newRuleDTO();
 
     ProgramDTO program = rule.getProgram();
-    program.setOwners(Collections.singleton(identityId));
+    program.setOwnerIds(Collections.singleton(identityId));
     programService.updateProgram(program, conversationState.getIdentity());
 
     rule.setTitle("update challenge");
@@ -91,6 +92,7 @@ public class TestAnnouncementRest extends AbstractServiceTest { // NOSONAR
     rule.setEndDate(END_DATE);
     rule.setEnabled(true);
     rule.setScore(10);
+    rule.setType(EntityType.MANUAL);
     rule = ruleService.updateRule(rule);
     String restPath = ANNOUNCEMENTS_REST_BASE_PATH;
     EnvironmentContext envctx = new EnvironmentContext();
@@ -206,7 +208,7 @@ public class TestAnnouncementRest extends AbstractServiceTest { // NOSONAR
     RuleDTO rule = newRuleDTO();
 
     ProgramDTO program = rule.getProgram();
-    program.setOwners(Collections.singleton(identityId));
+    program.setOwnerIds(Collections.singleton(identityId));
     programService.updateProgram(program, conversationState.getIdentity());
 
     rule.setTitle("update challenge");
@@ -215,6 +217,7 @@ public class TestAnnouncementRest extends AbstractServiceTest { // NOSONAR
     rule.setEndDate(END_DATE);
     rule.setProgram(program);
     rule.setEnabled(true);
+    rule.setType(EntityType.MANUAL);
     rule = ruleService.createRule(rule);
     Announcement announcement = new Announcement(0,
                                                  rule.getId(),

@@ -194,7 +194,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
     manualDomain.setDeleted(false);
     manualDomain.setEnabled(true);
     manualDomain.setBudget(20L);
-    manualDomain.setOwners(Collections.emptySet());
+    manualDomain.setOwnerIds(Collections.emptySet());
     manualDomain.setCoverFileId(1L);
     manualDomain.setType(EntityType.MANUAL.name());
     assertThrows(IllegalAccessException.class, () -> programService.createProgram(manualDomain, regularAclIdentity));
@@ -243,7 +243,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
 
     String ownerId = identityManager.getOrCreateUserIdentity(user.getUserName()).getId();
     Set<Long> newOwners = Collections.singleton(Long.parseLong(ownerId));
-    domain.setOwners(newOwners);
+    domain.setOwnerIds(newOwners);
     domain.setEnabled(false);
     ProgramDTO updatedDomain = programService.updateProgram(domain, adminAclIdentity);
     assertFalse(updatedDomain.isEnabled());
@@ -256,7 +256,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
     assertEquals(newDescription, storedDomain.getDescription());
     assertEquals(newTitle, storedDomain.getTitle());
     assertEquals(newBudget, storedDomain.getBudget());
-    assertEquals(newOwners, storedDomain.getOwners());
+    assertEquals(newOwners, storedDomain.getOwnerIds());
     assertTrue(storedDomain.isEnabled());
 
     programService.deleteProgramById(storedDomain.getId(), adminAclIdentity);
@@ -369,7 +369,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
     assertTrue(programService.isProgramOwner(domain.getId(), adminAclIdentity.getUserId()));
     assertFalse(programService.isProgramOwner(0, regularAclIdentity.getUserId()));
     String identityId = identityManager.getOrCreateUserIdentity(regularAclIdentity.getUserId()).getId();
-    domain.setOwners(Collections.singleton(Long.parseLong(identityId)));
+    domain.setOwnerIds(Collections.singleton(Long.parseLong(identityId)));
     programService.updateProgram(domain, adminAclIdentity);
     assertTrue(programService.isProgramOwner(domain.getId(), regularAclIdentity.getUserId()));
   }

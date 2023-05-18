@@ -179,7 +179,7 @@ public class AnalyticsProgramListenerTest {
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_TYPE_PARAM)));
       assertEquals(String.valueOf(program.getCoverFileId()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_COVERFILEID_PARAM)));
-      assertEquals(String.valueOf(program.getOwners()),
+      assertEquals(String.valueOf(program.getOwnerIds()),
                    String.valueOf(statisticData.getListParameters().get(STATISTICS_PROGRAM_OWNERS_PARAM)));
       return true;
     })), times(1));
@@ -197,7 +197,7 @@ public class AnalyticsProgramListenerTest {
     program.setAudienceId(AUDIENCE_ID);
     HashSet<Long> owners = new HashSet<Long>();
     owners.add(1L);
-    program.setOwners(owners);
+    program.setOwnerIds(owners);
     return program;
   }
 
