@@ -18,20 +18,32 @@
  *
  */
 
-const streamUserActions = ['addActivityOnMyStream', 'addActivityOnNetworkStream', 'addActivityOnSpaceStream', 'addActivityOnSpaceStreamTarget',
-  'addActivityTargetUserStream', 'addCommentOnNetworkStream', 'addCommentOnSpaceStream', 'receiveCommentOnNetworkStream', 'receiveCommentOnSpaceStream',
-  'likeActivityOnNetworkStream', 'likeActivityOnSpaceStream', 'likeActivityOnSpaceStreamTarget', 'likeActivityTargetUserStream', 'likeComment',
-  'likeCommentOnNetworkStream', 'likeCommentOnNetworkStreamTarget', 'likeCommentOnSpaceStream', 'likeCommentOnSpaceStreamTarget', 'uploaddocumentOnNetworkStream'];
-const profileUserActions = ['addUserProfileAboutMe', 'addUserProfileAvatar', 'addUserProfileBanner', 'userLogin', 'receiveRelationshipRequest', 'sendRelationshipRequest'];
-
-const spaceUserActions = ['addSpace', 'becomeSpaceManager', 'joinSpace' , ];
-
 extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
   type: 'Stream',
   options: {
     rank: 10,
     icon: 'fas fa-stream',
-    match: (actionLabel) => streamUserActions.includes(actionLabel),
+    match: (actionLabel) => [
+      'addActivityOnMyStream',
+      'addActivityOnNetworkStream',
+      'addActivityOnSpaceStream',
+      'addActivityOnSpaceStreamTarget',
+      'addActivityTargetUserStream',
+      'addCommentOnNetworkStream',
+      'addCommentOnSpaceStream',
+      'receiveCommentOnNetworkStream',
+      'receiveCommentOnSpaceStream',
+      'likeActivityOnNetworkStream',
+      'likeActivityOnSpaceStream',
+      'likeActivityOnSpaceStreamTarget',
+      'likeActivityTargetUserStream',
+      'likeComment',
+      'likeCommentOnNetworkStream',
+      'likeCommentOnNetworkStreamTarget',
+      'likeCommentOnSpaceStream',
+      'likeCommentOnSpaceStreamTarget',
+      'uploaddocumentOnNetworkStream'
+    ].includes(actionLabel),
     getLink: (realization) => {
       Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${realization?.objectId}`);
     }
@@ -43,7 +55,14 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
   options: {
     rank: 20,
     icon: 'fas fa-user',
-    match: (actionLabel) => profileUserActions.includes(actionLabel),
+    match: (actionLabel) => [
+      'addUserProfileAboutMe',
+      'addUserProfileAvatar',
+      'addUserProfileBanner',
+      'userLogin',
+      'receiveRelationshipRequest',
+      'sendRelationshipRequest'
+    ].includes(actionLabel),
     getLink: (realization) => {
       if (realization?.objectId && !realization.link) {
         Vue.prototype.$identityService.getIdentityById(realization?.objectId)
@@ -58,6 +77,10 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
   options: {
     rank: 30,
     icon: 'fas fa-layer-group',
-    match: (actionLabel) => spaceUserActions.includes(actionLabel),
+    match: (actionLabel) => [
+        'addSpace',
+        'becomeSpaceManager',
+        'joinSpace'
+    ].includes(actionLabel),
   },
 });
