@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
@@ -48,13 +49,17 @@ public class RuleServiceImpl implements RuleService {
 
   private final RuleStorage     ruleStorage;
 
+  private final SpaceService    spaceService;
+
   private final ListenerService listenerService;
 
   public RuleServiceImpl(ProgramService programService,
                          RuleStorage ruleStorage,
+                         SpaceService spaceService,
                          ListenerService listenerService) {
     this.programService = programService;
     this.listenerService = listenerService;
+    this.spaceService = spaceService;
     this.ruleStorage = ruleStorage;
   }
 
@@ -95,14 +100,6 @@ public class RuleServiceImpl implements RuleService {
   }
 
   @Override
-  public List<RuleDTO> findActiveRulesByEvent(String event) throws IllegalArgumentException {
-    if (StringUtils.isBlank(event)) {
-      throw new IllegalArgumentException("Rule event is mandatory");
-    }
-    return ruleStorage.findActiveRulesByEvent(event);
-  }
-
-  @Override
   public RuleDTO findRuleByTitle(String ruleTitle) throws IllegalArgumentException {
     if (StringUtils.isBlank(ruleTitle)) {
       throw new IllegalArgumentException("rule title is mandatory");
@@ -115,15 +112,32 @@ public class RuleServiceImpl implements RuleService {
   }
 
   @Override
-  public List<RuleDTO> findAllRules(int offset, int limit) {
-    List<Long> rulesIds = ruleStorage.findAllRulesIds(offset, limit);
+  public List<RuleDTO> getRules(RuleFilter ruleFilter,
+                                String username,
+                                int offset,
+                                int limit) {
+    if (computeUserSpaces(ruleFilter, username)) {
+      return getRules(ruleFilter, offset, limit);
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  @Override
+  public List<RuleDTO> getRules(RuleFilter ruleFilter,
+                                int offset,
+                                int limit) {
+    List<Long> rulesIds = ruleStorage.findRulesIdsByFilter(ruleFilter, offset, limit);
     return rulesIds.stream().map(this::findRuleById).toList();
   }
 
   @Override
-  public List<RuleDTO> getRules(RuleFilter ruleFilter, int offset, int limit) {
-    List<Long> rulesIds = ruleStorage.findRulesIdsByFilter(ruleFilter, offset, limit);
-    return rulesIds.stream().map(this::findRuleById).toList();
+  public int countRules(RuleFilter ruleFilter, String username) {
+    if (computeUserSpaces(ruleFilter, username)) {
+      return countRules(ruleFilter);
+    } else {
+      return 0;
+    }
   }
 
   @Override
@@ -131,6 +145,7 @@ public class RuleServiceImpl implements RuleService {
     return ruleStorage.countRulesByFilter(ruleFilter);
   }
 
+  @Override
   public List<String> getAllEvents() {
     return ruleStorage.getAllEvents();
   }
@@ -247,6 +262,28 @@ public class RuleServiceImpl implements RuleService {
     } else {
       return Collections.emptyList();
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  private boolean computeUserSpaces(RuleFilter ruleFilter, String username) {
+    if (StringUtils.isBlank(username)) {
+      return false;
+    }
+    if (Utils.isRewardingManager(username)) {
+      return true;
+    }
+    List<Long> memberSpacesIds = spaceService.getMemberSpacesIds(username, 0, -1)
+                                             .stream()
+                                             .map(Long::parseLong)
+                                             .toList();
+    if (CollectionUtils.isEmpty(memberSpacesIds)) {
+      return false;
+    }
+    if (CollectionUtils.isNotEmpty(ruleFilter.getSpaceIds())) {
+      memberSpacesIds = (List<Long>) CollectionUtils.intersection(memberSpacesIds, ruleFilter.getSpaceIds());
+    }
+    ruleFilter.setSpaceIds(memberSpacesIds);
+    return true;
   }
 
   private void checkPermissionAndDates(RuleDTO rule, String username) throws IllegalAccessException {

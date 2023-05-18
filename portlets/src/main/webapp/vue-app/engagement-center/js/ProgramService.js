@@ -57,7 +57,7 @@ export function getPrograms(offset, limit, type, status, query, includeDeleted, 
   });
 }
 
-export function saveProgram(program) {
+export function createProgram(program) {
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs/`, {
     method: 'POST',
     credentials: 'include',
