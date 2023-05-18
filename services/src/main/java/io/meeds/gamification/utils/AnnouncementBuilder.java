@@ -17,7 +17,11 @@
 
 package io.meeds.gamification.utils;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
 
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.AnnouncementActivity;
@@ -27,6 +31,14 @@ public class AnnouncementBuilder {
 
   private AnnouncementBuilder() {
     // Static methods
+  }
+
+  public static List<AnnouncementRestEntity> fromAnnouncementList(List<Announcement> announcements) {
+    if (CollectionUtils.isEmpty(announcements)) {
+      return Collections.emptyList();
+    } else {
+      return announcements.stream().map(AnnouncementBuilder::fromAnnouncement).toList();
+    }
   }
 
   public static AnnouncementRestEntity fromAnnouncement(Announcement announcement) {

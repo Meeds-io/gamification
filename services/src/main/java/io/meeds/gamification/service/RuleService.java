@@ -46,14 +46,6 @@ public interface RuleService {
   RuleDTO findRuleById(long id, String username) throws IllegalAccessException, ObjectNotFoundException;
 
   /**
-   * Find enable RuleEntity by title
-   * 
-   * @param  ruleTitle : rule's title param
-   * @return           an instance of RuleDTO
-   */
-  List<RuleDTO> findActiveRulesByEvent(String ruleTitle);
-
-  /**
    * Find a RuleEntity by title
    * 
    * @param  ruleTitle : rule's title param
@@ -62,13 +54,15 @@ public interface RuleService {
   RuleDTO findRuleByTitle(String ruleTitle);
 
   /**
-   * Get all Rules using offset and limit.
-   * 
-   * @param  offset Offset of result
-   * @param  limit  Limit of result
-   * @return        {@link List} of {@link RuleDTO}
+   * Get Rules accessible for a given user by filter using offset and limit.
+   *
+   * @param  ruleFilter {@link RuleFilter} used to filter rules
+   * @param  username   User name accessing Programs
+   * @param  offset     Offset of result
+   * @param  limit      Limit of result
+   * @return            {@link List} of {@link RuleDTO}
    */
-  List<RuleDTO> findAllRules(int offset, int limit);
+  List<RuleDTO> getRules(RuleFilter ruleFilter, String username, int offset, int limit);
 
   /**
    * Get Rules by filter using offset and limit.
@@ -79,6 +73,13 @@ public interface RuleService {
    * @return            {@link List} of {@link RuleDTO}
    */
   List<RuleDTO> getRules(RuleFilter ruleFilter, int offset, int limit);
+
+  /**
+   * @param  ruleFilter {@link RuleFilter} used to count associated rules
+   * @param  username   User name accessing Programs
+   * @return            count rules by filter accessible to a given user
+   */
+  int countRules(RuleFilter ruleFilter, String username);
 
   /**
    * @param  ruleFilter {@link RuleFilter} used to count associated rules

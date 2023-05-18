@@ -18,6 +18,7 @@ import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.LeaderboardFilter;
 import io.meeds.gamification.model.filter.RealizationFilter;
+import io.meeds.gamification.rest.model.RealizationValidityContext;
 
 public interface RealizationService {
 
@@ -208,11 +209,13 @@ public interface RealizationService {
    * Checks whether earner can create a realization on a designated rule at this
    * moment or not
    * 
-   * @param  rule {@link RuleDTO}
-   * @param  earnerIdentityId {@link org.exoplatform.social.core.identity.model.Identity} id
-   * @return true if can create a new realization, else false
+   * @param  rule             {@link RuleDTO}
+   * @param  earnerIdentityId {@link org.exoplatform.social.core.identity.model.Identity}
+   *                            id
+   * @return                  {@link RealizationValidityContext} if can not create a
+   *                          realization, else null
    */
-  boolean canCreateRealization(RuleDTO rule, String earnerIdentityId);
+  RealizationValidityContext getRealizationValidityContext(RuleDTO rule, String earnerIdentityId);
 
   /**
    * Retrieves latest Achievement made by an

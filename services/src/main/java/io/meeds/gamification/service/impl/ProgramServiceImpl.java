@@ -69,25 +69,34 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public List<ProgramDTO> getProgramsByFilter(ProgramFilter domainFilter, String username, int offset,
-                                              int limit) throws IllegalAccessException {// NOSONAR
-    List<Long> domainIds = getProgramIdsByFilter(domainFilter, username, offset, limit);
+  public List<ProgramDTO> getPrograms(ProgramFilter domainFilter,
+                                      String username,
+                                      int offset,
+                                      int limit) throws IllegalAccessException {
+    List<Long> domainIds = getProgramIds(domainFilter, username, offset, limit);
     return domainIds.stream().map(this::getProgramById).toList();
   }
 
   @Override
-  public List<Long> getProgramIdsByFilter(ProgramFilter domainFilter,
-                                          String username,
-                                          int offset,
-                                          int limit) throws IllegalAccessException {
+  public List<Long> getProgramIds(ProgramFilter domainFilter,
+                                  String username,
+                                  int offset,
+                                  int limit) throws IllegalAccessException {
     if (computeUserSpaces(domainFilter, username)) {
-      if (domainFilter.isSortByBudget()) {
-        return programStorage.findHighestBudgetProgramIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
-      } else {
-        return programStorage.getProgramsByFilter(domainFilter, offset, limit);
-      }
+      return getProgramIds(domainFilter, offset, limit);
     } else {
       return Collections.emptyList();
+    }
+  }
+
+  @Override
+  public List<Long> getProgramIds(ProgramFilter domainFilter,
+                                  int offset,
+                                  int limit) {
+    if (domainFilter.isSortByBudget()) {
+      return programStorage.findHighestBudgetProgramIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
+    } else {
+      return programStorage.getProgramIdsByFilter(domainFilter, offset, limit);
     }
   }
 
@@ -102,10 +111,15 @@ public class ProgramServiceImpl implements ProgramService {
   @Override
   public int countPrograms(ProgramFilter domainFilter, String username) throws IllegalAccessException {
     if (computeUserSpaces(domainFilter, username)) {
-      return programStorage.countPrograms(domainFilter);
+      return countPrograms(domainFilter);
     } else {
       return 0;
     }
+  }
+
+  @Override
+  public int countPrograms(ProgramFilter domainFilter) {
+    return programStorage.countPrograms(domainFilter);
   }
 
   @Override
@@ -247,7 +261,7 @@ public class ProgramServiceImpl implements ProgramService {
     if (domain == null || domain.isDeleted()) {
       return false;
     }
-    return Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
+    return Utils.isProgramOwner(domain.getAudienceId(), domain.getOwnerIds(), userIdentity);
   }
 
   @Override
