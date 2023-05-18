@@ -59,8 +59,9 @@ import io.meeds.gamification.rest.model.RuleList;
 import io.meeds.gamification.rest.model.RuleRestEntity;
 import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.ProgramService;
+import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
-import io.meeds.gamification.utils.EntityBuilder;
+import io.meeds.gamification.utils.RuleBuilder;
 import io.meeds.gamification.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -80,12 +81,15 @@ public class RuleRest implements ResourceContainer {
 
   protected RuleService         ruleService;
 
+  protected RealizationService  realizationService;
+
   protected AnnouncementService announcementService;
 
   protected IdentityManager     identityManager;
 
   public RuleRest(ProgramService programService,
                   RuleService ruleService,
+                  RealizationService realizationService,
                   AnnouncementService announcementService,
                   IdentityManager identityManager) {
     cacheControl = new CacheControl();
@@ -93,6 +97,7 @@ public class RuleRest implements ResourceContainer {
     cacheControl.setNoStore(true);
     this.programService = programService;
     this.ruleService = ruleService;
+    this.realizationService = realizationService;
     this.announcementService = announcementService;
     this.identityManager = identityManager;
   }
@@ -173,7 +178,6 @@ public class RuleRest implements ResourceContainer {
     String currentUser = Utils.getCurrentUser();
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setTerm(term);
-    ruleFilter.setUsername(currentUser);
     ruleFilter.setDateFilterType(dateFilter == null ? DateFilterType.ALL : dateFilter);
     ruleFilter.setEntityFilterType(ruleType == null ? EntityFilterType.ALL : ruleType);
     ruleFilter.setEntityStatusType(ruleStatus == null ? EntityStatusType.ALL : ruleStatus);
@@ -192,7 +196,7 @@ public class RuleRest implements ResourceContainer {
         ProgramFilter domainFilter = new ProgramFilter();
         domainFilter.setEntityFilterType(EntityFilterType.ALL);
         domainFilter.setEntityStatusType(EntityStatusType.ENABLED);
-        List<ProgramDTO> domains = programService.getProgramsByFilter(domainFilter, currentUser, 0, -1);
+        List<ProgramDTO> domains = programService.getPrograms(domainFilter, currentUser, 0, -1);
         List<ProgramWithRulesRestEntity> domainsWithRules = new ArrayList<>();
         for (ProgramDTO domain : domains) {
           ProgramWithRulesRestEntity domainWithRule = new ProgramWithRulesRestEntity(domain);
@@ -200,6 +204,7 @@ public class RuleRest implements ResourceContainer {
           List<RuleRestEntity> ruleEntities = getUserRulesByDomain(ruleFilter,
                                                                    periodType,
                                                                    expandFields,
+                                                                   currentUser,
                                                                    offset,
                                                                    limit,
                                                                    announcementsLimit,
@@ -208,7 +213,7 @@ public class RuleRest implements ResourceContainer {
           domainWithRule.setOffset(offset);
           domainWithRule.setLimit(limit);
           if (returnSize) {
-            domainWithRule.setSize(ruleService.countRules(ruleFilter));
+            domainWithRule.setSize(ruleService.countRules(ruleFilter, currentUser));
           }
           domainsWithRules.add(domainWithRule);
         }
@@ -218,6 +223,7 @@ public class RuleRest implements ResourceContainer {
         List<RuleRestEntity> ruleEntities = getUserRulesByDomain(ruleFilter,
                                                                  periodType,
                                                                  expandFields,
+                                                                 currentUser,
                                                                  offset,
                                                                  limit,
                                                                  announcementsLimit,
@@ -226,7 +232,7 @@ public class RuleRest implements ResourceContainer {
         ruleList.setOffset(offset);
         ruleList.setLimit(limit);
         if (returnSize) {
-          ruleList.setSize(ruleService.countRules(ruleFilter));
+          ruleList.setSize(ruleService.countRules(ruleFilter, currentUser));
         }
         return Response.ok(ruleList).build();
       }
@@ -258,14 +264,15 @@ public class RuleRest implements ResourceContainer {
       RuleDTO rule = ruleService.findRuleById(id, currentUser);
       String[] expandFieldsArray = StringUtils.split(expand, ",");
       List<String> expandFields = expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
-      RuleRestEntity ruleEntity = EntityBuilder.toRestEntity(programService,
-                                                             ruleService,
-                                                             announcementService,
-                                                             rule,
-                                                             expandFields,
-                                                             0,
-                                                             false,
-                                                             PeriodType.ALL);
+      RuleRestEntity ruleEntity = RuleBuilder.toRestEntity(programService,
+                                                           ruleService,
+                                                           realizationService,
+                                                           announcementService,
+                                                           rule,
+                                                           expandFields,
+                                                           0,
+                                                           false,
+                                                           PeriodType.ALL);
       return Response.ok(ruleEntity).build();
     } catch (IllegalArgumentException e) {
       return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -368,34 +375,37 @@ public class RuleRest implements ResourceContainer {
     }
   }
 
-  private List<RuleRestEntity> getUserRulesByDomain(RuleFilter filter,
+  private List<RuleRestEntity> getUserRulesByDomain(RuleFilter filter, // NOSONAR
                                                     PeriodType periodType,
                                                     List<String> expandFields,
+                                                    String username,
                                                     int offset,
                                                     int limit,
                                                     int announcementsLimit,
                                                     boolean noDomain) {
-    List<RuleDTO> rules = ruleService.getRules(filter, offset, limit);
+    List<RuleDTO> rules = ruleService.getRules(filter, username, offset, limit);
     return rules.stream()
-                .map(rule -> EntityBuilder.toRestEntity(programService,
-                                                        ruleService,
-                                                        announcementService,
-                                                        rule,
-                                                        expandFields,
-                                                        announcementsLimit,
-                                                        noDomain,
-                                                        periodType))
+                .map(rule -> RuleBuilder.toRestEntity(programService,
+                                                      ruleService,
+                                                      realizationService,
+                                                      announcementService,
+                                                      rule,
+                                                      expandFields,
+                                                      announcementsLimit,
+                                                      noDomain,
+                                                      periodType))
                 .toList();
   }
 
   private RuleRestEntity toRestEntity(RuleDTO rule) {
-    return EntityBuilder.toRestEntity(programService,
-                                      ruleService,
-                                      announcementService,
-                                      rule,
-                                      null,
-                                      0,
-                                      false,
-                                      null);
+    return RuleBuilder.toRestEntity(programService,
+                                    ruleService,
+                                    realizationService,
+                                    announcementService,
+                                    rule,
+                                    null,
+                                    0,
+                                    false,
+                                    null);
   }
 }

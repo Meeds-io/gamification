@@ -58,4 +58,38 @@ public enum RecurrenceType {
       throw new IllegalArgumentException("Unexpected value: " + this);
     };
   }
+
+  public Date getNextPeriodStartDate() {
+    return switch (this) {
+    case NONE: {
+      yield null;
+    }
+    case ONCE: {
+      yield ONCE_RECURRENCE_START_DATE;
+    }
+    case DAILY: {
+      yield Date.from(LocalDate.now()
+                               .atStartOfDay(ZoneId.systemDefault())
+                               .plusDays(1)
+                               .toInstant());
+    }
+    case WEEKLY: {
+      yield Date.from(LocalDate.now()
+                               .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                               .atStartOfDay(ZoneId.systemDefault())
+                               .plusWeeks(1)
+                               .toInstant());
+    }
+    case MONTHLY: {
+      yield Date.from(LocalDate.now()
+                               .with(TemporalAdjusters.firstDayOfMonth())
+                               .atStartOfDay(ZoneId.systemDefault())
+                               .plusMonths(1)
+                               .toInstant());
+    }
+    default:
+      throw new IllegalArgumentException("Unexpected value: " + this);
+    };
+  }
+
 }

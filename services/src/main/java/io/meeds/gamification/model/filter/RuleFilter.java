@@ -33,9 +33,9 @@ public class RuleFilter implements Serializable {
 
   private static final long serialVersionUID = 7863115218512008695L;
 
-  private String            username;
-
   private String            term;
+
+  private String            eventName;
 
   private long              domainId;
 

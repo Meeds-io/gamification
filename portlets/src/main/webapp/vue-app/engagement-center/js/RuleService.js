@@ -73,8 +73,9 @@ export function getRules(filter) {
   });
 }
 
-export function getRuleById(id) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules/${id}`, {
+export function getRuleById(id, expand) {
+  const extraParams = expand && `?expand=${expand}` || '';
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules/${id}${extraParams}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

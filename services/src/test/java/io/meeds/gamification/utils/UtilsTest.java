@@ -41,6 +41,7 @@ import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.UserInfo;
+import io.meeds.gamification.model.UserInfoContext;
 import io.meeds.gamification.test.AbstractServiceTest;
 
 public class UtilsTest extends AbstractServiceTest {
@@ -196,10 +197,10 @@ public class UtilsTest extends AbstractServiceTest {
     RuleDTO rule = newRuleDTO();
     Identity identity = identityManager.getOrCreateUserIdentity("root1");
 
-    UserInfo userInfo = Utils.toUserInfo(programService, rule.getProgram().getId(), identity.getRemoteId());
-    assertNotNull(userInfo);
-    assertEquals("root1", userInfo.getRemoteId());
-    assertTrue(userInfo.isCanAnnounce());
+    UserInfoContext userContext = Utils.toUserContext(rule.getProgram(), identity.getRemoteId());
+    assertNotNull(userContext);
+    assertEquals("root1", userContext.getRemoteId());
+    assertFalse(userContext.isAllowedToRealize());
   }
 
   @Test
@@ -245,11 +246,9 @@ public class UtilsTest extends AbstractServiceTest {
     space.setDisplayName("test space");
     space.setGroupId("/spaces/test_space");
     String username = "root";
-    assertFalse(Utils.canAnnounce("158", username));
-    boolean canAnnounce = Utils.canAnnounce("1", "");
-    assertFalse(canAnnounce);
-    canAnnounce = Utils.canAnnounce("1", "root");
-    assertTrue(canAnnounce);
+
+    assertFalse(Utils.canAcquireAchievement(realizationService, announcementService, new RuleDTO(), username));
+    assertTrue(Utils.canAcquireAchievement(realizationService, announcementService, newRuleDTO(), "root1"));
   }
 
   @Test

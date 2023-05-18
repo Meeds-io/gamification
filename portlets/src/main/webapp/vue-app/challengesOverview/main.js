@@ -32,5 +32,5 @@ export function init() {
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'Challenges Overview');
-    });
+    }).finally(() => Vue.prototype.$utils.includeExtensions('engagementCenterActions'));
 }
