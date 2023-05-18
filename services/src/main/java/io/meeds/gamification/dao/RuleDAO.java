@@ -191,6 +191,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (StringUtils.isNotBlank(filter.getTerm())) {
       query.setParameter("term", "%" + StringUtils.lowerCase(filter.getTerm()) + "%");
     }
+    if (StringUtils.isNotBlank(filter.getEventName())) {
+      query.setParameter(EVENT_PARAM_NAME, filter.getEventName());
+    }
     if (filter.getDomainId() > 0) {
       query.setParameter(DOMAIN_ID_PARAM_NAME, filter.getDomainId());
     }
@@ -243,6 +246,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (StringUtils.isNotBlank(filter.getTerm())) {
       suffixes.add("Term");
       predicates.add("LOWER(r.title) LIKE :term");
+    }
+    if (StringUtils.isNotBlank(filter.getEventName())) {
+      suffixes.add("Event");
+      predicates.add("r.event = :event");
     }
     if (filter.getDomainId() > 0) {
       suffixes.add("Domain");
