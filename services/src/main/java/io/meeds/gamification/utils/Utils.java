@@ -9,15 +9,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -31,14 +26,12 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.IdentityRegistry;
 import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -47,13 +40,17 @@ import org.exoplatform.social.rest.entity.IdentityEntity;
 import org.exoplatform.web.security.codec.CodecInitializer;
 import org.exoplatform.web.security.security.TokenServiceInitializationException;
 
+import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.UserInfo;
+import io.meeds.gamification.model.UserInfoContext;
+import io.meeds.gamification.rest.model.RealizationValidityContext;
 import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.ProgramService;
+import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 
 public class Utils {
@@ -201,9 +198,13 @@ public class Utils {
   }
 
   public static final long getCurrentUserIdentityId() {
-    String currentUser = getCurrentUser();
+    String username = getCurrentUser();
+    return getUserIdentityId(username);
+  }
+
+  public static long getUserIdentityId(String username) {
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    Identity identity = identityManager.getOrCreateUserIdentity(currentUser);
+    Identity identity = identityManager.getOrCreateUserIdentity(username);
     return identity == null ? 0l : Long.parseLong(identity.getId());
   }
 
@@ -214,15 +215,19 @@ public class Utils {
     return null;
   }
 
-  public static final boolean canAnnounce(String spaceId, String username) {
-    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    Space space = spaceService.getSpaceById(spaceId);
-    if (space == null || StringUtils.isBlank(username)) {
+  public static final boolean canAcquireAchievement(RealizationService realizationService,
+                                                    AnnouncementService announcementService,
+                                                    RuleDTO rule,
+                                                    String username) {
+    if (rule == null) {
       return false;
-    } else {
-      org.exoplatform.services.security.Identity identity = getUserAclIdentity(username);
-      return spaceService.canRedactOnSpace(space, identity) && !Utils.isUserMemberOfGroupOrUser(username, Utils.BLACK_LIST_GROUP);
     }
+    if (rule.getType() == EntityType.MANUAL) {
+      return announcementService.canAnnounce(rule, String.valueOf(getUserIdentityId(username)));
+    } else if (rule.getType() == EntityType.AUTOMATIC) {
+      return realizationService.getRealizationValidityContext(rule, String.valueOf(getUserIdentityId(username))).isValid();
+    }
+    return false;
   }
 
   public static String toRFC3339Date(Date dateTime) {
@@ -295,71 +300,29 @@ public class Utils {
       return false;
     } else {
       return isProgramOwner(program.getAudienceId(),
-                            program.getId() > 0 ? program.getOwners() : Collections.emptySet(),
+                            program.getId() > 0 ? program.getOwnerIds() : Collections.emptySet(),
                             username);
     }
   }
 
-  public static List<UserInfo> toUserInfo(Collection<Long> ids) {
-    if (ids == null || ids.isEmpty()) {
-      return Collections.emptyList();
-    }
-    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    return ids.stream()
-              .distinct()
-              .map(id -> {
-                try {
-                  Identity identity = identityManager.getIdentity(String.valueOf(id));
-                  if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
-                    return toUserInfo(identity);
-                  }
-                } catch (Exception e) {
-                  LOG.warn("Error when getting Identity with id {}. Ignore retrieving identity information", id, e);
-                }
-                return null;
-              })
-              .filter(Objects::nonNull)
-              .toList();
+  public static UserInfoContext toUserContext(RealizationService realizationService,
+                                              RuleDTO rule,
+                                              String username) {
+    UserInfoContext userContext = toUserContext(rule.getProgram(), username);
+    RealizationValidityContext realizationRestriction = realizationService.getRealizationValidityContext(rule, String.valueOf(getUserIdentityId(username)));
+    userContext.setContext(realizationRestriction);
+    userContext.setAllowedToRealize(realizationRestriction.isValid());
+    return userContext;
   }
 
-  public static List<UserInfo> getProgramOwnersByIds(Set<Long> ids, long spaceId) {
-    if (ids == null || ids.isEmpty()) {
-      return Collections.emptyList();
-    }
-    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    return ids.stream()
-              .distinct()
-              .map(id -> {
-                try {
-                  Identity identity = identityManager.getIdentity(String.valueOf(id));
-                  if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
-                    UserInfo userInfo = toUserInfo(identity);
-                    userInfo.setDomainOwner(isProgramOwner(spaceId, ids, identity));
-                    return userInfo;
-                  }
-                } catch (Exception e) {
-                  LOG.warn("Error when getting domain owner with id {}. Ignore retrieving identity information", id, e);
-                }
-                return null;
-              })
-              .filter(Objects::nonNull)
-              .toList();
-  }
+  public static UserInfoContext toUserContext(ProgramDTO program, String username) {
+    UserInfoContext userContext = new UserInfoContext();
 
-  public static UserInfo toUserInfo(ProgramService programService, long domainId, String username) {
-    ProgramDTO domain = null;
-    if (domainId > 0) {
-      domain = programService.getProgramById(domainId);
-    }
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
     Identity identity = identityManager.getOrCreateUserIdentity(username);
-    UserInfo userInfo = new UserInfo();
-    userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-    userInfo.setFullName(identity.getProfile().getFullName());
-    userInfo.setRemoteId(identity.getRemoteId());
-    userInfo.setId(identity.getId());
-    if (domain != null) {
-      long spaceId = domain.getAudienceId();
+    mapUserInfo(userContext, identity);
+    if (program != null) {
+      long spaceId = program.getAudienceId();
       SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
       Space space = spaceService.getSpaceById(String.valueOf(spaceId));
       if (space != null) {
@@ -367,22 +330,18 @@ public class Utils {
         boolean isManager = isSuperManager || spaceService.isManager(space, username);
         boolean isMember = isManager || spaceService.isMember(space, username);
         boolean isRedactor = isManager || spaceService.isRedactor(space, username);
-        userInfo.setManager(isManager);
-        userInfo.setMember(isMember);
-        userInfo.setRedactor(isRedactor);
-        userInfo.setCanAnnounce(canAnnounce(space.getId(), username));
-        userInfo.setCanEdit(isProgramOwner(spaceId, domain.getOwners(), identity));
+        userContext.setManager(isManager);
+        userContext.setMember(isMember);
+        userContext.setRedactor(isRedactor);
+        userContext.setCanEdit(isProgramOwner(spaceId, program.getOwnerIds(), identity));
       }
     }
-    return userInfo;
+    return userContext;
   }
 
   public static UserInfo toUserInfo(Identity identity) {
     UserInfo userInfo = new UserInfo();
-    userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-    userInfo.setFullName(identity.getProfile().getFullName());
-    userInfo.setRemoteId(identity.getRemoteId());
-    userInfo.setId(identity.getId());
+    mapUserInfo(userInfo, identity);
     return userInfo;
   }
 
@@ -404,24 +363,6 @@ public class Utils {
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
     Space space = spaceService.getSpaceByGroupId(groupID);
     return space != null ? space.getDisplayName() : null;
-  }
-
-  public static String getI18NMessage(Locale userLocale, String messageKey) {
-    if (userLocale == null) {
-      userLocale = Locale.ENGLISH;
-    }
-    try {
-      ResourceBundleService resourceBundleService = CommonsUtils.getService(ResourceBundleService.class);
-      ResourceBundle resourceBundle =
-                                    resourceBundleService.getResourceBundle(resourceBundleService.getSharedResourceBundleNames(),
-                                                                            userLocale);
-      if (resourceBundle != null && messageKey != null && resourceBundle.containsKey(messageKey)) {
-        return resourceBundle.getString(messageKey);
-      }
-    } catch (Exception e) {
-      LOG.debug("Error retrieving resource bundle key {}", messageKey, e);
-    }
-    return null;
   }
 
   public static String escapeIllegalCharacterInMessage(String message) {
@@ -607,7 +548,7 @@ public class Utils {
     statisticData.addParameter(STATISTICS_PROGRAM_BUDGET_PARAM, domain.getBudget());
     statisticData.addParameter(STATISTICS_PROGRAM_TYPE_PARAM, domain.getType());
     statisticData.addParameter(STATISTICS_PROGRAM_COVERFILEID_PARAM, domain.getCoverFileId());
-    statisticData.addParameter(STATISTICS_PROGRAM_OWNERS_PARAM, domain.getOwners());
+    statisticData.addParameter(STATISTICS_PROGRAM_OWNERS_PARAM, domain.getOwnerIds());
     if (domain.getAudienceId() > 0) {
       Space space = spaceService.getSpaceById(String.valueOf(domain.getAudienceId()));
       if (space != null) {
@@ -667,6 +608,13 @@ public class Utils {
       return false;
     }
     return spaceService.isManager(space, username);
+  }
+
+  private static <E extends UserInfo> void mapUserInfo(E userInfo, Identity identity) {
+    userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+    userInfo.setFullName(identity.getProfile().getFullName());
+    userInfo.setRemoteId(identity.getRemoteId());
+    userInfo.setId(identity.getId());
   }
 
 }

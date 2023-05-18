@@ -29,6 +29,7 @@ module.exports = {
     usersLeaderboard: './src/main/webapp/vue-app/usersLeaderboard/main.js',
     badgesOverview: './src/main/webapp/vue-app/badgesOverview/main.js',
     realizationsComponents: './src/main/webapp/vue-app/realizations/initComponents.js',
+    ruleComponents: './src/main/webapp/vue-app/rules/initComponents.js',
     realizations: './src/main/webapp/vue-app/realizations/main.js',
     engagementCenter: './src/main/webapp/vue-app/engagement-center/main.js',
     engagementCenterActivityStreamExtension: './src/main/webapp/vue-app/engagement-center-activity-stream-extension/main.js',

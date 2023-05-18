@@ -66,7 +66,7 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     return !domainEntities.isEmpty() ? domainEntities.get(0) : null;
   }
 
-  public List<Long> getProgramsByFilter(int offset, int limit, ProgramFilter filter) {
+  public List<Long> getProgramIdsByFilter(int offset, int limit, ProgramFilter filter) {
     TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, false);
     if (offset > 0) {
       query.setFirstResult(offset);

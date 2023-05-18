@@ -30,97 +30,62 @@ public class ProgramDTO implements Serializable, Cloneable {
 
   private static final long serialVersionUID = -8857818632949907592L;
 
-  private long              id;
+  protected long            id;
 
-  private String            title;
+  protected String          title;
 
-  private String            description;
+  protected String          description;
 
-  private long              audienceId;
+  protected long            audienceId;
 
-  private int               priority;
+  protected int             priority;
 
-  private String            createdBy;
+  protected String          createdBy;
 
-  private String            createdDate;
+  protected String          createdDate;
 
-  private String            lastModifiedBy;
+  protected String          lastModifiedBy;
 
-  private String            lastModifiedDate;
+  protected String          lastModifiedDate;
 
-  private boolean           deleted;
+  protected boolean         deleted;
 
-  private boolean           enabled;
+  protected boolean         enabled;
 
-  private long              budget;
+  protected long            budget;
 
-  private String            type;
+  protected String          type;
 
-  private String            coverUploadId;
+  protected String          coverUploadId;
 
-  private long              coverFileId;
+  protected long            coverFileId;
 
-  private String            coverUrl;
+  protected String          coverUrl;
 
-  private Set<Long>         owners;
+  protected Set<Long>       ownerIds;                                // NOSONAR
 
-  private long              rulesTotalScore;
-
-  public ProgramDTO(long id, // NOSONAR
-                   String title,
-                   String description,
-                   int priority,
-                   long audienceId,
-                   String createdBy,
-                   String createdDate,
-                   String lastModifiedBy,
-                   String lastModifiedDate,
-                   boolean deleted,
-                   boolean enabled,
-                   long budget,
-                   String type,
-                   long coverFileId,
-                   String coverUrl,
-                   Set<Long> owners,
-                   long rulesTotalScore) {
-    this.id = id;
-    this.title = title;
-    this.description = description;
-    this.priority = priority;
-    this.audienceId = audienceId;
-    this.createdBy = createdBy;
-    this.createdDate = createdDate;
-    this.lastModifiedBy = lastModifiedBy;
-    this.lastModifiedDate = lastModifiedDate;
-    this.deleted = deleted;
-    this.enabled = enabled;
-    this.budget = budget;
-    this.type = type;
-    this.coverFileId = coverFileId;
-    this.coverUrl = coverUrl;
-    this.owners = owners;
-    this.rulesTotalScore = rulesTotalScore;
-  }
+  protected long            rulesTotalScore;
 
   @Override
   public ProgramDTO clone() { // NOSONAR
     return new ProgramDTO(id,
-                         title,
-                         description,
-                         priority,
-                         audienceId,
-                         createdBy,
-                         createdDate,
-                         lastModifiedBy,
-                         lastModifiedDate,
-                         deleted,
-                         enabled,
-                         budget,
-                         type,
-                         coverFileId,
-                         coverUrl,
-                         owners,
-                         rulesTotalScore);
+                          title,
+                          description,
+                          audienceId,
+                          priority,
+                          createdBy,
+                          createdDate,
+                          lastModifiedBy,
+                          lastModifiedDate,
+                          deleted,
+                          enabled,
+                          budget,
+                          type,
+                          coverUploadId,
+                          coverFileId,
+                          coverUrl,
+                          ownerIds,
+                          rulesTotalScore);
   }
 
 }

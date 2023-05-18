@@ -238,7 +238,7 @@ export default {
       this.challengeIdFromUrl = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
       if (this.providedId) {
         setTimeout(() => {
-          const retrieveChallengePromise = this.$ruleService.getRuleById(this.providedId)
+          const retrieveChallengePromise = this.$ruleService.getRuleById(this.providedId, 'countAnnouncements')
             .then(challenge => {
               if (challenge?.id) {
                 this.$root.$emit('rule-detail-drawer', challenge);
