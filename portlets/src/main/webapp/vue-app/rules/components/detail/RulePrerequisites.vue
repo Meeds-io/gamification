@@ -33,31 +33,24 @@
         </v-icon>
       </v-avatar>
     </v-list-item-avatar>
-    <div class="d-flex flex-column flex-grow-1">
-      <v-list-item-content
-        :class="hasRemainingPrerequisitesCount && 'mt-3' || 'mt-1'">
-        <v-list-item-title
-          v-sanitized-html="prerequisitesTitle"
-          :class="hasRemainingPrerequisitesCount && 'center white--text px-2'"
-          class="text-wrap" />
-      </v-list-item-content>
-      <v-list-item-content>
-        <v-list-item-sub-title class="d-flex flex-column">
-          <engagement-center-rule-prerequisite-item
-            v-for="r in remainingPrerequisites"
-            :key="r.id"
-            :rule="rule"
-            :prerequisite-rule="r"
-            class="mx-auto mb-4" />
-          <engagement-center-rule-prerequisite-item
-            v-for="r in achievedPrerequisites"
-            :key="r.id"
-            :rule="rule"
-            :prerequisite-rule="r"
-            class="mx-auto mb-4" />
-        </v-list-item-sub-title>
-      </v-list-item-content>
-    </div>
+    <v-list-item-content :class="hasRemainingPrerequisitesCount && 'mt-3' || 'mt-1'">
+      <v-list-item-title
+        v-sanitized-html="prerequisitesTitle"
+        :class="hasRemainingPrerequisitesCount && 'white--text pe-2'"
+        class="text-wrap" />
+      <v-list-item-subtitle class="d-flex flex-column mt-3">
+        <engagement-center-rule-prerequisite-item
+          v-for="r in remainingPrerequisites"
+          :key="r.id"
+          :rule="rule"
+          :prerequisite-rule="r" />
+        <engagement-center-rule-prerequisite-item
+          v-for="r in achievedPrerequisites"
+          :key="r.id"
+          :rule="rule"
+          :prerequisite-rule="r" />
+      </v-list-item-subtitle>
+    </v-list-item-content>
   </v-list-item>
 </template>
 <script>

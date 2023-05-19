@@ -28,7 +28,7 @@
     <v-list-item-avatar class="me-2">
       <v-avatar
         color="grey"
-        size="24"
+        size="30"
         class="white--text">
         {{ announcementsCount }}
       </v-avatar>

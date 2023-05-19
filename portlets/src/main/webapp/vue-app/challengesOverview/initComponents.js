@@ -16,34 +16,10 @@
  */
 import ChallengesOverview from './components/ChallengesOverview.vue';
 import AvatarsList from '../engagement-center/components/common/AvatarsList.vue';
-import DescriptionEditor from '../engagement-center/components/common/DescriptionEditor.vue';
-import RuleDetailDrawer from '../engagement-center/components/rules/RuleDetailDrawer.vue';
-import RuleHeader from '../engagement-center/components/rules/detail/RuleHeader.vue';
-import RuleDescription from '../engagement-center/components/rules/detail/RuleDescription.vue';
-import RuleProgram from '../engagement-center/components/rules/detail/RuleProgram.vue';
-import RuleAnnouncements from '../engagement-center/components/rules/detail/RuleAnnouncements.vue';
-import RuleRecurrence from '../engagement-center/components/rules/detail/RuleRecurrence.vue';
-import RuleDates from '../engagement-center/components/rules/detail/RuleDates.vue';
-import RulePrerequisites from '../engagement-center/components/rules/detail/RulePrerequisites.vue';
-import RulePrerequisiteItem from '../engagement-center/components/rules/detail/RulePrerequisiteItem.vue';
-import RuleAnnouncementForm from '../engagement-center/components/rules/detail/RuleAnnouncementForm.vue';
-import WinnersDrawer from '../engagement-center/components/rules/WinnersDrawer.vue';
 
 const components = {
   'gamification-overview-challenges': ChallengesOverview,
-  'engagement-center-rule-detail-drawer': RuleDetailDrawer,
-  'engagement-center-rule-header': RuleHeader,
-  'engagement-center-rule-description': RuleDescription,
-  'engagement-center-rule-program': RuleProgram,
-  'engagement-center-rule-announcements': RuleAnnouncements,
-  'engagement-center-rule-recurrence': RuleRecurrence,
-  'engagement-center-rule-dates': RuleDates,
-  'engagement-center-rule-prerequisites': RulePrerequisites,
-  'engagement-center-rule-prerequisite-item': RulePrerequisiteItem,
-  'engagement-center-rule-announcement-form': RuleAnnouncementForm,
-  'engagement-center-winners-details': WinnersDrawer,
   'engagement-center-avatars-list': AvatarsList,
-  'engagement-center-description-editor': DescriptionEditor,
 };
 
 for (const key in components) {

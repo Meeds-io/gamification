@@ -28,12 +28,14 @@
         <v-icon
           size="30"
           class="primary--text">
-          fas fa-redo-alt
+          {{ recurrenceIcon }}
         </v-icon>
       </v-avatar>
     </v-list-item-avatar>
     <v-list-item-content>
-      <v-list-item-title v-sanitized-html="recurrenceTitle" class="text-wrap" />
+      <v-list-item-title
+        v-sanitized-html="recurrenceTitle"
+        class="text-wrap" />
     </v-list-item-content>
   </v-list-item>
 </template>
@@ -46,6 +48,9 @@ export default {
     },
   },
   computed: {
+    recurrenceIcon() {
+      return (this.recurrenceValid || this.recurrence !== 'ONCE') && 'fas fa-redo-alt' || 'fas fa-check';
+    },
     recurrence() {
       return this.rule.recurrence;
     },
@@ -61,13 +66,13 @@ export default {
       } else if (this.recurrenceValid) {
         switch (this.recurrence) {
         case 'ONCE':
-          return this.$t('rules.recurrenceDoItOnce');
+          return this.$t('rules.recurrenceDoItOnce', {0: '<strong>', 1: '</strong>'});
         case 'DAILY':
           return this.$t('rules.recurrenceDoItOncePerDay', {0: '<strong>', 1: '</strong>'});
         case 'WEEKLY':
-          return this.$t('rules.recurrenceDoItOncePerWeek', {0: '<strong>', 1: '</strong>', 2: this.nextOccurenceDaysLeft});
+          return this.$t('rules.recurrenceDoItOncePerWeek', {0: '<strong>', 1: '</strong>'});
         case 'MONTHLY':
-          return this.$t('rules.recurrenceDoItOncePerMonth', {0: '<strong>', 1: '</strong>', 2: this.nextOccurenceDaysLeft});
+          return this.$t('rules.recurrenceDoItOncePerMonth', {0: '<strong>', 1: '</strong>'});
         default:
           return null;
         }
@@ -78,9 +83,9 @@ export default {
         case 'DAILY':
           return this.$t('rules.actionAlreadyDoneOncePerDay', {0: '<strong>', 1: '</strong>'});
         case 'WEEKLY':
-          return this.$t('rules.actionAlreadyDoneOncePerWeek', {0: '<strong>', 1: '</strong>'});
+          return this.$t('rules.actionAlreadyDoneOncePerWeek', {0: '<strong>', 1: '</strong>', 2: this.nextOccurenceDaysLeft});
         case 'MONTHLY':
-          return this.$t('rules.actionAlreadyDoneOncePerMonth', {0: '<strong>', 1: '</strong>'});
+          return this.$t('rules.actionAlreadyDoneOncePerMonth', {0: '<strong>', 1: '</strong>', 2: this.nextOccurenceDaysLeft});
         default:
           return null;
         }
