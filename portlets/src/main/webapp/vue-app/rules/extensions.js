@@ -78,9 +78,9 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     rank: 30,
     icon: 'fas fa-layer-group',
     match: (actionLabel) => [
-        'addSpace',
-        'becomeSpaceManager',
-        'joinSpace'
+      'addSpace',
+      'becomeSpaceManager',
+      'joinSpace'
     ].includes(actionLabel),
   },
 });

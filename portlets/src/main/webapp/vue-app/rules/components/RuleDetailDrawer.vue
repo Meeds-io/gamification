@@ -22,13 +22,14 @@
   <exo-drawer
     id="ruleDetailDrawer"
     ref="ruleDetailDrawer"
+    v-model="drawer"
     :right="!$vuetify.rtl"
     allow-expand
     @closed="clear">
     <template #title>
       <span class="pb-2"> {{ $t('rule.detail.letsSeeWhatToDo') }} </span>
     </template>
-    <template #content>
+    <template v-if="!loading" #content>
       <v-card-text>
         <engagement-center-rule-header
           :rule="rule"
@@ -83,33 +84,17 @@ export default {
         return null;
       },
     },
-    isOverviewDisplayed: {
-      type: Boolean,
-      default: false,
-    },
-    tab: {
-      type: Number,
-      default: () => 0,
-    },
   },
   data: () => ({
     drawer: false,
     rule: {},
-    program: {},
+    loading: false,
+    linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`,
     validAnnouncement: false,
     announcementSending: false,
     announcementFormOpened: false,
   }),
   watch: {
-    rule() {
-      if (!this.isOverviewDisplayed && this.tab === 1) {
-        if (this.rule?.id) {
-          window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.rule.id}`);
-        } else {
-          window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
-        }
-      }
-    },
     announcementSending() {
       if (this.announcementSending) {
         this.$refs.ruleDetailDrawer.startLoading();
@@ -117,32 +102,54 @@ export default {
         this.$refs.ruleDetailDrawer.endLoading();
       }
     }, 
+    loading() {
+      if (this.loading) {
+        this.$refs.ruleDetailDrawer.startLoading();
+      } else {
+        this.$refs.ruleDetailDrawer.endLoading();
+      }
+    }, 
+    drawer() {
+      this.updatePagePath();
+    }, 
   },
   created() {
     this.$root.$on('rule-detail-drawer', this.open);
+    this.$root.$on('rule-detail-drawer-by-id', this.openById);
     document.addEventListener('rule-detail-drawer', event => this.open(event?.detail));
+    document.addEventListener('rule-detail-drawer-by-id', event => this.openById(event?.detail));
   },
   methods: {
-    open(rule, editorFocus) {
-      if (!rule || !this.$refs.ruleDetailDrawer) {
+    open(ruleToDisplay, displayAnnouncementForm) {
+      this.openById(ruleToDisplay?.id, displayAnnouncementForm);
+    },
+    openById(id, displayAnnouncementForm) {
+      if (!id || !this.$refs.ruleDetailDrawer) {
         return;
       }
-      this.rule = rule;
-      this.program = rule?.program || {};
+      this.clear();
+      this.rule = {id};
+
+      this.loading = true;
       this.$refs.ruleDetailDrawer.open();
-      this.$nextTick().then(() => window.setTimeout(() => {
-        if (this.$refs.ruleAnnouncementForm && editorFocus) {
-          this.$refs.ruleAnnouncementForm.displayForm();
-        }
-      }, 200));
-      this.collectRuleVisit();
+      this.$ruleService.getRuleById(id, 'countAnnouncements')
+        .then(rule => {
+          this.rule = rule;
+          this.loading = false; // Kept to allow displaying this.$refs.ruleAnnouncementForm
+          this.$nextTick().then(() => window.setTimeout(() => {
+            if (this.$refs.ruleAnnouncementForm && displayAnnouncementForm) {
+              this.$refs.ruleAnnouncementForm.displayForm();
+            }
+          }, 200));
+          this.collectRuleVisit();
+        })
+        .finally(() => this.loading = false);
     },
     close() {
       this.$refs.ruleDetailDrawer.close();
     },
     clear() {
       this.rule = {};
-      this.program = {};
       this.validAnnouncement = false;
       this.announcementSending = false;
       this.announcementFormOpened = false;
@@ -153,6 +160,15 @@ export default {
     createAnnouncement() {
       if (this.$refs.ruleAnnouncementForm){
         this.$refs.ruleAnnouncementForm.createAnnouncement();
+      }
+    },
+    updatePagePath() {
+      if (window.location.pathname.indexOf(this.linkBasePath) >= 0) {
+        if (!this.drawer) {
+          window.history.replaceState('challenges', this.$t('challenges.challenges'), this.linkBasePath);
+        } else if (this.rule.id) {
+          window.history.replaceState('challenges', this.$t('challenges.challenges'), `${this.linkBasePath}/${this.rule.id}`);
+        }
       }
     },
     collectRuleVisit() {
