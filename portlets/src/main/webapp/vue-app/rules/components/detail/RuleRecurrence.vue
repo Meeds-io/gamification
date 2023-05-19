@@ -61,6 +61,13 @@ export default {
       return this.rule?.userInfo?.context?.nextOccurenceDaysLeft;
     },
     recurrenceTitle() {
+      if (!this.nextOccurenceDaysLeft
+          && !this.recurrenceValid
+          && (this.recurrence === 'DAILY'
+              || this.recurrence === 'WEEKLY'
+              || this.recurrence === 'MONTHLY')) {
+        return this.$t('rules.card.actionAlreadyDone');
+      }
       if (!this.recurrence) {
         return null;
       } else if (this.recurrenceValid) {
