@@ -19,26 +19,14 @@
 
 -->
 <template>
-  <v-list-item
-    v-if="datesInfo"
-    class="rule-dates pa-0"
-    :class="notStartedYet && 'grey'"
-    dense>
-    <v-list-item-avatar class="me-2">
-      <v-avatar size="32" tile>
-        <v-icon
-          :class="notStartedYet && 'white--text' || 'primary--text'"
-          size="30">
-          {{ notStartedYet && 'fas fa-calendar-plus' || 'fas fa-calendar-day' }}
-        </v-icon>
-      </v-avatar>
-    </v-list-item-avatar>
-    <v-list-item-content>
-      <v-list-item-title :class="notStartedYet && 'white--text'">
-        {{ datesInfo }}
-      </v-list-item-title>
-    </v-list-item-content>
-  </v-list-item>
+  <div v-if="datesInfo" class="rule-card-dates d-flex align-center">
+    <v-icon class="primary--text me-2 mb-1" size="16">
+      fas fa-calendar-check
+    </v-icon>
+    <div>
+      {{ datesInfo }}
+    </div>
+  </div>
 </template>
 <script>
 export default {
@@ -55,21 +43,25 @@ export default {
     endDateMillis() {
       return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
     },
-    alreadyEnded() {
-      return this.endDateMillis && this.endDateMillis < Date.now();
-    },
     notStartedYet() {
       return this.startDateMillis && this.startDateMillis > Date.now();
     },
+    alreadyEnded() {
+      return this.endDateMillis && this.endDateMillis < Date.now();
+    },
     datesInfo() {
-      if (this.alreadyEnded) {
-        return this.$t('challenges.label.over');
-      } else if (this.notStartedYet) {
-        const days = Math.round((this.startDateMillis - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
-        return this.$t('challenges.label.opensIn', {0: days});
-      } else if (this.endDateMillis) {
-        const days = Math.round((this.endDateMillis - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
-        return this.$t('challenges.label.daysLeft', {0: days});
+      if (this.notStartedYet) {
+        const remainingSeconds = parseInt((this.startDateMillis - Date.now()) / 1000);
+        const days = Math.floor(remainingSeconds / (60 * 60 * 24));
+        const hours = Math.floor((remainingSeconds % (60 * 60 * 24)) / (60 * 60));
+        const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
+        return this.$t('rules.card.timerShort', {0: days, 1: hours, 2: minutes});
+      } else if (this.endDateMillis && !this.alreadyEnded) {
+        const remainingSeconds = parseInt((this.endDateMillis - Date.now()) / 1000);
+        const days = Math.floor(remainingSeconds / (60 * 60 * 24));
+        const hours = Math.floor((remainingSeconds % (60 * 60 * 24)) / (60 * 60));
+        const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
+        return this.$t('rules.card.timerShort', {0: days, 1: hours, 2: minutes});
       }
       return null;
     },
