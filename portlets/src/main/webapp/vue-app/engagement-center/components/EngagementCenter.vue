@@ -49,9 +49,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :action-value-extensions="actionValueExtensions" />
         </v-tab-item>
         <v-tab-item>
-          <challenges
-            :is-administrator="isAdministrator"
-            :challenge-id="challengeId" />
+          <engagement-center-rules :is-administrator="isAdministrator" />
         </v-tab-item>
         <v-tab-item>
           <realizations
@@ -100,7 +98,6 @@ export default {
     initialized: false,
     tab: null,
     earnerId: eXo.env.portal.userIdentityId,
-    challengeId: null,
     program: null,
     displayProgramDetail: false,
     events: [],
