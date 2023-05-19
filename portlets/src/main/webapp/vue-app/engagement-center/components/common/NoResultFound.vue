@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-flex class="searchNoResults justify-center d-flex border-box-sizing emptyChallenges">
+  <v-flex class="searchNoResults justify-center d-flex border-box-sizing empty-rules-message">
     <div class="d-flex flex-column">
       <img
         src="/gamification-portlets/skin/images/challenge_not_found_filter_image.png"

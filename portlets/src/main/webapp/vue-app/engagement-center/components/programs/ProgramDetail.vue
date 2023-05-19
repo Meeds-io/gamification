@@ -106,7 +106,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :items="programRulesToDisplay"
                 :options.sync="options"
                 :server-items-length="totalSize"
-                :loading="loadingRules"
                 :show-rows-border="false"
                 mobile-breakpoint="0"
                 hide-default-footer
@@ -277,6 +276,13 @@ export default {
     options() {
       this.retrieveProgramRules();
     },
+    loadingRules() {
+      if (this.loadingRules) {
+        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      } else {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+      }
+    },
     keyword() {
       if (!this.keyword) {
         this.retrieveProgramRules();
@@ -290,11 +296,13 @@ export default {
     },
   },
   created() {
-    this.$root.$on('challenge-delete-confirm', this.confirmDelete);
-    this.$root.$on('program-rules-refresh', this.retrieveProgramRules);
     this.$root.$on('program-deleted', this.backToProgramList);
     this.$root.$on('program-updated', this.programUpdated);
+    this.$root.$on('rule-created', this.retrieveProgramRules);
+    this.$root.$on('rule-updated', this.retrieveProgramRules);
+    this.$root.$on('rule-deleted', this.retrieveProgramRules);
     this.$root.$on('announcement-added', this.retrieveProgramRules);
+    this.$root.$on('rule-delete-confirm', this.confirmDelete);
     window.addEventListener('popstate', () => {
       this.backToProgramList();
     });
@@ -356,9 +364,7 @@ export default {
           this.totalSize = data.size || 0;
           return this.$nextTick();
         })
-        .finally(() => {
-          this.loadingRules = false;
-        });
+        .finally(() => this.loadingRules = false);
     },
     backToProgramList() {
       this.options.page = 1;
@@ -379,9 +385,8 @@ export default {
       this.loading = true;
       this.$ruleService.deleteRule(this.selectedRule.id)
         .then((deletedRule) => {
-          this.$root.$emit('program-rule-deleted', deletedRule);
+          this.$root.$emit('rule-deleted', deletedRule);
           this.$engagementCenterUtils.displayAlert(this.$t('programs.details.ruleDeleteSuccess'));
-          this.retrieveProgramRules();
         })
         .finally(() => this.loading = false);
     },
