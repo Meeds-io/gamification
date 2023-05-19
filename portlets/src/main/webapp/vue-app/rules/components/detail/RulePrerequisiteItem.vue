@@ -24,13 +24,14 @@
       <v-btn
         :loading="loading"
         :class="prerequisiteRuleValid && 'btn' || 'btn-primary'"
-        class="mx-auto mb-4"
+        max-width="250"
+        class="mb-4"
         v-bind="attrs"
         v-on="on"
         @click="openRule">
         <v-card
           :class="!prerequisiteRuleValid && 'white--text'"
-          max-width="250"
+          max-width="220"
           color="transparent"
           class="text-truncate"
           flat>

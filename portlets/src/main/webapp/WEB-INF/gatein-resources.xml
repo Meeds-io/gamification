@@ -78,7 +78,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <portlet>
     <name>EngagementCenter</name>
     <module>
-      <load-group>engagement-center-user-actions</load-group>
       <script>
         <minify>false</minify>
         <path>/js/engagementCenter.bundle.js</path>
@@ -88,6 +87,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>realizationComponents</module>
+      </depends>
+      <depends>
+        <module>ruleComponents</module>
       </depends>
       <depends>
         <module>extensionRegistry</module>
@@ -319,6 +321,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <path>/js/challengesOverview.bundle.js</path>
       </script>
       <depends>
+        <module>ruleComponents</module>
+      </depends>
+      <depends>
         <module>vue</module>
       </depends>
       <depends>
@@ -471,7 +476,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
     </module>
   </portlet>
-  
+
   <module>
     <name>realizationComponents</name>
     <script>
@@ -496,6 +501,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>extensionRegistry</module>
+    </depends>
+  </module>
+
+  <module>
+    <name>ruleComponents</name>
+    <load-group>engagement-center-user-actions</load-group>
+    <script>
+      <minify>false</minify>
+      <path>/js/ruleComponents.bundle.js</path>
+    </script>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
     </depends>
   </module>
 

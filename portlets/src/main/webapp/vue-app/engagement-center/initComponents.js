@@ -27,8 +27,10 @@ import ProgramSuggester from './components/common/ProgramSuggester.vue';
 import EngagementCenter from './components/EngagementCenter.vue';
 import NoResultFound from './components/common/NoResultFound.vue';
 import ResultNotFound from './components/common/ResultNotFound.vue';
-import ButtonGroupItem from './components/common/ButtonGroupItem.vue';
-import RuleSuggester from './components/common/RuleSuggester.vue';
+import RulesToolbar from './components/programs/RulesToolbar.vue';
+import NoRuleFound from './components/programs/NoRuleFound.vue';
+import RuleTitle from './components/programs/RuleTitle.vue';
+import RuleItem from './components/programs/RuleItem.vue';
 
 import Programs from './components/programs/Programs.vue';
 import ProgramCard from './components/programs/ProgramCard.vue';
@@ -38,28 +40,8 @@ import ProgramOwnersDrawer from './components/programs/ProgramOwnersDrawer.vue';
 import ProgramDetail from './components/programs/ProgramDetail.vue';
 import ProgramOwnerAssignment from './components/programs/ProgramOwnerAssignment.vue';
 
-import RuleTitle from './components/rules/RuleTitle.vue';
-import RuleItem from './components/rules/RuleItem.vue';
-import RuleFormDrawer from './components/rules/RuleFormDrawer.vue';
-import RuleRecurrenceInput from './components/rules/form/RuleRecurrenceInput.vue';
-import RuleLockInput from './components/rules/form/RuleLockInput.vue';
-import RulesToolbar from './components/rules/RulesToolbar.vue';
-import NoRuleFound from './components/rules/NoRuleFound.vue';
-import RuleDetailDrawer from './components/rules/RuleDetailDrawer.vue';
-import RuleAnnouncements from './components/rules/detail/RuleAnnouncements.vue';
-import RuleProgram from './components/rules/detail/RuleProgram.vue';
-import RuleDates from './components/rules/detail/RuleDates.vue';
-import RuleHeader from './components/rules/detail/RuleHeader.vue';
-import RuleDescription from './components/rules/detail/RuleDescription.vue';
-import RuleRecurrence from './components/rules/detail/RuleRecurrence.vue';
-import RulePrerequisites from './components/rules/detail/RulePrerequisites.vue';
-import RulePrerequisiteItem from './components/rules/detail/RulePrerequisiteItem.vue';
-import RuleAnnouncementForm from './components/rules/detail/RuleAnnouncementForm.vue';
-import WinnersDrawer from './components/rules/WinnersDrawer.vue';
-
 import Assignment from './components/common/Assignment.vue';
 import AvatarsList from './components/common/AvatarsList.vue';
-import DescriptionEditor from './components/common/DescriptionEditor.vue';
 import ImageSelector from './components/common/ImageSelector.vue';
 import WelcomeMessage from './components/common/WelcomeMessage.vue';
 
@@ -73,7 +55,6 @@ const components = {
   'domain-challenges-list': DomainChallengesList,
   'challenge-date-picker': ChallengeDatePicker,
   'program-suggester': ProgramSuggester,
-  'rule-suggester': RuleSuggester,
   'engagement-center-no-results': NoResultFound,
   'engagement-center-result-not-found': ResultNotFound,
   'engagement-center': EngagementCenter,
@@ -85,28 +66,9 @@ const components = {
   'engagement-center-program-detail': ProgramDetail,
   'engagement-center-program-owner-assignment': ProgramOwnerAssignment,
   'engagement-center-rules-toolbar': RulesToolbar,
-  'engagement-center-no-rule-found': NoRuleFound,
   'engagement-center-rule-item': RuleItem,
   'engagement-center-rule-title': RuleTitle,
-
-  'engagement-center-rule-form-drawer': RuleFormDrawer,
-  'engagement-center-button-group-item': ButtonGroupItem,
-  'engagement-center-rule-recurrence-input': RuleRecurrenceInput,
-  'engagement-center-rule-lock-input': RuleLockInput,
-  'engagement-center-description-editor': DescriptionEditor,
-
-  'engagement-center-rule-detail-drawer': RuleDetailDrawer,
-  'engagement-center-rule-header': RuleHeader,
-  'engagement-center-rule-description': RuleDescription,
-  'engagement-center-rule-program': RuleProgram,
-  'engagement-center-rule-announcements': RuleAnnouncements,
-  'engagement-center-rule-recurrence': RuleRecurrence,
-  'engagement-center-rule-dates': RuleDates,
-  'engagement-center-rule-prerequisites': RulePrerequisites,
-  'engagement-center-rule-prerequisite-item': RulePrerequisiteItem,
-  'engagement-center-winners-details': WinnersDrawer,
-  'engagement-center-rule-announcement-form': RuleAnnouncementForm,
-
+  'engagement-center-no-rule-found': NoRuleFound,
   'engagement-center-assignment': Assignment,
   'engagement-center-avatars-list': AvatarsList,
   'engagement-center-image-selector': ImageSelector,

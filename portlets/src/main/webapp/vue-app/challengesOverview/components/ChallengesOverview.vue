@@ -84,8 +84,11 @@
     </gamification-overview-widget>
     <engagement-center-rule-detail-drawer
       ref="challengeDetailsDrawer"
+      :action-value-extensions="actionValueExtensions"
       :is-overview-displayed="true" />
-    <engagement-center-winners-details ref="winnersDetails" />
+    <engagement-center-winners-details
+      ref="winnersDetails"
+      :action-value-extensions="actionValueExtensions" />
   </v-app>
 </template>
 <script>
@@ -99,6 +102,9 @@ export default {
     loading: true,
     rules: [],
     orderByRealizations: true,
+    extensionApp: 'engagementCenterActions',
+    actionValueExtensionType: 'user-actions',
+    actionValueExtensions: {},
   }),
   computed: {
     emptySummaryText() {
@@ -115,11 +121,15 @@ export default {
     },
   },
   created() {
+    document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
+    this.refreshActionValueExtensions();
+
     document.addEventListener('widget-row-click-event', (event) => {
       if (event?.detail) {
         document.dispatchEvent(new CustomEvent('rule-detail-drawer', { detail: event.detail }));
       }});
     this.retrieveRules();
+    this.$root.$on('announcement-added', this.retrieveRules);
   },
   methods: {
     retrieveRules() {
@@ -140,6 +150,20 @@ export default {
           this.rules = result?.rules || [];
           this.rules = this.rules.sort((challenge1, challenge2) => challenge2.score - challenge1.score);
         }).finally(() => this.loading = false);
+    },
+    refreshActionValueExtensions() {
+      const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
+      let changed = false;
+      extensions.forEach(extension => {
+        if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
+          this.actionValueExtensions[extension.type] = extension.options;
+          changed = true;
+        }
+      });
+      // force update of attribute to re-render switch new extension type
+      if (changed) {
+        this.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
+      }
     },
   },
 };

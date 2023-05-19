@@ -105,6 +105,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 export default {
+  props: {
+    actionValueExtensions: {
+      type: Object,
+      default: function() {
+        return null;
+      },
+    },
+  },
   data() {
     return {
       drawer: false,
