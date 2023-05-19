@@ -196,7 +196,7 @@ export default {
       dateFilter: 'STARTED',
       status: 'ENABLED',
       keyword: null,
-      expand: 'userAnnouncements',
+      announcementsLimit: 3,
       programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`
     };
   },
@@ -338,10 +338,7 @@ export default {
     },
     retrieveProgramRules() {
       const page = this.options && this.options.page;
-      let itemsPerPage = this.options && this.options.itemsPerPage;
-      if (itemsPerPage <= 0) {
-        itemsPerPage = this.totalSize || 10;
-      }
+      const itemsPerPage = this.options?.itemsPerPage || 10;
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;
       return this.$ruleService.getRules({
@@ -351,10 +348,7 @@ export default {
         dateFilter: this.dateFilter,
         offset,
         limit: itemsPerPage,
-        announcementsLimit: this.announcementsPerChallenge,
-        orderByRealizations: this.orderByRealizations,
-        excludedRuleIds: this.realizedChallenges,
-        expand: this.expand,
+        announcementsLimit: this.announcementsLimit,
       })
         .then((data) => {
           this.programRules = data.rules || [];

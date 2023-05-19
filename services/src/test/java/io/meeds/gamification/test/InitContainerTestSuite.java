@@ -60,7 +60,6 @@ import io.meeds.gamification.storage.AnnouncementStorageTest;
 import io.meeds.gamification.storage.ProgramStorageTest;
 import io.meeds.gamification.storage.RealizationsStorageTest;
 import io.meeds.gamification.storage.RuleStorageTest;
-import io.meeds.gamification.upgrade.RuleIndexingUpgradePluginTest;
 import io.meeds.gamification.utils.UtilsTest;
 
 @RunWith(Suite.class)
@@ -94,7 +93,6 @@ import io.meeds.gamification.utils.UtilsTest;
     GamificationProfileListenerTest.class,
     AnnouncementActivityUpdaterTest.class,
     RuleSearchConnectorTest.class,
-    RuleIndexingUpgradePluginTest.class,
     RuleIndexingServiceConnectorTest.class,
     RulesESListenerTest.class,
     GamificationRelationshipListenerTest.class,

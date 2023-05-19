@@ -258,53 +258,53 @@ public class RealizationServiceITTest extends AbstractServiceTest {
 
   public void testLeaderboardRank() {
     ProgramDTO program = newProgram();
-    RuleDTO ruleDTO = newRuleDTO(RULE_NAME, program.getId());
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    RuleDTO rule = newRuleDTO(RULE_NAME, program.getId());
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_USER_EARNER,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_USER_EARNER,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_USER_RECEIVER,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE2_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE2_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE2_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE2_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,

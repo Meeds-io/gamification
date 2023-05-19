@@ -29,6 +29,7 @@
         v-on="on"
         @click="openRule">
         <v-card
+          :class="!prerequisiteRuleValid && 'white--text'"
           max-width="250"
           color="transparent"
           class="text-truncate"
@@ -71,7 +72,7 @@ export default {
   methods: {
     openRule() {
       this.loading = true;
-      this.$ruleService.getRuleById(this.prerequisiteRule.id)
+      this.$ruleService.getRuleById(this.prerequisiteRule.id, 'countAnnouncements')
         .then(rule => this.$root.$emit('rule-detail-drawer', rule))
         .finally(() => this.loading = false);
     },

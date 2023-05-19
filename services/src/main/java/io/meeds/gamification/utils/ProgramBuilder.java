@@ -20,22 +20,67 @@ package io.meeds.gamification.utils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.dao.RuleDAO;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.model.ProgramDTO;
+import io.meeds.gamification.model.UserInfo;
+import io.meeds.gamification.rest.model.ProgramRestEntity;
 
 public class ProgramBuilder {
+
+  private static final Log LOG = ExoLogger.getLogger(ProgramBuilder.class);
 
   private ProgramBuilder() {
     // Class with static methods
   }
 
+  public static ProgramRestEntity toRestEntity(ProgramDTO program, String username) {
+    if (program == null) {
+      return null;
+    }
+    return new ProgramRestEntity(program.getId(), // NOSONAR
+                                 program.getTitle(),
+                                 program.getDescription(),
+                                 program.getAudienceId(),
+                                 program.getPriority(),
+                                 program.getCreatedBy(),
+                                 program.getCreatedDate(),
+                                 program.getLastModifiedBy(),
+                                 program.getLastModifiedDate(),
+                                 program.isDeleted(),
+                                 program.isEnabled(),
+                                 program.getBudget(),
+                                 program.getType(),
+                                 null,
+                                 program.getCoverFileId(),
+                                 program.getCoverUrl(),
+                                 program.getOwnerIds(),
+                                 program.getRulesTotalScore(),
+                                 program.getAudienceId() > 0 ? Utils.getSpaceById(String.valueOf(program.getAudienceId())) : null,
+                                 Utils.toUserContext(program, username),
+                                 getProgramOwnersByIds(program.getOwnerIds(), program.getAudienceId()));
+  }
+
+  public static List<ProgramRestEntity> toRestEntities(List<ProgramDTO> domains, String username) {
+    return domains.stream().map(program -> toRestEntity(program, username)).toList();
+  }
+
   public static List<ProgramDTO> fromEntities(RuleDAO ruleDAO,
-                                             List<ProgramEntity> domains) {
+                                              List<ProgramEntity> domains) {
     return domains.stream()
                   .filter(Objects::nonNull)
                   .map(entity -> fromEntity(ruleDAO, entity))
@@ -114,6 +159,33 @@ public class ProgramBuilder {
       return 0;
     }
     return ruleDAO.getRulesTotalScoreByDomain(domainId);
+  }
+
+  private static List<UserInfo> getProgramOwnersByIds(Set<Long> ids, long spaceId) {
+    if (ids == null || ids.isEmpty()) {
+      return Collections.emptyList();
+    }
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+    Space space = spaceService.getSpaceById(String.valueOf(spaceId));
+    return ids.stream()
+              .distinct()
+              .map(id -> {
+                try {
+                  Identity identity = identityManager.getIdentity(String.valueOf(id));
+                  if (identity != null
+                      && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())
+                      && !spaceService.isManager(space, identity.getRemoteId())
+                      && spaceService.isMember(space, identity.getRemoteId())) {
+                    return Utils.toUserInfo(identity);
+                  }
+                } catch (Exception e) {
+                  LOG.warn("Error when getting domain owner with id {}. Ignore retrieving identity information", id, e);
+                }
+                return null;
+              })
+              .filter(Objects::nonNull)
+              .toList();
   }
 
 }
