@@ -18,11 +18,6 @@
  *
  */
  
-import Challenges from './components/challenges/Challenges.vue';
-import ChallengeCard from './components/challenges/ChallengeCard.vue';
-import ChallengesList from './components/challenges/ChallengesList.vue';
-import DomainChallengesList from './components/challenges/DomainChallengesList.vue';
-import ChallengeDatePicker from './components/challenges/ChallengeDatePicker.vue';
 import ProgramSuggester from './components/common/ProgramSuggester.vue';
 import EngagementCenter from './components/EngagementCenter.vue';
 import NoResultFound from './components/common/NoResultFound.vue';
@@ -40,6 +35,22 @@ import ProgramOwnersDrawer from './components/programs/ProgramOwnersDrawer.vue';
 import ProgramDetail from './components/programs/ProgramDetail.vue';
 import ProgramOwnerAssignment from './components/programs/ProgramOwnerAssignment.vue';
 
+import Rules from './components/rules/Rules.vue';
+import RuleCard from './components/rules/card/RuleCard.vue';
+import RuleCardMask from './components/rules/card/RuleCardMask.vue';
+import RuleCardMaskContent from './components/rules/card/RuleCardMaskContent.vue';
+import RuleCardMaskPrequisiteRules from './components/rules/card/RuleCardMaskPrequisiteRules.vue';
+import RuleCardMaskRemainingDates from './components/rules/card/RuleCardMaskRemainingDates.vue';
+import RuleCardMaskRecurrence from './components/rules/card/RuleCardMaskRecurrence.vue';
+import RuleCardMenu from './components/rules/card/RuleCardMenu.vue';
+import RuleCardRecurrence from './components/rules/card/RuleCardRecurrence.vue';
+import RuleCardPoints from './components/rules/card/RuleCardPoints.vue';
+import RuleCardRemainingDates from './components/rules/card/RuleCardRemainingDates.vue';
+
+import RuleCategories from './components/rules/category/Categories.vue';
+import RuleCategory from './components/rules/category/Category.vue';
+import RulesList from './components/rules/category/RulesList.vue';
+
 import Assignment from './components/common/Assignment.vue';
 import AvatarsList from './components/common/AvatarsList.vue';
 import ImageSelector from './components/common/ImageSelector.vue';
@@ -49,11 +60,6 @@ import RuleActionValue from './components/actionValues/RuleActionValue.vue';
 import ChallengeActionValue from './components/actionValues/ChallengeActionValue.vue';
 
 const components = {
-  'challenges': Challenges,
-  'challenge-card': ChallengeCard,
-  'challenges-list': ChallengesList,
-  'domain-challenges-list': DomainChallengesList,
-  'challenge-date-picker': ChallengeDatePicker,
   'program-suggester': ProgramSuggester,
   'engagement-center-no-results': NoResultFound,
   'engagement-center-result-not-found': ResultNotFound,
@@ -69,6 +75,20 @@ const components = {
   'engagement-center-rule-item': RuleItem,
   'engagement-center-rule-title': RuleTitle,
   'engagement-center-no-rule-found': NoRuleFound,
+  'engagement-center-rules': Rules,
+  'engagement-center-rules-categories': RuleCategories,
+  'engagement-center-rules-category': RuleCategory,
+  'engagement-center-rules-list': RulesList,
+  'engagement-center-rule-card': RuleCard,
+  'engagement-center-rule-card-menu': RuleCardMenu,
+  'engagement-center-rule-card-mask': RuleCardMask,
+  'engagement-center-rule-card-mask-content': RuleCardMaskContent,
+  'engagement-center-rule-card-mask-prequisite-rules': RuleCardMaskPrequisiteRules,
+  'engagement-center-rule-card-mask-remaining-dates': RuleCardMaskRemainingDates,
+  'engagement-center-rule-card-mask-recurrence': RuleCardMaskRecurrence,
+  'engagement-center-rule-card-recurrence': RuleCardRecurrence,
+  'engagement-center-rule-card-points': RuleCardPoints,
+  'engagement-center-rule-card-remaining-dates': RuleCardRemainingDates,
   'engagement-center-assignment': Assignment,
   'engagement-center-avatars-list': AvatarsList,
   'engagement-center-image-selector': ImageSelector,

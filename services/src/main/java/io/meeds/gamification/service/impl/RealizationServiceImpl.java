@@ -324,12 +324,13 @@ public class RealizationServiceImpl implements RealizationService {
       if (!isRecurrenceValid(rule, earnerIdentityId)) {
         realizationRestriction.setValidRecurrence(false);
         RecurrenceType recurrence = rule.getRecurrence();
-        if (recurrence == RecurrenceType.DAILY) {
-          realizationRestriction.setNextOccurenceDaysLeft(1);
-        } else if (recurrence == RecurrenceType.WEEKLY || recurrence == RecurrenceType.MONTHLY) {
-          Instant now = Instant.now();
+        if (recurrence == RecurrenceType.DAILY || recurrence == RecurrenceType.WEEKLY || recurrence == RecurrenceType.MONTHLY) {
+          Date endDate = Utils.parseSimpleDate(rule.getEndDate());
           Instant nextDate = recurrence.getNextPeriodStartDate().toInstant();
-          realizationRestriction.setNextOccurenceDaysLeft(ChronoUnit.DAYS.between(now, nextDate));
+          if (endDate == null || endDate.toInstant().isAfter(nextDate)) {
+            Instant now = Instant.now();
+            realizationRestriction.setNextOccurenceDaysLeft(ChronoUnit.DAYS.between(now, nextDate));
+          }
         }
       }
       if (CollectionUtils.isNotEmpty(rule.getPrerequisiteRuleIds())) {
