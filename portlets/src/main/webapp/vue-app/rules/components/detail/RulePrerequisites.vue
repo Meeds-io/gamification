@@ -44,11 +44,6 @@
           :key="r.id"
           :rule="rule"
           :prerequisite-rule="r" />
-        <engagement-center-rule-prerequisite-item
-          v-for="r in achievedPrerequisites"
-          :key="r.id"
-          :rule="rule"
-          :prerequisite-rule="r" />
       </v-list-item-subtitle>
     </v-list-item-content>
   </v-list-item>
@@ -67,16 +62,6 @@ export default {
     },
     prerequisitesCount() {
       return this.rule.prerequisiteRules?.length || 0;
-    },
-    achievedPrerequisites() {
-      const prerequisitesStatus = this.rule?.userInfo?.context?.validPrerequisites;
-      return prerequisitesStatus
-          && this.prerequisiteRules
-          && this.prerequisiteRules.filter(r => prerequisitesStatus[`${r.id}`])
-          || [];
-    },
-    achievedPrerequisitesCount() {
-      return this.achievedPrerequisites.length;
     },
     remainingPrerequisites() {
       const prerequisitesStatus = this.rule?.userInfo?.context?.validPrerequisites;
