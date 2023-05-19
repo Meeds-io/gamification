@@ -1,0 +1,74 @@
+<!--
+
+ This file is part of the Meeds project (https://meeds.io/).
+
+ Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 3 of the License, or (at your option) any later version.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+-->
+<template>
+  <div class="rule-card-mask-recurrence d-flex flex-column align-center">
+    <v-icon
+      size="30"
+      class="white--text">
+      fas fa-check
+    </v-icon>
+    <v-card-text
+      v-sanitized-html="recurrenceTitle"
+      class="text-wrap title" />
+  </div>
+</template>
+<script>
+export default {
+  props: {
+    rule: {
+      type: Object,
+      default: null,
+    },
+  },
+  computed: {
+    recurrence() {
+      return this.rule.recurrence;
+    },
+    recurrenceValid() {
+      return this.rule?.userInfo?.context?.validRecurrence;
+    },
+    nextOccurenceDaysLeft() {
+      return this.rule?.userInfo?.context?.nextOccurenceDaysLeft;
+    },
+    recurrenceTitle() {
+      if (!this.nextOccurenceDaysLeft
+          && !this.recurrenceValid
+          && (this.recurrence === 'DAILY'
+              || this.recurrence === 'WEEKLY'
+              || this.recurrence === 'MONTHLY')) {
+        return this.$t('rules.card.actionAlreadyDone');
+      }
+      switch (this.recurrence) {
+      case 'ONCE':
+        return this.$t('rules.card.actionAlreadyDoneOnce');
+      case 'DAILY':
+        return this.$t('rules.card.actionAlreadyDoneOncePerDay', {0: '<strong>', 1: '</strong>'});
+      case 'WEEKLY':
+        return this.$t('rules.card.actionAlreadyDoneOncePerWeek', {0: '<strong>', 1: '</strong>', 2: this.nextOccurenceDaysLeft});
+      case 'MONTHLY':
+        return this.$t('rules.card.actionAlreadyDoneOncePerMonth', {0: '<strong>', 1: '</strong>', 2: this.nextOccurenceDaysLeft});
+      default:
+        return null;
+      }
+    },
+  },
+};
+</script>

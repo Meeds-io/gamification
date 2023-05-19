@@ -34,11 +34,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       cols="30"
       rows="10"
       class="d-none"></textarea>
-    <v-progress-circular
+    <v-card
       v-if="!editorReady"
-      :width="3"
-      indeterminate
-      class="loadingRing position-absolute" />
+      min-height="320"
+      class="d-flex align-center">
+      <v-progress-circular
+        :width="3"
+        indeterminate
+        class="loadingRing position-absolute" />
+    </v-card>
     <div
       :class="tooManyChars && 'tooManyChars' || ''"
       class="activityCharsCount">
