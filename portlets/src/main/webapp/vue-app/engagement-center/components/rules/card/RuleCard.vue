@@ -22,7 +22,6 @@
     <v-card
       id="ruleCard"
       class="mx-auto d-flex flex-column rule-card-info mx-2"
-      :width="challengeCardWidth"
       height="230"
       max-height="230"
       outlined
@@ -126,22 +125,5 @@ export default {
       }
     });
   },
-  methods: {
-    editChallenge(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      this.$ruleService.getRuleById(this.challenge?.id)
-        .then(rule => this.$root.$emit('rule-form-drawer', rule));
-    },
-    deleteRule(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      this.$root.$emit('rule-delete-confirm', this.challenge);
-    },
-  }
 };
 </script>
