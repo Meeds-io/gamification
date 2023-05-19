@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <div id="engagementCenterProgramDetail" class="pa-2 pa-sm-5">
     <div v-if="!isDeleted">
       <div class="py-2 py-sm-5 d-flex">
-        <v-tooltip bottom>
+        <v-tooltip :disabled="$root.isMobile" bottom>
           <template #activator="{ on }">
             <div
               v-on="on"

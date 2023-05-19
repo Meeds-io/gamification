@@ -70,7 +70,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </exo-user-avatar>
         </v-list-item-content>
         <v-list-item-action>
-          <v-tooltip bottom>
+          <v-tooltip :disabled="$root.isMobile" bottom>
             <template #activator="{ on }">
               <div v-on="on">
                 <v-btn
