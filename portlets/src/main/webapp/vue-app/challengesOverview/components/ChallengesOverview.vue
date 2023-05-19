@@ -86,8 +86,8 @@
       ref="challengeDetailsDrawer"
       :action-value-extensions="actionValueExtensions"
       :is-overview-displayed="true" />
-    <engagement-center-winners-details
-      ref="winnersDetails"
+    <engagement-center-rule-participants-drawer
+      ref="participantsDrawer"
       :action-value-extensions="actionValueExtensions" />
   </v-app>
 </template>
@@ -127,7 +127,8 @@ export default {
     document.addEventListener('widget-row-click-event', (event) => {
       if (event?.detail) {
         document.dispatchEvent(new CustomEvent('rule-detail-drawer', { detail: event.detail }));
-      }});
+      }
+    });
     this.retrieveRules();
     this.$root.$on('announcement-added', this.retrieveRules);
   },

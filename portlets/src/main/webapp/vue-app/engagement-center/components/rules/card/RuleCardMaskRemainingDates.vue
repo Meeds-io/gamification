@@ -19,26 +19,11 @@
 
 -->
 <template>
-  <v-list-item
+  <engagement-center-rule-card-mask-content
     v-if="datesInfo"
-    class="rule-dates pa-0"
-    :class="notStartedYet && 'grey'"
-    dense>
-    <v-list-item-avatar class="me-2">
-      <v-avatar size="32" tile>
-        <v-icon
-          :class="notStartedYet && 'white--text' || 'primary--text'"
-          size="30">
-          {{ notStartedYet && 'fas fa-calendar-plus' || 'fas fa-calendar-day' }}
-        </v-icon>
-      </v-avatar>
-    </v-list-item-avatar>
-    <v-list-item-content>
-      <v-list-item-title :class="notStartedYet && 'white--text'">
-        {{ datesInfo }}
-      </v-list-item-title>
-    </v-list-item-content>
-  </v-list-item>
+    :text="datesInfo"
+    icon="fas fa-calendar-plus"
+    class="rule-card-mask-dates" />
 </template>
 <script>
 export default {
@@ -67,9 +52,6 @@ export default {
       } else if (this.notStartedYet) {
         const days = Math.round((this.startDateMillis - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('challenges.label.opensIn', {0: days});
-      } else if (this.endDateMillis) {
-        const days = Math.round((this.endDateMillis - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
-        return this.$t('challenges.label.daysLeft', {0: days});
       }
       return null;
     },
