@@ -19,7 +19,7 @@
 
 -->
 <template>
-  <v-tooltip bottom>
+  <v-tooltip :disabled="$root.isMobile" bottom>
     <template #activator="{ on, attrs }">
       <v-btn
         :loading="loading"

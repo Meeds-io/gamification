@@ -40,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         dense>
         <v-list-item class="px-3">
           <v-list-item-content class="align-center text-wrap text-break py-0">
-            <v-tooltip bottom>
+            <v-tooltip :disabled="$root.isMobile" bottom>
               <template #activator="{ on, attrs }">
                 <span
                   class="d-flex-inline position-relative text-truncate-2 font-weight-bold text-subtitle-1 text--secondary" 
