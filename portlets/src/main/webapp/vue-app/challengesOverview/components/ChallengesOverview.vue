@@ -16,7 +16,7 @@
 <template>
   <v-app>
     <gamification-overview-widget
-      v-if="!displayChallenges"
+      v-if="!hasRules"
       :loading="loading">
       <template #title>
         {{ $t('gamification.overview.emptyChallengesOverviewTitle') }}
@@ -42,9 +42,9 @@
       <template #content>
         <gamification-overview-widget-row
           class="py-auto"                   
-          v-for="(item, index) in listChallenges" 
+          v-for="(item, index) in rules" 
           :key="index"
-          :click-event-param="`${item.challengeId}`"
+          :click-event-param="item"
           :is-challenge-id-provided="true">
           <template #icon>
             <v-icon
@@ -56,27 +56,24 @@
           </template>
           <template #content>
             <span>
-              <v-list
-                subheader
-                two-line>
-                <v-list-item
-                  two-line>
+              <v-list subheader two-line>
+                <v-list-item two-line>
                   <v-list-item-content>
-                    <v-list-item-title class="">
-                      {{ item.challengeTitle }}
+                    <v-list-item-title>
+                      {{ item.title }}
                     </v-list-item-title>
-                    <v-list-item-subtitle v-if="item.challengesAnnouncementsCount === 0"> 
+                    <v-list-item-subtitle v-if="item.announcementsCount === 0">
                       {{ $t('gamification.overview.label.firstAnnounecement') }}
                     </v-list-item-subtitle>
-                    <v-list-item-subtitle v-else-if="item.challengesAnnouncementsCount === 1"> 
-                      {{ item.challengesAnnouncementsCount }}  {{ $t('gamification.overview.label.participant') }}
+                    <v-list-item-subtitle v-else-if="item.announcementsCount === 1">
+                      1 {{ $t('gamification.overview.label.participant') }}
                     </v-list-item-subtitle>
-                    <v-list-item-subtitle v-else> 
-                      {{ item.challengesAnnouncementsCount }}  {{ $t('gamification.overview.label.participants') }}
+                    <v-list-item-subtitle v-else>
+                      {{ item.announcementsCount }} {{ $t('gamification.overview.label.participants') }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
                   <v-list-item-action>
-                    <v-list-item-action-text v-text="item.challengePoints + ' ' + $t('challenges.label.points') " class="mt-5" />
+                    <v-list-item-action-text v-text="item.score + ' ' + $t('challenges.label.points') " class="mt-5" />
                   </v-list-item-action>
                 </v-list-item>
               </v-list>
@@ -85,23 +82,22 @@
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
-    <rule-details-drawer
+    <engagement-center-rule-detail-drawer
       ref="challengeDetailsDrawer"
       :is-overview-displayed="true" />
+    <engagement-center-winners-details ref="winnersDetails" />
   </v-app>
 </template>
 <script>
 export default {
   data: () => ({
     search: '',
-    challengePerPage: 3,
+    pageSize: 3,
     announcementsPerChallenge: -1,
     filter: 'STARTED',
     period: 'WEEK',
     loading: true,
-    displayChallenges: false,
-    listChallenges: [],
-    realizedChallenges: [],
+    rules: [],
     orderByRealizations: true,
   }),
   computed: {
@@ -111,22 +107,22 @@ export default {
         1: '</a>',
       });
     },
+    hasRules() {
+      return this.rules?.length;
+    },
     challengesURL() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
     },
   },
   created() {
     document.addEventListener('widget-row-click-event', (event) => {
-      if (event) {
-        this.$ruleService.getRuleById(event.detail)
-          .then(challenge => {
-            document.dispatchEvent(new CustomEvent('rule-detail-drawer', { detail: challenge }));
-          });
+      if (event?.detail) {
+        document.dispatchEvent(new CustomEvent('rule-detail-drawer', { detail: event.detail }));
       }});
-    this.getChallenges();
+    this.retrieveRules();
   },
   methods: {
-    getChallenges() {
+    retrieveRules() {
       this.loading = true;
       return this.$ruleService.getRules({
         term: this.search,
@@ -134,32 +130,15 @@ export default {
         type: 'MANUAL',
         dateFilter: this.filter,
         offset: 0,
-        limit: this.challengePerPage,
+        limit: this.pageSize,
         announcementsLimit: this.announcementsPerChallenge,
         orderByRealizations: this.orderByRealizations,
-        excludedRuleIds: this.realizedChallenges,
         period: this.period,
+        expand: 'countAnnouncements',
       })
         .then(result => {
-          if (!result?.rules) {
-            return;
-          }
-          result.rules.forEach(data => {
-            const challenge = {};
-            challenge.challengeId = data.id;
-            challenge.challengeTitle = data.title;
-            challenge.challengePoints =  data.score;
-            challenge.challengesAnnouncementsCount = data.announcementsCount;
-            this.listChallenges.push(challenge);
-            this.realizedChallenges.push(data.id);
-          });
-          if (this.listChallenges.length < this.challengePerPage && this.orderByRealizations) {
-            this.orderByRealizations = false;
-            this.challengePerPage -= this.listChallenges.length;
-            return this.getChallenges();
-          }
-          this.listChallenges = this.listChallenges.sort((challenge1, challenge2) => challenge2.challengePoints - challenge1.challengePoints);
-          this.displayChallenges = this.listChallenges.length > 0;
+          this.rules = result?.rules || [];
+          this.rules = this.rules.sort((challenge1, challenge2) => challenge2.score - challenge1.score);
         }).finally(() => this.loading = false);
     },
   },
