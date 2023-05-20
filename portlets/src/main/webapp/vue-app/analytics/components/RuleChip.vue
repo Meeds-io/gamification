@@ -55,7 +55,7 @@ export default {
   }),
   computed: {
     ruleLink() {
-      return this.rule?.type === 'MANUAL' && `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.ruleId}`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions/${this.ruleId}`;
     },
   },
   created() {

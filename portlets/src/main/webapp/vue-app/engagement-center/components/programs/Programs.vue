@@ -92,7 +92,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div v-if="isAdministrator">
         <engagement-center-result-not-found 
           :display-back-arrow="false"
-          :message-title="$t('challenges.welcomeMessage')"
+          :message-title="$t('appCenter.welcomeMessage')"
           :message-info-one="$t('programs.label.welcomeMessageForManager')"
           :message-info-three="$t('programs.label.seeYouSoon')"
           :button-text="$t('programs.button.addProgram')"
@@ -102,13 +102,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <div v-if="isExternal">
           <engagement-center-result-not-found 
             :display-back-arrow="false"
-            :message-title="$t('challenges.welcomeMessage')"
+            :message-title="$t('appCenter.welcomeMessage')"
             :message-info-one="$t('programs.label.welcomeMessageForExternal')" />
         </div>
         <div v-else>
           <engagement-center-result-not-found 
             :display-back-arrow="false"
-            :message-title="$t('challenges.welcomeMessage')"
+            :message-title="$t('appCenter.welcomeMessage')"
             :button-text="$t('programs.label.joinSpace')"
             :message-info-one="$t('programs.label.welcomeMessageForUser')"
             :message-info-three="$t('programs.label.welcomeMessageTwoForUser')"
