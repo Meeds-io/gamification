@@ -77,11 +77,11 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
     if (lastUpdate != null) {
       return;
     }
-    realizationService.createRealizations(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR,
-                                          identityId,
-                                          identityId,
-                                          identityId,
-                                          IDENTITY_OBJECT_TYPE);
+    realizationService.createRealizationsAsync(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR,
+                                               identityId,
+                                               identityId,
+                                               identityId,
+                                               IDENTITY_OBJECT_TYPE);
   }
 
   @Override
@@ -97,11 +97,11 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
       return;
     }
 
-    realizationService.createRealizations(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER,
-                                          identityId,
-                                          identityId,
-                                          identityId,
-                                          IDENTITY_OBJECT_TYPE);
+    realizationService.createRealizationsAsync(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER,
+                                               identityId,
+                                               identityId,
+                                               identityId,
+                                               IDENTITY_OBJECT_TYPE);
   }
 
   @Override
@@ -135,11 +135,11 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
 
     String identityId = event.getProfile().getIdentity().getId();
 
-    realizationService.createRealizations(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME,
-                                          identityId,
-                                          identityId,
-                                          identityId,
-                                          IDENTITY_OBJECT_TYPE);
+    realizationService.createRealizationsAsync(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME,
+                                               identityId,
+                                               identityId,
+                                               identityId,
+                                               IDENTITY_OBJECT_TYPE);
   }
 
   private void clearUserActivitiesCache(String userIdentityId) {
