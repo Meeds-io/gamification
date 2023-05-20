@@ -20,7 +20,6 @@
 <template>
   <v-hover v-slot="{ hover }">
     <v-card
-      id="ruleCard"
       class="mx-auto d-flex flex-column rule-card-info mx-2"
       height="230"
       max-height="230"
@@ -28,7 +27,7 @@
       hover
       @click="$root.$emit('rule-detail-drawer', rule)">
       <div v-if="!isValid">
-        <div v-if="canEdit && hover" class="d-flex position-absolute full-width z-index-modal">
+        <div v-if="canEdit && hover" class="d-flex position-absolute full-width z-index-drawer">
           <div class="ms-auto mb-auto mt-4 me-4">
             <engagement-center-rule-card-menu
               :rule="rule"
@@ -55,7 +54,7 @@
         <div :title="title" class="text-truncate flex-grow-1">
           {{ title }}
         </div>
-        <div v-if="canEdit && hover && isValid" class="flex-grow-0">
+        <div v-if="canEdit && hover && isValid" class="flex-grow-0 d-flex align-center">
           <engagement-center-rule-card-menu :rule="rule" />
         </div>
       </v-card-title>

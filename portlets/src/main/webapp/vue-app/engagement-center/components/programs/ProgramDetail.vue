@@ -106,7 +106,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :items="programRulesToDisplay"
                 :options.sync="options"
                 :server-items-length="totalSize"
-                :loading="loadingRules"
                 :show-rows-border="false"
                 mobile-breakpoint="0"
                 hide-default-footer
@@ -277,6 +276,13 @@ export default {
     options() {
       this.retrieveProgramRules();
     },
+    loadingRules() {
+      if (this.loadingRules) {
+        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      } else {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+      }
+    },
     keyword() {
       if (!this.keyword) {
         this.retrieveProgramRules();
@@ -358,9 +364,7 @@ export default {
           this.totalSize = data.size || 0;
           return this.$nextTick();
         })
-        .finally(() => {
-          this.loadingRules = false;
-        });
+        .finally(() => this.loadingRules = false);
     },
     backToProgramList() {
       this.options.page = 1;

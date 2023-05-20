@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       rows="10"
       class="d-none"></textarea>
     <v-card
-      v-if="!editorReady"
+      v-if="!editorReady && visible"
       min-height="320"
       class="d-flex align-center">
       <v-progress-circular
@@ -58,6 +58,10 @@ export default {
     value: {
       type: String,
       default: null
+    },
+    visible: {
+      type: Boolean,
+      default: false,
     },
     label: {
       type: String,
