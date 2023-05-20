@@ -17,6 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <exo-drawer
     ref="ruleFormDrawer"
+    v-model="drawer"
     body-classes="hide-scroll decrease-z-index-more"
     class="EngagementCenterDrawer"
     right
@@ -78,6 +79,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :label="$t('rule.form.label.description')"
                 :placeholder="$t('rule.form.label.description.placeholder')"
                 :max-length="500"
+                :visible="drawer"
                 ck-editor-type="rule"
                 @addDescription="addDescription($event)"
                 @validity-updated=" validDescription = $event" />
@@ -318,6 +320,7 @@ export default {
     stepper: 0,
     programCoverSize: 40,
     isValidForm: true,
+    drawer: false,
     scoreRules: [
       v => ( v && v <= 10000 ),
     ],
