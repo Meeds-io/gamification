@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <div>
     <img
       src="/gamification-portlets/skin/images/Challenge_app_backg_image.png"
-      :alt="$t('challenges.welcomeMessageImgAlt')"
+      :alt="$t('actions.welcomeMessageImgAlt')"
       class="justify-center ma-auto d-flex flex-no-wrap"
       width="800px"
       loading="lazy">
