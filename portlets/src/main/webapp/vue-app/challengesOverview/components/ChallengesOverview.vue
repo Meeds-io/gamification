@@ -34,7 +34,7 @@
     </gamification-overview-widget>
     <gamification-overview-widget
       v-else
-      :see-all-url="challengesURL"
+      :see-all-url="actionsPageURL"
       :extra-class="'px-0 mt-1'">
       <template #title>
         {{ $t('gamification.overview.challengesOverviewTitle') }}
@@ -105,19 +105,17 @@ export default {
     extensionApp: 'engagementCenterActions',
     actionValueExtensionType: 'user-actions',
     actionValueExtensions: {},
+    actionsPageURL: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
   }),
   computed: {
     emptySummaryText() {
       return this.$t('gamification.overview.challengesOverviewSummary', {
-        0: `<a class="primary--text font-weight-bold" href="${this.challengesURL}">`,
+        0: `<a class="primary--text font-weight-bold" href="${this.actionsPageURL}">`,
         1: '</a>',
       });
     },
     hasRules() {
       return this.rules?.length;
-    },
-    challengesURL() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
     },
   },
   created() {

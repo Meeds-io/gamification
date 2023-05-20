@@ -52,6 +52,11 @@ import io.meeds.gamification.constant.IdentityType;
     + "     ORDER BY total DESC")
 @NamedQuery(name = "RealizationEntity.findRealizationsByEarnerId", query = "SELECT a"
     + " FROM RealizationEntity a" + " WHERE a.earnerId = :earnerId" + "     ORDER BY a.globalScore DESC")
+@NamedQuery(
+  name = "RealizationEntity.getScoreByIdentityId",
+  query = " SELECT MAX(a.globalScore) FROM RealizationEntity a" +
+          " WHERE a.earnerId = :earnerId"
+)
 @NamedQuery(name = "RealizationEntity.findAllRealizationsByDomain", query = "SELECT"
     + " new io.meeds.gamification.model.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g WHERE g.domainEntity.id = :domainId AND g.earnerType = :earnerType AND g.status = :status GROUP BY  g.earnerId ORDER BY total DESC")

@@ -71,7 +71,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <engagement-center-result-not-found 
         v-else
         :display-back-arrow="false"
-        :message-title="$t('challenges.welcomeMessage')"
+        :message-title="$t('appCenter.welcomeMessage')"
         :message-info-one="$t('challenge.realization.noPeriodResult.messageOne')"
         :message-info-two="$t('challenge.realization.noPeriodResult.messageTwo')"
         :button-text="$t('programs.details.programDeleted.explore')"

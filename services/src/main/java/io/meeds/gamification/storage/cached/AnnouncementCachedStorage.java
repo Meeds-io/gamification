@@ -1,3 +1,20 @@
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ *
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package io.meeds.gamification.storage.cached;
 
 import java.io.Serializable;
@@ -25,8 +42,8 @@ public class AnnouncementCachedStorage extends AnnouncementStorage {
                                    CacheService cacheService) {
     super(realizationsStorage, ruleStorage);
 
-    ExoCache<Serializable, Integer> domainCache = cacheService.getCacheInstance(ANNOUNCEMENT_CACHE_NAME);
-    Loader<Serializable, Integer, Integer> domainLoader = new Loader<Serializable, Integer, Integer>() {
+    ExoCache<Serializable, Integer> announcementCache = cacheService.getCacheInstance(ANNOUNCEMENT_CACHE_NAME);
+    Loader<Serializable, Integer, Integer> announcementLoader = new Loader<Serializable, Integer, Integer>() {
       @Override
       public Integer retrieve(Integer context, Serializable key) throws Exception {
         if (context == ANNOUNCEMENT_ID_CONTEXT) {
@@ -36,7 +53,7 @@ public class AnnouncementCachedStorage extends AnnouncementStorage {
         }
       }
     };
-    this.announcementFutureCache = new FutureExoCache<>(domainLoader, domainCache);
+    this.announcementFutureCache = new FutureExoCache<>(announcementLoader, announcementCache);
   }
 
   @Override
