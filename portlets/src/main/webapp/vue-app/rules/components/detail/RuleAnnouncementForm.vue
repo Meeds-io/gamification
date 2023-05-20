@@ -179,7 +179,15 @@ export default {
       this.sending = true;
       this.$announcementService.createAnnouncement(announcement)
         .then(createdAnnouncement => {
-          this.$engagementCenterUtils.displayAlert(this.$t('challenges.announcementCreateSuccess'));
+          const message = `
+            <div class="d-flex flex-nowrap me-n14 pt-1 justify-center">
+              ${this.$t('challenges.announcementCreateSuccess')}
+              <a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${createdAnnouncement.activityId}" class="ms-4">
+                ${this.$t('announcement.alert.see')}
+              </a>
+            </div>
+          `;
+          this.$root.$emit('alert-message-html', message, 'success');
           this.$root.$emit('announcement-added', {detail: {
             announcement: createdAnnouncement,
             challengeId: this.rule.id,
