@@ -153,6 +153,24 @@ public interface RealizationService {
                                           String objectType);
 
   /**
+   * Creates new Realizations asynchronously switch an event name for a given
+   * object identified by its id and type
+   * 
+   * @param event              {@link RuleDTO} event name
+   * @param earnerIdentityId   {@link org.exoplatform.social.core.identity.model.Identity}
+   *                             id
+   * @param receiverIdentityId {@link org.exoplatform.social.core.identity.model.Identity}
+   *                             id
+   * @param objectId           the designated object type identifier
+   * @param objectType         an object type, like 'activity', 'kudos' ...
+   */
+  void createRealizationsAsync(String event,
+                               String earnerIdentityId,
+                               String receiverIdentityId,
+                               String objectId,
+                               String objectType);
+
+  /**
    * Updates an existing realization
    *
    * @param  realization             {@link RealizationDTO} object to update
@@ -212,8 +230,8 @@ public interface RealizationService {
    * @param  rule             {@link RuleDTO}
    * @param  earnerIdentityId {@link org.exoplatform.social.core.identity.model.Identity}
    *                            id
-   * @return                  {@link RealizationValidityContext} if can not create a
-   *                          realization, else null
+   * @return                  {@link RealizationValidityContext} if can not
+   *                          create a realization, else null
    */
   RealizationValidityContext getRealizationValidityContext(RuleDTO rule, String earnerIdentityId);
 
