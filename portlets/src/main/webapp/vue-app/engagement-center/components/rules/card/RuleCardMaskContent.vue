@@ -19,40 +19,32 @@
 
 -->
 <template>
-  <div class="rule-card-recurrence d-flex flex-nowrap justify-center">
+  <div
+    :class="icon && 'mt-n8'"
+    class="d-flex flex-column align-center">
     <v-icon
-      size="18"
-      class="primary--text me-2">
-      fas fa-redo-alt
+      v-if="icon"
+      class="white--text mb-4"
+      size="52">
+      {{ icon }}
     </v-icon>
     <div
-      v-sanitized-html="recurrenceTitle"
-      class="text-wrap">
+      v-if="text"
+      v-sanitized-html="text"
+      class="white--text text-wrap title px-2">
     </div>
   </div>
 </template>
 <script>
 export default {
   props: {
-    rule: {
-      type: Object,
+    icon: {
+      type: String,
       default: null,
     },
-  },
-  computed: {
-    recurrenceTitle() {
-      switch (this.rule?.recurrence) {
-      case 'ONCE':
-        return this.$t('rules.card.recurrenceDoItOnce', {0: '<strong>', 1: '</strong>'});
-      case 'DAILY':
-        return this.$t('rules.card.recurrenceDoItOncePerDay', {0: '<strong>', 1: '</strong>'});
-      case 'WEEKLY':
-        return this.$t('rules.card.recurrenceDoItOncePerWeek', {0: '<strong>', 1: '</strong>'});
-      case 'MONTHLY':
-        return this.$t('rules.card.recurrenceDoItOncePerMonth', {0: '<strong>', 1: '</strong>'});
-      default:
-        return null;
-      }
+    text: {
+      type: String,
+      default: null,
     },
   },
 };

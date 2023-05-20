@@ -20,7 +20,9 @@
 -->
 <template>
   <div v-if="datesInfo" class="rule-card-dates d-flex align-center">
-    <v-icon class="primary--text me-2 mb-1" size="16">
+    <v-icon
+      class="primary--text me-2 mb-1"
+      size="18">
       fas fa-calendar-check
     </v-icon>
     <div>

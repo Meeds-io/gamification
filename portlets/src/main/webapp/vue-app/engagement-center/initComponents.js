@@ -38,6 +38,7 @@ import ProgramOwnerAssignment from './components/programs/ProgramOwnerAssignment
 import Rules from './components/rules/Rules.vue';
 import RuleCard from './components/rules/card/RuleCard.vue';
 import RuleCardMask from './components/rules/card/RuleCardMask.vue';
+import RuleCardMaskContent from './components/rules/card/RuleCardMaskContent.vue';
 import RuleCardMaskPrequisiteRules from './components/rules/card/RuleCardMaskPrequisiteRules.vue';
 import RuleCardMaskRemainingDates from './components/rules/card/RuleCardMaskRemainingDates.vue';
 import RuleCardMaskRecurrence from './components/rules/card/RuleCardMaskRecurrence.vue';
@@ -81,6 +82,7 @@ const components = {
   'engagement-center-rule-card': RuleCard,
   'engagement-center-rule-card-menu': RuleCardMenu,
   'engagement-center-rule-card-mask': RuleCardMask,
+  'engagement-center-rule-card-mask-content': RuleCardMaskContent,
   'engagement-center-rule-card-mask-prequisite-rules': RuleCardMaskPrequisiteRules,
   'engagement-center-rule-card-mask-remaining-dates': RuleCardMaskRemainingDates,
   'engagement-center-rule-card-mask-recurrence': RuleCardMaskRecurrence,

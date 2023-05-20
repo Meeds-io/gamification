@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-hover v-slot="{ hover }">
     <tr>
       <td class="no-border-bottom ps-0">
-        <div @click="openRule" class="clickable d-flex flex-row ma-auto">
+        <div @click="openRule(false)" class="clickable d-flex flex-row ma-auto">
           <div class="d-flex flex-column col-2 col-sm-1 pa-0">
             <v-icon size="22" class="primary--text my-auto">
               {{ actionIcon }}
@@ -38,7 +38,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-btn
               icon
               class="me-2"
-              @click="$root.$emit('rule-detail-drawer', rule, true)">
+              @click="openRule(true)">
               <v-icon :size="iconSize">fas fa-bullhorn</v-icon>
             </v-btn>
           </div>
@@ -183,8 +183,8 @@ export default {
     editRule() {
       this.$root.$emit('rule-form-drawer', this.rule);
     },
-    openRule() {
-      this.$root.$emit('rule-detail-drawer', this.rule);
+    openRule(announceRule) {
+      this.$root.$emit('rule-detail-drawer', this.rule, announceRule);
     },
     deleteRule() {
       this.$emit('delete-rule', this.rule);

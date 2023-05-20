@@ -36,9 +36,10 @@
           </div>
         </div>
         <engagement-center-rule-card-mask>
-          <div v-if="!rule.enabled" class="title font-weight-text">
-            {{ $t('challenges.label.disabled') }}
-          </div>
+          <engagement-center-rule-card-mask-content
+            v-if="!rule.enabled"
+            :text="$t('challenges.label.disabled')"
+            class="rule-card-mask-disabled" />
           <engagement-center-rule-card-mask-remaining-dates
             v-else-if="!isValidDates"
             :rule="rule" />
@@ -50,8 +51,8 @@
             :rule="rule" />
         </engagement-center-rule-card-mask>
       </div>
-      <v-card-title class="text-truncate d-flex">
-        <div class="flex-grow-1">
+      <v-card-title class="d-flex flex-nowrap pb-0">
+        <div :title="title" class="text-truncate flex-grow-1">
           {{ title }}
         </div>
         <div v-if="canEdit && hover && isValid" class="flex-grow-0">
@@ -60,7 +61,7 @@
       </v-card-title>
       <v-card-text
         v-sanitized-html="description"
-        class="text-truncate-2" />
+        class="text-truncate-2 pb-0" />
       <template v-if="rule.enabled">
         <v-spacer />
         <v-card-text v-if="rule.recurrence">
@@ -101,7 +102,6 @@ export default {
       return this.rule?.description;
     },
     isValid() {
-      console.warn('this.rule?.userInfo?.context?.valid', this.rule.title, this.rule?.userInfo?.context?.valid, this.rule);
       return this.rule?.userInfo?.context?.valid;
     },
     isValidDates() {

@@ -19,19 +19,11 @@
 
 -->
 <template>
-  <div
+  <engagement-center-rule-card-mask-content
     v-if="hasRemainingPrerequisitesCount"
-    class="rule-card-mask-prerequisites d-flex flex-column align-center">
-    <v-icon
-      class="white--text"
-      size="30">
-      fas fa-lock
-    </v-icon>
-    <div
-      v-sanitized-html="prerequisitesTitle"
-      class="white--text text-wrap title">
-    </div>
-  </div>
+    :text="prerequisitesTitle"
+    icon="fas fa-lock"
+    class="rule-card-mask-prerequisites" />
 </template>
 <script>
 export default {
