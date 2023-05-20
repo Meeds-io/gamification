@@ -135,8 +135,7 @@ public class RealizationStorage {
   }
 
   public long getScoreByIdentityId(String earnerIdentityId) {
-    RealizationDTO aHistory = findLatestRealizationByIdentityId(earnerIdentityId);
-    return (aHistory != null ? aHistory.getGlobalScore() : 0);
+    return gamificationHistoryDAO.getScoreByIdentityId(earnerIdentityId);
   }
 
   public Map<Long, Long> findUsersReputationScoreBetweenDate(List<String> earnersId, Date fromDate, Date toDate) {
