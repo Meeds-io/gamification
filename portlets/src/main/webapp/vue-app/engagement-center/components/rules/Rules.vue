@@ -24,6 +24,10 @@
     class="rules-list border-box-sizing"
     role="main">
     <v-toolbar flat>
+      <v-switch
+        v-model="displayManual"
+        :label="$t('rules.filter.showChallenges')"
+        class="mb-n2 hidden-xs-only" />
       <v-spacer />
       <div class="rules-filter-toolbar text-center d-flex align-center justify-space-around">
         <v-text-field
@@ -44,7 +48,7 @@
         <select
           id="rulesStatusFilterSelect"
           v-model="filter"
-          class="rules-quick-filter-select my-auto ignore-vuetify-classes text-truncate mb-3"
+          class="rules-quick-filter-select my-auto ignore-vuetify-classes text-truncate mb-3 full-width"
           @change="retrieveRules()">
           <option
             v-for="item in ruleFilters"
@@ -61,8 +65,8 @@
       <engagement-center-result-not-found
         v-if="displayWelcomeMessage"
         :display-back-arrow="false"
-        :message-title="$t('challenges.welcomeMessage')"
-        :message-info-one="$t('challenges.welcomeMessageForRegularUser')" />
+        :message-title="$t('appCenter.welcomeMessage')"
+        :message-info-one="$t('actions.welcomeMessageForRegularUser')" />
       <engagement-center-result-not-found
         v-else-if="displayNoSearchResult"
         :display-back-arrow="false"
@@ -75,10 +79,10 @@
     </v-card>
     <exo-confirm-dialog
       ref="deleteRuleConfirmDialog"
-      :title="$t('challenges.delete')"
-      :message="$t('challenges.deleteConfirmMessage')"
-      :ok-label="$t('challenges.ok')"
-      :cancel-label="$t('engagementCenter.button.cancel')"
+      :title="$t('programs.details.title.confirmDeleteRule')"
+      :message="$t('actions.deleteConfirmMessage')"
+      :ok-label="$t('programs.details.ok.button')"
+      :cancel-label="$t('programs.details.cancel.button')"
       @ok="deleteRule" />
   </div>
 </template>
@@ -100,10 +104,14 @@ export default {
     endTypingKeywordTimeout: 50,
     startTypingKeywordTimeout: 0,
     typing: false,
+    displayManual: false,
     displayMinimumCharactersToolTip: false,
     filter: 'STARTED',
   }),
   computed: {
+    actionType() {
+      return this.displayManual && 'MANUAL' || 'ALL';
+    },
     classWelcomeMessage() {
       return this.displayWelcomeMessage && 'empty-rules-message' || '';
     },
@@ -115,16 +123,16 @@ export default {
     },
     notFoundInfoMessage() {
       if (this.filter === 'NOT_STARTED' && !this.search?.length) {
-        return this.$t('challenges.filter.upcomingNoResultsMessage');
+        return this.$t('actions.filter.upcomingNoResultsMessage');
       } else if (this.filter === 'ENDED' && !this.search?.length) {
-        return this.$t('challenges.filter.endedNoResultsMessage');
+        return this.$t('actions.filter.endedNoResultsMessage');
       } else {
-        return this.$t('challenges.search.noResultsMessage');
+        return this.$t('actions.search.noResultsMessage');
       }
     },
     welcomeMessage() {
       if (this.filter === 'NOT_STARTED' && this.filter === 'ENDED' && !this.search?.length) {
-        return this.$t('challenges.welcomeMessage');
+        return this.$t('appCenter.welcomeMessage');
       } 
       return '';
     },
@@ -160,16 +168,16 @@ export default {
     },
     adminRuleFilters() {
       return [{
-        text: this.$t('challenges.filter.allChallenges'),
+        text: this.$t('rules.filter.all'),
         value: 'ALL',
       },{
-        text: this.$t('challenges.filter.activeChallenges'),
+        text: this.$t('rules.filter.active'),
         value: 'STARTED',
       },{
-        text: this.$t('challenges.filter.UpcomingChallenges'),
+        text: this.$t('rules.filter.upcoming'),
         value: 'NOT_STARTED',
       },{
-        text: this.$t('challenges.filter.endedChallenges'),
+        text: this.$t('rules.filter.ended'),
         value: 'ENDED',
       },{
         text: this.$t('programs.details.filter.disabled'),
@@ -178,16 +186,16 @@ export default {
     },
     userRuleFilters() {
       return [{
-        text: this.$t('challenges.filter.allChallenges'),
+        text: this.$t('rules.filter.all'),
         value: 'ALL',
       },{
-        text: this.$t('challenges.filter.activeChallenges'),
+        text: this.$t('rules.filter.active'),
         value: 'STARTED',
       },{
-        text: this.$t('challenges.filter.UpcomingChallenges'),
+        text: this.$t('rules.filter.upcoming'),
         value: 'NOT_STARTED',
       },{
-        text: this.$t('challenges.filter.endedChallenges'),
+        text: this.$t('rules.filter.ended'),
         value: 'ENDED',
       }];
     },
@@ -207,6 +215,9 @@ export default {
         this.typing = true;
         this.waitForEndTyping();
       }
+    },
+    displayManual() {
+      this.retrieveRules();
     },
     loading() {
       if (this.loading) {
@@ -261,7 +272,7 @@ export default {
         domainId: categoryId,
         dateFilter,
         status,
-        type: 'MANUAL',
+        type: this.actionType,
         offset: 0,
         limit: limit,
         groupByDomain: !categoryId,
@@ -285,17 +296,17 @@ export default {
       this.loading = true;
       this.$ruleService.deleteRule(this.selectedRule.id)
         .then(() => {
-          this.showAlert('success', this.$t('challenges.deleteSuccess'));
+          this.showAlert('success', this.$t('programs.details.ruleDeleteSuccess'));
           this.$root.$emit('rule-deleted', this.selectedRule);
         })
         .catch(e => {
           let msg = '';
           if (e.message === '401' || e.message === '403') {
-            msg = this.$t('challenges.deletePermissionDenied');
+            msg = this.$t('actions.deletePermissionDenied');
           } else if (e.message  === '404') {
-            msg = this.$t('challenges.notFound');
+            msg = this.$t('actions.notFound');
           } else  {
-            msg = this.$t('challenges.deleteError');
+            msg = this.$t('actions.deleteError');
           }
           this.showAlert('error', msg);
         })
@@ -329,7 +340,7 @@ export default {
     },
     extractRuleIdFromPath() {
       const urlPath = document.location.pathname;
-      if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`) > -1) {
+      if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`) > -1) {
         return urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
       }
       return null;

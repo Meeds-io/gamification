@@ -27,6 +27,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -35,7 +37,10 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.picocontainer.Startable;
 
+import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -69,7 +74,7 @@ import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.RealizationStorage;
 import io.meeds.gamification.utils.Utils;
 
-public class RealizationServiceImpl implements RealizationService {
+public class RealizationServiceImpl implements RealizationService, Startable {
 
   private static final Log    LOG       = ExoLogger.getLogger(RealizationServiceImpl.class);
 
@@ -82,6 +87,8 @@ public class RealizationServiceImpl implements RealizationService {
   private static final String HEADER    = "Date,Grantee,Action type,Program label,Action label,Points,Status";
 
   private static final String SHEETNAME = "Achivements Report";
+
+  private ExecutorService     executorService;
 
   private ProgramService      programService;
 
@@ -103,6 +110,18 @@ public class RealizationServiceImpl implements RealizationService {
     this.spaceService = spaceService;
     this.realizationStorage = realizationStorage;
     this.identityManager = identityManager;
+  }
+
+  @Override
+  public void start() {
+    QueuedThreadPool threadFactory = new QueuedThreadPool(5, 1, 1);
+    threadFactory.setName("Gamification - Realization");
+    executorService = Executors.newCachedThreadPool(threadFactory);
+  }
+
+  @Override
+  public void stop() {
+    executorService.shutdown();
   }
 
   @Override
@@ -180,6 +199,19 @@ public class RealizationServiceImpl implements RealizationService {
   }
 
   @Override
+  public void createRealizationsAsync(String event,
+                                      String earnerIdentityId,
+                                      String receiverIdentityId,
+                                      String objectId,
+                                      String objectType) {
+    executorService.execute(() -> createRealizationsAsyncInternal(event,
+                                                                  earnerIdentityId,
+                                                                  receiverIdentityId,
+                                                                  objectId,
+                                                                  objectType));
+  }
+
+  @Override
   public List<RealizationDTO> createRealizations(String event,
                                                  String earnerIdentityId,
                                                  String receiverIdentityId,
@@ -198,12 +230,13 @@ public class RealizationServiceImpl implements RealizationService {
       return Collections.emptyList();
     }
     return rules.stream()
-                .filter(rule -> getRealizationValidityContext(rule, earnerIdentityId).isValid())
-                .map(ruleDto -> toRealization(ruleDto,
-                                              earnerIdentity,
-                                              receiverIdentityId,
-                                              objectId,
-                                              objectType))
+                .distinct()
+                .filter(rule -> getRealizationValidityContext(rule, earnerIdentity.getId()).isValid())
+                .map(rule -> toRealization(rule,
+                                           earnerIdentity,
+                                           receiverIdentityId,
+                                           objectId,
+                                           objectType))
                 .filter(Objects::nonNull)
                 .map(realizationStorage::createRealization)
                 .toList();
@@ -524,6 +557,15 @@ public class RealizationServiceImpl implements RealizationService {
     }
   }
 
+  @ExoTransactional
+  public void createRealizationsAsyncInternal(String event,
+                                              String earnerIdentityId,
+                                              String receiverIdentityId,
+                                              String objectId,
+                                              String objectType) {
+    createRealizations(event, earnerIdentityId, receiverIdentityId, objectId, objectType);
+  }
+
   private String stringifyAchievements(List<RealizationDTO> realizations, Locale locale) { // NOSONAR
     StringBuilder sbResult = new StringBuilder();
     // Add header
@@ -671,9 +713,7 @@ public class RealizationServiceImpl implements RealizationService {
     realization.setEarnerType(earnerIdentity.getProviderId());
     realization.setActionTitle(ruleDto.getTitle());
     realization.setRuleId(ruleDto.getId());
-    if (ruleDto.getProgram() != null) {
-      realization.setProgram(ruleDto.getProgram());
-    }
+    realization.setProgram(ruleDto.getProgram());
     realization.setReceiver(receiverIdentityId);
     realization.setObjectId(objectId);
     realization.setObjectType(objectType);
