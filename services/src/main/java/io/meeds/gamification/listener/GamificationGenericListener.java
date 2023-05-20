@@ -88,11 +88,11 @@ public class GamificationGenericListener extends Listener<Map<String, String>, S
       String objectType = event.getSource().get(OBJECT_TYPE_PARAM);
 
       switch (event.getEventName()) {
-      case GENERIC_EVENT_NAME -> realizationService.createRealizations(gamificationEventId,
-                                                                       getIdentity(senderType, senderId).getId(),
-                                                                       getIdentity(receiverType, receiverId).getId(),
-                                                                       objectId,
-                                                                       objectType);
+      case GENERIC_EVENT_NAME -> realizationService.createRealizationsAsync(gamificationEventId,
+                                                                            getIdentity(senderType, senderId).getId(),
+                                                                            getIdentity(receiverType, receiverId).getId(),
+                                                                            objectId,
+                                                                            objectType);
       case DELETE_EVENT_NAME -> realizationService.deleteRealizations(objectId, objectType);
       case CANCEL_EVENT_NAME -> realizationService.cancelRealizations(gamificationEventId,
                                                                       getIdentity(senderType, senderId).getId(),
