@@ -78,7 +78,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <div class="d-flex flex-grow-0 flex-shrink-1">
             <span
               class="align-self-center text-wrap text-left text-break"
-              v-sanitized-html="$t('overview.myContributions.zeroPoints.description', {0: `<a href='${challengesURL}' class='primary--text font-weight-bold' rel='nofollow noreferrer noopener'>${$t('overview.myContributions.zeroPoints.description.this')}</a>`})"></span>
+              v-sanitized-html="$t('overview.myContributions.zeroPoints.description', {0: `<a href='${actionsPageURL}' class='primary--text font-weight-bold' rel='nofollow noreferrer noopener'>${$t('overview.myContributions.zeroPoints.description.this')}</a>`})"></span>
           </div>
         </v-list-item-content>
       </v-list-item>
@@ -143,6 +143,7 @@ export default {
       seriesData: [],
       loading: true,
       show: false,
+      actionsPageURL: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
       colors: [
         '#4ad66d', '#ffe169', '#ff8fa3', '#20a8ea', '#C155F4', '#F7A35B', '#A0C7FF', '#FD6A6A', '#059d98', '#b7efc5',
         '#dbb42c', '#c9184a', '#1273d4', '#E65ABC', '#00FF56', '#B1F6FF', '#FFFF46', '#26a855', '#f10000', '#208b3a',
@@ -194,9 +195,6 @@ export default {
     },
     pieChartDimensions() {
       return this.overviewDisplay ? 'width:100%; height:100%;' : 'width:100%; height:220px;';
-    },
-    challengesURL() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
     },
     displayLoadingChart() {
       return !this.overviewDisplay && !this.initialized;

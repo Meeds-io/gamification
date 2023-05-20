@@ -40,18 +40,18 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
     // Get the request receiver
     Identity receiver = event.getPayload().getReceiver();
 
-    realizationService.createRealizations(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
-                                          sender.getId(),
-                                          receiver.getId(),
-                                          sender.getId(),
-                                          IDENTITY_OBJECT_TYPE);
+    realizationService.createRealizationsAsync(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
+                                               sender.getId(),
+                                               receiver.getId(),
+                                               sender.getId(),
+                                               IDENTITY_OBJECT_TYPE);
 
     // Reward user who receive a relationship request
-    realizationService.createRealizations(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
-                                          receiver.getId(),
-                                          sender.getId(),
-                                          receiver.getId(),
-                                          IDENTITY_OBJECT_TYPE);
+    realizationService.createRealizationsAsync(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
+                                               receiver.getId(),
+                                               sender.getId(),
+                                               receiver.getId(),
+                                               IDENTITY_OBJECT_TYPE);
 
   }
 
