@@ -229,6 +229,18 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     return query.getResultList();
   }
 
+  public long getScoreByIdentityId(String earnerIdentityId) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("RealizationEntity.getScoreByIdentityId",
+                                                                 Long.class);
+    query.setParameter(EARNER_ID_PARAM_NAME, earnerIdentityId);
+    try {
+      Long result = query.getSingleResult();
+      return result == null ? 0 : result.longValue();
+    } catch (NoResultException e) {
+      return 0;
+    }
+  }
+
   /**
    * Get all ActionHistory records paginated
    * 
@@ -457,8 +469,9 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   }
 
   public int countRealizationsByRuleIdAndEarnerIdSinceDate(String earnerIdentityId, long ruleId, Date sinceDate) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("RealizationEntity.countRealizationsByRuleIdAndEarnerIdSinceDate",
-                                                                 Long.class);
+    TypedQuery<Long> query =
+                           getEntityManager().createNamedQuery("RealizationEntity.countRealizationsByRuleIdAndEarnerIdSinceDate",
+                                                               Long.class);
     query.setParameter(DATE_PARAM_NAME, sinceDate);
     query.setParameter(RULE_ID_PARAM_NAME, ruleId);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerIdentityId);
