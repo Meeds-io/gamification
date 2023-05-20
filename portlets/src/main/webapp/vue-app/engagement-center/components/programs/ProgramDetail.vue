@@ -290,11 +290,13 @@ export default {
     },
   },
   created() {
-    this.$root.$on('challenge-delete-confirm', this.confirmDelete);
-    this.$root.$on('program-rules-refresh', this.retrieveProgramRules);
     this.$root.$on('program-deleted', this.backToProgramList);
     this.$root.$on('program-updated', this.programUpdated);
+    this.$root.$on('rule-created', this.retrieveProgramRules);
+    this.$root.$on('rule-updated', this.retrieveProgramRules);
+    this.$root.$on('rule-deleted', this.retrieveProgramRules);
     this.$root.$on('announcement-added', this.retrieveProgramRules);
+    this.$root.$on('rule-delete-confirm', this.confirmDelete);
     window.addEventListener('popstate', () => {
       this.backToProgramList();
     });
@@ -379,9 +381,8 @@ export default {
       this.loading = true;
       this.$ruleService.deleteRule(this.selectedRule.id)
         .then((deletedRule) => {
-          this.$root.$emit('program-rule-deleted', deletedRule);
+          this.$root.$emit('rule-deleted', deletedRule);
           this.$engagementCenterUtils.displayAlert(this.$t('programs.details.ruleDeleteSuccess'));
-          this.retrieveProgramRules();
         })
         .finally(() => this.loading = false);
     },

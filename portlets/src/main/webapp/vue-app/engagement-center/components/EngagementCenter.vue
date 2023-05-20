@@ -72,7 +72,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :tab="tab"
       :action-value-extensions="actionValueExtensions"
       :is-administrator="isAdministrator" />
-    <engagement-center-winners-details
+    <engagement-center-rule-participants-drawer
       ref="winnersDetails"
       :action-value-extensions="actionValueExtensions" />
     <engagement-center-program-drawer
@@ -105,16 +105,28 @@ export default {
     extensionApp: 'engagementCenterActions',
     actionValueExtensionType: 'user-actions',
     actionValueExtensions: {},
+    linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions`,
   }),
+  computed: {
+    programsLinkBasePath() {
+      return `${this.linkBasePath}/programs`;
+    },
+    rulesLinkBasePath() {
+      return `${this.linkBasePath}/challenges`;
+    },
+    achievementsLinkBasePath() {
+      return `${this.linkBasePath}/achievements`;
+    },
+  },
   watch: {
     tab() {
       if (!this.avoidAddToHistory) {
-        if (this.tab === 0) {
-          window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`);
-        } else if (this.tab === 1) {
-          window.history.pushState('Engagement Center', this.$t('engagementCenter.label.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
-        } else if (this.tab === 2) {
-          window.history.pushState('Engagement Center', this.$t('engagementCenter.label.achievements'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`);
+        if (this.tab === 0 && window.location.pathname.indexOf(this.programsLinkBasePath) < 0) {
+          window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), this.programsLinkBasePath);
+        } else if (this.tab === 1 && window.location.pathname.indexOf(this.rulesLinkBasePath) < 0) {
+          window.history.pushState('Engagement Center', this.$t('engagementCenter.label.challenges'), this.rulesLinkBasePath);
+        } else if (this.tab === 2 && window.location.pathname.indexOf(this.achievementsLinkBasePath) < 0) {
+          window.history.pushState('Engagement Center', this.$t('engagementCenter.label.achievements'), this.achievementsLinkBasePath);
         }
         this.displayProgramDetail = false;
       }
@@ -154,7 +166,7 @@ export default {
             .then(program => {
               if (program && program.id) {
                 this.$root.$emit('open-program-detail', program);
-                window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${program.id}`);
+                window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${this.programsLinkBasePath}/${program.id}`);
               }
             });
         }

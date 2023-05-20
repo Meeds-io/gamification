@@ -19,16 +19,11 @@
 
 -->
 <template>
-  <div class="rule-card-mask-dates d-flex flex-column align-center">
-    <v-icon
-      class="white--text"
-      size="52">
-      fas fa-calendar-plus
-    </v-icon>
-    <div class="title font-weight-bold">
-      {{ datesInfo }}
-    </div>
-  </div>
+  <engagement-center-rule-card-mask-content
+    v-if="datesInfo"
+    :text="datesInfo"
+    icon="fas fa-calendar-plus"
+    class="rule-card-mask-dates" />
 </template>
 <script>
 export default {

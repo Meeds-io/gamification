@@ -542,7 +542,7 @@ export default {
         this.$ruleService.updateRule(this.rule)
           .then(rule => {
             this.displayAlert(this.$t('programs.details.ruleUpdateSuccess'));
-            this.$root.$emit('program-rules-refresh', rule);
+            this.$root.$emit('rule-updated', rule);
             this.close();
           })
           .catch(e => this.eventExist = e.message === '409')
@@ -554,7 +554,7 @@ export default {
         this.$ruleService.createRule(this.rule, this.program)
           .then(rule => {
             this.displayAlert(this.$t('programs.details.ruleCreationSuccess'));
-            this.$root.$emit('program-rules-refresh', rule);
+            this.$root.$emit('rule-created', rule);
             this.close();
           })
           .catch(e => this.eventExist = e.message === '409')

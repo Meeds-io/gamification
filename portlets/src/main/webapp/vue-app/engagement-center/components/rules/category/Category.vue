@@ -19,7 +19,7 @@
 -->
 <template>
   <v-list-group
-    v-if="size"
+    v-if="sizeToDisplay"
     v-model="open"
     :prepend-icon="open && 'fa-chevron-up fa-lg ms-2' || 'fa-chevron-down fa-lg ms-2'"
     color="grey darken-1"
@@ -27,14 +27,15 @@
     dense>
     <template #activator>
       <v-list-item-title class="text-color d-flex align-center ms-n4">
-        {{ category.title }} ( {{ size }} )
+        {{ category.title }} ( {{ sizeToDisplay }} )
         <v-divider class="ms-4" />
       </v-list-item-title>
     </template>
     <v-list-item class="my-4">
       <engagement-center-rules-list
-        :rules="rules"
-        :category-id="category.id" />
+        :category-id="category.id"
+        :rules="rulesToDisplay"
+        :size="sizeToDisplay" />
     </v-list-item>
   </v-list-group>
 </template>
@@ -48,16 +49,40 @@ export default {
   },
   data: () => ({
     open: true,
+    deletedRuleIds: {},
+    updatedRules: {},
   }),
   computed: {
-    size() {
-      return this.category?.size || this.rules?.length || 0;
-    },
     rules() {
       return this.category?.rules || [];
     },
-    hasMore() {
-      return this.size > this.category?.rules?.length;
+    rulesToDisplay() {
+      return this.rules
+        .filter(r => !this.deletedRuleIds[r.id])
+        .map(r => this.updatedRules[r.id] || r);
+    },
+    size() {
+      return this.category?.size || this.rules?.length || 0;
+    },
+    sizeToDisplay() {
+      return this.size - Object.keys(this.deletedRuleIds).length;
+    },
+  },
+  created() {
+    this.$root.$on('rule-updated', this.onRuleUpdated);
+    this.$root.$on('rule-deleted', this.onRuleDeleted);
+  },
+  methods: {
+    onRuleUpdated(rule) {
+      if (this.rules.find(r => r.id === rule.id)) {
+        return this.$ruleService.getRuleById(rule.id, 'countAccouncements')
+          .then(r => this.$set(this.updatedRules, r.id, r));
+      }
+    },
+    onRuleDeleted(rule) {
+      if (this.rules.find(r => r.id === rule.id)) {
+        this.$set(this.deletedRuleIds, rule.id, true);
+      }
     },
   },
 };

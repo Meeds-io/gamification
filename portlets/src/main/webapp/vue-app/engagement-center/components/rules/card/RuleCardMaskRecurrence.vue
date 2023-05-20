@@ -19,16 +19,10 @@
 
 -->
 <template>
-  <div class="rule-card-mask-recurrence d-flex flex-column align-center">
-    <v-icon
-      size="30"
-      class="white--text">
-      fas fa-check
-    </v-icon>
-    <v-card-text
-      v-sanitized-html="recurrenceTitle"
-      class="text-wrap title" />
-  </div>
+  <engagement-center-rule-card-mask-content
+    :text="recurrenceTitle"
+    icon="fas fa-check"
+    class="rule-card-mask-recurrence" />
 </template>
 <script>
 export default {
