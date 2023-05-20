@@ -41,7 +41,7 @@ public class AnnouncementActivityProcessor extends BaseActivityProcessorPlugin {
 
   private static final Log    LOG                        = ExoLogger.getLogger(AnnouncementActivityProcessor.class);
 
-  private static final String APP_URL                    = "/contributions/challenges/";
+  private static final String APP_URL                    = "/contributions/actions/";
 
   private AnnouncementService announcementService;
 

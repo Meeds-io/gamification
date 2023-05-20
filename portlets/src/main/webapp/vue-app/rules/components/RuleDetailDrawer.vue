@@ -89,7 +89,7 @@ export default {
     drawer: false,
     rule: {},
     loading: false,
-    linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`,
+    linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
     validAnnouncement: false,
     announcementSending: false,
     announcementFormOpened: false,
@@ -165,9 +165,9 @@ export default {
     updatePagePath() {
       if (window.location.pathname.indexOf(this.linkBasePath) >= 0) {
         if (!this.drawer) {
-          window.history.replaceState('challenges', this.$t('challenges.challenges'), this.linkBasePath);
+          window.history.replaceState('challenges', this.$t('program.actions'), this.linkBasePath);
         } else if (this.rule.id) {
-          window.history.replaceState('challenges', this.$t('challenges.challenges'), `${this.linkBasePath}/${this.rule.id}`);
+          window.history.replaceState('challenges', this.$t('program.actions'), `${this.linkBasePath}/${this.rule.id}`);
         }
       }
     },

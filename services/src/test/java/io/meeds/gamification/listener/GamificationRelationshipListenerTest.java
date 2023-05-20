@@ -55,15 +55,15 @@ public class GamificationRelationshipListenerTest {
     RelationshipEvent event = new RelationshipEvent(Type.CONFIRM, null, relationship);
     gamificationRelationshipListener.confirmed(event);
 
-    verify(realizationService, times(1)).createRealizations(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
-                                                            sender.getId(),
-                                                            receiver.getId(),
-                                                            sender.getId(),
-                                                            IDENTITY_OBJECT_TYPE);
-    verify(realizationService, times(1)).createRealizations(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
-                                                            receiver.getId(),
-                                                            sender.getId(),
-                                                            receiver.getId(),
-                                                            IDENTITY_OBJECT_TYPE);
+    verify(realizationService, times(1)).createRealizationsAsync(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
+                                                                 sender.getId(),
+                                                                 receiver.getId(),
+                                                                 sender.getId(),
+                                                                 IDENTITY_OBJECT_TYPE);
+    verify(realizationService, times(1)).createRealizationsAsync(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
+                                                                 receiver.getId(),
+                                                                 sender.getId(),
+                                                                 receiver.getId(),
+                                                                 IDENTITY_OBJECT_TYPE);
   }
 }
