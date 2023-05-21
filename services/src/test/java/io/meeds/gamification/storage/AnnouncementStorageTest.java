@@ -50,8 +50,8 @@ import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
-import io.meeds.gamification.utils.AnnouncementBuilder;
-import io.meeds.gamification.utils.ProgramBuilder;
+import io.meeds.gamification.rest.builder.AnnouncementBuilder;
+import io.meeds.gamification.storage.mapper.ProgramMapper;
 import io.meeds.gamification.utils.Utils;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -61,7 +61,7 @@ public class AnnouncementStorageTest {
 
   private static MockedStatic<AnnouncementBuilder> ANNOUNCEMENT_BUILDER;
 
-  private static MockedStatic<ProgramBuilder>       DOMAIN_MAPPER;
+  private static MockedStatic<ProgramMapper>       DOMAIN_MAPPER;
 
   @Mock
   private RealizationStorage                       realizationStorage;
@@ -75,7 +75,7 @@ public class AnnouncementStorageTest {
   public static void initClassContext() {
     UTILS = mockStatic(Utils.class);
     ANNOUNCEMENT_BUILDER = mockStatic(AnnouncementBuilder.class);
-    DOMAIN_MAPPER = mockStatic(ProgramBuilder.class);
+    DOMAIN_MAPPER = mockStatic(ProgramMapper.class);
   }
 
   @AfterClass
@@ -152,7 +152,7 @@ public class AnnouncementStorageTest {
     program.setTitle("gamification");
     ProgramEntity domainEntity = new ProgramEntity();
     domainEntity.setTitle("gamification");
-    DOMAIN_MAPPER.when(() -> ProgramBuilder.toEntity(program)).thenReturn(domainEntity);
+    DOMAIN_MAPPER.when(() -> ProgramMapper.toEntity(program)).thenReturn(domainEntity);
 
     Announcement createdAnnouncement = announcementStorage.createAnnouncement(announcement);
 

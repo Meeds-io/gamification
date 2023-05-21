@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.gamification.utils;
+package io.meeds.gamification.storage.mapper;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -27,11 +27,11 @@ import io.meeds.gamification.entity.BadgeEntity;
 import io.meeds.gamification.model.BadgeDTO;
 import io.meeds.gamification.storage.ProgramStorage;
 
-public class BadgeBuilder {
+public class BadgeMapper {
 
   public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-  private BadgeBuilder() {
+  private BadgeMapper() {
     // Utils class, thus private constructor
   }
 
@@ -50,7 +50,7 @@ public class BadgeBuilder {
     badgeDTO.setLastModifiedBy(badgeEntity.getLastModifiedBy());
     badgeDTO.setLastModifiedDate(formatDate(badgeEntity.getLastModifiedDate()));
     badgeDTO.setProgram((badgeEntity.getDomainEntity() == null) ? null
-                                                                  : programStorage.getProgramById(badgeEntity.getDomainEntity()
+                                                                : programStorage.getProgramById(badgeEntity.getDomainEntity()
                                                                                                            .getId()));
     badgeDTO.setIconFileId(badgeEntity.getIconFileId());
     return badgeDTO;
@@ -91,7 +91,7 @@ public class BadgeBuilder {
       if (badgeDTO.getLastModifiedDate() != null) {
         badge.setLastModifiedDate(parseDate(badgeDTO.getLastModifiedDate()));
       }
-      badge.setDomainEntity(ProgramBuilder.toEntity(badgeDTO.getProgram()));
+      badge.setDomainEntity(ProgramMapper.toEntity(badgeDTO.getProgram()));
       return badge;
     }
   }
