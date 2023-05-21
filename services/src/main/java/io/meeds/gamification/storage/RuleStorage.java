@@ -12,7 +12,7 @@ import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.RuleFilter;
-import io.meeds.gamification.utils.RuleBuilder;
+import io.meeds.gamification.storage.mapper.RuleMapper;
 
 public class RuleStorage {
 
@@ -31,7 +31,7 @@ public class RuleStorage {
   }
 
   public RuleDTO saveRule(RuleDTO ruleDTO) {
-    RuleEntity ruleEntity = RuleBuilder.toEntity(ruleDTO);
+    RuleEntity ruleEntity = RuleMapper.toEntity(ruleDTO);
     ruleEntity.setLastModifiedDate(new Date());
     ProgramDTO program = ruleDTO.getProgram();
     if (program != null) {
@@ -44,24 +44,24 @@ public class RuleStorage {
     } else {
       ruleEntity = ruleDAO.update(ruleEntity);
     }
-    return RuleBuilder.fromEntity(programStorage, ruleEntity);
+    return RuleMapper.fromEntity(programStorage, ruleEntity);
   }
 
   public RuleDTO findRuleById(Long id) {
-    return RuleBuilder.fromEntity(programStorage, ruleDAO.find(id));
+    return RuleMapper.fromEntity(programStorage, ruleDAO.find(id));
   }
 
   public List<RuleDTO> findActiveRulesByEvent(String event) {
     List<RuleEntity> entities = ruleDAO.findActiveRulesByEvent(event);
-    return RuleBuilder.fromEntities(programStorage, entities);
+    return RuleMapper.fromEntities(programStorage, entities);
   }
 
   public RuleDTO findRuleByTitle(String ruleTitle) {
-    return RuleBuilder.fromEntity(programStorage, ruleDAO.findRuleByTitle(ruleTitle));
+    return RuleMapper.fromEntity(programStorage, ruleDAO.findRuleByTitle(ruleTitle));
   }
 
   public RuleDTO findActiveRuleByEventAndDomain(String event, long domainId) {
-    return RuleBuilder.fromEntity(programStorage, ruleDAO.findActiveRuleByEventAndDomain(event, domainId));
+    return RuleMapper.fromEntity(programStorage, ruleDAO.findActiveRuleByEventAndDomain(event, domainId));
   }
 
   public List<Long> findRulesIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {
@@ -101,7 +101,7 @@ public class RuleStorage {
       ruleEntity.setDeleted(true);
       ruleDAO.update(ruleEntity);
     }
-    return RuleBuilder.fromEntity(programStorage, ruleEntity);
+    return RuleMapper.fromEntity(programStorage, ruleEntity);
   }
 
   public void clearCache() { // NOSONAR

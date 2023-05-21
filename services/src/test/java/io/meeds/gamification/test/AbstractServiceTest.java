@@ -56,8 +56,8 @@ import org.exoplatform.social.core.manager.RelationshipManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.HistoryStatus;
 import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.dao.BadgeDAO;
 import io.meeds.gamification.dao.ProgramDAO;
@@ -82,10 +82,10 @@ import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.ProgramStorage;
 import io.meeds.gamification.storage.RealizationStorage;
 import io.meeds.gamification.storage.RuleStorage;
-import io.meeds.gamification.utils.BadgeBuilder;
-import io.meeds.gamification.utils.ProgramBuilder;
-import io.meeds.gamification.utils.RealizationMapper;
-import io.meeds.gamification.utils.RuleBuilder;
+import io.meeds.gamification.storage.mapper.BadgeMapper;
+import io.meeds.gamification.storage.mapper.ProgramMapper;
+import io.meeds.gamification.storage.mapper.RealizationMapper;
+import io.meeds.gamification.storage.mapper.RuleMapper;
 import io.meeds.gamification.utils.Utils;
 
 @ConfiguredBy({
@@ -148,13 +148,13 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected ResourceLauncher             launcher;
 
-  protected ProviderBinder               providers;
+  protected ProviderBinder               providerBinder;
 
-  protected ResourceBinder               binder;
+  protected ResourceBinder               resourceBinder;
 
   protected BadgeService                 badgeService;
 
-  protected ProgramService                programService;
+  protected ProgramService               programService;
 
   protected RuleService                  ruleService;
 
@@ -162,9 +162,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected BadgeDAO                     badgeStorage;
 
-  protected ProgramDAO                    programDAO;
+  protected ProgramDAO                   programDAO;
 
-  protected ProgramStorage                domainStorage;
+  protected ProgramStorage               domainStorage;
 
   protected FileService                  fileService;
 
@@ -220,18 +220,18 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     ruleIndexingServiceConnector = ExoContainerContext.getService(RuleIndexingServiceConnector.class);
     spaceService = ExoContainerContext.getService(SpaceService.class);
     identityRegistry = ExoContainerContext.getService(IdentityRegistry.class);
-    binder = ExoContainerContext.getService(ResourceBinder.class);
+    resourceBinder = ExoContainerContext.getService(ResourceBinder.class);
     RequestHandlerImpl requestHandler = ExoContainerContext.getService(RequestHandlerImpl.class);
     // reset default providers to be sure it is clean.
     ProviderBinder.setInstance(new ProviderBinder());
-    providers = ProviderBinder.getInstance();
+    providerBinder = ProviderBinder.getInstance();
 
     fromDate = new Date(System.currentTimeMillis());
     toDate = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
     OutOfRangeDate = new Date(fromDate.getTime() - 2 * MILLIS_IN_A_DAY);
 
-    binder.clear();
-    ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providers, null));
+    resourceBinder.clear();
+    ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providerBinder, null));
     launcher = new ResourceLauncher(requestHandler);
     begin();
   }
@@ -253,7 +253,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected void registry(Class<?> resourceClass) {
-    binder.addResource(resourceClass, null);
+    resourceBinder.addResource(resourceClass, null);
   }
 
   protected ConversationState startSessionAs(String user) {
@@ -418,7 +418,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected ProgramDTO newProgram(EntityType entityType, String name, boolean status, Set<Long> owners) {
-    return ProgramBuilder.fromEntity(ruleDAO, newDomain(entityType, name, status, owners));
+    return ProgramMapper.fromEntity(ruleDAO, newDomain(entityType, name, status, owners));
   }
 
   protected ProgramEntity newDomain(String name) {
@@ -495,7 +495,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected RealizationEntity newRealizationEntity(String ruleName, long domainId) {
     RuleEntity rule = newRule(ruleName, domainId);
     RealizationEntity gHistory = new RealizationEntity();
-    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setStatus(RealizationStatus.ACCEPTED);
     gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(TEST_USER_EARNER);
@@ -517,7 +517,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RealizationEntity newRealizationByRuleByEarnerId(RuleEntity rule, String earnerId) {
     RealizationEntity gHistory = new RealizationEntity();
-    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setStatus(RealizationStatus.ACCEPTED);
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
@@ -540,7 +540,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected RealizationEntity newRealizationEntityWithRuleId(String actionTitle, Long ruleId) {
     RuleEntity rule = ruleDAO.find(ruleId);
     RealizationEntity gHistory = new RealizationEntity();
-    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setStatus(RealizationStatus.ACCEPTED);
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
@@ -560,7 +560,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return gHistory;
   }
 
-  protected RealizationEntity newRealizationsByStatus(HistoryStatus status) {
+  protected RealizationEntity newRealizationsByStatus(RealizationStatus status) {
     RuleEntity rule = newRule();
     RealizationEntity gHistory = new RealizationEntity();
     gHistory.setStatus(status);
@@ -586,7 +586,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected RealizationEntity newRealizationsByEarnerId(String earnerId) {
     RuleEntity rule = newRule();
     RealizationEntity gHistory = new RealizationEntity();
-    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setStatus(RealizationStatus.ACCEPTED);
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
@@ -611,7 +611,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
                                                                               Long ruleId) {
     RuleEntity rule = ruleDAO.find(ruleId);
     RealizationEntity gHistory = new RealizationEntity();
-    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setStatus(RealizationStatus.ACCEPTED);
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
@@ -637,23 +637,23 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected RuleDTO newRuleDTO() {
-    return RuleBuilder.fromEntity(domainStorage, newRule());
+    return RuleMapper.fromEntity(domainStorage, newRule());
   }
 
   protected RuleDTO newRuleDTO(String name, long domainId) {
-    return RuleBuilder.fromEntity(domainStorage, newRule(name, domainId));
+    return RuleMapper.fromEntity(domainStorage, newRule(name, domainId));
   }
 
   protected ProgramDTO newProgram() {
-    return ProgramBuilder.fromEntity(ruleDAO, newDomain());
+    return ProgramMapper.fromEntity(ruleDAO, newDomain());
   }
 
   protected ProgramDTO newProgram(String name) {
-    return ProgramBuilder.fromEntity(ruleDAO, newDomain(name));
+    return ProgramMapper.fromEntity(ruleDAO, newDomain(name));
   }
 
   protected BadgeDTO newBadgeDTO() {
-    return BadgeBuilder.fromEntity(domainStorage, newBadge(1L));
+    return BadgeMapper.fromEntity(domainStorage, newBadge(1L));
   }
 
   public boolean isThisDateWithinThisRange(Date date) {
