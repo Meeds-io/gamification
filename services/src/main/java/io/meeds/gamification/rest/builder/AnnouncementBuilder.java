@@ -15,7 +15,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-package io.meeds.gamification.utils;
+package io.meeds.gamification.rest.builder;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +26,7 @@ import org.apache.commons.collections.CollectionUtils;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.AnnouncementActivity;
 import io.meeds.gamification.rest.model.AnnouncementRestEntity;
+import io.meeds.gamification.utils.Utils;
 
 public class AnnouncementBuilder {
 

@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import io.meeds.gamification.constant.HistoryStatus;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.model.RealizationDTO;
@@ -94,10 +94,10 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setDomainIds(domainIds);
     assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
     RealizationDTO gHistory = newRealizationDTO();
-    assertEquals(gHistory.getStatus(), HistoryStatus.ACCEPTED.name());
-    gHistory.setStatus(HistoryStatus.REJECTED.name());
+    assertEquals(gHistory.getStatus(), RealizationStatus.ACCEPTED.name());
+    gHistory.setStatus(RealizationStatus.REJECTED.name());
     RealizationDTO rejectedGHistory = realizationsStorage.updateRealization(gHistory);
-    assertEquals(rejectedGHistory.getStatus(), HistoryStatus.REJECTED.name());
+    assertEquals(rejectedGHistory.getStatus(), RealizationStatus.REJECTED.name());
 
   }
 }

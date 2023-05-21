@@ -20,8 +20,6 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.impl.ContainerResponse;
 
 import io.meeds.gamification.entity.BadgeEntity;
@@ -29,9 +27,7 @@ import io.meeds.gamification.model.BadgeDTO;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.test.AbstractServiceTest;
 
-public class TestBadgeRest extends AbstractServiceTest {
-
-  private static final Log LOG = ExoLogger.getLogger(TestBadgeRest.class);
+public class TestBadgeRest extends AbstractServiceTest { // NOSONAR
 
   protected Class<?> getComponentClass() {
     return BadgeRest.class;
@@ -45,9 +41,6 @@ public class TestBadgeRest extends AbstractServiceTest {
     registry(getComponentClass());
   }
 
-  /**
-   * Testing get All badges
-   **/
   @Test
   public void testGetAllBadges() throws Exception {
     ContainerResponse response = getResponse("GET", getURLResource("badges/all"), null);
@@ -55,9 +48,6 @@ public class TestBadgeRest extends AbstractServiceTest {
     assertEquals(200, response.getStatus());
   }
 
-  /**
-   * Testing the add of a new badge with the Media Type
-   **/
   @Test
   public void testAddBadge() throws Exception {
     ProgramDTO program = newProgram();
@@ -79,9 +69,6 @@ public class TestBadgeRest extends AbstractServiceTest {
     assertEquals(GAMIFICATION_DOMAIN, entity.getProgram().getTitle());
   }
 
-  /**
-   * Testing the add of delete of badge with the Media Type
-   **/
   @Test
   public void testDeleteBadge() throws Exception {
     BadgeEntity badgeEntity = newBadge(1L);
@@ -90,9 +77,6 @@ public class TestBadgeRest extends AbstractServiceTest {
     assertEquals(200, response.getStatus());
   }
 
-  /**
-   * Testing the add of delete of badge with the Media Type
-   **/
   @Test
   public void testUpdateBadge() throws Exception {
     BadgeEntity badgeEntity = newBadge(1L);
