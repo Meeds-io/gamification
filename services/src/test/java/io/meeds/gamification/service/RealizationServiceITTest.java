@@ -22,13 +22,18 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.junit.Test;
 
-import io.meeds.gamification.constant.HistoryStatus;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.MembershipEntry;
+
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.constant.RecurrenceType;
@@ -42,6 +47,20 @@ import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 
 public class RealizationServiceITTest extends AbstractServiceTest {
+
+  private final Identity adminAclIdentity   =
+                                          new Identity("root1",
+                                                       Collections.singleton(new MembershipEntry("/platform/rewarding")));
+
+  private final Identity regularAclIdentity =
+                                            new Identity("root10", Collections.singleton(new MembershipEntry("/platform/users")));
+
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    identityRegistry.register(regularAclIdentity);
+    identityRegistry.register(adminAclIdentity);
+  }
 
   public void testCreateRealizations() {
     List<RealizationEntity> realizations = realizationDAO.findAll();
@@ -82,6 +101,23 @@ public class RealizationServiceITTest extends AbstractServiceTest {
     assertEquals(TEST_USER_RECEIVER, realizationEntity.getReceiver());
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.SPACE, realizationEntity.getEarnerType());
+  }
+
+  @Test
+  public void testHadOwnedProgram() throws IllegalAccessException, ObjectNotFoundException {
+    assertFalse(realizationService.isRealizationManager(regularAclIdentity.getUserId()));
+    assertTrue(realizationService.isRealizationManager(adminAclIdentity.getUserId()));
+
+    ProgramDTO program = newProgram();
+    org.exoplatform.social.core.identity.model.Identity regularUserIdentity =
+                                                                            identityManager.getOrCreateUserIdentity(regularAclIdentity.getUserId());
+
+    program.setOwnerIds(Collections.singleton(Long.parseLong(regularUserIdentity.getId())));
+    programService.updateProgram(program, adminAclIdentity);
+    assertTrue(realizationService.isRealizationManager(regularAclIdentity.getUserId()));
+
+    programService.deleteProgramById(program.getId(), adminAclIdentity);
+    assertTrue(realizationService.isRealizationManager(regularAclIdentity.getUserId()));
   }
 
   public void testCreateRealizationsOnOutdatedRules() throws ObjectNotFoundException {
@@ -322,36 +358,6 @@ public class RealizationServiceITTest extends AbstractServiceTest {
     assertEquals(2, rankSpace1);
   }
 
-  public void testFindLatestActionHistoryBySocialId() {
-    RuleDTO ruleDTO = newRuleDTO();
-    realizationService.createRealizations(ruleDTO.getEvent(),
-                                          TEST_USER_EARNER,
-                                          TEST_USER_RECEIVER,
-                                          ACTIVITY_ID,
-                                          ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
-                                          TEST_USER_EARNER,
-                                          TEST_USER_RECEIVER,
-                                          ACTIVITY_ID,
-                                          ACTIVITY_OBJECT_TYPE);
-    RealizationDTO lastRealization = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                                           TEST_USER_EARNER,
-                                                                           TEST_USER_RECEIVER,
-                                                                           ACTIVITY_ID,
-                                                                           ACTIVITY_OBJECT_TYPE)
-                                                       .get(0);
-
-    RealizationDTO realization = realizationService.findLatestRealizationByIdentityId(TEST_USER_EARNER);
-    assertEquals(lastRealization.getActionScore(), realization.getActionScore());
-    assertEquals(lastRealization.getActionTitle(), realization.getActionTitle());
-    assertEquals(lastRealization.getProgram(), realization.getProgram());
-    assertEquals(lastRealization.getGlobalScore(), realization.getGlobalScore());
-    assertEquals(lastRealization.getObjectId(), realization.getObjectId());
-    assertEquals(lastRealization.getReceiver(), realization.getReceiver());
-    assertEquals(lastRealization.getEarnerId(), realization.getEarnerId());
-    assertEquals(lastRealization.getCreatedBy(), realization.getCreatedBy());
-  }
-
   public void testFindUserReputationBySocialId() {
     RuleDTO ruleDTO = newRuleDTO();
     assertEquals(realizationService.getScoreByIdentityId(TEST_USER_EARNER), 0);
@@ -435,19 +441,27 @@ public class RealizationServiceITTest extends AbstractServiceTest {
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
 
-    RealizationDTO realization = realizationService.findLatestRealizationByIdentityId(TEST_USER_EARNER);
-    assertEquals(HistoryStatus.ACCEPTED.name(), realization.getStatus());
+    List<RealizationDTO> realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
+    assertNotNull(realizations);
+    assertEquals(1, realizations.size());
+    RealizationDTO lastRealization = realizations.get(0);
+    assertEquals(RealizationStatus.ACCEPTED.name(), lastRealization.getStatus());
 
-    realization = realizationService.findLatestRealizationByIdentityId(TEST_USER_RECEIVER);
-    assertEquals(HistoryStatus.ACCEPTED.name(), realization.getStatus());
+    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_RECEIVER, 1);
+    assertNotNull(realizations);
+    assertEquals(1, realizations.size());
+    lastRealization = realizations.get(0);
+    assertEquals(RealizationStatus.ACCEPTED.name(), lastRealization.getStatus());
 
     realizationService.deleteRealizations(ACTIVITY_ID, ACTIVITY_OBJECT_TYPE);
 
-    realization = realizationService.findLatestRealizationByIdentityId(TEST_USER_EARNER);
-    assertEquals(HistoryStatus.DELETED.name(), realization.getStatus());
+    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
+    assertNotNull(realizations);
+    assertEquals(0, realizations.size());
 
-    realization = realizationService.findLatestRealizationByIdentityId(TEST_USER_RECEIVER);
-    assertEquals(HistoryStatus.DELETED.name(), realization.getStatus());
+    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_RECEIVER, 1);
+    assertNotNull(realizations);
+    assertEquals(0, realizations.size());
   }
 
   private void makeRecurrenceTypeChecks(RecurrenceType recurrenceType) throws ObjectNotFoundException {

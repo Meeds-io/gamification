@@ -28,7 +28,7 @@ import org.exoplatform.social.core.activity.ActivityListenerPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
 
-import io.meeds.gamification.constant.HistoryStatus;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.RealizationService;
@@ -80,11 +80,8 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
     long realizationId = Long.parseLong(activity.getTemplateParams().get(ANNOUNCEMENT_ID_PARAM));
     try {
       RealizationDTO realization = realizationService.getRealizationById(realizationId);
-      if (!HistoryStatus.CANCELED.name().equals(realization.getStatus())) {
-        realization.setStatus(HistoryStatus.DELETED.name());
-        realization.setActivityId(null);
-        realization.setObjectId(null);
-        realizationService.updateRealization(realization);
+      if (!RealizationStatus.CANCELED.name().equals(realization.getStatus())) {
+        realizationService.updateRealizationStatus(realizationId, RealizationStatus.DELETED);
       }
     } catch (ObjectNotFoundException e) {
       LOG.warn("Realization with id {} does not exist", realizationId, e);

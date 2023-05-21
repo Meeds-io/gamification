@@ -38,12 +38,14 @@ public class RealizationFilter implements Serializable {
 
   private boolean           sortDescending;
 
+  private boolean           owned;
+
   private Date              fromDate;
 
   private Date              toDate;
-  
+
   private IdentityType      identityType;
-  
+
   private List<Long>        domainIds;
-  
+
 }
