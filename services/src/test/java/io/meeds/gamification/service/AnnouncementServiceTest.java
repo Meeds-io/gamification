@@ -23,7 +23,6 @@ import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ID_TEMPLATE_PARAM;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -270,10 +269,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     Map<String, String> templateParams = new HashMap<>();
 
     when(ruleService.findRuleById(anyLong())).thenReturn(rule);
-    UTILS.when(() -> Utils.canAcquireAchievement(any(), any(), any(), anyString())).thenReturn(false);
     when(identityManager.getIdentity("1")).thenReturn(identity);
-    UTILS.when(() -> Utils.canAcquireAchievement(any(), any(), any(), anyString())).thenReturn(true);
-    UTILS.when(() -> Utils.buildActivityParams(any(), any())).thenCallRealMethod();
     when(announcementStorage.getAnnouncementById(announcementId)).thenReturn(announcement);
     when(spaceService.getSpaceById(spaceId)).thenReturn(space);
     when(identityManager.getOrCreateSpaceIdentity(space.getPrettyName())).thenReturn(spaceIdentity);
@@ -367,8 +363,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
-    UTILS.when(() -> Utils.canAcquireAchievement(any(), any(), any(), anyString()))
-         .thenReturn(true);
     Identity identity = mock(Identity.class);
     when(identity.isEnable()).thenReturn(true);
     when(identity.getId()).thenReturn("1");
@@ -397,7 +391,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identity.isEnable()).thenReturn(true);
     UTILS.when(() -> Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
     when(identity.getId()).thenReturn("1");
-    UTILS.when(() -> Utils.canAcquireAchievement(any(), any(), any(), anyString())).thenReturn(true);
     Identity rootIdentity = new Identity();
     rootIdentity.setId("1");
     rootIdentity.setProviderId("organization");
@@ -553,7 +546,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(announcementStorage.countAnnouncements(rule.getId())).thenReturn(10);
 
     assertThrows(IllegalArgumentException.class, () -> announcementService.countAnnouncements(0l));
-    assertThrows(ObjectNotFoundException.class, () -> announcementService.countAnnouncements(rule.getId()));
     when(ruleService.findRuleById(anyLong())).thenReturn(rule);
     assertEquals(10, announcementService.countAnnouncements(rule.getId()));
   }

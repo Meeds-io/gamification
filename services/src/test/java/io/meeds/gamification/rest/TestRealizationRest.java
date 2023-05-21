@@ -43,7 +43,7 @@ import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.HistoryStatus;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RealizationEntity;
 import io.meeds.gamification.entity.RuleEntity;
@@ -82,7 +82,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
 
   @Test
   public void testGetAllRealizationsDefaultSort() throws Exception {
-    String restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    String restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&offset=-1&limit=10" + "&returnType=" + JSON_TYPE;
 
     startSessionAs("root1");
@@ -92,14 +92,14 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&offset=0&limit=-10" + "&returnType=" + JSON_TYPE;
 
     response = getResponse("GET", getURLResource(restPath), null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&offset=0&limit=10" + "&returnType=" + JSON_TYPE;
 
     response = getResponse("GET", getURLResource(restPath), null);
@@ -119,7 +119,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     realizations = realizationList.getRealizations();
     assertEquals(1, realizations.size());
 
-    restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&offset=0&limit=10" + "&returnType=" + JSON_TYPE + "&returnSize=true";
 
     response = getResponse("GET", getURLResource(restPath), null);
@@ -131,7 +131,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     assertNotNull(realizations);
     assertEquals(1, realizationCount);
 
-    restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&offset=0&limit=10" + "&returnType=fake&returnSize=true";
 
     response = getResponse("GET", getURLResource(restPath), null);
@@ -139,7 +139,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     assertEquals(400, response.getStatus());
 
     startSessionAs("root10");
-    restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&offset=0&limit=10" + "&returnType=" + JSON_TYPE + "&returnSize=true";
 
     response = getResponse("GET", getURLResource(restPath), null);
@@ -149,7 +149,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
 
   @Test
   public void testGetAllRealizationsSortByDateDescending() throws Exception {
-    String restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    String restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true" + "&returnType=" + JSON_TYPE;
 
     startSessionAs("root1");
@@ -186,7 +186,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
 
   @Test
   public void testGetAllRealizationsSortByDateAscending() throws Exception {
-    String restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    String restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=false" + "&returnType=" + JSON_TYPE;
 
     ContainerResponse response = getResponse("GET", getURLResource(restPath), null);
@@ -231,7 +231,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
       createdActionHistories.add(0, newRealizationEntityWithRuleId(rule1Automatic.getEvent(), rule1Automatic.getId()));
     }
 
-    String restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    String restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true" + "&returnType=" + JSON_TYPE;
 
     startSessionAs("root1");
@@ -249,7 +249,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
                                        .toList(),
                  realizations.stream().map(RealizationRestEntity::getId).toList());
 
-    restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&offset=0&limit=" + createdActionHistories.size() + "&sortBy=date&sortDescending=true" + "&returnType=" + JSON_TYPE;
     response = getResponse("GET", getURLResource(restPath), null);
     assertNotNull(response);
@@ -276,7 +276,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
       createdActionHistories.add(0, newRealizationEntityWithRuleId(rule2Manual.getEvent(), rule2Manual.getId()));
     }
 
-    String restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    String restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true" + "&returnType=" + JSON_TYPE;
 
     startSessionAs("root1");
@@ -293,7 +293,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
                                        .toList(),
                  realizations.stream().map(RealizationRestEntity::getId).toList());
 
-    restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&offset=0&limit=" + createdActionHistories.size() + "&sortBy=date&sortDescending=true" + "&returnType=" + JSON_TYPE;
     response = getResponse("GET", getURLResource(restPath), null);
     assertNotNull(response);
@@ -311,7 +311,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     ProgramEntity domainEntity = newDomain();
     RealizationEntity history1 = newRealizationEntity("rule", domainEntity.getId());
     RealizationEntity history2 = newRealizationEntity("rule", domainEntity.getId());
-    String restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+    String restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&returnType=" + XLSX_TYPE;
 
     EnvironmentContext environmentContext = new EnvironmentContext();
@@ -340,40 +340,52 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
   @Test
   public void testUpdateRealization() throws Exception {
     RealizationDTO gHistory = newRealizationDTO();
-    String restPath = "realizations/api/updateRealizations?realizationId=" + gHistory.getId() + "&status=" + HistoryStatus.EDITED
-        + "&actionLabel=newLabel&points=100";
+    Long realizationId = gHistory.getId();
+    RealizationDTO realization = realizationService.getRealizationById(realizationId);
+    assertEquals(RealizationStatus.ACCEPTED.name(), realization.getStatus());
 
     startSessionAs("root1");
-    ContainerResponse response = getResponse("PUT", getURLResource(restPath), null);
-
+    ContainerResponse response = getPatchResponse(realizationId, RealizationStatus.REJECTED);
     assertNotNull(response);
-    assertEquals(200, response.getStatus());
-    RealizationRestEntity realizations = (RealizationRestEntity) response.getEntity();
-    assertEquals(100, (long) realizations.getScore());
-    assertEquals(HistoryStatus.EDITED.name(), realizations.getStatus());
+    assertEquals(204, response.getStatus());
+    realization = realizationService.getRealizationById(realizationId);
+    assertEquals(RealizationStatus.REJECTED.name(), realization.getStatus());
 
-    restPath = "realizations/api/updateRealizations?realizationId=" + gHistory.getId() + "&status=" + HistoryStatus.REJECTED
-        + "&actionLabel=&points=0";
-
-    response = getResponse("PUT", getURLResource(restPath), null);
+    response = getPatchResponse(realizationId, RealizationStatus.CANCELED);
     assertNotNull(response);
-    assertEquals(200, response.getStatus());
-    realizations = (RealizationRestEntity) response.getEntity();
-    assertEquals(HistoryStatus.REJECTED.name(), realizations.getStatus());
+    assertEquals(400, response.getStatus());
+    realization = realizationService.getRealizationById(realizationId);
+    assertEquals(RealizationStatus.REJECTED.name(), realization.getStatus());
 
-    restPath = "realizations/api/updateRealizations?realizationId=1000&status=" + HistoryStatus.REJECTED
-        + "&actionLabel=&points=0";
+    response = getPatchResponse(realizationId, RealizationStatus.DELETED);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+    realization = realizationService.getRealizationById(realizationId);
+    assertEquals(RealizationStatus.REJECTED.name(), realization.getStatus());
 
-    response = getResponse("PUT", getURLResource(restPath), null);
+    response = getPatchResponse(realizationId, RealizationStatus.ACCEPTED);
+    assertNotNull(response);
+    assertEquals(204, response.getStatus());
+    realization = realizationService.getRealizationById(realizationId);
+    assertEquals(RealizationStatus.ACCEPTED.name(), realization.getStatus());
+
+    response = getPatchResponse(5000l, RealizationStatus.REJECTED);
     assertNotNull(response);
     assertEquals(404, response.getStatus());
+    realization = realizationService.getRealizationById(realizationId);
+    assertEquals(RealizationStatus.ACCEPTED.name(), realization.getStatus());
 
     startSessionAs("root10");
-    restPath = "realizations/api/updateRealizations?realizationId=" + gHistory.getId() + "&status=" + HistoryStatus.REJECTED
-        + "&actionLabel=&points=0";
-    response = getResponse("PUT", getURLResource(restPath), null);
-
+    response = getPatchResponse(realizationId, RealizationStatus.REJECTED);
     assertNotNull(response);
     assertEquals(401, response.getStatus());
   }
+
+  private ContainerResponse getPatchResponse(long realizationId, RealizationStatus status) throws Exception {
+    byte[] formData = ("id=" + realizationId + "&status=" + status).getBytes();
+    MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
+    headers.putSingle("Content-Type", "application/x-www-form-urlencoded");
+    return launcher.service("PATCH", getURLResource("realizations"), "", headers, formData, null);
+  }
+
 }

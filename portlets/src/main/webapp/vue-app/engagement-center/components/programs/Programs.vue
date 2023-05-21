@@ -29,7 +29,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div v-if="!displayNoSearchResult" class="border-box-sizing clickable">
         <v-btn
           id="engagementCenterAddProgramBtn"
-          v-if="canAddProgram"
+          v-if="isAdministrator"
           class="btn btn-primary"
           @click="$root.$emit('open-program-drawer')">
           <v-icon small>fas fa-plus</v-icon>
@@ -92,7 +92,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div v-if="isAdministrator">
         <engagement-center-result-not-found 
           :display-back-arrow="false"
-          :message-title="$t('challenges.welcomeMessage')"
+          :message-title="$t('actions.welcomeMessage')"
           :message-info-one="$t('programs.label.welcomeMessageForManager')"
           :message-info-three="$t('programs.label.seeYouSoon')"
           :button-text="$t('programs.button.addProgram')"
@@ -102,13 +102,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <div v-if="isExternal">
           <engagement-center-result-not-found 
             :display-back-arrow="false"
-            :message-title="$t('challenges.welcomeMessage')"
+            :message-title="$t('actions.welcomeMessage')"
             :message-info-one="$t('programs.label.welcomeMessageForExternal')" />
         </div>
         <div v-else>
           <engagement-center-result-not-found 
             :display-back-arrow="false"
-            :message-title="$t('challenges.welcomeMessage')"
+            :message-title="$t('actions.welcomeMessage')"
             :button-text="$t('programs.label.joinSpace')"
             :message-info-one="$t('programs.label.welcomeMessageForUser')"
             :message-info-three="$t('programs.label.welcomeMessageTwoForUser')"
@@ -133,7 +133,6 @@ export default {
       totalSize: 0,
       pageSize: 9,
       loading: false,
-      canAddProgram: false,
       type: 'ALL',
       status: 'ENABLED',
       deleteConfirmMessage: '',
@@ -189,7 +188,6 @@ export default {
   created() {
     this.limitToFetch = this.originalLimitToFetch = this.limit;
     const promises = [];
-    promises.push(this.computeCanAddProgram());
     promises.push(this.retrievePrograms());
     this.$root.$on('program-load-more', this.loadMore);
     this.$root.$on('program-added', this.refreshPrograms);
@@ -199,10 +197,6 @@ export default {
       .finally(() => this.$root.$applicationLoaded());
   },
   methods: {
-    computeCanAddProgram() {
-      return this.$programService.canAddProgram()
-        .then(canAddProgram => this.canAddProgram = canAddProgram);
-    },
     retrievePrograms() {
       this.loading = true;
       return this.$programService.getPrograms(this.offset, this.limitToFetch, this.type, this.status)

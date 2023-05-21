@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-app
     class="Realizations border-box-sizing">
     <div class="pt-5">
-      <div v-if="!isAdministrator" class="d-flex px-7">
+      <div v-if="isRealizationManager" class="d-flex px-7">
         <v-switch
           id="realizationAdministrationSwitch"
           v-model="administrationMode"
@@ -26,33 +26,35 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           @change="switchToAdminMode()" />
         <span class="me-auto text-sub-title ps-3">{{ $t("realization.label.switchAdministration") }}</span>
       </div>
-      <div class="d-flex px-7">
+      <div class="d-flex px-7 align-center">
         <v-toolbar-title class="d-flex" v-if="!isMobile && displaySearchResult">
-          <v-btn class="btn btn-primary export" @click="exportFile()">
-            <span class="ms-2 d-none d-lg-inline">
+          <v-btn
+            :href="exportFileLink"
+            download="achievements.xlsx"
+            class="btn btn-primary export">
+            <span class="ms-2 d-none d-lg-inline text-none">
               {{ $t("realization.label.export") }}
             </span>
           </v-btn>
         </v-toolbar-title>
         <v-spacer v-if="!isMobile" />
-        <div class="mt-1 ml-n4 pe-3">
+        <div class="ml-n4 pe-3 d-flex align-center">
           <select-period
             v-model="selectedPeriod"
             :left="!isMobile"
             class="mx-2" />
         </div>
         <v-spacer v-if="isMobile" />
-        <div>
-          <v-btn
-            class="btn px-2 mt-1 btn-primary filterTasksSetting"
-            outlined
-            @click="openRealizationsFilterDrawer">
-            <i class="uiIcon uiIcon24x24 settingsIcon primary--text mr-1"></i>
-            <span class="d-none font-weight-regular caption d-sm-inline">
-              {{ $t('profile.label.search.openSearch') }}
-            </span>
-          </v-btn>
-        </div>
+        <v-btn
+          color="primary"
+          text
+          class="primary-border-color px-2"
+          @click="openRealizationsFilterDrawer">
+          <v-icon size="16">fas fa-sliders-h</v-icon>
+          <span class="d-none d-sm-inline font-weight-regular caption ms-2">
+            {{ $t('profile.label.search.openSearch') }}
+          </span>
+        </v-btn>
       </div>
     </div>
     <v-progress-linear
@@ -71,7 +73,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <engagement-center-result-not-found 
         v-else
         :display-back-arrow="false"
-        :message-title="$t('challenges.welcomeMessage')"
+        :message-title="$t('actions.welcomeMessage')"
         :message-info-one="$t('challenge.realization.noPeriodResult.messageOne')"
         :message-info-two="$t('challenge.realization.noPeriodResult.messageTwo')"
         :button-text="$t('programs.details.programDeleted.explore')"
@@ -81,7 +83,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       v-else-if="displaySearchResult && !isMobile"
       :headers="realizationsHeaders"
       :items="realizationsToDisplay"
-      :loading="loading"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDescending"
       disable-pagination
@@ -92,7 +93,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <realization-item
           :realization="props.item"
           :date-format="dateFormat"
-          :is-administrator="isAdministrator || administrationMode"
+          :is-administrator="administrationMode"
           :action-value-extensions="actionValueExtensions"
           @updated="realizationUpdated" />
       </template>
@@ -115,7 +116,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-if="displaySearchResult && isMobile"
         :headers="realizationsHeaders"
         :realization="item"
-        :is-administrator="isAdministrator" 
+        :is-administrator="administrationMode" 
         :date-format="mobileDateFormat"
         :action-value-extensions="actionValueExtensions" />
     </template>
@@ -135,12 +136,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </span>
       </v-btn>
     </v-toolbar>
-    <edit-realization-drawer
-      ref="editRealizationDrawer"
-      @updated="realizationUpdated" />
     <filter-realizations-drawer
       ref="filterRealizationDrawer"
-      :is-administrator="isAdministrator || administrationMode"
+      :is-administrator="administrationMode"
       :administration-mode="administrationMode"
       @selectionConfirmed="filterByPrograms" />
   </v-app>
@@ -151,10 +149,6 @@ export default {
     earnerId: {
       type: Number,
       default: () => 0,
-    },
-    isAdministrator: {
-      type: Boolean,
-      default: false,
     },
     actionValueExtensions: {
       type: Object,
@@ -198,36 +192,32 @@ export default {
     filterActivated: false,
     selected: 'Date',
     programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`,
-    administrationMode: false
+    administrationMode: false,
+    isRealizationManager: false,
   }),
-  beforeDestroy () {
-    if (typeof window === 'undefined') {return;}
-    window.removeEventListener('resize', this.onResize, { passive: true });
-  },
-  mounted () {
-    this.onResize();
-    window.addEventListener('resize', this.onResize, { passive: true });
-  },
-  created() {
-    this.realizationsHeaders.map((header) => {if (header.sortable && header.value !== 'type') {this.availableSortBy.push(header);}});
-    // Workaround to fix closing menu when clicking outside
-    $(document).mousedown(() => {
-      if (this.$refs.select) {
-        window.setTimeout(() => {
-          this.$refs.select.blur();
-        }, 200);
-      }
-    });
-  },
   computed: {
     hasMore() {
       return this.limit < this.totalSize;
     },
     earnerIdToRetrieve() {
-      return this.isAdministrator || this.administrationMode ?  this.earnerIds : [this.earnerId];
+      return this.earnerIds?.length && this.earnerIds || (!this.administrationMode && [this.earnerId] || null);
     },
     realizationsToDisplay() {
       return this.realizations.slice(0, this.limit);
+    },
+    realizationsFilter() {
+      return {
+        fromDate: this.fromDate,
+        toDate: this.toDate,
+        earnerIds: this.earnerIdToRetrieve,
+        sortBy: this.sortBy,
+        sortDescending: this.sortDescending,
+        domainIds: this.searchList,
+        owned: this.administrationMode,
+      };
+    },
+    exportFileLink() {
+      return this.$realizationService.getRealizationsExportLink(this.realizationsFilter);
     },
     realizationsHeaders() {
       const realizationsHeaders = [
@@ -277,7 +267,7 @@ export default {
           width: '95',
         },
       ];
-      if (this.isAdministrator || this.administrationMode) {
+      if (this.administrationMode) {
         realizationsHeaders.push({
           text: this.$t('realization.label.actions'),
           sortable: false,
@@ -332,7 +322,39 @@ export default {
         this.limit = 25;
         this.pageSize = 25;
       }
-    }
+    },
+    loading() {
+      if (this.loading) {
+        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      } else {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+      }
+    },
+  },
+  created() {
+    this.realizationsHeaders.map((header) => {
+      if (header.sortable && header.value !== 'type') {
+        this.availableSortBy.push(header);
+      }
+    });
+    this.$realizationService.isRealizationManager()
+      .then(manager => this.isRealizationManager = manager);
+    // Workaround to fix closing menu when clicking outside
+    $(document).mousedown(() => {
+      if (this.$refs.select) {
+        window.setTimeout(() => {
+          this.$refs.select.blur();
+        }, 200);
+      }
+    });
+  },
+  mounted () {
+    this.onResize();
+    window.addEventListener('resize', this.onResize, { passive: true });
+  },
+  beforeDestroy () {
+    if (typeof window === 'undefined') {return;}
+    window.removeEventListener('resize', this.onResize, { passive: true });
   },
   methods: {
     sortUpdated() {
@@ -358,15 +380,16 @@ export default {
         });
     },
     getRealizations() {
-      return this.$realizationService.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit, this.searchList)
+      return this.$realizationService.getRealizations(Object.assign({
+        offset: this.offset,
+        limit: this.limit,
+        returnSize: true,
+      }, this.realizationsFilter))
         .then(realizations => {
           this.realizations = realizations?.realizations || [];
           this.totalSize = realizations?.size || this.totalSize;
           this.displaySearchResult = this.searchList?.length >= 0 && this.realizations.length > 0;
         });
-    },
-    exportFile() {
-      return this.$realizationService.exportFile(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.searchList);
     },
     realizationUpdated(updatedRealization){
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
@@ -384,20 +407,7 @@ export default {
     },
     switchToAdminMode() {
       this.realizations = [];
-      if (this.administrationMode) {
-        this.$programService.getPrograms(0, -1, 'ALL', 'ENABLED', '', false, false, true)
-          .then(data => {
-            this.searchList = data.domains.map(program => program.id);
-            this.ownedPrograms = data.domains.map(program => program.id);
-            return this.$nextTick();
-          }).then(() => {
-            this.loadRealizations();
-          });
-      } else {
-        this.searchList = [];
-        this.loadRealizations();
-      }
-      this.$refs.filterRealizationDrawer.clear();
+      this.loadRealizations();
     },
     onResize () {
       this.isMobile = window.innerWidth < 1020;
