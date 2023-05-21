@@ -1,7 +1,8 @@
 /**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2022 Meeds Association
- * contact@meeds.io
+ *
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -14,7 +15,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
+ 
 export function getPrograms(offset, limit, type, status, query, includeDeleted, sortByBudget, owned) {
   const formData = new FormData();
   if (offset) {
@@ -70,22 +71,6 @@ export function createProgram(program) {
       return resp.json();
     } else {
       throw new Error('Error saving program');
-    }
-  });
-}
-
-export function canAddProgram() {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs/canAddProgram`, {
-    headers: {
-      'Content-Type': 'text/plain'
-    },
-    method: 'GET',
-    credentials: 'include',
-  }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } else {
-      throw new Error('Server indicates an error while sending request');
     }
   });
 }

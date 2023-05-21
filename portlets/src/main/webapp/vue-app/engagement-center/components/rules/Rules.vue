@@ -27,7 +27,7 @@
       <v-switch
         v-model="displayManual"
         :label="$t('rules.filter.showChallenges')"
-        class="mb-n2 hidden-xs-only" />
+        class="mb-n2 ms-2 hidden-xs-only" />
       <v-spacer />
       <div class="rules-filter-toolbar text-center d-flex align-center justify-space-around">
         <v-text-field
@@ -132,7 +132,7 @@ export default {
     },
     welcomeMessage() {
       if (this.filter === 'NOT_STARTED' && this.filter === 'ENDED' && !this.search?.length) {
-        return this.$t('challenges.welcomeMessage');
+        return this.$t('actions.welcomeMessage');
       } 
       return '';
     },

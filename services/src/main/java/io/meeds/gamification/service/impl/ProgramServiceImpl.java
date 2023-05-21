@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +34,7 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.IdentityConstants;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.EntityType;
@@ -261,7 +263,7 @@ public class ProgramServiceImpl implements ProgramService {
     if (domain == null || domain.isDeleted()) {
       return false;
     }
-    return Utils.isProgramOwner(domain.getAudienceId(), domain.getOwnerIds(), userIdentity);
+    return isProgramOwner(domain.getAudienceId(), domain.getOwnerIds(), userIdentity);
   }
 
   @Override
@@ -276,7 +278,7 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     return Utils.isRewardingManager(username)
-        || Utils.isSpaceMember(program.getAudienceId(), username);
+        || isSpaceMember(program.getAudienceId(), username);
   }
 
   @SuppressWarnings("unchecked")
@@ -333,6 +335,42 @@ public class ProgramServiceImpl implements ProgramService {
     domain.setLastModifiedBy(username);
     domain.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
     return programStorage.saveProgram(domain);
+  }
+
+  private boolean isProgramOwner(long spaceId, Set<Long> ownerIds,
+                                 org.exoplatform.social.core.identity.model.Identity userIdentity) {
+    if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
+      return false;
+    }
+    String username = userIdentity.getRemoteId();
+    if (isSpaceManager(spaceId, username)) {
+      return true;
+    }
+    if (isSpaceMember(spaceId, username)
+        && ownerIds != null
+        && ownerIds.contains(Long.parseLong(userIdentity.getId()))) {
+      return true;
+    }
+    return Utils.isRewardingManager(username);
+  }
+
+  private boolean isSpaceManager(long spaceId, String username) {
+    if (spaceService.isSuperManager(username)) {
+      return true;
+    }
+    Space space = spaceService.getSpaceById(String.valueOf(spaceId));
+    if (space == null) {
+      return false;
+    }
+    return spaceService.isManager(space, username);
+  }
+
+  private boolean isSpaceMember(long spaceId, String username) {
+    Space space = spaceService.getSpaceById(String.valueOf(spaceId));
+    if (space == null) {
+      return false;
+    }
+    return spaceService.isMember(space, username);
   }
 
 }

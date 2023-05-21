@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.AfterClass;
@@ -50,7 +51,7 @@ import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-import io.meeds.gamification.constant.HistoryStatus;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.entity.RealizationEntity;
@@ -67,6 +68,8 @@ import io.meeds.gamification.utils.Utils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RealizationServiceTest extends AbstractServiceTest {
+
+  private static final Random RANDOM = new Random();
 
   protected static final long                      MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
 
@@ -116,7 +119,8 @@ public class RealizationServiceTest extends AbstractServiceTest {
                                                     ruleService,
                                                     identityManager,
                                                     spaceService,
-                                                    realizationsStorage);
+                                                    realizationsStorage,
+                                                    null);
   }
 
   @SuppressWarnings("deprecation")
@@ -195,35 +199,42 @@ public class RealizationServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void updateRealizationStatus() {
+  public void updateRealizationStatus() throws ObjectNotFoundException, IllegalAccessException {
     // Given
     RealizationDTO gHistory1 = newRealizationDTO();
     RealizationDTO gHistory2 = newRealizationDTO();
-    gHistory2.setStatus(HistoryStatus.REJECTED.name());
-    when(realizationsStorage.getRealizationById(1L)).thenReturn(gHistory1);
-    when(realizationsStorage.getRealizationById(2L)).thenReturn(null);
-    when(realizationsStorage.updateRealization(gHistory1)).thenReturn(gHistory2);
-    RealizationDTO rejectedHistory = null;
+    gHistory2.setStatus(RealizationStatus.REJECTED.name());
+    when(realizationsStorage.getRealizationById(gHistory1.getId())).thenReturn(gHistory1);
+    when(realizationsStorage.getRealizationById(gHistory2.getId())).thenReturn(gHistory2);
+    when(realizationsStorage.updateRealization(gHistory1)).thenReturn(gHistory1);
+    when(realizationsStorage.updateRealization(gHistory2)).thenReturn(gHistory2);
     // When
-    assertThrows(IllegalArgumentException.class,
-                 () -> realizationService.updateRealization(null));
-    RealizationDTO realization1 = new RealizationDTO();
-    realization1.setId(2L);
+    assertThrows(IllegalArgumentException.class, // NOSONAR
+                 () -> realizationService.updateRealizationStatus(gHistory1.getId(), null));
+    assertThrows(IllegalAccessException.class,
+                 () -> realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.ACCEPTED, null));
+    assertThrows(IllegalArgumentException.class, // NOSONAR
+                 () -> realizationService.updateRealizationStatus(gHistory1.getId(), null, "test"));
     assertThrows(ObjectNotFoundException.class,
-                 () -> realizationService.updateRealization(realization1));
+                 () -> realizationService.updateRealizationStatus(5000l, RealizationStatus.ACCEPTED));
+    assertThrows(ObjectNotFoundException.class,
+                 () -> realizationService.updateRealizationStatus(5000l, RealizationStatus.ACCEPTED, "test"));
+    assertThrows(IllegalArgumentException.class, // NOSONAR
+                 () -> realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.CANCELED, "root1"));
+    assertThrows(IllegalArgumentException.class, // NOSONAR
+                 () -> realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.DELETED, "root1"));
 
-    try {
-      gHistory1.setStatus(HistoryStatus.REJECTED.name());
-      gHistory1.setActionTitle("new label");
-      gHistory1.setActionScore(10L);
-      rejectedHistory = realizationService.updateRealization(gHistory1);
+    realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.REJECTED);
+    assertEquals(RealizationStatus.REJECTED.name(), realizationService.getRealizationById(gHistory1.getId()).getStatus());
 
-    } catch (ObjectNotFoundException e) {
-      fail(e.getMessage());
-    }
-    // Then
-    assertNotNull(rejectedHistory);
-    assertEquals(rejectedHistory.getStatus(), HistoryStatus.REJECTED.name());
+    realizationService.updateRealizationStatus(gHistory2.getId(), RealizationStatus.ACCEPTED);
+    assertEquals(RealizationStatus.ACCEPTED.name(), realizationService.getRealizationById(gHistory2.getId()).getStatus());
+
+    realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.REJECTED, "root1");
+    assertEquals(RealizationStatus.REJECTED.name(), realizationService.getRealizationById(gHistory1.getId()).getStatus());
+
+    realizationService.updateRealizationStatus(gHistory2.getId(), RealizationStatus.ACCEPTED, "root1");
+    assertEquals(RealizationStatus.ACCEPTED.name(), realizationService.getRealizationById(gHistory2.getId()).getStatus());
   }
 
   public void testBuildHistory() {
@@ -379,36 +390,6 @@ public class RealizationServiceTest extends AbstractServiceTest {
     assertEquals(2, rankSpace1);
   }
 
-  public void testFindLatestActionHistoryBySocialId() {
-    RuleDTO ruleDTO = newRuleDTO();
-    realizationService.createRealizations(ruleDTO.getEvent(),
-                                          TEST_USER_EARNER,
-                                          TEST_USER_RECEIVER,
-                                          ACTIVITY_ID,
-                                          ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
-                                          TEST_USER_EARNER,
-                                          TEST_USER_RECEIVER,
-                                          ACTIVITY_ID,
-                                          ACTIVITY_OBJECT_TYPE);
-    RealizationDTO lastRealization = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                                           TEST_USER_EARNER,
-                                                                           TEST_USER_RECEIVER,
-                                                                           ACTIVITY_ID,
-                                                                           ACTIVITY_OBJECT_TYPE)
-                                                       .get(0);
-
-    RealizationDTO realization = realizationService.findLatestRealizationByIdentityId(TEST_USER_EARNER);
-    assertEquals(lastRealization.getActionScore(), realization.getActionScore());
-    assertEquals(lastRealization.getActionTitle(), realization.getActionTitle());
-    assertEquals(lastRealization.getProgram(), realization.getProgram());
-    assertEquals(lastRealization.getGlobalScore(), realization.getGlobalScore());
-    assertEquals(lastRealization.getObjectId(), realization.getObjectId());
-    assertEquals(lastRealization.getReceiver(), realization.getReceiver());
-    assertEquals(lastRealization.getEarnerId(), realization.getEarnerId());
-    assertEquals(lastRealization.getCreatedBy(), realization.getCreatedBy());
-  }
-
   public void testFindUserReputationBySocialId() {
     RuleDTO ruleDTO = newRuleDTO();
     assertEquals(realizationService.getScoreByIdentityId(TEST_USER_EARNER), 0);
@@ -493,25 +474,37 @@ public class RealizationServiceTest extends AbstractServiceTest {
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
 
-    RealizationDTO lastRealization = realizationService.findLatestRealizationByIdentityId(TEST_USER_EARNER);
-    assertEquals(HistoryStatus.ACCEPTED, lastRealization.getStatus());
+    List<RealizationDTO> realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
+    assertNotNull(realizations);
+    assertEquals(1, realizations.size());
+    RealizationDTO lastRealization = realizations.get(0);
+    assertEquals(RealizationStatus.ACCEPTED, lastRealization.getStatus());
 
-    lastRealization = realizationService.findLatestRealizationByIdentityId(TEST_USER_RECEIVER);
-    assertEquals(HistoryStatus.ACCEPTED, lastRealization.getStatus());
+    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_RECEIVER, 1);
+    assertNotNull(realizations);
+    assertEquals(1, realizations.size());
+    lastRealization = realizations.get(0);
+    assertEquals(RealizationStatus.ACCEPTED, lastRealization.getStatus());
 
     realizationService.deleteRealizations(ACTIVITY_ID, ACTIVITY_OBJECT_TYPE);
 
-    lastRealization = realizationService.findLatestRealizationByIdentityId(TEST_USER_EARNER);
-    assertEquals(HistoryStatus.DELETED, lastRealization.getStatus());
+    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
+    assertNotNull(realizations);
+    assertEquals(1, realizations.size());
+    lastRealization = realizations.get(0);
+    assertEquals(RealizationStatus.DELETED, lastRealization.getStatus());
 
-    lastRealization = realizationService.findLatestRealizationByIdentityId(TEST_USER_RECEIVER);
-    assertEquals(HistoryStatus.DELETED, lastRealization.getStatus());
+    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_RECEIVER, 1);
+    assertNotNull(realizations);
+    assertEquals(1, realizations.size());
+    lastRealization = realizations.get(0);
+    assertEquals(RealizationStatus.DELETED, lastRealization.getStatus());
   }
 
   protected RealizationDTO newRealizationDTO() {
     RealizationDTO gHistory = new RealizationDTO();
-    gHistory.setId(1L);
-    gHistory.setStatus(HistoryStatus.ACCEPTED.name());
+    gHistory.setId(RANDOM.nextLong(1, 10000));
+    gHistory.setStatus(RealizationStatus.ACCEPTED.name());
     gHistory.setProgram(new ProgramDTO());
     gHistory.setReceiver("1");
     gHistory.setEarnerId("1L");

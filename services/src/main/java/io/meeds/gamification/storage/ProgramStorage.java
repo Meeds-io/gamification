@@ -37,7 +37,7 @@ import io.meeds.gamification.dao.RuleDAO;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
-import io.meeds.gamification.utils.ProgramBuilder;
+import io.meeds.gamification.storage.mapper.ProgramMapper;
 
 public class ProgramStorage {
 
@@ -62,7 +62,7 @@ public class ProgramStorage {
   }
 
   public ProgramDTO saveProgram(ProgramDTO program) {
-    ProgramEntity programEntity = ProgramBuilder.toEntity(program);
+    ProgramEntity programEntity = ProgramMapper.toEntity(program);
     if (StringUtils.isNotBlank(program.getCoverUploadId())) {
       Long coverFileId = saveProgramCover(program.getCoverUploadId());
       programEntity.setCoverFileId(coverFileId);
@@ -80,11 +80,11 @@ public class ProgramStorage {
     } else {
       programEntity = programDAO.update(programEntity);
     }
-    return ProgramBuilder.fromEntity(ruleDAO, programEntity);
+    return ProgramMapper.fromEntity(ruleDAO, programEntity);
   }
 
   public ProgramDTO getProgramByTitle(String programTitle) {
-    return ProgramBuilder.fromEntity(ruleDAO, programDAO.getProgramByTitle(programTitle));
+    return ProgramMapper.fromEntity(ruleDAO, programDAO.getProgramByTitle(programTitle));
   }
 
   public List<Long> findHighestBudgetProgramIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
@@ -105,7 +105,7 @@ public class ProgramStorage {
 
   public ProgramDTO getProgramById(Long id) {
     ProgramEntity programEntity = programDAO.find(id);
-    return ProgramBuilder.fromEntity(ruleDAO, programEntity);
+    return ProgramMapper.fromEntity(ruleDAO, programEntity);
   }
 
   public void clearCache() {// NOSONAR
