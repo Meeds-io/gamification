@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThrows;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -39,8 +40,8 @@ import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.RuleFilter;
+import io.meeds.gamification.storage.mapper.RuleMapper;
 import io.meeds.gamification.test.AbstractServiceTest;
-import io.meeds.gamification.utils.RuleBuilder;
 import io.meeds.gamification.utils.Utils;
 
 public class RuleServiceTest extends AbstractServiceTest {
@@ -140,7 +141,10 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertNotNull(realization);
     assertTrue(realization.getId() > 0);
 
-    RealizationDTO latestRealization = realizationService.findLatestRealizationByIdentityId(TEST_USER_EARNER);
+    List<RealizationDTO> realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
+    assertNotNull(realizations);
+    assertEquals(1, realizations.size());
+    RealizationDTO latestRealization = realizations.get(0);
     assertNotNull(latestRealization);
     assertEquals(realization.getId(), latestRealization.getId());
 
@@ -152,8 +156,10 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule = ruleService.findRuleById(rule.getId());
     assertNotNull(rule);
 
-    latestRealization = realizationService.findLatestRealizationByIdentityId(TEST_USER_EARNER);
-    assertNotNull(latestRealization);
+    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
+    assertNotNull(realizations);
+    assertEquals(1, realizations.size());
+    latestRealization = realizations.get(0);    assertNotNull(latestRealization);
     assertEquals(realization.getId(), latestRealization.getId());
   }
 
@@ -175,7 +181,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setDomainEntity(newDomain(GAMIFICATION_DOMAIN));
     rule.setType(EntityType.AUTOMATIC);
     rule.setRecurrence(RecurrenceType.NONE);
-    ruleService.createRule(RuleBuilder.fromEntity(domainStorage, rule), "root1");
+    ruleService.createRule(RuleMapper.fromEntity(domainStorage, rule), "root1");
     assertEquals(ruleDAO.findAll().size(), 1);
   }
 
@@ -185,7 +191,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertThrows(ObjectNotFoundException.class, () -> ruleService.updateRule(new RuleDTO(), "root"));
     RuleEntity ruleEntity = newRule();
     ruleEntity.setDescription("new_description");
-    ruleService.updateRule(RuleBuilder.fromEntity(domainStorage, ruleEntity), "root1");
+    ruleService.updateRule(RuleMapper.fromEntity(domainStorage, ruleEntity), "root1");
     RuleDTO rule = ruleService.findRuleById(ruleEntity.getId());
     assertEquals(ruleEntity.getDescription(), rule.getDescription());
 

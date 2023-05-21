@@ -10,6 +10,7 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
 
 import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.ProfileReputation;
 import io.meeds.gamification.model.ProgramDTO;
@@ -74,6 +75,15 @@ public interface RealizationService {
   RealizationDTO getRealizationById(long realizationId);
 
   /**
+   * Checks whether the user can manage realizations of one or multiple
+   * programs, even deleted ones.
+   * 
+   * @param  username User name
+   * @return          true if can manage realizations, else false
+   */
+  boolean isRealizationManager(String username);
+
+  /**
    * Export realizations found switch filter into an {@link InputStream}
    * containing a file of format XLS
    * 
@@ -99,17 +109,6 @@ public interface RealizationService {
    * @return            A {@link List &lt;RealizationDTO&gt;} object
    */
   List<RealizationDTO> findRealizationsByObjectIdAndObjectType(String objectId, String objectType);
-
-  /**
-   * Get realization entities
-   * 
-   * @param  date             filter by date
-   * @param  earnerIdentityId filter by
-   *                            {@link org.exoplatform.social.core.identity.model.Identity}
-   *                            id
-   * @return                  {@link List} of {@link RealizationDTO}
-   */
-  List<RealizationDTO> findRealizationsByDateAndIdentityId(Date date, String earnerIdentityId);
 
   /**
    * Retrieves Leaderboard rank of an earner
@@ -171,28 +170,31 @@ public interface RealizationService {
                                String objectType);
 
   /**
-   * Updates an existing realization
+   * Updates an existing realization status
    *
-   * @param  realization             {@link RealizationDTO} object to update
-   * @param  userAclIdentity         current identity {@link Identity}
-   * @return                         {@link RealizationDTO}
+   * @param  realizationId           {@link RealizationDTO} technical identifier
+   * @param  status                  new {@link RealizationStatus} to set
+   * @param  username                user name of modifier
    * @throws IllegalAccessException  when user is not authorized to update the
    *                                   realization
    * @throws ObjectNotFoundException when the realization identified by its
    *                                   technical identifier is not found
    */
-  RealizationDTO updateRealization(RealizationDTO realization,
-                                   Identity userAclIdentity) throws IllegalAccessException, ObjectNotFoundException;
+  void updateRealizationStatus(long realizationId,
+                               RealizationStatus status,
+                               String username) throws IllegalAccessException,
+                                                ObjectNotFoundException;
 
   /**
-   * Updates an existing realization
+   * Updates an existing realization status
    *
-   * @param  realization             {@link RealizationDTO} object to update
-   * @return                         {@link RealizationDTO}
+   * @param  realizationId           {@link RealizationDTO} technical identifier
+   * @param  status                  new {@link RealizationStatus} to set
    * @throws ObjectNotFoundException when the realization identified by its
    *                                   technical identifier is not found
    */
-  RealizationDTO updateRealization(RealizationDTO realization) throws ObjectNotFoundException;
+  void updateRealizationStatus(long realizationId,
+                               RealizationStatus status) throws ObjectNotFoundException;
 
   /**
    * Cancels an existing Realization with an event name for a given object
@@ -234,17 +236,6 @@ public interface RealizationService {
    *                          create a realization, else null
    */
   RealizationValidityContext getRealizationValidityContext(RuleDTO rule, String earnerIdentityId);
-
-  /**
-   * Retrieves latest Achievement made by an
-   * {@link org.exoplatform.social.core.identity.model.Identity} designated by
-   * its id
-   * 
-   * @param  earnerIdentityId {@link org.exoplatform.social.core.identity.model.Identity}
-   *                            id
-   * @return                  {@link RealizationDTO}
-   */
-  RealizationDTO findLatestRealizationByIdentityId(String earnerIdentityId);
 
   /**
    * Retrieves identities total score between designated dates

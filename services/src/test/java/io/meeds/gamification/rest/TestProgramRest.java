@@ -164,21 +164,6 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
-  public void testCanAddProgram() throws Exception {
-    startSessionAs("root1");
-    ContainerResponse response = getResponse("GET", getURLResource("programs/canAddProgram"), null);
-    assertNotNull(response);
-    assertEquals(200, response.getStatus());
-    assertEquals("true", response.getEntity());
-
-    startSessionAs("user");
-    response = getResponse("GET", getURLResource("programs/canAddProgram"), null);
-    assertNotNull(response);
-    assertEquals(200, response.getStatus());
-    assertEquals("false", response.getEntity());
-  }
-
-  @Test
   public void testGetDomainAvatarById() throws Exception {
     long lastUpdateCoverTime = Utils.parseRFC3339Date(manualDomain.getLastModifiedDate()).getTime();
     String token = URLEncoder.encode(Utils.generateAttachmentToken(String.valueOf(manualDomain.getId()),
@@ -228,6 +213,6 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     assertEquals(200, response.getStatus());
     ProgramRestEntity savedDomain = (ProgramRestEntity) response.getEntity();
     assertNotNull(savedDomain);
-    assertEquals(autoDomain.getId(), (long) savedDomain.getId());
+    assertEquals(autoDomain.getId(), savedDomain.getId());
   }
 }

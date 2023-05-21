@@ -54,6 +54,7 @@ import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.model.filter.RuleFilter;
+import io.meeds.gamification.rest.builder.RuleBuilder;
 import io.meeds.gamification.rest.model.ProgramWithRulesRestEntity;
 import io.meeds.gamification.rest.model.RuleList;
 import io.meeds.gamification.rest.model.RuleRestEntity;
@@ -61,7 +62,6 @@ import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
-import io.meeds.gamification.utils.RuleBuilder;
 import io.meeds.gamification.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -73,7 +73,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("/gamification/rules")
 @Tag(name = "/gamification/rules", description = "Manages rules")
-@Produces(MediaType.APPLICATION_JSON)
 public class RuleRest implements ResourceContainer {
   private final CacheControl    cacheControl;
 

@@ -149,9 +149,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <span>{{ statusLabel }}</span>
       </v-tooltip>
     </td>
-    <td v-if="isAdministrator" class="text-truncate actions align-center">
+    <td v-if="isAdministrator && hasActions" class="text-truncate actions align-center">
       <v-menu
-        v-if="hasActions"
         v-model="menu"
         :left="!$vuetify.rtl"
         :right="$vuetify.rtl"
@@ -171,18 +170,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-list dense class="pa-0">
           <template>
             <v-list-item
-              v-if="canEdit"
-              dense
-              @click="editRealization">
-              <v-icon size="13" class="dark-grey-color">fas fa-edit</v-icon>
-              <v-list-item-title class="text-justify ps-3">
-                {{ $t('realization.label.edit') }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item
               v-if="canAccept"
               dense
-              @click="updateRealizations('ACCEPTED')">
+              @click="updateRealizationStatus('ACCEPTED')">
               <v-icon size="13" class="dark-grey-color">fas fa-check</v-icon>
               <v-list-item-title class="text-justify ps-3">
                 {{ $t('realization.label.accept') }}
@@ -191,7 +181,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-list-item
               v-if="canReject"
               dense
-              @click="updateRealizations('REJECTED')">
+              @click="updateRealizationStatus('REJECTED')">
               <v-icon size="13" class="dark-grey-color">fas fa-ban</v-icon>
               <v-list-item-title class="text-justify ps-3">
                 {{ $t('realization.label.reject') }}
@@ -282,16 +272,13 @@ export default {
       return !this.realization.url && 'defaultCursor' || '';
     },
     canReject() {
-      return this.status === 'ACCEPTED' || this.status === 'EDITED';
+      return this.status === 'ACCEPTED';
     },
     canAccept() {
       return this.status === 'REJECTED';
     },
-    canEdit() {
-      return this.realization.action && this.realization.action.type === 'MANUAL';
-    },
     hasActions() {
-      return this.canReject || this.canAccept || this.canEdit;
+      return this.canReject || this.canAccept;
     },
     actionIcon() {
       return this.actionValueExtension?.icon;
@@ -355,12 +342,14 @@ export default {
     this.retrieveRealizationLink();
   },
   methods: {
-    updateRealizations(status) {
-      this.$realizationService.updateRealization(this.realization.id, status)
-        .then((updatedRealization) => this.$emit('updated', updatedRealization));
-    },
-    editRealization() {
-      this.$root.$emit('realization-open-edit-drawer', this.realization, this.actionLabel);
+    updateRealizationStatus(status) {
+      this.$realizationService.updateRealizationStatus(this.realization.id, status)
+        .then(() => {
+          const updatedRealization = Object.assign(this.realization, {
+            status,
+          });
+          this.$emit('updated', updatedRealization);
+        });
     },
     openProgramDetail() {
       this.$programService.getProgramById(this.program.id)
