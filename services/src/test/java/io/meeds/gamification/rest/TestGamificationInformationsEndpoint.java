@@ -32,7 +32,7 @@ import io.meeds.gamification.utils.Utils;
 
 public class TestGamificationInformationsEndpoint extends AbstractServiceTest { // NOSONAR
 
-  private static final String REST_PATH    = "/gamification/gameficationinformationsboard";
+  private static final String REST_PATH = "/gamification/gameficationinformationsboard"; // NOSONAR
 
   protected Class<?> getComponentClass() {
     return GamificationInformationsEndpoint.class;
@@ -66,6 +66,7 @@ public class TestGamificationInformationsEndpoint extends AbstractServiceTest { 
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
+    @SuppressWarnings("unchecked")
     List<GamificationInformationRestEntity> restEntities = (List<GamificationInformationRestEntity>) response.getEntity();
     assertEquals(1, restEntities.size());
   }

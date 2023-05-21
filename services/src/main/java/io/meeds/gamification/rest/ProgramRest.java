@@ -59,10 +59,10 @@ import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
+import io.meeds.gamification.rest.builder.ProgramBuilder;
 import io.meeds.gamification.rest.model.ProgramList;
 import io.meeds.gamification.rest.model.ProgramRestEntity;
 import io.meeds.gamification.service.ProgramService;
-import io.meeds.gamification.utils.ProgramBuilder;
 import io.meeds.gamification.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -70,23 +70,22 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Path("/gamification/programs")
-@Produces(MediaType.APPLICATION_JSON)
 public class ProgramRest implements ResourceContainer {
 
-  private static final String       DEFAULT_COVER_PATH          =
+  private static final String       DEFAULT_COVER_PATH       =
                                                        System.getProperty("meeds.engagementCenter.program.defaultCoverPath",
                                                                           "/skin/images/program_default_cover_back.png");
 
-  private static final String       DOMAIN_NOT_FOUND_MESSAGE    = "The domain doesn't exit";
+  private static final String       DOMAIN_NOT_FOUND_MESSAGE = "The domain doesn't exit";
 
-  private static final Log          LOG                         = ExoLogger.getLogger(ProgramRest.class);
+  private static final Log          LOG                      = ExoLogger.getLogger(ProgramRest.class);
 
   // 7 days
-  private static final int          CACHE_IN_SECONDS            = 604800;
+  private static final int          CACHE_IN_SECONDS         = 604800;
 
-  private static final int          CACHE_IN_MILLI_SECONDS      = CACHE_IN_SECONDS * 1000;
+  private static final int          CACHE_IN_MILLI_SECONDS   = CACHE_IN_SECONDS * 1000;
 
-  private static final CacheControl CACHECONTROL                = new CacheControl();
+  private static final CacheControl CACHECONTROL             = new CacheControl();
 
   static {
     CACHECONTROL.setMaxAge(CACHE_IN_SECONDS);
@@ -95,7 +94,7 @@ public class ProgramRest implements ResourceContainer {
 
   protected PortalContainer portalContainer;
 
-  protected ProgramService   programService;
+  protected ProgramService  programService;
 
   protected IdentityManager identityManager;
 
@@ -115,10 +114,12 @@ public class ProgramRest implements ResourceContainer {
   })
   @RolesAllowed("users")
   @Operation(summary = "Retrieves the list of available domains", method = "GET")
-  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+  })
   public Response getPrograms(
                               @Parameter(description = "Offset of results to retrieve")
                               @QueryParam("offset")
@@ -193,10 +194,12 @@ public class ProgramRest implements ResourceContainer {
   @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   @Operation(summary = "Creates a domain", method = "POST")
-  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+  })
   public Response createProgram(
                                 @Parameter(description = "Domain object to create", required = true)
                                 ProgramDTO program) {
@@ -206,7 +209,7 @@ public class ProgramRest implements ResourceContainer {
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
       program = programService.createProgram(program, identity);
-      return Response.ok(ProgramBuilder.toRestEntity(program, identity.getUserId())).build();
+      return Response.ok(ProgramBuilder.toRestEntity(programService, program, identity.getUserId())).build();
     } catch (IllegalAccessException e) {
       LOG.debug("Unauthorized user {} attempts to create a domain", identity.getUserId());
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
@@ -219,10 +222,12 @@ public class ProgramRest implements ResourceContainer {
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   @Operation(summary = "updates created domain", method = "PUT")
-  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+  })
   public Response updateProgram(
                                 @Parameter(description = "domain id", required = true)
                                 @PathParam("id")
@@ -239,7 +244,7 @@ public class ProgramRest implements ResourceContainer {
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
       program = programService.updateProgram(program, identity);
-      return Response.ok(ProgramBuilder.toRestEntity(program, identity.getUserId())).build();
+      return Response.ok(ProgramBuilder.toRestEntity(programService, program, identity.getUserId())).build();
     } catch (IllegalAccessException e) {
       LOG.warn("Unauthorized user {} attempts to update the domain {}", identity.getUserId(), program.getId());
       return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to update a domain").build();
@@ -259,9 +264,10 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "404", description = "Object not found"),
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
-  public Response deleteProgram(@Parameter(description = "domain id to be deleted", required = true)
-                               @PathParam("domainId")
-                               long domainId) {
+  public Response deleteProgramById(
+                                    @Parameter(description = "domain id to be deleted", required = true)
+                                    @PathParam("domainId")
+                                    long domainId) {
     if (domainId <= 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("The parameter 'id' must be positive integer").build();
     }
@@ -278,37 +284,28 @@ public class ProgramRest implements ResourceContainer {
   }
 
   @GET
-  @Path("canAddProgram")
-  @Produces(MediaType.TEXT_PLAIN)
-  @RolesAllowed("users")
-  @Operation(summary = "check if the current user can add a program", method = "GET")
-  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "User ability to add a program is returned"),
-      @ApiResponse(responseCode = "500", description = "Internal server error") })
-  public Response canAddProgram() {
-    org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
-    return Response.ok(String.valueOf(programService.canAddProgram(identity))).build();
-  }
-
-  @GET
   @Path("{id}/cover")
   @Produces("image/png")
   @Operation(summary = "Gets a domain cover", method = "GET")
-  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "500", description = "Internal server error"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "403", description = "Forbidden request"),
-      @ApiResponse(responseCode = "404", description = "Resource not found") })
-  public Response getDomainCoverById(@Context
-                                     Request request,
-                                     @Parameter(description = "The value of lastModified parameter will determine whether the query should be cached by browser or not. If not set, no 'expires HTTP Header will be sent'")
-                                     @QueryParam("lastModified")
-                                     Long lastModified,
-                                     @Parameter(description = "domain id", required = true)
-                                     @PathParam("id")
-                                     String domainId,
-                                     @Parameter(description = "A mandatory valid token that is used to authorize anonymous request", required = true)
-                                     @QueryParam("r")
-                                     String token) throws IOException {
+      @ApiResponse(responseCode = "404", description = "Resource not found")
+  })
+  public Response getProgramCoverById(
+                                      @Context
+                                      Request request,
+                                      @Parameter(description = "The value of lastModified parameter will determine whether the query should be cached by browser or not. If not set, no 'expires HTTP Header will be sent'")
+                                      @QueryParam("lastModified")
+                                      Long lastModified,
+                                      @Parameter(description = "domain id", required = true)
+                                      @PathParam("id")
+                                      String domainId,
+                                      @Parameter(description = "A mandatory valid token that is used to authorize anonymous request", required = true)
+                                      @QueryParam("r")
+                                      String token) throws IOException {
     boolean isDefault = StringUtils.equals(Utils.DEFAULT_IMAGE_REMOTE_ID, domainId);
     String lastUpdated = null;
     ProgramDTO program = null;
@@ -319,7 +316,7 @@ public class ProgramRest implements ResourceContainer {
       if (program == null) {
         return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
       }
-      isDefault = program.getCoverFileId() == 0 ;
+      isDefault = program.getCoverFileId() == 0;
       lastUpdated = program.getLastModifiedDate();
     }
 
@@ -369,7 +366,7 @@ public class ProgramRest implements ResourceContainer {
     String currentUser = Utils.getCurrentUser();
     try {
       ProgramDTO program = programService.getProgramById(programId, currentUser);
-      return Response.ok(ProgramBuilder.toRestEntity(program, currentUser)).build();
+      return Response.ok(ProgramBuilder.toRestEntity(programService, program, currentUser)).build();
     } catch (IllegalArgumentException e) {
       return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
     } catch (IllegalAccessException e) {
@@ -379,12 +376,15 @@ public class ProgramRest implements ResourceContainer {
     }
   }
 
-  private List<ProgramRestEntity> getDomainsRestEntitiesByFilter(ProgramFilter filter, int offset, int limit, String currentUser) throws IllegalAccessException {
+  private List<ProgramRestEntity> getDomainsRestEntitiesByFilter(ProgramFilter filter,
+                                                                 int offset,
+                                                                 int limit,
+                                                                 String currentUser) throws IllegalAccessException {
     List<ProgramDTO> programs = programService.getPrograms(filter, currentUser, offset, limit);
-    return ProgramBuilder.toRestEntities(programs, currentUser);
+    return ProgramBuilder.toRestEntities(programService, programs, currentUser);
   }
 
-  public InputStream getDefaultCoverInputStream() throws IOException {
+  private InputStream getDefaultCoverInputStream() throws IOException {
     if (defaultProgramCover == null) {
       InputStream is = portalContainer.getPortalContext().getResourceAsStream(DEFAULT_COVER_PATH);
       if (is == null) {

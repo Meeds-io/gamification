@@ -42,9 +42,11 @@ import org.picocontainer.Startable;
 
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -53,9 +55,9 @@ import io.meeds.gamification.constant.DateFilterType;
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.HistoryStatus;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.ProfileReputation;
@@ -76,17 +78,17 @@ import io.meeds.gamification.utils.Utils;
 
 public class RealizationServiceImpl implements RealizationService, Startable {
 
-  private static final Log    LOG       = ExoLogger.getLogger(RealizationServiceImpl.class);
+  private static final Log    LOG                           = ExoLogger.getLogger(RealizationServiceImpl.class);
 
   // Delimiters that must be in the CSV file
-  private static final String DELIMITER = ",";
+  private static final String DELIMITER                     = ",";
 
-  private static final String SEPARATOR = "\n";
+  private static final String SEPARATOR                     = "\n";
 
   // File header
-  private static final String HEADER    = "Date,Grantee,Action type,Program label,Action label,Points,Status";
+  private static final String HEADER                        = "Date,Grantee,Action type,Program label,Action label,Points,Status";
 
-  private static final String SHEETNAME = "Achivements Report";
+  private static final String SHEETNAME                     = "Achivements Report";
 
   private ExecutorService     executorService;
 
@@ -100,16 +102,29 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   private RealizationStorage  realizationStorage;
 
+  private String              blacklistMembershipExpression = Utils.BLACK_LIST_GROUP;
+
+  private MembershipEntry     blacklistMembership;
+
   public RealizationServiceImpl(ProgramService programService,
                                 RuleService ruleService,
                                 IdentityManager identityManager,
                                 SpaceService spaceService,
-                                RealizationStorage realizationStorage) {
+                                RealizationStorage realizationStorage,
+                                InitParams initParams) {
     this.programService = programService;
     this.ruleService = ruleService;
     this.spaceService = spaceService;
     this.realizationStorage = realizationStorage;
     this.identityManager = identityManager;
+
+    if (initParams != null && initParams.containsKey("blacklist.group")) {
+      this.blacklistMembershipExpression = initParams.getValueParam("blacklist.group").getValue();
+    }
+    this.blacklistMembership = MembershipEntry.parse(this.blacklistMembershipExpression);
+    if (this.blacklistMembership == null) {
+      this.blacklistMembership = new MembershipEntry(this.blacklistMembershipExpression);
+    }
   }
 
   @Override
@@ -152,11 +167,6 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     checkDates(realizationFilter.getFromDate(), realizationFilter.getToDate());
     computeProgramFilter(realizationFilter, userAclIdentity);
     return realizationStorage.countRealizationsByFilter(realizationFilter);
-  }
-
-  @Override
-  public List<RealizationDTO> findRealizationsByDateAndIdentityId(Date date, String earnerIdentityId) {
-    return realizationStorage.findRealizationsByDateAndIdentityId(date, earnerIdentityId);
   }
 
   @Override
@@ -221,7 +231,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (earnerIdentity == null
         || earnerIdentity.isDeleted()
         || !earnerIdentity.isEnable()
-        || Utils.isUserMemberOfGroupOrUser(earnerIdentity.getRemoteId(), Utils.BLACK_LIST_GROUP)) {
+        || isUserBlacklisted(earnerIdentity.getRemoteId())) {
       return Collections.emptyList();
     }
 
@@ -243,49 +253,42 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public RealizationDTO updateRealization(RealizationDTO realization,
-                                          Identity userAclIdentity) throws IllegalAccessException,
-                                                                    ObjectNotFoundException {
+  public void updateRealizationStatus(long realizationId, RealizationStatus status) throws ObjectNotFoundException {
+    RealizationDTO realization = getRealizationById(realizationId);
     if (realization == null) {
-      throw new IllegalArgumentException("Realization is mandatory");
+      throw new ObjectNotFoundException("Realization with id " + realizationId + " doesn't exist");
     }
-    if (userAclIdentity == null) {
-      throw new IllegalArgumentException("identity is mandatory");
+    if (status == null) {
+      throw new IllegalArgumentException("status is mandatory");
     }
-    long realizationId = realization.getId();
 
-    if (realizationId <= 0) {
-      throw new IllegalArgumentException("Realization id has to be positive integer");
-    }
-    String username = userAclIdentity.getUserId();
-
-    RealizationDTO storedRealization = realizationStorage.getRealizationById(realizationId);
-    if (storedRealization == null) {
-      throw new ObjectNotFoundException("Realization with id " + realizationId + " wasn't found");
-    }
-    if (Utils.isRewardingManager(username)
-        || programService.isProgramOwner(realization.getProgram().getId(), userAclIdentity.getUserId())) {
-      return realizationStorage.updateRealization(realization);
-    } else {
-      throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user"
-          + realization.getEarnerId());
-    }
+    updateRealizationStatus(realization, status);
   }
 
   @Override
-  public RealizationDTO updateRealization(RealizationDTO realization) throws ObjectNotFoundException {
+  public void updateRealizationStatus(long realizationId,
+                                      RealizationStatus status,
+                                      String username) throws IllegalAccessException, ObjectNotFoundException {
+    if (StringUtils.isBlank(username)) {
+      throw new IllegalAccessException("username is mandatory");
+    }
+    if (status == null) {
+      throw new IllegalArgumentException("status is mandatory");
+    }
+    if (status != RealizationStatus.ACCEPTED && status != RealizationStatus.REJECTED) {
+      throw new IllegalArgumentException("Allowed manual status can be either ACCEPTED or REJECTED");
+    }
+    RealizationDTO realization = getRealizationById(realizationId);
     if (realization == null) {
-      throw new IllegalArgumentException("Realization is mandatory");
+      throw new ObjectNotFoundException("Realization with id " + realizationId + " doesn't exist");
     }
-    long realizationId = realization.getId();
-    if (realizationId <= 0) {
-      throw new IllegalArgumentException("Realization id has to be positive integer");
+
+    if (!Utils.isRewardingManager(username)
+        && !programService.isProgramOwner(realization.getProgram().getId(), username)) {
+      throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user"
+          + realization.getEarnerId());
     }
-    RealizationDTO storedRealization = realizationStorage.getRealizationById(realizationId);
-    if (storedRealization == null) {
-      throw new ObjectNotFoundException("Realization with id " + realizationId + " wasn't found");
-    }
-    return realizationStorage.updateRealization(realization);
+    updateRealizationStatus(realization, status);
   }
 
   @Override
@@ -307,9 +310,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                                                                                               objectId,
                                                                                                               objectType))
                 .filter(Objects::nonNull)
-                .filter(realization -> !HistoryStatus.CANCELED.name().equals(realization.getStatus()))
+                .filter(realization -> !RealizationStatus.CANCELED.name().equals(realization.getStatus()))
                 .map(realization -> {
-                  realization.setStatus(HistoryStatus.CANCELED.name());
+                  realization.setStatus(RealizationStatus.CANCELED.name());
                   realization.setActivityId(null);
                   realization.setObjectId(null);
                   return realizationStorage.updateRealization(realization);
@@ -322,9 +325,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     List<RealizationDTO> realizations = findRealizationsByObjectIdAndObjectType(objectId,
                                                                                 objectType);
     realizations.forEach(realization -> {
-      if (!HistoryStatus.DELETED.name().equals(realization.getStatus())
-          && !HistoryStatus.CANCELED.name().equals(realization.getStatus())) {
-        realization.setStatus(HistoryStatus.DELETED.name());
+      if (!RealizationStatus.DELETED.name().equals(realization.getStatus())
+          && !RealizationStatus.CANCELED.name().equals(realization.getStatus())) {
+        realization.setStatus(RealizationStatus.DELETED.name());
         realization.setActivityId(null);
         realization.setObjectId(null);
         realizationStorage.updateRealization(realization);
@@ -383,16 +386,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         realizationRestriction.setValidAudience(false);
       } else if (!spaceService.canRedactOnSpace(space, Utils.getUserAclIdentity(identity.getRemoteId()))) { // NOSONAR
         realizationRestriction.setValidRedactor(false);
-      } else if (Utils.isUserMemberOfGroupOrUser(identity.getRemoteId(), Utils.BLACK_LIST_GROUP)) {
+      } else if (isUserBlacklisted(identity.getRemoteId())) {
         realizationRestriction.setValidWhitelist(false);
       }
     }
     return realizationRestriction;
-  }
-
-  @Override
-  public RealizationDTO findLatestRealizationByIdentityId(String earnerIdentityId) {
-    return realizationStorage.findLatestRealizationByIdentityId(earnerIdentityId);
   }
 
   @Override
@@ -488,6 +486,21 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
+  public boolean isRealizationManager(String username) {
+    if (Utils.isRewardingManager(username)) {
+      return true;
+    }
+    ProgramFilter programFilter = new ProgramFilter();
+    programFilter.setIncludeDeleted(true);
+    programFilter.setOwnerId(Utils.getUserIdentityId(username));
+    programFilter.setSpacesIds(spaceService.getManagerSpacesIds(username, 0, -1)
+                                           .stream()
+                                           .map(Long::parseLong)
+                                           .toList());
+    return programService.countPrograms(programFilter) > 0;
+  }
+
+  @Override
   public RealizationDTO getRealizationById(long realizationId, Identity userAclIdentity) throws IllegalAccessException,
                                                                                          ObjectNotFoundException {
     if (realizationId <= 0) {
@@ -575,9 +588,8 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
     realizations.forEach(ga -> {
       try {
-
-        RuleDTO rule = ga.getRuleId() != null && ga.getRuleId() != 0 ? Utils.getRuleById(ruleService, ga.getRuleId())
-                                                                     : Utils.getRuleByTitle(ruleService, ga.getActionTitle());
+        RuleDTO rule = ga.getRuleId() != null && ga.getRuleId() != 0 ? ruleService.findRuleById(ga.getRuleId())
+                                                                     : ruleService.findRuleByTitle(ga.getActionTitle());
 
         String ruleTitle = rule == null ? null : rule.getEvent();
         String actionLabel = ga.getActionTitle() != null ? ga.getActionTitle() : ruleTitle;
@@ -604,10 +616,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     return sbResult.toString();
   }
 
-  private void computeProgramFilter(RealizationFilter realizationFilter,
+  private void computeProgramFilter(RealizationFilter realizationFilter, // NOSONAR
                                     Identity userAclIdentity) throws IllegalAccessException {
     String username = userAclIdentity.getUserId();
-
     if (Utils.isRewardingManager(username)) {
       return;
     }
@@ -625,17 +636,16 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         throw new IllegalAccessException("User is not member of one or several selected domains :"
             + filterDomainIds);
       }
-    } else {
-      if (isFilterByDomains && !isDomainsOwner(filterDomainIds, userAclIdentity.getUserId())) {
-        throw new IllegalAccessException("User is not owner of one or several selected domains :"
-            + filterDomainIds);
-      } else if (!isFilterByDomains) {
-        List<Long> ownedDomainIds = getOwnedDomainIds(userIdentity);
-        if (CollectionUtils.isEmpty(ownedDomainIds)) {
-          throw new IllegalAccessException("User is not owner of any domain");
-        }
-        realizationFilter.setDomainIds(ownedDomainIds);
+    } else if (isFilterByDomains && !isDomainsOwner(filterDomainIds, userAclIdentity.getUserId())) {
+      throw new IllegalAccessException("User is not owner of one or several selected domains :" + filterDomainIds);
+    } else if (realizationFilter.isOwned()) {
+      List<Long> ownedDomainIds = getOwnedDomainIds(userIdentity);
+      if (CollectionUtils.isEmpty(ownedDomainIds)) {
+        throw new IllegalAccessException("User is not owner of any domain");
       }
+      realizationFilter.setDomainIds(ownedDomainIds);
+    } else if (!isFilterByDomains) {
+      throw new IllegalAccessException("User is not allowed to search for realizations of all domains");
     }
   }
 
@@ -648,6 +658,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     } else {
       domainFilter.setSpacesIds(managedSpaceIds.stream().map(Long::parseLong).toList());
     }
+    domainFilter.setIncludeDeleted(true);
     return programService.getProgramIds(domainFilter, userIdentity.getRemoteId(), 0, -1);
   }
 
@@ -717,7 +728,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     realization.setReceiver(receiverIdentityId);
     realization.setObjectId(objectId);
     realization.setObjectType(objectType);
-    realization.setStatus(HistoryStatus.ACCEPTED.name());
+    realization.setStatus(RealizationStatus.ACCEPTED.name());
     realization.setType(ruleDto.getType());
     return realization;
   }
@@ -751,6 +762,22 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     } else {
       return ruleService.getRules(ruleFilter, 0, -1);
     }
+  }
+
+  private boolean isUserBlacklisted(String username) {
+    if (StringUtils.isBlank(username)) {
+      return false;
+    }
+    org.exoplatform.services.security.Identity identity = Utils.getUserAclIdentity(username);
+    if (identity == null) {
+      return false;
+    }
+    return identity.isMemberOf(blacklistMembership);
+  }
+
+  private void updateRealizationStatus(RealizationDTO realization, RealizationStatus status) {
+    realization.setStatus(status.name());
+    realizationStorage.updateRealization(realization);
   }
 
 }

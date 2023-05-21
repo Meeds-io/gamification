@@ -106,10 +106,8 @@ public interface AnnouncementService {
    * 
    * @param  ruleId                  Rule technical identifier
    * @return                         A {@link Long} number of announcements
-   * @throws ObjectNotFoundException when the {@link RuleDTO} identified by its
-   *                                   technical identifier is not found
    */
-  int countAnnouncements(long ruleId) throws ObjectNotFoundException;
+  int countAnnouncements(long ruleId);
 
   /**
    * Retrieves number of all Announcements by {@link RuleDTO} identifier.
@@ -117,9 +115,7 @@ public interface AnnouncementService {
    * @param  ruleId                  {@link RuleDTO} technical identifier
    * @param  earnerType              the earner identity type
    * @return                         A {@link Long} number of announcements
-   * @throws ObjectNotFoundException when the {@link RuleDTO} identified by its
-   *                                   technical identifier is not found
    */
-  int countAnnouncements(long ruleId, IdentityType earnerType) throws ObjectNotFoundException;
+  int countAnnouncements(long ruleId, IdentityType earnerType);
 
 }
