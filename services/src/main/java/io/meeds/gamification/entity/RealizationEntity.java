@@ -35,7 +35,7 @@ import javax.persistence.Table;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.HistoryStatus;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.IdentityType;
 
 @ExoEntity
@@ -50,19 +50,15 @@ import io.meeds.gamification.constant.IdentityType;
     + " new io.meeds.gamification.model.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g WHERE g.createdDate >= :date  AND g.domainEntity.id = :domainId AND g.earnerType = :earnerType  AND g.status = :status GROUP BY  g.earnerId"
     + "     ORDER BY total DESC")
-@NamedQuery(name = "RealizationEntity.findRealizationsByEarnerId", query = "SELECT a"
-    + " FROM RealizationEntity a" + " WHERE a.earnerId = :earnerId" + "     ORDER BY a.globalScore DESC")
 @NamedQuery(
   name = "RealizationEntity.getScoreByIdentityId",
-  query = " SELECT MAX(a.globalScore) FROM RealizationEntity a" +
-          " WHERE a.earnerId = :earnerId"
+  query = " SELECT SUM(g.actionScore) FROM RealizationEntity g" +
+          " WHERE g.earnerId = :earnerId" +
+          " AND g.status = :status"
 )
 @NamedQuery(name = "RealizationEntity.findAllRealizationsByDomain", query = "SELECT"
     + " new io.meeds.gamification.model.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g WHERE g.domainEntity.id = :domainId AND g.earnerType = :earnerType AND g.status = :status GROUP BY  g.earnerId ORDER BY total DESC")
-@NamedQuery(name = "RealizationEntity.findActionHistoryByDateByEarnerId", query = "SELECT a"
-    + " FROM RealizationEntity a" + " WHERE a.createdDate = :date" + "     AND a.earnerId = :earnerId"
-    + "     ORDER BY a.globalScore DESC")
 @NamedQuery(name = "RealizationEntity.findRealizationsByDate", query = "SELECT"
     + " new io.meeds.gamification.model.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g  WHERE g.createdDate >= :date  AND g.earnerType = :earnerType AND g.status = :status GROUP BY  g.earnerId ORDER BY total DESC")
@@ -203,7 +199,7 @@ public class RealizationEntity extends AbstractAuditingEntity implements Seriali
 
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "STATUS", nullable = false)
-  private HistoryStatus     status;
+  private RealizationStatus     status;
 
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "TYPE", nullable = false)
@@ -337,11 +333,11 @@ public class RealizationEntity extends AbstractAuditingEntity implements Seriali
     this.creator = creator;
   }
 
-  public HistoryStatus getStatus() {
+  public RealizationStatus getStatus() {
     return status;
   }
 
-  public void setStatus(HistoryStatus status) {
+  public void setStatus(RealizationStatus status) {
     this.status = status;
   }
 

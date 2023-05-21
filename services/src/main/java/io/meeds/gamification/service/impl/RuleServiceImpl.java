@@ -90,10 +90,10 @@ public class RuleServiceImpl implements RuleService {
     if (rule.isDeleted()) {
       throw new ObjectNotFoundException("Rule has been deleted");
     }
-    if (!Utils.isRuleManager(rule, username)
+    if (!isRuleManager(rule, username)
         && (!rule.isEnabled()
             || rule.getProgram() == null
-            || !Utils.isSpaceMember(rule.getProgram().getAudienceId(), username))) {
+            || !programService.isProgramMember(rule.getProgram().getId(), username))) {
       throw new IllegalAccessException("Rule isn't accessible");
     }
     return rule;
@@ -162,7 +162,7 @@ public class RuleServiceImpl implements RuleService {
     if (rule == null) {
       throw new ObjectNotFoundException("Rule with id " + ruleId + " is not found");
     }
-    if (!Utils.isRuleManager(rule, username)) {
+    if (!isRuleManager(rule, username)) {
       throw new IllegalAccessException("The user is not authorized to delete a rule");
     }
     rule = ruleStorage.deleteRuleById(ruleId, username);
@@ -228,7 +228,7 @@ public class RuleServiceImpl implements RuleService {
     if (oldRule.isDeleted()) {
       throw new ObjectNotFoundException("Rule with id '" + oldRule.getId() + "' was deleted");
     }
-    if (!Utils.isRuleManager(oldRule, username)) {
+    if (!isRuleManager(oldRule, username)) {
       throw new IllegalAccessException("The user is not authorized to update a rule");
     }
     checkPermissionAndDates(oldRule, username); // Test if user was manager
@@ -287,7 +287,7 @@ public class RuleServiceImpl implements RuleService {
   }
 
   private void checkPermissionAndDates(RuleDTO rule, String username) throws IllegalAccessException {
-    if (!Utils.isRuleManager(rule, username)) {
+    if (!isRuleManager(rule, username)) {
       if (rule.getId() != null && rule.getId() > 0) {
         throw new IllegalAccessException("User " + username + " is not allowed to update the rule with id " + rule.getId());
       } else {
@@ -325,4 +325,14 @@ public class RuleServiceImpl implements RuleService {
     Utils.broadcastEvent(listenerService, POST_CREATE_RULE_EVENT, ruleDTO.getId(), username);
     return ruleDTO;
   }
+
+  private boolean isRuleManager(RuleDTO rule, String username) {
+    ProgramDTO program = rule.getProgram();
+    if (program == null) {
+      return false;
+    } else {
+      return programService.isProgramOwner(program.getId(), username);
+    }
+  }
+
 }

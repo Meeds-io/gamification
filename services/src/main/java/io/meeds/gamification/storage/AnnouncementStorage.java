@@ -12,7 +12,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.HistoryStatus;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.PeriodType;
 import io.meeds.gamification.model.Announcement;
@@ -69,7 +69,7 @@ public class AnnouncementStorage {
 
   public Announcement deleteAnnouncement(long announcementId) {
     RealizationDTO announcementRealization = realizationStorage.getRealizationById(announcementId);
-    announcementRealization.setStatus(HistoryStatus.CANCELED.name());
+    announcementRealization.setStatus(RealizationStatus.CANCELED.name());
     announcementRealization.setActivityId(null);
     announcementRealization.setObjectId(null);
     announcementRealization = realizationStorage.updateRealization(announcementRealization);
@@ -133,7 +133,7 @@ public class AnnouncementStorage {
     announcementRealization.setCreatedDate(announcement.getCreatedDate() == null ? Utils.toRFC3339Date(new Date())
                                                                                  : announcement.getCreatedDate());
     announcementRealization.setReceiver(String.valueOf(announcement.getCreator()));
-    announcementRealization.setStatus(HistoryStatus.ACCEPTED.name());
+    announcementRealization.setStatus(RealizationStatus.ACCEPTED.name());
     announcementRealization.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     announcementRealization.setCreatedBy(creator != null ? creator : "Gamification Inner Process");
     announcementRealization.setLastModifiedBy(creator != null ? creator : "Gamification Inner Process");

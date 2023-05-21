@@ -24,55 +24,39 @@ import org.exoplatform.services.test.mock.MockHttpServletRequest;
 
 public class GamificationMockHttpServletRequest extends MockHttpServletRequest {
 
-    private String remoteUser;
+  private String remoteUser;
 
-    /**
-     * Instantiates a new mock http servlet request.
-     *
-     * @param url     the url
-     * @param data    the data
-     * @param length  the length
-     * @param method  the method
-     * @param headers the headers
-     */
-    public GamificationMockHttpServletRequest(String url, InputStream data, int length, String method, Map<String, List<String>> headers, String remoteUser) {
-        super(url, data, length, method, headers);
-        this.remoteUser = remoteUser;
+  public GamificationMockHttpServletRequest(String url,
+                                            InputStream data,
+                                            int length,
+                                            String method,
+                                            Map<String, List<String>> headers,
+                                            String remoteUser) {
+    super(url, data, length, method, headers);
+    this.remoteUser = remoteUser;
+  }
+
+  @Override
+  public String getServerName() {
+    try {
+      return super.getServerName();
+    } catch (Exception e) {
+      return "localhost";
     }
+  }
 
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getServerName() {
-        try {
-            return super.getServerName();
-        } catch (Exception e) {
-
-        }
-        return "localhost";
+  @Override
+  public int getServerPort() {
+    try {
+      return super.getServerPort();
+    } catch (Exception e) {
+      return 8080;
     }
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    public int getServerPort() {
-        try {
-            return super.getServerPort();
-        } catch (Exception e) {
-
-        }
-        return 8080;
-    }
-
-    public String getRemoteUser() {
-        return this.remoteUser != null ? this.remoteUser : super.getRemoteUser();
-    }
-
-
-
-
-
-
+  @Override
+  public String getRemoteUser() {
+    return this.remoteUser != null ? this.remoteUser : super.getRemoteUser();
+  }
 
 }

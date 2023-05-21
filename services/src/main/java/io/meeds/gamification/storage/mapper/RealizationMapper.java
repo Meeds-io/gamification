@@ -1,4 +1,4 @@
-package io.meeds.gamification.utils;
+package io.meeds.gamification.storage.mapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,12 +7,13 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import io.meeds.gamification.constant.HistoryStatus;
 import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.entity.RealizationEntity;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.storage.ProgramStorage;
 import io.meeds.gamification.storage.RuleStorage;
+import io.meeds.gamification.utils.Utils;
 
 public class RealizationMapper {
 
@@ -38,7 +39,7 @@ public class RealizationMapper {
                               realizationEntity.getActionTitle(),
                               realizationEntity.getDomainEntity() == null ? null
                                                                           : programStorage.getProgramById(realizationEntity.getDomainEntity()
-                                                                                                                         .getId()),
+                                                                                                                           .getId()),
                               realizationEntity.getDomain(),
                               realizationEntity.getContext(),
                               realizationEntity.getActionScore(),
@@ -74,7 +75,7 @@ public class RealizationMapper {
     }
     RealizationEntity gHistoryEntity = new RealizationEntity();
     gHistoryEntity.setId(realization.getId());
-    gHistoryEntity.setDomainEntity(ProgramBuilder.toEntity(realization.getProgram()));
+    gHistoryEntity.setDomainEntity(ProgramMapper.toEntity(realization.getProgram()));
     gHistoryEntity.setDomain(realization.getProgram().getTitle());
     gHistoryEntity.setActionTitle(realization.getActionTitle());
     gHistoryEntity.setActionScore(realization.getActionScore());
@@ -87,9 +88,9 @@ public class RealizationMapper {
     gHistoryEntity.setEarnerType(IdentityType.getType(realization.getEarnerType()));
     gHistoryEntity.setContext(realization.getContext());
     gHistoryEntity.setComment(realization.getComment());
-    gHistoryEntity.setRuleEntity(RuleBuilder.toEntity(ruleStorage.findRuleById(realization.getRuleId())));
+    gHistoryEntity.setRuleEntity(RuleMapper.toEntity(ruleStorage.findRuleById(realization.getRuleId())));
     gHistoryEntity.setCreator(realization.getCreator());
-    gHistoryEntity.setStatus(HistoryStatus.valueOf(realization.getStatus()));
+    gHistoryEntity.setStatus(RealizationStatus.valueOf(realization.getStatus()));
     gHistoryEntity.setType(realization.getType());
     if (realization.getCreatedDate() != null) {
       gHistoryEntity.setCreatedDate(Utils.parseRFC3339Date(realization.getCreatedDate()));

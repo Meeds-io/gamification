@@ -191,6 +191,6 @@ export default {
       this.$root.$emit('open-program-detail', this.program);
       window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
     },
-  }
+  },
 };
 </script>
