@@ -9,17 +9,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.analytics.model.StatisticData;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
@@ -29,8 +24,6 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.IdentityRegistry;
-import org.exoplatform.services.security.MembershipEntry;
-import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
@@ -40,18 +33,9 @@ import org.exoplatform.social.rest.entity.IdentityEntity;
 import org.exoplatform.web.security.codec.CodecInitializer;
 import org.exoplatform.web.security.security.TokenServiceInitializationException;
 
-import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
-import io.meeds.gamification.model.UserInfo;
-import io.meeds.gamification.model.UserInfoContext;
-import io.meeds.gamification.rest.model.RealizationValidityContext;
-import io.meeds.gamification.service.AnnouncementService;
-import io.meeds.gamification.service.ProgramService;
-import io.meeds.gamification.service.RealizationService;
-import io.meeds.gamification.service.RuleService;
 
 public class Utils {
 
@@ -215,21 +199,6 @@ public class Utils {
     return null;
   }
 
-  public static final boolean canAcquireAchievement(RealizationService realizationService,
-                                                    AnnouncementService announcementService,
-                                                    RuleDTO rule,
-                                                    String username) {
-    if (rule == null) {
-      return false;
-    }
-    if (rule.getType() == EntityType.MANUAL) {
-      return announcementService.canAnnounce(rule, String.valueOf(getUserIdentityId(username)));
-    } else if (rule.getType() == EntityType.AUTOMATIC) {
-      return realizationService.getRealizationValidityContext(rule, String.valueOf(getUserIdentityId(username))).isValid();
-    }
-    return false;
-  }
-
   public static String toRFC3339Date(Date dateTime) {
     if (dateTime == null) {
       return null;
@@ -276,85 +245,6 @@ public class Utils {
     return space;
   }
 
-  public static ProgramDTO getProgramByTitle(ProgramService programService, String domainTitle) {
-    if (domainTitle == null || domainTitle.isEmpty()) {
-      return null;
-    }
-    return programService.getProgramByTitle(domainTitle);
-  }
-
-  public static RuleDTO getRuleById(RuleService ruleService, long ruleId) throws IllegalArgumentException {
-    if (ruleId == 0) {
-      return null;
-    }
-    return ruleService.findRuleById(ruleId);
-  }
-
-  public static RuleDTO getRuleByTitle(RuleService ruleService, String title) {
-    return StringUtils.isBlank(title) ? null : ruleService.findRuleByTitle("def_" + title);
-  }
-
-  public static boolean isRuleManager(RuleDTO rule, String username) {
-    ProgramDTO program = rule.getProgram();
-    if (program == null) {
-      return false;
-    } else {
-      return isProgramOwner(program.getAudienceId(),
-                            program.getId() > 0 ? program.getOwnerIds() : Collections.emptySet(),
-                            username);
-    }
-  }
-
-  public static UserInfoContext toUserContext(RealizationService realizationService,
-                                              RuleDTO rule,
-                                              String username) {
-    UserInfoContext userContext = toUserContext(rule.getProgram(), username);
-    RealizationValidityContext realizationRestriction = realizationService.getRealizationValidityContext(rule, String.valueOf(getUserIdentityId(username)));
-    userContext.setContext(realizationRestriction);
-    userContext.setAllowedToRealize(realizationRestriction.isValid());
-    return userContext;
-  }
-
-  public static UserInfoContext toUserContext(ProgramDTO program, String username) {
-    UserInfoContext userContext = new UserInfoContext();
-
-    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    Identity identity = identityManager.getOrCreateUserIdentity(username);
-    mapUserInfo(userContext, identity);
-    if (program != null) {
-      long spaceId = program.getAudienceId();
-      SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-      Space space = spaceService.getSpaceById(String.valueOf(spaceId));
-      if (space != null) {
-        boolean isSuperManager = spaceService.isSuperManager(username);
-        boolean isManager = isSuperManager || spaceService.isManager(space, username);
-        boolean isMember = isManager || spaceService.isMember(space, username);
-        boolean isRedactor = isManager || spaceService.isRedactor(space, username);
-        userContext.setManager(isManager);
-        userContext.setMember(isMember);
-        userContext.setRedactor(isRedactor);
-        userContext.setCanEdit(isProgramOwner(spaceId, program.getOwnerIds(), identity));
-      }
-    }
-    return userContext;
-  }
-
-  public static UserInfo toUserInfo(Identity identity) {
-    UserInfo userInfo = new UserInfo();
-    mapUserInfo(userInfo, identity);
-    return userInfo;
-  }
-
-  public static int countAnnouncementsByRuleIdAndEarnerType(AnnouncementService announcementService,
-                                                            long ruleId,
-                                                            IdentityType earnerType) {
-    try {
-      return announcementService.countAnnouncements(ruleId, earnerType);
-    } catch (ObjectNotFoundException e) {
-      return 0;
-    }
-  }
-
   public static String getSpaceFromObjectID(String objectId) {
     if (StringUtils.isBlank(objectId) || !objectId.contains("/portal/g/:spaces:")) {
       return null;
@@ -375,41 +265,6 @@ public class Utils {
       message = message.replace(c, ' ');
     }
     return message;
-  }
-
-  public static void buildActivityParams(ExoSocialActivity activity, Map<String, ?> templateParams) {
-    Map<String, String> currentTemplateParams =
-                                              activity.getTemplateParams() == null ? new HashMap<>()
-                                                                                   : new HashMap<>(activity.getTemplateParams());
-    if (templateParams != null) {
-      templateParams.forEach((name, value) -> currentTemplateParams.put(name, (String) value));
-    }
-    currentTemplateParams.entrySet()
-                         .removeIf(entry -> entry != null
-                             && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-")));
-    activity.setTemplateParams(currentTemplateParams);
-  }
-
-  public static boolean isProgramOwner(long spaceId, Set<Long> ownerIds, String username) {
-    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    return isProgramOwner(spaceId, ownerIds, userIdentity);
-  }
-
-  public static boolean isProgramOwner(long spaceId, Set<Long> ownerIds, Identity userIdentity) {
-    if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
-      return false;
-    }
-    String username = userIdentity.getRemoteId();
-    if (isSpaceManager(spaceId, username)) {
-      return true;
-    }
-    if (isSpaceMember(spaceId, username)
-        && ownerIds != null
-        && ownerIds.contains(Long.parseLong(userIdentity.getId()))) {
-      return true;
-    }
-    return isRewardingManager(username);
   }
 
   public static String buildAttachmentUrl(String domainId, Long lastModifiedDate, String type, boolean isDefault) {
@@ -503,38 +358,6 @@ public class Utils {
     return aclIdentity;
   }
 
-  public static boolean isSpaceMember(long spaceId, String username) {
-    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    Space space = getSpaceById(String.valueOf(spaceId));
-    if (space == null) {
-      return false;
-    }
-    return spaceService.isMember(space, username);
-  }
-
-  public static boolean isUserMemberOfGroupOrUser(String username, String permissionExpression) {
-    if (StringUtils.isBlank(permissionExpression)) {
-      throw new IllegalArgumentException("Permission expression is mandatory");
-    }
-    if (StringUtils.isBlank(username)) {
-      return false;
-    }
-    org.exoplatform.services.security.Identity identity = getUserAclIdentity(username);
-    if (identity == null) {
-      return false;
-    }
-    MembershipEntry membership = null;
-    if (permissionExpression.contains(":")) {
-      String[] permissionExpressionParts = permissionExpression.split(":");
-      membership = new MembershipEntry(permissionExpressionParts[1], permissionExpressionParts[0]);
-    } else if (permissionExpression.contains("/")) {
-      membership = new MembershipEntry(permissionExpression, MembershipEntry.ANY_TYPE);
-    } else {
-      return StringUtils.equals(username, permissionExpression);
-    }
-    return identity.isMemberOf(membership);
-  }
-
   public static void addDomainStatisticParameters(IdentityManager identityManager,
                                                   SpaceService spaceService,
                                                   ProgramDTO domain,
@@ -596,25 +419,6 @@ public class Utils {
     statisticData.addParameter(STATISTICS_ANNOUNCE_COMMENT_PARAM, announcement.getComment());
 
     addRuleStatisticParameters(identityManager, spaceService, rule, statisticData, username);
-  }
-
-  private static boolean isSpaceManager(long spaceId, String username) {
-    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    if (spaceService.isSuperManager(username)) {
-      return true;
-    }
-    Space space = getSpaceById(String.valueOf(spaceId));
-    if (space == null) {
-      return false;
-    }
-    return spaceService.isManager(space, username);
-  }
-
-  private static <E extends UserInfo> void mapUserInfo(E userInfo, Identity identity) {
-    userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-    userInfo.setFullName(identity.getProfile().getFullName());
-    userInfo.setRemoteId(identity.getRemoteId());
-    userInfo.setId(identity.getId());
   }
 
 }

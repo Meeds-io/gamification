@@ -1,8 +1,8 @@
 package io.meeds.gamification.storage;
 
-import static io.meeds.gamification.utils.RealizationMapper.fromEntities;
-import static io.meeds.gamification.utils.RealizationMapper.fromEntity;
-import static io.meeds.gamification.utils.RealizationMapper.toEntity;
+import static io.meeds.gamification.storage.mapper.RealizationMapper.fromEntities;
+import static io.meeds.gamification.storage.mapper.RealizationMapper.fromEntity;
+import static io.meeds.gamification.storage.mapper.RealizationMapper.toEntity;
 
 import java.util.Date;
 import java.util.List;
@@ -95,10 +95,6 @@ public class RealizationStorage {
     return fromEntities(programStorage, gamificationHistoryDAO.findRealizationsByIdentityIdSortedByDate(earnerIdentityId, limit));
   }
 
-  public List<RealizationDTO> findRealizationsByDateAndIdentityId(Date date, String earnerIdentityId) {
-    return fromEntities(programStorage, gamificationHistoryDAO.findRealizationsByDateAndIdentityId(date, earnerIdentityId));
-  }
-
   public List<StandardLeaderboard> findRealizationsByDate(Date fromDate, IdentityType identityType, int limit) {
     return gamificationHistoryDAO.findRealizationsByDate(fromDate, identityType, limit);
   }
@@ -159,13 +155,6 @@ public class RealizationStorage {
                                                                                                              receiverId,
                                                                                                              objectId,
                                                                                                              objectType));
-  }
-
-  public RealizationDTO findLatestRealizationByIdentityId(String earnerIdentityId) {
-    List<RealizationEntity> entities = gamificationHistoryDAO.findRealizationsByEarnerId(earnerIdentityId, 1);
-    // Return the first element since the underluing API returns entities
-    // ordered by insertion date
-    return (entities != null && !entities.isEmpty()) ? fromEntity(programStorage, entities.get(0)) : null;
   }
 
   public List<RealizationDTO> findRealizationsByRuleId(long ruleId,
