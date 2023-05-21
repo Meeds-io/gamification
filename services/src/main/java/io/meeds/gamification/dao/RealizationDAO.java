@@ -40,7 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.HistoryStatus;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.PeriodType;
 import io.meeds.gamification.entity.RealizationEntity;
@@ -69,9 +69,9 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
 
   private static final String        EARNER_TYPE_PARAM_NAME  = "earnerType";
 
-  public static final String         STATUS                  = "status";
+  public static final String         STATUS_PARAM_NAME       = "status";
 
-  public static final String         TYPE                    = "type";
+  public static final String         TYPE_PARAM_NAME         = "type";
 
   private static final String        RULE_ID_PARAM_NAME      = "ruleId";
 
@@ -97,7 +97,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                                           getEntityManager().createNamedQuery("RealizationEntity.findAllRealizations",
                                                                               StandardLeaderboard.class);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
-    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     try {
       return query.getResultList();
     } catch (NoResultException e) {
@@ -120,7 +120,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     query.setParameter(DATE_PARAM_NAME, date)
          .setParameter(DOMAIN_ID_PARAM_NAME, domainId)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
-    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     return query.getResultList();
   }
 
@@ -135,7 +135,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     TypedQuery<RealizationEntity> query =
                                         getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByEarnerIdAndByType",
                                                                             RealizationEntity.class);
-    query.setParameter(TYPE, type);
+    query.setParameter(TYPE_PARAM_NAME, type);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     return query.getResultList();
   }
@@ -153,7 +153,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                                                                               StandardLeaderboard.class);
     query.setParameter(DOMAIN_ID_PARAM_NAME, domainId);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
-    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     return query.getResultList();
 
   }
@@ -172,7 +172,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                                                                               StandardLeaderboard.class);
     query.setParameter(DOMAIN_ID_PARAM_NAME, domainId);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
-    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     query.setMaxResults(limit);
     return query.getResultList();
   }
@@ -190,7 +190,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                                                                               StandardLeaderboard.class);
     query.setParameter(DATE_PARAM_NAME, date);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
-    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     return query.getResultList();
   }
 
@@ -208,23 +208,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                                                                               StandardLeaderboard.class);
     query.setParameter(DATE_PARAM_NAME, date);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
-    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
-    query.setMaxResults(limit);
-    return query.getResultList();
-  }
-
-  /**
-   * Get an ActionHistory record based on userId
-   * 
-   * @param  earnerId : the userId used in projection
-   * @param  limit    : limit of the query
-   * @return          list of objects of type {@link RealizationEntity}
-   */
-  public List<RealizationEntity> findRealizationsByEarnerId(String earnerId, int limit) {
-    TypedQuery<RealizationEntity> query =
-                                        getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByEarnerId",
-                                                                            RealizationEntity.class);
-    query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     query.setMaxResults(limit);
     return query.getResultList();
   }
@@ -233,6 +217,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("RealizationEntity.getScoreByIdentityId",
                                                                  Long.class);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerIdentityId);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     try {
       Long result = query.getSingleResult();
       return result == null ? 0 : result.longValue();
@@ -253,27 +238,9 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                                           getEntityManager().createNamedQuery("RealizationEntity.findAllRealizations",
                                                                               StandardLeaderboard.class);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
-    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     query.setMaxResults(limit);
     return query.getResultList();
-  }
-
-  /**
-   * Get The last ActionHistory record
-   * 
-   * @param  date     : date from when we aim to track the user
-   * @param  earnerId identity id of earner
-   * @return          an instance of type {@link RealizationEntity}
-   */
-  public List<RealizationEntity> findRealizationsByDateAndIdentityId(Date date, String earnerId) {
-    TypedQuery<RealizationEntity> query =
-                                        getEntityManager().createNamedQuery("RealizationEntity.findActionHistoryByDateByEarnerId",
-                                                                            RealizationEntity.class)
-                                                          .setParameter(DATE_PARAM_NAME, date)
-                                                          .setParameter(EARNER_ID_PARAM_NAME, earnerId);
-
-    return query.getResultList();
-
   }
 
   /**
@@ -344,7 +311,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId)
          .setParameter(FROM_DATE_PARAM_NAME, fromDate)
          .setParameter(TO_DATE_PARAM_NAME, toDate);
-    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     Long count = query.getSingleResult();
     return count == null ? 0 : count;
   }
@@ -356,7 +323,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                                               .setParameter("earnersId", earnersId)
                                               .setParameter(FROM_DATE_PARAM_NAME, fromDate)
                                               .setParameter(TO_DATE_PARAM_NAME, toDate)
-                                              .setParameter(STATUS, HistoryStatus.ACCEPTED);
+                                              .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
 
     return query.getResultList()
                 .stream()
@@ -408,7 +375,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                                                                             RealizationEntity.class);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     query.setMaxResults(limit);
-    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     return query.getResultList();
 
   }
@@ -459,7 +426,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                                                                  Long.class);
     query.setParameter(RULE_ID_PARAM_NAME, ruleId);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerIdentityId);
-    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     try {
       Long count = query.getSingleResult();
       return count == null ? 0 : count.intValue();
@@ -475,7 +442,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     query.setParameter(DATE_PARAM_NAME, sinceDate);
     query.setParameter(RULE_ID_PARAM_NAME, ruleId);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerIdentityId);
-    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     try {
       Long count = query.getSingleResult();
       return count == null ? 0 : count.intValue();
@@ -539,7 +506,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
       Date now = Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
       query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
            .setParameter(TO_DATE_PARAM_NAME, utilToDate)
-           .setParameter(TYPE, type)
+           .setParameter(TYPE_PARAM_NAME, type)
            .setParameter(NOW_DATE_PARAM_NAME, now);
       query.setFirstResult(offset);
       query.setMaxResults(limit);
@@ -637,11 +604,11 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
       predicates.add("g.createdDate >= :fromDate AND g.createdDate < :toDate");
     }
     if (CollectionUtils.isNotEmpty(filter.getEarnerIds())) {
-      suffixes.add("Earner");
+      suffixes.add("EarnerIds");
       predicates.add("g.earnerId IN (:earnerIds)");
     }
-    if (!filter.getDomainIds().isEmpty()) {
-      suffixes.add("searchByProgramIds" + filter.getDomainIds());
+    if (CollectionUtils.isNotEmpty(filter.getDomainIds())) {
+      suffixes.add("ProgramIds");
       predicates.add("g.domainEntity.id IN (:domainIds)");
     }
   }
@@ -688,7 +655,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     if (CollectionUtils.isNotEmpty(filter.getDomainIds())) {
       query.setParameter(DOMAIN_IDS_PARAM_NAME, filter.getDomainIds());
     }
-    query.setParameter(TYPE, filter.getIdentityType());
+    query.setParameter(TYPE_PARAM_NAME, filter.getIdentityType());
   }
 
 }

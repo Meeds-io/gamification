@@ -26,8 +26,8 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import io.meeds.gamification.entity.BadgeEntity;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.model.BadgeDTO;
+import io.meeds.gamification.storage.mapper.BadgeMapper;
 import io.meeds.gamification.test.AbstractServiceTest;
-import io.meeds.gamification.utils.BadgeBuilder;
 
 public class BadgeServiceTest extends AbstractServiceTest {
 
@@ -99,7 +99,7 @@ public class BadgeServiceTest extends AbstractServiceTest {
     ProgramEntity domainEntity = newDomain();
     BadgeEntity badge = newBadge(domainEntity.getId());
     badge.setDescription("Desc_2");
-    badgeService.updateBadge(BadgeBuilder.fromEntity(domainStorage, badge));
+    badgeService.updateBadge(BadgeMapper.fromEntity(domainStorage, badge));
     BadgeDTO badge_ = badgeService.findBadgeByTitle(BADGE_NAME);
     assertNotNull(badge_);
     assertEquals(badge_.getDescription(), "Desc_2");

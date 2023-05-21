@@ -1,37 +1,57 @@
-export function getAllRealizations(fromDate, toDate, earnerIds, sortBy, sortDescending, offset, limit, domainIds) {
-  const formData = new FormData();
-  if (fromDate) {
-    formData.append('fromDate', fromDate);
-  }
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ *
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 
-  if (toDate) {
-    formData.append('toDate', toDate);
+export function getRealizations(filter) {
+  const formData = new FormData();
+  if (filter?.fromDate) {
+    formData.append('fromDate', filter.fromDate);
   }
-  if (earnerIds?.length > 0) {
-    for (const earnerId of earnerIds) {
+  if (filter?.toDate) {
+    formData.append('toDate', filter.toDate);
+  }
+  if (filter?.earnerIds?.length > 0) {
+    for (const earnerId of filter.earnerIds) {
       formData.append('earnerIds', earnerId);
     }
   }
-  if (sortBy) {
-    formData.append('sortBy', sortBy);
+  if (filter?.sortBy) {
+    formData.append('sortBy', filter.sortBy);
   }
-  if (sortDescending != null) {
-    formData.append('sortDescending', sortDescending);
+  if (filter?.sortDescending) {
+    formData.append('sortDescending', 'true');
   }
-  if (offset) {
-    formData.append('offset', offset);
+  if (filter?.offset) {
+    formData.append('offset', filter.offset);
   }
-  if (limit) {
-    formData.append('limit', limit);
+  if (filter?.limit) {
+    formData.append('limit', filter.limit);
   }
-  if (domainIds?.length > 0) {
-    for (const element of domainIds) {
+  if (filter?.domainIds?.length > 0) {
+    for (const element of filter.domainIds) {
       formData.append('domainIds', element);
     }
   }
+  if (filter?.owned) {
+    formData.append('owned', 'true');
+  }
 
   const params = new URLSearchParams(formData).toString();
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?returnSize=true&${params}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations?returnSize=true&${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -43,45 +63,78 @@ export function getAllRealizations(fromDate, toDate, earnerIds, sortBy, sortDesc
   });
 }
 
-export function updateRealization( id, status, actionLabel, domain, points) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/updateRealizations?realizationId=${id}&status=${status}&actionLabel=${actionLabel || ''}&domain=${domain || ''}&points=${points || 0}`, {
-    method: 'PUT',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-  }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } else {
-      throw new Error('Error updating realization status');
-    }
-  });
-}
-
-export function exportFile(fromDate, toDate, earnerIds, domainIds) {
+export function getRealizationsExportLink(filter) {
   const formData = new FormData();
-
-  if (fromDate) {
-    formData.append('fromDate', fromDate);
+  if (filter?.fromDate) {
+    formData.append('fromDate', filter.fromDate);
   }
-
-  if (toDate) {
-    formData.append('toDate', toDate);
+  if (filter?.toDate) {
+    formData.append('toDate', filter.toDate);
   }
-  if (earnerIds?.length > 0) {
-    for (const earnerId of earnerIds) {
+  if (filter?.earnerIds?.length > 0) {
+    for (const earnerId of filter.earnerIds) {
       formData.append('earnerIds', earnerId);
     }
   }
-  if (domainIds?.length > 0) {
-    for (const element of domainIds) {
+  if (filter?.sortBy) {
+    formData.append('sortBy', filter.sortBy);
+  }
+  if (filter?.sortDescending) {
+    formData.append('sortDescending', 'true');
+  }
+  if (filter?.offset) {
+    formData.append('offset', filter.offset);
+  }
+  if (filter?.limit) {
+    formData.append('limit', filter.limit);
+  }
+  if (filter?.domainIds?.length > 0) {
+    for (const element of filter.domainIds) {
       formData.append('domainIds', element);
     }
+  }
+  if (filter?.owned) {
+    formData.append('owned', 'true');
+  }
+  if (filter?.returnSize) {
+    formData.append('returnSize', 'true');
   }
   formData.append('returnType', 'xlsx');
 
   const params = new URLSearchParams(formData).toString();
+  return `${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations?${params}`;
+}
 
-  window.open(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?${params}`, '_blank');
+export function isRealizationManager() {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/manager`, {
+    headers: {
+      'Content-Type': 'text/plain'
+    },
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.text()
+        .then(manager => manager === 'true');
+    } else {
+      throw new Error('Server indicates an error while sending request');
+    }
+  });
+}
+
+export function updateRealizationStatus(id, status) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations`, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `id=${id}&status=${status}`,
+  }).then((resp) => {
+    if (resp?.ok) {
+      return;
+    } else {
+      throw new Error('Error updating realization status');
+    }
+  });
 }

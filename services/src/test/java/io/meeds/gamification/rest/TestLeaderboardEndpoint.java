@@ -23,23 +23,20 @@ import javax.ws.rs.core.SecurityContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 
 import io.meeds.gamification.test.AbstractServiceTest;
 
-public class TestLeaderboardEndpoint extends AbstractServiceTest {
-
-  private static final Log LOG = ExoLogger.getLogger(TestLeaderboardEndpoint.class);
+public class TestLeaderboardEndpoint extends AbstractServiceTest { // NOSONAR
 
   protected Class<?> getComponentClass() {
     return LeaderboardEndpoint.class;
   }
 
   @Before
+  @Override
   public void setUp() throws Exception {
     super.setUp();
     startSessionAs("root1");
@@ -53,7 +50,7 @@ public class TestLeaderboardEndpoint extends AbstractServiceTest {
   public void testGetAllLeadersByRank() {
 
     try {
-      String restPath = "/gamification/leaderboard/rank/all?period=MONTH";
+      String restPath = "/gamification/leaderboard/rank/all?period=MONTH"; // NOSONAR
       EnvironmentContext envctx = new EnvironmentContext();
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
       envctx.put(HttpServletRequest.class, httpRequest);
@@ -71,7 +68,7 @@ public class TestLeaderboardEndpoint extends AbstractServiceTest {
   public void testFilter() {
 
     try {
-      String restPath = "/gamification/leaderboard/filter?period=MONTH";
+      String restPath = "/gamification/leaderboard/filter?period=MONTH"; // NOSONAR
       EnvironmentContext envctx = new EnvironmentContext();
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
       envctx.put(HttpServletRequest.class, httpRequest);
@@ -88,7 +85,7 @@ public class TestLeaderboardEndpoint extends AbstractServiceTest {
   public void testStats() {
 
     try {
-      String restPath = "/gamification/leaderboard/stats?period=MONTH&userSocialId=";
+      String restPath = "/gamification/leaderboard/stats?period=MONTH&userSocialId="; // NOSONAR
       EnvironmentContext envctx = new EnvironmentContext();
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
       envctx.put(HttpServletRequest.class, httpRequest);
