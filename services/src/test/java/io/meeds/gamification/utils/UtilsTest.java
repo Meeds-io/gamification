@@ -23,27 +23,24 @@ import static io.meeds.gamification.utils.Utils.isAttachmentTokenValid;
 import static org.junit.Assert.assertThrows;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 
 import org.junit.Test;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.space.model.Space;
 
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RuleEntity;
-import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
-import io.meeds.gamification.model.UserInfo;
 import io.meeds.gamification.model.UserInfoContext;
+import io.meeds.gamification.rest.builder.ProgramBuilder;
 import io.meeds.gamification.test.AbstractServiceTest;
 
+@SuppressWarnings("deprecation")
 public class UtilsTest extends AbstractServiceTest {
 
   @Test
@@ -177,7 +174,8 @@ public class UtilsTest extends AbstractServiceTest {
     newRealizationEntityWithRuleId("annoucement 1", ruleEntity.getId());
     newRealizationEntityWithRuleId("annoucement 2", ruleEntity.getId());
     assertEquals(2, announcementService.countAnnouncements(ruleEntity.getId()));
-    assertThrows(ObjectNotFoundException.class, () -> announcementService.countAnnouncements(528l));
+    assertEquals(0, announcementService.countAnnouncements(528l));
+    assertThrows(IllegalArgumentException.class, () -> announcementService.countAnnouncements(0));
   }
 
   @Test
@@ -197,31 +195,10 @@ public class UtilsTest extends AbstractServiceTest {
     RuleDTO rule = newRuleDTO();
     Identity identity = identityManager.getOrCreateUserIdentity("root1");
 
-    UserInfoContext userContext = Utils.toUserContext(rule.getProgram(), identity.getRemoteId());
+    UserInfoContext userContext = ProgramBuilder.toUserContext(programService, rule.getProgram(), identity.getRemoteId());
     assertNotNull(userContext);
     assertEquals("root1", userContext.getRemoteId());
     assertFalse(userContext.isAllowedToRealize());
-  }
-
-  @Test
-  public void testGetDomainByTitle() {
-    ProgramDTO domain = newProgram();
-    ProgramDTO savedDomain = Utils.getProgramByTitle(programService, null);
-    assertNull(savedDomain);
-    savedDomain = Utils.getProgramByTitle(programService, "");
-    assertNull(savedDomain);
-    savedDomain = Utils.getProgramByTitle(programService, domain.getTitle());
-    assertNotNull(savedDomain);
-  }
-
-  @Test
-  public void testGetRuleById() {
-    RuleDTO rule = newRuleDTO();
-    RuleDTO savedRule = Utils.getRuleById(ruleService, 0);
-    assertNull(savedRule);
-    savedRule = Utils.getRuleById(ruleService, rule.getId());
-    assertNotNull(savedRule);
-    assertEquals(rule.getTitle(), savedRule.getTitle());
   }
 
   @Test
@@ -236,19 +213,6 @@ public class UtilsTest extends AbstractServiceTest {
     assertNull(remoteId);
     remoteId = Utils.getUserRemoteId("1");
     assertNotNull(remoteId);
-  }
-
-  @Test
-  public void testCanAnnounce() {
-    Space space = new Space();
-    space.setId("1");
-    space.setPrettyName("test_space");
-    space.setDisplayName("test space");
-    space.setGroupId("/spaces/test_space");
-    String username = "root";
-
-    assertFalse(Utils.canAcquireAchievement(realizationService, announcementService, new RuleDTO(), username));
-    assertTrue(Utils.canAcquireAchievement(realizationService, announcementService, newRuleDTO(), "root1"));
   }
 
   @Test
@@ -267,24 +231,6 @@ public class UtilsTest extends AbstractServiceTest {
     savedSpace = Utils.getSpaceById("1");
     assertNotNull(savedSpace);
     assertEquals(space.getId(), savedSpace.getId());
-  }
-
-  @Test
-  public void testBuildActivityParams() {
-    ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
-    Map<String, String> activityParams = new HashMap<>();
-    activityParams.put("id", "1");
-    activityParams.put("titre", "titre");
-    activityParams.put("description", null);
-    activity.setTemplateParams(activityParams);
-    Map<String, String> extraParams = new HashMap<>();
-    extraParams.put("toAdd", "true");
-
-    Utils.buildActivityParams(activity, extraParams);
-    Map<String, String> buildedParams = activity.getTemplateParams();
-    assertNotNull(buildedParams);
-    assertEquals(3, buildedParams.size());
-    assertFalse(buildedParams.containsKey("description"));
   }
 
   @Test

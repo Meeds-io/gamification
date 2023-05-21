@@ -17,7 +17,6 @@
 
 package io.meeds.gamification.model;
 
-import io.meeds.gamification.rest.model.RealizationValidityContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

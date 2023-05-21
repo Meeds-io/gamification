@@ -17,6 +17,7 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.ActivityManager;
@@ -33,7 +34,6 @@ import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.AnnouncementStorage;
-import io.meeds.gamification.utils.Utils;
 
 public class AnnouncementServiceImpl implements AnnouncementService {
 
@@ -167,27 +167,32 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public int countAnnouncements(long ruleId) throws ObjectNotFoundException {
+  public int countAnnouncements(long ruleId) {
     if (ruleId <= 0) {
       throw new IllegalArgumentException("ruleId has to be positive integer");
     }
     RuleDTO rule = ruleService.findRuleById(ruleId);
     if (rule == null) {
-      throw new ObjectNotFoundException("Rule doesn't exist");
+      return 0;
+    } else {
+      return announcementStorage.countAnnouncements(ruleId);
     }
-    return announcementStorage.countAnnouncements(ruleId);
   }
 
   @Override
-  public int countAnnouncements(long ruleId, IdentityType earnerType) throws ObjectNotFoundException {
+  public int countAnnouncements(long ruleId, IdentityType earnerType) {
     if (ruleId <= 0) {
       throw new IllegalArgumentException("ruleId has to be positive integer");
     }
+    if (earnerType == null) {
+      throw new IllegalArgumentException("IdentityType is mandatory");
+    }
     RuleDTO rule = ruleService.findRuleById(ruleId);
     if (rule == null) {
-      throw new ObjectNotFoundException("Rule doesn't exist");
+      return 0;
+    } else {
+      return announcementStorage.countAnnouncements(ruleId, earnerType);
     }
-    return announcementStorage.countAnnouncements(ruleId, earnerType);
   }
 
   @Override
@@ -237,7 +242,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       activity.setUserId(String.valueOf(announcement.getCreator()));
       templateParams.put(ANNOUNCEMENT_ID_TEMPLATE_PARAM, String.valueOf(announcement.getId()));
       templateParams.put(ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM, rule.getTitle());
-      Utils.buildActivityParams(activity, templateParams);
+      buildActivityParams(activity, templateParams);
 
       activityManager.saveActivityNoReturn(spaceIdentity, activity);
       long activityId = Long.parseLong(activity.getId());
@@ -249,6 +254,19 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                announcement.getCreator(),
                e);
     }
+  }
+
+  private void buildActivityParams(ExoSocialActivity activity, Map<String, ?> templateParams) {
+    Map<String, String> currentTemplateParams =
+                                              activity.getTemplateParams() == null ? new HashMap<>()
+                                                                                   : new HashMap<>(activity.getTemplateParams());
+    if (templateParams != null) {
+      templateParams.forEach((name, value) -> currentTemplateParams.put(name, (String) value));
+    }
+    currentTemplateParams.entrySet()
+                         .removeIf(entry -> entry != null
+                             && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-")));
+    activity.setTemplateParams(currentTemplateParams);
   }
 
 }

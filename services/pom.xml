@@ -35,7 +35,7 @@
     <rest.api.doc.version>1.0</rest.api.doc.version>
     <rest.api.doc.description>Gamification addon rest endpoints</rest.api.doc.description>
 
-    <exo.test.coverage.ratio>0.68</exo.test.coverage.ratio>
+    <exo.test.coverage.ratio>0.70</exo.test.coverage.ratio>
   </properties>
 
   <dependencies>
@@ -166,11 +166,12 @@
           <artifactId>jacoco-maven-plugin</artifactId>
           <configuration>
             <excludes>
-              <exclude>**/entity/**.class</exclude>
-              <exclude>**/model/**.class</exclude>
+              <exclude>**/entity/*.class</exclude>
+              <exclude>**/model/*.class</exclude>
               <exclude>**/constant/*.class</exclude>
-              <exclude>**/*DTO.class</exclude>
-              <exclude>**/*Entity.class</exclude>
+              <exclude>**/entity/**/*.class</exclude>
+              <exclude>**/model/**/*.class</exclude>
+              <exclude>**/constant/**/*.class</exclude>
             </excludes>
           </configuration>
         </plugin>

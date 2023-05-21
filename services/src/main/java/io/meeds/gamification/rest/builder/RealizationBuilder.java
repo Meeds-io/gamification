@@ -1,4 +1,4 @@
-package io.meeds.gamification.utils;
+package io.meeds.gamification.rest.builder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +16,7 @@ import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.rest.model.RealizationRestEntity;
 import io.meeds.gamification.service.RuleService;
+import io.meeds.gamification.utils.Utils;
 
 public class RealizationBuilder {
 
@@ -31,7 +32,7 @@ public class RealizationBuilder {
     try {
       String spaceName = "";
       if (realization.getRuleId() != null && realization.getRuleId() != 0) {
-        RuleDTO rule = Utils.getRuleById(ruleService, realization.getRuleId());
+        RuleDTO rule = ruleService.findRuleById(realization.getRuleId());
         if (rule != null) {
           long spaceId = rule.getAudienceId();
           if (spaceId > 0) {
@@ -45,8 +46,8 @@ public class RealizationBuilder {
         spaceName = Utils.getSpaceFromObjectID(realization.getObjectId());
       }
       RuleDTO rule = realization.getRuleId() != null
-          && realization.getRuleId() != 0 ? Utils.getRuleById(ruleService, realization.getRuleId())
-                                          : Utils.getRuleByTitle(ruleService, realization.getActionTitle());
+          && realization.getRuleId() != 0 ? ruleService.findRuleById(realization.getRuleId())
+                                          : ruleService.findRuleByTitle(realization.getActionTitle());
 
       return new RealizationRestEntity(realization.getId(),
                                        Utils.getIdentityEntity(identityManager, Long.parseLong(realization.getEarnerId())),
