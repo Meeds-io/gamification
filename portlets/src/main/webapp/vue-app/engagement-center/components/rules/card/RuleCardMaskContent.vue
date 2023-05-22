@@ -29,7 +29,12 @@
       {{ icon }}
     </v-icon>
     <div
-      v-if="text"
+      v-if="$slots.default"
+      class="white--text text-wrap title px-2">
+      <slot></slot>
+    </div>
+    <div
+      v-else-if="text"
       v-sanitized-html="text"
       class="white--text text-wrap title px-2">
     </div>

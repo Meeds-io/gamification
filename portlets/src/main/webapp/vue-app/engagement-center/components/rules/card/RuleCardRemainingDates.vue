@@ -19,15 +19,16 @@
 
 -->
 <template>
-  <div v-if="datesInfo" class="rule-card-dates d-flex align-center">
+  <div v-if="show" class="rule-card-dates d-flex align-center">
     <v-icon
       class="primary--text me-2 mb-1"
       size="18">
       fas fa-calendar-check
     </v-icon>
-    <div>
-      {{ datesInfo }}
-    </div>
+    <engagement-center-rule-date-info
+      v-model="datesInfo"
+      :rule="rule"
+      @input="initialized = true" />
   </div>
 </template>
 <script>
@@ -38,41 +39,13 @@ export default {
       default: null,
     },
   },
+  data: () => ({
+    datesInfo: null,
+    initialized: false,
+  }),
   computed: {
-    startDateMillis() {
-      return this.rule?.startDate && new Date(this.rule?.startDate).getTime() || 0;
-    },
-    endDateMillis() {
-      return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
-    },
-    notStartedYet() {
-      return this.startDateMillis && this.startDateMillis > Date.now();
-    },
-    alreadyEnded() {
-      return this.endDateMillis && this.endDateMillis < Date.now();
-    },
-    datesInfo() {
-      if (this.alreadyEnded) {
-        return this.$t('challenges.label.over');
-      } else if (this.notStartedYet) {
-        return this.$t('actions.label.opensIn', {0: this.getRemainingDateLabel(this.startDateMillis)});
-      } else if (this.endDateMillis) {
-        return this.$t('actions.label.endsIn', {0: this.getRemainingDateLabel(this.endDateMillis)});
-      }
-      return null;
-    },
-  },
-  methods: {
-    getRemainingDateLabel(timeInMs) {
-      const remainingSeconds = parseInt((timeInMs - Date.now()) / 1000);
-      const days = Math.floor(remainingSeconds / (60 * 60 * 24));
-      const hours = Math.floor((remainingSeconds % (60 * 60 * 24)) / (60 * 60));
-      if (days === 0) {
-        const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
-        return this.$t('rules.card.timerShortHoursMinutes', {0: hours, 1: minutes});
-      } else {
-        return this.$t('rules.card.timerShortDaysHours', {0: days, 1: hours});
-      }
+    show() {
+      return !this.initialized || this.datesInfo;
     },
   },
 };
