@@ -52,20 +52,27 @@ export default {
       return this.endDateMillis && this.endDateMillis < Date.now();
     },
     datesInfo() {
-      if (this.notStartedYet) {
-        const remainingSeconds = parseInt((this.startDateMillis - Date.now()) / 1000);
-        const days = Math.floor(remainingSeconds / (60 * 60 * 24));
-        const hours = Math.floor((remainingSeconds % (60 * 60 * 24)) / (60 * 60));
-        const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
-        return this.$t('rules.card.timerShort', {0: days, 1: hours, 2: minutes});
-      } else if (this.endDateMillis && !this.alreadyEnded) {
-        const remainingSeconds = parseInt((this.endDateMillis - Date.now()) / 1000);
-        const days = Math.floor(remainingSeconds / (60 * 60 * 24));
-        const hours = Math.floor((remainingSeconds % (60 * 60 * 24)) / (60 * 60));
-        const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
-        return this.$t('rules.card.timerShort', {0: days, 1: hours, 2: minutes});
+      if (this.alreadyEnded) {
+        return this.$t('challenges.label.over');
+      } else if (this.notStartedYet) {
+        return this.$t('actions.label.opensIn', {0: this.getRemainingDateLabel(this.startDateMillis)});
+      } else if (this.endDateMillis) {
+        return this.$t('actions.label.endsIn', {0: this.getRemainingDateLabel(this.endDateMillis)});
       }
       return null;
+    },
+  },
+  methods: {
+    getRemainingDateLabel(timeInMs) {
+      const remainingSeconds = parseInt((timeInMs - Date.now()) / 1000);
+      const days = Math.floor(remainingSeconds / (60 * 60 * 24));
+      const hours = Math.floor((remainingSeconds % (60 * 60 * 24)) / (60 * 60));
+      if (days === 0) {
+        const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
+        return this.$t('rules.card.timerShortHoursMinutes', {0: hours, 1: minutes});
+      } else {
+        return this.$t('rules.card.timerShortDaysHours', {0: days, 1: hours});
+      }
     },
   },
 };

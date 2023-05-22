@@ -50,10 +50,24 @@ export default {
       if (this.alreadyEnded) {
         return this.$t('challenges.label.over');
       } else if (this.notStartedYet) {
-        const days = Math.round((this.startDateMillis - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
-        return this.$t('challenges.label.opensIn', {0: days});
+        return this.$t('actions.label.opensIn', {0: this.getRemainingDateLabel(this.startDateMillis)});
+      } else if (this.endDateMillis) {
+        return this.$t('actions.label.endsIn', {0: this.getRemainingDateLabel(this.endDateMillis)});
       }
       return null;
+    },
+  },
+  methods: {
+    getRemainingDateLabel(timeInMs) {
+      const remainingSeconds = parseInt((timeInMs - Date.now()) / 1000);
+      const days = Math.floor(remainingSeconds / (60 * 60 * 24));
+      const hours = Math.floor((remainingSeconds % (60 * 60 * 24)) / (60 * 60));
+      if (days === 0) {
+        const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
+        return this.$t('rules.card.timerShortHoursMinutes', {0: hours, 1: minutes});
+      } else {
+        return this.$t('rules.card.timerShortDaysHours', {0: days, 1: hours});
+      }
     },
   },
 };
