@@ -20,10 +20,14 @@
 -->
 <template>
   <engagement-center-rule-card-mask-content
-    v-if="datesInfo"
-    :text="datesInfo"
+    v-if="show"
     icon="fas fa-calendar-plus"
-    class="rule-card-mask-dates" />
+    class="rule-card-mask-dates">
+    <engagement-center-rule-date-info
+      v-model="datesInfo"
+      :rule="rule"
+      @input="initialized = true" />
+  </engagement-center-rule-card-mask-content>
 </template>
 <script>
 export default {
@@ -33,27 +37,13 @@ export default {
       default: null,
     },
   },
+  data: () => ({
+    datesInfo: null,
+    initialized: false,
+  }),
   computed: {
-    startDateMillis() {
-      return this.rule?.startDate && new Date(this.rule?.startDate).getTime() || 0;
-    },
-    endDateMillis() {
-      return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
-    },
-    alreadyEnded() {
-      return this.endDateMillis && this.endDateMillis < Date.now();
-    },
-    notStartedYet() {
-      return this.startDateMillis && this.startDateMillis > Date.now();
-    },
-    datesInfo() {
-      if (this.alreadyEnded) {
-        return this.$t('challenges.label.over');
-      } else if (this.notStartedYet) {
-        const days = Math.round((this.startDateMillis - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
-        return this.$t('challenges.label.opensIn', {0: days});
-      }
-      return null;
+    show() {
+      return !this.initialized || this.datesInfo;
     },
   },
 };
