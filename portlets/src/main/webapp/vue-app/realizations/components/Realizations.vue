@@ -19,18 +19,20 @@
 -->
 <template>
   <div class="Realizations border-box-sizing">
-    <v-toolbar class="px-2" flat>
+    <v-toolbar class="z-index-one px-2" flat>
       <div class="d-flex flex-grow-1 align-center">
-        <v-switch
-          v-if="isRealizationManager"
-          id="realizationAdministrationSwitch"
-          v-model="administrationMode"
-          :label="$t('realization.label.switchAdministration')"
-          class="mb-n2 hidden-xs-only" />
-        <realizations-export-button
-          v-else-if="!isMobile && displaySearchResult"
-          :link="exportFileLink" />
-        <v-spacer v-if="!isMobile" />
+        <template v-if="!isMobile">
+          <v-switch
+            v-if="isRealizationManager"
+            id="realizationAdministrationSwitch"
+            v-model="administrationMode"
+            :label="$t('realization.label.switchAdministration')"
+            class="mb-n2 hidden-xs-only" />
+          <realizations-export-button
+            v-else-if="displaySearchResult"
+            :link="exportFileLink" />
+          <v-spacer />
+        </template>
         <div class="ml-n4 pe-3 d-flex align-center">
           <select-period
             v-model="selectedPeriod"
@@ -50,14 +52,11 @@
         </v-btn>
       </div>
     </v-toolbar>
-    <v-toolbar
-      v-if="isRealizationManager"
-      class="px-2"
-      flat>
-      <realizations-export-button
-        v-if="!isMobile && displaySearchResult"
-        :link="exportFileLink" />
-    </v-toolbar>
+    <div
+      v-if="isRealizationManager && !isMobile && displaySearchResult"
+      class="px-6">
+      <realizations-export-button :link="exportFileLink" />
+    </div>
     <v-progress-linear
       v-if="!initialized"
       indeterminate

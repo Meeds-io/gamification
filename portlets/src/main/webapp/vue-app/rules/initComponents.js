@@ -15,6 +15,7 @@ import RuleRecurrence from './components/detail/RuleRecurrence.vue';
 import RulePrerequisites from './components/detail/RulePrerequisites.vue';
 import RulePrerequisiteItem from './components/detail/RulePrerequisiteItem.vue';
 import RuleAnnouncementForm from './components/detail/RuleAnnouncementForm.vue';
+import RuleDateInfo from './components/detail/RuleDateInfo.vue';
 
 import RuleParticipantsDrawer from './components/RuleParticipantsDrawer.vue';
 
@@ -37,6 +38,7 @@ const components = {
   'engagement-center-rule-prerequisites': RulePrerequisites,
   'engagement-center-rule-prerequisite-item': RulePrerequisiteItem,
   'engagement-center-rule-participants-drawer': RuleParticipantsDrawer,
+  'engagement-center-rule-date-info': RuleDateInfo,
 };
 
 for (const key in components) {
