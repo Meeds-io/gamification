@@ -8,6 +8,7 @@ import FilterRealizationsDrawer from './components/FilterRealizationsDrawer.vue'
 import FilterRealizationsProgramList from './components/FilterRealizationsProgramList.vue';
 import GranteeAttendeeItem from './components/GranteeAttendeeItem.vue';
 import ProgramAttendeeItem from './components/ProgramAttendeeItem.vue';
+import RealizationExportButton from './components/RealizationExportButton.vue';
 
 const components = {
   'realizations': Realizations,
@@ -20,6 +21,7 @@ const components = {
   'grantee-attendee-item': GranteeAttendeeItem,
   'program-attendee-item': ProgramAttendeeItem,
   'program-suggester': ProgramSuggester,
+  'realizations-export-button': RealizationExportButton,
 };
 
 for (const key in components) {

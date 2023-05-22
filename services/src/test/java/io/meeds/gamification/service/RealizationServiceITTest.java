@@ -55,11 +55,16 @@ public class RealizationServiceITTest extends AbstractServiceTest {
   private final Identity regularAclIdentity =
                                             new Identity("root10", Collections.singleton(new MembershipEntry("/platform/users")));
 
+  private final Identity spaceHostAclIdentity =
+                                              new Identity("root5",
+                                                           Collections.singleton(new MembershipEntry("/platform/users")));
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
     identityRegistry.register(regularAclIdentity);
     identityRegistry.register(adminAclIdentity);
+    identityRegistry.register(spaceHostAclIdentity);
   }
 
   public void testCreateRealizations() {
@@ -107,8 +112,12 @@ public class RealizationServiceITTest extends AbstractServiceTest {
   public void testHadOwnedProgram() throws IllegalAccessException, ObjectNotFoundException {
     assertFalse(realizationService.isRealizationManager(regularAclIdentity.getUserId()));
     assertTrue(realizationService.isRealizationManager(adminAclIdentity.getUserId()));
+    assertFalse(realizationService.isRealizationManager(spaceHostAclIdentity.getUserId()));
 
     ProgramDTO program = newProgram();
+
+    assertTrue(realizationService.isRealizationManager(spaceHostAclIdentity.getUserId()));
+
     org.exoplatform.social.core.identity.model.Identity regularUserIdentity =
                                                                             identityManager.getOrCreateUserIdentity(regularAclIdentity.getUserId());
 
