@@ -21,7 +21,6 @@
 <template>
   <engagement-center-rule-card-mask-content
     v-if="show"
-    v-show="datesInfo"
     icon="fas fa-calendar-plus"
     class="rule-card-mask-dates">
     <engagement-center-rule-date-info
