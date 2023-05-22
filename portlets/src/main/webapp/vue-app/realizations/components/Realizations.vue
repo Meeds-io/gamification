@@ -15,28 +15,18 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app
-    class="Realizations border-box-sizing">
-    <div class="pt-5">
-      <div v-if="isRealizationManager" class="d-flex px-7">
+  <div class="Realizations border-box-sizing">
+    <v-toolbar class="px-2" flat>
+      <div class="d-flex flex-grow-1 align-center">
         <v-switch
+          v-if="isRealizationManager"
           id="realizationAdministrationSwitch"
           v-model="administrationMode"
-          class="my-0 ms-0 me-n1 pt-0"
-          @change="switchToAdminMode()" />
-        <span class="me-auto text-sub-title ps-3">{{ $t("realization.label.switchAdministration") }}</span>
-      </div>
-      <div class="d-flex px-7 align-center">
-        <v-toolbar-title class="d-flex" v-if="!isMobile && displaySearchResult">
-          <v-btn
-            :href="exportFileLink"
-            download="achievements.xlsx"
-            class="btn btn-primary export">
-            <span class="ms-2 d-none d-lg-inline text-none">
-              {{ $t("realization.label.export") }}
-            </span>
-          </v-btn>
-        </v-toolbar-title>
+          :label="$t('realization.label.switchAdministration')"
+          class="mb-n2 hidden-xs-only" />
+        <realizations-export-button
+          v-else-if="!isMobile && displaySearchResult"
+          :link="exportFileLink" />
         <v-spacer v-if="!isMobile" />
         <div class="ml-n4 pe-3 d-flex align-center">
           <select-period
@@ -56,7 +46,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </span>
         </v-btn>
       </div>
-    </div>
+    </v-toolbar>
+    <v-toolbar
+      v-if="isRealizationManager"
+      class="px-2"
+      flat>
+      <realizations-export-button
+        v-if="!isMobile && displaySearchResult"
+        :link="exportFileLink" />
+    </v-toolbar>
     <v-progress-linear
       v-if="!initialized"
       indeterminate
@@ -85,6 +83,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :items="realizationsToDisplay"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDescending"
+      :loading="loading"
       disable-pagination
       hide-default-footer
       must-sort
@@ -141,7 +140,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :is-administrator="administrationMode"
       :administration-mode="administrationMode"
       @selectionConfirmed="filterByPrograms" />
-  </v-app>
+  </div>
 </template>
 <script>
 export default {
@@ -323,6 +322,10 @@ export default {
         this.pageSize = 25;
       }
     },
+    administrationMode() {
+      this.realizations = [];
+      this.loadRealizations();
+    },
     loading() {
       if (this.loading) {
         document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
@@ -403,10 +406,6 @@ export default {
       this.filterActivated = true;
       this.searchList = programs.map(program => program.id);
       this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
-      this.loadRealizations();
-    },
-    switchToAdminMode() {
-      this.realizations = [];
       this.loadRealizations();
     },
     onResize () {

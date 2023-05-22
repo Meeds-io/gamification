@@ -493,6 +493,10 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     ProgramFilter programFilter = new ProgramFilter();
     programFilter.setIncludeDeleted(true);
     programFilter.setOwnerId(Utils.getUserIdentityId(username));
+    programFilter.setSpacesIds(spaceService.getManagerSpacesIds(username, 0, -1)
+                                           .stream()
+                                           .map(Long::parseLong)
+                                           .toList());
     return programService.countPrograms(programFilter) > 0;
   }
 
