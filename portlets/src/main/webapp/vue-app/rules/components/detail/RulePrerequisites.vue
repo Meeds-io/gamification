@@ -20,24 +20,22 @@
 -->
 <template>
   <v-list-item
-    v-if="prerequisitesCount > 0"
-    :class="hasRemainingPrerequisitesCount && 'grey'"
-    class="rule-prerequisites pa-0"
+    v-if="prerequisitesTitle"
+    class="rule-prerequisites grey pa-0"
     dense>
     <v-list-item-avatar class="me-2 mb-auto">
       <v-avatar size="32" tile>
         <v-icon
-          :class="hasRemainingPrerequisitesCount && 'white--text' || 'primary--text'"
+          class="white--text"
           size="30">
-          {{ hasRemainingPrerequisitesCount && 'fas fa-lock' || 'fas fa-unlock' }}
+          fas fa-lock
         </v-icon>
       </v-avatar>
     </v-list-item-avatar>
-    <v-list-item-content :class="hasRemainingPrerequisitesCount && 'mt-3' || 'mt-1'">
+    <v-list-item-content class="mt-3">
       <v-list-item-title
         v-sanitized-html="prerequisitesTitle"
-        :class="hasRemainingPrerequisitesCount && 'white--text pe-2'"
-        class="text-wrap" />
+        class="white--text text-wrap" />
       <v-list-item-subtitle class="d-flex flex-column mt-3">
         <engagement-center-rule-prerequisite-item
           v-for="r in remainingPrerequisites"
@@ -60,9 +58,6 @@ export default {
     prerequisiteRules() {
       return this.rule.prerequisiteRules;
     },
-    prerequisitesCount() {
-      return this.rule.prerequisiteRules?.length || 0;
-    },
     remainingPrerequisites() {
       const prerequisitesStatus = this.rule?.userInfo?.context?.validPrerequisites;
       return prerequisitesStatus
@@ -73,21 +68,13 @@ export default {
     remainingPrerequisitesCount() {
       return this.remainingPrerequisites.length;
     },
-    hasRemainingPrerequisitesCount() {
-      return this.remainingPrerequisitesCount > 0;
-    },
     prerequisitesTitle() {
-      if (this.remainingPrerequisitesCount <= 0) {
-        if (this.prerequisitesCount === 1) {
-          return this.$t('rules.prerequisiteActionMade');
-        } else {
-          return this.$t('rules.prerequisiteActionsMade', {0: this.prerequisitesCount});
-        }
-      } else if (this.remainingPrerequisitesCount === 1) {
+      if (this.remainingPrerequisitesCount === 1) {
         return this.$t('rules.doActionToUnlockIncentive');
-      } else {
+      } else if (this.remainingPrerequisitesCount > 1) {
         return this.$t('rules.doActionsToUnlockIncentive', {0: this.remainingPrerequisitesCount});
       }
+      return null;
     },
   },
 };

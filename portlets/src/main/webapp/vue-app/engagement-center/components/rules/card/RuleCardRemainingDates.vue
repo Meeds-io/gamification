@@ -19,15 +19,16 @@
 
 -->
 <template>
-  <div v-if="datesInfo" class="rule-card-dates d-flex align-center">
+  <div v-if="show" class="rule-card-dates d-flex align-center">
     <v-icon
       class="primary--text me-2 mb-1"
       size="18">
       fas fa-calendar-check
     </v-icon>
-    <div>
-      {{ datesInfo }}
-    </div>
+    <engagement-center-rule-date-info
+      v-model="datesInfo"
+      :rule="rule"
+      @input="initialized = true" />
   </div>
 </template>
 <script>
@@ -38,34 +39,13 @@ export default {
       default: null,
     },
   },
+  data: () => ({
+    datesInfo: null,
+    initialized: false,
+  }),
   computed: {
-    startDateMillis() {
-      return this.rule?.startDate && new Date(this.rule?.startDate).getTime() || 0;
-    },
-    endDateMillis() {
-      return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
-    },
-    notStartedYet() {
-      return this.startDateMillis && this.startDateMillis > Date.now();
-    },
-    alreadyEnded() {
-      return this.endDateMillis && this.endDateMillis < Date.now();
-    },
-    datesInfo() {
-      if (this.notStartedYet) {
-        const remainingSeconds = parseInt((this.startDateMillis - Date.now()) / 1000);
-        const days = Math.floor(remainingSeconds / (60 * 60 * 24));
-        const hours = Math.floor((remainingSeconds % (60 * 60 * 24)) / (60 * 60));
-        const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
-        return this.$t('rules.card.timerShort', {0: days, 1: hours, 2: minutes});
-      } else if (this.endDateMillis && !this.alreadyEnded) {
-        const remainingSeconds = parseInt((this.endDateMillis - Date.now()) / 1000);
-        const days = Math.floor(remainingSeconds / (60 * 60 * 24));
-        const hours = Math.floor((remainingSeconds % (60 * 60 * 24)) / (60 * 60));
-        const minutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
-        return this.$t('rules.card.timerShort', {0: days, 1: hours, 2: minutes});
-      }
-      return null;
+    show() {
+      return !this.initialized || this.datesInfo;
     },
   },
 };
