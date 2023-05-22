@@ -20,7 +20,7 @@
 -->
 <template>
   <v-list-item
-    v-if="datesInfo"
+    v-if="show"
     class="rule-dates pa-0"
     :class="notStartedYet && 'grey'"
     dense>
@@ -35,7 +35,10 @@
     </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title :class="notStartedYet && 'white--text'">
-        {{ datesInfo }}
+        <engagement-center-rule-date-info
+          v-model="datesInfo"
+          :rule="rule"
+          @input="initialized = true" />
       </v-list-item-title>
     </v-list-item-content>
   </v-list-item>
@@ -48,30 +51,19 @@ export default {
       default: null,
     },
   },
+  data: () => ({
+    datesInfo: null,
+    initialized: false,
+  }),
   computed: {
+    show() {
+      return !this.initialized || this.datesInfo;
+    },
     startDateMillis() {
       return this.rule?.startDate && new Date(this.rule?.startDate).getTime() || 0;
     },
-    endDateMillis() {
-      return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
-    },
-    alreadyEnded() {
-      return this.endDateMillis && this.endDateMillis < Date.now();
-    },
     notStartedYet() {
       return this.startDateMillis && this.startDateMillis > Date.now();
-    },
-    datesInfo() {
-      if (this.alreadyEnded) {
-        return this.$t('challenges.label.over');
-      } else if (this.notStartedYet) {
-        const days = Math.round((this.startDateMillis - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
-        return this.$t('challenges.label.opensIn', {0: days});
-      } else if (this.endDateMillis) {
-        const days = Math.round((this.endDateMillis - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
-        return this.$t('challenges.label.daysLeft', {0: days});
-      }
-      return null;
     },
   },
 };
