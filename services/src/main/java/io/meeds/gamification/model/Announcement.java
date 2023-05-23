@@ -27,7 +27,14 @@ public class Announcement implements Cloneable {
 
   @Override
   public Announcement clone() { // NOSONAR
-    return new Announcement(id, challengeId, challengeTitle, assignee, comment, creator, createdDate, activityId);
+    return new Announcement(id,
+                            challengeId,
+                            challengeTitle,
+                            assignee,
+                            comment,
+                            creator,
+                            createdDate,
+                            activityId);
   }
 
 }

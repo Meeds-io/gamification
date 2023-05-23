@@ -17,6 +17,7 @@
 package io.meeds.gamification.model.filter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.meeds.gamification.constant.DateFilterType;
@@ -50,4 +51,17 @@ public class RuleFilter implements Serializable {
   private boolean           orderByRealizations;
 
   private List<Long>        excludedRuleIds;
+
+  public RuleFilter clone() { // NOSONAR
+    return new RuleFilter(term,
+                          eventName,
+                          domainId,
+                          spaceIds == null ? null : new ArrayList<>(spaceIds),
+                          dateFilterType,
+                          entityFilterType,
+                          entityStatusType,
+                          orderByRealizations,
+                          excludedRuleIds == null ? null : new ArrayList<>(excludedRuleIds));
+  }
+
 }
