@@ -130,6 +130,7 @@ export default {
       }
       this.startDateValue = this.startDate ? new Date(this.startDate).getTime() : null;
       this.endDateValue = this.endDate ? new Date(this.endDate).getTime() : null;
+      this.$emit('input', !!this.validDatesInput);
     },
     resetDates() {
       this.startDateValue = null;

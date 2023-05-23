@@ -17,6 +17,7 @@
 package io.meeds.gamification.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -84,7 +85,7 @@ public class ProgramDTO implements Serializable, Cloneable {
                           coverUploadId,
                           coverFileId,
                           coverUrl,
-                          ownerIds,
+                          ownerIds == null ? null : new HashSet<>(ownerIds),
                           rulesTotalScore);
   }
 

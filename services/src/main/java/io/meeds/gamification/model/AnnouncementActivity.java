@@ -17,6 +17,7 @@
 
 package io.meeds.gamification.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import lombok.AllArgsConstructor;
@@ -56,7 +57,7 @@ public class AnnouncementActivity implements Cloneable {
                                     creator,
                                     createdDate,
                                     activityId,
-                                    templateParams);
+                                    templateParams == null ? null : new HashMap<>(templateParams));
   }
 
 }
