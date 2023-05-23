@@ -1,4 +1,5 @@
 import RuleFormDrawer from './components/RuleFormDrawer.vue';
+import RuleDatesInput from './components/form/RuleDatesInput.vue';
 import RuleRecurrenceInput from './components/form/RuleRecurrenceInput.vue';
 import RuleLockInput from './components/form/RuleLockInput.vue';
 import ButtonGroupItem from './components/form/ButtonGroupItem.vue';
@@ -22,6 +23,7 @@ import RuleParticipantsDrawer from './components/RuleParticipantsDrawer.vue';
 const components = {
   'engagement-center-rule-form-drawer': RuleFormDrawer,
   'engagement-center-button-group-item': ButtonGroupItem,
+  'engagement-center-rule-dates-input': RuleDatesInput,
   'engagement-center-rule-recurrence-input': RuleRecurrenceInput,
   'engagement-center-rule-lock-input': RuleLockInput,
   'engagement-center-description-editor': DescriptionEditor,
