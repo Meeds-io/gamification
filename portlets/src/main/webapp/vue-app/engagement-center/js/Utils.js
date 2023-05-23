@@ -78,6 +78,7 @@ export function displayAlert(message, type) {
   }));
 }
 
-export const getIsoDate = (date) => {
+export const getIsoDate = (time) => {
+  const date = new Date(time);
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T00:00:00`;
 };
