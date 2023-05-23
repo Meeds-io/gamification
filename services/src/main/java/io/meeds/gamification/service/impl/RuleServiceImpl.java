@@ -116,10 +116,11 @@ public class RuleServiceImpl implements RuleService {
                                 String username,
                                 int offset,
                                 int limit) {
-    if (computeUserSpaces(ruleFilter, username)) {
-      return getRules(ruleFilter, offset, limit);
-    } else {
+    ruleFilter = computeUserSpaces(ruleFilter, username);
+    if (ruleFilter == null) {
       return Collections.emptyList();
+    } else {
+      return getRules(ruleFilter, offset, limit);
     }
   }
 
@@ -133,10 +134,11 @@ public class RuleServiceImpl implements RuleService {
 
   @Override
   public int countRules(RuleFilter ruleFilter, String username) {
-    if (computeUserSpaces(ruleFilter, username)) {
-      return countRules(ruleFilter);
-    } else {
+    ruleFilter = computeUserSpaces(ruleFilter, username);
+    if (ruleFilter == null) {
       return 0;
+    } else {
+      return countRules(ruleFilter);
     }
   }
 
@@ -265,25 +267,25 @@ public class RuleServiceImpl implements RuleService {
   }
 
   @SuppressWarnings("unchecked")
-  private boolean computeUserSpaces(RuleFilter ruleFilter, String username) {
+  private RuleFilter computeUserSpaces(RuleFilter ruleFilter, String username) {
+    ruleFilter = ruleFilter.clone();
     if (StringUtils.isBlank(username)) {
-      return false;
-    }
-    if (Utils.isRewardingManager(username)) {
-      return true;
+      return null;
+    } else if (Utils.isRewardingManager(username)) {
+      return ruleFilter;
     }
     List<Long> memberSpacesIds = spaceService.getMemberSpacesIds(username, 0, -1)
                                              .stream()
                                              .map(Long::parseLong)
                                              .toList();
     if (CollectionUtils.isEmpty(memberSpacesIds)) {
-      return false;
+      return null;
     }
     if (CollectionUtils.isNotEmpty(ruleFilter.getSpaceIds())) {
       memberSpacesIds = (List<Long>) CollectionUtils.intersection(memberSpacesIds, ruleFilter.getSpaceIds());
     }
     ruleFilter.setSpaceIds(memberSpacesIds);
-    return true;
+    return ruleFilter;
   }
 
   private void checkPermissionAndDates(RuleDTO rule, String username) throws IllegalAccessException {
