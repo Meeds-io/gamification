@@ -328,7 +328,8 @@ public class ProgramServiceImpl implements ProgramService {
 
   private ProgramDTO createDomain(ProgramDTO domain, String username) {
     if (StringUtils.isBlank(domain.getType())) {
-      domain.setType(EntityType.AUTOMATIC.name());
+      boolean isAutomatic = StringUtils.isBlank(username) || StringUtils.equals(IdentityConstants.SYSTEM, username);
+      domain.setType(isAutomatic ? EntityType.AUTOMATIC.name() : EntityType.MANUAL.name());
     }
     domain.setCreatedBy(username);
     domain.setCreatedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));

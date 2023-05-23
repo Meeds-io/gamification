@@ -20,18 +20,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     class="EngagementCenterDrawer"
     v-model="drawer"
     :right="!$vuetify.rtl"
+    :confirm-close="programChanged"
+    :confirm-close-labels="confirmCloseLabels"
     eager>
     <template slot="title">
       <span class="pb-2"> {{ drawerTitle }} </span>
     </template>
     <template v-if="drawer" #content>
       <v-card-text v-if="program">
-        <div
-          v-if="warning"
-          class="alert alert-error v-content mb-4">
-          <i class="uiIconError"></i>
-          {{ warning }}
-        </div>
         <v-form
           id="EngagementCenterProgramDrawerForm"
           ref="form"
@@ -188,9 +184,9 @@ export default {
   },
   data: () => ({
     program: null,
+    originalProgram: null,
     programOwners: [],
     audience: null,
-    warning: null,
     isValidForm: true,
     drawer: false,
     showMenu: false,
@@ -239,6 +235,24 @@ export default {
     },
     isExternalOwner() {
       return this.programOwners.some(owner => owner.external);
+    },
+    programToSave() {
+      return this.computeProgramModel(
+        this.program,
+        this.audienceId,
+        this.programOwners?.map(owner => owner.id).filter(id => !!id)
+      );
+    },
+    programChanged() {
+      return this.originalProgram && JSON.stringify(this.programToSave) !== JSON.stringify(this.originalProgram);
+    },
+    confirmCloseLabels() {
+      return {
+        title: this.program?.id && this.$t('program.confirmCloseModificationTitle') || this.$t('program.confirmCloseCreationTitle'),
+        message: this.program?.id && this.$t('program.confirmCloseModificationMessage') || this.$t('program.confirmCloseCreationMessage'),
+        ok: this.$t('confirm.yes'),
+        cancel: this.$t('confirm.no'),
+      };
     },
   },
   watch: {
@@ -294,6 +308,12 @@ export default {
       } else {
         this.audience = null;
       }
+
+      this.originalProgram = this.computeProgramModel(
+        this.program,
+        this.audienceId,
+        this.programOwners?.map(owner => owner.id).filter(id => !!id)
+      );
       this.$refs.programDrawer.open();
       this.$nextTick().then(() => this.$refs.programDescription.initCKEditor());
     },
@@ -315,39 +335,45 @@ export default {
       if (this.disabledSave) {
         return;
       }
-      this.program.type = 'MANUAL';
       this.loading = true;
-
-      const programToSave = JSON.parse(JSON.stringify(this.program));
-      programToSave.ownerIds = this.programOwners?.map(owner => owner.id).filter(id => !!id);
-      programToSave.audienceId = this.audienceId;
-      delete programToSave.space;
-      delete programToSave.owners;
-      delete programToSave.userInfo;
-
       if (this.program?.id) {
-        this.$programService.updateProgram(programToSave)
+        this.$programService.updateProgram(this.programToSave)
           .then((program) => {
-            this.close();
+            this.originalProgram = null;
             this.$root.$emit('program-updated', program);
             this.$engagementCenterUtils.displayAlert(this.$t('programs.programUpdateSuccess'));
+            return this.$nextTick();
           })
+          .then(() => this.close())
           .catch(() => {
             this.$engagementCenterUtils.displayAlert(this.$t('programs.programUpdateError'), 'error');
           })
           .finally(() => this.loading = false);
       } else {
-        this.$programService.createProgram(programToSave)
+        this.$programService.createProgram(this.programToSave)
           .then((program) => {
+            this.originalProgram = null;
             this.$root.$emit('program-added', program);
-            this.close();
             this.$engagementCenterUtils.displayAlert(this.$t('programs.programCreateSuccess'));
+            return this.$nextTick();
           })
+          .then(() => this.close())
           .catch(() => {
             this.$engagementCenterUtils.displayAlert(this.$t('programs.programCreateError'), 'error');
           })
           .finally(() => this.loading = false);
       }
+    },
+    computeProgramModel(program, audienceId, ownerIds) {
+      return {
+        id: program?.id,
+        title: program?.title,
+        description: program?.description,
+        coverUploadId: program?.coverUploadId,
+        audienceId: audienceId || program?.audienceId || 0,
+        ownerIds: ownerIds || program?.ownerIds || null,
+        enabled: program?.enabled,
+      };
     },
   }
 };
