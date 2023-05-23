@@ -173,49 +173,50 @@ public class ProgramServiceTest extends AbstractServiceTest {
   @Test
   public void testCreateDomain() throws IllegalAccessException {
     assertEquals(0, programDAO.count().longValue());
-    ProgramDTO autoDomain = new ProgramDTO();
-    autoDomain.setTitle(GAMIFICATION_DOMAIN);
-    autoDomain.setDescription("Description");
-    autoDomain.setDeleted(false);
-    autoDomain.setEnabled(true);
-    autoDomain.setBudget(20L);
+    ProgramDTO program = new ProgramDTO();
+    program.setTitle(GAMIFICATION_DOMAIN);
+    program.setDescription("Description");
+    program.setDeleted(false);
+    program.setEnabled(true);
+    program.setBudget(20L);
     assertThrows(IllegalArgumentException.class, () -> programService.createProgram(null, adminAclIdentity));
     ProgramDTO domainWithId = new ProgramDTO();
     domainWithId.setId(150L);
     assertThrows(IllegalArgumentException.class, () -> programService.createProgram(domainWithId, adminAclIdentity));
-    autoDomain = programService.createProgram(autoDomain, adminAclIdentity);
-    assertNotNull(autoDomain);
-    assertEquals(EntityType.AUTOMATIC.name(), autoDomain.getType());
-    assertNotNull(programDAO.find(autoDomain.getId()));
+    program = programService.createProgram(program, adminAclIdentity);
+    assertNotNull(program);
+    assertEquals(EntityType.MANUAL.name(), program.getType());
+    assertNotNull(programDAO.find(program.getId()));
 
-    ProgramDTO manualDomain = new ProgramDTO();
-    manualDomain.setTitle(GAMIFICATION_DOMAIN);
-    manualDomain.setDescription("Description");
-    manualDomain.setDeleted(false);
-    manualDomain.setEnabled(true);
-    manualDomain.setBudget(20L);
-    manualDomain.setOwnerIds(Collections.emptySet());
-    manualDomain.setCoverFileId(1L);
-    manualDomain.setType(EntityType.MANUAL.name());
-    assertThrows(IllegalAccessException.class, () -> programService.createProgram(manualDomain, regularAclIdentity));
+    ProgramDTO programToSave = new ProgramDTO();
+    programToSave.setTitle(GAMIFICATION_DOMAIN);
+    programToSave.setDescription("Description");
+    programToSave.setDeleted(false);
+    programToSave.setEnabled(true);
+    programToSave.setBudget(20L);
+    programToSave.setOwnerIds(Collections.emptySet());
+    programToSave.setCoverFileId(1L);
+    programToSave.setType(EntityType.MANUAL.name());
+    assertThrows(IllegalAccessException.class, () -> programService.createProgram(programToSave, regularAclIdentity));
 
-    ProgramDTO savedDomain = programService.createProgram(manualDomain, adminAclIdentity);
+    ProgramDTO savedDomain = programService.createProgram(programToSave, adminAclIdentity);
     assertNotNull(savedDomain);
     savedDomain = programService.getProgramById(savedDomain.getId());
-    assertEquals(GAMIFICATION_DOMAIN, manualDomain.getTitle());
-    assertEquals("Description", manualDomain.getDescription());
-    assertEquals(adminAclIdentity.getUserId(), manualDomain.getCreatedBy());
-    assertEquals(adminAclIdentity.getUserId(), manualDomain.getLastModifiedBy());
-    assertFalse(manualDomain.isDeleted());
-    assertTrue(manualDomain.isEnabled());
-    assertEquals(20L, manualDomain.getBudget());
-    assertEquals(1L, manualDomain.getCoverFileId());
+    assertEquals(GAMIFICATION_DOMAIN, programToSave.getTitle());
+    assertEquals("Description", programToSave.getDescription());
+    assertEquals(adminAclIdentity.getUserId(), programToSave.getCreatedBy());
+    assertEquals(adminAclIdentity.getUserId(), programToSave.getLastModifiedBy());
+    assertFalse(programToSave.isDeleted());
+    assertTrue(programToSave.isEnabled());
+    assertEquals(20L, programToSave.getBudget());
+    assertEquals(1L, programToSave.getCoverFileId());
     assertEquals(EntityType.MANUAL.name(), savedDomain.getType());
-    assertNotNull(manualDomain.getCreatedDate());
-    assertNotNull(manualDomain.getLastModifiedDate());
+    assertNotNull(programToSave.getCreatedDate());
+    assertNotNull(programToSave.getLastModifiedDate());
 
-    ProgramDTO domain = programService.createProgram(manualDomain);
-    assertNotNull(domain);
+    program = programService.createProgram(programToSave);
+    assertNotNull(program);
+    assertEquals(EntityType.AUTOMATIC.name(), program.getType());
   }
 
   @Test
