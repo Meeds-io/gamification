@@ -17,6 +17,7 @@
 package io.meeds.gamification.model.filter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,5 +48,17 @@ public class RealizationFilter implements Serializable {
   private IdentityType      identityType;
 
   private List<Long>        domainIds;
+
+  @Override
+  public RealizationFilter clone() { // NOSONAR
+    return new RealizationFilter(earnerIds == null ? null : new ArrayList<>(earnerIds),
+                                 sortField,
+                                 sortDescending,
+                                 owned,
+                                 fromDate,
+                                 toDate,
+                                 identityType,
+                                 domainIds == null ? null : new ArrayList<>(domainIds));
+  }
 
 }

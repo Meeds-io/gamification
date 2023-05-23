@@ -18,6 +18,7 @@ package io.meeds.gamification.model;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import io.meeds.gamification.constant.EntityType;
@@ -95,7 +96,7 @@ public class RuleDTO implements Serializable {
                        lastModifiedDate,
                        startDate,
                        endDate,
-                       prerequisiteRuleIds,
+                       prerequisiteRuleIds == null ? null : new HashSet<>(prerequisiteRuleIds),
                        type,
                        recurrence);
   }

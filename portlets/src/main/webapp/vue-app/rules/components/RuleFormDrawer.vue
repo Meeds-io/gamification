@@ -18,6 +18,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <exo-drawer
     ref="ruleFormDrawer"
     v-model="drawer"
+    :confirm-close="ruleChanged"
+    :confirm-close-labels="confirmCloseLabels"
     body-classes="hide-scroll decrease-z-index-more"
     class="EngagementCenterDrawer"
     right
@@ -277,6 +279,7 @@ export default {
   },
   data: () => ({
     rule: {},
+    originalRule: null,
     ruleToUpdate: {},
     saving: false,
     eventMapping: [],
@@ -373,6 +376,20 @@ export default {
     manualType() {
       return this.ruleType === 'MANUAL';
     },
+    ruleToSave() {
+      return this.computeRuleModel(this.rule, this.program);
+    },
+    ruleChanged() {
+      return this.originalRule && JSON.stringify(this.ruleToSave) !== JSON.stringify(this.originalRule);
+    },
+    confirmCloseLabels() {
+      return {
+        title: this.rule?.id && this.$t('rule.confirmCloseModificationTitle') || this.$t('rule.confirmCloseCreationTitle'),
+        message: this.rule?.id && this.$t('rule.confirmCloseModificationMessage') || this.$t('rule.confirmCloseCreationMessage'),
+        ok: this.$t('confirm.yes'),
+        cancel: this.$t('confirm.no'),
+      };
+    },
   },
   watch: {
     value: {
@@ -400,6 +417,7 @@ export default {
       this.recurrenceCondition = !!this.rule.recurrence;
       this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
       this.eventExist = false;
+      this.originalRule = this.computeRuleModel(this.rule, this.program);
       if (this.$refs.ruleFormDrawer) {
         this.$refs.ruleFormDrawer.open();
       }
@@ -462,30 +480,57 @@ export default {
       this.saving = true;
       this.$refs.ruleFormDrawer.startLoading();
       if (this.rule.id) {
-        this.$ruleService.updateRule(this.rule)
+        this.$ruleService.updateRule(this.ruleToSave)
           .then(rule => {
-            this.displayAlert(this.$t('programs.details.ruleUpdateSuccess'));
+            this.originalRule = null;
             this.$root.$emit('rule-updated', rule);
-            this.close();
+            this.displayAlert(this.$t('programs.details.ruleUpdateSuccess'));
+            return this.$nextTick();
           })
+          .then(() => this.close())
           .catch(e => this.eventExist = e.message === '409')
           .finally(() => {
             this.saving = false;
             this.$refs.ruleFormDrawer.endLoading();
           });
       } else {
-        this.$ruleService.createRule(this.rule, this.program)
+        this.$ruleService.createRule(this.ruleToSave)
           .then(rule => {
-            this.displayAlert(this.$t('programs.details.ruleCreationSuccess'));
+            this.originalRule = null;
             this.$root.$emit('rule-created', rule);
-            this.close();
+            this.displayAlert(this.$t('programs.details.ruleCreationSuccess'));
+            return this.$nextTick();
           })
+          .then(() => this.close())
           .catch(e => this.eventExist = e.message === '409')
           .finally(() => {
             this.saving = false;
             this.$refs.ruleFormDrawer.endLoading();
           });
       }
+    },
+    computeRuleModel(rule, program) {
+      const ruleModel = {
+        id: rule?.id,
+        title: rule?.title,
+        description: rule?.description,
+        score: rule?.score,
+        program: program && JSON.parse(JSON.stringify(program)),
+        enabled: rule?.enabled,
+        event: rule.type === 'AUTOMATIC' && rule?.event || null,
+        startDate: rule?.startDate,
+        endDate: rule?.endDate,
+      };
+      if (rule.recurrence) {
+        ruleModel.recurrence = rule.recurrence;
+      }
+      if (rule.type) {
+        ruleModel.type = rule.type;
+      }
+      if (rule.prerequisiteRules?.length) {
+        ruleModel.prerequisiteRuleIds = rule.prerequisiteRules.map(r => r.id).filter(id => id);
+      }
+      return ruleModel;
     },
     setAutomatic() {
       this.$set(this.rule,'type', 'AUTOMATIC');

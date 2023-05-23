@@ -18,14 +18,17 @@
 package io.meeds.gamification.model.filter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class ProgramFilter implements Serializable {
 
@@ -44,4 +47,15 @@ public class ProgramFilter implements Serializable {
   private List<Long>        spacesIds;
 
   private long              ownerId;
+
+  public ProgramFilter clone() { // NOSONAR
+    return new ProgramFilter(entityFilterType,
+                             entityStatusType,
+                             domainTitle,
+                             includeDeleted,
+                             sortByBudget,
+                             spacesIds == null ? null : new ArrayList<>(spacesIds),
+                             ownerId);
+  }
+
 }
