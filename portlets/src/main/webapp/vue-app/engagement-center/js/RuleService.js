@@ -115,12 +115,6 @@ export function deleteRule(ruleId) {
 }
 
 export function updateRule(rule) {
-  rule = Object.assign({}, rule);
-  if (!rule.recurrence) {
-    delete rule.recurrence;
-  }
-  rule.prerequisiteRuleIds = rule.prerequisiteRules?.length && rule.prerequisiteRules.map(r => r.id).filter(id => id) || [];
-  delete rule.prerequisiteRules;
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules`, {
     method: 'PUT',
     credentials: 'include',
@@ -137,14 +131,7 @@ export function updateRule(rule) {
   });
 }
 
-export function createRule(rule, program) {
-  rule = Object.assign({}, rule);
-  if (!rule.recurrence) {
-    delete rule.recurrence;
-  }
-  rule.program = JSON.parse(JSON.stringify(program));
-  rule.prerequisiteRuleIds = rule.prerequisiteRules?.length && rule.prerequisiteRules.map(r => r.id).filter(id => id) || [];
-  delete rule.prerequisiteRules;
+export function createRule(rule) {
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules`, {
     method: 'POST',
     credentials: 'include',
