@@ -80,14 +80,15 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public List<Long> getProgramIds(ProgramFilter domainFilter,
+  public List<Long> getProgramIds(ProgramFilter programFilter,
                                   String username,
                                   int offset,
                                   int limit) throws IllegalAccessException {
-    if (computeUserSpaces(domainFilter, username)) {
-      return getProgramIds(domainFilter, offset, limit);
-    } else {
+    programFilter = computeUserSpaces(programFilter, username);
+    if (programFilter == null) {
       return Collections.emptyList();
+    } else {
+      return getProgramIds(programFilter, offset, limit);
     }
   }
 
@@ -111,11 +112,12 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public int countPrograms(ProgramFilter domainFilter, String username) throws IllegalAccessException {
-    if (computeUserSpaces(domainFilter, username)) {
-      return countPrograms(domainFilter);
-    } else {
+  public int countPrograms(ProgramFilter programFilter, String username) throws IllegalAccessException {
+    programFilter = computeUserSpaces(programFilter, username);
+    if (programFilter == null) {
       return 0;
+    } else {
+      return countPrograms(programFilter);
     }
   }
 
@@ -282,37 +284,38 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @SuppressWarnings("unchecked")
-  private boolean computeUserSpaces(ProgramFilter domainFilter, String username) throws IllegalAccessException {
+  private ProgramFilter computeUserSpaces(ProgramFilter programFilter, String username) throws IllegalAccessException { // NOSONAR
+    programFilter = programFilter.clone();
     if (Utils.isRewardingManager(username)) {
-      domainFilter.setOwnerId(0);
-      return true;
+      programFilter.setOwnerId(0);
+      return programFilter;
     }
-    if (domainFilter.getOwnerId() > 0) {
+    if (programFilter.getOwnerId() > 0) {
       org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-      if (Long.parseLong(userIdentity.getId()) != domainFilter.getOwnerId()) {
+      if (Long.parseLong(userIdentity.getId()) != programFilter.getOwnerId()) {
         throw new IllegalAccessException();
       }
 
       List<Long> managedSpaceIds = spaceService.getManagerSpacesIds(username, 0, -1).stream().map(Long::parseLong).toList();
       if (CollectionUtils.isEmpty(managedSpaceIds)) {
-        domainFilter.setSpacesIds(Collections.emptyList());
+        programFilter.setSpacesIds(Collections.emptyList());
       } else {
-        if (CollectionUtils.isNotEmpty(domainFilter.getSpacesIds())) {
-          managedSpaceIds = (List<Long>) CollectionUtils.intersection(managedSpaceIds, domainFilter.getSpacesIds());
+        if (CollectionUtils.isNotEmpty(programFilter.getSpacesIds())) {
+          managedSpaceIds = (List<Long>) CollectionUtils.intersection(managedSpaceIds, programFilter.getSpacesIds());
         }
-        domainFilter.setSpacesIds(managedSpaceIds);
+        programFilter.setSpacesIds(managedSpaceIds);
       }
     } else {
       List<Long> memberSpacesIds = spaceService.getMemberSpacesIds(username, 0, -1).stream().map(Long::parseLong).toList();
       if (CollectionUtils.isEmpty(memberSpacesIds)) {
-        return false;
+        return null;
       }
-      if (CollectionUtils.isNotEmpty(domainFilter.getSpacesIds())) {
-        memberSpacesIds = (List<Long>) CollectionUtils.intersection(memberSpacesIds, domainFilter.getSpacesIds());
+      if (CollectionUtils.isNotEmpty(programFilter.getSpacesIds())) {
+        memberSpacesIds = (List<Long>) CollectionUtils.intersection(memberSpacesIds, programFilter.getSpacesIds());
       }
-      domainFilter.setSpacesIds(memberSpacesIds);
+      programFilter.setSpacesIds(memberSpacesIds);
     }
-    return true;
+    return programFilter;
   }
 
   private void broadcast(String eventName, ProgramDTO domain, String userName) {
@@ -327,9 +330,8 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   private ProgramDTO createDomain(ProgramDTO domain, String username) {
-    if (StringUtils.isBlank(domain.getType())) {
-      domain.setType(EntityType.AUTOMATIC.name());
-    }
+    boolean isAutomatic = StringUtils.isBlank(username) || StringUtils.equals(IdentityConstants.SYSTEM, username);
+    domain.setType(isAutomatic ? EntityType.AUTOMATIC.name() : EntityType.MANUAL.name());
     domain.setCreatedBy(username);
     domain.setCreatedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
     domain.setLastModifiedBy(username);

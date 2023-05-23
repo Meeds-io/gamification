@@ -144,28 +144,14 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                                       Identity userAclIdentity,
                                                       int offset,
                                                       int limit) throws IllegalAccessException {
-    if (realizationFilter == null) {
-      throw new IllegalArgumentException("filter is mandatory");
-    }
-    if (userAclIdentity == null) {
-      throw new IllegalArgumentException("identity is mandatory");
-    }
-    checkDates(realizationFilter.getFromDate(), realizationFilter.getToDate());
-    computeProgramFilter(realizationFilter, userAclIdentity);
+    realizationFilter = computeProgramFilter(realizationFilter, userAclIdentity);
     return realizationStorage.getRealizationsByFilter(realizationFilter, offset, limit);
   }
 
   @Override
   public int countRealizationsByFilter(RealizationFilter realizationFilter,
                                        Identity userAclIdentity) throws IllegalAccessException {
-    if (realizationFilter == null) {
-      throw new IllegalArgumentException("filter is mandatory");
-    }
-    if (userAclIdentity == null) {
-      throw new IllegalArgumentException("identity is mandatory");
-    }
-    checkDates(realizationFilter.getFromDate(), realizationFilter.getToDate());
-    computeProgramFilter(realizationFilter, userAclIdentity);
+    realizationFilter = computeProgramFilter(realizationFilter, userAclIdentity);
     return realizationStorage.countRealizationsByFilter(realizationFilter);
   }
 
@@ -616,11 +602,20 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     return sbResult.toString();
   }
 
-  private void computeProgramFilter(RealizationFilter realizationFilter, // NOSONAR
-                                    Identity userAclIdentity) throws IllegalAccessException {
+  private RealizationFilter computeProgramFilter(RealizationFilter realizationFilter, // NOSONAR
+                                                 Identity userAclIdentity) throws IllegalAccessException {
+    if (realizationFilter == null) {
+      throw new IllegalArgumentException("filter is mandatory");
+    }
+    if (userAclIdentity == null) {
+      throw new IllegalArgumentException("identity is mandatory");
+    }
+    realizationFilter = realizationFilter.clone();
+    checkDates(realizationFilter.getFromDate(), realizationFilter.getToDate());
+
     String username = userAclIdentity.getUserId();
     if (Utils.isRewardingManager(username)) {
-      return;
+      return realizationFilter;
     }
 
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
@@ -647,6 +642,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     } else if (!isFilterByDomains) {
       throw new IllegalAccessException("User is not allowed to search for realizations of all domains");
     }
+    return realizationFilter;
   }
 
   private List<Long> getOwnedDomainIds(org.exoplatform.social.core.identity.model.Identity userIdentity) throws IllegalAccessException {
