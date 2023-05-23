@@ -1,7 +1,6 @@
 package io.meeds.gamification.rest;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,8 +20,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.http.PATCH;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
@@ -48,8 +45,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Path("/gamification/realizations")
 @Tag(name = "/gamification/realizations", description = "Manages users realizations")
 public class RealizationRest implements ResourceContainer {
-
-  private static final Log   LOG = ExoLogger.getLogger(RealizationRest.class);
 
   private RuleService        ruleService;
 
@@ -131,10 +126,6 @@ public class RealizationRest implements ResourceContainer {
     Date dateFrom = Utils.parseRFC3339Date(fromDate);
     Date dateTo = Utils.parseRFC3339Date(toDate);
 
-    if (domainIds == null) {
-      domainIds = new ArrayList<>();
-    }
-
     RealizationFilter filter = new RealizationFilter(earnerIds,
                                                      sortField,
                                                      sortDescending,
@@ -171,20 +162,15 @@ public class RealizationRest implements ResourceContainer {
                                                                                                 identityManager,
                                                                                                 realizations);
         RealizationList realizationList = new RealizationList();
-        if (returnSize) {
-          int realizationsSize = realizationService.countRealizationsByFilter(filter, identity);
-          realizationList.setSize(realizationsSize);
-        }
         realizationList.setRealizations(realizationRestEntities);
         realizationList.setOffset(offset);
         realizationList.setLimit(limit);
+        if (returnSize) {
+          realizationList.setSize(realizationService.countRealizationsByFilter(filter, identity));
+        }
         return Response.ok(realizationList).build();
       }
     } catch (IllegalAccessException e) {
-      LOG.debug("User '{}' isn't authorized to access achievements with parameter : earnerId = {}",
-                identity.getUserId(),
-                earnerIds,
-                e);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
     }
   }
