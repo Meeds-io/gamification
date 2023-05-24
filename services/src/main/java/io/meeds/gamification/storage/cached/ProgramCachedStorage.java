@@ -38,9 +38,9 @@ import io.meeds.gamification.storage.ProgramStorage;
 
 public class ProgramCachedStorage extends ProgramStorage {
 
-  private static final String                                DOMAIN_CACHE_NAME = "gamification.domain";
+  private static final String                                PROGRAM_CACHE_NAME = "gamification.domain";
 
-  private FutureExoCache<Long, ProgramDTO, Object> domainFutureCache;
+  private FutureExoCache<Long, ProgramDTO, Object> programFutureCache;
 
   public ProgramCachedStorage(FileService fileService,
                               UploadService uploadService,
@@ -49,24 +49,24 @@ public class ProgramCachedStorage extends ProgramStorage {
                               CacheService cacheService,
                               ListenerService listenerService) {
     super(fileService, uploadService, programDAO, ruleDAO);
-    ExoCache<Long, ProgramDTO> domainCache = cacheService.getCacheInstance(DOMAIN_CACHE_NAME);
-    Loader<Long, ProgramDTO, Object> domainLoader = new Loader<>() {
+    ExoCache<Long, ProgramDTO> programCache = cacheService.getCacheInstance(PROGRAM_CACHE_NAME);
+    Loader<Long, ProgramDTO, Object> programLoader = new Loader<>() {
       @Override
       public ProgramDTO retrieve(Object context, Long id) throws Exception {
         return ProgramCachedStorage.super.getProgramById(id);
       }
     };
-    this.domainFutureCache = new FutureExoCache<>(domainLoader, domainCache);
+    this.programFutureCache = new FutureExoCache<>(programLoader, programCache);
     listenerService.addListener(POST_CREATE_RULE_EVENT, new RuleUpdatedListener());
     listenerService.addListener(POST_DELETE_RULE_EVENT, new RuleUpdatedListener());
     listenerService.addListener(POST_UPDATE_RULE_EVENT, new RuleUpdatedListener());
   }
 
   @Override
-  public ProgramDTO saveProgram(ProgramDTO domain) {
+  public ProgramDTO saveProgram(ProgramDTO program) {
     try {
-      domain = super.saveProgram(domain);
-      return domain;
+      program = super.saveProgram(program);
+      return program;
     } finally {
       clearCache();
     }
@@ -74,13 +74,13 @@ public class ProgramCachedStorage extends ProgramStorage {
 
   @Override
   public ProgramDTO getProgramById(Long id) {
-    ProgramDTO program = this.domainFutureCache.get(null, id);
+    ProgramDTO program = this.programFutureCache.get(null, id);
     return program == null ? null : program.clone();
   }
 
   @Override
   public void clearCache() {
-    domainFutureCache.clear();
+    programFutureCache.clear();
   }
 
   public class RuleUpdatedListener extends Listener<Object, String> {

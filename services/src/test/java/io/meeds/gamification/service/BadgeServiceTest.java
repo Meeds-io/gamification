@@ -62,7 +62,7 @@ public class BadgeServiceTest extends AbstractServiceTest {
     ProgramEntity domainEntity = newDomain();
     BadgeEntity badgeEntity = newBadge("badge1", domainEntity.getId());
     assertNotNull(badgeService.findBadgeById(badgeEntity.getId()));
-    assertNotNull(badgeService.findBadgeByTitleAndDomain("badge1", domainEntity.getId()));
+    assertNotNull(badgeService.findBadgeByTitleAndProgramId("badge1", domainEntity.getId()));
   }
 
   @Test
@@ -121,15 +121,15 @@ public class BadgeServiceTest extends AbstractServiceTest {
     ProgramEntity domainEntity1 = newDomain();
     ProgramEntity domainEntity2 = newDomain();
     assertEquals(badgeStorage.findAll().size(), 0);
-    assertEquals(badgeService.findBadgesByDomain(1L).size(), 0);
-    assertEquals(badgeService.findBadgesByDomain(2L).size(), 0);
+    assertEquals(badgeService.findBadgesByProgramId(1L).size(), 0);
+    assertEquals(badgeService.findBadgesByProgramId(2L).size(), 0);
     newBadge("badge1", domainEntity1.getId());
     newBadge("badge2", domainEntity1.getId());
     newBadge("badge3", domainEntity1.getId());
     newBadge("badge4", domainEntity2.getId());
     newBadge("badge5", domainEntity2.getId());
-    assertEquals(badgeService.findBadgesByDomain(domainEntity1.getId()).size(), 3);
-    assertEquals(badgeService.findBadgesByDomain(domainEntity2.getId()).size(), 2);
+    assertEquals(badgeService.findBadgesByProgramId(domainEntity1.getId()).size(), 3);
+    assertEquals(badgeService.findBadgesByProgramId(domainEntity2.getId()).size(), 2);
   }
 
   @Test
@@ -137,43 +137,18 @@ public class BadgeServiceTest extends AbstractServiceTest {
     ProgramEntity domainEntity1 = newDomain();
     ProgramEntity domainEntity2 = newDomain();
     assertEquals(badgeStorage.findAll().size(), 0);
-    assertEquals(badgeService.findEnabledBadgesByDomain(domainEntity1.getId()).size(), 0);
-    assertEquals(badgeService.findEnabledBadgesByDomain(domainEntity2.getId()).size(), 0);
+    assertEquals(badgeService.findEnabledBadgesByProgramId(domainEntity1.getId()).size(), 0);
+    assertEquals(badgeService.findEnabledBadgesByProgramId(domainEntity2.getId()).size(), 0);
     newBadge("badge1", domainEntity1.getId());
     newBadge("badge2", domainEntity1.getId());
     newBadge("badge3", domainEntity1.getId());
     newBadge("badge4", domainEntity2.getId());
     newBadge("badge5", domainEntity2.getId());
-    assertEquals(badgeService.findEnabledBadgesByDomain(domainEntity1.getId()).size(), 3);
-    assertEquals(badgeService.findEnabledBadgesByDomain(domainEntity2.getId()).size(), 2);
+    assertEquals(badgeService.findEnabledBadgesByProgramId(domainEntity1.getId()).size(), 3);
+    assertEquals(badgeService.findEnabledBadgesByProgramId(domainEntity2.getId()).size(), 2);
     BadgeEntity badge_ = badgeStorage.findBadgeByTitle("badge1");
     badge_.setEnabled(false);
     badgeStorage.update(badge_);
-    assertEquals(badgeService.findEnabledBadgesByDomain(domainEntity1.getId()).size(), 2);
-  }
-
-  @Test
-  public void testGetAllBadgesWithNullDomain() {
-    ProgramEntity domainEntity1 = newDomain();
-    ProgramEntity domainEntity2 = newDomain();
-    ProgramEntity domainEntity3 = newDomain();
-    ProgramEntity domainEntity4 = newDomain();
-    ProgramEntity domainEntity5 = newDomain();
-    assertEquals(badgeStorage.findAll().size(), 0);
-    newBadge("badge1", domainEntity1.getId());
-    newBadge("badge2", domainEntity2.getId());
-    newBadge("badge3", domainEntity3.getId());
-    newBadge("badge4", domainEntity4.getId());
-    newBadge("badge5", domainEntity5.getId());
-    assertEquals(badgeStorage.findAll().size(), 5);
-    try {
-      assertEquals(badgeService.getAllBadgesWithNullDomain().size(), 0);
-      BadgeEntity badge_ = badgeStorage.findBadgeByTitle("badge1");
-      badge_.setDomainEntity(null);
-      badgeStorage.update(badge_);
-      assertEquals(badgeService.getAllBadgesWithNullDomain().size(), 1);
-    } catch (Exception e) {
-      fail("Error when getting the list of badges with null domain", e);
-    }
+    assertEquals(badgeService.findEnabledBadgesByProgramId(domainEntity1.getId()).size(), 2);
   }
 }

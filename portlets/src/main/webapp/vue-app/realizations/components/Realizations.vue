@@ -22,16 +22,15 @@
     <v-toolbar class="z-index-one px-2" flat>
       <div class="d-flex flex-grow-1 align-center">
         <template v-if="!isMobile">
-          <v-switch
-            v-if="isRealizationManager"
-            id="realizationAdministrationSwitch"
-            v-model="administrationMode"
-            :label="$t('realization.label.switchAdministration')"
-            class="mb-n2 hidden-xs-only" />
-          <realizations-export-button
-            v-else-if="displaySearchResult"
-            :link="exportFileLink" />
+          <realizations-export-button :link="exportFileLink" />
           <v-spacer />
+          <template v-if="isRealizationManager">
+            <realizations-owner-switch-buttons
+              id="realizationAdministrationSwitch"
+              v-model="administrationMode"
+              class="mx-auto" />
+            <v-spacer />
+          </template>
         </template>
         <div class="ml-n4 pe-3 d-flex align-center">
           <select-period
@@ -52,11 +51,6 @@
         </v-btn>
       </div>
     </v-toolbar>
-    <div
-      v-if="isRealizationManager && !isMobile && displaySearchResult"
-      class="px-6">
-      <realizations-export-button :link="exportFileLink" />
-    </div>
     <v-progress-linear
       v-if="!initialized"
       indeterminate
@@ -213,7 +207,7 @@ export default {
         earnerIds: this.earnerIdToRetrieve,
         sortBy: this.sortBy,
         sortDescending: this.sortDescending,
-        domainIds: this.searchList,
+        programIds: this.searchList,
         owned: this.administrationMode,
       };
     },

@@ -201,7 +201,7 @@ export default {
       this.loading = true;
       return this.$programService.getPrograms(this.offset, this.limitToFetch, this.type, this.status)
         .then((data) => {
-          this.programs = data.domains;
+          this.programs = data.programs;
           this.totalSize = data.size || 0;
         })
         .finally(() => {

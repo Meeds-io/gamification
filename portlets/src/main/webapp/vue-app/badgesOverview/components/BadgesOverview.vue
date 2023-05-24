@@ -91,7 +91,7 @@ export default {
           document.dispatchEvent(new CustomEvent('badgesCount', {detail: this.badges.length}));
           this.badges.forEach(badge => {
             badge.avatar = badge.url;
-            badge.domainLabel = this.getLabel('exoplatform.gamification.gamificationinformation.domain', badge.zone);
+            badge.programLabel = this.getLabel('exoplatform.gamification.gamificationinformation.domain', badge.zone);
             badge.badgeLabel = this.getLabel('exoplatform.gamification.gamificationinformation.domain', badge.title);
           });
           return this.$nextTick();

@@ -37,7 +37,7 @@ export default {
         return 'pie';
       },
     },
-    domains: {
+    programs: {
       type: Array,
       default: function() {
         return [];
@@ -92,8 +92,8 @@ export default {
           .then(chartData => {
             this.chartData = chartData;
             chartData.forEach(statData => {
-              const domain = this.domains.find(tmpDomain => tmpDomain.title === statData.label);
-              statData.name = domain?.label || this.$t('exoplatform.gamification.gamificationinformation.domain.others');
+              const program = this.programs.find(p => p.title === statData.label);
+              statData.name = program?.label || this.$t('exoplatform.gamification.gamificationinformation.domain.others');
             });
             this.$nextTick().then(() => resolve(this.chartData));
           })

@@ -148,7 +148,7 @@ export default {
       return this.realization.actionLabel;
     },
     program() {
-      return this.realization?.domain;
+      return this.realization?.program;
     },
     programTitle() {
       return this.program?.title || '-';
