@@ -16,6 +16,8 @@
  */
 package io.meeds.gamification.dao;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -240,6 +242,111 @@ public class RuleDAOTest extends AbstractServiceTest {
 
     filter.setEntityStatusType(EntityStatusType.DISABLED);
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
+  }
+
+  @Test
+  public void testSortRulesByFilter() { // NOSONAR
+    RuleFilter filter = new RuleFilter();
+    ProgramEntity domainEntity1 = newDomain();
+    ProgramEntity domainEntity2 = newDomain();
+
+    List<Long> rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(0, rules.size());
+
+    RuleEntity rule1 = newRule("rule1", domainEntity1.getId());
+    rule1.setScore(10);
+    rule1.setStartDate(Date.from(LocalDate.now().atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC)));
+    rule1.setEndDate(null);
+    ruleDAO.update(rule1);
+
+    RuleEntity rule2 = newRule("rule2", domainEntity1.getId());
+    rule2.setScore(5);
+    rule2.setStartDate(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
+    rule2.setEndDate(Date.from(LocalDate.now().atStartOfDay().plusDays(5).toInstant(ZoneOffset.UTC)));
+    ruleDAO.update(rule2);
+
+    RuleEntity rule3 = newRule("rule3", domainEntity2.getId());
+    rule3.setScore(50);
+    rule3.setStartDate(Date.from(LocalDate.now().atStartOfDay().minusDays(1).toInstant(ZoneOffset.UTC)));
+    rule3.setEndDate(Date.from(LocalDate.now().atStartOfDay().plusDays(3).toInstant(ZoneOffset.UTC)));
+    ruleDAO.update(rule3);
+
+    rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(3, rules.size());
+    assertEquals(rule3.getId(), rules.get(0));
+    assertEquals(rule1.getId(), rules.get(1));
+    assertEquals(rule2.getId(), rules.get(2));
+
+    filter.setSortBy("Score");
+    rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(3, rules.size());
+    assertEquals(rule3.getId(), rules.get(0));
+    assertEquals(rule1.getId(), rules.get(1));
+    assertEquals(rule2.getId(), rules.get(2));
+
+    filter.setSortBy("Score");
+    filter.setSortDescending(false);
+    rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(3, rules.size());
+    assertEquals(rule2.getId(), rules.get(0));
+    assertEquals(rule1.getId(), rules.get(1));
+    assertEquals(rule3.getId(), rules.get(2));
+
+    filter.setSortBy("createdDate");
+    filter.setSortDescending(true);
+    rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(3, rules.size());
+    assertEquals(rule3.getId(), rules.get(0));
+    assertEquals(rule2.getId(), rules.get(1));
+    assertEquals(rule1.getId(), rules.get(2));
+
+    filter.setSortBy("createdDate");
+    filter.setSortDescending(false);
+    rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(3, rules.size());
+    assertEquals(rule1.getId(), rules.get(0));
+    assertEquals(rule2.getId(), rules.get(1));
+    assertEquals(rule3.getId(), rules.get(2));
+
+    filter.setSortBy("startDate");
+    filter.setSortDescending(true);
+    rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(3, rules.size());
+    assertEquals(rule1.getId(), rules.get(0));
+    assertEquals(rule2.getId(), rules.get(1));
+    assertEquals(rule3.getId(), rules.get(2));
+
+    filter.setSortBy("startDate");
+    filter.setSortDescending(false);
+    rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(3, rules.size());
+    assertEquals(rule3.getId(), rules.get(0));
+    assertEquals(rule2.getId(), rules.get(1));
+    assertEquals(rule1.getId(), rules.get(2));
+    
+    filter.setSortBy("endDate");
+    filter.setSortDescending(true);
+    rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(3, rules.size());
+    assertEquals(rule1.getId(), rules.get(0));
+    assertEquals(rule2.getId(), rules.get(1));
+    assertEquals(rule3.getId(), rules.get(2));
+
+    filter.setSortBy("endDate");
+    filter.setSortDescending(false);
+    rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(3, rules.size());
+    assertEquals(rule1.getId(), rules.get(0));
+    assertEquals(rule3.getId(), rules.get(1));
+    assertEquals(rule2.getId(), rules.get(2));
+
+    filter.setSortBy("endDate");
+    filter.setSortDescending(true);
+    filter.setDateFilterType(DateFilterType.STARTED_WITH_END);
+    rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(2, rules.size());
+    assertEquals(rule2.getId(), rules.get(0));
+    assertEquals(rule3.getId(), rules.get(1));
   }
 
   @Test
