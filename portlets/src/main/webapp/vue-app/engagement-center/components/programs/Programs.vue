@@ -24,8 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       v-if="isAdministrator"
       color="transparent"
       max-height="64"
-      flat
-      class="px-1">
+      flat>
       <div v-if="!displayNoSearchResult" class="border-box-sizing clickable">
         <v-btn
           id="engagementCenterAddProgramBtn"
@@ -54,32 +53,33 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </option>
       </select>
     </v-toolbar>
-    <v-layout class="pa-3">
-      <v-row no-gutters>
+    <v-layout class="py-3 px-4">
+      <v-row class="mx-n3">
         <v-col
           v-for="program in programs"
           :key="program.id"
-          class="mb-4"
           cols="12"
           sm="6"
           lg="4">
           <engagement-center-program-card
             :program="program"
-            :is-administrator="isAdministrator"
-            class="mx-2" />
+            :is-administrator="isAdministrator" />
+        </v-col>
+        <v-col
+          v-if="hasMore"
+          cols="12"
+          class="px-3">
+          <v-btn
+            :loading="loading"
+            :disabled="loading"
+            class="loadMoreButton my-4 btn"
+            block
+            @click="$root.$emit('program-load-more')">
+            {{ $t('engagementCenter.button.ShowMore') }}
+          </v-btn>
         </v-col>
       </v-row>
     </v-layout>
-    <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4">
-      <v-btn
-        :loading="loading"
-        :disabled="loading"
-        class="loadMoreButton my-4 btn"
-        block
-        @click="$root.$emit('program-load-more')">
-        {{ $t('engagementCenter.button.ShowMore') }}
-      </v-btn>
-    </v-row>
     <exo-confirm-dialog
       v-if="confirmDelete"
       ref="deleteProgramConfirmDialog"
