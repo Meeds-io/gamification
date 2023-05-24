@@ -18,12 +18,12 @@
 
 -->
 <template>
-  <v-container class="pa-0">
-    <v-row class="mx-n1">
+  <v-container>
+    <v-row class="mx-n3">
       <v-col
         v-for="rule in rules"
         :key="rule.id"
-        class="mb-4 rule-column"
+        class="rule-column"
         cols="12"
         sm="6"
         lg="4">
@@ -31,14 +31,18 @@
           :rule="rule"
           :category-id="categoryId" />
       </v-col>
-    </v-row>
-    <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4">
-      <v-btn
-        class="loadMoreButton ma-auto mt-4 btn"
-        block
-        @click="$root.$emit('rules-category-load-more', categoryId)">
-        {{ $t('engagementCenter.button.ShowMore') }}
-      </v-btn>
+      <v-col
+        v-if="hasMore"
+        cols="12"
+        class="px-3">
+        <v-btn
+          :loading="loading"
+          class="loadMoreButton btn"
+          block
+          @click="$root.$emit('rules-category-load-more', categoryId)">
+          {{ $t('engagementCenter.button.ShowMore') }}
+        </v-btn>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -56,6 +60,10 @@ export default {
     rules: {
       type: Array,
       default: null,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

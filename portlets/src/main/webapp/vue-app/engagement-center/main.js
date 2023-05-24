@@ -40,6 +40,8 @@ const urls = [
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`
 ];
 
+document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+
 export function init(isAdministrator) {
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
@@ -48,6 +50,9 @@ export function init(isAdministrator) {
         isMobile() {
           return this.$vuetify.breakpoint.xsOnly;
         },
+      },
+      mounted() {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
       },
       template: `<engagement-center id="${appId}" :is-administrator="${isAdministrator}"/>`,
       vuetify,

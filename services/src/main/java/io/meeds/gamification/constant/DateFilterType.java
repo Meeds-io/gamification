@@ -18,5 +18,5 @@
 package io.meeds.gamification.constant;
 
 public enum DateFilterType {
-  STARTED, NOT_STARTED, ENDED, ALL
+  STARTED, STARTED_WITH_END, NOT_STARTED, ENDED, ALL
 }
