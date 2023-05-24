@@ -152,14 +152,19 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   }
 
   public List<Long> findRulesIdsByFilter(RuleFilter filter, int offset, int limit) {
-    TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, false);
+    TypedQuery<Tuple> query = buildQueryFromFilter(filter, Tuple.class, false);
     if (offset > 0) {
       query.setFirstResult(offset);
     }
     if (limit > 0) {
       query.setMaxResults(limit);
     }
-    return query.getResultList();
+    List<Tuple> result = query.getResultList();
+    if (CollectionUtils.isEmpty(result)) {
+      return Collections.emptyList();
+    } else {
+      return result.stream().map(t -> t.get(0, Long.class)).toList();
+    }
   }
 
   public int countRulesByFilter(RuleFilter filter) {
@@ -173,11 +178,11 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     buildPredicates(filter, suffixes, predicates);
 
     TypedQuery<T> query;
-    String queryName = getQueryFilterName(suffixes, count);
+    String queryName = getQueryFilterName(filter.getSortBy(), filter.isSortDescending(), suffixes, count);
     if (filterNamedQueries.containsKey(queryName)) {
       query = getEntityManager().createNamedQuery(queryName, clazz);
     } else {
-      String queryContent = getQueryFilterContent(predicates, count);
+      String queryContent = getQueryFilterContent(filter.getSortBy(), filter.isSortDescending(), predicates, count);
       query = getEntityManager().createQuery(queryContent, clazz);
       getEntityManager().getEntityManagerFactory().addNamedQuery(queryName, query);
       filterNamedQueries.put(queryName, true);
@@ -213,19 +218,29 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  private String getQueryFilterName(List<String> suffixes, boolean count) {
+  private String getQueryFilterName(String sortField,
+                                    boolean sortDescending,
+                                    List<String> suffixes,
+                                    boolean count) {
     String queryName;
     if (suffixes.isEmpty()) {
       queryName = count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX;
     } else {
       queryName = (count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX) + "By" + StringUtils.join(suffixes, "And");
     }
+    if (StringUtils.isBlank(sortField)) {
+      sortField = "Score";
+    }
+    queryName += "OrderBy" + StringUtils.capitalize(sortField) + (sortDescending ? "Desc" : "Asc");
     return queryName;
   }
 
-  private String getQueryFilterContent(List<String> predicates, boolean count) {
-    String querySelect = count ? "SELECT COUNT(r) FROM Rule r " : "SELECT r.id FROM Rule r ";
-    String orderBy = " ORDER BY r.score DESC";
+  private String getQueryFilterContent(String sortField,
+                                       boolean sortDescending,
+                                       List<String> predicates,
+                                       boolean count) {
+    String querySelect = count ? "SELECT COUNT(r) FROM Rule r "
+                               : "SELECT DISTINCT(r.id), " + getSortFieldName(sortField) + " FROM Rule r ";
 
     String queryContent;
     if (predicates.isEmpty()) {
@@ -234,14 +249,43 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       queryContent = querySelect + " WHERE " + StringUtils.join(predicates, " AND ");
     }
     if (!count) {
-      queryContent = queryContent + orderBy;
+      queryContent += " ORDER BY " + getSortFieldName(sortField) + (sortDescending ? " DESC " : " ASC ");
     }
     return queryContent;
+  }
+
+  private String getSortFieldName(String sortField) {
+    if (StringUtils.isBlank(sortField)) {
+      sortField = "Score";
+    }
+    return switch (sortField) {
+    case "id", "createdDate": {
+      yield "r.id";
+    }
+    case "modifiedDate": {
+      yield "r.lastModifiedDate";
+    }
+    case "startDate": {
+      yield "r.startDate";
+    }
+    case "endDate": {
+      yield "r.endDate";
+    }
+    case "type": {
+      yield "r.type";
+    }
+    case "recurrence": {
+      yield "r.recurrence";
+    }
+    default:
+      yield "r.score";
+    };
   }
 
   private void buildPredicates(RuleFilter filter, List<String> suffixes, List<String> predicates) { // NOSONAR
     suffixes.add("ExcludeDeleted");
     predicates.add("r.isDeleted = false");
+    predicates.add("r.domainEntity.isDeleted = false");
 
     if (StringUtils.isNotBlank(filter.getTerm())) {
       suffixes.add("Term");
@@ -290,8 +334,15 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       predicates.add("((r.startDate IS NULL OR r.startDate <= :date)" +
           " AND (r.endDate IS NULL OR r.endDate >= :date))");
       break;
+    case STARTED_WITH_END:
+      suffixes.add("StartDateAndEndDateNotNull");
+      predicates.add("r.endDate IS NOT NULL");
+      predicates.add("r.endDate >= :date");
+      predicates.add("(r.startDate IS NULL OR r.startDate <= :date)");
+      break;
     case NOT_STARTED:
       suffixes.add("StartDate");
+      predicates.add("r.startDate IS NOT NULL");
       predicates.add("r.startDate > :date");
       break;
     case ENDED:
@@ -312,6 +363,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     boolean filterEnabledRules = entityStatusType == EntityStatusType.ENABLED;
     suffixes.add(filterEnabledRules ? "StatusEnabled" : "StatusDisabled");
     predicates.add("r.isEnabled = " + filterEnabledRules);
+    if (filterEnabledRules) {
+      predicates.add("r.domainEntity.isEnabled = true");
+    }
   }
 
 }

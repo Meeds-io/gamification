@@ -40,12 +40,14 @@
         </div>
         <v-spacer v-if="isMobile" />
         <v-btn
-          color="primary"
+          :class="!isMobile && 'primary-border-color'"
+          :color="!isMobile && 'primary'"
+          :small="isMobile"
           text
-          class="primary-border-color px-2"
+          class="px-0 px-sm-2"
           @click="openRealizationsFilterDrawer">
-          <v-icon size="16">fas fa-sliders-h</v-icon>
-          <span class="d-none d-sm-inline font-weight-regular caption ms-2">
+          <v-icon :size="isMobile && 30 || 16">fas fa-sliders-h</v-icon>
+          <span v-if="!isMobile" class="font-weight-regular caption ms-2">
             {{ $t('profile.label.search.openSearch') }}
           </span>
         </v-btn>
