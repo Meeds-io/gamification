@@ -18,39 +18,19 @@ package io.meeds.gamification.model;
 
 import java.io.Serializable;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class ProfileReputation implements Serializable {
 
   private static final long serialVersionUID = 6634145450513189786L;
 
-  private long              domainId;
+  private long              programId;
 
   private long              score;
 
-  public ProfileReputation() {
-
-  }
-
-  public ProfileReputation(long domainId, long score) {
-    this.domainId = domainId;
-    this.score = score;
-  }
-
-  public long getDomainId() {
-    return domainId;
-  }
-
-  public void setDomainId(long domainId) {
-    this.domainId = domainId;
-  }
-
-  public long getScore() {
-    return score;
-  }
-
-  public void setScore(long score) {
-    this.score = score;
-  }
 }

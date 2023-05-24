@@ -185,7 +185,7 @@ public class RuleSearchConnector {
     }).toList();
     String termQuery = StringUtils.join(termsQuery, " AND ");
     String query = retrieveSearchQuery();
-    if (filter.getDomainId() > 0) {
+    if (filter.getProgramId() > 0) {
       query = query.replace("@domain_filtering@", DOMAIN_FILTERING_QUERY);
     } else {
       query = query.replace("@domain_filtering@", "");
@@ -233,7 +233,7 @@ public class RuleSearchConnector {
       query = query.replace(DATE_FILTERING, "");
     }
 
-    return query.replace("@domainId@", String.valueOf(filter.getDomainId()))
+    return query.replace("@domainId@", String.valueOf(filter.getProgramId()))
                 .replace("@term@", term)
                 .replace("@term_query@", termQuery)
                 .replace("@spaceList@", StringUtils.join(spaceList, ","))
