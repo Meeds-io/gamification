@@ -48,6 +48,10 @@ export function getRules(filter) {
   if (filter?.returnSize) {
     formData.append('returnSize', filter.returnSize);
   }
+  if (filter?.sortBy) {
+    formData.append('sortBy', filter.sortBy);
+    formData.append('sortDescending', !!filter.sortDescending);
+  }
   if (filter?.offset) {
     formData.append('offset', filter.offset);
   }
@@ -61,7 +65,7 @@ export function getRules(filter) {
     formData.append('expand', filter.expand);
   }
   const params = new URLSearchParams(formData).toString();
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules?returnSize=true&${params}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules?${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

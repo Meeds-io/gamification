@@ -21,14 +21,20 @@
   <v-list-group
     v-if="sizeToDisplay"
     v-model="open"
-    :prepend-icon="open && 'fa-chevron-up fa-lg ms-2' || 'fa-chevron-down fa-lg ms-2'"
+    :prepend-icon="prependIcon"
+    :disabled="disabledCollapsing"
+    :ripple="!disabledCollapsing"
     color="grey darken-1"
     append-icon=""
     dense>
     <template #activator>
-      <v-list-item-title class="text-color d-flex align-center ms-n4">
-        {{ category.title }} ( {{ sizeToDisplay }} )
-        <v-divider class="ms-4" />
+      <slot v-if="$slots.default"></slot>
+      <v-list-item-title
+        v-else
+        :disabled="disabledCollapsing"
+        class="text-color d-flex align-center ms-n4">
+        {{ title }}
+        <v-divider v-if="!disabledCollapsing" class="ms-4" />
       </v-list-item-title>
     </template>
     <v-list-item class="my-4">
@@ -46,6 +52,10 @@ export default {
       type: Object,
       default: null,
     },
+    disabledCollapsing: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     open: true,
@@ -53,6 +63,15 @@ export default {
     updatedRules: {},
   }),
   computed: {
+    title() {
+      return !this.disabledCollapsing && this.size && `${this.category.title} ( ${this.sizeToDisplay} )` || this.category.title;
+    },
+    prependIcon() {
+      if (this.disabledCollapsing) {
+        return;
+      }
+      return this.open && 'fa-chevron-up fa-lg ms-2' || 'fa-chevron-down fa-lg ms-2';
+    },
     rules() {
       return this.category?.rules || [];
     },
