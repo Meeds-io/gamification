@@ -36,6 +36,7 @@ import ProgramDetail from './components/programs/ProgramDetail.vue';
 import ProgramOwnerAssignment from './components/programs/ProgramOwnerAssignment.vue';
 
 import Rules from './components/rules/Rules.vue';
+
 import RuleCard from './components/rules/card/RuleCard.vue';
 import RuleCardMask from './components/rules/card/RuleCardMask.vue';
 import RuleCardMaskContent from './components/rules/card/RuleCardMaskContent.vue';
@@ -47,9 +48,14 @@ import RuleCardRecurrence from './components/rules/card/RuleCardRecurrence.vue';
 import RuleCardPoints from './components/rules/card/RuleCardPoints.vue';
 import RuleCardRemainingDates from './components/rules/card/RuleCardRemainingDates.vue';
 
-import RuleCategories from './components/rules/category/Categories.vue';
 import RuleCategory from './components/rules/category/Category.vue';
-import RulesList from './components/rules/category/RulesList.vue';
+
+import RulesList from './components/rules/layout/RulesList.vue';
+import RulesByProgram from './components/rules/layout/RulesByProgram.vue';
+import RulesByTrend from './components/rules/layout/RulesByTrend.vue';
+
+import RuleCategorySwitchButtons from './components/rules/filter/RuleCategorySwitchButtons.vue';
+import RulesFilterDrawer from './components/rules/filter/RulesFilterDrawer.vue';
 
 import Assignment from './components/common/Assignment.vue';
 import AvatarsList from './components/common/AvatarsList.vue';
@@ -76,9 +82,12 @@ const components = {
   'engagement-center-rule-title': RuleTitle,
   'engagement-center-no-rule-found': NoRuleFound,
   'engagement-center-rules': Rules,
-  'engagement-center-rules-categories': RuleCategories,
   'engagement-center-rules-category': RuleCategory,
   'engagement-center-rules-list': RulesList,
+  'engagement-center-rules-by-program': RulesByProgram,
+  'engagement-center-rules-by-trend': RulesByTrend,
+  'engagement-center-category-switch-buttons': RuleCategorySwitchButtons,
+  'engagement-center-rules-filter-drawer': RulesFilterDrawer,
   'engagement-center-rule-card': RuleCard,
   'engagement-center-rule-card-menu': RuleCardMenu,
   'engagement-center-rule-card-mask': RuleCardMask,
