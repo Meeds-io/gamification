@@ -24,41 +24,73 @@
     class="rules-list border-box-sizing"
     role="main">
     <v-toolbar flat>
-      <v-switch
-        v-model="displayManual"
-        :label="$t('rules.filter.showChallenges')"
-        class="mb-n2 ms-2 hidden-xs-only" />
-      <v-spacer />
-      <div class="rules-filter-toolbar text-center d-flex align-center justify-space-around">
-        <v-text-field
-          id="rulesFilterInput"
-          v-model="search"
-          :placeholder="$t('challenges.filter.search')"
-          prepend-inner-icon="fa-filter"
-          single-line
-          hide-details
-          class="rules-filter-input pa-0 mx-3" />
-        <v-tooltip
-          id="RulesSearchTooltip"
-          :value="displayMinimumCharactersToolTip">
-          <span> {{ $t('challenges.filter.searchTooltip') }} </span>
-        </v-tooltip>
-      </div>
-      <div class="pt-1">
-        <select
-          id="rulesStatusFilterSelect"
-          v-model="filter"
-          class="rules-quick-filter-select my-auto ignore-vuetify-classes text-truncate mb-3 full-width"
-          @change="retrieveRules()">
-          <option
-            v-for="item in ruleFilters"
-            :key="item.value"
-            :value="item.value">
-            <span class="d-none d-lg-inline">
-              {{ item.text }}
-            </span>
-          </option>
-        </select>
+      <div class="d-flex flex-grow-1 align-center justify-space-between content-box-sizing position-relative">
+        <v-card
+          v-if="!showFilter || !$root.isMobile"
+          flat>
+          {{ incentivesCountLabel }}
+        </v-card>
+        <v-card
+          v-else
+          flat>
+          <v-btn
+            class="px-0 me-2 width-auto"
+            small
+            icon
+            @click="showFilter = !showFilter">
+            <v-icon size="26">fa-arrow-left</v-icon>
+          </v-btn>
+        </v-card>
+        <v-spacer class="hidden-md-and-down" />
+        <engagement-center-category-switch-buttons
+          v-model="groupByProgram"
+          :disabled="!!filtered"
+          class="hidden-md-and-down absolute-all-center"
+          @change="clearFilter" />
+        <v-spacer class="hidden-xs-only" />
+        <div v-if="!$root.isMobile || showFilter" class="rules-filter-toolbar me-sm-4">
+          <v-tooltip :value="displayMinimumCharactersToolTip" bottom>
+            <template #activator="{on}">
+              <v-text-field
+                id="rulesFilterInput"
+                ref="rulesFilterInput"
+                v-model="term"
+                :placeholder="$t('challenges.filter.search')"
+                :autofocus="$root.isMobile"
+                :height="$root.isMobile && 24 || 36"
+                :clear-icon="$root.isMobile && 'fa-times py-0 mt-n2' || 'fa-times pt-2'"
+                autocomplete="off"
+                prepend-inner-icon="fa-filter"
+                class="selected-period-input pa-0 full-width full-height"
+                hide-details
+                clearable
+                v-on="on" />
+            </template>
+            <span> {{ $t('challenges.filter.searchTooltip') }} </span>
+          </v-tooltip>
+        </div>
+        <v-btn
+          v-if="!$root.isMobile || showFilter"
+          :class="$root.isMobile && 'width-auto' || 'primary-border-color'"
+          :color="!$root.isMobile && 'primary'"
+          :small="$root.isMobile"
+          text
+          class="px-0 px-sm-2"
+          @click="openRulesFilterDrawer">
+          <v-icon :size="$root.isMobile && 24 || 16">fas fa-sliders-h</v-icon>
+          <span v-if="!$root.isMobile" class="font-weight-regular caption ms-2">
+            {{ $t('profile.label.search.openSearch') }}
+          </span>
+        </v-btn>
+        <template v-if="$root.isMobile && !showFilter">
+          <v-spacer />
+          <v-btn
+            class="width-auto"
+            icon
+            @click="showFilter = !showFilter">
+            <v-icon size="24">fa-filter</v-icon>
+          </v-btn>
+        </template>
       </div>
     </v-toolbar>
     <v-card flat>
@@ -72,11 +104,24 @@
         :display-back-arrow="false"
         :message-title="welcomeMessage"
         :message-info-one="notFoundInfoMessage" />
-      <engagement-center-rules-categories
-        v-else-if="displayList"
-        :categories="validCategories"
-        class="pt-4" />
+      <engagement-center-rules-list
+        v-else-if="filtered"
+        :loading="loading"
+        :category-id="filterCategoryId"
+        :rules="rules"
+        :size="rulesSize"
+        class="px-4" />
+      <engagement-center-rules-by-program
+        v-else-if="groupByProgram"
+        :categories="validCategories" />
+      <engagement-center-rules-by-trend
+        v-else
+        @initialized="setInitialized" />
     </v-card>
+    <engagement-center-rules-filter-drawer
+      ref="rulesFilterDrawer"
+      :is-administrator="isAdministrator"
+      @apply="applyFilter" />
     <exo-confirm-dialog
       ref="deleteRuleConfirmDialog"
       :title="$t('programs.details.title.confirmDeleteRule')"
@@ -97,20 +142,50 @@ export default {
   data: () => ({
     selectedRuleId: null,
     selectedRule: null,
-    loading: false,
+    loading: true,
     categories: [],
-    search: '',
+    hasTrends: false,
+    groupByProgram: false,
+    filterCategoryId: 'filtered_category_id',
+    rules: [],
+    rulesSize: 0,
+    rulesOffset: 0,
+    rulesLimit: 0,
+    pageSize: 9,
+    term: '',
     startSearchAfterInMilliseconds: 600,
     endTypingKeywordTimeout: 50,
     startTypingKeywordTimeout: 0,
+    showFilter: false,
     typing: false,
-    displayManual: false,
     displayMinimumCharactersToolTip: false,
-    filter: 'STARTED',
+    type: 'ALL',
+    status: 'STARTED',
   }),
   computed: {
-    actionType() {
-      return this.displayManual && 'MANUAL' || 'ALL';
+    incentivesCountLabel() {
+      if (!this.rulesSize || this.loading || this.typing) {
+        return '';
+      }
+      if (this.term) {
+        switch (this.status) {
+        case 'ALL': return this.$t('rules.filter.incentivesFound', {0: this.rulesSize});
+        case 'STARTED': return this.$t('rules.filter.activeIncentivesFound', {0: this.rulesSize});
+        case 'NOT_STARTED': return this.$t('rules.filter.upcomingIncentivesFound', {0: this.rulesSize});
+        case 'ENDED': return this.$t('rules.filter.endedIncentivesFound', {0: this.rulesSize});
+        case 'DISABLED': return this.$t('rules.filter.disabledIncentivesFound', {0: this.rulesSize});
+        default: return '';
+        }
+      } else {
+        switch (this.status) {
+        case 'ALL': return this.$t('rules.filter.incentives', {0: this.rulesSize});
+        case 'STARTED': return this.$t('rules.filter.activeIncentives', {0: this.rulesSize});
+        case 'NOT_STARTED': return this.$t('rules.filter.upcomingIncentives', {0: this.rulesSize});
+        case 'ENDED': return this.$t('rules.filter.endedIncentives', {0: this.rulesSize});
+        case 'DISABLED': return this.$t('rules.filter.disabledIncentives', {0: this.rulesSize});
+        default: return '';
+        }
+      }
     },
     classWelcomeMessage() {
       return this.displayWelcomeMessage && 'empty-rules-message' || '';
@@ -118,29 +193,39 @@ export default {
     validCategories() {
       return this.categories.filter(category => category.rules.length > 0);
     },
+    filtered() {
+      return !!this.term?.length || !!this.filterApplied;
+    },
+    filterApplied() {
+      return this.status !== 'STARTED' || this.type !== 'ALL';
+    },
+    hasRulesToDisplay() {
+      return this.filtered ? this.rules?.length : this.hasTrends;
+    },
+    hasItemsToDisplay() {
+      const groupByProgram = this.groupByProgram && !this.term;
+      return groupByProgram ? this.validCategories.length : this.hasRulesToDisplay;
+    },
     displayWelcomeMessage() {
-      return !this.typing && !this.loading && !this.validCategories.length && !this.search?.length && (this.filter === 'ALL' || this.filter === 'STARTED');
+      return !this.typing && !this.loading && !this.hasItemsToDisplay && !this.term?.length && (this.status === 'ALL' || this.status === 'STARTED');
     },
     notFoundInfoMessage() {
-      if (this.filter === 'NOT_STARTED' && !this.search?.length) {
+      if (this.status === 'NOT_STARTED' && !this.term?.length) {
         return this.$t('actions.filter.upcomingNoResultsMessage');
-      } else if (this.filter === 'ENDED' && !this.search?.length) {
+      } else if (this.status === 'ENDED' && !this.term?.length) {
         return this.$t('actions.filter.endedNoResultsMessage');
       } else {
         return this.$t('actions.search.noResultsMessage');
       }
     },
     welcomeMessage() {
-      if (this.filter === 'NOT_STARTED' && this.filter === 'ENDED' && !this.search?.length) {
+      if (this.status === 'NOT_STARTED' && this.status === 'ENDED' && !this.term?.length) {
         return this.$t('actions.welcomeMessage');
       } 
       return '';
     },
     displayNoSearchResult() {
-      return !this.typing && !this.loading && !this.validCategories.length && (this.search?.length || (this.filter === 'NOT_STARTED' || this.filter === 'ENDED'));
-    },
-    displayList() {
-      return this.validCategories.length;
+      return !this.typing && !this.loading && !this.hasItemsToDisplay && (this.term?.length || (this.status === 'NOT_STARTED' || this.status === 'ENDED'));
     },
     rulesByCategoryId() {
       const rulesByCategoryId = {};
@@ -156,57 +241,31 @@ export default {
       });
       return categoriesById;
     },
-    pageSize() {
-      if (this.$vuetify.breakpoint.width <= 768) {
-        return 5;
-      } else {
-        return 6;
-      }
-    },
-    ruleFilters() {
-      return this.isAdministrator && this.adminRuleFilters || this.userRuleFilters;
-    },
-    adminRuleFilters() {
-      return [{
-        text: this.$t('rules.filter.all'),
-        value: 'ALL',
-      },{
-        text: this.$t('rules.filter.active'),
-        value: 'STARTED',
-      },{
-        text: this.$t('rules.filter.upcoming'),
-        value: 'NOT_STARTED',
-      },{
-        text: this.$t('rules.filter.ended'),
-        value: 'ENDED',
-      },{
-        text: this.$t('programs.details.filter.disabled'),
-        value: 'DISABLED',
-      }];
-    },
-    userRuleFilters() {
-      return [{
-        text: this.$t('rules.filter.all'),
-        value: 'ALL',
-      },{
-        text: this.$t('rules.filter.active'),
-        value: 'STARTED',
-      },{
-        text: this.$t('rules.filter.upcoming'),
-        value: 'NOT_STARTED',
-      },{
-        text: this.$t('rules.filter.ended'),
-        value: 'ENDED',
-      }];
-    },
   },
   watch: {
-    search()  {
+    groupByProgram()  {
+      if (this.groupByProgram || this.filtered) {
+        this.refreshRules();
+      }
+    },
+    filtered: {
+      immediate: true,
+      handler(newVal, oldVal) {
+        if (!newVal !== !oldVal) {
+          this.rulesLimit = 0;
+          this.rulesSize = 0;
+        }
+        if (!this.filtered) {
+          this.retrieveRulesCount();
+        }
+      },
+    },
+    term()  {
       this.displayMinimumCharactersToolTip = false;
-      if (!this.search?.length) {
+      if (!this.term?.length) {
         this.retrieveRules();
         return;
-      } else if (this.search.length < 3) {
+      } else if (this.term.length < 3) {
         this.displayMinimumCharactersToolTip = true;
         return;
       }
@@ -229,12 +288,11 @@ export default {
   },
   created() {
     this.$root.$on('rule-created', this.retrieveCategoryOfRule);
+    this.$root.$on('rule-updated', this.onRuleUpdate);
     this.$root.$on('rule-deleted', this.refreshRules);
     this.$root.$on('rule-delete-confirm', this.confirmDelete);
     this.$root.$on('rules-category-load-more', this.loadMore);
-
-    this.refreshRules()
-      .finally(() => this.$root.$applicationLoaded());
+    this.reset();
   },
   mounted() {
     this.selectedRuleId = this.extractRuleIdFromPath();
@@ -244,38 +302,45 @@ export default {
   },
   beforeDestroy() {
     this.$root.$off('rule-created', this.retrieveCategoryOfRule);
+    this.$root.$off('rule-updated', this.onRuleUpdate);
     this.$root.$off('rule-deleted', this.refreshRules);
     this.$root.$off('rule-delete-confirm', this.confirmDelete);
     this.$root.$off('rules-category-load-more', this.loadMore);
   },
   methods: {
-    retrieveCategoryOfRule(rule) {
-      if (rule?.program?.id) {
-        return this.retrieveRules(rule?.program?.id);
-      } else {
-        return Promise.resolve(null);
-      }
+    reset() {
+      this.type = 'ALL';
+      this.status = 'STARTED';
     },
-    refreshRules() {
-      return this.retrieveRules();
+    setInitialized(hasTrends) {
+      this.hasTrends = hasTrends;
+      this.loading = false;
     },
-    retrieveRules(categoryId) {
-      const status = (this.filter === 'DISABLED' && 'DISABLED')
-        || (this.isAdministrator && this.filter === 'ALL' && 'ALL')
-        || 'ENABLED';
-      const dateFilter = this.filter === 'DISABLED' && 'ALL' || this.filter;
-      const limit = (this.categoriesById[categoryId]?.limit || 0) + this.pageSize;
+    retrieveRulesCount() {
+      return this.$ruleService.getRules({
+        dateFilter: 'ALL',
+        status: 'ENABLED',
+        offset: 0,
+        limit: 1,
+        returnSize: true,
+      }).then(data => this.rulesSize = data?.size || 0);
+    },
+    retrieveRules(categoryId) { // NOSONAR
+      const groupByProgram = this.groupByProgram && !this.filtered;
+      const limit = (categoryId || groupByProgram) ?
+        (categoryId && this.categoriesById[categoryId]?.limit || 0) + this.pageSize
+        : this.rulesLimit + this.pageSize;
 
       this.loading = true;
       return this.$ruleService.getRules({
-        term: this.search,
+        term: this.term,
         programId: categoryId,
-        dateFilter,
-        status,
-        type: this.actionType,
+        dateFilter: this.status === 'DISABLED' && 'ALL' || this.status,
+        status: this.status === 'DISABLED' && 'DISABLED' || 'ENABLED',
+        type: this.type,
         offset: 0,
-        limit: limit,
-        groupByProgram: !categoryId,
+        limit,
+        groupByProgram,
         expand: 'countAnnouncements',
         returnSize: true,
       })
@@ -284,11 +349,14 @@ export default {
             const category = this.categoriesById[categoryId] || {};
             if (category) {
               category.size = data.size || 0;
-              category.limit = data.limit || 0;
+              category.limit = data.limit;
               category.rules = data.rules || [];
             }
-          } else {
+          } else if (groupByProgram) {
             this.categories = data;
+          } else {
+            this.rules = data.rules || [];
+            this.rulesSize = data.size;
           }
         }).finally(() => this.loading = false);
     },
@@ -316,17 +384,46 @@ export default {
       this.selectedRule = rule;
       this.$refs.deleteRuleConfirmDialog.open();
     },
+    applyFilter(type, status) {
+      this.type = type;
+      this.status = status;
+      this.retrieveRules();
+    },
+    openRulesFilterDrawer() {
+      this.$refs.rulesFilterDrawer.open();
+    },
+    retrieveCategoryOfRule(rule) {
+      if (this.groupbyProgram && rule?.program?.id) {
+        return this.retrieveRules(rule?.program?.id);
+      } else {
+        return Promise.resolve(null);
+      }
+    },
+    onRuleUpdate(rule) {
+      if (this.filtered && this.rules?.length) {
+        if (this.rules.findIndex(r => r.id === rule.id) >= 0) {
+          this.rules = this.rules.map(r => r.id === rule.id && rule || r);
+        }
+      }
+    },
+    refreshRules() {
+      return this.retrieveRules();
+    },
     loadMore(categoryId) {
-      return this.retrieveRules(categoryId);
+      if (categoryId === this.filterCategoryId) {
+        this.rulesLimit += this.pageSize;
+        return this.retrieveRules();
+      } else if (categoryId) {
+        return this.retrieveRules(categoryId);
+      }
     },
     showAlert(alertType, alertMessage){
       this.$engagementCenterUtils.displayAlert(alertMessage, alertType);
     },
-    addProgramTitle(program) {
-      const key = `exoplatform.gamification.gamificationinformation.domain.${program.title}`;
-      if (this.$te(key)) {
-        program.title = this.$t(key);
-      }
+    clearFilter()  {
+      this.term = '';
+      this.reset();
+      this.$refs.rulesFilterDrawer.reset();
     },
     waitForEndTyping() {
       window.setTimeout(() => {

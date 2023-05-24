@@ -36,7 +36,7 @@
         </div>
         <engagement-center-rule-card-mask>
           <engagement-center-rule-card-mask-content
-            v-if="!rule.enabled"
+            v-if="!isEnabled"
             :text="$t('challenges.label.disabled')"
             class="rule-card-mask-disabled" />
           <engagement-center-rule-card-mask-remaining-dates
@@ -50,7 +50,7 @@
             :rule="rule" />
         </engagement-center-rule-card-mask>
       </div>
-      <v-card-title class="d-flex flex-nowrap pb-0">
+      <v-card-title class="rule-card-title d-flex flex-nowrap pb-0 text-break">
         <div :title="title" class="text-truncate flex-grow-1">
           {{ title }}
         </div>
@@ -60,8 +60,8 @@
       </v-card-title>
       <v-card-text
         v-sanitized-html="description"
-        class="text-truncate-2 pb-0" />
-      <template v-if="rule.enabled">
+        class="rule-card-description text-truncate-2 pb-0" />
+      <template v-if="isEnabled">
         <v-spacer />
         <v-card-text v-if="rule.recurrence">
           <engagement-center-rule-card-recurrence :rule="rule" />
@@ -105,6 +105,9 @@ export default {
     },
     isValidDates() {
       return this.rule?.userInfo?.context?.validDates;
+    },
+    isEnabled() {
+      return this.rule?.enabled && !this.rule?.deleted && this.rule?.program?.enabled && !this.rule?.program?.deleted;
     },
     isValidPrerequities() {
       const prerequisitesStatus = this.rule?.userInfo?.context?.validPrerequisites;

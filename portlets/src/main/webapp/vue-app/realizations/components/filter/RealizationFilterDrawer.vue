@@ -19,12 +19,8 @@
     ref="RealizationsFilterDrawer"
     class="RealizationsFilterDrawer"
     :right="!$vuetify.rtl"
-    @closed="close"
-    eager>
-    <v-progress-circular
-      v-if="loading"
-      indeterminate
-      size="32" />
+    eager
+    @closed="close">
     <template slot="title">
       <span class="pb-2"> {{ $t('realization.label.search.filtersAchievements') }} </span>
     </template>
@@ -162,13 +158,6 @@ export default {
     this.$root.$on('reset-filter-values', this.reset);
   },
   watch: {
-    loading() {
-      if (this.loading) {
-        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
-      } else {
-        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
-      }
-    },
     granteeAttendee() {
       if (!this.granteeAttendee) {
         this.$nextTick(this.$refs.granteeAttendeeAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
