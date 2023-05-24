@@ -120,9 +120,9 @@ public class RuleRest implements ResourceContainer {
                            @QueryParam("limit")
                            @DefaultValue("20")
                            int limit,
-                           @Parameter(description = "Used to filter rules by domain", required = false)
-                           @QueryParam("domainId")
-                           long domainId,
+                           @Parameter(description = "Used to filter rules by program", required = false)
+                           @QueryParam("programId")
+                           long programId,
                            @Parameter(description = "Rules type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = ALL.", required = false)
                            @QueryParam("type")
                            @DefaultValue("ALL")
@@ -143,10 +143,10 @@ public class RuleRest implements ResourceContainer {
                            @Schema(defaultValue = "0")
                            @QueryParam("announcementsLimit")
                            int announcementsLimit,
-                           @Parameter(description = "Group rules by domain")
+                           @Parameter(description = "Group rules by program")
                            @Schema(defaultValue = "false")
-                           @QueryParam("groupByDomain")
-                           boolean groupByDomain,
+                           @QueryParam("groupByProgram")
+                           boolean groupByProgram,
                            @Parameter(description = "Whether Sort by popular rules or not")
                            @DefaultValue("false")
                            @QueryParam("orderByRealizations")
@@ -159,7 +159,7 @@ public class RuleRest implements ResourceContainer {
                            @DefaultValue("ALL")
                            @QueryParam("period")
                            PeriodType periodType,
-                           @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false)
+                           @Parameter(description = "If true, this will return the total count of filtered programs. Possible values = true or false. Default value = false.", required = false)
                            @QueryParam("returnSize")
                            @DefaultValue("false")
                            boolean returnSize,
@@ -182,7 +182,7 @@ public class RuleRest implements ResourceContainer {
     ruleFilter.setEntityStatusType(ruleStatus == null ? EntityStatusType.ALL : ruleStatus);
     ruleFilter.setOrderByRealizations(orderByRealizations);
     ruleFilter.setExcludedRuleIds(excludedRuleIds);
-    ruleFilter.setDomainId(domainId);
+    ruleFilter.setProgramId(programId);
     String[] expandFieldsArray = StringUtils.split(expand, ",");
     List<String> expandFields = expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
 
@@ -191,16 +191,16 @@ public class RuleRest implements ResourceContainer {
     }
 
     try {
-      if (groupByDomain) {
-        ProgramFilter domainFilter = new ProgramFilter();
-        domainFilter.setEntityFilterType(EntityFilterType.ALL);
-        domainFilter.setEntityStatusType(EntityStatusType.ENABLED);
-        List<ProgramDTO> domains = programService.getPrograms(domainFilter, currentUser, 0, -1);
-        List<ProgramWithRulesRestEntity> domainsWithRules = new ArrayList<>();
-        for (ProgramDTO domain : domains) {
-          ProgramWithRulesRestEntity domainWithRule = new ProgramWithRulesRestEntity(domain);
-          ruleFilter.setDomainId(domain.getId());
-          List<RuleRestEntity> ruleEntities = getUserRulesByDomain(ruleFilter,
+      if (groupByProgram) {
+        ProgramFilter programFilter = new ProgramFilter();
+        programFilter.setEntityFilterType(EntityFilterType.ALL);
+        programFilter.setEntityStatusType(EntityStatusType.ENABLED);
+        List<ProgramDTO> programs = programService.getPrograms(programFilter, currentUser, 0, -1);
+        List<ProgramWithRulesRestEntity> programsWithRules = new ArrayList<>();
+        for (ProgramDTO program : programs) {
+          ProgramWithRulesRestEntity programWithRule = new ProgramWithRulesRestEntity(program);
+          ruleFilter.setProgramId(program.getId());
+          List<RuleRestEntity> ruleEntities = getUserRulesByProgram(ruleFilter,
                                                                    periodType,
                                                                    expandFields,
                                                                    currentUser,
@@ -208,25 +208,25 @@ public class RuleRest implements ResourceContainer {
                                                                    limit,
                                                                    announcementsLimit,
                                                                    true);
-          domainWithRule.setRules(ruleEntities);
-          domainWithRule.setOffset(offset);
-          domainWithRule.setLimit(limit);
+          programWithRule.setRules(ruleEntities);
+          programWithRule.setOffset(offset);
+          programWithRule.setLimit(limit);
           if (returnSize) {
-            domainWithRule.setSize(ruleService.countRules(ruleFilter, currentUser));
+            programWithRule.setSize(ruleService.countRules(ruleFilter, currentUser));
           }
-          domainsWithRules.add(domainWithRule);
+          programsWithRules.add(programWithRule);
         }
-        return Response.ok(domainsWithRules).build();
+        return Response.ok(programsWithRules).build();
       } else {
         RuleList ruleList = new RuleList();
-        List<RuleRestEntity> ruleEntities = getUserRulesByDomain(ruleFilter,
+        List<RuleRestEntity> ruleEntities = getUserRulesByProgram(ruleFilter,
                                                                  periodType,
                                                                  expandFields,
                                                                  currentUser,
                                                                  offset,
                                                                  limit,
                                                                  announcementsLimit,
-                                                                 domainId > 0);
+                                                                 programId > 0);
         ruleList.setRules(ruleEntities);
         ruleList.setOffset(offset);
         ruleList.setLimit(limit);
@@ -374,14 +374,14 @@ public class RuleRest implements ResourceContainer {
     }
   }
 
-  private List<RuleRestEntity> getUserRulesByDomain(RuleFilter filter, // NOSONAR
+  private List<RuleRestEntity> getUserRulesByProgram(RuleFilter filter, // NOSONAR
                                                     PeriodType periodType,
                                                     List<String> expandFields,
                                                     String username,
                                                     int offset,
                                                     int limit,
                                                     int announcementsLimit,
-                                                    boolean noDomain) {
+                                                    boolean noProgram) {
     List<RuleDTO> rules = ruleService.getRules(filter, username, offset, limit);
     return rules.stream()
                 .map(rule -> RuleBuilder.toRestEntity(programService,
@@ -391,7 +391,7 @@ public class RuleRest implements ResourceContainer {
                                                       rule,
                                                       expandFields,
                                                       announcementsLimit,
-                                                      noDomain,
+                                                      noProgram,
                                                       periodType))
                 .toList();
   }

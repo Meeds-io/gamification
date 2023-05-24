@@ -75,16 +75,16 @@ public class RealizationStorage {
     return gamificationHistoryDAO.findRealizationsByDate(identityType, date);
   }
 
-  public List<StandardLeaderboard> findRealizationsByDateAndDomain(IdentityType identityType, Date date, long domainId) {
-    return gamificationHistoryDAO.findRealizationsByDateAndDomain(identityType, date, domainId);
+  public List<StandardLeaderboard> findRealizationsByDateAndProgramId(IdentityType identityType, Date date, long programId) {
+    return gamificationHistoryDAO.findRealizationsByDateAndProgramId(identityType, date, programId);
   }
 
   public List<StandardLeaderboard> findRealizationsAgnostic(IdentityType identityType) {
     return gamificationHistoryDAO.findRealizationsAgnostic(identityType);
   }
 
-  public List<StandardLeaderboard> findRealizationsByDomain(IdentityType identityType, long domainId) {
-    return gamificationHistoryDAO.findRealizationsByDomain(identityType, domainId);
+  public List<StandardLeaderboard> findRealizationsByProgramId(IdentityType identityType, long programId) {
+    return gamificationHistoryDAO.findRealizationsByProgramId(identityType, programId);
   }
 
   public List<RealizationDTO> findRealizationsByIdentityIdAndByType(String earnerId, EntityType entityType) {
@@ -103,23 +103,23 @@ public class RealizationStorage {
     return gamificationHistoryDAO.findRealizations(identityType, limit);
   }
 
-  public List<StandardLeaderboard> findRealizationsByDateByDomain(Date fromDate,
-                                                                  IdentityType identityType,
-                                                                  long domainId,
-                                                                  int limit) {
-    return gamificationHistoryDAO.findRealizationsByDateByDomain(fromDate, identityType, domainId, limit);
+  public List<StandardLeaderboard> findRealizationsByDateByProgramId(Date fromDate,
+                                                                     IdentityType identityType,
+                                                                     long programId,
+                                                                     int limit) {
+    return gamificationHistoryDAO.findRealizationsByDateByProgramId(fromDate, identityType, programId, limit);
   }
 
-  public List<StandardLeaderboard> findRealizationsByDomain(long domainId, IdentityType identityType, int limit) {
-    return gamificationHistoryDAO.findRealizationsByDomain(domainId, identityType, limit);
+  public List<StandardLeaderboard> findRealizationsByProgramId(long programId, IdentityType identityType, int limit) {
+    return gamificationHistoryDAO.findRealizationsByProgramId(programId, identityType, limit);
   }
 
   public List<Long> findMostRealizedRuleIds(List<Long> spacesIds, int offset, int limit, EntityType type) {
     return gamificationHistoryDAO.findMostRealizedRuleIds(spacesIds, offset, limit, type);
   }
 
-  public List<ProfileReputation> getScorePerDomainByIdentityId(String earnerIdentityId) {
-    return gamificationHistoryDAO.getScorePerDomainByIdentityId(earnerIdentityId);
+  public List<ProfileReputation> getScorePerProgramByIdentityId(String earnerIdentityId) {
+    return gamificationHistoryDAO.getScorePerProgramByIdentityId(earnerIdentityId);
   }
 
   public List<PiechartLeaderboard> getStatsByIdentityId(String earnerIdentityId, Date startDate, Date endDate) {
@@ -143,14 +143,14 @@ public class RealizationStorage {
   }
 
   public RealizationDTO findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
-                                                                                      long domainId,
+                                                                                      long programId,
                                                                                       String earnerId,
                                                                                       String receiverId,
                                                                                       String objectId,
                                                                                       String objectType) {
     return fromEntity(programStorage,
                       gamificationHistoryDAO.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId(actionTitle,
-                                                                                                             domainId,
+                                                                                                             programId,
                                                                                                              earnerId,
                                                                                                              receiverId,
                                                                                                              objectId,

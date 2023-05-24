@@ -269,13 +269,13 @@ export default {
       this.loading = true;
       return this.$ruleService.getRules({
         term: this.search,
-        domainId: categoryId,
+        programId: categoryId,
         dateFilter,
         status,
         type: this.actionType,
         offset: 0,
         limit: limit,
-        groupByDomain: !categoryId,
+        groupByProgram: !categoryId,
         expand: 'countAnnouncements',
         returnSize: true,
       })

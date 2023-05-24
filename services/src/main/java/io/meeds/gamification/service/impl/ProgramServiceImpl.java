@@ -71,12 +71,12 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public List<ProgramDTO> getPrograms(ProgramFilter domainFilter,
+  public List<ProgramDTO> getPrograms(ProgramFilter programFilter,
                                       String username,
                                       int offset,
                                       int limit) throws IllegalAccessException {
-    List<Long> domainIds = getProgramIds(domainFilter, username, offset, limit);
-    return domainIds.stream().map(this::getProgramById).toList();
+    List<Long> programIds = getProgramIds(programFilter, username, offset, limit);
+    return programIds.stream().map(this::getProgramById).toList();
   }
 
   @Override
@@ -93,22 +93,22 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public List<Long> getProgramIds(ProgramFilter domainFilter,
+  public List<Long> getProgramIds(ProgramFilter programFilter,
                                   int offset,
                                   int limit) {
-    if (domainFilter.isSortByBudget()) {
-      return programStorage.findHighestBudgetProgramIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
+    if (programFilter.isSortByBudget()) {
+      return programStorage.findHighestBudgetProgramIdsBySpacesIds(programFilter.getSpacesIds(), offset, limit);
     } else {
-      return programStorage.getProgramIdsByFilter(domainFilter, offset, limit);
+      return programStorage.getProgramIdsByFilter(programFilter, offset, limit);
     }
   }
 
   @Override
-  public ProgramDTO getProgramByTitle(String domainTitle) {
-    if (StringUtils.isBlank(domainTitle)) {
-      throw new IllegalArgumentException("domainTitle has to be not null");
+  public ProgramDTO getProgramByTitle(String programTitle) {
+    if (StringUtils.isBlank(programTitle)) {
+      throw new IllegalArgumentException("programTitle has to be not null");
     }
-    return programStorage.getProgramByTitle(domainTitle);
+    return programStorage.getProgramByTitle(programTitle);
   }
 
   @Override
@@ -122,34 +122,34 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public int countPrograms(ProgramFilter domainFilter) {
-    return programStorage.countPrograms(domainFilter);
+  public int countPrograms(ProgramFilter programFilter) {
+    return programStorage.countPrograms(programFilter);
   }
 
   @Override
   public ProgramDTO createProgram(ProgramDTO program, Identity aclIdentity) throws IllegalAccessException {
     if (program == null) {
-      throw new IllegalArgumentException("domain is mandatory");
+      throw new IllegalArgumentException("program is mandatory");
     }
     if (program.getId() != 0) {
-      throw new IllegalArgumentException("domain id must be equal to 0");
+      throw new IllegalArgumentException("program id must be equal to 0");
     }
     if (program.isDeleted()) {
-      throw new IllegalArgumentException("domain to create can't be marked as deleted");
+      throw new IllegalArgumentException("program to create can't be marked as deleted");
     }
     if (!canAddProgram(aclIdentity)) {
-      throw new IllegalAccessException("The user is not authorized to create a domain");
+      throw new IllegalAccessException("The user is not authorized to create a program");
     }
-    ProgramDTO createdDomain = createDomain(program, aclIdentity.getUserId());
-    broadcast(GAMIFICATION_DOMAIN_CREATE_LISTENER, createdDomain, aclIdentity.getUserId());
-    return createdDomain;
+    ProgramDTO createdProgram = createProgram(program, aclIdentity.getUserId());
+    broadcast(GAMIFICATION_DOMAIN_CREATE_LISTENER, createdProgram, aclIdentity.getUserId());
+    return createdProgram;
   }
 
   @Override
-  public ProgramDTO createProgram(ProgramDTO domain) {
-    ProgramDTO createdDomain = createDomain(domain, IdentityConstants.SYSTEM);
-    broadcast(GAMIFICATION_DOMAIN_CREATE_LISTENER, createdDomain, null);
-    return createdDomain;
+  public ProgramDTO createProgram(ProgramDTO program) {
+    ProgramDTO createdProgram = createProgram(program, IdentityConstants.SYSTEM);
+    broadcast(GAMIFICATION_DOMAIN_CREATE_LISTENER, createdProgram, null);
+    return createdProgram;
   }
 
   @Override
@@ -163,7 +163,7 @@ public class ProgramServiceImpl implements ProgramService {
       throw new ObjectNotFoundException("Program is marked as deleted");
     }
     if (aclIdentity == null || !isProgramOwner(program.getId(), aclIdentity.getUserId())) {
-      throw new IllegalAccessException("The user is not authorized to update domain " + program);
+      throw new IllegalAccessException("The user is not authorized to update program " + program);
     }
     program.setLastModifiedBy(aclIdentity.getUserId());
     program.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
@@ -187,21 +187,21 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public ProgramDTO deleteProgramById(long domainId, Identity aclIdentity) throws IllegalAccessException,
+  public ProgramDTO deleteProgramById(long programId, Identity aclIdentity) throws IllegalAccessException,
                                                                            ObjectNotFoundException {
     String date = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
-    ProgramDTO domain = programStorage.getProgramById(domainId);
-    if (domain == null) {
-      throw new ObjectNotFoundException("domain doesn't exist");
+    ProgramDTO program = programStorage.getProgramById(programId);
+    if (program == null) {
+      throw new ObjectNotFoundException("program doesn't exist");
     }
-    if (aclIdentity == null || !isProgramOwner(domainId, aclIdentity.getUserId())) {
-      throw new IllegalAccessException("The user is not authorized to delete the domain");
+    if (aclIdentity == null || !isProgramOwner(programId, aclIdentity.getUserId())) {
+      throw new IllegalAccessException("The user is not authorized to delete the program");
     }
-    domain.setDeleted(true);
-    domain.setLastModifiedDate(date);
-    domain = programStorage.saveProgram(domain);
-    broadcast(GAMIFICATION_DOMAIN_DELETE_LISTENER, domain, aclIdentity.getUserId());
-    return domain;
+    program.setDeleted(true);
+    program.setLastModifiedDate(date);
+    program = programStorage.saveProgram(program);
+    broadcast(GAMIFICATION_DOMAIN_DELETE_LISTENER, program, aclIdentity.getUserId());
+    return program;
   }
 
   @Override
@@ -232,20 +232,20 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public InputStream getFileDetailAsStream(long domainId) throws ObjectNotFoundException {
-    ProgramDTO domain = programStorage.getProgramById(domainId);
-    if (domain == null) {
-      throw new ObjectNotFoundException("Domain with id " + domainId + " doesn't exist");
+  public InputStream getFileDetailAsStream(long programId) throws ObjectNotFoundException {
+    ProgramDTO program = programStorage.getProgramById(programId);
+    if (program == null) {
+      throw new ObjectNotFoundException("program with id " + programId + " doesn't exist");
     }
-    if (domain.getCoverFileId() == 0) {
-      throw new ObjectNotFoundException("Domain with id " + domainId + " doesn't have a coverdId");
+    if (program.getCoverFileId() == 0) {
+      throw new ObjectNotFoundException("program with id " + programId + " doesn't have a coverdId");
     }
     FileItem fileItem;
     try {
-      fileItem = fileService.getFile(domain.getCoverFileId());
+      fileItem = fileService.getFile(program.getCoverFileId());
       return fileItem == null || fileItem.getFileInfo() == null ? null : fileItem.getAsStream();
     } catch (Exception e) {
-      LOG.warn("Error retrieving image with id {}", domainId, e);
+      LOG.warn("Error retrieving image with id {}", programId, e);
       return null;
     }
   }
@@ -256,25 +256,25 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public boolean isProgramOwner(long domainId, String username) {
+  public boolean isProgramOwner(long programId, String username) {
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
       return false;
     }
-    ProgramDTO domain = programStorage.getProgramById(domainId);
-    if (domain == null || domain.isDeleted()) {
+    ProgramDTO program = programStorage.getProgramById(programId);
+    if (program == null || program.isDeleted()) {
       return false;
     }
-    return isProgramOwner(domain.getAudienceId(), domain.getOwnerIds(), userIdentity);
+    return isProgramOwner(program.getAudienceId(), program.getOwnerIds(), userIdentity);
   }
 
   @Override
-  public boolean isProgramMember(long domainId, String username) {
+  public boolean isProgramMember(long programId, String username) {
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
       return false;
     }
-    ProgramDTO program = programStorage.getProgramById(domainId);
+    ProgramDTO program = programStorage.getProgramById(programId);
     if (program == null) {
       return false;
     }
@@ -318,25 +318,25 @@ public class ProgramServiceImpl implements ProgramService {
     return programFilter;
   }
 
-  private void broadcast(String eventName, ProgramDTO domain, String userName) {
+  private void broadcast(String eventName, ProgramDTO program, String userName) {
     try {
-      listenerService.broadcast(eventName, domain, userName);
+      listenerService.broadcast(eventName, program, userName);
     } catch (Exception e) {
-      LOG.warn("Error while broadcasting operation '{}' on domain {}. The operation '{}' isn't interrupted.",
+      LOG.warn("Error while broadcasting operation '{}' on program {}. The operation '{}' isn't interrupted.",
                eventName,
-               domain,
+               program,
                e);
     }
   }
 
-  private ProgramDTO createDomain(ProgramDTO domain, String username) {
+  private ProgramDTO createProgram(ProgramDTO program, String username) {
     boolean isAutomatic = StringUtils.isBlank(username) || StringUtils.equals(IdentityConstants.SYSTEM, username);
-    domain.setType(isAutomatic ? EntityType.AUTOMATIC.name() : EntityType.MANUAL.name());
-    domain.setCreatedBy(username);
-    domain.setCreatedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
-    domain.setLastModifiedBy(username);
-    domain.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
-    return programStorage.saveProgram(domain);
+    program.setType(isAutomatic ? EntityType.AUTOMATIC.name() : EntityType.MANUAL.name());
+    program.setCreatedBy(username);
+    program.setCreatedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
+    program.setLastModifiedBy(username);
+    program.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
+    return programStorage.saveProgram(program);
   }
 
   private boolean isProgramOwner(long spaceId, Set<Long> ownerIds,

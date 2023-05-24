@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       v-model="program"
       :label="labels.label"
       :placeholder="labels.placeholder"
-      :items="domains"
+      :items="programs"
       :loading="loadingSuggestions"
       :multiple="multiple"
       hide-no-data
@@ -114,7 +114,7 @@ export default {
   data() {
     return {
       id: `ProgramSuggester${parseInt(Math.random() * 10000)}`,
-      domains: [],
+      programs: [],
       program: null,
       searchTerm: null,
       loadingSuggestions: false,
@@ -139,8 +139,8 @@ export default {
       }
     },
     value() {
-      if (!this.domains.length && this.value) {
-        this.domains.push(this.value);
+      if (!this.programs.length && this.value) {
+        this.programs.push(this.value);
       }
     },
     includeDeleted() {
@@ -150,7 +150,7 @@ export default {
   created() {
     this.program = this.value;
     if (this.program) {
-      this.domains = [this.program];
+      this.programs = [this.program];
     }
   },
   mounted() {
@@ -181,19 +181,17 @@ export default {
         this.focus();
         if (!this.previousSearchTerm || this.previousSearchTerm !== this.searchTerm) {
           this.loadingSuggestions = 0;
-          this.domains = [];
+          this.programs = [];
           this.$programService.getPrograms(0, 10, 'ALL', this.includeDisabled ? 'ALL' : 'ENABLED', this.searchTerm, this.includeDeleted, false, this.onlyOwned)
-            .then(data => {
-              this.domains = data.domains;
-            });
+            .then(data => this.programs = data.programs);
         }
         this.previousSearchTerm = this.searchTerm;
       } else {
-        this.domains = [];
+        this.programs = [];
       }
     },
     clear() {
-      this.domains = [];
+      this.programs = [];
       this.value = null;
       this.loadingSuggestions = 0;
       this.$refs.selectAutoComplete.cachedItems = [];

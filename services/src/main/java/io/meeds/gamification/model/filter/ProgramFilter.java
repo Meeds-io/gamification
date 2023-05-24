@@ -38,7 +38,7 @@ public class ProgramFilter implements Serializable {
 
   private EntityStatusType  entityStatusType = EntityStatusType.ALL;
 
-  private String            domainTitle;
+  private String            programTitle;
 
   private boolean           includeDeleted;
 
@@ -51,7 +51,7 @@ public class ProgramFilter implements Serializable {
   public ProgramFilter clone() { // NOSONAR
     return new ProgramFilter(entityFilterType,
                              entityStatusType,
-                             domainTitle,
+                             programTitle,
                              includeDeleted,
                              sortByBudget,
                              spacesIds == null ? null : new ArrayList<>(spacesIds),

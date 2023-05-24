@@ -63,9 +63,9 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
 
   private static final String        EARNER_IDS_PARAM_NAME   = "earnerIds";
 
-  private static final String        DOMAIN_IDS_PARAM_NAME   = "domainIds";
+  private static final String        PROGRAM_IDS_PARAM_NAME  = "programIds";
 
-  private static final String        DOMAIN_ID_PARAM_NAME    = "domainId";
+  private static final String        PROGRAM_ID_PARAM_NAME   = "domainId";
 
   private static final String        EARNER_TYPE_PARAM_NAME  = "earnerType";
 
@@ -110,15 +110,15 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
    * 
    * @param  earnerType : {@link IdentityType} USER or SPACE
    * @param  date       : date from when we load gamification entries
-   * @param  domainId   : domain Id
+   * @param  domainId   : program Id
    * @return            list of object of type StandardLeaderboard
    */
-  public List<StandardLeaderboard> findRealizationsByDateAndDomain(IdentityType earnerType, Date date, long domainId) {
+  public List<StandardLeaderboard> findRealizationsByDateAndProgramId(IdentityType earnerType, Date date, long domainId) {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("RealizationEntity.findAllRealizationsByDateByDomain",
                                                                               StandardLeaderboard.class);
     query.setParameter(DATE_PARAM_NAME, date)
-         .setParameter(DOMAIN_ID_PARAM_NAME, domainId)
+         .setParameter(PROGRAM_ID_PARAM_NAME, domainId)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     return query.getResultList();
@@ -144,14 +144,14 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
    * Find all gamification entries by domain
    * 
    * @param  earnerType : {@link IdentityType} USER or SPACE
-   * @param  domainId   : domain Id
+   * @param  domainId   : program Id
    * @return            list of object of type StandardLeaderboard
    */
-  public List<StandardLeaderboard> findRealizationsByDomain(IdentityType earnerType, long domainId) {
+  public List<StandardLeaderboard> findRealizationsByProgramId(IdentityType earnerType, long domainId) {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("RealizationEntity.findAllRealizationsByDomain",
                                                                               StandardLeaderboard.class);
-    query.setParameter(DOMAIN_ID_PARAM_NAME, domainId);
+    query.setParameter(PROGRAM_ID_PARAM_NAME, domainId);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     return query.getResultList();
@@ -161,16 +161,16 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   /**
    * Find all gamification entries by domain
    * 
-   * @param  domainId   : domain id
+   * @param  domainId   : program id
    * @param  earnerType : {@link IdentityType} USER or SPACE
    * @param  limit      : limit of the query
    * @return            list of object of type StandardLeaderboard
    */
-  public List<StandardLeaderboard> findRealizationsByDomain(long domainId, IdentityType earnerType, int limit) {
+  public List<StandardLeaderboard> findRealizationsByProgramId(long domainId, IdentityType earnerType, int limit) {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("RealizationEntity.findAllRealizationsByDomain",
                                                                               StandardLeaderboard.class);
-    query.setParameter(DOMAIN_ID_PARAM_NAME, domainId);
+    query.setParameter(PROGRAM_ID_PARAM_NAME, domainId);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     query.setMaxResults(limit);
@@ -248,20 +248,20 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
    * 
    * @param  date       : date from when we aim to track user
    * @param  earnerType : {@link IdentityType} USER or SPACE
-   * @param  domainId   : domain Id we aim to track
+   * @param  domainId   : program Id we aim to track
    * @param  limit      : how many records we should load from DB
    * @return            a list of object of type StandardLraderboard
    */
-  public List<StandardLeaderboard> findRealizationsByDateByDomain(Date date,
-                                                                  IdentityType earnerType,
-                                                                  long domainId,
-                                                                  int limit) {
+  public List<StandardLeaderboard> findRealizationsByDateByProgramId(Date date,
+                                                                     IdentityType earnerType,
+                                                                     long domainId,
+                                                                     int limit) {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByDateByDomain",
                                                                               StandardLeaderboard.class);
     query.setParameter(DATE_PARAM_NAME, date)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
-         .setParameter(DOMAIN_ID_PARAM_NAME, domainId);
+         .setParameter(PROGRAM_ID_PARAM_NAME, domainId);
     query.setMaxResults(limit);
     return query.getResultList();
   }
@@ -296,7 +296,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
    * @param  earnerId ProfileReputation
    * @return          a list of objects of type
    */
-  public List<ProfileReputation> getScorePerDomainByIdentityId(String earnerId) {
+  public List<ProfileReputation> getScorePerProgramByIdentityId(String earnerId) {
     TypedQuery<ProfileReputation> query =
                                         getEntityManager().createNamedQuery("RealizationEntity.findDomainScoreByUserId",
                                                                             ProfileReputation.class);
@@ -344,7 +344,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                            getEntityManager().createNamedQuery("RealizationEntity.findUserReputationScoreByDomainBetweenDate",
                                                                Long.class);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId)
-         .setParameter(DOMAIN_ID_PARAM_NAME, domainId)
+         .setParameter(PROGRAM_ID_PARAM_NAME, domainId)
          .setParameter(FROM_DATE_PARAM_NAME, fromDate)
          .setParameter(TO_DATE_PARAM_NAME, toDate);
     Long count = query.getSingleResult();
@@ -391,7 +391,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     TypedQuery<RealizationEntity> query =
                                         getEntityManager().createNamedQuery("RealizationEntity.getAllPointsByDomain",
                                                                             RealizationEntity.class);
-    query.setParameter(DOMAIN_ID_PARAM_NAME, domainId);
+    query.setParameter(PROGRAM_ID_PARAM_NAME, domainId);
 
     return query.getResultList();
   }
@@ -525,7 +525,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                                         getEntityManager().createNamedQuery("RealizationEntity.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId",
                                                                             RealizationEntity.class);
     query.setParameter(ACTION_TITLE_PARAM_NAME, actionTitle);
-    query.setParameter(DOMAIN_ID_PARAM_NAME, domainId);
+    query.setParameter(PROGRAM_ID_PARAM_NAME, domainId);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     query.setParameter(RECEIVER_ID_PARAM_NAME, receiverId);
     query.setParameter(OBJECT_ID_PARAM_NAME, objectId);
@@ -607,9 +607,9 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
       suffixes.add("EarnerIds");
       predicates.add("g.earnerId IN (:earnerIds)");
     }
-    if (CollectionUtils.isNotEmpty(filter.getDomainIds())) {
+    if (CollectionUtils.isNotEmpty(filter.getProgramIds())) {
       suffixes.add("ProgramIds");
-      predicates.add("g.domainEntity.id IN (:domainIds)");
+      predicates.add("g.domainEntity.id IN (:programIds)");
     }
   }
 
@@ -652,8 +652,8 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     if (CollectionUtils.isNotEmpty(filter.getEarnerIds())) {
       query.setParameter(EARNER_IDS_PARAM_NAME, filter.getEarnerIds());
     }
-    if (CollectionUtils.isNotEmpty(filter.getDomainIds())) {
-      query.setParameter(DOMAIN_IDS_PARAM_NAME, filter.getDomainIds());
+    if (CollectionUtils.isNotEmpty(filter.getProgramIds())) {
+      query.setParameter(PROGRAM_IDS_PARAM_NAME, filter.getProgramIds());
     }
     query.setParameter(TYPE_PARAM_NAME, filter.getIdentityType());
   }

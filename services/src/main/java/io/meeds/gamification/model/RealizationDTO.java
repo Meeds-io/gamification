@@ -18,7 +18,7 @@ public class RealizationDTO implements Cloneable {
 
   private ProgramDTO program;
 
-  private String     domainLabel;
+  private String     programLabel;
 
   private String     context;
 
@@ -56,7 +56,7 @@ public class RealizationDTO implements Cloneable {
                         long globalScore,
                         String actionTitle,
                         ProgramDTO program,
-                        String domainLabel,
+                        String programLabel,
                         String context,
                         long actionScore,
                         String receiver,
@@ -78,7 +78,7 @@ public class RealizationDTO implements Cloneable {
     this.globalScore = globalScore;
     this.actionTitle = actionTitle;
     this.program = program;
-    this.domainLabel = domainLabel;
+    this.programLabel = programLabel;
     this.context = context;
     this.actionScore = actionScore;
     this.receiver = receiver;
@@ -107,7 +107,7 @@ public class RealizationDTO implements Cloneable {
                               globalScore,
                               actionTitle,
                               program,
-                              domainLabel,
+                              programLabel,
                               context,
                               actionScore,
                               receiver,
