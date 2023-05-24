@@ -141,7 +141,7 @@ public class AnnouncementStorage {
     announcementRealization.setActionScore(rule.getScore());
     announcementRealization.setGlobalScore(realizationStorage.getScoreByIdentityId(String.valueOf(announcement.getAssignee())));
     announcementRealization.setProgram(program);
-    announcementRealization.setDomainLabel(program == null ? null : program.getTitle());
+    announcementRealization.setProgramLabel(program == null ? null : program.getTitle());
     announcementRealization.setObjectId("");
     announcementRealization.setType(rule.getType());
     return announcementRealization;

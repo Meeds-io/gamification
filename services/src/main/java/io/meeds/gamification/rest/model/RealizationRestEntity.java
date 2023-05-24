@@ -21,9 +21,9 @@ public class RealizationRestEntity implements Cloneable {
 
   private RuleDTO        action;
 
-  private ProgramDTO     domain;
+  private ProgramDTO     program;
 
-  private String         domainLabel;
+  private String         programLabel;
 
   private String         actionLabel;
 
@@ -46,8 +46,8 @@ public class RealizationRestEntity implements Cloneable {
     return new RealizationRestEntity(id,
                                      earner,
                                      action,
-                                     domain,
-                                     domainLabel,
+                                     program,
+                                     programLabel,
                                      actionLabel,
                                      score,
                                      creator,

@@ -59,9 +59,9 @@ public class GamificationDomainListener extends Listener<ProgramDTO, String> {
     String username = event.getData();
     String action = event.getEventName();
     RuleFilter ruleFilter = new RuleFilter();
-    ruleFilter.setDomainId(program.getId());
+    ruleFilter.setProgramId(program.getId());
     List<RuleDTO> rules = ruleService.getRules(ruleFilter, 0, -1);
-    List<BadgeDTO> badges = badgeService.findBadgesByDomain(program.getId());
+    List<BadgeDTO> badges = badgeService.findBadgesByProgramId(program.getId());
     switch (action) {
     case GAMIFICATION_DOMAIN_DELETE_LISTENER:
       for (RuleDTO rule : rules) {

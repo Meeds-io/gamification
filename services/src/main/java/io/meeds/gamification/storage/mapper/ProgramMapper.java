@@ -35,77 +35,77 @@ public class ProgramMapper {
   }
 
   public static List<ProgramDTO> fromEntities(RuleDAO ruleDAO,
-                                              List<ProgramEntity> domains) {
-    return domains.stream()
-                  .filter(Objects::nonNull)
-                  .map(entity -> fromEntity(ruleDAO, entity))
-                  .toList();
+                                              List<ProgramEntity> programs) {
+    return programs.stream()
+                   .filter(Objects::nonNull)
+                   .map(entity -> fromEntity(ruleDAO, entity))
+                   .toList();
   }
 
   public static ProgramEntity toEntity(ProgramDTO program) {
     if (program == null) {
       return null;
     }
-    ProgramEntity domain = new ProgramEntity();
-    domain.setId(program.getId());
-    domain.setTitle(program.getTitle());
-    domain.setDescription(program.getDescription());
-    domain.setCreatedBy(program.getCreatedBy());
-    domain.setLastModifiedBy(program.getLastModifiedBy());
-    domain.setDeleted(program.isDeleted());
-    domain.setEnabled(program.isEnabled());
+    ProgramEntity programEntity = new ProgramEntity();
+    programEntity.setId(program.getId());
+    programEntity.setTitle(program.getTitle());
+    programEntity.setDescription(program.getDescription());
+    programEntity.setCreatedBy(program.getCreatedBy());
+    programEntity.setLastModifiedBy(program.getLastModifiedBy());
+    programEntity.setDeleted(program.isDeleted());
+    programEntity.setEnabled(program.isEnabled());
     if (program.getAudienceId() > 0) {
-      domain.setAudienceId(program.getAudienceId());
+      programEntity.setAudienceId(program.getAudienceId());
     }
     if (program.getCreatedDate() != null) {
-      domain.setCreatedDate(Utils.parseRFC3339Date(program.getCreatedDate()));
+      programEntity.setCreatedDate(Utils.parseRFC3339Date(program.getCreatedDate()));
     }
-    domain.setLastModifiedDate(Utils.parseRFC3339Date(program.getLastModifiedDate()));
-    domain.setPriority(program.getPriority());
-    domain.setBudget(program.getBudget());
-    domain.setCoverFileId(program.getCoverFileId());
+    programEntity.setLastModifiedDate(Utils.parseRFC3339Date(program.getLastModifiedDate()));
+    programEntity.setPriority(program.getPriority());
+    programEntity.setBudget(program.getBudget());
+    programEntity.setCoverFileId(program.getCoverFileId());
     if (StringUtils.isBlank(program.getType())) {
-      domain.setType(EntityType.AUTOMATIC);
+      programEntity.setType(EntityType.AUTOMATIC);
     } else {
-      domain.setType(EntityType.valueOf(program.getType()));
+      programEntity.setType(EntityType.valueOf(program.getType()));
     }
     if (program.getOwnerIds() != null) {
-      domain.setOwners(program.getOwnerIds());
+      programEntity.setOwners(program.getOwnerIds());
     } else {
-      domain.setOwners(Collections.emptySet());
+      programEntity.setOwners(Collections.emptySet());
     }
-    return domain;
+    return programEntity;
   }
 
-  public static ProgramDTO fromEntity(RuleDAO ruleDAO, ProgramEntity domainEntity) {
-    if (domainEntity == null) {
+  public static ProgramDTO fromEntity(RuleDAO ruleDAO, ProgramEntity programEntity) {
+    if (programEntity == null) {
       return null;
     }
-    long lastUpdateTime = domainEntity.getLastModifiedDate() == null ? 0 : domainEntity.getLastModifiedDate().getTime();
-    String coverUrl = Utils.buildAttachmentUrl(String.valueOf(domainEntity.getId()),
+    long lastUpdateTime = programEntity.getLastModifiedDate() == null ? 0 : programEntity.getLastModifiedDate().getTime();
+    String coverUrl = Utils.buildAttachmentUrl(String.valueOf(programEntity.getId()),
                                                lastUpdateTime,
                                                Utils.TYPE,
-                                               domainEntity.getCoverFileId() == 0);
+                                               programEntity.getCoverFileId() == 0);
     ProgramDTO program = new ProgramDTO();
-    program.setId(domainEntity.getId());
-    program.setTitle(domainEntity.getTitle());
-    program.setDescription(domainEntity.getDescription());
-    if (domainEntity.getAudienceId() != null) {
-      program.setAudienceId(domainEntity.getAudienceId());
+    program.setId(programEntity.getId());
+    program.setTitle(programEntity.getTitle());
+    program.setDescription(programEntity.getDescription());
+    if (programEntity.getAudienceId() != null) {
+      program.setAudienceId(programEntity.getAudienceId());
     }
-    program.setCreatedBy(domainEntity.getCreatedBy());
-    program.setCreatedDate(Utils.toRFC3339Date(domainEntity.getCreatedDate()));
-    program.setLastModifiedBy(domainEntity.getLastModifiedBy());
-    program.setLastModifiedDate(Utils.toRFC3339Date(domainEntity.getLastModifiedDate()));
-    program.setDeleted(domainEntity.isDeleted());
-    program.setEnabled(domainEntity.isEnabled());
-    program.setBudget(domainEntity.getBudget());
-    program.setType(domainEntity.getType().name());
-    program.setCoverFileId(domainEntity.getCoverFileId());
+    program.setCreatedBy(programEntity.getCreatedBy());
+    program.setCreatedDate(Utils.toRFC3339Date(programEntity.getCreatedDate()));
+    program.setLastModifiedBy(programEntity.getLastModifiedBy());
+    program.setLastModifiedDate(Utils.toRFC3339Date(programEntity.getLastModifiedDate()));
+    program.setDeleted(programEntity.isDeleted());
+    program.setEnabled(programEntity.isEnabled());
+    program.setBudget(programEntity.getBudget());
+    program.setType(programEntity.getType().name());
+    program.setCoverFileId(programEntity.getCoverFileId());
     program.setCoverUrl(coverUrl);
-    program.setOwnerIds(domainEntity.getOwners());
-    program.setRulesTotalScore(domainEntity.isDeleted() || !domainEntity.isEnabled() ? 0
-                                                                                     : ruleDAO.getRulesTotalScoreByDomain(domainEntity.getId()));
+    program.setOwnerIds(programEntity.getOwners());
+    program.setRulesTotalScore(programEntity.isDeleted() || !programEntity.isEnabled() ? 0
+                                                                                       : ruleDAO.getRulesTotalScoreByProgramId(programEntity.getId()));
     return program;
   }
 

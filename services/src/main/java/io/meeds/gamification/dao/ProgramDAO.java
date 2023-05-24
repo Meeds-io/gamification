@@ -110,8 +110,8 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
       query.setParameter("type", EntityType.valueOf(entityFilterType.name()));
     }
-    if (StringUtils.isNotEmpty(filter.getDomainTitle())) {
-      query.setParameter("searchingKey", "%" + filter.getDomainTitle() + "%");
+    if (StringUtils.isNotEmpty(filter.getProgramTitle())) {
+      query.setParameter("searchingKey", "%" + filter.getProgramTitle() + "%");
     }
     if (filter.getOwnerId() > 0) {
       query.setParameter("ownerId", filter.getOwnerId());
@@ -126,7 +126,7 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
       suffixes.add("Type");
       predicates.add("d.type = :type");
     }
-    if (StringUtils.isNotEmpty(filter.getDomainTitle())) {
+    if (StringUtils.isNotEmpty(filter.getProgramTitle())) {
       suffixes.add("SearchBy");
       predicates.add(" UPPER(d.title) like UPPER(:searchingKey) ");
     }

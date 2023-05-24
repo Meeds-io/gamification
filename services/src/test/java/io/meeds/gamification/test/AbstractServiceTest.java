@@ -297,7 +297,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RuleEntity newRule(String name, long domainId) {
     ProgramEntity domainEntity = programDAO.find(domainId);
-    RuleEntity rule = ruleDAO.findActiveRuleByEventAndDomain(name, domainId);
+    RuleEntity rule = ruleDAO.findActiveRuleByEventAndProgramId(name, domainId);
     if (rule == null) {
       rule = new RuleEntity();
       rule.setScore(Integer.parseInt(TEST__SCORE));
@@ -320,7 +320,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RuleEntity newManualRule(String name, long domainId) {
     ProgramEntity domainEntity = programDAO.find(domainId);
-    RuleEntity rule = ruleDAO.findActiveRuleByEventAndDomain(name, domainId);
+    RuleEntity rule = ruleDAO.findActiveRuleByEventAndProgramId(name, domainId);
     if (rule == null) {
       rule = new RuleEntity();
       rule.setScore(Integer.parseInt(TEST__SCORE));

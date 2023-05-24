@@ -65,7 +65,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertEquals(ruleDAO.findAll().size(), 0);
     RuleEntity ruleEntity = newRule();
     long domainId = ruleEntity.getDomainEntity().getId();
-    assertNotNull(ruleDAO.findActiveRuleByEventAndDomain(ruleEntity.getEvent(), domainId));
+    assertNotNull(ruleDAO.findActiveRuleByEventAndProgramId(ruleEntity.getEvent(), domainId));
   }
 
   @Test
@@ -138,12 +138,12 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleDAO.update(r2);
     r3.setScore(20);
     ruleDAO.update(r3);
-    assertEquals(160, ruleDAO.getRulesTotalScoreByDomain(firstDomain.getId()));
-    assertEquals(20, ruleDAO.getRulesTotalScoreByDomain(secondDomain.getId()));
+    assertEquals(160, ruleDAO.getRulesTotalScoreByProgramId(firstDomain.getId()));
+    assertEquals(20, ruleDAO.getRulesTotalScoreByProgramId(secondDomain.getId()));
 
     r1.setEnabled(false);
     ruleDAO.update(r1);
-    assertEquals(60, ruleDAO.getRulesTotalScoreByDomain(firstDomain.getId()));
+    assertEquals(60, ruleDAO.getRulesTotalScoreByProgramId(firstDomain.getId()));
   }
 
   @Test
@@ -152,7 +152,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     ProgramEntity domainEntity = newDomain();
     filter.setDateFilterType(DateFilterType.ALL);
     RuleEntity ruleEntity1 = newRule("rule1", domainEntity.getId());
-    filter.setDomainId(ruleEntity1.getDomainEntity().getId());
+    filter.setProgramId(ruleEntity1.getDomainEntity().getId());
     filter.setSpaceIds(Collections.singletonList(1L));
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     newRule("rule2", domainEntity.getId());
@@ -171,7 +171,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     filter.setDateFilterType(DateFilterType.ALL);
     assertEquals(0, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     RuleEntity ruleEntity1 = newManualRule("rule1", domainEntity1.getId());
-    filter.setDomainId(ruleEntity1.getDomainEntity().getId());
+    filter.setProgramId(ruleEntity1.getDomainEntity().getId());
     filter.setSpaceIds(Collections.singletonList(1L));
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     newManualRule("rule2", domainEntity1.getId());
@@ -249,7 +249,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     ProgramEntity domainEntity2 = newDomain();
     assertEquals(0, ruleDAO.countRulesByFilter(filter));
     RuleEntity ruleEntity1 = newRule("rule1", domainEntity.getId());
-    filter.setDomainId(ruleEntity1.getDomainEntity().getId());
+    filter.setProgramId(ruleEntity1.getDomainEntity().getId());
     filter.setSpaceIds(Collections.singletonList(1L));
     assertEquals(1, ruleDAO.countRulesByFilter(filter));
     newRule("rule2", domainEntity.getId());

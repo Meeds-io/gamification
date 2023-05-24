@@ -29,17 +29,17 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class UserInfoContext extends UserInfo {
 
-  private boolean                canEdit;
+  private boolean                    canEdit;
 
-  private boolean                isAllowedToRealize;
+  private boolean                    isAllowedToRealize;
 
-  private boolean                isMember;
+  private boolean                    isMember;
 
-  private boolean                isRedactor;
+  private boolean                    isRedactor;
 
-  private boolean                isManager;
+  private boolean                    isManager;
 
-  private boolean                isDomainOwner;
+  private boolean                    isProgramOwner;
 
   private RealizationValidityContext context;
 
