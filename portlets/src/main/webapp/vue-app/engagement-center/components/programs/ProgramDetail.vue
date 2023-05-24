@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div id="engagementCenterProgramDetail" class="pa-2 pa-sm-5">
+  <div id="engagementCenterProgramDetail">
     <div v-if="!isDeleted">
       <div class="py-2 py-sm-5 d-flex">
         <v-tooltip :disabled="$root.isMobile" bottom>
@@ -357,6 +357,7 @@ export default {
         offset,
         limit: itemsPerPage,
         announcementsLimit: this.announcementsLimit,
+        returnSize: true,
       })
         .then((data) => {
           this.programRules = data.rules || [];

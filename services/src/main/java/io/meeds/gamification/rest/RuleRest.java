@@ -139,6 +139,14 @@ public class RuleRest implements ResourceContainer {
                            @Parameter(description = "term to search rules with")
                            @QueryParam("term")
                            String term,
+                           @Parameter(description = "Sort field. Possible values: createdDate, startDate, endDate or score.")
+                           @QueryParam("sortBy")
+                           @DefaultValue("score")
+                           String sortField,
+                           @Parameter(description = "Whether to retrieve results sorted descending or not")
+                           @QueryParam("sortDescending")
+                           @DefaultValue("true")
+                           boolean sortDescending,
                            @Parameter(description = "Number of announcements per rule")
                            @Schema(defaultValue = "0")
                            @QueryParam("announcementsLimit")
@@ -183,6 +191,8 @@ public class RuleRest implements ResourceContainer {
     ruleFilter.setOrderByRealizations(orderByRealizations);
     ruleFilter.setExcludedRuleIds(excludedRuleIds);
     ruleFilter.setProgramId(programId);
+    ruleFilter.setSortBy(sortField);
+    ruleFilter.setSortDescending(sortDescending);
     String[] expandFieldsArray = StringUtils.split(expand, ",");
     List<String> expandFields = expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
 

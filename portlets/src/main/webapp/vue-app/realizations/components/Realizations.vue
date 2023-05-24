@@ -19,7 +19,7 @@
 -->
 <template>
   <div class="Realizations border-box-sizing">
-    <v-toolbar class="z-index-one px-2" flat>
+    <v-toolbar class="z-index-one" flat>
       <div class="d-flex flex-grow-1 align-center content-box-sizing">
         <template v-if="!isMobile">
           <realizations-export-button :link="exportFileLink" />
@@ -32,7 +32,7 @@
             <v-spacer />
           </template>
         </template>
-        <div class="ml-n4 pe-3 d-flex align-center">
+        <div class="pe-3 d-flex align-center">
           <select-period
             v-model="selectedPeriod"
             :left="!isMobile"
@@ -40,12 +40,14 @@
         </div>
         <v-spacer v-if="isMobile" />
         <v-btn
-          color="primary"
+          :class="isMobile && 'width-auto' || 'primary-border-color'"
+          :color="!isMobile && 'primary'"
+          :small="isMobile"
           text
-          class="primary-border-color px-2"
+          class="px-0 px-sm-2"
           @click="openRealizationsFilterDrawer">
-          <v-icon size="16">fas fa-sliders-h</v-icon>
-          <span class="d-none d-sm-inline font-weight-regular caption ms-2">
+          <v-icon :size="isMobile && 24 || 16">fas fa-sliders-h</v-icon>
+          <span v-if="!isMobile" class="font-weight-regular caption ms-2">
             {{ $t('profile.label.search.openSearch') }}
           </span>
         </v-btn>
@@ -83,7 +85,7 @@
       disable-pagination
       hide-default-footer
       must-sort
-      class="mx-6 mt-6 realizationsTable">
+      class="mx-3 mt-2 realizationsTable">
       <template slot="item" slot-scope="props">
         <realization-item
           :realization="props.item"
@@ -97,7 +99,7 @@
       v-if="displaySearchResult && isMobile"
       flat
       width="auto"
-      class="ms-3 me-7 mb-4">
+      class="px-4 mb-4">
       <v-select
         ref="select"
         class="pt-0"
@@ -117,8 +119,7 @@
     </template>
     <v-toolbar
       color="transparent"
-      flat
-      class="pa-2 mb-4">
+      flat>
       <v-btn
         v-if="hasMore && displaySearchResult"
         class="btn"

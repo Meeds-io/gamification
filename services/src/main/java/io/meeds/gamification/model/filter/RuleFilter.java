@@ -52,6 +52,10 @@ public class RuleFilter implements Serializable {
 
   private List<Long>        excludedRuleIds;
 
+  private String            sortBy;
+
+  private boolean           sortDescending   = true;
+
   public RuleFilter clone() { // NOSONAR
     return new RuleFilter(term,
                           eventName,
@@ -61,7 +65,9 @@ public class RuleFilter implements Serializable {
                           entityFilterType,
                           entityStatusType,
                           orderByRealizations,
-                          excludedRuleIds == null ? null : new ArrayList<>(excludedRuleIds));
+                          excludedRuleIds == null ? null : new ArrayList<>(excludedRuleIds),
+                          sortBy,
+                          sortDescending);
   }
 
 }
