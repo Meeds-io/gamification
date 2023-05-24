@@ -96,14 +96,14 @@ public class BadgeService {
    * Find a BadgeEntity by title
    *
    * @param  badgeTitle : badge title
-   * @param  domainId   : badge domain id
+   * @param  programId   : badge program id
    * @return            an instance BadgeDTO
    */
-  public BadgeDTO findBadgeByTitleAndDomain(String badgeTitle, long domainId) {
+  public BadgeDTO findBadgeByTitleAndProgramId(String badgeTitle, long programId) {
 
     try {
       // --- Get Entity from DB
-      BadgeEntity entity = badgeDAO.findBadgeByTitleAndDomain(badgeTitle, domainId);
+      BadgeEntity entity = badgeDAO.findBadgeByTitleAndProgramId(badgeTitle, programId);
       // --- Convert Entity to DTO
       if (entity != null) {
         return BadgeMapper.fromEntity(programStorage, entity);
@@ -143,7 +143,7 @@ public class BadgeService {
       badgeDTO.setEnabled(false);
       badgeEntity = badgeDAO.create(BadgeMapper.toEntity(badgeDTO));
     } else {
-      badgeEntity = badgeDAO.findBadgeByTitleAndDomain(badgeDTO.getTitle(), badgeDTO.getProgram().getId());
+      badgeEntity = badgeDAO.findBadgeByTitleAndProgramId(badgeDTO.getTitle(), badgeDTO.getProgram().getId());
       if (badgeEntity == null) {
         if (!badgeDTO.getProgram().isEnabled()) {
           badgeDTO.setEnabled(false);
@@ -173,9 +173,9 @@ public class BadgeService {
    */
   public BadgeDTO updateBadge(BadgeDTO badgeDTO) throws ObjectAlreadyExistsException {
     BadgeEntity badgeEntity = null;
-    badgeEntity = badgeDAO.findBadgeByTitleAndDomain(badgeDTO.getTitle(), badgeDTO.getProgram().getId());
+    badgeEntity = badgeDAO.findBadgeByTitleAndProgramId(badgeDTO.getTitle(), badgeDTO.getProgram().getId());
     if (badgeEntity != null && badgeDTO.getId() != null && badgeEntity.getId().longValue() != badgeDTO.getId().longValue()) {
-      throw new ObjectAlreadyExistsException("Badge with same title and domain already exist");
+      throw new ObjectAlreadyExistsException("Badge with same title and program already exist");
     }
     if (badgeDTO.getProgram() == null || !badgeDTO.getProgram().isEnabled()) {
       badgeDTO.setEnabled(false);
@@ -200,51 +200,34 @@ public class BadgeService {
     }
   }
 
-  public List<BadgeDTO> findBadgesByDomain(long domainId) {
+  public List<BadgeDTO> findBadgesByProgramId(long programId) {
 
     try {
       // --- load all Rules
-      List<BadgeEntity> badges = badgeDAO.findBadgesByDomain(domainId);
+      List<BadgeEntity> badges = badgeDAO.findBadgesByProgramId(programId);
       if (badges != null) {
         return BadgeMapper.fromEntities(programStorage, badges);
       }
 
     } catch (Exception e) {
-      LOG.error("Error to find badges within domain id {}", domainId, e);
+      LOG.error("Error to find badges within program id {}", programId, e);
     }
     return Collections.emptyList();
   }
 
-  public List<BadgeDTO> findEnabledBadgesByDomain(long badgeDomainId) {
+  public List<BadgeDTO> findEnabledBadgesByProgramId(long programId) {
 
     try {
       // --- load all Rules
-      List<BadgeEntity> badges = badgeDAO.findEnabledBadgesByDomain(badgeDomainId);
+      List<BadgeEntity> badges = badgeDAO.findEnabledBadgesByProgramId(programId);
       if (badges != null) {
         return BadgeMapper.fromEntities(programStorage, badges);
       }
 
     } catch (Exception e) {
-      LOG.error("Error to find badges within domain id {}", badgeDomainId, e);
+      LOG.error("Error to find badges within program id {}", programId, e);
     }
     return Collections.emptyList();
   }
 
-  /**
-   * Get all Rules by with null ProgramDTO from DB
-   *
-   * @return RuleDTO list
-   */
-  public List<BadgeDTO> getAllBadgesWithNullDomain() {
-    try {
-      List<BadgeEntity> badgeEntities = badgeDAO.getAllBadgesWithNullDomain();
-      if (badgeEntities != null) {
-        return BadgeMapper.fromEntities(programStorage, badgeEntities);
-      }
-    } catch (Exception e) {
-      LOG.error("Error to find Badges", e);
-      throw (e);
-    }
-    return Collections.emptyList();
-  }
 }

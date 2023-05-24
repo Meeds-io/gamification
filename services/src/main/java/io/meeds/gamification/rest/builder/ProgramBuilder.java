@@ -76,9 +76,9 @@ public class ProgramBuilder {
   }
 
   public static List<ProgramRestEntity> toRestEntities(ProgramService programService,
-                                                       List<ProgramDTO> domains,
+                                                       List<ProgramDTO> programs,
                                                        String username) {
-    return domains.stream().map(program -> toRestEntity(programService, program, username)).toList();
+    return programs.stream().map(program -> toRestEntity(programService, program, username)).toList();
   }
 
   private static List<UserInfo> getProgramOwnersByIds(Set<Long> ids, long spaceId) {
@@ -100,7 +100,7 @@ public class ProgramBuilder {
                     return toUserInfo(identity);
                   }
                 } catch (Exception e) {
-                  LOG.warn("Error when getting domain owner with id {}. Ignore retrieving identity information", id, e);
+                  LOG.warn("Error when getting program owner with id {}. Ignore retrieving identity information", id, e);
                 }
                 return null;
               })

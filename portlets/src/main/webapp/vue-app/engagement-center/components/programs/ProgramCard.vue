@@ -61,7 +61,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </div>
     <div class="d-flex mb-0 mx-2">
       <div class="pa-1">
-        <span class="my-auto caption text-light-color"> {{ this.$t('programs.details.label.hosts') }} </span>
+        <span class="my-auto caption text-light-color"> {{ $t('programs.details.label.hosts') }} </span>
       </div>
       <v-spacer />
       <engagement-center-avatars-list

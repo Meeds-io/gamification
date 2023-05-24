@@ -351,7 +351,7 @@ export default {
       this.loadingRules = true;
       return this.$ruleService.getRules({
         term: this.keyword,
-        domainId: this.programId,
+        programId: this.programId,
         status: this.status,
         dateFilter: this.dateFilter,
         offset,

@@ -28,7 +28,7 @@ import lombok.Setter;
 @Setter
 public class ProgramList {
 
-  private List<ProgramRestEntity> domains;
+  private List<ProgramRestEntity> programs;
 
   private int                     offset;
 

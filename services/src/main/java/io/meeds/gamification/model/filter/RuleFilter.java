@@ -38,7 +38,7 @@ public class RuleFilter implements Serializable {
 
   private String            eventName;
 
-  private long              domainId;
+  private long              programId;
 
   private List<Long>        spaceIds;
 
@@ -55,7 +55,7 @@ public class RuleFilter implements Serializable {
   public RuleFilter clone() { // NOSONAR
     return new RuleFilter(term,
                           eventName,
-                          domainId,
+                          programId,
                           spaceIds == null ? null : new ArrayList<>(spaceIds),
                           dateFilterType,
                           entityFilterType,

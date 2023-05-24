@@ -156,7 +156,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public int getLeaderboardRank(String earnerIdentityId, Date date, Long domainId) {
+  public int getLeaderboardRank(String earnerIdentityId, Date date, Long programId) {
     List<StandardLeaderboard> leaderboard = null;
     org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId); // NOSONAR
     // :
@@ -164,16 +164,16 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     // is always true
     IdentityType identityType = IdentityType.getType(identity.getProviderId());
     if (date != null) {
-      if (domainId == null || domainId <= 0) {
+      if (programId == null || programId <= 0) {
         leaderboard = realizationStorage.findRealizationsByDate(identityType, date);
       } else {
-        leaderboard = realizationStorage.findRealizationsByDateAndDomain(identityType, date, domainId);
+        leaderboard = realizationStorage.findRealizationsByDateAndProgramId(identityType, date, programId);
       }
     } else {
-      if (domainId == null || domainId <= 0) {
+      if (programId == null || programId <= 0) {
         leaderboard = realizationStorage.findRealizationsAgnostic(identityType);
       } else {
-        leaderboard = realizationStorage.findRealizationsByDomain(identityType, domainId);
+        leaderboard = realizationStorage.findRealizationsByProgramId(identityType, programId);
       }
     }
     // Get username
@@ -190,8 +190,8 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public List<ProfileReputation> getScorePerDomainByIdentityId(String earnerIdentityId) {
-    return realizationStorage.getScorePerDomainByIdentityId(earnerIdentityId);
+  public List<ProfileReputation> getScorePerProgramByIdentityId(String earnerIdentityId) {
+    return realizationStorage.getScorePerProgramByIdentityId(earnerIdentityId);
   }
 
   @Override
@@ -390,7 +390,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
 
     List<StandardLeaderboard> result = null;
-    if (filter.getDomainId() == null || filter.getDomainId() <= 0) {
+    if (filter.getProgramId() == null || filter.getProgramId() <= 0) {
       // Compute date
       LocalDate now = LocalDate.now();
       // Check the period
@@ -415,14 +415,14 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         Date fromDate = from(now.with(DayOfWeek.MONDAY)
                                 .atStartOfDay(ZoneId.systemDefault())
                                 .toInstant());
-        result = realizationStorage.findRealizationsByDateByDomain(fromDate, identityType, filter.getDomainId(), limit);
+        result = realizationStorage.findRealizationsByDateByProgramId(fromDate, identityType, filter.getProgramId(), limit);
       } else if (filter.getPeriod().equals(Period.MONTH.name())) {
         Date fromDate = from(now.with(TemporalAdjusters.firstDayOfMonth())
                                 .atStartOfDay(ZoneId.systemDefault())
                                 .toInstant());
-        result = realizationStorage.findRealizationsByDateByDomain(fromDate, identityType, filter.getDomainId(), limit);
+        result = realizationStorage.findRealizationsByDateByProgramId(fromDate, identityType, filter.getProgramId(), limit);
       } else {
-        result = realizationStorage.findRealizationsByDomain(filter.getDomainId(), identityType, limit);
+        result = realizationStorage.findRealizationsByProgramId(filter.getProgramId(), identityType, limit);
       }
     }
 
@@ -572,27 +572,28 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     // Add a new line after the header
     sbResult.append(SEPARATOR);
 
-    realizations.forEach(ga -> {
+    realizations.forEach(realization -> {
       try {
-        RuleDTO rule = ga.getRuleId() != null && ga.getRuleId() != 0 ? ruleService.findRuleById(ga.getRuleId())
-                                                                     : ruleService.findRuleByTitle(ga.getActionTitle());
+        RuleDTO rule = realization.getRuleId() != null
+            && realization.getRuleId() != 0 ? ruleService.findRuleById(realization.getRuleId())
+                                            : ruleService.findRuleByTitle(realization.getActionTitle());
 
         String ruleTitle = rule == null ? null : rule.getEvent();
-        String actionLabel = ga.getActionTitle() != null ? ga.getActionTitle() : ruleTitle;
-        String domainTitle = escapeIllegalCharacterInMessage(ga.getDomainLabel());
-        sbResult.append(ga.getCreatedDate());
+        String actionLabel = realization.getActionTitle() != null ? realization.getActionTitle() : ruleTitle;
+        String programTitle = escapeIllegalCharacterInMessage(realization.getProgramLabel());
+        sbResult.append(realization.getCreatedDate());
         sbResult.append(DELIMITER);
-        sbResult.append(Utils.getUserFullName(ga.getEarnerId()));
+        sbResult.append(Utils.getUserFullName(realization.getEarnerId()));
         sbResult.append(DELIMITER);
         sbResult.append(rule != null ? rule.getType().name() : "-");
         sbResult.append(DELIMITER);
-        sbResult.append(domainTitle);
+        sbResult.append(programTitle);
         sbResult.append(DELIMITER);
         sbResult.append(actionLabel);
         sbResult.append(DELIMITER);
-        sbResult.append(ga.getActionScore());
+        sbResult.append(realization.getActionScore());
         sbResult.append(DELIMITER);
-        sbResult.append(ga.getStatus());
+        sbResult.append(realization.getStatus());
         sbResult.append(DELIMITER);
         sbResult.append(SEPARATOR);
       } catch (Exception e) {
@@ -619,53 +620,53 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
 
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    List<Long> filterDomainIds = realizationFilter.getDomainIds();
+    List<Long> filterProgramIds = realizationFilter.getProgramIds();
 
     boolean isSelfFilter = CollectionUtils.isNotEmpty(realizationFilter.getEarnerIds())
         && realizationFilter.getEarnerIds().size() == 1
         && realizationFilter.getEarnerIds().get(0).equals(userIdentity.getId());
-    boolean isFilterByDomains = CollectionUtils.isNotEmpty(filterDomainIds);
+    boolean isFilterByPrograms = CollectionUtils.isNotEmpty(filterProgramIds);
 
     if (isSelfFilter) {
-      if (isFilterByDomains && !isDomainsMember(filterDomainIds, userAclIdentity.getUserId())) {
-        throw new IllegalAccessException("User is not member of one or several selected domains :"
-            + filterDomainIds);
+      if (isFilterByPrograms && !isProgramsMember(filterProgramIds, userAclIdentity.getUserId())) {
+        throw new IllegalAccessException("User is not member of one or several selected programs :"
+            + filterProgramIds);
       }
-    } else if (isFilterByDomains && !isDomainsOwner(filterDomainIds, userAclIdentity.getUserId())) {
-      throw new IllegalAccessException("User is not owner of one or several selected domains :" + filterDomainIds);
+    } else if (isFilterByPrograms && !isProgramsOwner(filterProgramIds, userAclIdentity.getUserId())) {
+      throw new IllegalAccessException("User is not owner of one or several selected programs :" + filterProgramIds);
     } else if (realizationFilter.isOwned()) {
-      List<Long> ownedDomainIds = getOwnedDomainIds(userIdentity);
-      if (CollectionUtils.isEmpty(ownedDomainIds)) {
-        throw new IllegalAccessException("User is not owner of any domain");
+      List<Long> ownedProgramIds = getOwnedProgramIds(userIdentity);
+      if (CollectionUtils.isEmpty(ownedProgramIds)) {
+        throw new IllegalAccessException("User is not owner of any program");
       }
-      realizationFilter.setDomainIds(ownedDomainIds);
-    } else if (!isFilterByDomains) {
-      throw new IllegalAccessException("User is not allowed to search for realizations of all domains");
+      realizationFilter.setProgramIds(ownedProgramIds);
+    } else if (!isFilterByPrograms) {
+      throw new IllegalAccessException("User is not allowed to search for realizations of all programs");
     }
     return realizationFilter;
   }
 
-  private List<Long> getOwnedDomainIds(org.exoplatform.social.core.identity.model.Identity userIdentity) throws IllegalAccessException {
-    ProgramFilter domainFilter = new ProgramFilter();
-    domainFilter.setOwnerId(Long.parseLong(userIdentity.getId()));
+  private List<Long> getOwnedProgramIds(org.exoplatform.social.core.identity.model.Identity userIdentity) throws IllegalAccessException {
+    ProgramFilter programFilter = new ProgramFilter();
+    programFilter.setOwnerId(Long.parseLong(userIdentity.getId()));
     List<String> managedSpaceIds = spaceService.getManagerSpacesIds(userIdentity.getRemoteId(), 0, -1);
     if (CollectionUtils.isEmpty(managedSpaceIds)) {
-      domainFilter.setSpacesIds(Collections.emptyList());
+      programFilter.setSpacesIds(Collections.emptyList());
     } else {
-      domainFilter.setSpacesIds(managedSpaceIds.stream().map(Long::parseLong).toList());
+      programFilter.setSpacesIds(managedSpaceIds.stream().map(Long::parseLong).toList());
     }
-    domainFilter.setIncludeDeleted(true);
-    return programService.getProgramIds(domainFilter, userIdentity.getRemoteId(), 0, -1);
+    programFilter.setIncludeDeleted(true);
+    return programService.getProgramIds(programFilter, userIdentity.getRemoteId(), 0, -1);
   }
 
-  private boolean isDomainsOwner(List<Long> domainIds, String username) {
-    return domainIds.stream()
-                    .allMatch(domainId -> programService.isProgramOwner(domainId, username));
+  private boolean isProgramsOwner(List<Long> programIds, String username) {
+    return programIds.stream()
+                     .allMatch(programId -> programService.isProgramOwner(programId, username));
   }
 
-  private boolean isDomainsMember(List<Long> domainIds, String username) {
-    return domainIds.stream()
-                    .allMatch(domainId -> programService.isProgramMember(domainId, username));
+  private boolean isProgramsMember(List<Long> programIds, String username) {
+    return programIds.stream()
+                     .allMatch(programId -> programService.isProgramMember(programId, username));
   }
 
   private List<StandardLeaderboard> filterAuthorizedSpaces(List<StandardLeaderboard> result,

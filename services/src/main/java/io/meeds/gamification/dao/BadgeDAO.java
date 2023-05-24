@@ -44,13 +44,13 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
 
   }
 
-  public BadgeEntity findBadgeByTitleAndDomain(String badgeTitle, long domainId) throws PersistenceException {
+  public BadgeEntity findBadgeByTitleAndProgramId(String badgeTitle, long programId) throws PersistenceException {
 
     TypedQuery<BadgeEntity> query = getEntityManager()
                                                       .createNamedQuery("GamificationBadge.findBadgeByTitleAndDomain",
                                                                         BadgeEntity.class)
                                                       .setParameter("badgeTitle", badgeTitle)
-                                                      .setParameter(DOMAIN_ID, domainId);
+                                                      .setParameter(DOMAIN_ID, programId);
 
     try {
       return query.getSingleResult();
@@ -60,7 +60,7 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
 
   }
 
-  public List<BadgeEntity> findBadgesByDomain(long domainId) throws PersistenceException {
+  public List<BadgeEntity> findBadgesByProgramId(long domainId) throws PersistenceException {
 
     TypedQuery<BadgeEntity> query = getEntityManager().createNamedQuery("GamificationBadge.findBadgeByDomain", BadgeEntity.class)
                                                       .setParameter(DOMAIN_ID, domainId);
@@ -73,7 +73,7 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
 
   }
 
-  public List<BadgeEntity> findEnabledBadgesByDomain(long domainId) throws PersistenceException {
+  public List<BadgeEntity> findEnabledBadgesByProgramId(long domainId) throws PersistenceException {
 
     TypedQuery<BadgeEntity> query = getEntityManager().createNamedQuery("GamificationBadge.findEnabledBadgeByDomain",
                                                                         BadgeEntity.class)
@@ -99,14 +99,4 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
 
   }
 
-  public List<BadgeEntity> getAllBadgesWithNullDomain() throws PersistenceException {
-
-    TypedQuery<BadgeEntity> query = getEntityManager().createNamedQuery("GamificationBadge.getAllBadgesWithNullDomain",
-                                                                        BadgeEntity.class);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
-  }
 }

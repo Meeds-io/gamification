@@ -27,7 +27,7 @@ import static io.meeds.gamification.utils.Utils.STATISTICS_ENABLE_PROGRAM_OPERAT
 import static io.meeds.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_SUBMODULE;
 import static io.meeds.gamification.utils.Utils.STATISTICS_UPDATE_PROGRAM_OPERATION;
-import static io.meeds.gamification.utils.Utils.addDomainStatisticParameters;
+import static io.meeds.gamification.utils.Utils.addProgramStatisticParameters;
 import static org.exoplatform.analytics.utils.AnalyticsUtils.addStatisticData;
 
 import org.exoplatform.analytics.model.StatisticData;
@@ -88,7 +88,7 @@ public class AnalyticsProgramListener extends Listener<ProgramDTO, String> {
     default:
       throw new IllegalArgumentException("Unexpected listener event name: " + event.getEventName());
     }
-    addDomainStatisticParameters(identityManager, spaceService, program, statisticData, userId);
+    addProgramStatisticParameters(identityManager, spaceService, program, statisticData, userId);
     addStatisticData(statisticData);
   }
 

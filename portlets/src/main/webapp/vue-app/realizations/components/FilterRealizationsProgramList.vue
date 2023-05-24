@@ -133,10 +133,10 @@ export default {
         .then((programsList) => {
           this.size = programsList.size;
           if (append) {
-            this.loadedMoreProgramsList = programsList?.domains.map(program => ({[program.id]: program.title}));
+            this.loadedMoreProgramsList = programsList?.programs.map(program => ({[program.id]: program.title}));
             this.programsList = this.programsList?.concat(this.loadedMoreProgramsList);
           } else {
-            this.programsList = programsList?.domains.map( program => ({[program.id]: program.title}));
+            this.programsList = programsList?.programs.map( program => ({[program.id]: program.title}));
             this.loadedMoreProgramsList = this.programsList;
           }
           if (this.selectAll) {

@@ -410,13 +410,13 @@ public class RealizationServiceTest extends AbstractServiceTest {
 
   public void testBuildDomainScoreByUserId() {
     RuleDTO ruleDTO = newRuleDTO();
-    assertEquals(0, realizationService.getScorePerDomainByIdentityId(TEST_USER_EARNER).size());
+    assertEquals(0, realizationService.getScorePerProgramByIdentityId(TEST_USER_EARNER).size());
     realizationService.createRealizations(ruleDTO.getEvent(),
                                           TEST_USER_EARNER,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    assertEquals(1, realizationService.getScorePerDomainByIdentityId(TEST_USER_EARNER).size());
+    assertEquals(1, realizationService.getScorePerProgramByIdentityId(TEST_USER_EARNER).size());
   }
 
   public void testFilterByDomainId() {
@@ -425,7 +425,7 @@ public class RealizationServiceTest extends AbstractServiceTest {
     filter.setPeriod(Period.ALL.name());
     filter.setIdentityType(IdentityType.USER);
     filter.setLoadCapacity(limit);
-    filter.setDomainId(ruleDTO.getProgram().getId());
+    filter.setProgramId(ruleDTO.getProgram().getId());
     List<StandardLeaderboard> filteredLeaderboard = realizationService.getLeaderboard(filter);
     assertEquals(0, filteredLeaderboard.size());
 
