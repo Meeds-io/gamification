@@ -53,7 +53,7 @@ public class RealizationBuilder {
                                        Utils.getIdentityEntity(identityManager, Long.parseLong(realization.getEarnerId())),
                                        rule,
                                        realization.getProgram(),
-                                       realization.getDomainLabel(),
+                                       realization.getProgramLabel(),
                                        realization.getActionTitle() != null ? realization.getActionTitle()
                                                                             : Objects.requireNonNull(rule).getTitle(),
                                        realization.getActionScore(),

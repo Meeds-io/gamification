@@ -145,13 +145,9 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       // Set Action Title
       gamificationInformationRestEntity.setActionTitle(element.getActionTitle());
       gamificationInformationRestEntity.setContext(element.getContext());
-      // Set Date-Hours-Minutes GMT Format of the creation
       gamificationInformationRestEntity.setCreatedDate(element.getCreatedDate());
-      // Set Domain
       gamificationInformationRestEntity.setProgram(element.getProgram());
-      // Set Global Score
       gamificationInformationRestEntity.setGlobalScore(element.getGlobalScore());
-      // Set event id
       if (canShowDetails) {
         if (element.getActivityId() != null && element.getActivityId() != 0) {
           gamificationInformationRestEntity.setObjectId("/" + LinkProvider.getPortalName("") + "/"
@@ -161,7 +157,6 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
           gamificationInformationRestEntity.setObjectId(element.getObjectId());
         }
       }
-      // log
       gamificationInformationRestEntities.add(gamificationInformationRestEntity);
     }
 

@@ -36,7 +36,6 @@ import java.util.Objects;
 @NamedQuery(name = "GamificationBadge.findBadgeByTitleAndDomain", query = "SELECT badge FROM GamificationBadge badge where badge.title = :badgeTitle and badge.domainEntity.id = :domainId")
 @NamedQuery(name = "GamificationBadge.deleteBadgeByTitle", query = "DELETE FROM GamificationBadge badge WHERE badge.title = :badgeTitle")
 @NamedQuery(name = "GamificationBadge.deleteBadgeById", query = "DELETE FROM GamificationBadge badge WHERE badge.id = :badgeId")
-@NamedQuery(name = "GamificationBadge.getAllBadgesWithNullDomain", query = "SELECT badge FROM GamificationBadge badge where badge.domainEntity IS NULL")
 public class BadgeEntity extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 8412261859526217944L;

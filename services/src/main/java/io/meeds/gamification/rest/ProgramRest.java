@@ -76,7 +76,7 @@ public class ProgramRest implements ResourceContainer {
                                                        System.getProperty("meeds.engagementCenter.program.defaultCoverPath",
                                                                           "/skin/images/program_default_cover_back.png");
 
-  private static final String       DOMAIN_NOT_FOUND_MESSAGE = "The domain doesn't exit";
+  private static final String       PROGRAM_NOT_FOUND_MESSAGE = "The program doesn't exit";
 
   private static final Log          LOG                      = ExoLogger.getLogger(ProgramRest.class);
 
@@ -113,7 +113,7 @@ public class ProgramRest implements ResourceContainer {
       MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN
   })
   @RolesAllowed("users")
-  @Operation(summary = "Retrieves the list of available domains", method = "GET")
+  @Operation(summary = "Retrieves the list of available programs", method = "GET")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
@@ -129,26 +129,26 @@ public class ProgramRest implements ResourceContainer {
                               @QueryParam("limit")
                               @DefaultValue("0")
                               int limit,
-                              @Parameter(description = "Domains type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = AUTOMATIC.", required = false)
+                              @Parameter(description = "Programs type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = AUTOMATIC.", required = false)
                               @QueryParam("type")
                               @DefaultValue("ALL")
                               String type,
-                              @Parameter(description = "Domains status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false)
+                              @Parameter(description = "Programs status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false)
                               @QueryParam("status")
                               @DefaultValue("ENABLED")
                               String status,
                               @Parameter(description = "Whether retrieve owned programs only or not")
                               @QueryParam("owned")
                               boolean owned,
-                              @Parameter(description = "If true, this will return the filtered domains sorted by budget. Possible values = true or false. Default value = false.", required = false)
+                              @Parameter(description = "If true, this will return the filtered programs sorted by budget. Possible values = true or false. Default value = false.", required = false)
                               @QueryParam("sortByBudget")
                               @DefaultValue("false")
                               boolean sortByBudget,
-                              @Parameter(description = "If true, this will return the filtered domains including deleted domains. Possible values = true or false. Default value = false.", required = false)
+                              @Parameter(description = "If true, this will return the filtered programs including deleted ones. Possible values = true or false. Default value = false.", required = false)
                               @QueryParam("includeDeleted")
                               @DefaultValue("false")
                               boolean includeDeleted,
-                              @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false)
+                              @Parameter(description = "If true, this will return the total count of filtered programs. Possible values = true or false. Default value = false.", required = false)
                               @QueryParam("returnSize")
                               @DefaultValue("false")
                               boolean returnSize,
@@ -156,33 +156,32 @@ public class ProgramRest implements ResourceContainer {
                               @QueryParam("query")
                               String query) {
 
-    ProgramFilter domainFilter = new ProgramFilter();
-    domainFilter.setSortByBudget(sortByBudget);
-    domainFilter.setIncludeDeleted(includeDeleted);
+    ProgramFilter programFilter = new ProgramFilter();
+    programFilter.setSortByBudget(sortByBudget);
+    programFilter.setIncludeDeleted(includeDeleted);
     EntityFilterType filterType = StringUtils.isBlank(type) ? EntityFilterType.ALL : EntityFilterType.valueOf(type);
-    domainFilter.setEntityFilterType(filterType);
+    programFilter.setEntityFilterType(filterType);
     EntityStatusType statusType = StringUtils.isBlank(status) ? EntityStatusType.ENABLED : EntityStatusType.valueOf(status);
-    domainFilter.setEntityStatusType(statusType);
+    programFilter.setEntityStatusType(statusType);
     if (StringUtils.isNotEmpty(query)) {
-      domainFilter.setDomainTitle(query);
+      programFilter.setProgramTitle(query);
     }
     if (owned) {
-      domainFilter.setOwnerId(Utils.getCurrentUserIdentityId());
+      programFilter.setOwnerId(Utils.getCurrentUserIdentityId());
     }
     String currentUser = Utils.getCurrentUser();
     try {
-      ProgramList domainList = new ProgramList();
-      List<ProgramRestEntity> domains = getDomainsRestEntitiesByFilter(domainFilter, offset, limit, currentUser);
+      ProgramList programList = new ProgramList();
+      List<ProgramRestEntity> programs = getProgramsRestEntitiesByFilter(programFilter, offset, limit, currentUser);
       if (returnSize) {
-        int domainsSize = programService.countPrograms(domainFilter, currentUser);
-        domainList.setSize(domainsSize);
+        int programsSize = programService.countPrograms(programFilter, currentUser);
+        programList.setSize(programsSize);
       }
-      domainList.setDomains(domains);
-      domainList.setOffset(offset);
-      domainList.setLimit(limit);
-      return Response.ok(domainList).build();
+      programList.setPrograms(programs);
+      programList.setOffset(offset);
+      programList.setLimit(limit);
+      return Response.ok(programList).build();
     } catch (IllegalAccessException e) {
-      LOG.debug("Unauthorized access for user {} while attempting to get domains with filter {}", currentUser, domainFilter);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
     }
   }
@@ -193,7 +192,7 @@ public class ProgramRest implements ResourceContainer {
   })
   @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @Operation(summary = "Creates a domain", method = "POST")
+  @Operation(summary = "Creates a program", method = "POST")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
@@ -201,17 +200,16 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response createProgram(
-                                @Parameter(description = "Domain object to create", required = true)
+                                @Parameter(description = "Program object to create", required = true)
                                 ProgramDTO program) {
     if (program == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Domain object is mandatory").build();
+      return Response.status(Response.Status.BAD_REQUEST).entity("Program object is mandatory").build();
     }
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
       program = programService.createProgram(program, identity);
       return Response.ok(ProgramBuilder.toRestEntity(programService, program, identity.getUserId())).build();
     } catch (IllegalAccessException e) {
-      LOG.debug("Unauthorized user {} attempts to create a domain", identity.getUserId());
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
     }
   }
@@ -221,7 +219,7 @@ public class ProgramRest implements ResourceContainer {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @Operation(summary = "updates created domain", method = "PUT")
+  @Operation(summary = "Updates an existing program", method = "PUT")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
@@ -229,34 +227,33 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response updateProgram(
-                                @Parameter(description = "domain id", required = true)
+                                @Parameter(description = "Program id", required = true)
                                 @PathParam("id")
-                                long domainId,
-                                @Parameter(description = "domain object to update", required = true)
+                                long programId,
+                                @Parameter(description = "Program object to update", required = true)
                                 ProgramDTO program) {
     if (program == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("domain object is mandatory").build();
+      return Response.status(Response.Status.BAD_REQUEST).entity("Program object is mandatory").build();
     }
-    if (domainId <= 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("domain technical identifier must be positive").build();
+    if (programId <= 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Program technical identifier must be positive").build();
     }
-    program.setId(domainId);
+    program.setId(programId);
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
       program = programService.updateProgram(program, identity);
       return Response.ok(ProgramBuilder.toRestEntity(programService, program, identity.getUserId())).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("Unauthorized user {} attempts to update the domain {}", identity.getUserId(), program.getId());
-      return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to update a domain").build();
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (ObjectNotFoundException e) {
-      return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
+      return Response.status(Response.Status.NOT_FOUND).entity(PROGRAM_NOT_FOUND_MESSAGE).build();
     }
   }
 
   @DELETE
   @RolesAllowed("administrators")
-  @Path("{domainId}")
-  @Operation(summary = "Deletes an existing domain identified by its id", method = "DELETE")
+  @Path("{programId}")
+  @Operation(summary = "Deletes an existing program identified by its id", method = "DELETE")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "204", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
@@ -265,28 +262,27 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response deleteProgramById(
-                                    @Parameter(description = "domain id to be deleted", required = true)
-                                    @PathParam("domainId")
-                                    long domainId) {
-    if (domainId <= 0) {
+                                    @Parameter(description = "Program id to be deleted", required = true)
+                                    @PathParam("programId")
+                                    long programId) {
+    if (programId <= 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("The parameter 'id' must be positive integer").build();
     }
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
-      programService.deleteProgramById(domainId, identity);
+      programService.deleteProgramById(programId, identity);
       return Response.noContent().build();
     } catch (ObjectNotFoundException e) {
-      return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
+      return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("unauthorized user {} trying to delete domain with id {}", identity.getUserId(), domainId);
-      return Response.status(Response.Status.UNAUTHORIZED).build();
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     }
   }
 
   @GET
   @Path("{id}/cover")
   @Produces("image/png")
-  @Operation(summary = "Gets a domain cover", method = "GET")
+  @Operation(summary = "Gets a program cover", method = "GET")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "500", description = "Internal server error"),
@@ -300,36 +296,36 @@ public class ProgramRest implements ResourceContainer {
                                       @Parameter(description = "The value of lastModified parameter will determine whether the query should be cached by browser or not. If not set, no 'expires HTTP Header will be sent'")
                                       @QueryParam("lastModified")
                                       Long lastModified,
-                                      @Parameter(description = "domain id", required = true)
+                                      @Parameter(description = "program id", required = true)
                                       @PathParam("id")
-                                      String domainId,
+                                      String programId,
                                       @Parameter(description = "A mandatory valid token that is used to authorize anonymous request", required = true)
                                       @QueryParam("r")
                                       String token) throws IOException {
-    boolean isDefault = StringUtils.equals(Utils.DEFAULT_IMAGE_REMOTE_ID, domainId);
+    boolean isDefault = StringUtils.equals(Utils.DEFAULT_IMAGE_REMOTE_ID, programId);
     String lastUpdated = null;
     ProgramDTO program = null;
     if (isDefault) {
       lastUpdated = Utils.toRFC3339Date(new Date(DEFAULT_COVER_LAST_MODIFIED));
     } else {
-      program = programService.getProgramById(Long.valueOf(domainId));
+      program = programService.getProgramById(Long.valueOf(programId));
       if (program == null) {
-        return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
+        return Response.status(Response.Status.NOT_FOUND).entity(PROGRAM_NOT_FOUND_MESSAGE).build();
       }
       isDefault = program.getCoverFileId() == 0;
       lastUpdated = program.getLastModifiedDate();
     }
 
     try {
-      if (!isDefault && RestUtils.isAnonymous() && !Utils.isAttachmentTokenValid(token, domainId, Utils.TYPE, lastModified)) {
-        LOG.warn("An anonymous user attempts to access avatar of space {} without a valid access token", domainId);
+      if (!isDefault && RestUtils.isAnonymous() && !Utils.isAttachmentTokenValid(token, programId, Utils.TYPE, lastModified)) {
+        LOG.warn("An anonymous user attempts to access avatar of space {} without a valid access token", programId);
         return Response.status(Response.Status.FORBIDDEN).build();
       }
       EntityTag eTag = new EntityTag(lastUpdated);
       Response.ResponseBuilder builder = request.evaluatePreconditions(eTag);
       if (builder == null) {
         InputStream stream = isDefault ? getDefaultCoverInputStream()
-                                       : programService.getFileDetailAsStream(Long.valueOf(domainId));
+                                       : programService.getFileDetailAsStream(Long.valueOf(programId));
         builder = Response.ok(stream, "image/png");
         builder.tag(eTag);
       }
@@ -340,7 +336,7 @@ public class ProgramRest implements ResourceContainer {
       }
       return builder.build();
     } catch (ObjectNotFoundException e) {
-      return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
+      return Response.status(Response.Status.NOT_FOUND).entity(PROGRAM_NOT_FOUND_MESSAGE).build();
     }
   }
 
@@ -361,7 +357,7 @@ public class ProgramRest implements ResourceContainer {
                                  @PathParam("programId")
                                  long programId) {
     if (programId == 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("DomainId must be not null").build();
+      return Response.status(Response.Status.BAD_REQUEST).entity("Program Id must be not null").build();
     }
     String currentUser = Utils.getCurrentUser();
     try {
@@ -376,7 +372,7 @@ public class ProgramRest implements ResourceContainer {
     }
   }
 
-  private List<ProgramRestEntity> getDomainsRestEntitiesByFilter(ProgramFilter filter,
+  private List<ProgramRestEntity> getProgramsRestEntitiesByFilter(ProgramFilter filter,
                                                                  int offset,
                                                                  int limit,
                                                                  String currentUser) throws IllegalAccessException {

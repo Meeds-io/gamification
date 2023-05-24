@@ -54,7 +54,7 @@ public class RuleBuilder {
                                             RuleDTO rule,
                                             List<String> expandFields,
                                             int announcementsLimit,
-                                            boolean noDomain,
+                                            boolean noProgram,
                                             PeriodType periodType) {
     if (rule == null) {
       return null;
@@ -82,7 +82,7 @@ public class RuleBuilder {
                                                    return r;
                                                  })
                                                  .toList();
-    ProgramDTO program = noDomain ? null : rule.getProgram();
+    ProgramDTO program = noProgram ? null : rule.getProgram();
     UserInfoContext userContext = toUserContext(programService,
                                                 realizationService,
                                                 rule,

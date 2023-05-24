@@ -248,7 +248,7 @@ export default {
       return this.realization?.action?.event;
     },
     program() {
-      return this.realization?.domain;
+      return this.realization?.program;
     },
     programTitle() {
       return this.program?.title || '-';
@@ -324,7 +324,7 @@ export default {
       return this.realizationActionLabel !== this.actionLabel;
     },
     programLabel() {
-      return this.realization?.domainLabel;
+      return this.realization?.programLabel;
     },
     programLabelChanged() {
       return this.programLabel !== this.programTitle;

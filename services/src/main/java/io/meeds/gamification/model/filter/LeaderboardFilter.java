@@ -18,38 +18,20 @@ package io.meeds.gamification.model.filter;
 
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
+import lombok.Data;
 
+@Data
 public class LeaderboardFilter {
 
   private int          loadCapacity = 10;
 
   private String       currentUser  = null;
 
-  private Long         domainId     = null;
+  private Long         programId    = null;
 
   private IdentityType identityType = IdentityType.USER;
 
   private Period       period       = Period.WEEK;
-
-  public int getLoadCapacity() {
-    return loadCapacity;
-  }
-
-  public void setLoadCapacity(String loadCapacity) {
-    this.loadCapacity = Integer.parseInt(loadCapacity);
-  }
-
-  public void setLoadCapacity(int limit) {
-    this.loadCapacity = limit;
-  }
-
-  public Long getDomainId() {
-    return domainId;
-  }
-
-  public void setDomainId(Long domainId) {
-    this.domainId = domainId;
-  }
 
   public String getPeriod() {
     return period.name();
@@ -59,19 +41,4 @@ public class LeaderboardFilter {
     this.period = Period.valueOf(period.toUpperCase());
   }
 
-  public IdentityType getIdentityType() {
-    return identityType;
-  }
-
-  public void setIdentityType(IdentityType identityType) {
-    this.identityType = identityType;
-  }
-
-  public void setCurrentUser(String currentUser) {
-    this.currentUser = currentUser;
-  }
-
-  public String getCurrentUser() {
-    return currentUser;
-  }
 }

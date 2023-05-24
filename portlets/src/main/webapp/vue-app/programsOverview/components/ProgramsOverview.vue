@@ -98,7 +98,7 @@ export default {
     retrievePrograms() {
       return this.$programService.getPrograms(0, 3, this.type, this.status, '', false, true)
         .then((data) => {
-          this.programs = (data?.domains || []).sort((p1, p2) => p2.rulesTotalScore - p1.rulesTotalScore);
+          this.programs = (data?.programs || []).sort((p1, p2) => p2.rulesTotalScore - p1.rulesTotalScore);
           this.programsDisplayed = data.size > 0;
           this.loading = false;
         });
