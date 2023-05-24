@@ -196,7 +196,7 @@ export default {
       this.rules = [];
       return this.$ruleService.getRules({
         term: this.searchTerm || null,
-        domainId: this.programId,
+        programId: this.programId,
         excludedRuleIds: this.excludedIds || [],
         status: 'ENABLED',
         offset: 0,

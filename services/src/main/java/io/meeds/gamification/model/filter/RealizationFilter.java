@@ -47,7 +47,7 @@ public class RealizationFilter implements Serializable {
 
   private IdentityType      identityType;
 
-  private List<Long>        domainIds;
+  private List<Long>        programIds;
 
   @Override
   public RealizationFilter clone() { // NOSONAR
@@ -58,7 +58,7 @@ public class RealizationFilter implements Serializable {
                                  fromDate,
                                  toDate,
                                  identityType,
-                                 domainIds == null ? null : new ArrayList<>(domainIds));
+                                 programIds == null ? null : new ArrayList<>(programIds));
   }
 
 }

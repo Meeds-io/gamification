@@ -15,14 +15,14 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <option :value="domain.id">
-    {{ domain.label }}
+  <option :value="program.id">
+    {{ program.label }}
   </option>
 </template>
 <script>
 export default {
   props: {
-    domain: {
+    program: {
       type: Object,
       default: () => null,
     },
