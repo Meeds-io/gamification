@@ -158,7 +158,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
   @RolesAllowed("users")
   @Path("filter")
   public Response filter(@Context UriInfo uriInfo, // NOSONAR
-                         @QueryParam("domain") Long domainId,
+                         @QueryParam("program") Long programId,
                          @QueryParam("period") String period,
                          @QueryParam("url") String url,
                          @QueryParam("capacity") String capacity) {
@@ -170,7 +170,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
       // Init search criteria
       LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
 
-        leaderboardFilter.setDomainId(domainId);
+        leaderboardFilter.setProgramId(programId);
 
       if (StringUtils.isNotBlank(period))
         leaderboardFilter.setPeriod(period);
@@ -228,7 +228,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
         }
         LeaderboardEndpoint.LeaderboardInfo leader = buildCurrentUserRank(conversationState.getIdentity().getUserId(),
                                                                           date,
-                                                                          leaderboardFilter.getDomainId(),
+                                                                          leaderboardFilter.getProgramId(),
                                                                           leaderboardInfoList);
         // Complete the final leaderboard
         if (leader != null)
@@ -239,7 +239,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
       } catch (Exception e) {
 
         LOG.error("Error filtering leaderbaord by Doamin : {} and by Period {} ",
-                  leaderboardFilter.getDomainId(),
+                  leaderboardFilter.getProgramId(),
                   leaderboardFilter.getPeriod(),
                   e);
 
@@ -267,7 +267,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
 
   private LeaderboardEndpoint.LeaderboardInfo buildCurrentUserRank(String identityId,
                                                                    Date date,
-                                                                   Long domainId,
+                                                                   Long programId,
                                                                    List<LeaderboardEndpoint.LeaderboardInfo> leaderboardList) {
     if (CollectionUtils.isEmpty(leaderboardList)) {
       return null;
@@ -277,7 +277,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
     if (!isCurrentUserInTopTen(currentUser, leaderboardList)) {
 
       // Get GaamificationScore for current user
-      int rank = realizationService.getLeaderboardRank(currentUser, date, domainId);
+      int rank = realizationService.getLeaderboardRank(currentUser, date, programId);
 
       if (rank > 0) {
 

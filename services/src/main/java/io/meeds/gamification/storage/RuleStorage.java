@@ -35,8 +35,8 @@ public class RuleStorage {
     ruleEntity.setLastModifiedDate(new Date());
     ProgramDTO program = ruleDTO.getProgram();
     if (program != null) {
-      ProgramEntity domainEntity = programDAO.find(program.getId());
-      ruleEntity.setDomainEntity(domainEntity);
+      ProgramEntity programEntity = programDAO.find(program.getId());
+      ruleEntity.setDomainEntity(programEntity);
     }
     if (ruleEntity.getId() == null) {
       ruleEntity.setCreatedDate(new Date());
@@ -60,8 +60,8 @@ public class RuleStorage {
     return RuleMapper.fromEntity(programStorage, ruleDAO.findRuleByTitle(ruleTitle));
   }
 
-  public RuleDTO findActiveRuleByEventAndDomain(String event, long domainId) {
-    return RuleMapper.fromEntity(programStorage, ruleDAO.findActiveRuleByEventAndDomain(event, domainId));
+  public RuleDTO findActiveRuleByEventAndProgramId(String event, long programId) {
+    return RuleMapper.fromEntity(programStorage, ruleDAO.findActiveRuleByEventAndProgramId(event, programId));
   }
 
   public List<Long> findRulesIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {

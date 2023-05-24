@@ -79,7 +79,7 @@ export default {
       if (this.isCurrent) {
         return null;
       } else {
-        return this.getDescription('badge.description', this.badge.title.replace(' ', ''), this.badge.domain, this.badge.description);
+        return this.getDescription('badge.description', this.badge.title.replace(' ', ''), this.badge.program, this.badge.description);
       }
     },
     score() {
@@ -95,8 +95,8 @@ export default {
       const translation = this.$t(label);
       return translation === label && key || translation;
     },
-    getDescription(base, title, domain, value) {
-      const label = `${base}.${title}_${domain}`;
+    getDescription(base, title, program, value) {
+      const label = `${base}.${title}_${program}`;
       const translation = this.$t(label);
       return translation === label && value || translation;
     }

@@ -16,9 +16,9 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <b-container fluid>
-    <b-row>
-      <b-col sm="12">
+  <div fluid>
+    <div>
+      <div>
         <div
           v-if="isdeleted"
           class="alert alert-success"
@@ -52,11 +52,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
         <div
           id="collapseThree"
-          :class="isEditShown ? '' : 'out'"
+          :class="!isEditShown && 'out' || ''"
           aria-labelledby="headingOne"
           class="collapse show"
-          data-parent="#accordionExample"
-          style="height: 0px; transition: inherit;">
+          data-parent="#accordionExample">
           <div class="card-body">
             <div
               id="myForm"
@@ -74,8 +73,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     v-model="editedbadge.title"
                     class="form-control"
                     required
-                    type="text">
-                  </input>
+                    type="text" />
                 </form>
                 <div id="descriptionInputGroup">
                   <label id="descriptionInput" class="pt-0">{{
@@ -95,7 +93,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <label
                     id="Needed"
                     label-for="neededScoreInput"
-                    class="pt-0">{{ this.$t('exoplatform.gamification.badge.score','Score') }}:</label>
+                    class="pt-0">{{ $t('exoplatform.gamification.badge.score','Score') }}:</label>
                   <input
                     id="neededScoreInput"
                     v-model="editedbadge.neededScore"
@@ -105,8 +103,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     :placeholder="this.$t('exoplatform.gamification.badge.edit.score.label')">
                 </form>
                 <form id="iconInputGroup">
-                  <label for="iconInputBadge" class="pt-0"> {{ this.$t('exoplatform.gamification.badge.icon','Icon') }}: </label>
-                  <button type="button" onclick="document.getElementById('iconInputBadge').click()"> {{ this.$t('exoplatform.gamification.badge.icon.label','Choose file') }} </button>  {{ this.imageName }}
+                  <label for="iconInputBadge" class="pt-0"> {{ $t('exoplatform.gamification.badge.icon','Icon') }}: </label>
+                  <button type="button" onclick="document.getElementById('iconInputBadge').click()"> {{ $t('exoplatform.gamification.badge.icon.label','Choose file') }} </button>  {{ imageName }}
 
                   <input
                     id="iconInputBadge"
@@ -118,7 +116,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     @change="onFilePicked">
                 </form>
 
-                <form id="domainSelectboxGroup">
+                <form id="programSelectboxGroup">
                   <label class="pt-0">{{ $t('exoplatform.gamification.gamificationinformation.Domain') }}:</label>
 
                   <select v-model="editedbadge.program" class="mb-4">
@@ -126,11 +124,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       {{ $t('exoplatform.gamification.selectdomain') }}
                     </option>
                     <option
-                      v-for="domain in domains"
-                      :key="domain.id"
-                      :value="domain">
+                      v-for="program in programs"
+                      :key="program.id"
+                      :value="program">
                       {{
-                        $t(`exoplatform.gamification.gamificationinformation.domain.${domain.title}`,domain.title)
+                        $t(`exoplatform.gamification.gamificationinformation.domain.${program.title}`,program.title)
                       }}
                     </option>
                   </select>
@@ -140,35 +138,34 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
                 <form id="enabledswittch">
                   <label class="col-form-label pt-0">{{ $t(`exoplatform.gamification.enabled`,"Enabled") }}:</label>
-                  <label class="uiSwitchBtn">
+                  <label class="uiSwitchBtn" @click="editedbadge.enabled = !editedbadge.enabled">
                     <input
                       v-model="editedbadge.enabled"
                       :disabled="editedbadge.program==null||!editedbadge.program.enabled"
                       type="checkbox">
-                    <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
-                    <span class="absolute-no">{{ $t(`exoplatform.gamification.NO`,"NO") }}</span>
+                    <div class="slider round" @click="editedbadge.enabled = !editedbadge.enabled">
+                      <span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span>
+                    </div>
+                    <span class="absolute-no" @click="editedbadge.enabled = !editedbadge.enabled">{{ $t(`exoplatform.gamification.NO`,"NO") }}</span>
                   </label>
                   <div v-if="editedbadge.program==null||!editedbadge.program.enabled" class="error"> *{{ $t(`exoplatform.gamification.disabledDomainForBadges`,"This domain cannot be enabled as long as the related domain is disabled") }}.</div>
                 </form>
  
 
-                <b-row style="display: inherit;">
-                  <b-col>
-                    <button
-                      class="btn secondary pull-right"
-                      type="cancel"
-                      @click.prevent="collapseEditButton(), onCancel()">
-                      {{ $t('exoplatform.gamification.gamificationinformation.domain.cancel',"cancel") }}
-                    </button>
-                    <button
-                      class="btn-primary pull-right"
-                      type="submit"
-                      :disabled="isDisabled"
-                      @click.prevent="onSave">
-                      {{ $t('exoplatform.gamification.gamificationinformation.domain.confirm',"confirm") }}
-                    </button>
-                  </b-col>
-                </b-row>
+                <div class="card-body-actions">
+                  <button
+                    class="btn-primary"
+                    type="submit"
+                    :disabled="isDisabled"
+                    @click.prevent="onSave">
+                    {{ $t('exoplatform.gamification.gamificationinformation.domain.confirm',"confirm") }}
+                  </button>
+                  <button
+                    class="btn"
+                    @click.prevent="collapseEditButton(), onCancel()">
+                    {{ $t('exoplatform.gamification.gamificationinformation.domain.cancel',"cancel") }}
+                  </button>
+                </div>
               </div>
             </div> 
           </div>
@@ -204,24 +201,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     </p>
                   </div>
                 </div>
-                <div class="uiAction uiActionBorder">
-                  <b-col>
-                    <button
-                      class="btn cancel pull-right"
-                      type="submit"
-                      @click.prevent="collapseConfirm(badge), onCancel()">
-                      {{ $t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
-                    </button>
-
-
-                    <button
-                      class="btn-primary pull-right"
-                      type="submit"
-
-                      @click.prevent="onRemove(badge.id,badge.title),collapseConfirm(badge)">
-                      {{ $t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
-                    </button>
-                  </b-col>
+                <div class="card-body-actions">
+                  <button
+                    class="btn-primary"
+                    type="submit"
+                    @click.prevent="onRemove(badge.id,badge.title),collapseConfirm(badge)">
+                    {{ $t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
+                  </button>
+                  <button
+                    class="btn cancel"
+                    @click.prevent="collapseConfirm(badge), onCancel()">
+                    {{ $t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
+                  </button>
                 </div>
               </div>
             </div>
@@ -237,13 +228,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   $t('exoplatform.gamification.gamificationinformation.domain.Description') }}
               </th>
               <th class="badge-nedded-score-col">{{ $t('exoplatform.gamification.neededscore') }}</th>
-              <th class="badge-domain-col">
+              <th class="badge-program-col">
                 {{ $t('exoplatform.gamification.gamificationinformation.Domain') }}
               </th>
                         
-              <th class="badge-status-col">{{ this.$t('exoplatform.gamification.status') }}</th>
+              <th class="badge-status-col">{{ $t('exoplatform.gamification.status') }}</th>
               <!--    <th class="badge-created-by-col">Created by</th> -->
-              <th class="badge-action-col">{{ this.$t('exoplatform.gamification.action') }}</th>
+              <th class="badge-action-col">{{ $t('exoplatform.gamification.action') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -264,7 +255,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <div>{{ $t(`badge.title.${badge.title.replace(' ','')}`,badge.title) }}</div>
               </td>
               <td class="badge-desc-col">
-                <div>{{ $t(`badge.description.${badge.title.replace(' ','')}_${badge.domain}`,badge.description) }}</div>
+                <div>{{ $t(`badge.description.${badge.title.replace(' ','')}_${badge.program}`,badge.description) }}</div>
               </td>
               <td class="badge-needed-score-col">
                 <div>
@@ -275,7 +266,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <td style="max-width: 105px;">
                 <div v-if="badge.program != null">{{ $t(`exoplatform.gamification.gamificationinformation.domain.${badge.program.title}`,badge.program.title) }}</div>
               </td>
-
 
               <td class="badge-status-col">
                 <div>
@@ -320,9 +310,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </tr>
           </tbody>
         </table>
-      </b-col>
-    </b-row>
-  </b-container>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -335,7 +325,7 @@ import axios from 'axios';
 
 Vue.use(BootstrapVue);
 export default {
-  props: ['badges','domains'],
+  props: ['badges','programs'],
   data() {
     return {
       search: '',
@@ -398,9 +388,6 @@ export default {
     onRemove(id, title) {
       this.$emit('remove', id, title);
     },
-    change() {
-      console.log('filechange');
-    },
     collapseConfirm(badge) {
       this.badge = badge;
       this.isShown = !this.isShown;
@@ -409,13 +396,14 @@ export default {
       }
     },
     collapseEditButton(badge) {
-      if ( badge ) {
-        if (badge?.program && this.domains?.length) {
-          badge.program = this.domains.find(domain => domain.title === badge.program.title);
+      if (badge) {
+        badge = JSON.parse(JSON.stringify(badge));
+        if (badge?.program && this.programs?.length) {
+          badge.program = this.programs.find(program => program.id === badge.program.id);
         }
         this.badge = badge;
         this.editedbadge=badge;
-        this.editedbadge.description =  this.$t(`badge.description.${this.editedbadge.title.replace(' ','')}_${this.editedbadge.domain}`,this.editedbadge.description) ;
+        this.editedbadge.description =  this.$t(`badge.description.${this.editedbadge.title.replace(' ','')}_${this.editedbadge.program}`,this.editedbadge.description) ;
         this.editedbadge.title =  this.$t(`badge.title.${this.editedbadge.title.replace(' ','')}`,this.editedbadge.title) ;
       }
       this.isEditShown = !this.isEditShown;
@@ -450,7 +438,6 @@ export default {
 
         const MAX_RANDOM_NUMBER = 100000;
         const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
-        console.log(uploadId);
         const form = this.getFormData(files);
         axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, form,
           {
@@ -513,6 +500,7 @@ export default {
     .switch, .uiSwitchBtn {
         position: relative;
         display: inline-block;
+        margin: auto;
         width: 53px;
         height: 32px;
         /* zoom: 30%; */
@@ -842,7 +830,7 @@ export default {
         font-weight: 600;
         margin-right: 20px;
     }
-    form#domainSelectboxGroup, form#enabledswittch {
+    form#programSelectboxGroup, form#enabledswittch {
         width: 40%;
         display: inline-block;
         margin: 15px 0;
@@ -864,7 +852,7 @@ export default {
         background-color: #afc9e5; 
         background-image: none;
     }
-    form#domainSelectboxGroup select.mb-4 {
+    form#programSelectboxGroup select.mb-4 {
         vertical-align: sub;
     }
     input#neededScoreInput {
@@ -874,6 +862,20 @@ export default {
         box-shadow: none;
         outline: none;
         height: 40px;
+    }
+    .card-body .UIPopupWindow {
+        background: #fff;
+        overflow: auto;
+    }
+    .card-body .PopupContent {
+        padding: 8px 10px 8px 15px;
+    }
+    .card-body .card-body-actions {
+        display: flex;
+        justify-content: center;
+    }
+    .card-body .card-body-actions button {
+        margin: 8px 10px 8px 15px;
     }
     textarea.form-control {
         height: auto;

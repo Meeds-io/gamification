@@ -107,9 +107,9 @@ public class RealizationRest implements ResourceContainer {
                                   @Parameter(description = "identity Type")
                                   @QueryParam("identityType")
                                   String identityType,
-                                  @Parameter(description = "domainIds. that will be used to filter achievements", required = false)
-                                  @QueryParam("domainIds")
-                                  List<Long> domainIds,
+                                  @Parameter(description = "programIds. that will be used to filter achievements", required = false)
+                                  @QueryParam("programIds")
+                                  List<Long> programIds,
                                   @Parameter(description = "If true, this will return the list of realizations, the current user can manage. Possible values = true or false. Default value = false.", required = false)
                                   @QueryParam("owned")
                                   @DefaultValue("false")
@@ -133,7 +133,7 @@ public class RealizationRest implements ResourceContainer {
                                                      dateFrom,
                                                      dateTo,
                                                      IdentityType.getType(identityType),
-                                                     domainIds);
+                                                     programIds);
 
     boolean isXlsx = StringUtils.isNotBlank(returnType) && returnType.equals("xlsx");
     if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXlsx) {
