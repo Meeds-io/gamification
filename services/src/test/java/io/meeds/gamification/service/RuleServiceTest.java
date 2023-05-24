@@ -218,7 +218,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     ruleFilter.setEntityStatusType(EntityStatusType.ALL);
     ProgramDTO domain = programService.getProgramByTitle(GAMIFICATION_DOMAIN);
     long domainId = domain.getId();
-    ruleFilter.setDomainId(domainId);
+    ruleFilter.setProgramId(domainId);
     assertEquals(1, ruleService.getRules(ruleFilter, "root1",0, 10).size());
     ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
     assertEquals(0, ruleService.getRules(ruleFilter, "root1",0, 10).size());

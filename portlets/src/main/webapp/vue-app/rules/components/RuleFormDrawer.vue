@@ -453,7 +453,7 @@ export default {
     },
     retrieveProgramRules() {
       return this.$ruleService.getRules({
-        domainId: this.programId,
+        programId: this.programId,
         status: 'ENABLED',
         type: 'AUTOMATIC',
         offset: 0,

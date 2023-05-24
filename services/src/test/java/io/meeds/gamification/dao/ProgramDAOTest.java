@@ -69,7 +69,7 @@ public class ProgramDAOTest extends AbstractServiceTest {
     newDomain(EntityType.MANUAL, "domain2", true, null);
     newDomain(EntityType.AUTOMATIC, "domain3", true, null);
     newDomain(EntityType.AUTOMATIC, "domain4", true, null);
-    filter.setDomainTitle("domain1");
+    filter.setProgramTitle("domain1");
     assertEquals(1, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
 
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);

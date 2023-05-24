@@ -9,6 +9,7 @@ import FilterRealizationsProgramList from './components/FilterRealizationsProgra
 import GranteeAttendeeItem from './components/GranteeAttendeeItem.vue';
 import ProgramAttendeeItem from './components/ProgramAttendeeItem.vue';
 import RealizationExportButton from './components/RealizationExportButton.vue';
+import RealizationOwnerSwitchButtons from './components/RealizationOwnerSwitchButtons.vue';
 
 const components = {
   'realizations': Realizations,
@@ -22,6 +23,7 @@ const components = {
   'program-attendee-item': ProgramAttendeeItem,
   'program-suggester': ProgramSuggester,
   'realizations-export-button': RealizationExportButton,
+  'realizations-owner-switch-buttons': RealizationOwnerSwitchButtons,
 };
 
 for (const key in components) {
