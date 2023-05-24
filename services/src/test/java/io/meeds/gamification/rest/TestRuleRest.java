@@ -310,7 +310,7 @@ public class TestRuleRest extends AbstractServiceTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  public void testGetChallengesByUser() throws Exception {
+  public void testGetRulesByUser() throws Exception {
     // add challenge with root1
     startSessionAs("root1");
     ProgramDTO domain = newProgram();
@@ -359,14 +359,14 @@ public class TestRuleRest extends AbstractServiceTest {
 
     startSessionAs("root1");
 
-    restPath = "/gamification/rules?offset=0&limit=10&domainId=" + domain.getId() + "&announcements=4";
+    restPath = "/gamification/rules?offset=0&limit=10&programId=" + domain.getId() + "&announcements=4";
     response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     savedChallenges = (RuleList) response.getEntity();
     assertEquals(2, savedChallenges.getRules().size());
 
-    restPath = "/gamification/rules?offset=0&limit=10&domainId=0&announcements=4&groupByDomain=true";
+    restPath = "/gamification/rules?offset=0&limit=10&programId=0&announcements=4&groupByProgram=true";
     response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
@@ -459,7 +459,7 @@ public class TestRuleRest extends AbstractServiceTest {
     response = getResponse("GET", getURLResource("rules?returnSize=true&offset=-1"), null);
     assertEquals(400, response.getStatus());
 
-    response = getResponse("GET", getURLResource("rules?returnSize=true&domainId=" + domainEntity.getId()), null);
+    response = getResponse("GET", getURLResource("rules?returnSize=true&programId=" + domainEntity.getId()), null);
     assertEquals(200, response.getStatus());
   }
 

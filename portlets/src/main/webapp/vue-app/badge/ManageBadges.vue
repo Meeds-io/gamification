@@ -22,28 +22,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       class="alert alert-success"
       v-on:="closeAlert()">
       <i class="uiIconSuccess"></i>
-      {{ this.$t('exoplatform.gamification.badge') }}
-      {{ updateMessage }} {{ this.$t('exoplatform.gamification.successfully') }}
+      {{ $t('exoplatform.gamification.badge') }}
+      {{ updateMessage }} {{ $t('exoplatform.gamification.successfully') }}
     </div>
     <div
       v-show="addError"
       class="alert alert-error"
       v-on:="closeAlert()">
       <i class="uiIconError"></i>
-      {{ this.$t(`exoplatform.gamification.${errorType}`) }}
+      {{ $t(`exoplatform.gamification.${errorType}`) }}
     </div>
 
     <section>
       <save-badge-form
         :badge="badgeInForm"
-        :domains="domains"
+        :programs="programs"
         :error-type="errorType"
         @cancel="resetBadgeInForm"
         @failAdd="onBadgeFail"
         @submit="onBadgeCreated" />
       <badge-list
         :badges="badges"
-        :domains="domains"
+        :programs="programs"
         @remove="onRemoveClicked"
         @save="onSaveClicked" />
     </section>
@@ -71,7 +71,7 @@ const initialData = () => {
       dismissSecs: 5,
       countDown: 0,
       showDismissibleAlert: false,
-      domain: '',
+      program: '',
       enabled: true,
       createdDate: null,
       lastModifiedBy: '',
@@ -82,7 +82,7 @@ const initialData = () => {
     addError: false,
     updateMessage: '',
     badges: [],
-    domains: [],
+    programs: [],
     errorType: ''
   };
 };
@@ -93,8 +93,8 @@ export default {
   },
   data: initialData,
   created() {
-    this.getBadges();
-    this.getDomains(); 
+    this.getPrograms()
+      .then(() => this.getBadges());
   },
   methods: {
     resetBadgeInForm() {
@@ -175,9 +175,18 @@ export default {
 
     },
     getBadges() {
-      axios.get('/portal/rest/gamification/badges/all')
-        .then(response => {
-          this.badges = response.data;
+      return fetch('/portal/rest/gamification/badges/all', {
+        credentials: 'include',
+      }).then(resp => resp?.ok && resp.json())
+        .then(badges => {
+          badges.forEach(badge => {
+            if (badge?.program && this.programs?.length) {
+              if(!this.programs.find(program => program.id === badge.program.id)) {
+                badge.enabled = false;
+              }
+            }
+          });
+          this.badges = badges;
         })
         .catch(e => {
           this.errorType='getBadgesError';
@@ -186,11 +195,11 @@ export default {
           console.log(e);
         });
     },
-    getDomains(){
+    getPrograms(){
       return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs?type=ALL`, {
         credentials: 'include',
       }).then(resp => resp?.ok && resp.json())
-        .then(data => this.domains = data?.domains || []);
+        .then(data => this.programs = data?.programs || []);
     }
   }
 };

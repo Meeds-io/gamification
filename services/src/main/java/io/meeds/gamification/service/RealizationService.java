@@ -117,20 +117,20 @@ public interface RealizationService {
    * 
    * @param  earnerIdentityId
    * @param  date
-   * @param  domainId
+   * @param  programId
    * @return                  identity leaderboard rank in {@link Integer}
    */
-  int getLeaderboardRank(String earnerIdentityId, Date date, Long domainId);
+  int getLeaderboardRank(String earnerIdentityId, Date date, Long programId);
 
   /**
-   * Compute User reputation score by Domain
+   * Compute User reputation score by program
    * 
    * @param  earnerIdentityId earner
    *                            {@link org.exoplatform.social.core.identity.model.Identity}
    *                            id
    * @return                  list of objects of type {@link ProfileReputation}
    */
-  List<ProfileReputation> getScorePerDomainByIdentityId(String earnerIdentityId);
+  List<ProfileReputation> getScorePerProgramByIdentityId(String earnerIdentityId);
 
   /**
    * Creates new Realizations switch an event name for a given object identified

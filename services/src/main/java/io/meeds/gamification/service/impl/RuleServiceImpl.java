@@ -183,7 +183,7 @@ public class RuleServiceImpl implements RuleService {
       throw new IllegalArgumentException(USERNAME_IS_MANDATORY_MESSAGE);
     }
     if (rule.getId() != null) {
-      throw new IllegalArgumentException("domain id must be equal to 0");
+      throw new IllegalArgumentException("program id must be equal to 0");
     }
     long programId = rule.getProgram().getId();
     ProgramDTO program = programService.getProgramById(programId, username);
@@ -193,9 +193,9 @@ public class RuleServiceImpl implements RuleService {
     rule.setCreatedBy(username);
     rule.setLastModifiedBy(username);
     rule.setDeleted(false);
-    RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndDomain(rule.getEvent(), programId);
+    RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent(), programId);
     if (similarRule != null && !similarRule.isDeleted()) {
-      throw new ObjectAlreadyExistsException("Rule with same event and domain already exist");
+      throw new ObjectAlreadyExistsException("Rule with same event and program already exist");
     }
     return createRuleAndBroadcast(rule, username);
   }
@@ -309,10 +309,10 @@ public class RuleServiceImpl implements RuleService {
     }
     ProgramDTO program = rule.getProgram();
     if (program != null) {
-      long domainId = rule.getProgram().getId();
-      RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndDomain(rule.getEvent(), domainId);
+      long programId = rule.getProgram().getId();
+      RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent(), programId);
       if (similarRule != null && !similarRule.getId().equals(rule.getId()) && !similarRule.isDeleted()) {
-        throw new IllegalStateException("Rule with same event and domain already exist");
+        throw new IllegalStateException("Rule with same event and program already exist");
       }
     }
     rule.setLastModifiedBy(username);

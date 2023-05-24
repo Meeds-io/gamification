@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           mt-n2
           justify-center>
           <div>
-            <span class="pe-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header" @click="openSpaceRequests()">{{ this.$t('homepage.profileStatus.spaceRequests') }}</span>
+            <span class="pe-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header" @click="openSpaceRequests()">{{ $t('homepage.profileStatus.spaceRequests') }}</span>
             <v-btn
               fab
               depressed
@@ -103,7 +103,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         small
         class="caption text-uppercase grey--text"
         :href="invitationSpaceUrl">
-        {{ this.$t('homepage.seeAll') }}
+        {{ $t('homepage.seeAll') }}
       </v-btn>
     </v-flex>
   </v-layout>

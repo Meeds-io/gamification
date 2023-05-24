@@ -73,40 +73,40 @@ public class RealizationMapper {
     if (realization == null) {
       return null;
     }
-    RealizationEntity gHistoryEntity = new RealizationEntity();
-    gHistoryEntity.setId(realization.getId());
-    gHistoryEntity.setDomainEntity(ProgramMapper.toEntity(realization.getProgram()));
-    gHistoryEntity.setDomain(realization.getProgram().getTitle());
-    gHistoryEntity.setActionTitle(realization.getActionTitle());
-    gHistoryEntity.setActionScore(realization.getActionScore());
-    gHistoryEntity.setGlobalScore(realization.getGlobalScore());
-    gHistoryEntity.setActivityId(realization.getActivityId());
-    gHistoryEntity.setObjectId(realization.getObjectId());
-    gHistoryEntity.setObjectType(realization.getObjectType());
-    gHistoryEntity.setReceiver(realization.getReceiver());
-    gHistoryEntity.setEarnerId(realization.getEarnerId());
-    gHistoryEntity.setEarnerType(IdentityType.getType(realization.getEarnerType()));
-    gHistoryEntity.setContext(realization.getContext());
-    gHistoryEntity.setComment(realization.getComment());
-    gHistoryEntity.setRuleEntity(RuleMapper.toEntity(ruleStorage.findRuleById(realization.getRuleId())));
-    gHistoryEntity.setCreator(realization.getCreator());
-    gHistoryEntity.setStatus(RealizationStatus.valueOf(realization.getStatus()));
-    gHistoryEntity.setType(realization.getType());
+    RealizationEntity realizationEntity = new RealizationEntity();
+    realizationEntity.setId(realization.getId());
+    realizationEntity.setDomainEntity(ProgramMapper.toEntity(realization.getProgram()));
+    realizationEntity.setDomain(realization.getProgram().getTitle());
+    realizationEntity.setActionTitle(realization.getActionTitle());
+    realizationEntity.setActionScore(realization.getActionScore());
+    realizationEntity.setGlobalScore(realization.getGlobalScore());
+    realizationEntity.setActivityId(realization.getActivityId());
+    realizationEntity.setObjectId(realization.getObjectId());
+    realizationEntity.setObjectType(realization.getObjectType());
+    realizationEntity.setReceiver(realization.getReceiver());
+    realizationEntity.setEarnerId(realization.getEarnerId());
+    realizationEntity.setEarnerType(IdentityType.getType(realization.getEarnerType()));
+    realizationEntity.setContext(realization.getContext());
+    realizationEntity.setComment(realization.getComment());
+    realizationEntity.setRuleEntity(RuleMapper.toEntity(ruleStorage.findRuleById(realization.getRuleId())));
+    realizationEntity.setCreator(realization.getCreator());
+    realizationEntity.setStatus(RealizationStatus.valueOf(realization.getStatus()));
+    realizationEntity.setType(realization.getType());
     if (realization.getCreatedDate() != null) {
-      gHistoryEntity.setCreatedDate(Utils.parseRFC3339Date(realization.getCreatedDate()));
+      realizationEntity.setCreatedDate(Utils.parseRFC3339Date(realization.getCreatedDate()));
     } else {
-      gHistoryEntity.setCreatedDate(new Date());
+      realizationEntity.setCreatedDate(new Date());
     }
     if (realization.getLastModifiedDate() != null) {
-      gHistoryEntity.setLastModifiedDate(Utils.parseRFC3339Date(realization.getLastModifiedDate()));
+      realizationEntity.setLastModifiedDate(Utils.parseRFC3339Date(realization.getLastModifiedDate()));
     } else {
-      gHistoryEntity.setLastModifiedDate(new Date());
+      realizationEntity.setLastModifiedDate(new Date());
     }
-    gHistoryEntity.setCreatedBy(realization.getCreatedBy() != null ? realization.getCreatedBy()
+    realizationEntity.setCreatedBy(realization.getCreatedBy() != null ? realization.getCreatedBy()
                                                                    : Utils.SYSTEM_USERNAME);
-    gHistoryEntity.setLastModifiedBy(realization.getLastModifiedBy() != null ? realization.getLastModifiedBy()
+    realizationEntity.setLastModifiedBy(realization.getLastModifiedBy() != null ? realization.getLastModifiedBy()
                                                                              : Utils.SYSTEM_USERNAME);
-    return gHistoryEntity;
+    return realizationEntity;
   }
 
 }

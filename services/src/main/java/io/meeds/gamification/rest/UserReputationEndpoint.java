@@ -140,8 +140,8 @@ public class UserReputationEndpoint implements ResourceContainer {
     if (identity == null) {
       return Response.status(400).entity("Identity not found with id " + identityId).build();
     }
-    List<ProfileReputation> badgesByDomain = realizationService.getScorePerDomainByIdentityId(earnerId);
-    JSONArray profileBadges = buildProfileBadges(badgesByDomain);
+    List<ProfileReputation> badgesByProgram = realizationService.getScorePerProgramByIdentityId(earnerId);
+    JSONArray profileBadges = buildProfileBadges(badgesByProgram);
     return Response.ok().cacheControl(cacheControl).entity(profileBadges.toString()).build();
   }
 
@@ -171,9 +171,9 @@ public class UserReputationEndpoint implements ResourceContainer {
           }
           String actorId = id.getId();
 
-          List<ProfileReputation> badgesByDomain = realizationService.getScorePerDomainByIdentityId(actorId);
+          List<ProfileReputation> badgesByProgram = realizationService.getScorePerProgramByIdentityId(actorId);
 
-          allBadges = buildProfileBadges(badgesByDomain);
+          allBadges = buildProfileBadges(badgesByProgram);
 
           return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
         } else {
@@ -263,7 +263,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
            for (ProfileReputation rep : reputationLis) {
                // Compute won badge
-               buildLatestWonBadge(rep.getDomainId(), rep.getScore(), allBadges);
+               buildLatestWonBadge(rep.getProgramId(), rep.getScore(), allBadges);
            }
 
         }
@@ -272,11 +272,11 @@ public class UserReputationEndpoint implements ResourceContainer {
 
     }
 
-    private void buildLatestWonBadge(long domainId, long score, JSONArray userBadges) {
+    private void buildLatestWonBadge(long programId, long score, JSONArray userBadges) {
 
         try {
             // Get available badge within the solution
-            List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domainId);
+            List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByProgramId(programId);
             BadgeDTO badgeDTO = null;
 
             // A badge
@@ -365,9 +365,9 @@ public class UserReputationEndpoint implements ResourceContainer {
                 String actorId = id.getId();
 
 
-                List<ProfileReputation> badgesByDomain= realizationService.getScorePerDomainByIdentityId(actorId);
+                List<ProfileReputation> badgesByProgram= realizationService.getScorePerProgramByIdentityId(actorId);
 
-                allBadges = buildProfilBadges(badgesByDomain);
+                allBadges = buildProfilBadges(badgesByProgram);
 
                 return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
 
@@ -473,9 +473,9 @@ public class UserReputationEndpoint implements ResourceContainer {
                 String actorId = id.getId();
 
 
-                List<ProfileReputation> badgesByDomain= realizationService.getScorePerDomainByIdentityId(actorId);
+                List<ProfileReputation> badgesByProgram= realizationService.getScorePerProgramByIdentityId(actorId);
 
-                allBadges = buildProfileNextBadges(badgesByDomain);
+                allBadges = buildProfileNextBadges(badgesByProgram);
 
                 return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
 
@@ -496,10 +496,10 @@ public class UserReputationEndpoint implements ResourceContainer {
                     .build();
         }
     }
-    private void buildWonBadges(long domainId, long score, JSONArray userBadges) {
+    private void buildWonBadges(long programId, long score, JSONArray userBadges) {
 
         // Get available badge within the solution
-        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domainId);
+        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByProgramId(programId);
 
         // A badge
         JSONObject reputation = null;
@@ -563,9 +563,9 @@ public class UserReputationEndpoint implements ResourceContainer {
                 String actorId = id.getId();
 
 
-                List<ProfileReputation> badgesByDomain= realizationService.getScorePerDomainByIdentityId(actorId);
+                List<ProfileReputation> badgesByProgram= realizationService.getScorePerProgramByIdentityId(actorId);
 
-                allBadges = buildallBadges(badgesByDomain,url);
+                allBadges = buildallBadges(badgesByProgram,url);
 
 
 
@@ -596,7 +596,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
             for (ProfileReputation rep : reputationLis) {
                 // Compute won badge
-                buildnextWinBadges(rep.getDomainId(), rep.getScore(), allBadges);
+                buildnextWinBadges(rep.getProgramId(), rep.getScore(), allBadges);
             }
         }
         return allBadges;
@@ -628,7 +628,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 for (ProfileReputation rep : reputationLis) {
                     // Compute won badge
-                    buildWonBadges(rep.getDomainId(), rep.getScore(), allBadges);
+                    buildWonBadges(rep.getProgramId(), rep.getScore(), allBadges);
 
                 }
 
@@ -647,7 +647,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
             for (ProfileReputation rep : reputationLis) {
                 // Compute won badge
-                buildWonBadges(rep.getDomainId(), rep.getScore(), allBadges);
+                buildWonBadges(rep.getProgramId(), rep.getScore(), allBadges);
 
 
             }
@@ -658,10 +658,10 @@ public class UserReputationEndpoint implements ResourceContainer {
 
     }
 
-    private void buildnextWinBadges(long domainId, long score, JSONArray userBadges) {
+    private void buildnextWinBadges(long programId, long score, JSONArray userBadges) {
 
         // Get available badge within the solution
-        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domainId);
+        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByProgramId(programId);
 
         // A badge
         JSONObject reputation = null;

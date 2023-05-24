@@ -59,7 +59,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       ref="chart"
       :open="menu"
       :username="username"
-      :domains="domains" />
+      :programs="programs" />
   </v-menu>
 </template>
 <script>
@@ -69,7 +69,7 @@ export default {
       type: Object,
       default: () => null,
     },
-    domains: {
+    programs: {
       type: Array,
       default: () => [],
     },
