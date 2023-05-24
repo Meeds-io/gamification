@@ -72,7 +72,7 @@ public class RuleDTO implements Serializable {
     return program == null ? 0 : program.getAudienceId();
   }
 
-  public long getDomainId() {
+  public long getProgramId() {
     return program == null ? 0 : program.getId();
   }
 

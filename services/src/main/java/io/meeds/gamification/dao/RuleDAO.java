@@ -118,7 +118,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   }
 
-  public RuleEntity findActiveRuleByEventAndDomain(String event, long domainId) throws PersistenceException {
+  public RuleEntity findActiveRuleByEventAndProgramId(String event, long domainId) throws PersistenceException {
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findActiveRuleByEventAndDomain", RuleEntity.class)
                                                      .setParameter(EVENT_PARAM_NAME, event)
                                                      .setParameter(DOMAIN_ID_PARAM_NAME, domainId)
@@ -132,7 +132,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  public long getRulesTotalScoreByDomain(long domainId) throws PersistenceException {
+  public long getRulesTotalScoreByProgramId(long domainId) throws PersistenceException {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.getRulesTotalScoreByDomain", Long.class)
                                                .setParameter(DOMAIN_ID_PARAM_NAME, domainId)
                                                .setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
@@ -194,8 +194,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (StringUtils.isNotBlank(filter.getEventName())) {
       query.setParameter(EVENT_PARAM_NAME, filter.getEventName());
     }
-    if (filter.getDomainId() > 0) {
-      query.setParameter(DOMAIN_ID_PARAM_NAME, filter.getDomainId());
+    if (filter.getProgramId() > 0) {
+      query.setParameter(DOMAIN_ID_PARAM_NAME, filter.getProgramId());
     }
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
       query.setParameter("ids", filter.getSpaceIds());
@@ -251,7 +251,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       suffixes.add("Event");
       predicates.add("r.event = :event");
     }
-    if (filter.getDomainId() > 0) {
+    if (filter.getProgramId() > 0) {
       suffixes.add("Domain");
       predicates.add("r.domainEntity.id = :domainId");
     }

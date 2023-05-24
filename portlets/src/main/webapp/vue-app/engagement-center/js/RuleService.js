@@ -21,8 +21,8 @@ export function getRules(filter) {
   if (filter?.term) {
     formData.append('term', filter.term);
   }
-  if (filter?.domainId) {
-    formData.append('domainId', filter.domainId);
+  if (filter?.programId) {
+    formData.append('programId', filter.programId);
   }
   if (filter?.status) {
     formData.append('status', filter.status.toUpperCase());
@@ -36,8 +36,8 @@ export function getRules(filter) {
   if (filter?.period) {
     formData.append('period', filter.period.toUpperCase());
   }
-  if (filter?.groupByDomain) {
-    formData.append('groupByDomain', 'true');
+  if (filter?.groupByProgram) {
+    formData.append('groupByProgram', 'true');
   }
   if (filter?.orderByRealizations) {
     formData.append('orderByRealizations', 'true');
