@@ -6,11 +6,21 @@
     outlined
     dense>
     <v-btn value="YOURS" text>
-      <v-icon :color="!isOwned && 'primary'" class="me-2" small>fa-user</v-icon>
+      <v-icon
+        :color="!isOwned && 'primary'"
+        class="me-2"
+        small>
+        fa-user
+      </v-icon>
       {{ $t('gamification.achievement.yours') }}
     </v-btn>
     <v-btn value="OWNED" text>
-      <v-icon :color="isOwned && 'primary'" class="me-2" small>fa-users-cog</v-icon>
+      <v-icon
+        :color="isOwned && 'primary'"
+        class="me-2"
+        small>
+        fa-users-cog
+      </v-icon>
       {{ $t('gamification.achievement.owned') }}
     </v-btn>
   </v-btn-toggle>

@@ -20,7 +20,7 @@
 <template>
   <div class="Realizations border-box-sizing">
     <v-toolbar class="z-index-one px-2" flat>
-      <div class="d-flex flex-grow-1 align-center">
+      <div class="d-flex flex-grow-1 align-center content-box-sizing">
         <template v-if="!isMobile">
           <realizations-export-button :link="exportFileLink" />
           <v-spacer />
