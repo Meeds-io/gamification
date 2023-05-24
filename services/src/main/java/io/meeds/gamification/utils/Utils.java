@@ -267,17 +267,17 @@ public class Utils {
     return message;
   }
 
-  public static String buildAttachmentUrl(String domainId, Long lastModifiedDate, String type, boolean isDefault) {
-    if (Long.valueOf(domainId) == 0) {
+  public static String buildAttachmentUrl(String programId, Long lastModifiedDate, String type, boolean isDefault) {
+    if (Long.valueOf(programId) == 0) {
       return null;
     }
 
     if (isDefault) {
-      domainId = DEFAULT_IMAGE_REMOTE_ID;
+      programId = DEFAULT_IMAGE_REMOTE_ID;
       lastModifiedDate = DEFAULT_COVER_LAST_MODIFIED;
     }
 
-    String token = generateAttachmentToken(domainId, type, lastModifiedDate);
+    String token = generateAttachmentToken(programId, type, lastModifiedDate);
     if (org.apache.commons.lang.StringUtils.isNotBlank(token)) {
       try {
         token = URLEncoder.encode(token, "UTF8");
@@ -288,7 +288,7 @@ public class Utils {
     }
 
     return new StringBuilder(getBaseURLProgramRest()).append("/")
-                                                     .append(domainId)
+                                                     .append(programId)
                                                      .append("/")
                                                      .append(type)
                                                      .append("?lastModified=")
@@ -299,7 +299,7 @@ public class Utils {
 
   }
 
-  public static String generateAttachmentToken(String domainId, String attachmentType, Long lastModifiedDate) {
+  public static String generateAttachmentToken(String programId, String attachmentType, Long lastModifiedDate) {
     String token = null;
     CodecInitializer codecInitializer = ExoContainerContext.getService(CodecInitializer.class);
     if (codecInitializer == null) {
@@ -307,22 +307,22 @@ public class Utils {
       token = org.apache.commons.lang.StringUtils.EMPTY;
     } else {
       try {
-        String tokenPlain = attachmentType + ":" + domainId + ":" + lastModifiedDate;
+        String tokenPlain = attachmentType + ":" + programId + ":" + lastModifiedDate;
         token = codecInitializer.getCodec().encode(tokenPlain);
       } catch (TokenServiceInitializationException e) {
-        LOG.warn("Error generating token of {} for domain {}. An empty token will be used", attachmentType, domainId, e);
+        LOG.warn("Error generating token of {} for program {}. An empty token will be used", attachmentType, programId, e);
         token = org.apache.commons.lang.StringUtils.EMPTY;
       }
     }
     return token;
   }
 
-  public static boolean isAttachmentTokenValid(String token, String domainId, String attachmentType, Long lastModifiedDate) {
+  public static boolean isAttachmentTokenValid(String token, String programId, String attachmentType, Long lastModifiedDate) {
     if (StringUtils.isBlank(token)) {
-      LOG.warn("An empty token is used for {} for domain {}", attachmentType, domainId);
+      LOG.warn("An empty token is used for {} for program {}", attachmentType, programId);
       return false;
     }
-    String validToken = generateAttachmentToken(domainId, attachmentType, lastModifiedDate);
+    String validToken = generateAttachmentToken(programId, attachmentType, lastModifiedDate);
     return StringUtils.equals(validToken, token);
   }
 
@@ -358,22 +358,22 @@ public class Utils {
     return aclIdentity;
   }
 
-  public static void addDomainStatisticParameters(IdentityManager identityManager,
-                                                  SpaceService spaceService,
-                                                  ProgramDTO domain,
-                                                  StatisticData statisticData,
-                                                  String username) {
-    if (domain == null) {
+  public static void addProgramStatisticParameters(IdentityManager identityManager,
+                                                   SpaceService spaceService,
+                                                   ProgramDTO program,
+                                                   StatisticData statisticData,
+                                                   String username) {
+    if (program == null) {
       return;
     }
-    statisticData.addParameter(STATISTICS_PROGRAM_ID_PARAM, domain.getId());
-    statisticData.addParameter(STATISTICS_PROGRAM_TITLE_PARAM, domain.getTitle());
-    statisticData.addParameter(STATISTICS_PROGRAM_BUDGET_PARAM, domain.getBudget());
-    statisticData.addParameter(STATISTICS_PROGRAM_TYPE_PARAM, domain.getType());
-    statisticData.addParameter(STATISTICS_PROGRAM_COVERFILEID_PARAM, domain.getCoverFileId());
-    statisticData.addParameter(STATISTICS_PROGRAM_OWNERS_PARAM, domain.getOwnerIds());
-    if (domain.getAudienceId() > 0) {
-      Space space = spaceService.getSpaceById(String.valueOf(domain.getAudienceId()));
+    statisticData.addParameter(STATISTICS_PROGRAM_ID_PARAM, program.getId());
+    statisticData.addParameter(STATISTICS_PROGRAM_TITLE_PARAM, program.getTitle());
+    statisticData.addParameter(STATISTICS_PROGRAM_BUDGET_PARAM, program.getBudget());
+    statisticData.addParameter(STATISTICS_PROGRAM_TYPE_PARAM, program.getType());
+    statisticData.addParameter(STATISTICS_PROGRAM_COVERFILEID_PARAM, program.getCoverFileId());
+    statisticData.addParameter(STATISTICS_PROGRAM_OWNERS_PARAM, program.getOwnerIds());
+    if (program.getAudienceId() > 0) {
+      Space space = spaceService.getSpaceById(String.valueOf(program.getAudienceId()));
       if (space != null) {
         addSpaceStatistics(statisticData, space);
       }
@@ -401,7 +401,7 @@ public class Utils {
     statisticData.addParameter(STATISTICS_RULE_SCORE_PARAM, rule.getScore());
     statisticData.addParameter(STATISTICS_RULE_TYPE_PARAM, rule.getType());
 
-    addDomainStatisticParameters(identityManager, spaceService, rule.getProgram(), statisticData, username);
+    addProgramStatisticParameters(identityManager, spaceService, rule.getProgram(), statisticData, username);
   }
 
   public static void addAnnouncementStatisticParameters(IdentityManager identityManager,

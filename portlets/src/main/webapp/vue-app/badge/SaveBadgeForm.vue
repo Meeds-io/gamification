@@ -27,7 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           data-toggle="collapse"
           type="button"
           @click.prevent="collapseButton()">
-          {{ this.$t('exoplatform.gamification.addbadge') }}
+          {{ $t('exoplatform.gamification.addbadge') }}
         </button>
       </div>
       <div
@@ -35,8 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :class="isShown ? '' : 'out'"
         aria-labelledby="headingOne"
         class="collapse show"
-        data-parent="#accordionExample"
-        style="height: 0px; transition: inherit;">
+        data-parent="#accordionExample">
         <div class="card-body">
           <div
             id="myForm"
@@ -44,11 +43,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
             <div class="popupHeader ClearFix">
               <a class="uiIconClose pull-right" @click.prevent="collapseButton(), onCancel()"></a>
-              <span class="PopupTitle popupTitle"> {{ this.$t('exoplatform.gamification.addbadge') }}</span>
+              <span class="PopupTitle popupTitle"> {{ $t('exoplatform.gamification.addbadge') }}</span>
             </div>
             <div class="PopupContent popupContent">
               <form id="titleInputGroup">
-                <label class="pt-0">{{ this.$t('exoplatform.gamification.title') }}:</label>
+                <label class="pt-0">{{ $t('exoplatform.gamification.title') }}:</label>
                 <input
                   id="titleInput"
                   v-model="badge.title"
@@ -79,7 +78,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <label
                   id="Needed"
                   label-for="neededScoreInput"
-                  class="pt-0">{{ this.$t('exoplatform.gamification.badge.score','Score') }}:</label>
+                  class="pt-0">{{ $t('exoplatform.gamification.badge.score','Score') }}:</label>
                 <input
                   id="neededScoreInput"
                   v-model="badge.neededScore"
@@ -89,8 +88,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   :placeholder="$t('badge.score.placeholder','Enter badge needed score')">
               </form>
               <form id="iconInputGroup">
-                <label for="iconInput" class="pt-0"> {{ this.$t('exoplatform.gamification.badge.icon','Icon') }}: </label>
-                <button type="button" onclick="document.getElementById('iconInput').click()"> {{ this.$t('exoplatform.gamification.badge.icon.label','Choose file') }} </button>  {{ this.imageName }}
+                <label for="iconInput" class="pt-0"> {{ $t('exoplatform.gamification.badge.icon','Icon') }}: </label>
+                <button type="button" onclick="document.getElementById('iconInput').click()"> {{ $t('exoplatform.gamification.badge.icon.label','Choose file') }} </button>  {{ imageName }}
                 <input
                   type="file"
                   id="iconInput"
@@ -101,51 +100,48 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   @change="onFilePicked">
               </form>
 
-              <form id="domainSelectboxGroup">
+              <form id="programSelectboxGroup">
                 <label class="pt-0">{{ $t('exoplatform.gamification.gamificationinformation.Domain') }}:</label>
 
                 <select v-model="badge.program" class="mb-4">
                   <option disabled>
-                    {{ this.$t('exoplatform.gamification.selectdomain') }}
+                    {{ $t('exoplatform.gamification.selectdomain') }}
                   </option>
                   <option
-                    v-for="domain in domains"
-                    :key="domain.id"
-                    :value="domain">
+                    v-for="program in programs"
+                    :key="program.id"
+                    :value="program">
                     {{
-                      $t(`exoplatform.gamification.gamificationinformation.domain.${domain.title}`,domain.title)
+                      $t(`exoplatform.gamification.gamificationinformation.domain.${program.title}`,program.title)
                     }}
                   </option>
                 </select>
               </form>
               <form id="enable">
-                <label class="pt-0">{{ this.$t('exoplatform.gamification.enabled') }} :</label>
-                <label class="uiSwitchBtn">
-
+                <label class="pt-0">{{ $t('exoplatform.gamification.enabled') }} :</label>
+                <label class="uiSwitchBtn" @click="badge.enabled = !badge.enabled">
                   <input v-model="badge.enabled" type="checkbox">
-                  <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
-                  <span class="absolute-no">{{ this.$t('exoplatform.gamification.NO') }}</span>
+                  <div class="slider round" @click="badge.enabled = !badge.enabled">
+                    <span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span>
+                  </div>
+                  <span class="absolute-no" @click="badge.enabled = !badge.enabled">{{ $t('exoplatform.gamification.NO') }}</span>
                 </label>
               </form>
 
-              <b-row style="display: inherit;">
-                <b-col>
-                  <button
-                    class="btn secondary pull-right"
-                    type="cancel"
-                    @click.prevent="collapseButton(), onCancel()">
-                    {{
-                      this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
-                  </button>
-                  <button
-                    class="btn-primary pull-right"
-                    type="submit"
-                    :disabled="isDisabled"
-                    @click="onSubmit(), collapseButton()">
-                    {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
-                  </button>
-                </b-col>
-              </b-row>
+              <div class="card-body-actions">
+                <button
+                  class="btn-primary"
+                  type="submit"
+                  :disabled="isDisabled"
+                  @click="onSubmit(), collapseButton()">
+                  {{ $t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
+                </button>
+                <button
+                  class="btn cancel"
+                  @click.prevent="collapseButton(), onCancel()">
+                  {{ $t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
+                </button>
+            </div>
             </div>
           </div>
         </div>
@@ -162,7 +158,7 @@ import BootstrapVue from 'bootstrap-vue';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 Vue.use(BootstrapVue);
 export default {
-  props: ['badge', 'domains', 'errorType'],
+  props: ['badge', 'programs', 'errorType'],
   data: function () {
     return {
       formErrors: {},
@@ -183,7 +179,7 @@ export default {
     };
   },
   computed: {
-    isDisabled: function(){
+    isDisabled() {
       return !(this.isNotEmpty(this.badge.neededScore)&&this.isNotEmpty(this.badge.title)&&this.isNotEmpty(this.uploadId)&&this.badge.program!=null);
     }
   },
@@ -307,11 +303,6 @@ div#headingOne button.btn.btn-primary {
     margin: 15px 12px 5px;
     border-radius: 3px;
 
-}
-
-.btn-primary:focus,
-.btn-primary.focus {
-    box-shadow: inset 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
 }
 
 .collapse.show.out {
@@ -440,21 +431,6 @@ div#headingOne:hover {
     background: transparent;
 }
 
-button.btn.btn-link.primary.collapsed,
-button.btn.btn-link.primary {
-    background: #3c8dbc;
-    color: white;
-    padding: 5px 10px;
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    text-decoration: none;
-}
-
-button.btn-primary.pull-right {
-    border-radius: 0.25rem;
-}
-
 .collapse {
     top: 15px;
 }
@@ -477,7 +453,7 @@ div#collapseOne {
     position: relative;
     display: inline-block;
     width: 60px;
-
+    margin: auto;
     height: 55px;
 }
 
@@ -626,19 +602,27 @@ select:focus {
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 5px #c9d5e6;
     color: #333;
 }
-
-
+.card-body .UIPopupWindow {
+    background: #fff;
+    overflow: auto;
+}
+.card-body .PopupContent {
+    padding: 8px 10px 8px 15px;
+}
+.card-body .card-body-actions {
+    display: flex;
+    justify-content: center;
+}
+.card-body .card-body-actions button {
+    margin: 8px 10px 8px 15px;
+}
 label.pt-0 {
     display: inline-block;
     width: 100%;
 }
 
-form#domainSelectboxGroup {
+form#programSelectboxGroup {
     display: inline-block;
-}
-.btn-primary.disabled, .btn-primary:disabled {
-     background-color: #afc9e5; 
-     background-image: none;
 }
 textarea#badgeDescription {
     border:2px solid #e1e8ee

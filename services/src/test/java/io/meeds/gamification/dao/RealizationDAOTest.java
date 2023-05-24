@@ -77,13 +77,13 @@ public class RealizationDAOTest extends AbstractServiceTest {
   public void testFindAllActionsHistoryByDateByDomain() {
     ProgramEntity domainEntity = newDomain();
     assertEquals(0,
-                 realizationDAO.findRealizationsByDateAndDomain(IdentityType.USER, fromDate, domainEntity.getId())
+                 realizationDAO.findRealizationsByDateAndProgramId(IdentityType.USER, fromDate, domainEntity.getId())
                                .size());
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     List<StandardLeaderboard> leaderboardList = realizationDAO
-                                                              .findRealizationsByDateAndDomain(IdentityType.USER,
+                                                              .findRealizationsByDateAndProgramId(IdentityType.USER,
                                                                                                fromDate,
                                                                                                domainEntity.getId());
     assertEquals(leaderboardList.size(), 1);
@@ -101,12 +101,12 @@ public class RealizationDAOTest extends AbstractServiceTest {
   public void testFindAllActionsHistoryByDomain() {
     ProgramEntity domainEntity = newDomain();
     assertEquals(0,
-                 realizationDAO.findRealizationsByDomain(IdentityType.USER, domainEntity.getId()).size());
+                 realizationDAO.findRealizationsByProgramId(IdentityType.USER, domainEntity.getId()).size());
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     List<StandardLeaderboard> leaderboardList = realizationDAO
-                                                              .findRealizationsByDomain(IdentityType.USER,
+                                                              .findRealizationsByProgramId(IdentityType.USER,
                                                                                         domainEntity.getId());
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_EARNER);
@@ -162,13 +162,13 @@ public class RealizationDAOTest extends AbstractServiceTest {
   public void testFindActionsHistoryByDateByDomain() {
     ProgramEntity domainEntity = newDomain();
     assertEquals(realizationDAO
-                               .findRealizationsByDateByDomain(fromDate, IdentityType.USER, domainEntity.getId(), limit)
+                               .findRealizationsByDateByProgramId(fromDate, IdentityType.USER, domainEntity.getId(), limit)
                                .size(),
                  0);
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    List<StandardLeaderboard> leaderboardList = realizationDAO.findRealizationsByDateByDomain(fromDate,
+    List<StandardLeaderboard> leaderboardList = realizationDAO.findRealizationsByDateByProgramId(fromDate,
                                                                                               IdentityType.USER,
                                                                                               domainEntity.getId(),
                                                                                               limit);
@@ -204,13 +204,13 @@ public class RealizationDAOTest extends AbstractServiceTest {
   @Test
   public void testFindDomainScoreByIdentityId() {
     ProgramEntity domainEntity = newDomain();
-    assertEquals(realizationDAO.getScorePerDomainByIdentityId(TEST_USER_EARNER).size(), 0);
+    assertEquals(realizationDAO.getScorePerProgramByIdentityId(TEST_USER_EARNER).size(), 0);
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    assertEquals(1, realizationDAO.getScorePerDomainByIdentityId(TEST_USER_EARNER).size());
+    assertEquals(1, realizationDAO.getScorePerProgramByIdentityId(TEST_USER_EARNER).size());
     assertEquals(Integer.parseInt(TEST__SCORE) * 3L,
-                 realizationDAO.getScorePerDomainByIdentityId(TEST_USER_EARNER).get(0).getScore());
+                 realizationDAO.getScorePerProgramByIdentityId(TEST_USER_EARNER).get(0).getScore());
   }
 
   @Test
@@ -354,7 +354,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     dateFilter.setSortDescending(true);
     dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setIdentityType(IdentityType.getType(""));
-    dateFilter.setDomainIds(domainIds);
+    dateFilter.setProgramIds(domainIds);
     List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -406,7 +406,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     dateFilter.setSortField("date");
     dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setIdentityType(IdentityType.getType(""));
-    dateFilter.setDomainIds(domainIds);
+    dateFilter.setProgramIds(domainIds);
     // Test default Sort field = 'date' with sort descending = false
     List<RealizationEntity> filteredRealizations = realizationDAO.findRealizationsByFilter(dateFilter,
                                                                                            offset,
@@ -483,7 +483,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
 
     RealizationFilter dateFilter = new RealizationFilter();
     List<Long> domainIds = Collections.emptyList();
-    dateFilter.setDomainIds(domainIds);
+    dateFilter.setProgramIds(domainIds);
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("type");
@@ -544,7 +544,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
 
     RealizationFilter dateFilter = new RealizationFilter();
     List<Long> domainIds = Collections.emptyList();
-    dateFilter.setDomainIds(domainIds);
+    dateFilter.setProgramIds(domainIds);
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("status");
@@ -605,7 +605,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     RealizationFilter dateFilter = new RealizationFilter();
 
     List<Long> domainIds = Collections.emptyList();
-    dateFilter.setDomainIds(domainIds);
+    dateFilter.setProgramIds(domainIds);
     dateFilter.setEarnerIds(new ArrayList<>(Collections.singleton("1")));
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
@@ -709,7 +709,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     RealizationFilter dateFilter = new RealizationFilter();
     List<Long> domainIds = new ArrayList<Long>();
     domainIds.add(rule1Automatic.getDomainEntity().getId());
-    dateFilter.setDomainIds(domainIds);
+    dateFilter.setProgramIds(domainIds);
     dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
@@ -766,7 +766,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     RealizationFilter dateFilter = new RealizationFilter();
     List<Long> domainIds = new ArrayList<Long>();
     domainIds.add(rule1Automatic.getDomainEntity().getId());
-    dateFilter.setDomainIds(domainIds);
+    dateFilter.setProgramIds(domainIds);
     dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
@@ -825,7 +825,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     RealizationFilter dateFilter = new RealizationFilter();
     List<Long> domainIds = new ArrayList<Long>();
     domainIds.add(rule1Automatic.getDomainEntity().getId());
-    dateFilter.setDomainIds(domainIds);
+    dateFilter.setProgramIds(domainIds);
     dateFilter.setEarnerIds(new ArrayList<>(Collections.singleton("1")));
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);

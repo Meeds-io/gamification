@@ -170,7 +170,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
         // Check if the current user is already in top10
         LeaderboardInfo leader = buildCurrentUserRank(date,
-                                                      leaderboardFilter.getDomainId(),
+                                                      leaderboardFilter.getProgramId(),
                                                       leaderboardList);
         // Complete the final leaderboard
         if (leader != null) {
@@ -190,24 +190,25 @@ public class LeaderboardEndpoint implements ResourceContainer {
   @GET
   @Path("filter")
   @RolesAllowed("users")
-  public Response filter(@Context
-  UriInfo uriInfo,
-                         @QueryParam("domainId")
-                         Long domainId,
+  public Response filter(
+                         @Context
+                         UriInfo uriInfo,
+                         @QueryParam("programId")
+                         Long programId,
                          @QueryParam("period")
                          String period,
                          @QueryParam("capacity")
-                         String capacity) {
+                         int capacity) {
     // Init search criteria
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
-    leaderboardFilter.setDomainId(domainId);
+    leaderboardFilter.setProgramId(programId);
     if (StringUtils.isBlank(period)) {
       leaderboardFilter.setPeriod(Period.WEEK.name());
     } else {
       leaderboardFilter.setPeriod(period);
     }
 
-    if (StringUtils.isBlank(capacity)) {
+    if (capacity <= 0) {
       leaderboardFilter.setLoadCapacity(DEFAULT_LOAD_CAPACITY);
     } else {
       leaderboardFilter.setLoadCapacity(capacity);
@@ -251,7 +252,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
         break;
       }
       LeaderboardInfo leader = buildCurrentUserRank(date,
-                                                    leaderboardFilter.getDomainId(),
+                                                    leaderboardFilter.getProgramId(),
                                                     leaderboardInfoList);
       // Complete the final leaderboard
       if (leader != null)
@@ -262,7 +263,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
     } catch (Exception e) {
 
       LOG.error("Error filtering leaderbaord by Doamin : {} and by Period {} ",
-                leaderboardFilter.getDomainId(),
+                leaderboardFilter.getProgramId(),
                 leaderboardFilter.getPeriod(),
                 e);
 
@@ -338,7 +339,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
   }
 
   private LeaderboardInfo buildCurrentUserRank(Date date,
-                                               Long domainId,
+                                               Long programId,
                                                List<LeaderboardInfo> leaderboardList) {
     if (leaderboardList.isEmpty()) {
       return null;
@@ -350,7 +351,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
       String earnerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUser).getId();
       if (!isEarnerInTopTen(earnerIdentity, leaderboardList)) {
         // Get GaamificationScore for current user
-        int rank = realizationService.getLeaderboardRank(earnerIdentity, date, domainId);
+        int rank = realizationService.getLeaderboardRank(earnerIdentity, date, programId);
         if (rank > 0) {
           leaderboardInfo = new LeaderboardInfo();
           leaderboardInfo.setRank(rank);

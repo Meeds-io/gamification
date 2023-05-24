@@ -20,16 +20,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd"
                xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
-    <!-- Domains storage (JPA) -->
     <component>
         <type>io.meeds.gamification.dao.ProgramDAO</type>
     </component>
-    <!-- Domains Service Layer-->
     <component>
         <key>io.meeds.gamification.service.ProgramService</key>
         <type>io.meeds.gamification.service.impl.ProgramServiceImpl</type>
     </component>
-    <!-- Domains storage Layer-->
     <component>
         <key>io.meeds.gamification.storage.ProgramStorage</key>
         <type>io.meeds.gamification.storage.cached.ProgramCachedStorage</type>
@@ -41,7 +38,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <name>addExoCacheConfig</name>
             <set-method>addExoCacheConfig</set-method>
             <type>org.exoplatform.services.cache.ExoCacheConfigPlugin</type>
-            <description>Configures the cache for gamifications domains and rules</description>
+            <description>Configures the cache for gamifications programs and rules</description>
             <init-params>
                 <object-param>
                     <name>gamification.domain</name>

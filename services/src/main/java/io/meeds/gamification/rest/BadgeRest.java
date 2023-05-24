@@ -194,7 +194,7 @@ public class BadgeRest implements ResourceContainer {
 
       } catch (ObjectAlreadyExistsException e) {
 
-        LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getProgram().getTitle(), e);
+        LOG.error("Badge with title {} and program {} already exist", badgeDTO.getTitle(), badgeDTO.getProgram().getTitle(), e);
 
         return Response.notModified()
                 .cacheControl(cacheControl)
@@ -262,7 +262,7 @@ public class BadgeRest implements ResourceContainer {
       }
         catch (ObjectAlreadyExistsException e) {
 
-          LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getProgram().getTitle(), e);
+          LOG.error("Badge with title {} and program {} already exist", badgeDTO.getTitle(), badgeDTO.getProgram().getTitle(), e);
 
           return Response.notModified()
                   .cacheControl(cacheControl)

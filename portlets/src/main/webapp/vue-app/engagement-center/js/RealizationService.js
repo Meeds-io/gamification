@@ -41,9 +41,9 @@ export function getRealizations(filter) {
   if (filter?.limit) {
     formData.append('limit', filter.limit);
   }
-  if (filter?.domainIds?.length > 0) {
-    for (const element of filter.domainIds) {
-      formData.append('domainIds', element);
+  if (filter?.programIds?.length > 0) {
+    for (const element of filter.programIds) {
+      formData.append('programIds', element);
     }
   }
   if (filter?.owned) {
@@ -88,9 +88,9 @@ export function getRealizationsExportLink(filter) {
   if (filter?.limit) {
     formData.append('limit', filter.limit);
   }
-  if (filter?.domainIds?.length > 0) {
-    for (const element of filter.domainIds) {
-      formData.append('domainIds', element);
+  if (filter?.programIds?.length > 0) {
+    for (const element of filter.programIds) {
+      formData.append('programIds', element);
     }
   }
   if (filter?.owned) {
