@@ -58,18 +58,25 @@ export default {
     weekInMs: 604800000,
   }),
   computed: {
-    categories() {
-      const categories = [];
-      if (this.endingSoonCategory) {
-        categories.push(this.endingSoonCategory);
-      }
-      if (this.endingSoonCategory) {
-        categories.push(this.newestCategory);
-      }
-      if (this.startingSoonCategory) {
-        categories.push(this.startingSoonCategory);
-      }
-      return categories;
+    endingSoonRulesToDisplay() {
+      return this.endingSoonRules
+        .filter(r => r.endDate && (new Date(r.endDate).getTime() - Date.now()) < this.weekInMs);
+    },
+    newestRulesToDisplay() {
+      return this.newestRules
+        .filter(r => !this.endingSoonRules?.find(e => e.id === r.id))
+        .filter(r => r.createdDate && (Date.now() - new Date(r.createdDate).getTime()) < this.weekInMs)
+        .slice(0, this.limit * 3 - (this.startingSoonCategory && 3 || 0) - (this.endingSoonCategory && 3 || 0));
+    },
+    startingSoonRulesToDisplay() {
+      return this.startingSoonRules
+        .filter(r => r.startDate && (new Date(r.startDate).getTime() - Date.now()) < this.weekInMs);
+    },
+    hasRules() {
+      return this.startingSoonRules?.length || this.newestRules?.length || this.endingSoonRules?.length;
+    },
+    initialized() {
+      return this.loading === 0;
     },
     endingSoonCategory() {
       return this.endingSoonRulesToDisplay?.length && {
@@ -101,25 +108,18 @@ export default {
         offset: 0,
       };
     },
-    endingSoonRulesToDisplay() {
-      return this.endingSoonRules
-        .filter(r => r.endDate && (new Date(r.endDate).getTime() - Date.now()) < this.weekInMs);
-    },
-    newestRulesToDisplay() {
-      return this.newestRules
-        .filter(r => !this.endingSoonRules?.find(e => e.id === r.id))
-        .filter(r => r.createdDate && (Date.now() - new Date(r.createdDate).getTime()) < this.weekInMs)
-        .slice(0, this.limit * 3 - (this.startingSoonCategory && 3 || 0) - (this.endingSoonCategory && 3 || 0));
-    },
-    startingSoonRulesToDisplay() {
-      return this.startingSoonRules
-        .filter(r => r.startDate && (new Date(r.startDate).getTime() - Date.now()) < this.weekInMs);
-    },
-    hasRules() {
-      return this.startingSoonRules?.length || this.newestRules?.length || this.endingSoonRules?.length;
-    },
-    initialized() {
-      return this.loading === 0;
+    categories() {
+      const categories = [];
+      if (this.endingSoonCategory) {
+        categories.push(this.endingSoonCategory);
+      }
+      if (this.newestCategory) {
+        categories.push(this.newestCategory);
+      }
+      if (this.startingSoonCategory) {
+        categories.push(this.startingSoonCategory);
+      }
+      return categories;
     },
   },
   watch: {
