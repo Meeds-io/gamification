@@ -96,7 +96,12 @@ export default {
   },
   methods: {
     retrievePrograms() {
-      return this.$programService.getPrograms(0, 3, this.type, this.status, '', false, true)
+      return this.$programService.getPrograms({
+        limit: 3,
+        type: this.type,
+        status: this.status,
+        sortByBudget: true,
+      })
         .then((data) => {
           this.programs = (data?.programs || []).sort((p1, p2) => p2.rulesTotalScore - p1.rulesTotalScore);
           this.programsDisplayed = data.size > 0;

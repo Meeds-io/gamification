@@ -19,40 +19,38 @@
 -->
 <template>
   <div class="Realizations border-box-sizing">
-    <v-toolbar class="z-index-one" flat>
-      <div class="d-flex flex-grow-1 align-center content-box-sizing">
-        <template v-if="!isMobile">
-          <realizations-export-button :link="exportFileLink" />
-          <v-spacer />
-          <template v-if="isRealizationManager">
-            <realizations-owner-switch-buttons
-              id="realizationAdministrationSwitch"
-              v-model="administrationMode"
-              class="mx-auto" />
-            <v-spacer />
-          </template>
-        </template>
-        <div class="pe-3 d-flex align-center">
-          <select-period
-            v-model="selectedPeriod"
-            :left="!isMobile"
-            class="mx-2" />
-        </div>
-        <v-spacer v-if="isMobile" />
-        <v-btn
-          :class="isMobile && 'width-auto' || 'primary-border-color'"
-          :color="!isMobile && 'primary'"
-          :small="isMobile"
-          text
-          class="px-0 px-sm-2"
-          @click="openRealizationsFilterDrawer">
-          <v-icon :size="isMobile && 24 || 16">fas fa-sliders-h</v-icon>
-          <span v-if="!isMobile" class="font-weight-regular caption ms-2">
-            {{ $t('profile.label.search.openSearch') }}
-          </span>
-        </v-btn>
-      </div>
-    </v-toolbar>
+    <application-toolbar
+      :center-button-toggle="isRealizationManager && !isMobile && {
+        selected: tabName,
+        hide: false,
+        buttons: [{
+          value: 'YOURS',
+          text: $t('gamification.achievement.yours'),
+          icon: 'fa-user',
+        }, {
+          value: 'OWNED',
+          text: $t('gamification.achievement.owned'),
+          icon: 'fa-users-cog',
+        }]
+      }"
+      :right-filter-button="{
+        text: $t('profile.label.search.openSearch'),
+      }"
+      :filters-count="filtersCount"
+      hide-cone-button
+      @toggle-select="tabName = $event"
+      @filter-button-click="$root.$emit('realization-open-filter-drawer')">
+      <template v-if="!$vuetify.breakpoint.mobile" #left>
+        <realizations-export-button :link="exportFileLink" />
+      </template>
+      <template #right>
+        <select-period
+          v-model="selectedPeriod"
+          :left="!$vuetify.breakpoint.mobile"
+          class="mx-2" />
+      </template>
+    </application-toolbar>
+
     <v-progress-linear
       v-if="!initialized"
       indeterminate
@@ -188,10 +186,17 @@ export default {
     filterActivated: false,
     selected: 'Date',
     programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`,
-    administrationMode: false,
+    tabName: 'YOURS',
     isRealizationManager: false,
   }),
   computed: {
+    administrationMode() {
+      return this.tabName === 'OWNED';
+    },
+    filtersCount() {
+      return (this.searchList?.length && 1 || 0)
+        + (this.earnerIds?.length && 1 || 0);
+    },
     hasMore() {
       return this.limit < this.totalSize;
     },
@@ -395,9 +400,6 @@ export default {
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
       this.realizations[index] = updatedRealization;
       this.$set(this.realizations,index,updatedRealization);
-    },
-    openRealizationsFilterDrawer() {
-      this.$root.$emit('realization-open-filter-drawer');
     },
     filterByPrograms(programs, grantees) {
       this.filterActivated = true;

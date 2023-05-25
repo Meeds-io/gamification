@@ -18,23 +18,134 @@
 
 -->
 <template>
-  <v-list>
+  <div>
     <engagement-center-rules-category
-      v-for="category in categories"
+      v-for="category in validCategories"
       :key="category.id"
       :category="category"
-      prepend-icon="mdi-account-circle" />
-  </v-list>
+      :program="category" />
+  </div>
 </template>
 <script>
 export default {
   props: {
-    categories: {
-      type: Array,
-      default: function() {
-        return [];
-      },
+    term: {
+      type: String,
+      default: null,
+    },
+    type: {
+      type: String,
+      default: () => 'ALL',
+    },
+    status: {
+      type: String,
+      default: () => 'STARTED',
     },
   },
+  data: () => ({
+    loading: true,
+    applyfilters: false,
+    categories: [],
+    pageSize: 6,
+  }),
+  computed: {
+    validCategories() {
+      return this.categories.filter(category => category.rules.length > 0);
+    },
+    rulesSize() {
+      return this.categories.map(cat => cat.size || 0).reduce((sum, v) => sum += v, 0) || 0;
+    },
+    categoriesById() {
+      const categoriesById = {};
+      this.categories.forEach(category => {
+        categoriesById[category.id] = category;
+      });
+      return categoriesById;
+    },
+  },
+  watch: {
+    term() {
+      this.applyfilters = true;
+    },
+    type() {
+      this.applyfilters = true;
+    },
+    status() {
+      this.applyfilters = true;
+    },
+    applyfilters() {
+      if (this.applyfilters) {
+        this.retrieveRules()
+          .finally(() => this.applyfilters = false);
+      }
+    },
+    rulesSize() {
+      this.$emit('initialized', this.rulesSize);
+    },
+    loading() {
+      this.$emit('loading', this.loading);
+    },
+  },
+  created() {
+    this.$root.$on('rule-created', this.retrieveCategoryOfRule);
+    this.$root.$on('rule-updated', this.retrieveCategoryOfRule);
+    this.$root.$on('rule-deleted', this.refreshRules);
+    this.$root.$on('rules-category-load-more', this.loadMore);
+    this.refreshRules();
+  },
+  beforeDestroy() {
+    this.$root.$off('rule-created', this.retrieveCategoryOfRule);
+    this.$root.$off('rule-updated', this.retrieveCategoryOfRule);
+    this.$root.$off('rule-deleted', this.refreshRules);
+    this.$root.$off('rules-category-load-more', this.loadMore);
+  },
+  methods: {
+    refreshRules() {
+      return this.retrieveRules();
+    },
+    retrieveCategoryOfRule(rule) {
+      const categoryId = rule?.program?.id;
+      if (categoryId) {
+        return this.retrieveRules(categoryId);
+      }
+    },
+    loadMore(categoryId) {
+      if (categoryId && this.categoriesById[categoryId]) {
+        this.categoriesById[categoryId].limit += this.pageSize;
+        return this.retrieveRules(categoryId);
+      }
+    },
+    retrieveRules(categoryId) { // NOSONAR
+      const limit = this.pageSize + (categoryId && this.categoriesById[categoryId]?.limit || 0);
+
+      this.loading = true;
+      return this.$ruleService.getRules({
+        programId: categoryId,
+        term: this.term,
+        dateFilter: this.status === 'DISABLED' && 'ALL' || this.status,
+        status: this.status === 'DISABLED' && 'DISABLED' || 'ENABLED',
+        type: this.type,
+        returnSize: true,
+        groupByProgram: true,
+        sortBy: 'title',
+        limit,
+        expand: 'countAnnouncements',
+      })
+        .then(data => {
+          if (categoryId) {
+            const category = this.categoriesById[categoryId] || {};
+            if (category) {
+              category.size = data.size || 0;
+              category.limit = data.limit;
+              category.rules = data.rules || [];
+            }
+            this.rulesSize = this.categories.map(cat => cat.size || 0).reduce((sum, v) => sum += v, 0) || 0;
+          } else {
+            this.categories = data;
+            this.rulesSize = this.categories.map(cat => cat.size || 0).reduce((sum, v) => sum += v, 0);
+          }
+        }).finally(() => this.loading = false);
+    },
+  }
 };
 </script>

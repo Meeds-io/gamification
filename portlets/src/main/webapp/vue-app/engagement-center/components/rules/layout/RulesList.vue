@@ -29,6 +29,7 @@
         lg="4">
         <engagement-center-rule-card
           :rule="rule"
+          :program="program"
           :category-id="categoryId" />
       </v-col>
       <v-col
@@ -59,6 +60,10 @@ export default {
     },
     rules: {
       type: Array,
+      default: null,
+    },
+    program: {
+      type: Object,
       default: null,
     },
     loading: {
