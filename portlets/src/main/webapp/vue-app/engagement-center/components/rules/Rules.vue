@@ -23,76 +23,33 @@
     :class="classWelcomeMessage"
     class="rules-list border-box-sizing"
     role="main">
-    <v-toolbar flat>
-      <div class="d-flex flex-grow-1 align-center justify-space-between content-box-sizing position-relative">
-        <v-card
-          v-if="!showFilter || !$root.isMobile"
-          flat>
-          {{ incentivesCountLabel }}
-        </v-card>
-        <v-card
-          v-else
-          flat>
-          <v-btn
-            class="px-0 me-2 width-auto"
-            small
-            icon
-            @click="showFilter = !showFilter">
-            <v-icon size="26">fa-arrow-left</v-icon>
-          </v-btn>
-        </v-card>
-        <v-spacer class="hidden-md-and-down" />
-        <engagement-center-category-switch-buttons
-          v-model="groupByProgram"
-          :disabled="!!filtered"
-          class="hidden-md-and-down absolute-all-center"
-          @change="clearFilter" />
-        <v-spacer class="hidden-xs-only" />
-        <div v-if="!$root.isMobile || showFilter" class="rules-filter-toolbar me-sm-4">
-          <v-tooltip :value="displayMinimumCharactersToolTip" bottom>
-            <template #activator="{on}">
-              <v-text-field
-                id="rulesFilterInput"
-                ref="rulesFilterInput"
-                v-model="term"
-                :placeholder="$t('challenges.filter.search')"
-                :autofocus="$root.isMobile"
-                :height="$root.isMobile && 24 || 36"
-                :clear-icon="$root.isMobile && 'fa-times py-0 mt-n2' || 'fa-times pt-2'"
-                autocomplete="off"
-                prepend-inner-icon="fa-filter"
-                class="selected-period-input pa-0 full-width full-height"
-                hide-details
-                clearable
-                v-on="on" />
-            </template>
-            <span> {{ $t('challenges.filter.searchTooltip') }} </span>
-          </v-tooltip>
-        </div>
-        <v-btn
-          v-if="!$root.isMobile || showFilter"
-          :class="$root.isMobile && 'width-auto' || 'primary-border-color'"
-          :color="!$root.isMobile && 'primary'"
-          :small="$root.isMobile"
-          text
-          class="px-0 px-sm-2"
-          @click="openRulesFilterDrawer">
-          <v-icon :size="$root.isMobile && 24 || 16">fas fa-sliders-h</v-icon>
-          <span v-if="!$root.isMobile" class="font-weight-regular caption ms-2">
-            {{ $t('profile.label.search.openSearch') }}
-          </span>
-        </v-btn>
-        <template v-if="$root.isMobile && !showFilter">
-          <v-spacer />
-          <v-btn
-            class="width-auto"
-            icon
-            @click="showFilter = !showFilter">
-            <v-icon size="24">fa-filter</v-icon>
-          </v-btn>
-        </template>
-      </div>
-    </v-toolbar>
+    <application-toolbar
+      :left-text="incentivesCountLabel"
+      :center-button-toggle="{
+        selected: tabName,
+        hide: false,
+        buttons: [{
+          value: 'TRENDS',
+          text: $t('gamification.actions.groupBy.trends'),
+          icon: 'fa-fire',
+        }, {
+          value: 'ALL',
+          text: $t('gamification.actions.groupBy.all'),
+          icon: 'fa-layer-group',
+        }]
+      }"
+      :right-text-filter="tabName !== 'TRENDS' && {
+        minCharacters: 3,
+        placeholder: $t('challenges.filter.search'),
+        tooltip: $t('challenges.filter.searchTooltip'),
+      }"
+      :right-filter-button="tabName !== 'TRENDS' && {
+        text: $t('profile.label.search.openSearch'),
+      }"
+      :filters-count="filtersCount"
+      @toggle-select="tabName = $event"
+      @filter-text-input-end-typing="term = $event"
+      @filter-button-click="$refs.rulesFilterDrawer.open()" />
     <v-card flat>
       <engagement-center-result-not-found
         v-if="displayWelcomeMessage"
@@ -104,19 +61,18 @@
         :display-back-arrow="false"
         :message-title="welcomeMessage"
         :message-info-one="notFoundInfoMessage" />
-      <engagement-center-rules-list
-        v-else-if="filtered"
-        :loading="loading"
-        :category-id="filterCategoryId"
-        :rules="rules"
-        :size="rulesSize"
-        class="px-4" />
+
       <engagement-center-rules-by-program
-        v-else-if="groupByProgram"
-        :categories="validCategories" />
+        v-if="tabName === 'ALL'"
+        :term="term"
+        :type="type"
+        :status="status"
+        @loading="loading = $event"
+        @initialized="setRulesSize" />
       <engagement-center-rules-by-trend
-        v-else
-        @initialized="setInitialized" />
+        v-else-if="tabName === 'TRENDS'"
+        @loading="loading = $event"
+        @initialized="setRulesSize" />
     </v-card>
     <engagement-center-rules-filter-drawer
       ref="rulesFilterDrawer"
@@ -143,71 +99,39 @@ export default {
     selectedRuleId: null,
     selectedRule: null,
     loading: true,
-    categories: [],
-    hasTrends: false,
-    groupByProgram: false,
-    filterCategoryId: 'filtered_category_id',
-    rules: [],
+    tabName: 'TRENDS',
     rulesSize: 0,
-    rulesOffset: 0,
-    rulesLimit: 0,
-    pageSize: 9,
     term: '',
-    startSearchAfterInMilliseconds: 600,
-    endTypingKeywordTimeout: 50,
-    startTypingKeywordTimeout: 0,
-    showFilter: false,
-    typing: false,
-    displayMinimumCharactersToolTip: false,
     type: 'ALL',
     status: 'STARTED',
+    linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
   }),
   computed: {
+    filtersCount() {
+      return (this.status !== 'STARTED' && 1 || 0)
+        + (this.type !== 'ALL' && 1 || 0);
+    },
     incentivesCountLabel() {
-      if (!this.rulesSize || this.loading || this.typing) {
+      if (!this.rulesSize || this.loading) {
         return '';
       }
-      if (this.term) {
-        switch (this.status) {
-        case 'ALL': return this.$t('rules.filter.incentivesFound', {0: this.rulesSize});
-        case 'STARTED': return this.$t('rules.filter.activeIncentivesFound', {0: this.rulesSize});
-        case 'NOT_STARTED': return this.$t('rules.filter.upcomingIncentivesFound', {0: this.rulesSize});
-        case 'ENDED': return this.$t('rules.filter.endedIncentivesFound', {0: this.rulesSize});
-        case 'DISABLED': return this.$t('rules.filter.disabledIncentivesFound', {0: this.rulesSize});
-        default: return '';
-        }
-      } else {
-        switch (this.status) {
-        case 'ALL': return this.$t('rules.filter.incentives', {0: this.rulesSize});
-        case 'STARTED': return this.$t('rules.filter.activeIncentives', {0: this.rulesSize});
-        case 'NOT_STARTED': return this.$t('rules.filter.upcomingIncentives', {0: this.rulesSize});
-        case 'ENDED': return this.$t('rules.filter.endedIncentives', {0: this.rulesSize});
-        case 'DISABLED': return this.$t('rules.filter.disabledIncentives', {0: this.rulesSize});
-        default: return '';
-        }
+      switch (this.status) {
+      case 'ALL': return this.$t('rules.filter.incentives', {0: this.rulesSize});
+      case 'STARTED': return this.$t('rules.filter.activeIncentives', {0: this.rulesSize});
+      case 'NOT_STARTED': return this.$t('rules.filter.upcomingIncentives', {0: this.rulesSize});
+      case 'ENDED': return this.$t('rules.filter.endedIncentives', {0: this.rulesSize});
+      case 'DISABLED': return this.$t('rules.filter.disabledIncentives', {0: this.rulesSize});
+      default: return '';
       }
     },
     classWelcomeMessage() {
       return this.displayWelcomeMessage && 'empty-rules-message' || '';
     },
-    validCategories() {
-      return this.categories.filter(category => category.rules.length > 0);
-    },
-    filtered() {
-      return !!this.term?.length || !!this.filterApplied;
-    },
-    filterApplied() {
-      return this.status !== 'STARTED' || this.type !== 'ALL';
-    },
-    hasRulesToDisplay() {
-      return this.filtered ? this.rules?.length : this.hasTrends;
-    },
     hasItemsToDisplay() {
-      const groupByProgram = this.groupByProgram && !this.term;
-      return groupByProgram ? this.validCategories.length : this.hasRulesToDisplay;
+      return this.rulesSize > 0;
     },
     displayWelcomeMessage() {
-      return !this.typing && !this.loading && !this.hasItemsToDisplay && !this.term?.length && (this.status === 'ALL' || this.status === 'STARTED');
+      return !this.loading && !this.hasItemsToDisplay && !this.term?.length && (this.status === 'ALL' || this.status === 'STARTED');
     },
     notFoundInfoMessage() {
       if (this.status === 'NOT_STARTED' && !this.term?.length) {
@@ -225,59 +149,10 @@ export default {
       return '';
     },
     displayNoSearchResult() {
-      return !this.typing && !this.loading && !this.hasItemsToDisplay && (this.term?.length || (this.status === 'NOT_STARTED' || this.status === 'ENDED'));
-    },
-    rulesByCategoryId() {
-      const rulesByCategoryId = {};
-      this.validCategories.forEach(category => {
-        rulesByCategoryId[category.id] = category.rules;
-      });
-      return rulesByCategoryId;
-    },
-    categoriesById() {
-      const categoriesById = {};
-      this.categories.forEach(category => {
-        categoriesById[category.id] = category;
-      });
-      return categoriesById;
+      return !this.loading && !this.hasItemsToDisplay && (this.term?.length || this.status !== 'STARTED' || this.type !== 'ALL');
     },
   },
   watch: {
-    groupByProgram()  {
-      if (this.groupByProgram || this.filtered) {
-        this.refreshRules();
-      }
-    },
-    filtered: {
-      immediate: true,
-      handler(newVal, oldVal) {
-        if (!newVal !== !oldVal) {
-          this.rulesLimit = 0;
-          this.rulesSize = 0;
-        }
-        if (!this.filtered) {
-          this.retrieveRulesCount();
-        }
-      },
-    },
-    term()  {
-      this.displayMinimumCharactersToolTip = false;
-      if (!this.term?.length) {
-        this.retrieveRules();
-        return;
-      } else if (this.term.length < 3) {
-        this.displayMinimumCharactersToolTip = true;
-        return;
-      }
-      this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
-      if (!this.typing) {
-        this.typing = true;
-        this.waitForEndTyping();
-      }
-    },
-    displayManual() {
-      this.retrieveRules();
-    },
     loading() {
       if (this.loading) {
         document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
@@ -285,14 +160,19 @@ export default {
         document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
       }
     },
+    tabName() {
+      if (this.tabName === 'ALL') {
+        window.history.replaceState('challenges', this.$t('program.actions'), `${this.linkBasePath}#all`);
+      } else {
+        window.history.replaceState('challenges', this.$t('program.actions'), this.linkBasePath);
+      }
+    },
   },
   created() {
-    this.$root.$on('rule-created', this.retrieveCategoryOfRule);
-    this.$root.$on('rule-updated', this.onRuleUpdate);
-    this.$root.$on('rule-deleted', this.refreshRules);
     this.$root.$on('rule-delete-confirm', this.confirmDelete);
-    this.$root.$on('rules-category-load-more', this.loadMore);
-    this.reset();
+    if (window.location.hash) {
+      this.tabName = this.extractSelectedTabFromPath();
+    }
   },
   mounted() {
     this.selectedRuleId = this.extractRuleIdFromPath();
@@ -301,70 +181,17 @@ export default {
     }
   },
   beforeDestroy() {
-    this.$root.$off('rule-created', this.retrieveCategoryOfRule);
-    this.$root.$off('rule-updated', this.onRuleUpdate);
-    this.$root.$off('rule-deleted', this.refreshRules);
     this.$root.$off('rule-delete-confirm', this.confirmDelete);
-    this.$root.$off('rules-category-load-more', this.loadMore);
   },
   methods: {
-    reset() {
-      this.type = 'ALL';
-      this.status = 'STARTED';
-    },
-    setInitialized(hasTrends) {
-      this.hasTrends = hasTrends;
-      this.loading = false;
-    },
-    retrieveRulesCount() {
-      return this.$ruleService.getRules({
-        dateFilter: 'ALL',
-        status: 'ENABLED',
-        offset: 0,
-        limit: 1,
-        returnSize: true,
-      }).then(data => this.rulesSize = data?.size || 0);
-    },
-    retrieveRules(categoryId) { // NOSONAR
-      const groupByProgram = this.groupByProgram && !this.filtered;
-      const limit = (categoryId || groupByProgram) ?
-        (categoryId && this.categoriesById[categoryId]?.limit || 0) + this.pageSize
-        : this.rulesLimit + this.pageSize;
-
-      this.loading = true;
-      return this.$ruleService.getRules({
-        term: this.term,
-        programId: categoryId,
-        dateFilter: this.status === 'DISABLED' && 'ALL' || this.status,
-        status: this.status === 'DISABLED' && 'DISABLED' || 'ENABLED',
-        type: this.type,
-        offset: 0,
-        limit,
-        groupByProgram,
-        expand: 'countAnnouncements',
-        returnSize: true,
-      })
-        .then(data => {
-          if (categoryId) {
-            const category = this.categoriesById[categoryId] || {};
-            if (category) {
-              category.size = data.size || 0;
-              category.limit = data.limit;
-              category.rules = data.rules || [];
-            }
-          } else if (groupByProgram) {
-            this.categories = data;
-          } else {
-            this.rules = data.rules || [];
-            this.rulesSize = data.size;
-          }
-        }).finally(() => this.loading = false);
+    setRulesSize(rulesSize) {
+      this.rulesSize = rulesSize;
     },
     deleteRule() {
       this.loading = true;
       this.$ruleService.deleteRule(this.selectedRule.id)
         .then(() => {
-          this.showAlert('success', this.$t('programs.details.ruleDeleteSuccess'));
+          this.$root.$emit('alert-message', 'success', this.$t('programs.details.ruleDeleteSuccess'));
           this.$root.$emit('rule-deleted', this.selectedRule);
         })
         .catch(e => {
@@ -376,7 +203,7 @@ export default {
           } else  {
             msg = this.$t('actions.deleteError');
           }
-          this.showAlert('error', msg);
+          this.$root.$emit('alert-message', 'error', msg);
         })
         .finally(() => this.loading = false);
     },
@@ -387,60 +214,17 @@ export default {
     applyFilter(type, status) {
       this.type = type;
       this.status = status;
-      this.retrieveRules();
-    },
-    openRulesFilterDrawer() {
-      this.$refs.rulesFilterDrawer.open();
-    },
-    retrieveCategoryOfRule(rule) {
-      if (this.groupbyProgram && rule?.program?.id) {
-        return this.retrieveRules(rule?.program?.id);
-      } else {
-        return Promise.resolve(null);
-      }
-    },
-    onRuleUpdate(rule) {
-      if (this.filtered && this.rules?.length) {
-        if (this.rules.findIndex(r => r.id === rule.id) >= 0) {
-          this.rules = this.rules.map(r => r.id === rule.id && rule || r);
-        }
-      }
-    },
-    refreshRules() {
-      return this.retrieveRules();
-    },
-    loadMore(categoryId) {
-      if (categoryId === this.filterCategoryId) {
-        this.rulesLimit += this.pageSize;
-        return this.retrieveRules();
-      } else if (categoryId) {
-        return this.retrieveRules(categoryId);
-      }
-    },
-    showAlert(alertType, alertMessage){
-      this.$engagementCenterUtils.displayAlert(alertMessage, alertType);
-    },
-    clearFilter()  {
-      this.term = '';
-      this.reset();
-      this.$refs.rulesFilterDrawer.reset();
-    },
-    waitForEndTyping() {
-      window.setTimeout(() => {
-        if (Date.now() > this.startTypingKeywordTimeout) {
-          this.typing = false;
-          this.retrieveRules();
-        } else {
-          this.waitForEndTyping();
-        }
-      }, this.endTypingKeywordTimeout);
     },
     extractRuleIdFromPath() {
       const urlPath = document.location.pathname;
-      if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`) > -1) {
+      if (urlPath.indexOf(this.linkBasePath) > -1) {
         return urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
       }
       return null;
+    },
+    extractSelectedTabFromPath() {
+      const hash = document.location.hash.substring(1);
+      return hash === 'all' && 'ALL' || 'TRENDS';
     },
   }
 };

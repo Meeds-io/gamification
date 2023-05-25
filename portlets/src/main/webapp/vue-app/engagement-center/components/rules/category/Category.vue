@@ -41,6 +41,7 @@
       <engagement-center-rules-list
         :category-id="category.id"
         :rules="rulesToDisplay"
+        :program="program"
         :size="sizeToDisplay"
         class="pa-0" />
     </v-list-item>
@@ -50,6 +51,10 @@
 export default {
   props: {
     category: {
+      type: Object,
+      default: null,
+    },
+    program: {
       type: Object,
       default: null,
     },
@@ -71,7 +76,7 @@ export default {
       if (this.disabledCollapsing) {
         return;
       }
-      return this.open && 'fa-chevron-up fa-lg' || 'fa-chevron-down fa-lg';
+      return this.open && 'fa-chevron-up fa-lg icon-default-color' || 'fa-chevron-down fa-lg icon-default-color';
     },
     rules() {
       return this.category?.rules || [];

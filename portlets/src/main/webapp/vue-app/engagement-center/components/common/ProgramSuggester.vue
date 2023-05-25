@@ -182,7 +182,14 @@ export default {
         if (!this.previousSearchTerm || this.previousSearchTerm !== this.searchTerm) {
           this.loadingSuggestions = 0;
           this.programs = [];
-          this.$programService.getPrograms(0, 10, 'ALL', this.includeDisabled ? 'ALL' : 'ENABLED', this.searchTerm, this.includeDeleted, false, this.onlyOwned)
+          this.$programService.getPrograms({
+            limit: 10,
+            type: 'ALL',
+            status: this.includeDisabled ? 'ALL' : 'ENABLED',
+            query: this.searchTerm,
+            includeDeleted: this.includeDeleted,
+            owned: this.onlyOwned,
+          })
             .then(data => this.programs = data.programs);
         }
         this.previousSearchTerm = this.searchTerm;

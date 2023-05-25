@@ -20,39 +20,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     class="border-box-sizing"
     role="main"
     flat>
-    <v-toolbar
+    <application-toolbar
       v-if="isAdministrator"
-      color="transparent"
-      max-height="64"
-      flat>
-      <div v-if="!displayNoSearchResult" class="border-box-sizing clickable">
-        <v-btn
-          id="engagementCenterAddProgramBtn"
-          v-if="isAdministrator"
-          class="btn btn-primary"
-          @click="$root.$emit('open-program-drawer')">
-          <v-icon small>fas fa-plus</v-icon>
-          <span class="mx-2 d-none d-lg-inline text-capitalize-first-letter subtitle-1">
-            {{ $t('programs.button.addProgram') }}
-          </span>
-        </v-btn>
-      </div>
-      <v-spacer />
-      <select
-        id="EngagementCenterApplicationCProgramsQuickFilter"
-        v-model="status"
-        class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter width-auto"
-        @change="filter">
-        <option
-          v-for="stat in programStatus"
-          :key="stat.value"
-          :value="stat.value">
-          <span class="d-none d-lg-inline">
-            {{ stat.text }}
-          </span>
-        </option>
-      </select>
-    </v-toolbar>
+      :left-button="!displayNoSearchResult && {
+        icon: 'fa-plus',
+        text: $t('programs.button.addProgram'),
+      }"
+      :right-select-box="{
+        selected: status,
+        items: programStatus,
+      }"
+      hide-cone-button
+      @left-button-click="$root.$emit('open-program-drawer')"
+      @filter-select-change="status = $event" />
+
     <v-layout class="py-3 px-4">
       <v-row class="mx-n3">
         <v-col
@@ -199,7 +180,12 @@ export default {
   methods: {
     retrievePrograms() {
       this.loading = true;
-      return this.$programService.getPrograms(this.offset, this.limitToFetch, this.type, this.status)
+      return this.$programService.getPrograms({
+        offset: this.offset,
+        limit: this.limitToFetch,
+        type: this.type,
+        status: this.status,
+      })
         .then((data) => {
           this.programs = data.programs;
           this.totalSize = data.size || 0;

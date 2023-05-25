@@ -347,6 +347,24 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertEquals(2, rules.size());
     assertEquals(rule2.getId(), rules.get(0));
     assertEquals(rule3.getId(), rules.get(1));
+
+    filter.setSortBy("title");
+    filter.setSortDescending(true);
+    filter.setDateFilterType(null);
+    rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(3, rules.size());
+    assertEquals(rule3.getId(), rules.get(0));
+    assertEquals(rule2.getId(), rules.get(1));
+    assertEquals(rule1.getId(), rules.get(2));
+
+    filter.setSortBy("title");
+    filter.setSortDescending(false);
+    filter.setDateFilterType(null);
+    rules = ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+    assertEquals(3, rules.size());
+    assertEquals(rule1.getId(), rules.get(0));
+    assertEquals(rule2.getId(), rules.get(1));
+    assertEquals(rule3.getId(), rules.get(2));
   }
 
   @Test
