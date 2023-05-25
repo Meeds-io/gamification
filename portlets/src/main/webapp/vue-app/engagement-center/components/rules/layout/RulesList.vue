@@ -18,7 +18,7 @@
 
 -->
 <template>
-  <v-container class="pa-0">
+  <v-container class="px-0 py-4">
     <v-row class="mx-n1">
       <v-col
         v-for="rule in rules"
@@ -32,8 +32,9 @@
           :category-id="categoryId" />
       </v-col>
     </v-row>
-    <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4">
+    <v-row v-if="hasMore" class="mx-2 mb-6 mt-n4">
       <v-btn
+        :loading="loading"
         class="loadMoreButton ma-auto mt-4 btn"
         block
         @click="$root.$emit('rules-category-load-more', categoryId)">
@@ -56,6 +57,10 @@ export default {
     rules: {
       type: Array,
       default: null,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

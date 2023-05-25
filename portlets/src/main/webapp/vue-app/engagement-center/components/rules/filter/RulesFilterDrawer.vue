@@ -120,11 +120,7 @@ export default {
     },
     reset() {
       this.type = 'ALL';
-      if (this.isAdministrator) {
-        this.status = 'ALL';
-      } else {
-        this.status = 'STARTED';
-      }
+      this.status = 'STARTED';
     },
     apply() {
       this.$emit('apply', this.type, this.status);

@@ -34,7 +34,7 @@
           v-else
           flat>
           <v-btn
-            class="px-0"
+            class="px-0 me-2"
             small
             icon
             @click="showFilter = !showFilter">
@@ -57,10 +57,10 @@
                 v-model="term"
                 :placeholder="$t('challenges.filter.search')"
                 :autofocus="$root.isMobile"
+                :height="$root.isMobile && 24 || 36"
+                :clear-icon="$root.isMobile && 'fa-times py-0 mt-n2' || 'fa-times pt-2'"
                 autocomplete="off"
-                height="36"
                 prepend-inner-icon="fa-filter"
-                clear-icon="fa-times pt-2"
                 class="selected-period-input pa-0 full-width full-height"
                 hide-details
                 clearable
@@ -77,7 +77,7 @@
           text
           class="px-0 px-sm-2"
           @click="openRulesFilterDrawer">
-          <v-icon :size="$root.isMobile && 30 || 16">fas fa-sliders-h</v-icon>
+          <v-icon :size="$root.isMobile && 24 || 16">fas fa-sliders-h</v-icon>
           <span v-if="!$root.isMobile" class="font-weight-regular caption ms-2">
             {{ $t('profile.label.search.openSearch') }}
           </span>
@@ -87,7 +87,7 @@
           <v-btn
             icon
             @click="showFilter = !showFilter">
-            <v-icon size="30">fa-filter</v-icon>
+            <v-icon size="24">fa-filter</v-icon>
           </v-btn>
         </template>
       </div>
@@ -105,8 +105,10 @@
         :message-info-one="notFoundInfoMessage" />
       <engagement-center-rules-list
         v-else-if="filtered"
+        :loading="loading"
+        :category-id="filterCategoryId"
         :rules="rules"
-        :size="ruleSize"
+        :size="rulesSize"
         class="pt-4" />
       <engagement-center-rules-by-program
         v-else-if="groupByProgram"
@@ -145,10 +147,12 @@ export default {
     categories: [],
     hasTrends: false,
     groupByProgram: false,
+    filterCategoryId: 'filtered_category_id',
     rules: [],
     rulesSize: 0,
     rulesOffset: 0,
     rulesLimit: 0,
+    pageSize: 9,
     term: '',
     startSearchAfterInMilliseconds: 600,
     endTypingKeywordTimeout: 50,
@@ -191,14 +195,10 @@ export default {
       return this.categories.filter(category => category.rules.length > 0);
     },
     filtered() {
-      return this.term?.length || this.filterApplied;
+      return !!this.term?.length || !!this.filterApplied;
     },
     filterApplied() {
-      if (this.isAdministrator) {
-        return this.status !== 'ALL' || this.type !== 'ALL';
-      } else {
-        return this.status !== 'STARTED' || this.type !== 'ALL';
-      }
+      return this.status !== 'STARTED' || this.type !== 'ALL';
     },
     hasRulesToDisplay() {
       return this.filtered ? this.rules?.length : this.hasTrends;
@@ -242,13 +242,6 @@ export default {
       });
       return categoriesById;
     },
-    pageSize() {
-      if (this.$vuetify.breakpoint.width <= 768) {
-        return 5;
-      } else {
-        return 6;
-      }
-    },
   },
   watch: {
     groupByProgram()  {
@@ -258,7 +251,11 @@ export default {
     },
     filtered: {
       immediate: true,
-      handler() {
+      handler(newVal, oldVal) {
+        if (!newVal !== !oldVal) {
+          this.rulesLimit = 0;
+          this.rulesSize = 0;
+        }
         if (!this.filtered) {
           this.retrieveRulesCount();
         }
@@ -314,11 +311,7 @@ export default {
   methods: {
     reset() {
       this.type = 'ALL';
-      if (this.isAdministrator) {
-        this.status = 'ALL';
-      } else {
-        this.status = 'STARTED';
-      }
+      this.status = 'STARTED';
     },
     setInitialized(hasTrends) {
       this.hasTrends = hasTrends;
@@ -331,8 +324,7 @@ export default {
         offset: 0,
         limit: 1,
         returnSize: true,
-      })
-        .then(data => this.rulesSize = data?.size || 0);
+      }).then(data => this.rulesSize = data?.size || 0);
     },
     retrieveRules(categoryId) { // NOSONAR
       const groupByProgram = this.groupByProgram && !this.filtered;
@@ -366,7 +358,6 @@ export default {
           } else {
             this.rules = data.rules || [];
             this.rulesSize = data.size;
-            this.rulesLimit = data.limit;
           }
         }).finally(() => this.loading = false);
     },
@@ -420,7 +411,10 @@ export default {
       return this.retrieveRules();
     },
     loadMore(categoryId) {
-      if (categoryId) {
+      if (categoryId === this.filterCategoryId) {
+        this.rulesLimit += this.pageSize;
+        return this.retrieveRules();
+      } else if (categoryId) {
         return this.retrieveRules(categoryId);
       }
     },

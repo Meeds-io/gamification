@@ -46,7 +46,7 @@
           text
           class="px-0 px-sm-2"
           @click="openRealizationsFilterDrawer">
-          <v-icon :size="isMobile && 30 || 16">fas fa-sliders-h</v-icon>
+          <v-icon :size="isMobile && 24 || 16">fas fa-sliders-h</v-icon>
           <span v-if="!isMobile" class="font-weight-regular caption ms-2">
             {{ $t('profile.label.search.openSearch') }}
           </span>

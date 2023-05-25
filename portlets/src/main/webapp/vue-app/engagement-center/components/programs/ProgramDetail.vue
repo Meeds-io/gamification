@@ -357,6 +357,7 @@ export default {
         offset,
         limit: itemsPerPage,
         announcementsLimit: this.announcementsLimit,
+        returnSize: true,
       })
         .then((data) => {
           this.programRules = data.rules || [];
