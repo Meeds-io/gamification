@@ -16,31 +16,30 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
  
-export function getPrograms(offset, limit, type, status, query, includeDeleted, sortByBudget, owned) {
+export function getPrograms(filter) {
   const formData = new FormData();
-  if (offset) {
-    formData.append('offset', offset);
+  if (filter?.offset) {
+    formData.append('offset', filter.offset);
   }
-  if (limit) {
-    formData.append('limit', limit);
+  if (filter?.limit) {
+    formData.append('limit', filter.limit);
   }
-
-  if (type) {
-    formData.append('type', type);
+  if (filter?.type) {
+    formData.append('type', filter.type.toUpperCase());
   }
-  if (status) {
-    formData.append('status', status);
+  if (filter?.status) {
+    formData.append('status', filter.status.toUpperCase());
   }
-  if (query) {
-    formData.append('query', query);
+  if (filter?.query) {
+    formData.append('query', filter.query);
   }
-  if (includeDeleted != null) {
-    formData.append('includeDeleted', includeDeleted);
+  if (filter?.includeDeleted) {
+    formData.append('includeDeleted', 'true');
   }
-  if (sortByBudget != null) {
-    formData.append('sortByBudget', sortByBudget);
+  if (filter?.sortByBudget) {
+    formData.append('sortByBudget', 'true');
   }
-  if (owned) {
+  if (filter?.owned) {
     formData.append('owned', 'true');
   }
 

@@ -19,6 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <template v-if="canManageRule">
       <v-icon
         v-if="menuHeaderChanged"
+        class="icon-default-color"
         @click="changeHeaderMenu">
         fas fa-arrow-left
       </v-icon>
@@ -44,7 +45,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-if="!isMobile || menuHeaderChanged"
         v-model="keyword"
         :placeholder="$t('programs.details.filter.filterRules')"
-        prepend-inner-icon="fa-filter"
+        prepend-inner-icon="fa-filter icon-default-color"
         clear-icon="fa-times fa-1x"
         class="pa-0 me-3 my-auto"
         clearable
@@ -67,11 +68,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <div class="d-sm-none">
       <v-icon
         v-if="!menuHeaderChanged"
+        class="icon-default-color"
         @click="changeHeaderMenu">
         fa-filter
       </v-icon>
       <v-icon
         v-else-if="canManageRule"
+        class="icon-default-color"
         @click="openBottomMenuFilter">
         fa-sliders-h
       </v-icon>
@@ -90,7 +93,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-btn>
           <v-spacer />
           <v-toolbar-title>
-            <v-icon>fa-filter</v-icon>
+            <v-icon class="icon-default-color">fa-filter</v-icon>
             {{ $t('programs.details.filter.cancel') }}
           </v-toolbar-title>
           <v-spacer />

@@ -79,12 +79,12 @@
     <template slot="footer">
       <div class="VuetifyApp flex d-flex">
         <v-btn
-          class="btn"
-          @click="reset">
-          <v-icon x-small class="pr-1">fas fa-redo</v-icon>
-          <template>
-            {{ $t('exoplatform.gamification.gamificationinformation.domain.reset') }}
-          </template>
+          class="dark-grey-color px-0 hiddent-xs-only"
+          text
+          outlined
+          @click="resetAndApply">
+          <v-icon size="18" class="icon-default-color me-2">fa-redo</v-icon>
+          {{ $t('challenge.button.resetFilter') }}
         </v-btn>
         <v-spacer />
         <div class="d-btn">
@@ -216,6 +216,10 @@ export default {
       this.programs = [];
       this.grantees = [];
       this.IncludeDisabledPrograms = false;
+    },
+    resetAndApply() {
+      this.reset();
+      this.confirm();
     },
     removeGranteeAttendee(attendee) {
       const index = this.grantees.findIndex(addedAttendee => {

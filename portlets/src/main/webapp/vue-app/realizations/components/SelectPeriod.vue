@@ -31,7 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :value="rangeDate"
         :title="rangeDateTimeTitle"
         height="36"
-        prepend-inner-icon="fa-calendar-alt fa-lg"
+        prepend-inner-icon="fa-calendar-alt fa-lg icon-default-color"
         class="selected-period-input pt-0 mt-0 full-width full-height"
         rel="tooltip"
         hide-details
