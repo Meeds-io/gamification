@@ -54,7 +54,6 @@ import RulesList from './components/rules/layout/RulesList.vue';
 import RulesByProgram from './components/rules/layout/RulesByProgram.vue';
 import RulesByTrend from './components/rules/layout/RulesByTrend.vue';
 
-import RuleCategorySwitchButtons from './components/rules/filter/RuleCategorySwitchButtons.vue';
 import RulesFilterDrawer from './components/rules/filter/RulesFilterDrawer.vue';
 
 import Assignment from './components/common/Assignment.vue';
@@ -86,7 +85,6 @@ const components = {
   'engagement-center-rules-list': RulesList,
   'engagement-center-rules-by-program': RulesByProgram,
   'engagement-center-rules-by-trend': RulesByTrend,
-  'engagement-center-category-switch-buttons': RuleCategorySwitchButtons,
   'engagement-center-rules-filter-drawer': RulesFilterDrawer,
   'engagement-center-rule-card': RuleCard,
   'engagement-center-rule-card-menu': RuleCardMenu,

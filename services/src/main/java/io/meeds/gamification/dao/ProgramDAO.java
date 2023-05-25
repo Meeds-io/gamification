@@ -177,7 +177,6 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
   private String getQueryFilterContent(List<String> predicates, boolean count) {
     String querySelect = count ? "SELECT COUNT(d) FROM GamificationDomain d "
                                : "SELECT d.id FROM GamificationDomain d ";
-    String orderBy = " ORDER BY d.createdDate DESC";
 
     String queryContent;
     if (predicates.isEmpty()) {
@@ -186,7 +185,7 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
       queryContent = querySelect + " WHERE " + StringUtils.join(predicates, " AND ");
     }
     if (!count) {
-      queryContent = queryContent + orderBy;
+      queryContent += " ORDER BY d.title ASC";
     }
     return queryContent;
   }

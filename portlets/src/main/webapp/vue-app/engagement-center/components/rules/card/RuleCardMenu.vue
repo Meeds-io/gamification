@@ -22,14 +22,14 @@
       <v-list-item
         dense
         @click.prevent.stop="editRule">
-        <v-list-item-title class="editLabel">
+        <v-list-item-title class="text-start">
           {{ $t('programs.details.rule.button.edit') }}
         </v-list-item-title>
       </v-list-item>
       <v-list-item
         dense
         @click.prevent.stop="deleteRule">
-        <v-list-item-title class="editLabel">
+        <v-list-item-title class="text-start">
           {{ $t('programs.details.rule.button.delete') }}
         </v-list-item-title>
       </v-list-item>
