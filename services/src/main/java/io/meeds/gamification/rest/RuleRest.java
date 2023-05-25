@@ -201,7 +201,24 @@ public class RuleRest implements ResourceContainer {
     }
 
     try {
-      if (groupByProgram) {
+      if (!groupByProgram || programId > 0) {
+        RuleList ruleList = new RuleList();
+        List<RuleRestEntity> ruleEntities = getUserRulesByProgram(ruleFilter,
+                                                                  periodType,
+                                                                  expandFields,
+                                                                  currentUser,
+                                                                  offset,
+                                                                  limit,
+                                                                  announcementsLimit,
+                                                                  programId > 0);
+        ruleList.setRules(ruleEntities);
+        ruleList.setOffset(offset);
+        ruleList.setLimit(limit);
+        if (returnSize) {
+          ruleList.setSize(ruleService.countRules(ruleFilter, currentUser));
+        }
+        return Response.ok(ruleList).build();
+      } else {
         ProgramFilter programFilter = new ProgramFilter();
         programFilter.setEntityFilterType(EntityFilterType.ALL);
         programFilter.setEntityStatusType(EntityStatusType.ENABLED);
@@ -211,13 +228,13 @@ public class RuleRest implements ResourceContainer {
           ProgramWithRulesRestEntity programWithRule = new ProgramWithRulesRestEntity(program);
           ruleFilter.setProgramId(program.getId());
           List<RuleRestEntity> ruleEntities = getUserRulesByProgram(ruleFilter,
-                                                                   periodType,
-                                                                   expandFields,
-                                                                   currentUser,
-                                                                   offset,
-                                                                   limit,
-                                                                   announcementsLimit,
-                                                                   true);
+                                                                    periodType,
+                                                                    expandFields,
+                                                                    currentUser,
+                                                                    offset,
+                                                                    limit,
+                                                                    announcementsLimit,
+                                                                    true);
           programWithRule.setRules(ruleEntities);
           programWithRule.setOffset(offset);
           programWithRule.setLimit(limit);
@@ -227,23 +244,6 @@ public class RuleRest implements ResourceContainer {
           programsWithRules.add(programWithRule);
         }
         return Response.ok(programsWithRules).build();
-      } else {
-        RuleList ruleList = new RuleList();
-        List<RuleRestEntity> ruleEntities = getUserRulesByProgram(ruleFilter,
-                                                                 periodType,
-                                                                 expandFields,
-                                                                 currentUser,
-                                                                 offset,
-                                                                 limit,
-                                                                 announcementsLimit,
-                                                                 programId > 0);
-        ruleList.setRules(ruleEntities);
-        ruleList.setOffset(offset);
-        ruleList.setLimit(limit);
-        if (returnSize) {
-          ruleList.setSize(ruleService.countRules(ruleFilter, currentUser));
-        }
-        return Response.ok(ruleList).build();
       }
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();

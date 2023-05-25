@@ -527,6 +527,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <module>animationComponents</module>
     </depends>
     <depends>
+      <module>applicationToolbarComponent</module>
+    </depends>
+    <depends>
       <module>jquery</module>
       <as>$</as>
     </depends>

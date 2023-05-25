@@ -27,7 +27,7 @@
     </template>
     <template #content>
       <v-card flat>
-        <v-card-title class="pb-0">
+        <v-card-title class="pb-0 text-subtitle-1 text-color font-weight-bold">
           {{ $t('gamification.actions.filter.filterByType') }}
         </v-card-title>
         <v-card-text class="pb-0">
@@ -43,7 +43,7 @@
               value="AUTOMATIC" />
           </v-radio-group>
         </v-card-text>
-        <v-card-title class="pb-0">
+        <v-card-title class="pb-0 text-subtitle-1 text-color font-weight-bold">
           {{ $t('gamification.actions.filter.filterByStatus') }}
         </v-card-title>
         <v-card-text class="pb-0">
@@ -75,7 +75,7 @@
           text
           outlined
           @click="reset">
-          <v-icon size="18" class="me-2">fa-redo</v-icon>
+          <v-icon size="18" class="icon-default-color me-2">fa-redo</v-icon>
           {{ $t('challenge.button.resetFilter') }}
         </v-btn>
         <v-spacer />
@@ -109,7 +109,6 @@ export default {
   },
   created() {
     this.$root.$on('rules-filter-drawer', this.open);
-    this.reset();
   },
   methods: {
     open() {
@@ -121,6 +120,7 @@ export default {
     reset() {
       this.type = 'ALL';
       this.status = 'STARTED';
+      this.apply();
     },
     apply() {
       this.$emit('apply', this.type, this.status);
