@@ -15,22 +15,19 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div id="engagementCenterProgramDetail">
+  <div id="engagementCenterProgramDetail" class="px-4">
     <div v-if="!isDeleted">
-      <div class="py-2 py-sm-5 d-flex">
+      <div class="py-2 py-sm-5 d-flex align-center">
         <v-tooltip :disabled="$root.isMobile" bottom>
           <template #activator="{ on }">
-            <div
+            <v-btn
+              class="width-auto ms-n3"
+              icon
               v-on="on"
-              class="d-flex my-auto clickable"
               @click="backToProgramList()">
-              <v-icon
-                class="px-3"
-                size="18">
-                fas fa-arrow-left
-              </v-icon>
-              <div class="text-header-title"> {{ programTitle }} </div>
-            </div>
+              <v-icon size="18" class="mx-2">fa-arrow-left</v-icon>
+            </v-btn>
+            <div class="text-header-title"> {{ programTitle }}</div>
           </template>
           <span>{{ $t('programs.details.label.BackToList') }}</span>
         </v-tooltip>
