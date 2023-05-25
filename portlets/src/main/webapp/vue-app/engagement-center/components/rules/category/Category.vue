@@ -41,6 +41,7 @@
       <engagement-center-rules-list
         :category-id="category.id"
         :rules="rulesToDisplay"
+        :program="program"
         :size="sizeToDisplay"
         class="pa-0" />
     </v-list-item>
@@ -50,6 +51,10 @@
 export default {
   props: {
     category: {
+      type: Object,
+      default: null,
+    },
+    program: {
       type: Object,
       default: null,
     },

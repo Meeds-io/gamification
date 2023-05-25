@@ -23,6 +23,7 @@
       v-for="category in categories"
       :key="category.id"
       :category="category"
+      :program="category"
       prepend-icon="mdi-account-circle" />
   </v-list>
 </template>
