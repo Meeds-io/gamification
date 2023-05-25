@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-on="on" 
             class="d-flex my-auto clickable" 
             @click="$emit('back-to-list')">
-            <v-icon class="px-3" size="16">
+            <v-icon class="px-3 icon-default-color" size="16">
               fas fa-arrow-left
             </v-icon>
             <div class="text-subtitle-1 font-weight-bold dark-grey-color"> {{ $t('programs.details.label.BackToList') }} </div>
