@@ -19,30 +19,15 @@
 -->
 <template>
   <v-card flat>
-    <v-list v-if="endingSoonCategory">
+    <v-list
+      v-for="category in categories"
+      :key="category.id"
+      class="pt-2 pb-6">
       <engagement-center-rules-category
-        :category="endingSoonCategory"
+        :category="category"
         disabled-collapsing>
-        <v-card-title class="ps-2 py-1 text-color font-weight-bold text-break">
-          {{ endingSoonCategory.title }}
-        </v-card-title>
-      </engagement-center-rules-category>
-    </v-list>
-    <v-list v-if="newestCategory">
-      <engagement-center-rules-category
-        :category="newestCategory"
-        disabled-collapsing>
-        <v-card-title class="ps-2 py-1 text-color font-weight-bold text-break">
-          {{ newestCategory.title }}
-        </v-card-title>
-      </engagement-center-rules-category>
-    </v-list>
-    <v-list v-if="startingSoonCategory">
-      <engagement-center-rules-category
-        :category="startingSoonCategory"
-        disabled-collapsing>
-        <v-card-title class="ps-2 py-1 text-color font-weight-bold text-break">
-          {{ startingSoonCategory.title }}
+        <v-card-title class="px-0 py-1 text-color font-weight-bold text-break">
+          {{ category.title }}
         </v-card-title>
       </engagement-center-rules-category>
     </v-list>
@@ -73,25 +58,18 @@ export default {
     weekInMs: 604800000,
   }),
   computed: {
-    endingSoonRulesToDisplay() {
-      return this.endingSoonRules
-        .filter(r => r.endDate && (new Date(r.endDate).getTime() - Date.now()) < this.weekInMs);
-    },
-    newestRulesToDisplay() {
-      return this.newestRules
-        .filter(r => !this.endingSoonRules?.find(e => e.id === r.id))
-        .filter(r => r.createdDate && (Date.now() - new Date(r.createdDate).getTime()) < this.weekInMs)
-        .slice(0, this.limit * 3 - (this.startingSoonCategory && 3 || 0) - (this.endingSoonCategory && 3 || 0));
-    },
-    startingSoonRulesToDisplay() {
-      return this.startingSoonRules
-        .filter(r => r.startDate && (new Date(r.startDate).getTime() - Date.now()) < this.weekInMs);
-    },
-    hasRules() {
-      return this.startingSoonRules?.length || this.newestRules?.length || this.endingSoonRules?.length;
-    },
-    initialized() {
-      return this.loading === 0;
+    categories() {
+      const categories = [];
+      if (this.endingSoonCategory) {
+        categories.push(this.endingSoonCategory);
+      }
+      if (this.endingSoonCategory) {
+        categories.push(this.newestCategory);
+      }
+      if (this.startingSoonCategory) {
+        categories.push(this.startingSoonCategory);
+      }
+      return categories;
     },
     endingSoonCategory() {
       return this.endingSoonRulesToDisplay?.length && {
@@ -122,6 +100,26 @@ export default {
         limit: this.startingSoonRulesToDisplay.length,
         offset: 0,
       };
+    },
+    endingSoonRulesToDisplay() {
+      return this.endingSoonRules
+        .filter(r => r.endDate && (new Date(r.endDate).getTime() - Date.now()) < this.weekInMs);
+    },
+    newestRulesToDisplay() {
+      return this.newestRules
+        .filter(r => !this.endingSoonRules?.find(e => e.id === r.id))
+        .filter(r => r.createdDate && (Date.now() - new Date(r.createdDate).getTime()) < this.weekInMs)
+        .slice(0, this.limit * 3 - (this.startingSoonCategory && 3 || 0) - (this.endingSoonCategory && 3 || 0));
+    },
+    startingSoonRulesToDisplay() {
+      return this.startingSoonRules
+        .filter(r => r.startDate && (new Date(r.startDate).getTime() - Date.now()) < this.weekInMs);
+    },
+    hasRules() {
+      return this.startingSoonRules?.length || this.newestRules?.length || this.endingSoonRules?.length;
+    },
+    initialized() {
+      return this.loading === 0;
     },
   },
   watch: {

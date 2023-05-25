@@ -24,7 +24,7 @@
     class="rules-list border-box-sizing"
     role="main">
     <v-toolbar flat>
-      <div class="d-flex flex-grow-1 align-center content-box-sizing position-relative">
+      <div class="d-flex flex-grow-1 align-center justify-space-between content-box-sizing position-relative">
         <v-card
           v-if="!showFilter || !$root.isMobile"
           flat>
@@ -34,7 +34,7 @@
           v-else
           flat>
           <v-btn
-            class="px-0 me-2"
+            class="px-0 me-2 width-auto"
             small
             icon
             @click="showFilter = !showFilter">
@@ -71,7 +71,7 @@
         </div>
         <v-btn
           v-if="!$root.isMobile || showFilter"
-          :class="!$root.isMobile && 'primary-border-color'"
+          :class="$root.isMobile && 'width-auto' || 'primary-border-color'"
           :color="!$root.isMobile && 'primary'"
           :small="$root.isMobile"
           text
@@ -85,6 +85,7 @@
         <template v-if="$root.isMobile && !showFilter">
           <v-spacer />
           <v-btn
+            class="width-auto"
             icon
             @click="showFilter = !showFilter">
             <v-icon size="24">fa-filter</v-icon>
@@ -109,14 +110,12 @@
         :category-id="filterCategoryId"
         :rules="rules"
         :size="rulesSize"
-        class="pt-4" />
+        class="px-4" />
       <engagement-center-rules-by-program
         v-else-if="groupByProgram"
-        :categories="validCategories"
-        class="pt-4" />
+        :categories="validCategories" />
       <engagement-center-rules-by-trend
         v-else
-        class="pt-4"
         @initialized="setInitialized" />
     </v-card>
     <engagement-center-rules-filter-drawer

@@ -32,16 +32,17 @@
       <v-list-item-title
         v-else
         :disabled="disabledCollapsing"
-        class="text-color d-flex align-center ms-n4">
+        class="text-color d-flex align-center ms-n6">
         {{ title }}
         <v-divider v-if="!disabledCollapsing" class="ms-4" />
       </v-list-item-title>
     </template>
-    <v-list-item class="my-4">
+    <v-list-item class="ma-0">
       <engagement-center-rules-list
         :category-id="category.id"
         :rules="rulesToDisplay"
-        :size="sizeToDisplay" />
+        :size="sizeToDisplay"
+        class="pa-0" />
     </v-list-item>
   </v-list-group>
 </template>
@@ -70,7 +71,7 @@ export default {
       if (this.disabledCollapsing) {
         return;
       }
-      return this.open && 'fa-chevron-up fa-lg ms-2' || 'fa-chevron-down fa-lg ms-2';
+      return this.open && 'fa-chevron-up fa-lg' || 'fa-chevron-down fa-lg';
     },
     rules() {
       return this.category?.rules || [];
