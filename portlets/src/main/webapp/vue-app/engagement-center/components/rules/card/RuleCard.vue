@@ -25,12 +25,12 @@
       max-height="230"
       outlined
       hover
-      @click="$root.$emit('rule-detail-drawer', rule)">
+      @click="$root.$emit('rule-detail-drawer', ruleWithProgram)">
       <div v-if="!isValid">
         <div v-if="canEdit && hover" class="d-flex position-absolute full-width z-index-drawer">
           <div class="ms-auto mb-auto mt-4 me-4">
             <engagement-center-rule-card-menu
-              :rule="rule"
+              :rule="ruleWithProgram"
               dark />
           </div>
         </div>
@@ -41,13 +41,13 @@
             class="rule-card-mask-disabled" />
           <engagement-center-rule-card-mask-remaining-dates
             v-else-if="!isValidDates"
-            :rule="rule" />
+            :rule="ruleWithProgram" />
           <engagement-center-rule-card-mask-recurrence
             v-else-if="!isValidRecurrence"
-            :rule="rule" />
+            :rule="ruleWithProgram" />
           <engagement-center-rule-card-mask-prequisite-rules
             v-else-if="!isValidPrerequities"
-            :rule="rule" />
+            :rule="ruleWithProgram" />
         </engagement-center-rule-card-mask>
       </div>
       <v-card-title class="rule-card-title d-flex flex-nowrap pb-0 text-break">
@@ -55,7 +55,7 @@
           {{ title }}
         </div>
         <div v-if="canEdit && hover && isValid" class="flex-grow-0 d-flex align-center">
-          <engagement-center-rule-card-menu :rule="rule" />
+          <engagement-center-rule-card-menu :rule="ruleWithProgram" />
         </div>
       </v-card-title>
       <v-card-text
@@ -64,13 +64,13 @@
       <template v-if="isEnabled">
         <v-spacer />
         <v-card-text v-if="rule.recurrence">
-          <engagement-center-rule-card-recurrence :rule="rule" />
+          <engagement-center-rule-card-recurrence :rule="ruleWithProgram" />
         </v-card-text>
         <v-spacer />
         <v-card-text class="d-flex align-center">
-          <engagement-center-rule-card-points :rule="rule" />
+          <engagement-center-rule-card-points :rule="ruleWithProgram" />
           <v-spacer />
-          <engagement-center-rule-card-remaining-dates :rule="rule" />
+          <engagement-center-rule-card-remaining-dates :rule="ruleWithProgram" />
         </v-card-text>
       </template>
     </v-card>
@@ -83,11 +83,23 @@ export default {
       type: Object,
       default: null
     },
+    program: {
+      type: Object,
+      default: null
+    },
   },
   data: () => ({
     showMenu: false,
   }),
   computed: {
+    ruleProgram() {
+      return this.rule?.program || this.program;
+    },
+    ruleWithProgram() {
+      return this.rule?.program && this.rule || Object.assign(this.rule, {
+        program: this.ruleProgram,
+      });
+    },
     canEdit() {
       return this.rule?.userInfo?.canEdit;
     },
@@ -107,7 +119,7 @@ export default {
       return this.rule?.userInfo?.context?.validDates;
     },
     isEnabled() {
-      return this.rule?.enabled && !this.rule?.deleted && this.rule?.program?.enabled && !this.rule?.program?.deleted;
+      return this.rule?.enabled && !this.rule?.deleted && this.ruleProgram?.enabled && !this.ruleProgram?.deleted;
     },
     isValidPrerequities() {
       const prerequisitesStatus = this.rule?.userInfo?.context?.validPrerequisites;

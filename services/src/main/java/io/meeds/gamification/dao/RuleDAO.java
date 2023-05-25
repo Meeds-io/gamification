@@ -259,6 +259,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       sortField = "Score";
     }
     return switch (sortField) {
+    case "title": {
+      yield "r.title";
+    }
     case "id", "createdDate": {
       yield "r.id";
     }

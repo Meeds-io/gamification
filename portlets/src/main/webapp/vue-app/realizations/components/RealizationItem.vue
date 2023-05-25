@@ -173,7 +173,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               v-if="canAccept"
               dense
               @click="updateRealizationStatus('ACCEPTED')">
-              <v-icon size="13" class="dark-grey-color">fas fa-check</v-icon>
+              <v-icon size="13" class="icon-default-color">fas fa-check</v-icon>
               <v-list-item-title class="text-justify ps-3">
                 {{ $t('realization.label.accept') }}
               </v-list-item-title>
@@ -182,7 +182,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               v-if="canReject"
               dense
               @click="updateRealizationStatus('REJECTED')">
-              <v-icon size="13" class="dark-grey-color">fas fa-ban</v-icon>
+              <v-icon size="13" class="icon-default-color">fas fa-ban</v-icon>
               <v-list-item-title class="text-justify ps-3">
                 {{ $t('realization.label.reject') }}
               </v-list-item-title>
