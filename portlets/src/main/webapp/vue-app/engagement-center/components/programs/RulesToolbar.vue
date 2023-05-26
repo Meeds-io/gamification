@@ -27,7 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-else
         class="btn btn-primary"
         small
-        @click="$root.$emit('rule-form-drawer')">
+        @click="$root.$emit('rule-form-drawer', null, program)">
         <v-icon dark>
           mdi-plus
         </v-icon>
@@ -133,6 +133,10 @@ export default {
     },
     keyword: {
       type: String,
+      default: null,
+    },
+    program: {
+      type: Object,
       default: null,
     },
   },

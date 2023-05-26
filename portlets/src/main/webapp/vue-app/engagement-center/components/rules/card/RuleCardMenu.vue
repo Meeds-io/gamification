@@ -22,6 +22,7 @@
       <v-list-item
         dense
         @click.prevent.stop="editRule">
+        <v-icon size="13" class="icon-default-color me-2">fas fa-edit</v-icon>
         <v-list-item-title class="text-start">
           {{ $t('programs.details.rule.button.edit') }}
         </v-list-item-title>
@@ -29,6 +30,7 @@
       <v-list-item
         dense
         @click.prevent.stop="deleteRule">
+        <v-icon size="13" class="icon-default-color me-2">fas fa-trash-alt</v-icon>
         <v-list-item-title class="text-start">
           {{ $t('programs.details.rule.button.delete') }}
         </v-list-item-title>
