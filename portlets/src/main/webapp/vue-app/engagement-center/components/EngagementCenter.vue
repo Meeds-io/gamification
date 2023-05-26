@@ -16,16 +16,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <main v-if="!initialized">
-      <v-toolbar color="transparent" flat>
-        <v-spacer />
-        <v-progress-circular
-          color="primary"
-          class="mb-2"
-          indeterminate />
-        <v-spacer />
-      </v-toolbar>
-    </main>
     <main>
       <v-tabs
         id="engagementCenterTabs"
@@ -94,7 +84,6 @@ export default {
     },
   },
   data: () => ({
-    initialized: false,
     tab: null,
     earnerId: eXo.env.portal.userIdentityId,
     program: null,
@@ -143,7 +132,6 @@ export default {
       .then(events => {
         this.events = events || [];
       });
-    this.initialized = true;
     window.addEventListener('popstate', (event) => this.initTabs(event));
     document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
     this.refreshActionValueExtensions();
