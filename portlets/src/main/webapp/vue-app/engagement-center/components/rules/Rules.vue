@@ -24,7 +24,7 @@
     class="rules-list border-box-sizing"
     role="main">
     <application-toolbar
-      :left-text="incentivesCountLabel"
+      :left-text="tabName !== 'TRENDS' && incentivesCountLabel"
       :center-button-toggle="{
         selected: tabName,
         hide: false,
@@ -161,6 +161,7 @@ export default {
       }
     },
     tabName() {
+      this.loading = true;
       if (this.tabName === 'ALL') {
         window.history.replaceState('challenges', this.$t('program.actions'), `${this.linkBasePath}#all`);
       } else {
