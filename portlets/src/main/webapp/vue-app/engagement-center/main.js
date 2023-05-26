@@ -51,6 +51,9 @@ export function init(isAdministrator) {
           return this.$vuetify.breakpoint.xsOnly;
         },
       },
+      created() {
+        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      },
       template: `<engagement-center id="${appId}" :is-administrator="${isAdministrator}"/>`,
       vuetify,
       i18n
