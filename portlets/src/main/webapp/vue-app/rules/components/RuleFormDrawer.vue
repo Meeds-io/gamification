@@ -410,9 +410,7 @@ export default {
         enabled: true,
         area: this.programTitle
       };
-      if (!this.program) {
-        this.program = this.rule?.program;
-      }
+      this.program = this.rule?.program;
       this.durationCondition = this.rule.startDate || this.rule.endDate;
       this.recurrenceCondition = !!this.rule.recurrence;
       this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
