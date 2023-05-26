@@ -192,7 +192,7 @@ export default {
       this.loading = true;
       this.$ruleService.deleteRule(this.selectedRule.id)
         .then(() => {
-          this.$root.$emit('alert-message', 'success', this.$t('programs.details.ruleDeleteSuccess'));
+          this.$root.$emit('alert-message', this.$t('programs.details.ruleDeleteSuccess'), 'success');
           this.$root.$emit('rule-deleted', this.selectedRule);
         })
         .catch(e => {
@@ -204,7 +204,7 @@ export default {
           } else  {
             msg = this.$t('actions.deleteError');
           }
-          this.$root.$emit('alert-message', 'error', msg);
+          this.$root.$emit('alert-message', msg, 'error');
         })
         .finally(() => this.loading = false);
     },
