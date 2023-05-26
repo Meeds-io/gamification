@@ -95,6 +95,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <engagement-center-rules-toolbar
               :can-manage-rule="canManageRule"
               :keyword="keyword"
+              :program="program"
               @keyword-changed="keyword = $event"
               @filter-changed="updateFilter" />
             <v-list-item-subtitle class="text-color pt-4">
