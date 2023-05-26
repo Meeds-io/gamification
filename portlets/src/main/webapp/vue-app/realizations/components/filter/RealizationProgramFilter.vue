@@ -27,7 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           id="EngagementCenterApplicationSearchFilter"
           v-model="search"
           :placeholder="$t('realization.label.filterByProgram')"
-          prepend-inner-icon="fa-filter"
+          prepend-inner-icon="fa-filter icon-default-color"
           single-line
           hide-details
           class="pa-0 mx-3 " />
@@ -129,7 +129,12 @@ export default {
     },
     retrievePrograms(append, searchingKey) {
       this.loading = true;
-      this.$programService.getPrograms(null, null, this.type, this.status, searchingKey, true)
+      this.$programService.getPrograms({
+        type: this.type,
+        status: this.status,
+        query: searchingKey,
+        includeDeleted: true,
+      })
         .then((programsList) => {
           this.size = programsList.size;
           if (append) {

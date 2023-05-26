@@ -72,8 +72,8 @@ export default {
       return this.startingSoonRules
         .filter(r => r.startDate && (new Date(r.startDate).getTime() - Date.now()) < this.weekInMs);
     },
-    hasRules() {
-      return this.startingSoonRules?.length || this.newestRules?.length || this.endingSoonRules?.length;
+    rulesSize() {
+      return (this.startingSoonRules?.length || 0) + (this.newestRules?.length || 0) + (this.endingSoonRules?.length || 0);
     },
     initialized() {
       return this.loading === 0;
@@ -125,8 +125,11 @@ export default {
   watch: {
     initialized() {
       if (this.initialized) {
-        this.$emit('initialized', this.hasRules);
+        this.$emit('initialized', this.rulesSize);
       }
+    },
+    loading() {
+      this.$emit('loading', !!this.loading);
     },
   },
   created() {
