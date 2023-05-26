@@ -79,7 +79,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   icon>
                   <v-icon
                     size="16"
-                    color="dark-grey">
+                    class="icon-default-color">
                     fas fa-eye
                   </v-icon>
                 </v-btn>

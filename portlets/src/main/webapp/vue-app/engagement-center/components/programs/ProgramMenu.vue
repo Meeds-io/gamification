@@ -24,7 +24,7 @@
         @mousedown="$event.preventDefault()"
         @click="editProgram">
         <v-layout class="me-3">
-          <v-icon size="13" class="dark-grey-color pb-2px">fas fa-edit</v-icon>
+          <v-icon size="13" class="icon-default-color pb-2px">fas fa-edit</v-icon>
         </v-layout>
         <v-list-item-title class="d-flex">{{ $t('programs.button.editProgram') }}</v-list-item-title>
       </v-list-item>
@@ -33,7 +33,7 @@
         @mousedown="$event.preventDefault()"
         @click="deleteProgram">
         <v-layout class="me-3">
-          <v-icon size="13" class="dark-grey-color pb-2px">fas fa-trash-alt</v-icon>
+          <v-icon size="13" class="icon-default-color pb-2px">fas fa-trash-alt</v-icon>
         </v-layout>
         <v-list-item-title class="d-flex">
           {{ $t('programs.button.deleteProgram') }}

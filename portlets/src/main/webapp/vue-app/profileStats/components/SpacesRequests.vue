@@ -159,7 +159,7 @@ export default {
       });
     },
     openSpaceRequests() {
-      window.location.href =  `${this.invitationSpaceUrl}`;
+      window.location.href = `${this.invitationSpaceUrl}`;
     },
     replyInvitationToJoinSpace(spaceId, reply) {
       replyInvitationToJoinSpace(spaceId, reply)

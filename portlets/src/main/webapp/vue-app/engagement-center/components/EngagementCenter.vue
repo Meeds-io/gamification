@@ -156,7 +156,7 @@ export default {
       this.switchTabs();
     },
     switchTabs() {
-      const urlPath = document.location.search || document.location.pathname;
+      const urlPath = document.location.pathname;
       const id = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
       if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`) >= 0) {
         this.tab = 0;

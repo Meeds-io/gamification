@@ -76,7 +76,7 @@ export default {
       if (this.disabledCollapsing) {
         return;
       }
-      return this.open && 'fa-chevron-up fa-lg' || 'fa-chevron-down fa-lg';
+      return this.open && 'fa-chevron-up fa-lg icon-default-color' || 'fa-chevron-down fa-lg icon-default-color';
     },
     rules() {
       return this.category?.rules || [];
