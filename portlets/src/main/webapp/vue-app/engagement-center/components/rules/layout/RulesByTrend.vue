@@ -128,12 +128,21 @@ export default {
         this.$emit('initialized', this.rulesSize);
       }
     },
-    loading() {
-      this.$emit('loading', !!this.loading);
+    loading(newVal, oldVal) {
+      if (!newVal !== !oldVal) {
+        this.$emit('loading', !!this.loading);
+      }
     },
   },
   created() {
-    this.init();
+    this.init()
+      .finally(() => this.loading--);
+    this.$root.$on('rule-updated', this.init);
+    this.$root.$on('rule-deleted', this.init);
+  },
+  beforeDestroy() {
+    this.$root.$off('rule-updated', this.init);
+    this.$root.$off('rule-deleted', this.init);
   },
   methods: {
     init() {
@@ -141,10 +150,7 @@ export default {
         this.retrieveEndingSoonRules(),
         this.retrieveNewestRules(),
         this.retrieveStartingSoonRules()
-      ]).finally(() => {
-        this.loading--;
-        this.$root.$applicationLoaded();
-      });
+      ]).finally(() => this.$root.$applicationLoaded());
     },
     retrieveEndingSoonRules() {
       this.loading++;

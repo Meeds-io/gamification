@@ -404,13 +404,13 @@ export default {
     this.$root.$on('rule-form-drawer', this.open);
   },
   methods: {
-    open(rule) {
+    open(rule, program) {
       this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
         score: 20,
         enabled: true,
         area: this.programTitle
       };
-      this.program = this.rule?.program;
+      this.program = this.rule?.program || program;
       this.durationCondition = this.rule.startDate || this.rule.endDate;
       this.recurrenceCondition = !!this.rule.recurrence;
       this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
