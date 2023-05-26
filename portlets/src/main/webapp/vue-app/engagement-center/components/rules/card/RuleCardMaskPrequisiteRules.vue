@@ -21,9 +21,17 @@
 <template>
   <engagement-center-rule-card-mask-content
     v-if="hasRemainingPrerequisitesCount"
-    :text="prerequisitesTitle"
     icon="fas fa-lock"
-    class="rule-card-mask-prerequisites" />
+    class="rule-card-mask-prerequisites">
+    <div
+      v-sanitized-html="rule.title"
+      class="white--text text-wrap title px-2 font-weight-bold">
+    </div>
+    <div
+      v-sanitized-html="prerequisitesTitle"
+      class="white--text text-wrap subtitle-1 px-2">
+    </div>
+  </engagement-center-rule-card-mask-content>
 </template>
 <script>
 export default {
@@ -52,11 +60,31 @@ export default {
     },
     prerequisitesTitle() {
       if (this.remainingPrerequisitesCount === 1) {
-        return this.$t('rules.card.completeActionToUnlock', {0: this.remainingPrerequisites[0].title});
+        return this.$t('rules.card.completeActionToUnlock', {0: `<strong>${this.remainingPrerequisites[0].title}</strong>`});
       } else {
-        return this.$t('rules.card.completeActionToUnlock', {0: this.remainingPrerequisitesCount});
+        return this.$t('rules.card.completeActionsToUnlock', {0: this.remainingPrerequisitesCount});
       }
     },
   },
+  created() {
+    this.$root.$on('rule-updated', this.checkUpdatedEvent);
+    this.$root.$on('announcement-added', this.checkAnnouncedChallenge);
+  },
+  beforeDestroy() {
+    this.$root.$off('rule-updated', this.checkUpdatedEvent);
+    this.$root.$off('announcement-added', this.checkAnnouncedChallenge);
+  },
+  methods: {
+    checkAnnouncedChallenge(event) {
+      this.checkUpdatedEvent({
+        id: event?.detail?.challengeId,
+      });
+    },
+    checkUpdatedEvent(rule) {
+      if (rule && this.remainingPrerequisitesCount && this.remainingPrerequisites.find(r => r.id === rule.id)) {
+        this.$root.$emit('rule-updated', this.rule);
+      }
+    },
+  }
 };
 </script>
