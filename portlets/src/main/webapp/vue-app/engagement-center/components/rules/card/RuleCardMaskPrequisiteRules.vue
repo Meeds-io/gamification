@@ -66,5 +66,25 @@ export default {
       }
     },
   },
+  created() {
+    this.$root.$on('rule-updated', this.checkUpdatedEvent);
+    this.$root.$on('announcement-added', this.checkAnnouncedChallenge);
+  },
+  beforeDestroy() {
+    this.$root.$off('rule-updated', this.checkUpdatedEvent);
+    this.$root.$off('announcement-added', this.checkAnnouncedChallenge);
+  },
+  methods: {
+    checkAnnouncedChallenge(event) {
+      this.checkUpdatedEvent({
+        id: event?.detail?.challengeId,
+      });
+    },
+    checkUpdatedEvent(rule) {
+      if (rule && this.remainingPrerequisitesCount && this.remainingPrerequisites.find(r => r.id === rule.id)) {
+        this.$root.$emit('rule-updated', this.rule);
+      }
+    },
+  }
 };
 </script>
