@@ -113,12 +113,11 @@ export default {
       programs: [],
       totalSize: 0,
       pageSize: 9,
-      loading: false,
+      loading: true,
       type: 'ALL',
       status: 'ENABLED',
       deleteConfirmMessage: '',
       selectedProgram: {},
-      initialized: false,
       offset: 0,
       limit: 9,
       users: [],
@@ -165,16 +164,17 @@ export default {
         document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
       }
     },
+    status() {
+      this.retrievePrograms();
+    },
   },
   created() {
     this.limitToFetch = this.originalLimitToFetch = this.limit;
-    const promises = [];
-    promises.push(this.retrievePrograms());
     this.$root.$on('program-load-more', this.loadMore);
     this.$root.$on('program-added', this.refreshPrograms);
     this.$root.$on('program-updated', this.refreshPrograms);
     this.$root.$on('delete-program', this.confirmDelete);
-    Promise.all(promises)
+    this.retrievePrograms()
       .finally(() => this.$root.$applicationLoaded());
   },
   methods: {
@@ -190,13 +190,7 @@ export default {
           this.programs = data.programs;
           this.totalSize = data.size || 0;
         })
-        .finally(() => {
-          if (!this.initialized) {
-            this.$root.$applicationLoaded();
-          }
-          this.loading = false;
-          this.initialized = true;
-        });
+        .finally(() => this.loading = false);
     },
     loadMore() {
       if (this.hasMore) {
