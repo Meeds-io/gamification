@@ -1,18 +1,21 @@
 <!--
-This file is part of the Meeds project (https://meeds.io/).
-Copyright (C) 2022 Meeds Association
-contact@meeds.io
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 3 of the License, or (at your option) any later version.
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-You should have received a copy of the GNU Lesser General Public License
-along with this program; if not, write to the Free Software Foundation,
-Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+  This file is part of the Meeds project (https://meeds.io/).
+
+  Copyright (C) 2023 Meeds Association contact@meeds.io
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 3 of the License, or (at your option) any later version.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 -->
 <template>
   <v-hover v-slot="{ hover }">
@@ -93,14 +96,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <td class="no-border-bottom  d-none d-sm-table-cell">
         <div
           :class="showAllAvatarList && 'AllUsersAvatar'"
-          class="winners winnersAvatarsList d-flex flex-nowrap my-2 justify-center">
+          class="d-flex flex-nowrap my-2 justify-center">
           <engagement-center-avatars-list
             v-if="hasParticipants"
-            :avatars="ruleWinnerAvatars"
+            :avatars="users"
             :max-avatars-to-show="maxAvatarsToShow"
-            :avatars-count="ruleWinnersCount"
+            :avatars-count="realizationsCount"
             :size="27"
-            @open-avatars-drawer="$root.$emit('open-winners-drawer', rule)" />
+            @open-avatars-drawer="$root.$emit('open-achievements-drawer', rule)" />
           <div v-else>
             <span>
               -
@@ -133,7 +136,7 @@ export default {
   data() {
     return {
       menu: false,
-      maxAvatarsToShow: 4,
+      maxAvatarsToShow: 3,
     };
   },
   computed: {
@@ -157,17 +160,17 @@ export default {
     iconSize() {
       return this.isMobile ? 13 : 16;
     },
-    ruleWinnerAvatars() {
-      return this.rule?.announcements?.filter(announce => announce.assignee)
-        .map(announce => ({
-          userName: announce.assignee
+    users() {
+      return this.rule?.realizations?.filter(realization => realization?.earner?.remoteId)
+        .map(realization => ({
+          userName: realization?.earner?.remoteId,
         })) || [];
     },
-    ruleWinnersCount() {
-      return this.rule?.announcementsCount || this.rule?.announcements?.length || 0;
+    realizationsCount() {
+      return this.rule?.realizationsCount || 0;
     },
     hasParticipants() {
-      return this.ruleWinnersCount !== 0;
+      return this.realizationsCount !== 0;
     },
     enabledRule() {
       return this.rule?.enabled;

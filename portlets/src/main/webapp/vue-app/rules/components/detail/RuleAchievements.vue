@@ -20,22 +20,22 @@
 -->
 <template>
   <v-list-item
-    v-if="announcementsCount"
-    class="rule-announcements pa-0"
+    v-if="realizationsCount"
+    class="rule-realizations pa-0"
     dense
     ripple
-    @click="$root.$emit('open-winners-drawer', rule, true)">
+    @click="$root.$emit('open-achievements-drawer', rule, true)">
     <v-list-item-avatar class="me-2">
       <v-avatar
         color="grey"
         size="30"
         class="white--text">
-        {{ announcementsCount }}
+        {{ realizationsCount }}
       </v-avatar>
     </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title>
-        {{ $t('rules.announcementsSoFar') }}
+        {{ $t('rules.achievementsSoFar') }}
       </v-list-item-title>
     </v-list-item-content>
   </v-list-item>
@@ -49,8 +49,8 @@ export default {
     },
   },
   computed: {
-    announcementsCount() {
-      return this.rule?.announcementsCount || 0;
+    realizationsCount() {
+      return this.rule?.realizationsCount || 0;
     },
   },
 };

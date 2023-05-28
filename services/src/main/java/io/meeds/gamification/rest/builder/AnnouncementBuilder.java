@@ -17,40 +17,13 @@
 
 package io.meeds.gamification.rest.builder;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.AnnouncementActivity;
-import io.meeds.gamification.rest.model.AnnouncementRestEntity;
-import io.meeds.gamification.utils.Utils;
 
 public class AnnouncementBuilder {
 
   private AnnouncementBuilder() {
     // Static methods
-  }
-
-  public static List<AnnouncementRestEntity> fromAnnouncementList(List<Announcement> announcements) {
-    if (CollectionUtils.isEmpty(announcements)) {
-      return Collections.emptyList();
-    } else {
-      return announcements.stream().map(AnnouncementBuilder::fromAnnouncement).toList();
-    }
-  }
-
-  public static AnnouncementRestEntity fromAnnouncement(Announcement announcement) {
-    if (announcement == null) {
-      return null;
-    }
-    return new AnnouncementRestEntity(announcement.getId(),
-                                      Utils.getUserRemoteId(String.valueOf(announcement.getAssignee() != null ? announcement.getAssignee()
-                                                                                                              : announcement.getCreator())),
-                                      announcement.getCreatedDate(),
-                                      announcement.getActivityId());
   }
 
   public static Announcement fromAnnouncementActivity(AnnouncementActivity announcementActivity) {
@@ -65,7 +38,7 @@ public class AnnouncementBuilder {
 
   }
 
-  public static AnnouncementActivity toAnnouncementActivity(Announcement announcement, Map<String, String> templateParams) {
+  public static AnnouncementActivity toAnnouncementActivity(Announcement announcement) {
     return new AnnouncementActivity(announcement.getId(),
                                     announcement.getChallengeId(),
                                     announcement.getChallengeTitle(),
@@ -74,7 +47,7 @@ public class AnnouncementBuilder {
                                     announcement.getCreator(),
                                     announcement.getCreatedDate(),
                                     announcement.getActivityId(),
-                                    templateParams);
+                                    null);
   }
 
 }

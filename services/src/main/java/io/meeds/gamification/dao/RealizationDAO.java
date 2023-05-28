@@ -16,12 +16,6 @@
  */
 package io.meeds.gamification.dao;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -40,9 +34,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.IdentityType;
-import io.meeds.gamification.constant.PeriodType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.entity.RealizationEntity;
 import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.ProfileReputation;
@@ -57,21 +50,19 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
 
   private static final String        FROM_DATE_PARAM_NAME    = "fromDate";
 
-  private static final String        NOW_DATE_PARAM_NAME     = "nowDate";
-
   private static final String        EARNER_ID_PARAM_NAME    = "earnerId";
 
   private static final String        EARNER_IDS_PARAM_NAME   = "earnerIds";
 
   private static final String        PROGRAM_IDS_PARAM_NAME  = "programIds";
 
+  private static final String        RULE_IDS_PARAM_NAME     = "ruleIds";
+
   private static final String        PROGRAM_ID_PARAM_NAME   = "domainId";
 
   private static final String        EARNER_TYPE_PARAM_NAME  = "earnerType";
 
   public static final String         STATUS_PARAM_NAME       = "status";
-
-  public static final String         TYPE_PARAM_NAME         = "type";
 
   private static final String        RULE_ID_PARAM_NAME      = "ruleId";
 
@@ -135,7 +126,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     TypedQuery<RealizationEntity> query =
                                         getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByEarnerIdAndByType",
                                                                             RealizationEntity.class);
-    query.setParameter(TYPE_PARAM_NAME, type);
+    query.setParameter(EARNER_TYPE_PARAM_NAME, type);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     return query.getResultList();
   }
@@ -408,19 +399,6 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public int countRealizationsByRuleIdAndEarnerType(long ruleId, IdentityType earnerType) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("RealizationEntity.countRealizationsByRuleIdAndEarnerType",
-                                                                 Long.class);
-    query.setParameter(RULE_ID_PARAM_NAME, ruleId);
-    query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
-    try {
-      Long count = query.getSingleResult();
-      return count == null ? 0 : count.intValue();
-    } catch (NoResultException e) {
-      return 0;
-    }
-  }
-
   public int countRealizationsByRuleIdAndEarnerId(String earnerIdentityId, long ruleId) {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("RealizationEntity.countRealizationsByRuleIdAndEarnerId",
                                                                  Long.class);
@@ -449,70 +427,6 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     } catch (NoResultException e) {
       return 0;
     }
-  }
-
-  public List<RealizationEntity> findRealizationsByRuleId(long ruleId,
-                                                          int offset,
-                                                          int limit,
-                                                          PeriodType periodType,
-                                                          IdentityType earnerType) {
-    TypedQuery<RealizationEntity> query = null;
-    if (periodType != null && periodType.equals(PeriodType.WEEK)) {
-      if (earnerType != null) {
-        query = getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByRuleIdAndDateAndEarnerType",
-                                                    RealizationEntity.class);
-        query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
-      } else {
-        query = getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByRuleIdAndDate",
-                                                    RealizationEntity.class);
-      }
-      LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-      LocalDate sunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-      Date utilFromDate = Date.from(monday.atStartOfDay(ZoneId.systemDefault()).toInstant());
-      Date utilToDate = Date.from(sunday.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
-      query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate).setParameter(TO_DATE_PARAM_NAME, utilToDate);
-    } else {
-      if (earnerType != null) {
-        query = getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByRuleIdAndEarnerType",
-                                                    RealizationEntity.class);
-
-        query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
-      } else {
-        query = getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByRuleId",
-                                                    RealizationEntity.class);
-      }
-    }
-    query.setParameter(RULE_ID_PARAM_NAME, ruleId);
-    if (offset >= 0) {
-      query.setFirstResult(offset);
-    }
-    if (limit >= 0) {
-      query.setMaxResults(limit);
-    }
-    List<RealizationEntity> result = query.getResultList();
-    return result == null ? Collections.emptyList() : result;
-  }
-
-  public List<Long> findMostRealizedRuleIds(List<Long> spacesIds, int offset, int limit, EntityType type) {
-    List<Long> resultList = null;
-    if (CollectionUtils.isNotEmpty(spacesIds)) {
-      TypedQuery<Long> query;
-      query = getEntityManager().createNamedQuery("RealizationEntity.findMostRealizedRuleIds", Long.class);
-      query.setParameter("spacesIds", spacesIds);
-      LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-      LocalDate sunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-      Date utilFromDate = Date.from(monday.atStartOfDay(ZoneId.systemDefault()).toInstant());
-      Date utilToDate = Date.from(sunday.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
-      Date now = Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
-      query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
-           .setParameter(TO_DATE_PARAM_NAME, utilToDate)
-           .setParameter(TYPE_PARAM_NAME, type)
-           .setParameter(NOW_DATE_PARAM_NAME, now);
-      query.setFirstResult(offset);
-      query.setMaxResults(limit);
-      resultList = query.getResultList();
-    }
-    return resultList == null ? Collections.emptyList() : resultList;
   }
 
   public RealizationEntity findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
@@ -556,7 +470,8 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
    * @return                   a list of object of type
    *                           {@link RealizationEntity}
    */
-  public List<RealizationEntity> findRealizationsByFilter(RealizationFilter realizationFilter, int offset,
+  public List<RealizationEntity> findRealizationsByFilter(RealizationFilter realizationFilter,
+                                                          int offset,
                                                           int limit) {
     TypedQuery<RealizationEntity> query =
                                         buildQueryFromFilter(realizationFilter,
@@ -596,21 +511,31 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   }
 
   private void buildPredicates(RealizationFilter filter, List<String> suffixes, List<String> predicates) {
-    predicates.add("g.earnerType = :type");
-    suffixes.add(filter.getSortField());
-    suffixes.add(filter.isSortDescending() ? "Descending" : "Ascending");
+    predicates.add("g.earnerType = :" + EARNER_TYPE_PARAM_NAME);
+
     if (filter.getFromDate() != null && filter.getToDate() != null) {
       suffixes.add("Interval");
-      predicates.add("g.createdDate >= :fromDate AND g.createdDate < :toDate");
+      predicates.add("g.createdDate >= :" + FROM_DATE_PARAM_NAME + " AND g.createdDate < :" + TO_DATE_PARAM_NAME);
     }
     if (CollectionUtils.isNotEmpty(filter.getEarnerIds())) {
       suffixes.add("EarnerIds");
-      predicates.add("g.earnerId IN (:earnerIds)");
+      predicates.add("g.earnerId IN (:" + EARNER_IDS_PARAM_NAME + ")");
     }
     if (CollectionUtils.isNotEmpty(filter.getProgramIds())) {
       suffixes.add("ProgramIds");
-      predicates.add("g.domainEntity.id IN (:programIds)");
+      predicates.add("g.domainEntity.id IN (:" + PROGRAM_IDS_PARAM_NAME + ")");
     }
+    if (CollectionUtils.isNotEmpty(filter.getRuleIds())) {
+      suffixes.add("RuleIds");
+      predicates.add("g.ruleEntity.id IN (:" + RULE_IDS_PARAM_NAME + ")");
+    }
+    if (filter.getStatus() != null) {
+      suffixes.add("Status");
+      predicates.add("g.status = :" + STATUS_PARAM_NAME);
+    }
+
+    suffixes.add(getSortField(filter));
+    suffixes.add(filter.isSortDescending() ? "Descending" : "Ascending");
   }
 
   private String getQueryFilterName(List<String> suffixes, boolean count) {
@@ -619,7 +544,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
       queryName = count ? "RealizationEntity.countRealizations" : "RealizationEntity.findRealizations";
     } else {
       queryName = (count ? "RealizationEntity.countRealizations" : "RealizationEntity.findRealizations") + "By"
-          + StringUtils.join(suffixes, "By");
+          + StringUtils.join(suffixes, "And");
     }
     return queryName;
   }
@@ -627,35 +552,56 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   private String getQueryFilterContent(RealizationFilter filter, List<String> predicates, boolean count) {
     String querySelect = count ? "SELECT COUNT(g) FROM RealizationEntity g "
                                : "SELECT DISTINCT g FROM RealizationEntity g ";
-    String orderBy = null;
-    String sortDirection = filter.isSortDescending() ? " DESC" : " ASC";
-    if (StringUtils.equals(filter.getSortField(), DATE_PARAM_NAME) || StringUtils.isAllEmpty(filter.getSortField())) {
-      orderBy = " ORDER BY g.id " + sortDirection;
-    } else {
-      orderBy = " ORDER BY g." + filter.getSortField() + sortDirection + " ,g.id DESC ";
-    }
     String queryContent;
     if (predicates.isEmpty()) {
       queryContent = querySelect;
     } else {
       queryContent = querySelect + " WHERE " + StringUtils.join(predicates, " AND ");
     }
+
     if (!count) {
-      queryContent = queryContent + orderBy;
+      String sortDirection = filter.isSortDescending() ? "DESC" : "ASC";
+      String sortField = getSortField(filter);
+      if (StringUtils.equals(sortField, DATE_PARAM_NAME)) {
+        queryContent += " ORDER BY g.id " + sortDirection;
+      } else {
+        queryContent += " ORDER BY g." + sortField + " " + sortDirection + " ,g.id DESC ";
+      }
     }
     return queryContent;
   }
 
   private <T> void addQueryFilterParameters(RealizationFilter filter, TypedQuery<T> query) {
-    query.setParameter(FROM_DATE_PARAM_NAME, filter.getFromDate());
-    query.setParameter(TO_DATE_PARAM_NAME, filter.getToDate());
+    query.setParameter(EARNER_TYPE_PARAM_NAME, filter.getEarnerType());
+    if (filter.getFromDate() != null && filter.getToDate() != null) {
+      query.setParameter(FROM_DATE_PARAM_NAME, filter.getFromDate());
+      query.setParameter(TO_DATE_PARAM_NAME, filter.getToDate());
+    }
     if (CollectionUtils.isNotEmpty(filter.getEarnerIds())) {
       query.setParameter(EARNER_IDS_PARAM_NAME, filter.getEarnerIds());
     }
     if (CollectionUtils.isNotEmpty(filter.getProgramIds())) {
       query.setParameter(PROGRAM_IDS_PARAM_NAME, filter.getProgramIds());
     }
-    query.setParameter(TYPE_PARAM_NAME, filter.getIdentityType());
+    if (CollectionUtils.isNotEmpty(filter.getRuleIds())) {
+      query.setParameter(RULE_IDS_PARAM_NAME, filter.getRuleIds());
+    }
+    if (filter.getStatus() != null) {
+      query.setParameter(STATUS_PARAM_NAME, filter.getStatus());
+    }
+  }
+
+  private String getSortField(RealizationFilter filter) {
+    if (StringUtils.isBlank(filter.getSortField())) {
+      return DATE_PARAM_NAME;
+    }
+    return switch (filter.getSortField()) {
+    case "status", "type", "earnerId", "receiver", "objectId", "objectType", "earnerType", "actionScore", "globalScore", DATE_PARAM_NAME: {
+      yield filter.getSortField();
+    }
+    default:
+      throw new IllegalArgumentException("Unexpected Sort Field value: " + filter.getSortField());
+    };
   }
 
 }

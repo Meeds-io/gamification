@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
@@ -40,10 +39,8 @@ import org.exoplatform.services.test.mock.MockHttpServletRequest;
 import org.exoplatform.social.core.identity.model.Identity;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
-import io.meeds.gamification.rest.model.AnnouncementRestEntity;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 
@@ -196,78 +193,6 @@ public class TestAnnouncementRest extends AbstractServiceTest { // NOSONAR
     response = launcher.service("POST", restPath, "", h, data, envctx);
     assertNotNull(response);
     assertEquals(404, response.getStatus());
-  }
-
-  @Test
-  public void testGetAllAnnouncementByChallenge() throws Exception {
-    Identity identity = identityManager.getOrCreateUserIdentity("root1");
-    long identityId = Long.parseLong(identity.getId());
-
-    ConversationState conversationState = startSessionAs("root1");
-
-    RuleDTO rule = newRuleDTO();
-
-    ProgramDTO program = rule.getProgram();
-    program.setOwnerIds(Collections.singleton(identityId));
-    programService.updateProgram(program, conversationState.getIdentity());
-
-    rule.setTitle("update challenge");
-    rule.setDescription("challenge description");
-    rule.setStartDate(START_DATE);
-    rule.setEndDate(END_DATE);
-    rule.setProgram(program);
-    rule.setEnabled(true);
-    rule.setType(EntityType.MANUAL);
-    rule = ruleService.createRule(rule);
-    Announcement announcement = new Announcement(0,
-                                                 rule.getId(),
-                                                 rule.getTitle(),
-                                                 1L,
-                                                 "announcement comment",
-                                                 1L,
-                                                 DATE,
-                                                 null);
-    announcementService.createAnnouncement(announcement, new HashMap<>(), "root1");
-    String restPath = ANNOUNCEMENTS_REST_BASE_PATH + "?ruleId=1&offset=1&limit=-10";
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
-    assertNotNull(response);
-    assertEquals(400, response.getStatus());
-
-    restPath = ANNOUNCEMENTS_REST_BASE_PATH + "?ruleId=1&offset=-1&limit=10";
-    envctx = new EnvironmentContext();
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    response = launcher.service("GET", restPath, "", h, null, envctx);
-    assertNotNull(response);
-    assertEquals(400, response.getStatus());
-
-    restPath = ANNOUNCEMENTS_REST_BASE_PATH + "?ruleId=-1&offset=1&limit=10";
-    envctx = new EnvironmentContext();
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    response = launcher.service("GET", restPath, "", h, null, envctx);
-    assertNotNull(response);
-    assertEquals(400, response.getStatus());
-
-    restPath = ANNOUNCEMENTS_REST_BASE_PATH + "?ruleId=" + rule.getId() + "&offset=0&limit=10";
-    envctx = new EnvironmentContext();
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    response = launcher.service("GET", restPath, "", h, null, envctx);
-    assertNotNull(response);
-    assertEquals(200, response.getStatus());
-    @SuppressWarnings("unchecked")
-    List<AnnouncementRestEntity> announcementRestEntityList = (List<AnnouncementRestEntity>) response.getEntity();
-    assertEquals(1, announcementRestEntityList.size());
   }
 
 }
