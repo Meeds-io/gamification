@@ -129,7 +129,7 @@ export default {
         groupByProgram: true,
         sortBy: 'title',
         limit,
-        expand: 'countAnnouncements',
+        expand: 'countRealizations',
       })
         .then(data => {
           if (categoryId) {
