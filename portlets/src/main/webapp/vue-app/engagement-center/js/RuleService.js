@@ -58,8 +58,8 @@ export function getRules(filter) {
   if (filter?.limit) {
     formData.append('limit', filter.limit);
   }
-  if (filter?.announcementsLimit) {
-    formData.append('announcementsLimit', filter.announcementsLimit);
+  if (filter?.realizationsLimit) {
+    formData.append('realizationsLimit', filter.realizationsLimit);
   }
   if (filter?.expand) {
     formData.append('expand', filter.expand);

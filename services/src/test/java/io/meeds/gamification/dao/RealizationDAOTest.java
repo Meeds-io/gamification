@@ -27,9 +27,8 @@ import java.util.Map;
 import org.junit.Test;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.IdentityType;
-import io.meeds.gamification.constant.PeriodType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RealizationEntity;
 import io.meeds.gamification.entity.RuleEntity;
@@ -309,29 +308,6 @@ public class RealizationDAOTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testFindAllAnnouncementByChallengeByDate() {
-    assertEquals(0,
-                 realizationDAO.findRealizationsByRuleId(5558l, offset, limit, PeriodType.ALL, null)
-                               .size());
-
-    ProgramEntity domainEntity = newDomain();
-    RuleEntity ruleEntity = newRule("rule", domainEntity.getId());
-    assertEquals(0, (long) realizationDAO.countRealizationsByRuleId(1L));
-    assertEquals(0,
-                 realizationDAO.findRealizationsByRuleId(ruleEntity.getId(), offset, limit, PeriodType.ALL, null)
-                               .size());
-    newRealizationEntityWithRuleId("action history", ruleEntity.getId());
-    newRealizationEntityWithRuleId("action history 2", ruleEntity.getId());
-    newRealizationEntityWithRuleId("action history 3", ruleEntity.getId());
-    assertEquals(limit,
-                 realizationDAO.findRealizationsByRuleId(ruleEntity.getId(), offset, limit, PeriodType.ALL, null)
-                               .size());
-    assertEquals(limit, realizationDAO.findRealizationsByRuleId(ruleEntity.getId(), offset, limit, PeriodType.WEEK, null).size());
-    assertEquals(limit, (long) realizationDAO.countRealizationsByRuleId(ruleEntity.getId()));
-
-  }
-
-  @Test
   public void testFindAllRealizationsByFilterSortByActionType() {
     RuleEntity rule1Automatic = newRule("testFindRealizationsByFilterSortByActionType1", "domain1", true, EntityType.AUTOMATIC);
     RuleEntity rule2Automatic = newRule("testFindRealizationsByFilterSortByActionType2", "domain2", true, EntityType.AUTOMATIC);
@@ -353,7 +329,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     dateFilter.setSortField("type");
     dateFilter.setSortDescending(true);
     dateFilter.setEarnerIds(new ArrayList<>());
-    dateFilter.setIdentityType(IdentityType.getType(""));
+    dateFilter.setEarnerType(IdentityType.getType(""));
     dateFilter.setProgramIds(domainIds);
     List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
@@ -405,7 +381,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("date");
     dateFilter.setEarnerIds(new ArrayList<>());
-    dateFilter.setIdentityType(IdentityType.getType(""));
+    dateFilter.setEarnerType(IdentityType.getType(""));
     dateFilter.setProgramIds(domainIds);
     // Test default Sort field = 'date' with sort descending = false
     List<RealizationEntity> filteredRealizations = realizationDAO.findRealizationsByFilter(dateFilter,
@@ -489,7 +465,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     dateFilter.setSortField("type");
     dateFilter.setSortDescending(true);
     dateFilter.setEarnerIds(new ArrayList<>());
-    dateFilter.setIdentityType(IdentityType.getType(""));
+    dateFilter.setEarnerType(IdentityType.getType(""));
     List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -550,7 +526,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     dateFilter.setSortField("status");
     dateFilter.setSortDescending(true);
     dateFilter.setEarnerIds(new ArrayList<>());
-    dateFilter.setIdentityType(IdentityType.getType(""));
+    dateFilter.setEarnerType(IdentityType.getType(""));
     List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -611,7 +587,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("type");
     dateFilter.setSortDescending(true);
-    dateFilter.setIdentityType(IdentityType.getType(""));
+    dateFilter.setEarnerType(IdentityType.getType(""));
 
     List<RealizationEntity> result1 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result1);
@@ -713,7 +689,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
-    dateFilter.setIdentityType(IdentityType.getType(""));
+    dateFilter.setEarnerType(IdentityType.getType(""));
     List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result);
     assertEquals(3, result.size());
@@ -770,7 +746,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
-    dateFilter.setIdentityType(IdentityType.getType(""));
+    dateFilter.setEarnerType(IdentityType.getType(""));
     dateFilter.setSortField("type");
     dateFilter.setSortDescending(true);
     List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
@@ -829,38 +805,13 @@ public class RealizationDAOTest extends AbstractServiceTest {
     dateFilter.setEarnerIds(new ArrayList<>(Collections.singleton("1")));
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
-    dateFilter.setIdentityType(IdentityType.getType(""));
+    dateFilter.setEarnerType(IdentityType.getType(""));
     List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result);
     assertEquals(2, result.size());
     assertEquals(Arrays.asList(histories.get(0).getId(),
                                histories.get(2).getId()),
                  result.stream().map(RealizationEntity::getId).toList());
-  }
-
-  @Test
-  public void testFindMostRealizedRuleIds() {
-
-    RuleEntity rule1Automatic = newRule("domain0", "domain0", true, EntityType.AUTOMATIC);
-    RuleEntity rule1Manual = newRule("domain1", "domain1", true, EntityType.MANUAL);
-    RuleEntity rule2Manual = newRule("domain2", "domain2", true, EntityType.MANUAL);
-
-    List<RealizationEntity> histories = new ArrayList<>();
-
-    histories.add(newRealizationEntityWithRuleId("automatic action", rule1Automatic.getId()));
-    histories.add(newRealizationEntityWithRuleId("Manual action", rule1Manual.getId()));
-    histories.add(newRealizationEntityWithRuleId("Manual action", rule2Manual.getId()));
-    histories.add(newRealizationEntityWithRuleId("Manual action", rule2Manual.getId()));
-
-    List<Long> spacesIds = new ArrayList<>();
-    spacesIds.add(1L);
-
-    List<Long> result = realizationDAO.findMostRealizedRuleIds(spacesIds, 0, 6, EntityType.MANUAL);
-
-    assertNotNull(result);
-    assertEquals(2, result.size());
-    assertEquals(Arrays.asList(histories.get(2).getRuleEntity().getId(), histories.get(1).getRuleEntity().getId()),
-                 new ArrayList<>(result));
   }
 
 }

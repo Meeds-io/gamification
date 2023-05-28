@@ -10,7 +10,6 @@ import java.util.Map;
 
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
-import io.meeds.gamification.constant.PeriodType;
 import io.meeds.gamification.dao.RealizationDAO;
 import io.meeds.gamification.entity.RealizationEntity;
 import io.meeds.gamification.model.PiechartLeaderboard;
@@ -114,10 +113,6 @@ public class RealizationStorage {
     return gamificationHistoryDAO.findRealizationsByProgramId(programId, identityType, limit);
   }
 
-  public List<Long> findMostRealizedRuleIds(List<Long> spacesIds, int offset, int limit, EntityType type) {
-    return gamificationHistoryDAO.findMostRealizedRuleIds(spacesIds, offset, limit, type);
-  }
-
   public List<ProfileReputation> getScorePerProgramByIdentityId(String earnerIdentityId) {
     return gamificationHistoryDAO.getScorePerProgramByIdentityId(earnerIdentityId);
   }
@@ -155,27 +150,6 @@ public class RealizationStorage {
                                                                                                              receiverId,
                                                                                                              objectId,
                                                                                                              objectType));
-  }
-
-  public List<RealizationDTO> findRealizationsByRuleId(long ruleId,
-                                                       int offset,
-                                                       int limit,
-                                                       PeriodType periodType,
-                                                       IdentityType earnerType) {
-    return fromEntities(programStorage,
-                        gamificationHistoryDAO.findRealizationsByRuleId(ruleId,
-                                                                        offset,
-                                                                        limit,
-                                                                        periodType,
-                                                                        earnerType));
-  }
-
-  public int countRealizationsByRuleId(long ruleId) {
-    return gamificationHistoryDAO.countRealizationsByRuleId(ruleId);
-  }
-
-  public int countRealizationsByRuleIdAndEarnerType(long ruleId, IdentityType earnerType) {
-    return gamificationHistoryDAO.countRealizationsByRuleIdAndEarnerType(ruleId, earnerType);
   }
 
   public int countRealizationsByRuleIdAndEarnerId(String earnerIdentityId, long ruleId) {

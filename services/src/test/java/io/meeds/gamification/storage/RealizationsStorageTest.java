@@ -39,7 +39,7 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     filter.setEarnerIds(new ArrayList<>());
-    filter.setIdentityType(IdentityType.getType(""));
+    filter.setEarnerType(IdentityType.getType(""));
     filter.setProgramIds(domainIds);
     ProgramEntity domainEntity = newDomain();
     assertEquals(0, realizationsStorage.getRealizationsByFilter(filter, offset, limit).size());
@@ -56,7 +56,7 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     filter.setEarnerIds(new ArrayList<>(Collections.singleton("1")));
-    filter.setIdentityType(IdentityType.getType(""));
+    filter.setEarnerType(IdentityType.getType(""));
     filter.setProgramIds(domainIds);
     assertEquals(0, realizationsStorage.getRealizationsByFilter(filter, offset, limit).size());
     ProgramEntity domainEntity = newDomain();
@@ -73,7 +73,7 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     filter.setEarnerIds(new ArrayList<>());
-    filter.setIdentityType(IdentityType.getType(""));
+    filter.setEarnerType(IdentityType.getType(""));
     filter.setProgramIds(domainIds);
     assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
     RealizationDTO gHistory = newRealizationDTO();
@@ -89,8 +89,7 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     filter.setEarnerIds(new ArrayList<>());
-    filter.setIdentityType(IdentityType.getType(""));
-    filter.setIdentityType(IdentityType.getType(""));
+    filter.setEarnerType(IdentityType.getType(""));
     filter.setProgramIds(domainIds);
     assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
     RealizationDTO gHistory = newRealizationDTO();

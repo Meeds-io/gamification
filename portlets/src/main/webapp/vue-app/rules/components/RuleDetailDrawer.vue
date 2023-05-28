@@ -38,7 +38,7 @@
           :rule="rule" />
         <engagement-center-rule-program
           :rule="rule" />
-        <engagement-center-rule-announcements
+        <engagement-center-rule-achievements
           :rule="rule" />
         <engagement-center-rule-recurrence
           :rule="rule" />
@@ -51,7 +51,7 @@
           v-model="validAnnouncement"
           :rule="rule"
           @form-opened="announcementFormOpened = $event"
-          @sending="announcementSending = $event"
+          @sending="sending = $event"
           @sent="close" />
       </v-card-text>
     </template>
@@ -65,7 +65,7 @@
         </v-btn>
         <v-btn
           :disabled="!validAnnouncement"
-          :loading="announcementSending"
+          :loading="sending"
           class="btn btn-primary"
           @click="createAnnouncement">
           {{ $t('rule.detail.label.announce') }}
@@ -91,12 +91,12 @@ export default {
     loading: false,
     linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
     validAnnouncement: false,
-    announcementSending: false,
+    sending: false,
     announcementFormOpened: false,
   }),
   watch: {
-    announcementSending() {
-      if (this.announcementSending) {
+    sending() {
+      if (this.sending) {
         this.$refs.ruleDetailDrawer.startLoading();
       } else {
         this.$refs.ruleDetailDrawer.endLoading();
@@ -132,7 +132,7 @@ export default {
 
       this.loading = true;
       this.$refs.ruleDetailDrawer.open();
-      this.$ruleService.getRuleById(id, 'countAnnouncements')
+      this.$ruleService.getRuleById(id, 'countRealizations')
         .then(rule => {
           this.rule = rule;
           this.loading = false; // Kept to allow displaying this.$refs.ruleAnnouncementForm
@@ -151,7 +151,7 @@ export default {
     clear() {
       this.rule = {};
       this.validAnnouncement = false;
-      this.announcementSending = false;
+      this.sending = false;
       this.announcementFormOpened = false;
       if (this.$refs.ruleAnnouncementForm) {
         this.$refs.ruleAnnouncementForm.clear();

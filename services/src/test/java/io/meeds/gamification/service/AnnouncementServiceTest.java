@@ -27,15 +27,12 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -60,8 +57,6 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.IdentityType;
-import io.meeds.gamification.constant.PeriodType;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.AnnouncementActivity;
 import io.meeds.gamification.model.ProgramDTO;
@@ -434,120 +429,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     assertThrows(IllegalAccessException.class, () -> announcementService.deleteAnnouncement(1L, "john"));
 
     assertNull(announcementService.deleteAnnouncement(createdAnnouncement.getId(), username).getActivityId());
-  }
-
-  @Test
-  public void testGetAnnouncementByChallenge() throws ObjectNotFoundException, IllegalAccessException {
-    RuleDTO rule = newRule();
-    Announcement announcement1 = new Announcement(0,
-                                                  rule.getId(),
-                                                  rule.getTitle(),
-                                                  1L,
-                                                  "announcement comment",
-                                                  1L,
-                                                  Utils.toSimpleDateFormat(new Date()),
-                                                  null);
-    Announcement announcement2 = new Announcement(1,
-                                                  rule.getId(),
-                                                  rule.getTitle(),
-                                                  1L,
-                                                  "announcement comment",
-                                                  1L,
-                                                  Utils.toSimpleDateFormat(new Date()),
-                                                  null);
-    Announcement announcement3 = new Announcement(1,
-                                                  rule.getId(),
-                                                  rule.getTitle(),
-                                                  1L,
-                                                  "announcement comment",
-                                                  1L,
-                                                  Utils.toSimpleDateFormat(new Date()),
-                                                  1L);
-    List<Announcement> announcementList = new ArrayList<>();
-    announcementList.add(announcement1);
-    announcementList.add(announcement2);
-    announcementList.add(announcement3);
-    when(announcementStorage.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null)).thenReturn(announcementList);
-
-    String username = "demo";
-    assertThrows(IllegalArgumentException.class,
-                 () -> announcementService.findAnnouncements(0, 0, 10, PeriodType.ALL, null, null));
-    assertThrows(ObjectNotFoundException.class,
-                 () -> announcementService.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null, username));
-
-    when(ruleService.findRuleById(rule.getId(), username)).thenThrow(new IllegalAccessException());
-    assertThrows(IllegalAccessException.class,
-                 () -> announcementService.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null, username));
-
-    reset(ruleService);
-    when(ruleService.findRuleById(rule.getId(), username)).thenReturn(rule);
-    List<Announcement> newAnnouncementList = announcementService.findAnnouncements(rule.getId(),
-                                                                                   0,
-                                                                                   10,
-                                                                                   PeriodType.ALL,
-                                                                                   null,
-                                                                                   username);
-    assertNotNull(newAnnouncementList);
-    assertEquals(announcementList, newAnnouncementList);
-  }
-
-  @Test
-  public void testGetAnnouncementByChallengeByEarnerType() throws ObjectNotFoundException, IllegalAccessException {
-    identityManager.getOrCreateIdentity("1L", "1L");
-    Space space = new Space();
-    space.setId("2L");
-    spaceService.createSpace(space, "1L");
-
-    RuleDTO rule = newRule();
-    when(ruleService.findRuleById(rule.getId(), "root")).thenReturn(rule);
-
-    Announcement announcement2 = new Announcement(1,
-                                                  rule.getId(),
-                                                  rule.getTitle(),
-                                                  1L,
-                                                  "announcement comment",
-                                                  1L,
-                                                  Utils.toSimpleDateFormat(new Date()),
-                                                  null);
-    Announcement announcement3 = new Announcement(1,
-                                                  rule.getId(),
-                                                  rule.getTitle(),
-                                                  2L,
-                                                  "announcement comment",
-                                                  1L,
-                                                  Utils.toSimpleDateFormat(new Date()),
-                                                  1L);
-    List<Announcement> announcementList = new ArrayList<>();
-    announcementList.add(announcement2);
-    announcementList.add(announcement3);
-    when(announcementStorage.findAnnouncements(rule.getId(),
-                                               0,
-                                               10,
-                                               PeriodType.ALL,
-                                               IdentityType.USER)).thenReturn(announcementList);
-
-    assertThrows(IllegalArgumentException.class,
-                 () -> announcementService.findAnnouncements(0, 0, 10, PeriodType.ALL, IdentityType.USER, null));
-
-    List<Announcement> announcements = announcementService.findAnnouncements(rule.getId(),
-                                                                             0,
-                                                                             10,
-                                                                             PeriodType.ALL,
-                                                                             IdentityType.USER,
-                                                                             "root");
-    assertNotNull(announcements);
-    assertEquals(announcementList, announcements);
-  }
-
-  @Test
-  public void testCountAllAnnouncementsByChallenge() throws ObjectNotFoundException {
-    RuleDTO rule = newRule();
-
-    when(announcementStorage.countAnnouncements(rule.getId())).thenReturn(10);
-
-    assertThrows(IllegalArgumentException.class, () -> announcementService.countAnnouncements(0l));
-    when(ruleService.findRuleById(anyLong())).thenReturn(rule);
-    assertEquals(10, announcementService.countAnnouncements(rule.getId()));
   }
 
   @Test
