@@ -82,9 +82,8 @@ public enum RecurrenceType {
     }
     case MONTHLY: {
       yield Date.from(LocalDate.now()
-                               .with(TemporalAdjusters.firstDayOfMonth())
+                               .with(TemporalAdjusters.firstDayOfNextMonth())
                                .atStartOfDay(ZoneId.systemDefault())
-                               .plusMonths(1)
                                .toInstant());
     }
     default:

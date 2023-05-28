@@ -41,6 +41,19 @@ public interface RealizationService {
                                                int limit) throws IllegalAccessException;
 
   /**
+   * Retrieves all Realizations by Filter.
+   *
+   * @param  filter                 used to filter realizations using
+   *                                  {@link RealizationFilter}
+   * @param  offset                 Offset
+   * @param  limit                  Limit
+   * @return                        A {@link List &lt;RealizationDTO&gt;} object
+   */
+  List<RealizationDTO> getRealizationsByFilter(RealizationFilter filter,
+                                               int offset,
+                                               int limit);
+
+  /**
    * Count realizations by filter
    *
    * @param  filter                 used to filter realizations using
@@ -51,6 +64,15 @@ public interface RealizationService {
    *                                  access achievements of user
    */
   int countRealizationsByFilter(RealizationFilter filter, Identity userAclIdentity) throws IllegalAccessException;
+
+  /**
+   * Count realizations by filter
+   *
+   * @param  filter                 used to filter realizations using
+   *                                  {@link RealizationFilter}
+   * @return                        realizations count
+   */
+  int countRealizationsByFilter(RealizationFilter filter);
 
   /**
    * Retrieves a realization identified by its technical identifier.

@@ -17,6 +17,70 @@
 
 package io.meeds.gamification.constant;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Date;
+
 public enum PeriodType {
-  WEEK, MONTH, YEAR, ALL
+  WEEK, MONTH, YEAR, ALL;
+
+  public Date getFromDate() {
+    return switch (this) {
+    case ALL: {
+      yield null;
+    }
+    case WEEK: {
+      yield Date.from(LocalDate.now()
+                               .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                               .atStartOfDay(ZoneId.systemDefault())
+                               .toInstant());
+    }
+    case MONTH: {
+      yield Date.from(LocalDate.now()
+                               .with(TemporalAdjusters.firstDayOfMonth())
+                               .atStartOfDay(ZoneId.systemDefault())
+                               .toInstant());
+    }
+    case YEAR: {
+      yield Date.from(LocalDate.now()
+                               .with(TemporalAdjusters.firstDayOfYear())
+                               .atStartOfDay(ZoneId.systemDefault())
+                               .toInstant());
+    }
+    default:
+      throw new IllegalArgumentException("Unexpected value: " + this);
+    };
+  }
+
+  public Date getToDate() {
+    return switch (this) {
+    case ALL: {
+      yield null;
+    }
+    case WEEK: {
+      yield Date.from(LocalDate.now()
+                               .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                               .atStartOfDay(ZoneId.systemDefault())
+                               .plusWeeks(1)
+                               .toInstant());
+    }
+    case MONTH: {
+      yield Date.from(LocalDate.now()
+                               .with(TemporalAdjusters.firstDayOfNextMonth())
+                               .atStartOfDay(ZoneId.systemDefault())
+                               .toInstant());
+    }
+    case YEAR: {
+      yield Date.from(LocalDate.now()
+                               .with(TemporalAdjusters.firstDayOfNextYear())
+                               .atStartOfDay(ZoneId.systemDefault())
+                               .toInstant());
+    }
+    default:
+      throw new IllegalArgumentException("Unexpected value: " + this);
+    };
+  }
+
 }
