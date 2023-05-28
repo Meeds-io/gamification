@@ -238,16 +238,16 @@ export default {
         },
         {
           text: this.$t('realization.label.date'),
-          sortable: true,
           value: 'date',
+          sortable: true,
           class: 'actionHeader',
           width: '120'
         },
         {
           text: this.$t('realization.label.actionType'),
+          value: 'type',
           sortable: true,
           align: 'center',
-          value: 'type',
           class: 'actionHeader',
           width: '85',
         },
@@ -261,9 +261,9 @@ export default {
         },
         {
           text: this.$t('realization.label.status'),
+          value: 'status',
           sortable: true,
           align: 'center',
-          value: 'status',
           class: 'actionHeader',
           width: '95',
         },
@@ -277,10 +277,10 @@ export default {
         });
         realizationsHeaders.splice(3, 0,         
           {
+            value: 'grantee',
             text: this.$t('realization.label.grantee'),
             sortable: false,
             align: 'center',
-            value: 'grantee',
             class: 'actionHeader',
             width: '70',
           },);

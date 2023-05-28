@@ -19,29 +19,26 @@ package io.meeds.gamification.rest.builder;
 import java.util.Collections;
 import java.util.List;
 
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
-import org.exoplatform.social.rest.api.RestUtils;
+import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.social.core.manager.IdentityManager;
 
-import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.PeriodType;
-import io.meeds.gamification.model.Announcement;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.model.ProgramDTO;
+import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.UserInfoContext;
-import io.meeds.gamification.rest.model.AnnouncementRestEntity;
+import io.meeds.gamification.model.filter.RealizationFilter;
+import io.meeds.gamification.rest.model.RealizationRestEntity;
 import io.meeds.gamification.rest.model.RealizationValidityContext;
 import io.meeds.gamification.rest.model.RuleRestEntity;
-import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.utils.Utils;
 
 public class RuleBuilder {
-
-  private static final Log LOG = ExoLogger.getLogger(RuleBuilder.class);
 
   private RuleBuilder() {
     // Class with static methods
@@ -50,30 +47,30 @@ public class RuleBuilder {
   public static RuleRestEntity toRestEntity(ProgramService programService, // NOSONAR
                                             RuleService ruleService,
                                             RealizationService realizationService,
-                                            AnnouncementService announcementService,
                                             RuleDTO rule,
                                             List<String> expandFields,
-                                            int announcementsLimit,
+                                            int realizationsLimit,
                                             boolean noProgram,
                                             PeriodType periodType) {
     if (rule == null) {
       return null;
     }
-    boolean isManual = rule.getType() == EntityType.MANUAL;
-    boolean retrieveAnnouncements = announcementsLimit > 0;
-    List<AnnouncementRestEntity> announcementEntities = null;
-    if (isManual && retrieveAnnouncements) {
-      List<Announcement> announcements = getAnnouncements(announcementService,
-                                                          rule,
-                                                          announcementsLimit,
-                                                          periodType == null ? PeriodType.ALL : periodType);
-      announcementEntities = AnnouncementBuilder.fromAnnouncementList(announcements);
+    boolean retrieveRealizations = realizationsLimit > 0;
+    List<RealizationRestEntity> realizationEntities = null;
+    if (retrieveRealizations) {
+      List<RealizationDTO> realizations = getRealizations(realizationService,
+                                                          rule.getId(),
+                                                          periodType,
+                                                          realizationsLimit);
+      realizationEntities = RealizationBuilder.toRestEntities(ruleService,
+                                                              ExoContainerContext.getService(IdentityManager.class),
+                                                              realizations);
     }
 
-    boolean countAnnouncements = retrieveAnnouncements || (expandFields != null && expandFields.contains("countAnnouncements"));
-    long announcementsCount = 0;
-    if (isManual && countAnnouncements) {
-      announcementsCount = announcementService.countAnnouncements(rule.getId(), IdentityType.USER);
+    boolean countRealizations = retrieveRealizations || (expandFields != null && expandFields.contains("countRealizations"));
+    long realizationsCount = 0;
+    if (countRealizations) {
+      realizationsCount = countRealizations(realizationService, rule.getId(), periodType);
     }
     List<RuleDTO> prerequisiteRules = ruleService.getPrerequisiteRules(rule.getId())
                                                  .stream()
@@ -106,34 +103,10 @@ public class RuleBuilder {
                               rule.getRecurrence(),
                               rule.getAudienceId(),
                               rule.getManagers(),
-                              announcementEntities,
-                              announcementsCount,
+                              realizationEntities,
+                              realizationsCount,
                               userContext,
                               prerequisiteRules);
-  }
-
-  private static List<Announcement> getAnnouncements(AnnouncementService announcementService,
-                                                     RuleDTO rule,
-                                                     int limit,
-                                                     PeriodType period) {
-    if (limit > 0) {
-      try {
-        return announcementService.findAnnouncements(rule.getId(),
-                                                     0,
-                                                     limit,
-                                                     period,
-                                                     null,
-                                                     RestUtils.getCurrentUser());
-      } catch (Exception e) {
-        LOG.warn("Error while retrieving announcements list on rule {} for user {}. Returning empty list",
-                 rule.getId(),
-                 Utils.getCurrentUser(),
-                 e);
-        return Collections.emptyList();
-      }
-    } else {
-      return Collections.emptyList();
-    }
   }
 
   public static UserInfoContext toUserContext(ProgramService programService,
@@ -146,6 +119,36 @@ public class RuleBuilder {
     userContext.setContext(realizationRestriction);
     userContext.setAllowedToRealize(realizationRestriction.isValid());
     return userContext;
+  }
+
+  private static List<RealizationDTO> getRealizations(RealizationService realizationService,
+                                                      long ruleId,
+                                                      PeriodType periodType,
+                                                      int limit) {
+    if (limit > 0) {
+      return realizationService.getRealizationsByFilter(getRealizationsFilter(ruleId, periodType),
+                                                        0,
+                                                        limit);
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  private static int countRealizations(RealizationService realizationService,
+                                       long ruleId,
+                                       PeriodType periodType) {
+    return realizationService.countRealizationsByFilter(getRealizationsFilter(ruleId, periodType));
+  }
+
+  private static RealizationFilter getRealizationsFilter(long ruleId, PeriodType periodType) {
+    return new RealizationFilter(null,
+                                 "date",
+                                 true,
+                                 periodType.getFromDate(),
+                                 periodType.getToDate(),
+                                 IdentityType.USER,
+                                 RealizationStatus.ACCEPTED,
+                                 Collections.singletonList(ruleId));
   }
 
 }

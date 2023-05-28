@@ -62,14 +62,14 @@
                     <v-list-item-title>
                       {{ item.title }}
                     </v-list-item-title>
-                    <v-list-item-subtitle v-if="item.announcementsCount === 0">
+                    <v-list-item-subtitle v-if="item.realizationsCount === 0">
                       {{ $t('gamification.overview.label.firstAnnounecement') }}
                     </v-list-item-subtitle>
-                    <v-list-item-subtitle v-else-if="item.announcementsCount === 1">
+                    <v-list-item-subtitle v-else-if="item.realizationsCount === 1">
                       1 {{ $t('gamification.overview.label.participant') }}
                     </v-list-item-subtitle>
                     <v-list-item-subtitle v-else>
-                      {{ item.announcementsCount }} {{ $t('gamification.overview.label.participants') }}
+                      {{ item.realizationsCount }} {{ $t('gamification.overview.label.participants') }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
                   <v-list-item-action>
@@ -86,8 +86,8 @@
       ref="challengeDetailsDrawer"
       :action-value-extensions="actionValueExtensions"
       :is-overview-displayed="true" />
-    <engagement-center-rule-participants-drawer
-      ref="participantsDrawer"
+    <engagement-center-rule-achievements-drawer
+      ref="achievementsDrawer"
       :action-value-extensions="actionValueExtensions" />
   </v-app>
 </template>
@@ -96,7 +96,7 @@ export default {
   data: () => ({
     search: '',
     pageSize: 3,
-    announcementsPerChallenge: -1,
+    realizationsPerRule: 3,
     filter: 'STARTED',
     period: 'WEEK',
     loading: true,
@@ -140,10 +140,10 @@ export default {
         dateFilter: this.filter,
         offset: 0,
         limit: this.pageSize,
-        announcementsLimit: this.announcementsPerChallenge,
+        realizationsLimit: this.realizationsPerRule,
         orderByRealizations: this.orderByRealizations,
         period: this.period,
-        expand: 'countAnnouncements',
+        expand: 'countRealizations',
       })
         .then(result => {
           this.rules = result?.rules || [];
