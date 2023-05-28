@@ -63,7 +63,8 @@ public class RealizationBuilder {
                                        realization.getStatus(),
                                        spaceName,
                                        realization.getObjectId(),
-                                       realization.getObjectType());
+                                       realization.getObjectType(),
+                                       realization.getActivityId());
 
     } catch (Exception e) {
       LOG.error("Error while mapping history with id {}", realization.getId(), e);

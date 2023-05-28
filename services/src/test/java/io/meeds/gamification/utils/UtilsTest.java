@@ -20,21 +20,17 @@ package io.meeds.gamification.utils;
 import static io.meeds.gamification.utils.Utils.DEFAULT_IMAGE_REMOTE_ID;
 import static io.meeds.gamification.utils.Utils.TYPE;
 import static io.meeds.gamification.utils.Utils.isAttachmentTokenValid;
-import static org.junit.Assert.assertThrows;
 
 import java.util.Date;
 import java.util.TimeZone;
 
 import org.junit.Test;
 
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.space.model.Space;
 
-import io.meeds.gamification.entity.ProgramEntity;
-import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.UserInfoContext;
 import io.meeds.gamification.rest.builder.ProgramBuilder;
@@ -165,17 +161,6 @@ public class UtilsTest extends AbstractServiceTest {
     spaceDisplayName = Utils.getSpaceFromObjectID(ObjectId);
     assertNotNull(spaceDisplayName);
     assertEquals("test space", spaceDisplayName);
-  }
-
-  @Test
-  public void testCountAnnouncementsByChallenge() throws ObjectNotFoundException {
-    ProgramEntity domainEntity = newDomain();
-    RuleEntity ruleEntity = newRule("challenge1", domainEntity.getId());
-    newRealizationEntityWithRuleId("annoucement 1", ruleEntity.getId());
-    newRealizationEntityWithRuleId("annoucement 2", ruleEntity.getId());
-    assertEquals(2, announcementService.countAnnouncements(ruleEntity.getId()));
-    assertEquals(0, announcementService.countAnnouncements(528l));
-    assertThrows(IllegalArgumentException.class, () -> announcementService.countAnnouncements(0));
   }
 
   @Test

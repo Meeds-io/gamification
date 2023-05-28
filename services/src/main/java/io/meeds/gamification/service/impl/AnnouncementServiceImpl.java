@@ -26,8 +26,6 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.IdentityType;
-import io.meeds.gamification.constant.PeriodType;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.service.AnnouncementService;
@@ -145,54 +143,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public List<Announcement> findAnnouncements(long ruleId,
-                                              int offset,
-                                              int limit,
-                                              PeriodType periodType,
-                                              IdentityType earnerType,
-                                              String username) throws IllegalAccessException, ObjectNotFoundException {
-    if (ruleId <= 0) {
-      throw new IllegalArgumentException("ruleId has to be positive integer");
-    }
-    RuleDTO rule = ruleService.findRuleById(ruleId, username);
-    if (rule == null) {
-      throw new ObjectNotFoundException("Rule with id " + ruleId + " wasn't found");
-    }
-    return announcementStorage.findAnnouncements(ruleId, offset, limit, periodType, earnerType);
-  }
-
-  @Override
   public List<Announcement> findAnnouncements(String earnerIdentityId) {
     return announcementStorage.findAnnouncements(earnerIdentityId);
-  }
-
-  @Override
-  public int countAnnouncements(long ruleId) {
-    if (ruleId <= 0) {
-      throw new IllegalArgumentException("ruleId has to be positive integer");
-    }
-    RuleDTO rule = ruleService.findRuleById(ruleId);
-    if (rule == null) {
-      return 0;
-    } else {
-      return announcementStorage.countAnnouncements(ruleId);
-    }
-  }
-
-  @Override
-  public int countAnnouncements(long ruleId, IdentityType earnerType) {
-    if (ruleId <= 0) {
-      throw new IllegalArgumentException("ruleId has to be positive integer");
-    }
-    if (earnerType == null) {
-      throw new IllegalArgumentException("IdentityType is mandatory");
-    }
-    RuleDTO rule = ruleService.findRuleById(ruleId);
-    if (rule == null) {
-      return 0;
-    } else {
-      return announcementStorage.countAnnouncements(ruleId, earnerType);
-    }
   }
 
   @Override
