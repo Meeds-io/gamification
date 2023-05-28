@@ -30,10 +30,10 @@ public class RealizationList {
 
   private List<RealizationRestEntity> realizations;
 
-  private int                                        offset;
+  private int                         offset;
 
-  private int                                        limit;
+  private int                         limit;
 
-  private int                                        size;
+  private int                         size;
 
 }

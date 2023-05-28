@@ -73,7 +73,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :max-avatars-to-show="3"
             :avatars-count="ownersCount"
             :size="25"
-            class="justify-sm-end pt-2"
+            class="d-flex justify-sm-end pt-2"
             @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
           <div class="dark-grey-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
             {{ $t('programs.details.label.audienceSpace') }}
@@ -193,7 +193,7 @@ export default {
       dateFilter: 'STARTED',
       status: 'ENABLED',
       keyword: null,
-      announcementsLimit: 3,
+      realizationsLimit: 3,
       programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`
     };
   },
@@ -354,7 +354,7 @@ export default {
         dateFilter: this.dateFilter,
         offset,
         limit: itemsPerPage,
-        announcementsLimit: this.announcementsLimit,
+        realizationsLimit: this.realizationsLimit,
         returnSize: true,
       })
         .then((data) => {

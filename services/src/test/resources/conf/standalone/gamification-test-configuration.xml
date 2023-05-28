@@ -94,8 +94,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
-        <key>io.meeds.gamification.storage.AnnouncementStorage</key>
-        <type>io.meeds.gamification.storage.cached.AnnouncementCachedStorage</type>
+        <type>io.meeds.gamification.storage.AnnouncementStorage</type>
     </component>
 
     <component>

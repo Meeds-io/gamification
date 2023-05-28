@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.RealizationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,9 +46,31 @@ public class RealizationFilter implements Serializable {
 
   private Date              toDate;
 
-  private IdentityType      identityType;
+  private RealizationStatus status;
+
+  private IdentityType      earnerType;
 
   private List<Long>        programIds;
+
+  private List<Long>        ruleIds;
+
+  public RealizationFilter(List<String> earnerIds, // NOSONAR
+                           String sortField,
+                           boolean sortDescending,
+                           Date fromDate,
+                           Date toDate,
+                           IdentityType identityType,
+                           RealizationStatus status,
+                           List<Long> ruleIds) {
+    this.earnerIds = earnerIds;
+    this.sortField = sortField;
+    this.sortDescending = sortDescending;
+    this.fromDate = fromDate;
+    this.toDate = toDate;
+    this.earnerType = identityType;
+    this.status = status;
+    this.ruleIds = ruleIds;
+  }
 
   @Override
   public RealizationFilter clone() { // NOSONAR
@@ -57,8 +80,10 @@ public class RealizationFilter implements Serializable {
                                  owned,
                                  fromDate,
                                  toDate,
-                                 identityType,
-                                 programIds == null ? null : new ArrayList<>(programIds));
+                                 status,
+                                 earnerType,
+                                 programIds == null ? null : new ArrayList<>(programIds),
+                                 ruleIds == null ? null : new ArrayList<>(ruleIds));
   }
 
 }

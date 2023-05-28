@@ -12,9 +12,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.IdentityType;
-import io.meeds.gamification.constant.PeriodType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
@@ -85,27 +84,6 @@ public class AnnouncementStorage {
     List<RealizationDTO> announcementEntities = realizationStorage.findRealizationsByIdentityIdAndByType(earnerIdentityId,
                                                                                                          EntityType.MANUAL);
     return fromAnnouncementEntities(announcementEntities);
-  }
-
-  public List<Announcement> findAnnouncements(long ruleId,
-                                              int offset,
-                                              int limit,
-                                              PeriodType periodType,
-                                              IdentityType earnerType) {
-    List<RealizationDTO> announcementEntities = realizationStorage.findRealizationsByRuleId(ruleId,
-                                                                                            offset,
-                                                                                            limit,
-                                                                                            periodType,
-                                                                                            earnerType);
-    return fromAnnouncementEntities(announcementEntities);
-  }
-
-  public int countAnnouncements(long ruleId) {
-    return realizationStorage.countRealizationsByRuleId(ruleId);
-  }
-
-  public int countAnnouncements(long ruleId, IdentityType earnerType) {
-    return realizationStorage.countRealizationsByRuleIdAndEarnerType(ruleId, earnerType);
   }
 
   private RealizationDTO toRealization(Announcement announcement, RuleDTO rule) {

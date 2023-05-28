@@ -16,29 +16,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-export function getAnnouncements(ruleId, earnerType, offset, limit) {
-  const formData = new FormData();
-  formData.append('offset', offset || 0);
-  formData.append('limit', limit || 0);
-  if (earnerType) {
-    formData.append('type', earnerType);
-  }
-  if (ruleId) {
-    formData.append('ruleId', ruleId);
-  }
-  const params = new URLSearchParams(formData).toString();
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcements?${params}`, {
-    method: 'GET',
-    credentials: 'include',
-  }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } else {
-      throw new Error('Error when getting challenges');
-    }
-  });
-}
-
 export function createAnnouncement(announcement) {
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcements`, {
     method: 'POST',
@@ -61,9 +38,7 @@ export function cancelAnnouncement(announcementId) {
     method: 'DELETE',
     credentials: 'include',
   }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } else {
+    if (!resp?.ok) {
       throw new Error('Response code indicates a server error', resp);
     }
   });
