@@ -41,6 +41,8 @@ public class RealizationRestEntity implements Cloneable {
 
   private String         objectType;
 
+  private Long           activityId;
+
   @Override
   public RealizationRestEntity clone() { // NOSONAR
     return new RealizationRestEntity(id,
@@ -55,6 +57,7 @@ public class RealizationRestEntity implements Cloneable {
                                      status,
                                      space,
                                      objectId,
-                                     objectType);
+                                     objectType,
+                                     activityId);
   }
 }
