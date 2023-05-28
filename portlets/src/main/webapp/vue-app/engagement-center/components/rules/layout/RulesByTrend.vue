@@ -162,7 +162,7 @@ export default {
         limit: this.limit,
         sortBy: 'endDate',
         sortDescending: false,
-        expand: 'countAnnouncements',
+        expand: 'countRealizations',
         returnSize: false,
       })
         .then(data => this.endingSoonRules = data.rules || [])
@@ -178,7 +178,7 @@ export default {
         limit: this.limit * 3,
         sortBy: 'createdDate',
         sortDescending: true,
-        expand: 'countAnnouncements',
+        expand: 'countRealizations',
         returnSize: false,
       })
         .then(data => this.newestRules = data.rules || [])
@@ -194,7 +194,7 @@ export default {
         limit: this.limit,
         sortBy: 'startDate',
         sortDescending: true,
-        expand: 'countAnnouncements',
+        expand: 'countRealizations',
         returnSize: false,
       })
         .then(data => this.startingSoonRules = data.rules || [])

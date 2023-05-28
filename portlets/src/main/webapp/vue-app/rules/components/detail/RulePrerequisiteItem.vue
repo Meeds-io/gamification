@@ -73,7 +73,7 @@ export default {
   methods: {
     openRule() {
       this.loading = true;
-      this.$ruleService.getRuleById(this.prerequisiteRule.id, 'countAnnouncements')
+      this.$ruleService.getRuleById(this.prerequisiteRule.id, 'countRealizations')
         .then(rule => this.$root.$emit('rule-detail-drawer', rule))
         .finally(() => this.loading = false);
     },

@@ -72,13 +72,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <name>gamification.realization</name>
                     <object type="org.exoplatform.services.cache.impl.infinispan.generic.GenericExoCacheConfig">
                         <field name="name">
-                            <string>gamification.rule</string>
+                            <string>gamification.realization</string>
                         </field>
                         <field name="maxSize">
-                            <int>${exo.cache.gamification.rule.MaxNodes:5000}</int>
+                            <int>${exo.cache.gamification.realization.MaxNodes:5000}</int>
                         </field>
                         <field name="liveTime">
-                            <long>${exo.cache.gamification.rule.TimeToLive:-1}</long>
+                            <long>${exo.cache.gamification.realization.TimeToLive:-1}</long>
                         </field>
                     </object>
                 </object-param>
