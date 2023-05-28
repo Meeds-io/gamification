@@ -21,15 +21,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -43,7 +40,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.exoplatform.social.core.identity.model.Identity;
 
 import io.meeds.gamification.constant.IdentityType;
-import io.meeds.gamification.constant.PeriodType;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.model.Announcement;
@@ -228,98 +224,5 @@ public class AnnouncementStorageTest {
     assertNotNull(createdAnnouncement);
     assertEquals(1l, createdAnnouncement.getId());
     assertEquals(announcementFromEntity, createdAnnouncement);
-  }
-
-  @Test
-  public void testGetAnnouncementByChallengeId() {
-    Date startDate = new Date(System.currentTimeMillis());
-    Date endDate = new Date(System.currentTimeMillis() + 1);
-    ProgramEntity domainEntity = new ProgramEntity();
-    domainEntity.setId(1L);
-    domainEntity.setTitle("domain");
-    RuleEntity ruleEntity = new RuleEntity();
-    ruleEntity.setId(1l);
-    ruleEntity.setDescription("challenge description");
-    ruleEntity.setTitle("new challenge");
-    ruleEntity.setStartDate(startDate);
-    ruleEntity.setEndDate(endDate);
-    ruleEntity.setDomainEntity(domainEntity);
-
-    Date createDate = new Date(System.currentTimeMillis());
-
-    RealizationDTO announcementEntity1 = new RealizationDTO();
-    announcementEntity1.setId(1l);
-    announcementEntity1.setEarnerId("1");
-    announcementEntity1.setCreator(1L);
-    announcementEntity1.setRuleId(ruleEntity.getId());
-    announcementEntity1.setComment("announcement comment 1");
-    announcementEntity1.setCreatedDate(Utils.toSimpleDateFormat(createDate));
-
-    Announcement announcementFromEntity1 = new Announcement();
-    announcementFromEntity1.setId(announcementEntity1.getId());
-    announcementFromEntity1.setAssignee(announcementEntity1.getId());
-    announcementFromEntity1.setCreator(announcementEntity1.getCreator());
-    announcementFromEntity1.setComment(announcementEntity1.getComment());
-    announcementFromEntity1.setCreatedDate(Utils.toSimpleDateFormat(createDate));
-    announcementFromEntity1.setChallengeId(announcementEntity1.getRuleId());
-    announcementFromEntity1.setId(announcementEntity1.getId());
-
-    RealizationDTO announcementEntity2 = new RealizationDTO();
-    announcementEntity2.setId(1l);
-    announcementEntity2.setCreator(1L);
-    announcementEntity2.setEarnerId(String.valueOf(1L));
-    announcementEntity2.setRuleId(ruleEntity.getId());
-    announcementEntity2.setComment("announcement comment 2");
-    announcementEntity2.setCreatedDate(Utils.toSimpleDateFormat(createDate));
-
-    Announcement announcementFromEntity2 = new Announcement();
-    announcementFromEntity2.setId(announcementEntity2.getId());
-    announcementFromEntity2.setAssignee(Long.valueOf(announcementEntity2.getEarnerId()));
-    announcementFromEntity2.setCreator(announcementEntity2.getCreator());
-    announcementFromEntity2.setComment(announcementEntity2.getComment());
-    announcementFromEntity2.setCreatedDate(Utils.toSimpleDateFormat(createDate));
-    announcementFromEntity2.setChallengeId(announcementEntity2.getRuleId());
-    announcementFromEntity2.setId(announcementEntity2.getId());
-
-    RealizationDTO announcementEntity3 = new RealizationDTO();
-    announcementEntity3.setId(1l);
-    announcementEntity3.setEarnerId("1");
-    announcementEntity3.setCreator(1L);
-    announcementEntity3.setRuleId(ruleEntity.getId());
-    announcementEntity3.setComment("announcement comment 3");
-    announcementEntity3.setCreatedDate(Utils.toSimpleDateFormat(createDate));
-
-    Announcement announcementFromEntity3 = new Announcement();
-    announcementFromEntity3.setId(announcementEntity3.getId());
-    announcementFromEntity3.setAssignee(Long.valueOf(announcementEntity3.getEarnerId()));
-    announcementFromEntity3.setCreator(announcementEntity3.getCreator());
-    announcementFromEntity3.setComment(announcementEntity3.getComment());
-    announcementFromEntity3.setCreatedDate(Utils.toSimpleDateFormat(createDate));
-    announcementFromEntity3.setChallengeId(announcementEntity3.getRuleId());
-
-    List<Announcement> announcementList = new ArrayList<>();
-    announcementList.add(announcementFromEntity1);
-    announcementList.add(announcementFromEntity2);
-    announcementList.add(announcementFromEntity3);
-
-    List<RealizationDTO> announcementEntities = new ArrayList<>();
-    announcementEntities.add(announcementEntity1);
-    announcementEntities.add(announcementEntity2);
-    announcementEntities.add(announcementEntity3);
-
-    when(realizationStorage.findRealizationsByRuleId(anyLong(),
-                                                      anyInt(),
-                                                      anyInt(),
-                                                      any(),
-                                                      any())).thenReturn(announcementEntities);
-    List<Announcement> announcementListByChallenge = announcementStorage.findAnnouncements(ruleEntity.getId(),
-                                                                                           0,
-                                                                                           10,
-                                                                                           PeriodType.ALL,
-                                                                                           null);
-
-    // Then
-    assertNotNull(announcementListByChallenge);
-    assertEquals(3, announcementListByChallenge.size());
   }
 }

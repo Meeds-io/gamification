@@ -1,36 +1,22 @@
 package io.meeds.gamification.rest;
 
-import java.util.Date;
-import java.util.List;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.rest.resource.ResourceContainer;
-import org.exoplatform.social.rest.api.RestUtils;
 
-import io.meeds.gamification.constant.IdentityType;
-import io.meeds.gamification.constant.PeriodType;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.AnnouncementActivity;
 import io.meeds.gamification.rest.builder.AnnouncementBuilder;
-import io.meeds.gamification.rest.model.AnnouncementRestEntity;
 import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,80 +39,6 @@ public class AnnouncementRest implements ResourceContainer {
     cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
     cacheControl.setNoStore(true);
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Consumes(MediaType.APPLICATION_JSON)
-  @RolesAllowed("users")
-  @Operation(summary = "Retrieves the list of announcements for a given rule identified by its id", method = "GET", description = "Retrieves the list of announcements for a given rule identified by its id")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
-      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"),
-  })
-  public Response getAnnouncementsByRuleId(
-                                           @Context
-                                           Request request, @Context
-                                           UriInfo uriInfo,
-                                           @Parameter(description = "Rule technical identifier", required = true)
-                                           @QueryParam("ruleId")
-                                           long ruleId,
-                                           @Parameter(description = "Earner type, either USER or SPACE", required = false)
-                                           @DefaultValue("USER")
-                                           @QueryParam("type")
-                                           IdentityType earnerType,
-                                           @Parameter(description = "Offset of result")
-                                           @DefaultValue("0")
-                                           @QueryParam("offset")
-                                           int offset,
-                                           @Parameter(description = "Limit of result")
-                                           @DefaultValue("10")
-                                           @QueryParam("limit")
-                                           int limit) {
-    if (ruleId <= 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("ruleId is mandatory").build();
-    }
-    if (offset < 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
-    }
-    if (limit <= 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
-    }
-    if (earnerType == null) {
-      earnerType = IdentityType.USER;
-    }
-    EntityTag eTag = null;
-    try {
-      List<Announcement> announcements = announcementService.findAnnouncements(ruleId,
-                                                                                      offset,
-                                                                                      limit,
-                                                                                      PeriodType.ALL,
-                                                                                      earnerType,
-                                                                                      RestUtils.getCurrentUser());
-      List<AnnouncementRestEntity> announcementsRestEntities = announcements.stream()
-                                                                            .map(AnnouncementBuilder::fromAnnouncement)
-                                                                            .toList();
-      eTag = new EntityTag(String.valueOf(announcementsRestEntities.hashCode()));
-      Response.ResponseBuilder builder = request.evaluatePreconditions(eTag);
-
-      if (builder == null) {
-        builder = org.exoplatform.social.rest.api.EntityBuilder.getResponseBuilder(announcementsRestEntities,
-                                                                                   uriInfo,
-                                                                                   RestUtils.getJsonMediaType(),
-                                                                                   Response.Status.OK);
-        builder.tag(eTag);
-        Date date = new Date(System.currentTimeMillis());
-        builder.lastModified(date);
-        builder.expires(date);
-        builder.cacheControl(cacheControl);
-      }
-      return builder.build();
-    } catch (IllegalAccessException e) {
-      return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
-    } catch (ObjectNotFoundException e) {
-      return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
-    }
   }
 
   @POST
@@ -152,7 +64,7 @@ public class AnnouncementRest implements ResourceContainer {
       Announcement newAnnouncement = announcementService.createAnnouncement(announcement,
                                                                             announcementActivity.getTemplateParams(),
                                                                             currentUser);
-      return Response.ok(AnnouncementBuilder.fromAnnouncement(newAnnouncement)).build();
+      return Response.ok(AnnouncementBuilder.toAnnouncementActivity(newAnnouncement)).build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (IllegalArgumentException | IllegalStateException e) {
@@ -169,7 +81,7 @@ public class AnnouncementRest implements ResourceContainer {
   @RolesAllowed("users")
   @Operation(summary = "Cancels an existing announcement", method = "DELETE", description = "Cancels an existing announcement")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "204", description = "Request fulfilled"),
       @ApiResponse(responseCode = "404", description = "Object not found"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
   })
@@ -179,8 +91,8 @@ public class AnnouncementRest implements ResourceContainer {
 
     String currentUser = Utils.getCurrentUser();
     try {
-      Announcement announcement = announcementService.deleteAnnouncement(announcementId, currentUser);
-      return Response.ok(AnnouncementBuilder.fromAnnouncement(announcement)).build();
+      announcementService.deleteAnnouncement(announcementId, currentUser);
+      return Response.noContent().build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (ObjectNotFoundException e) {

@@ -36,19 +36,19 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class RuleRestEntity extends RuleDTO {
 
-  private static final long            serialVersionUID = 5177522303947816474L;
+  private static final long           serialVersionUID = 5177522303947816474L;
 
-  private long                         audience;
+  private long                        audience;
 
-  private Set<Long>                    managers;
+  private Set<Long>                   managers;
 
-  private List<AnnouncementRestEntity> announcements;                          // NOSONAR
+  private List<RealizationRestEntity> realizations;                           // NOSONAR
 
-  private long                         announcementsCount;
+  private long                        realizationsCount;
 
-  private UserInfo                     userInfo;                               // NOSONAR
+  private UserInfo                    userInfo;                               // NOSONAR
 
-  private List<RuleDTO>                prerequisiteRules;
+  private List<RuleDTO>               prerequisiteRules;
 
   public RuleRestEntity(Long id, // NOSONAR
                         String title,
@@ -69,8 +69,8 @@ public class RuleRestEntity extends RuleDTO {
                         RecurrenceType recurrence,
                         long audience,
                         Set<Long> managers,
-                        List<AnnouncementRestEntity> announcements,
-                        long announcementsCount,
+                        List<RealizationRestEntity> realizations,
+                        long realizationsCount,
                         UserInfo userInfo,
                         List<RuleDTO> prerequisiteRules) {
     super(id,
@@ -92,8 +92,8 @@ public class RuleRestEntity extends RuleDTO {
           recurrence);
     this.audience = audience;
     this.managers = managers;
-    this.announcements = announcements;
-    this.announcementsCount = announcementsCount;
+    this.realizations = realizations;
+    this.realizationsCount = realizationsCount;
     this.userInfo = userInfo;
     this.prerequisiteRules = prerequisiteRules;
   }
@@ -119,8 +119,8 @@ public class RuleRestEntity extends RuleDTO {
                               recurrence,
                               audience,
                               managers,
-                              announcements,
-                              announcementsCount,
+                              realizations,
+                              realizationsCount,
                               userInfo,
                               prerequisiteRules);
   }

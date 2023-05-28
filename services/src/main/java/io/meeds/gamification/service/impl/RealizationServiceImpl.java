@@ -145,6 +145,13 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                                       int offset,
                                                       int limit) throws IllegalAccessException {
     realizationFilter = computeProgramFilter(realizationFilter, userAclIdentity);
+    return getRealizationsByFilter(realizationFilter, offset, limit);
+  }
+
+  @Override
+  public List<RealizationDTO> getRealizationsByFilter(RealizationFilter realizationFilter,
+                                                      int offset,
+                                                      int limit) {
     return realizationStorage.getRealizationsByFilter(realizationFilter, offset, limit);
   }
 
@@ -152,6 +159,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   public int countRealizationsByFilter(RealizationFilter realizationFilter,
                                        Identity userAclIdentity) throws IllegalAccessException {
     realizationFilter = computeProgramFilter(realizationFilter, userAclIdentity);
+    return countRealizationsByFilter(realizationFilter);
+  }
+
+  @Override
+  public int countRealizationsByFilter(RealizationFilter realizationFilter) {
     return realizationStorage.countRealizationsByFilter(realizationFilter);
   }
 
@@ -687,13 +699,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   private void checkDates(Date fromDate, Date toDate) {
-    if (fromDate == null) {
-      throw new IllegalArgumentException("fromDate is mandatory");
-    }
-    if (toDate == null) {
-      throw new IllegalArgumentException("toDate is mandatory");
-    }
-    if (fromDate.after(toDate)) {
+    if (fromDate != null && toDate != null && fromDate.after(toDate)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
   }
