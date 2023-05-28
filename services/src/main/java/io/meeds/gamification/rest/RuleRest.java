@@ -58,7 +58,6 @@ import io.meeds.gamification.rest.builder.RuleBuilder;
 import io.meeds.gamification.rest.model.ProgramWithRulesRestEntity;
 import io.meeds.gamification.rest.model.RuleList;
 import io.meeds.gamification.rest.model.RuleRestEntity;
-import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
@@ -74,22 +73,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Path("/gamification/rules")
 @Tag(name = "/gamification/rules", description = "Manages rules")
 public class RuleRest implements ResourceContainer {
-  private final CacheControl    cacheControl;
+  private final CacheControl   cacheControl;
 
-  protected ProgramService      programService;
+  protected ProgramService     programService;
 
-  protected RuleService         ruleService;
+  protected RuleService        ruleService;
 
-  protected RealizationService  realizationService;
+  protected RealizationService realizationService;
 
-  protected AnnouncementService announcementService;
-
-  protected IdentityManager     identityManager;
+  protected IdentityManager    identityManager;
 
   public RuleRest(ProgramService programService,
                   RuleService ruleService,
                   RealizationService realizationService,
-                  AnnouncementService announcementService,
                   IdentityManager identityManager) {
     cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
@@ -97,7 +93,6 @@ public class RuleRest implements ResourceContainer {
     this.programService = programService;
     this.ruleService = ruleService;
     this.realizationService = realizationService;
-    this.announcementService = announcementService;
     this.identityManager = identityManager;
   }
 
@@ -147,10 +142,10 @@ public class RuleRest implements ResourceContainer {
                            @QueryParam("sortDescending")
                            @DefaultValue("true")
                            boolean sortDescending,
-                           @Parameter(description = "Number of announcements per rule")
+                           @Parameter(description = "Accepted users realizations count")
                            @Schema(defaultValue = "0")
-                           @QueryParam("announcementsLimit")
-                           int announcementsLimit,
+                           @QueryParam("realizationsLimit")
+                           int realizationsLimit,
                            @Parameter(description = "Group rules by program")
                            @Schema(defaultValue = "false")
                            @QueryParam("groupByProgram")
@@ -171,7 +166,7 @@ public class RuleRest implements ResourceContainer {
                            @QueryParam("returnSize")
                            @DefaultValue("false")
                            boolean returnSize,
-                           @Parameter(description = "Asking for a full representation of a specific subresource, ex: userAnnouncements")
+                           @Parameter(description = "Asking for a full representation of a specific subresource, ex: userRealizations")
                            @QueryParam("expand")
                            String expand) {
 
@@ -209,7 +204,7 @@ public class RuleRest implements ResourceContainer {
                                                                   currentUser,
                                                                   offset,
                                                                   limit,
-                                                                  announcementsLimit,
+                                                                  realizationsLimit,
                                                                   programId > 0);
         ruleList.setRules(ruleEntities);
         ruleList.setOffset(offset);
@@ -233,7 +228,7 @@ public class RuleRest implements ResourceContainer {
                                                                     currentUser,
                                                                     offset,
                                                                     limit,
-                                                                    announcementsLimit,
+                                                                    realizationsLimit,
                                                                     true);
           programWithRule.setRules(ruleEntities);
           programWithRule.setOffset(offset);
@@ -265,7 +260,7 @@ public class RuleRest implements ResourceContainer {
                           @Parameter(description = "Rule technical identifier")
                           @PathParam("id")
                           long id,
-                          @Parameter(description = "Asking for a full representation of a specific subresource, ex: userAnnouncements", required = false)
+                          @Parameter(description = "Asking for a full representation of a specific subresource, ex: countRealizations", required = false)
                           @QueryParam("expand")
                           String expand) {
     String currentUser = Utils.getCurrentUser();
@@ -276,7 +271,6 @@ public class RuleRest implements ResourceContainer {
       RuleRestEntity ruleEntity = RuleBuilder.toRestEntity(programService,
                                                            ruleService,
                                                            realizationService,
-                                                           announcementService,
                                                            rule,
                                                            expandFields,
                                                            0,
@@ -385,22 +379,21 @@ public class RuleRest implements ResourceContainer {
   }
 
   private List<RuleRestEntity> getUserRulesByProgram(RuleFilter filter, // NOSONAR
-                                                    PeriodType periodType,
-                                                    List<String> expandFields,
-                                                    String username,
-                                                    int offset,
-                                                    int limit,
-                                                    int announcementsLimit,
-                                                    boolean noProgram) {
+                                                     PeriodType periodType,
+                                                     List<String> expandFields,
+                                                     String username,
+                                                     int offset,
+                                                     int limit,
+                                                     int realizationsLimit,
+                                                     boolean noProgram) {
     List<RuleDTO> rules = ruleService.getRules(filter, username, offset, limit);
     return rules.stream()
                 .map(rule -> RuleBuilder.toRestEntity(programService,
                                                       ruleService,
                                                       realizationService,
-                                                      announcementService,
                                                       rule,
                                                       expandFields,
-                                                      announcementsLimit,
+                                                      realizationsLimit,
                                                       noProgram,
                                                       periodType))
                 .toList();
@@ -410,11 +403,10 @@ public class RuleRest implements ResourceContainer {
     return RuleBuilder.toRestEntity(programService,
                                     ruleService,
                                     realizationService,
-                                    announcementService,
                                     rule,
                                     null,
                                     0,
                                     false,
-                                    null);
+                                    PeriodType.ALL);
   }
 }

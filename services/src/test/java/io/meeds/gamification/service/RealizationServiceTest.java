@@ -128,17 +128,17 @@ public class RealizationServiceTest extends AbstractServiceTest {
   public void testGetRealizationsByFilter() throws IllegalAccessException {
     // Given
     RealizationFilter filter = new RealizationFilter();
-    Identity rootAclIdentity = new Identity("root1");
-    org.exoplatform.social.core.identity.model.Identity rootIdentity =
+    Identity adminAclIdentity = new Identity("root1");
+    org.exoplatform.social.core.identity.model.Identity adminIdentity =
                                                                      mock(org.exoplatform.social.core.identity.model.Identity.class);
-    when(rootIdentity.getId()).thenReturn("2");
-    when(rootIdentity.getRemoteId()).thenReturn(rootAclIdentity.getUserId());
+    when(adminIdentity.getId()).thenReturn("2");
+    when(adminIdentity.getRemoteId()).thenReturn(adminAclIdentity.getUserId());
 
-    ConversationState.setCurrent(new ConversationState(rootAclIdentity));
+    ConversationState.setCurrent(new ConversationState(adminAclIdentity));
     List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
-    rootAclIdentity.setMemberships(memberships);
+    adminAclIdentity.setMemberships(memberships);
     CONTAINER_CONTEXT.when(() -> ExoContainerContext.getService(IdentityRegistry.class)).thenReturn(identityRegistry);
-    when(identityRegistry.getIdentity(rootIdentity.getRemoteId())).thenReturn(rootAclIdentity);
+    when(identityRegistry.getIdentity(adminIdentity.getRemoteId())).thenReturn(adminAclIdentity);
 
     RealizationDTO gHistory1 = newRealizationDTO();
     RealizationDTO gHistory2 = newRealizationDTO();
@@ -148,35 +148,22 @@ public class RealizationServiceTest extends AbstractServiceTest {
     realizations.add(gHistory2);
     realizations.add(gHistory3);
     when(realizationsStorage.getRealizationsByFilter(filter, offset, limit)).thenReturn(realizations);
-    when(identityManager.getOrCreateUserIdentity(rootAclIdentity.getUserId())).thenReturn(rootIdentity);
+    when(identityManager.getOrCreateUserIdentity(adminAclIdentity.getUserId())).thenReturn(adminIdentity);
     assertThrows(IllegalArgumentException.class,
-                 () -> realizationService.getRealizationsByFilter(null, rootAclIdentity, offset, limit));
+                 () -> realizationService.getRealizationsByFilter(null, adminAclIdentity, offset, limit));
     assertThrows(IllegalArgumentException.class, () -> realizationService.getRealizationsByFilter(filter, null, offset, limit));
-    assertThrows(IllegalArgumentException.class,
-                 () -> realizationService.getRealizationsByFilter(filter, rootAclIdentity, offset, limit));
-
-    assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(null, rootAclIdentity));
-    assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(filter, null));
-    assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(filter, rootAclIdentity));
-
-    // When
-    filter.setFromDate(toDate);
-    filter.setToDate(fromDate);
-    assertThrows(IllegalArgumentException.class,
-                 () -> realizationService.getRealizationsByFilter(filter, rootAclIdentity, offset, limit));
-    assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(filter, rootAclIdentity));
 
     // When
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     assertThrows(IllegalAccessException.class,
-                 () -> realizationService.getRealizationsByFilter(filter, rootAclIdentity, offset, limit));
-    assertThrows(IllegalAccessException.class, () -> realizationService.countRealizationsByFilter(filter, rootAclIdentity));
+                 () -> realizationService.getRealizationsByFilter(filter, adminAclIdentity, offset, limit));
+    assertThrows(IllegalAccessException.class, () -> realizationService.countRealizationsByFilter(filter, adminAclIdentity));
 
-    filter.setEarnerIds(Collections.singletonList(rootIdentity.getId()));
+    filter.setEarnerIds(Collections.singletonList(adminIdentity.getId()));
     List<RealizationDTO> createdRealizations =
                                              realizationService.getRealizationsByFilter(filter,
-                                                                                        rootAclIdentity,
+                                                                                        adminAclIdentity,
                                                                                         offset,
                                                                                         limit);
     // Then
@@ -185,12 +172,26 @@ public class RealizationServiceTest extends AbstractServiceTest {
 
     MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
     memberships.add(membershipentry);
-    rootAclIdentity.setMemberships(memberships);
+    adminAclIdentity.setMemberships(memberships);
+
+
+    filter.setFromDate(toDate);
+    filter.setToDate(fromDate);
+    assertThrows(IllegalArgumentException.class,
+                 () -> realizationService.getRealizationsByFilter(filter, adminAclIdentity, offset, limit));
+    assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
+    assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(null, adminAclIdentity));
+    assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(filter, null));
+
+    // When
     filter.setEarnerIds(null);
 
     createdRealizations =
                         realizationService.getRealizationsByFilter(filter,
-                                                                   rootAclIdentity,
+                                                                   adminAclIdentity,
                                                                    offset,
                                                                    limit);
     // Then

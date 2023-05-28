@@ -103,8 +103,8 @@ export default {
     canEdit() {
       return this.rule?.userInfo?.canEdit;
     },
-    announcementsCount() {
-      return this.rule?.announcementsCount || 0;
+    realizationsCount() {
+      return this.rule?.realizationsCount || 0;
     },
     title() {
       return this.rule?.title;

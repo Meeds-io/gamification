@@ -78,10 +78,10 @@ public class RealizationRest implements ResourceContainer {
                                   HttpServletRequest httpRequest,
                                   @Parameter(description = "result fromDate", required = true)
                                   @QueryParam("fromDate")
-                                  String fromDate,
+                                  String fromDateRfc3339,
                                   @Parameter(description = "result toDate", required = true)
                                   @QueryParam("toDate")
-                                  String toDate,
+                                  String toDateRfc3339,
                                   @Parameter(description = "Sort field. Possible values: date or actionType.")
                                   @QueryParam("sortBy")
                                   @DefaultValue("date")
@@ -100,16 +100,23 @@ public class RealizationRest implements ResourceContainer {
                                   @Parameter(description = "Limit of result")
                                   @QueryParam("limit")
                                   int limit,
-                                  @Parameter(description = "Response Type")
-                                  @DefaultValue("")
+                                  @Parameter(description = "Response content Type. Either xlsx or json. Default value: json")
+                                  @DefaultValue("json")
                                   @QueryParam("returnType")
                                   String returnType,
-                                  @Parameter(description = "identity Type")
-                                  @QueryParam("identityType")
-                                  String identityType,
-                                  @Parameter(description = "programIds. that will be used to filter achievements", required = false)
+                                  @Parameter(description = "Earner type, either USER or SPACE. Default: USER", required = false)
+                                  @DefaultValue("USER")
+                                  @QueryParam("earnerType")
+                                  IdentityType earnerType,
+                                  @Parameter(description = "Realization status. Possible values: ACCEPTED, REJECTED, CANCELED, DELETED", required = false)
+                                  @QueryParam("status")
+                                  RealizationStatus status,
+                                  @Parameter(description = "Program technical identifiers. that will be used to filter achievements", required = false)
                                   @QueryParam("programIds")
                                   List<Long> programIds,
+                                  @Parameter(description = "Rule technical identifiers that will be used to filter achievements", required = false)
+                                  @QueryParam("ruleIds")
+                                  List<Long> ruleIds,
                                   @Parameter(description = "If true, this will return the list of realizations, the current user can manage. Possible values = true or false. Default value = false.", required = false)
                                   @QueryParam("owned")
                                   @DefaultValue("false")
@@ -118,22 +125,24 @@ public class RealizationRest implements ResourceContainer {
                                   @QueryParam("returnSize")
                                   @DefaultValue("false")
                                   boolean returnSize) {
-    if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
+    if (limit == 0 && (StringUtils.isBlank(fromDateRfc3339) || StringUtils.isBlank(toDateRfc3339))) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Either use limit or dates to limit returned results").build();
     }
 
     Identity identity = ConversationState.getCurrent().getIdentity();
-    Date dateFrom = Utils.parseRFC3339Date(fromDate);
-    Date dateTo = Utils.parseRFC3339Date(toDate);
+    Date fromDate = Utils.parseRFC3339Date(fromDateRfc3339);
+    Date toDate = Utils.parseRFC3339Date(toDateRfc3339);
 
     RealizationFilter filter = new RealizationFilter(earnerIds,
                                                      sortField,
                                                      sortDescending,
                                                      owned,
-                                                     dateFrom,
-                                                     dateTo,
-                                                     IdentityType.getType(identityType),
-                                                     programIds);
+                                                     fromDate,
+                                                     toDate,
+                                                     status,
+                                                     earnerType,
+                                                     programIds,
+                                                     ruleIds);
 
     boolean isXlsx = StringUtils.isNotBlank(returnType) && returnType.equals("xlsx");
     if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXlsx) {
