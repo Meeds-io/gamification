@@ -30,6 +30,8 @@
           :placeholder="$t('challenges.label.startDate')"
           :min-value="minimumStartDate"
           :max-value="maximumStartDate"
+          :attach="false"
+          :allow-overflow="false"
           class="flex-grow-1 my-auto"
           required />
         <date-picker
@@ -38,6 +40,8 @@
           :default-value="false"
           :placeholder="$t('challenges.label.endDate')"
           :min-value="minimumEndDate"
+          :attach="false"
+          :allow-overflow="false"
           class="flex-grow-1 my-auto"
           required />
       </div>
