@@ -45,47 +45,9 @@
               <v-icon :size="iconSize">fas fa-bullhorn</v-icon>
             </v-btn>
           </div>
-          <v-menu
+          <engagement-center-rule-menu
             v-if="canManageRule"
-            v-model="menu"
-            :left="!$vuetify.rtl"
-            :right="$vuetify.rtl"
-            bottom
-            offset-y
-            attach>
-            <template #activator="{ on, attrs }">
-              <v-btn
-                icon
-                class="me-2"
-                v-bind="attrs"
-                v-on="on"
-                @blur="closeMenu">
-                <v-icon :size="iconSize" class="icon-default-color">fas fa-ellipsis-v</v-icon>
-              </v-btn>
-            </template>
-            <v-list dense class="pa-0">
-              <v-list-item
-                dense
-                @mousedown="$event.preventDefault()"
-                @click="editRule">
-                <v-layout class="me-3">
-                  <v-icon size="13" class="icon-default-color pb-2px">fas fa-edit</v-icon>
-                </v-layout>
-                <v-list-item-title class="d-flex">{{ $t('programs.details.rule.button.edit') }}</v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                dense
-                @mousedown="$event.preventDefault()"
-                @click="deleteRule">
-                <v-layout class="me-3">
-                  <v-icon size="13" class="icon-default-color pb-2px">fas fa-trash-alt</v-icon>
-                </v-layout>
-                <v-list-item-title class="d-flex">
-                  {{ $t('programs.details.rule.button.delete') }}
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+            :rule="rule" />
         </div>
       </td>
       <td class="no-border-bottom d-none d-sm-inline">
@@ -135,7 +97,6 @@ export default {
   },
   data() {
     return {
-      menu: false,
       maxAvatarsToShow: 3,
     };
   },
@@ -180,18 +141,9 @@ export default {
     },
   },
   methods: {
-    closeMenu() {
-      this.menu = false;
-    },
-    editRule() {
-      this.$root.$emit('rule-form-drawer', this.rule);
-    },
     openRule(announceRule) {
       this.$root.$emit('rule-detail-drawer', this.rule, announceRule);
     },
-    deleteRule() {
-      this.$emit('delete-rule', this.rule);
-    }
   }
 };
 </script>
