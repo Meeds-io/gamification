@@ -125,7 +125,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
                 {{ $t('rule.form.label.selectEvent') }}
               </v-card-text>
-              <v-card-text class="py-0">
+              <v-card-text v-if="eventNames.length" class="py-0">
                 <v-autocomplete
                   id="EventSelectAutoComplete"
                   ref="EventSelectAutoComplete"
@@ -265,20 +265,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <script>
 export default {
-  props: {
-    program: {
-      type: Object,
-      default: () => null,
-    },
-    events: {
-      type: Array,
-      default: function() {
-        return [];
-      },
-    },
-  },
   data: () => ({
     rule: {},
+    program: null,
     originalRule: null,
     ruleToUpdate: {},
     saving: false,
@@ -298,6 +287,7 @@ export default {
     recurrenceCondition: false,
     prerequisiteRuleCondition: false,
     validDatesInput: false,
+    events: [],
     programEvents: [],
   }),
   computed: {
@@ -405,33 +395,45 @@ export default {
   },
   methods: {
     open(rule, program) {
-      this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
-        score: 20,
-        enabled: true,
-        area: this.programTitle
-      };
-      this.program = this.rule?.program || program;
-      this.durationCondition = this.rule.startDate || this.rule.endDate;
-      this.recurrenceCondition = !!this.rule.recurrence;
-      this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
-      this.eventExist = false;
-      this.originalRule = this.computeRuleModel(this.rule, this.program);
-      if (this.$refs.ruleFormDrawer) {
-        this.$refs.ruleFormDrawer.open();
-      }
-      window.setTimeout(() => {
-        if (this.$refs.ruleTitle) {
-          this.$refs.ruleTitle.focus();
-          if (this.$refs.ruleDescription) {
-            this.$refs.ruleDescription.initCKEditor();
+      this.retrieveEvents()
+        .then(() => {
+          this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
+            score: 20,
+            enabled: true,
+            area: this.programTitle
+          };
+
+          this.program = this.rule?.program || program;
+          this.durationCondition = this.rule.startDate || this.rule.endDate;
+          this.recurrenceCondition = !!this.rule.recurrence;
+          this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
+          this.eventExist = false;
+          this.originalRule = this.computeRuleModel(this.rule, this.program);
+          if (this.$refs.ruleFormDrawer) {
+            this.$refs.ruleFormDrawer.open();
           }
-        }
-      }, 200);
-      this.$nextTick().then(() => {
-        this.$root.$emit('rule-form-drawer-opened', this.rule);
-        this.value = this.eventMapping.find(event => event.name === rule?.event) || '';
-      });
-      this.retrieveProgramRules();
+          window.setTimeout(() => {
+            if (this.$refs.ruleTitle) {
+              this.$refs.ruleTitle.focus();
+              if (this.$refs.ruleDescription) {
+                this.$refs.ruleDescription.initCKEditor();
+              }
+            }
+          }, 200);
+          this.$nextTick().then(() => {
+            this.$root.$emit('rule-form-drawer-opened', this.rule);
+            this.value = this.eventMapping.find(event => event.name === rule?.event) || '';
+          });
+          return this.retrieveProgramRules();
+        });
+    },
+    retrieveEvents() {
+      if (!this.events?.length) {
+        return this.$ruleService.getEvents()
+          .then(events => this.events = events || []);
+      } else {
+        return Promise.resolve(null);
+      }
     },
     close() {
       this.$refs.ruleDescription?.destroyCKEditor();
