@@ -24,7 +24,7 @@
     max-width="380"
     class="rule-prerequisites grey"
     flat>
-    <div class="d-flex align-center pt-4 px-2">
+    <div class="d-flex align-center justify-center pt-4 px-2">
       <v-avatar
         size="32"
         class="me-2"

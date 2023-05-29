@@ -69,7 +69,7 @@
         ck-editor-type="announcementContent"
         class="flex my-3"
         autofocus
-        @validity-updated="$emit('input', $event)"
+        @validity-updated="validLength = $event"
         @ready="focusOnEditor" />
     </div>
     <v-btn
@@ -109,13 +109,14 @@ export default {
     templateParams: {},
     userId: eXo.env.portal.userIdentityId,
     username: eXo.env.portal.userName,
+    validLength: true,
   }),
   computed: {
     spaceId() {
       return this.rule?.program?.audienceId;
     },
     validComment() {
-      return this.comment?.length > 0 && this.comment?.length <= this.MAX_LENGTH;
+      return this.comment?.length > 0 && this.validLength;
     },
     space() {
       return this.rule?.program?.space;

@@ -45,7 +45,7 @@
       <div class="rule-title font-weight-bold text-truncate-2 mx-0 my-auto">
         {{ ruleTitle }}
       </div>
-      <div v-if="!reduced" class="rule-score font-weight-bold text--secondary">
+      <div v-if="reduced" class="rule-score font-weight-bold text--secondary">
         {{ rule.score }} {{ $t('challenges.label.points') }}
       </div>
     </div>
