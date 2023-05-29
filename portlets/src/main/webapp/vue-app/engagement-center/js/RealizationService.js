@@ -71,6 +71,10 @@ export function getRealizationsUrl(filter, exportXls) {
   const formData = getRealizationsFormData(filter);
   if (exportXls) {
     formData.append('returnType', 'xlsx');
+  } else {
+    if (filter?.returnSize) {
+      formData.append('returnSize', 'true');
+    }
   }
   const params = new URLSearchParams(formData).toString();
   return `${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations?${params}`;

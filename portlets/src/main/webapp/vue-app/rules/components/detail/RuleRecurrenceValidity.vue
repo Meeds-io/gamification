@@ -19,18 +19,11 @@
 
 -->
 <template>
-  <div v-if="recurrence" class="rule-recurrence d-flex flex-column full-height">
-    <div class="text-sub-title font-italic mb-1">
-      {{ $t('rules.earnPoints') }}
-    </div>
-    <div class="d-flex align-center">
-      <v-icon size="26" class="primary--text me-2">
-        fas fa-redo-alt
-      </v-icon>
-      <div
-        v-sanitized-html="recurrenceTitle"
-        class="text-wrap"></div>
-    </div>
+  <div v-if="recurrenceTitle" class="rule-recurrence-validity d-flex align-center justify-center">
+    <v-icon size="26" class="primary--text me-2">
+      far fa-check-circle
+    </v-icon>
+    {{ recurrenceTitle }}
   </div>
 </template>
 <script>
@@ -45,22 +38,43 @@ export default {
     recurrence() {
       return this.rule.recurrence;
     },
+    recurrenceValid() {
+      return this.rule?.userInfo?.context?.validRecurrence;
+    },
+    nextOccurenceDaysLeft() {
+      const diff = this.rule?.userInfo?.context?.nextOccurenceMillis;
+      if (diff) {
+        const days = Math.floor(diff / 1000 / (60 * 60 * 24));
+        return days + 1;
+      } else {
+        return 0;
+      }
+    },
     recurrenceTitle() {
+      if (!this.nextOccurenceDaysLeft
+          && !this.recurrenceValid
+          && (this.recurrence === 'DAILY'
+              || this.recurrence === 'WEEKLY'
+              || this.recurrence === 'MONTHLY')) {
+        return this.$t('rules.card.actionCantAchieveAgainBeforeEndDate');
+      }
       if (!this.recurrence) {
         return null;
-      } else {
+      } else if (!this.recurrenceValid) {
         switch (this.recurrence) {
         case 'ONCE':
-          return this.$t('rules.once', {0: '<strong>', 1: '</strong>'});
+          return this.$t('rules.actionAlreadyDone');
         case 'DAILY':
-          return this.$t('rules.oncePerDay', {0: '<strong>', 1: '</strong>'});
+          return this.$t('rules.actionAlreadyDoneEarnTomorrow');
         case 'WEEKLY':
-          return this.$t('rules.oncePerWeek', {0: '<strong>', 1: '</strong>'});
+          return this.$t('rules.actionAlreadyDoneEarnInDays', {0: this.nextOccurenceDaysLeft});
         case 'MONTHLY':
-          return this.$t('rules.oncePerMonth', {0: '<strong>', 1: '</strong>'});
+          return this.$t('rules.actionAlreadyDoneEarnInDays', {0: this.nextOccurenceDaysLeft});
         default:
           return null;
         }
+      } else {
+        return null;
       }
     },
   },

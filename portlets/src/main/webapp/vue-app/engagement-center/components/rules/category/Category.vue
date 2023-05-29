@@ -100,7 +100,7 @@ export default {
   methods: {
     onRuleUpdated(rule) {
       if (this.rules.find(r => r.id === rule.id)) {
-        return this.$ruleService.getRuleById(rule.id, 'countAccouncements')
+        return this.$ruleService.getRuleById(rule.id, 'countRealizations', 3)
           .then(r => this.$set(this.updatedRules, r.id, r));
       }
     },
