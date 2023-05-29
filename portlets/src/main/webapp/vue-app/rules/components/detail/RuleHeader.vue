@@ -20,14 +20,32 @@
 -->
 <template>
   <div class="d-flex mb-1">
-    <v-icon size="60" class="rule-icon align-start primary--text mb-1">
+    <v-icon
+      v-if="reduced || expanded"
+      :size="reduced && 60 || 45"
+      class="rule-icon align-start primary--text mb-1">
       {{ actionIcon }}
     </v-icon>
-    <div class="d-flex flex-column ms-4">
-      <div class="rule-title font-weight-bold text-truncate-2 mx-0 mt-0 mb-auto">
+    <div v-else class="d-flex flex-column pe-4">
+      <v-avatar
+        :size="programCoverSize"
+        class="rule-program-cover border-color primary--text"
+        rounded>
+        <v-img :src="programCoverUrl" />
+      </v-avatar>
+      <v-avatar
+        :size="programCoverSize"
+        class="rule-icon border-color grey lighten-2 mt-n4 ms-auto me-n4">
+        <v-icon size="24" class="rule-icon primary--text">
+          {{ actionIcon }}
+        </v-icon>
+      </v-avatar>
+    </div>
+    <div class="d-flex flex-column ms-2">
+      <div class="rule-title font-weight-bold text-truncate-2 mx-0 my-auto">
         {{ ruleTitle }}
       </div>
-      <div class="rule-score font-weight-bold text--secondary">
+      <div v-if="reduced" class="rule-score font-weight-bold text--secondary">
         {{ rule.score }} {{ $t('challenges.label.points') }}
       </div>
     </div>
@@ -39,6 +57,14 @@ export default {
     rule: {
       type: Object,
       default: null,
+    },
+    expanded: {
+      type: Boolean,
+      default: false,
+    },
+    reduced: {
+      type: Boolean,
+      default: false,
     },
     actionValueExtensions: {
       type: Array,
@@ -53,6 +79,7 @@ export default {
     templateParams: {},
     userId: eXo.env.portal.userIdentityId,
     username: eXo.env.portal.userName,
+    programCoverSize: 35,
   }),
   computed: {
     ruleTitle() {
@@ -73,6 +100,9 @@ export default {
     },
     actionIcon() {
       return this.rule?.type === 'AUTOMATIC' ? this.extension?.icon : 'fas fa-trophy';
+    },
+    programCoverUrl() {
+      return this.rule?.program?.coverUrl;
     },
   },
 };
