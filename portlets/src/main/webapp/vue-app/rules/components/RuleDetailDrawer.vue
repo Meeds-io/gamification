@@ -69,6 +69,7 @@
         </v-col>
 
         <v-col
+          v-if="hasDetails"
           :cols="expandedView && 6 || 12"
           :class="!expandedView && 'px-8'"
           class="py-0">
@@ -99,7 +100,7 @@
                 @sent="close" />
             </v-col>
             <v-col
-              v-if="hasValidityMessage"
+              v-else-if="hasValidityMessage"
               cols="12"
               class="px-0 py-6">
               <engagement-center-rule-date-over
@@ -169,23 +170,32 @@ export default {
     expandedView() {
       return !this.$root.isMobile && this.expanded;
     },
+    hasDetails() {
+      return this.hasValidityMessage
+        || this.canAnnounce
+        || this.hasRecurrence
+        || this.showEndDate
+        || false;
+    },
     hasValidityMessage() {
       return this.alreadyEnded
         || !this.alreadyStarted
         || this.isRecurrenceInvalid
-        || this.isPrerequisitesInvalid;
+        || this.isPrerequisitesInvalid
+        || false;
     },
     hasRecurrence() {
-      return this.rule?.recurrence && this.rule?.recurrence !== 'NONE';
+      return this.rule?.recurrence && this.rule?.recurrence !== 'NONE' || false;
     },
     isRecurrenceInvalid() {
       return this.hasRecurrence && !this.rule?.userInfo?.context?.validRecurrence;
     },
     isPrerequisitesInvalid() {
       const prerequisitesStatus = this.rule?.userInfo?.context?.validPrerequisites;
-      return !this.rule?.prerequisiteRules?.length
-          || !prerequisitesStatus
-          || this.rule?.prerequisiteRules.filter(r => !prerequisitesStatus[`${r.id}`]).length;
+      if (!prerequisitesStatus || !this.rule?.prerequisiteRules?.length) {
+        return false;
+      }
+      return this.rule.prerequisiteRules.filter(r => !prerequisitesStatus[`${r.id}`]).length;
     },
     startDateMillis() {
       return this.rule?.startDate && new Date(this.rule?.startDate).getTime() || 0;
@@ -200,10 +210,10 @@ export default {
       return this.endDateMillis && this.endDateMillis < Date.now();
     },
     showEndDate() {
-      return !this.alreadyEnded && this.alreadyStarted && this.endDateMillis;
+      return !this.alreadyEnded && this.alreadyStarted && this.endDateMillis || false;
     },
     canAnnounce() {
-      return this.rule?.userInfo?.context?.valid;
+      return this.rule?.userInfo?.context?.valid && this.rule?.type === 'MANUAL';
     },
   },
   watch: {
