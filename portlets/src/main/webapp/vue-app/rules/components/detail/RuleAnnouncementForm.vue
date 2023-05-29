@@ -59,6 +59,7 @@
       </div>
       <rich-editor
         ref="announcementEditor"
+        id="announcementEditor"
         v-model="comment"
         :max-length="MAX_LENGTH"
         :template-params="templateParams"
@@ -73,16 +74,17 @@
     </div>
     <v-btn
       v-else
-      :disabled="editor"
-      class="btn btn-primary mx-auto mt-4"
+      color="primary"
+      class="primary-border-color mx-auto my-4"
+      outlined
       @click="editor = true">
       <v-icon
         size="16"
-        color="white">
+        color="primary">
         fas fa-bullhorn
       </v-icon>
       <span class="font-weight-bold my-auto ms-3">
-        {{ $t('rule.detail.AnnounceYourAchievement') }}
+        {{ $t('rule.detail.Announce') }}
       </span>
     </v-btn>
   </div>
@@ -131,7 +133,6 @@ export default {
     },
     editor() {
       if (this.editor) {
-        this.focusOnEditor();
         this.$emit('form-opened', true);
       } else {
         this.destroyEditor();
@@ -159,11 +160,14 @@ export default {
     },
     focusOnEditor() {
       const drawerContentElement = document.querySelector('#ruleDetailDrawer .drawerContent');
-      drawerContentElement.scrollTo({
-        top: drawerContentElement.scrollHeight,
-        behavior: 'smooth',
-        block: 'start',
-      });
+      const announcementEditor = document.querySelector('#announcementEditor');
+      if (announcementEditor) {
+        drawerContentElement.scrollTo({
+          top: announcementEditor.scrollHeight + drawerContentElement.offsetHeight / 3,
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
     },
     createAnnouncement() {
       if (!this.validComment) {
