@@ -171,7 +171,6 @@ export default {
   created() {
     this.limitToFetch = this.originalLimitToFetch = this.limit;
     this.$root.$on('program-load-more', this.loadMore);
-    this.$root.$on('program-added', this.refreshPrograms);
     this.$root.$on('program-updated', this.refreshPrograms);
     this.$root.$on('delete-program', this.confirmDelete);
     this.retrievePrograms()

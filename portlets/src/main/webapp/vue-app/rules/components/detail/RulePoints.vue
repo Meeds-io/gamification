@@ -19,13 +19,13 @@
 
 -->
 <template>
-  <div class="rule-description">
-    <div class="subtitle-1 font-weight-bold mb-2">
-      {{ $t('rules.description') }}
+  <div class="rule-points">
+    <div class="text-sub-title font-italic mb-1">
+      {{ $t('rules.achieveItFor') }}
     </div>
-    <div class="d-flex flex-row rich-editor-content text-break overflow-hidden">
-      <span v-sanitized-html="rule.description"></span>
-    </div>
+    <v-chip class="secondary secondary-border-color content-box-sizing white--text" small>
+      <span class="subtitle-2">{{ $t('rules.pointsShort', {0: rule.score}) }}</span>
+    </v-chip>
   </div>
 </template>
 <script>

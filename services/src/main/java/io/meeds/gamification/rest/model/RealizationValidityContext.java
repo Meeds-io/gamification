@@ -28,27 +28,27 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class RealizationValidityContext {
+public class RealizationValidityContext implements Cloneable {
 
-  private boolean              validIdentity         = true;
+  private boolean              validIdentity       = true;
 
-  private boolean              validProgram          = true;
+  private boolean              validProgram        = true;
 
-  private boolean              validAudience         = true;
+  private boolean              validAudience       = true;
 
-  private boolean              validRule             = true;
+  private boolean              validRule           = true;
 
-  private boolean              validDates            = true;
+  private boolean              validDates          = true;
 
-  private boolean              validRecurrence       = true;
+  private boolean              validRecurrence     = true;
 
-  private boolean              validRedactor         = true;
+  private boolean              validRedactor       = true;
 
-  private boolean              validWhitelist        = true;
+  private boolean              validWhitelist      = true;
 
-  private Map<String, Boolean> validPrerequisites    = null;
+  private Map<String, Boolean> validPrerequisites  = null;
 
-  private long                 nextOccurenceDaysLeft = 0;
+  private long                 nextOccurenceMillis = 0;
 
   public boolean isValid() {
     return validIdentity
@@ -60,5 +60,19 @@ public class RealizationValidityContext {
         && validRedactor
         && validWhitelist
         && (MapUtils.isEmpty(validPrerequisites) || validPrerequisites.values().stream().allMatch(Boolean::booleanValue));
+  }
+
+  @Override
+  protected RealizationValidityContext clone() { // NOSONAR
+    return new RealizationValidityContext(validIdentity,
+                                          validProgram,
+                                          validAudience,
+                                          validRule,
+                                          validDates,
+                                          validRecurrence,
+                                          validRedactor,
+                                          validWhitelist,
+                                          validPrerequisites,
+                                          nextOccurenceMillis);
   }
 }

@@ -8,14 +8,19 @@ import DescriptionEditor from './components/form/DescriptionEditor.vue';
 
 import RuleDetailDrawer from './components/RuleDetailDrawer.vue';
 import RuleAchievements from './components/detail/RuleAchievements.vue';
+import RuleAchievementItem from './components/detail/RuleAchievementItem.vue';
 import RuleProgram from './components/detail/RuleProgram.vue';
-import RuleDates from './components/detail/RuleDates.vue';
 import RuleHeader from './components/detail/RuleHeader.vue';
 import RuleDescription from './components/detail/RuleDescription.vue';
 import RuleRecurrence from './components/detail/RuleRecurrence.vue';
+import RuleRecurrenceValidity from './components/detail/RuleRecurrenceValidity.vue';
 import RulePrerequisites from './components/detail/RulePrerequisites.vue';
 import RulePrerequisiteItem from './components/detail/RulePrerequisiteItem.vue';
 import RuleAnnouncementForm from './components/detail/RuleAnnouncementForm.vue';
+import RulePoints from './components/detail/RulePoints.vue';
+import RuleDateStart from './components/detail/RuleDateStart.vue';
+import RuleDateOver from './components/detail/RuleDateOver.vue';
+import RuleDateEnd from './components/detail/RuleDateEnd.vue';
 import RuleDateInfo from './components/detail/RuleDateInfo.vue';
 
 import RuleAchievementsDrawer from './components/RuleAchievementsDrawer.vue';
@@ -34,13 +39,18 @@ const components = {
   'engagement-center-rule-description': RuleDescription,
   'engagement-center-rule-program': RuleProgram,
   'engagement-center-rule-achievements': RuleAchievements,
+  'engagement-center-rule-achievement-item': RuleAchievementItem,
   'engagement-center-rule-recurrence': RuleRecurrence,
-  'engagement-center-rule-dates': RuleDates,
+  'engagement-center-rule-recurrence-validity': RuleRecurrenceValidity,
+  'engagement-center-rule-date-info': RuleDateInfo,
+  'engagement-center-rule-date-start': RuleDateStart,
+  'engagement-center-rule-date-end': RuleDateEnd,
+  'engagement-center-rule-date-over': RuleDateOver,
+  'engagement-center-rule-points': RulePoints,
   'engagement-center-rule-announcement-form': RuleAnnouncementForm,
   'engagement-center-rule-prerequisites': RulePrerequisites,
   'engagement-center-rule-prerequisite-item': RulePrerequisiteItem,
   'engagement-center-rule-achievements-drawer': RuleAchievementsDrawer,
-  'engagement-center-rule-date-info': RuleDateInfo,
 };
 
 for (const key in components) {

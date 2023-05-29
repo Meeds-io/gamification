@@ -260,6 +260,10 @@ public class RuleRest implements ResourceContainer {
                           @Parameter(description = "Rule technical identifier")
                           @PathParam("id")
                           long id,
+                          @Parameter(description = "Accepted users realizations count")
+                          @Schema(defaultValue = "0")
+                          @QueryParam("realizationsLimit")
+                          int realizationsLimit,
                           @Parameter(description = "Asking for a full representation of a specific subresource, ex: countRealizations", required = false)
                           @QueryParam("expand")
                           String expand) {
@@ -273,7 +277,7 @@ public class RuleRest implements ResourceContainer {
                                                            realizationService,
                                                            rule,
                                                            expandFields,
-                                                           0,
+                                                           realizationsLimit,
                                                            false,
                                                            PeriodType.ALL);
       return Response.ok(ruleEntity).build();

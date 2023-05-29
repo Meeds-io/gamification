@@ -363,7 +363,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
           Instant nextDate = recurrence.getNextPeriodStartDate().toInstant();
           if (endDate == null || endDate.toInstant().isAfter(nextDate)) {
             Instant now = Instant.now();
-            realizationRestriction.setNextOccurenceDaysLeft(ChronoUnit.DAYS.between(now, nextDate));
+            realizationRestriction.setNextOccurenceMillis(ChronoUnit.MILLIS.between(now, nextDate));
           }
         }
       }
