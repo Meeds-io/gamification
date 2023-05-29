@@ -103,7 +103,8 @@
               </v-col>
               <v-col v-else-if="isPrerequisitesInvalid" cols="12">
                 <engagement-center-rule-prerequisites
-                  :rule="rule" />
+                  :rule="rule"
+                  class="rounded" />
               </v-col>
             </template>
           </v-row>

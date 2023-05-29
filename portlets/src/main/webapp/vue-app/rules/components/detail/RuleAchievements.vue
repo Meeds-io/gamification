@@ -36,6 +36,7 @@
           :src="defaultAvatarUrl"
           class="object-fit-cover ma-auto"
           loading="lazy"
+          alt=""
           role="presentation">
       </v-avatar>
       {{ $t('rules.beTheFirstToDoIt') }}

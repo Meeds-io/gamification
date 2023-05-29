@@ -8,6 +8,7 @@ import DescriptionEditor from './components/form/DescriptionEditor.vue';
 
 import RuleDetailDrawer from './components/RuleDetailDrawer.vue';
 import RuleAchievements from './components/detail/RuleAchievements.vue';
+import RuleAchievementItem from './components/detail/RuleAchievementItem.vue';
 import RuleProgram from './components/detail/RuleProgram.vue';
 import RuleHeader from './components/detail/RuleHeader.vue';
 import RuleDescription from './components/detail/RuleDescription.vue';
@@ -38,6 +39,7 @@ const components = {
   'engagement-center-rule-description': RuleDescription,
   'engagement-center-rule-program': RuleProgram,
   'engagement-center-rule-achievements': RuleAchievements,
+  'engagement-center-rule-achievement-item': RuleAchievementItem,
   'engagement-center-rule-recurrence': RuleRecurrence,
   'engagement-center-rule-recurrence-validity': RuleRecurrenceValidity,
   'engagement-center-rule-date-info': RuleDateInfo,
