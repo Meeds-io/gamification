@@ -19,32 +19,27 @@
 
 -->
 <template>
-  <v-list-item
-    v-if="prerequisitesTitle"
-    class="rule-prerequisites grey pa-0"
-    dense>
-    <v-list-item-avatar class="me-2 mb-auto">
-      <v-avatar size="32" tile>
+  <div v-if="prerequisitesTitle" class="rule-prerequisites grey">
+    <div class="d-flex align-center pt-4 px-2">
+      <v-avatar size="32" class="me-2" tile>
         <v-icon
           class="white--text"
           size="30">
           fas fa-lock
         </v-icon>
       </v-avatar>
-    </v-list-item-avatar>
-    <v-list-item-content class="mt-3">
-      <v-list-item-title
+      <div
         v-sanitized-html="prerequisitesTitle"
-        class="white--text text-wrap" />
-      <v-list-item-subtitle class="d-flex flex-column mt-3">
-        <engagement-center-rule-prerequisite-item
-          v-for="r in remainingPrerequisites"
-          :key="r.id"
-          :rule="rule"
-          :prerequisite-rule="r" />
-      </v-list-item-subtitle>
-    </v-list-item-content>
-  </v-list-item>
+        class="white--text text-wrap font-weight-bold"></div>
+    </div>
+    <div class="d-flex flex-column align-center justify-center mt-3">
+      <engagement-center-rule-prerequisite-item
+        v-for="r in remainingPrerequisites"
+        :key="r.id"
+        :rule="rule"
+        :prerequisite-rule="r" />
+    </div>
+  </div>
 </template>
 <script>
 export default {
