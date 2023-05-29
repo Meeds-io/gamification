@@ -29,9 +29,10 @@
       <div v-if="!isValid">
         <div v-if="canEdit && hover" class="d-flex position-absolute full-width z-index-drawer">
           <div class="ms-auto mb-auto mt-4 me-4">
-            <engagement-center-rule-card-menu
+            <engagement-center-rule-menu
               :rule="ruleWithProgram"
-              dark />
+              dark
+              small />
           </div>
         </div>
         <engagement-center-rule-card-mask>
@@ -55,7 +56,9 @@
           {{ title }}
         </div>
         <div v-if="canEdit && hover && isValid" class="flex-grow-0 d-flex align-center">
-          <engagement-center-rule-card-menu :rule="ruleWithProgram" />
+          <engagement-center-rule-menu
+            :rule="ruleWithProgram"
+            small />
         </div>
       </v-card-title>
       <v-card-text

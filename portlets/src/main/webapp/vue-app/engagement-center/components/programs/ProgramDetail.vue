@@ -112,8 +112,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <engagement-center-rule-item
                     :rule="props.item"
                     :can-manage-rule="canManageRule"
-                    :action-value-extensions="actionValueExtensions"
-                    @delete-rule="confirmDelete" />
+                    :action-value-extensions="actionValueExtensions" />
                 </template>
                 <template slot="no-data">
                   <engagement-center-no-rule-found v-if="keyword" @keyword-changed="keyword = $event" />
@@ -135,14 +134,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <exo-confirm-dialog
-          v-if="confirmDelete"
-          ref="deleteRuleConfirmDialog"
-          :message="deleteConfirmMessage"
-          :title="$t('programs.details.title.confirmDeleteRule')"
-          :ok-label="$t('programs.details.ok.button')"
-          :cancel-label="$t('programs.details.cancel.button')"
-          @ok="deleteRule" />
       </div>
     </div>
     <engagement-center-result-not-found
@@ -300,7 +291,6 @@ export default {
     this.$root.$on('rule-updated', this.retrieveProgramRules);
     this.$root.$on('rule-deleted', this.retrieveProgramRules);
     this.$root.$on('announcement-added', this.retrieveProgramRules);
-    this.$root.$on('rule-delete-confirm', this.confirmDelete);
     window.addEventListener('popstate', () => {
       this.backToProgramList();
     });
@@ -374,20 +364,6 @@ export default {
       } else if (this.tab === 2) {
         window.history.replaceState('Engagement Center', this.$t('engagementCenter.label.achievements'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`);
       }
-    },
-    confirmDelete(rule) {
-      this.selectedRule = rule;
-      this.deleteConfirmMessage = this.$t('programs.details.message.confirmDeleteRule', {0: this.ruleTitle(this.selectedRule)});
-      this.$refs.deleteRuleConfirmDialog.open();
-    },
-    deleteRule() {
-      this.loading = true;
-      this.$ruleService.deleteRule(this.selectedRule.id)
-        .then((deletedRule) => {
-          this.$root.$emit('rule-deleted', deletedRule);
-          this.$engagementCenterUtils.displayAlert(this.$t('programs.details.ruleDeleteSuccess'));
-        })
-        .finally(() => this.loading = false);
     },
     ruleTitle(rule) {
       let fieldLabelI18NKey = `exoplatform.gamification.gamificationinformation.rule.title.${rule?.title}`;
