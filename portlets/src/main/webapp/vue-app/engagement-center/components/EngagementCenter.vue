@@ -39,7 +39,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :action-value-extensions="actionValueExtensions" />
         </v-tab-item>
         <v-tab-item>
-          <engagement-center-rules :is-administrator="isAdministrator" />
+          <engagement-center-rules
+            ref="rules"
+            :is-administrator="isAdministrator" />
         </v-tab-item>
         <v-tab-item>
           <realizations
@@ -144,6 +146,9 @@ export default {
     resetSelection() {
       this.displayProgramDetail = false;
       this.$nextTick().then(() => this.program = null);
+      if (this.$refs.rules) {
+        this.$refs.rules.reset();
+      }
     },
     openProgramDetail(program) {
       this.program = program;
