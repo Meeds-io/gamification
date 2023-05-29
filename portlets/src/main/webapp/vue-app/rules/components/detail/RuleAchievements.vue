@@ -19,26 +19,28 @@
 
 -->
 <template>
-  <v-list-item
-    v-if="realizationsCount"
-    class="rule-realizations pa-0"
-    dense
-    ripple
-    @click="$root.$emit('open-achievements-drawer', rule, true)">
-    <v-list-item-avatar class="me-2">
-      <v-avatar
-        color="grey"
-        size="30"
-        class="white--text">
-        {{ realizationsCount }}
+  <div class="rule-realizations">
+    <div class="text-sub-title font-italic mb-1">
+      {{ $t('rules.participations') }}
+    </div>
+    <engagement-center-avatars-list
+      v-if="realizationsCount"
+      :avatars="users"
+      :max-avatars-to-show="4"
+      :avatars-count="realizationsCount"
+      :size="avatarSize"
+      @open-avatars-drawer="$root.$emit('open-achievements-drawer', rule, true)" />
+    <div v-else class="d-flex align-center">
+      <v-avatar :size="avatarSize" class="my-0 me-2">
+        <img
+          :src="defaultAvatarUrl"
+          class="object-fit-cover ma-auto"
+          loading="lazy"
+          role="presentation">
       </v-avatar>
-    </v-list-item-avatar>
-    <v-list-item-content>
-      <v-list-item-title>
-        {{ $t('rules.achievementsSoFar') }}
-      </v-list-item-title>
-    </v-list-item-content>
-  </v-list-item>
+      {{ $t('rules.beTheFirstToDoIt') }}
+    </div>
+  </div>
 </template>
 <script>
 export default {
@@ -48,9 +50,19 @@ export default {
       default: null,
     },
   },
+  data: () => ({
+    avatarSize: 26,
+    defaultAvatarUrl: `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/default-image/avatar`,
+  }),
   computed: {
     realizationsCount() {
       return this.rule?.realizationsCount || 0;
+    },
+    users() {
+      return this.rule?.realizations?.filter(realization => realization?.earner?.remoteId)
+        .map(realization => ({
+          userName: realization?.earner?.remoteId,
+        })) || [];
     },
   },
 };

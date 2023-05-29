@@ -19,13 +19,15 @@
 
 -->
 <template>
-  <div class="rule-description">
-    <div class="subtitle-1 font-weight-bold mb-2">
-      {{ $t('rules.description') }}
-    </div>
-    <div class="d-flex flex-row rich-editor-content text-break overflow-hidden">
-      <span v-sanitized-html="rule.description"></span>
-    </div>
+  <div class="rule-start-date d-flex align-center justify-center">
+    <v-icon size="26" class="primary--text me-2">
+      far fa-calendar-plus
+    </v-icon>
+    <span>{{ $t('rules.availableIn') }}</span>
+    <engagement-center-rule-date-info
+      :rule="rule"
+      class="ms-1"
+      small />
   </div>
 </template>
 <script>

@@ -19,7 +19,7 @@
 
 -->
 <template>
-  <div>
+  <div :class="lessThanADay && 'error--text'">
     {{ datesInfo }}
   </div>
 </template>
@@ -30,7 +30,14 @@ export default {
       type: Object,
       default: null,
     },
+    small: {
+      type: Boolean,
+      default: false,
+    },
   },
+  data: () => ({
+    label: null,
+  }),
   computed: {
     startDateMillis() {
       return this.rule?.startDate && new Date(this.rule?.startDate).getTime() || 0;
@@ -44,13 +51,27 @@ export default {
     alreadyEnded() {
       return this.endDateMillis && this.endDateMillis < Date.now();
     },
+    lessThanADay() {
+      if (this.alreadyEnded) {
+        return false;
+      } else if (this.notStartedYet) {
+        return this.getRemainingDays(this.startDateMillis) <= 0;
+      } else if (this.endDateMillis) {
+        return this.getRemainingDays(this.endDateMillis) <= 0;
+      }
+      return false;
+    },
     datesInfo() {
       if (this.alreadyEnded) {
-        return this.$t('challenges.label.over');
+        return !this.small && this.$t('challenges.label.over');
       } else if (this.notStartedYet) {
-        return this.$t('actions.label.opensIn', {0: this.getRemainingDateLabel(this.startDateMillis)});
+        return this.small
+            && this.getRemainingDateLabel(this.startDateMillis)
+            || this.$t('actions.label.opensIn', {0: this.getRemainingDateLabel(this.startDateMillis)});
       } else if (this.endDateMillis) {
-        return this.$t('actions.label.endsIn', {0: this.getRemainingDateLabel(this.endDateMillis)});
+        return this.small
+            && this.getRemainingDateLabel(this.endDateMillis)
+            || this.$t('actions.label.endsIn', {0: this.getRemainingDateLabel(this.endDateMillis)});
       }
       return null;
     },
@@ -59,11 +80,33 @@ export default {
     datesInfo: {
       immediate: true,
       handler() {
+        this.computeLabel();
         this.$emit('input', this.datesInfo);
+      },
+    },
+    label: {
+      immediate: true,
+      handler() {
+        this.$emit('update:label', this.label);
       },
     },
   },
   methods: {
+    computeLabel() {
+      if (this.alreadyEnded) {
+        this.label = null;
+      } else if (this.notStartedYet) {
+        this.label = this.$t('actions.label.opensInShort');
+      } else if (this.endDateMillis) {
+        this.label = this.$t('actions.label.endsInShort');
+      } else {
+        this.label = null;
+      }
+    },
+    getRemainingDays(timeInMs) {
+      const remainingSeconds = parseInt((timeInMs - Date.now()) / 1000);
+      return Math.floor(remainingSeconds / (60 * 60 * 24));
+    },
     getRemainingDateLabel(timeInMs) {
       const remainingSeconds = parseInt((timeInMs - Date.now()) / 1000);
       const days = Math.floor(remainingSeconds / (60 * 60 * 24));
