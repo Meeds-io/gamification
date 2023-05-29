@@ -84,13 +84,6 @@
       ref="rulesFilterDrawer"
       :is-administrator="isAdministrator"
       @apply="applyFilter" />
-    <exo-confirm-dialog
-      ref="deleteRuleConfirmDialog"
-      :title="$t('programs.details.title.confirmDeleteRule')"
-      :message="$t('actions.deleteConfirmMessage')"
-      :ok-label="$t('programs.details.ok.button')"
-      :cancel-label="$t('programs.details.cancel.button')"
-      @ok="deleteRule" />
   </div>
 </template>
 <script>
@@ -103,7 +96,6 @@ export default {
   },
   data: () => ({
     selectedRuleId: null,
-    selectedRule: null,
     loading: true,
     tabName: 'TRENDS',
     rulesSize: 0,
@@ -177,7 +169,6 @@ export default {
     },
   },
   created() {
-    this.$root.$on('rule-delete-confirm', this.confirmDelete);
     this.$root.$on('rule-access-denied', this.displayRuleNotFoundMessage);
     this.$root.$on('rule-not-found', this.displayRuleNotFoundMessage);
     if (window.location.hash) {
@@ -191,7 +182,8 @@ export default {
     }
   },
   beforeDestroy() {
-    this.$root.$off('rule-delete-confirm', this.confirmDelete);
+    this.$root.$off('rule-access-denied', this.displayRuleNotFoundMessage);
+    this.$root.$off('rule-not-found', this.displayRuleNotFoundMessage);
   },
   methods: {
     reset() {
@@ -203,30 +195,6 @@ export default {
     },
     setRulesSize(rulesSize) {
       this.rulesSize = rulesSize;
-    },
-    deleteRule() {
-      this.loading = true;
-      this.$ruleService.deleteRule(this.selectedRule.id)
-        .then(() => {
-          this.$root.$emit('alert-message', this.$t('programs.details.ruleDeleteSuccess'), 'success');
-          this.$root.$emit('rule-deleted', this.selectedRule);
-        })
-        .catch(e => {
-          let msg = '';
-          if (e.message === '401' || e.message === '403') {
-            msg = this.$t('actions.deletePermissionDenied');
-          } else if (e.message  === '404') {
-            msg = this.$t('actions.notFound');
-          } else  {
-            msg = this.$t('actions.deleteError');
-          }
-          this.$root.$emit('alert-message', msg, 'error');
-        })
-        .finally(() => this.loading = false);
-    },
-    confirmDelete(rule) {
-      this.selectedRule = rule;
-      this.$refs.deleteRuleConfirmDialog.open();
     },
     applyFilter(type, status) {
       this.type = type;

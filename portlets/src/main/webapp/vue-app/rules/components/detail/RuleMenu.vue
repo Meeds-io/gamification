@@ -9,8 +9,8 @@
     <template #activator="{ on, attrs }">
       <v-btn
         :class="dark && 'white'"
+        :small="small"
         icon
-        small
         v-bind="attrs"
         v-on="on">
         <v-icon size="16" class="icon-default-color">
@@ -18,7 +18,7 @@
         </v-icon>
       </v-btn>
     </template>
-    <v-list dense class="pa-0">
+    <v-list dense class="pa-0 white">
       <v-list-item
         dense
         @click.prevent.stop="editRule">
@@ -46,6 +46,10 @@ export default {
       default: null
     },
     dark: {
+      type: Boolean,
+      default: false,
+    },
+    small: {
       type: Boolean,
       default: false,
     },
