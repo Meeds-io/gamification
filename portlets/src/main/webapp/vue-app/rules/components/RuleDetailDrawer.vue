@@ -165,6 +165,7 @@ export default {
     validAnnouncement: false,
     sending: false,
     announcementFormOpened: false,
+    drawerUrl: null,
   }),
   computed: {
     expandedView() {
@@ -229,11 +230,17 @@ export default {
         this.$refs.ruleDetailDrawer.startLoading();
       } else {
         this.$refs.ruleDetailDrawer.endLoading();
+        this.updatePagePath();
       }
     }, 
-    drawer() {
+    expanded() {
       this.updatePagePath();
     }, 
+    drawerUrl(newVal, oldVal) {
+      if (newVal && newVal !== oldVal) {
+        window.history.replaceState('challenges', this.$t('program.actions'), newVal);
+      }
+    },
   },
   created() {
     this.$root.$on('rule-detail-drawer', this.open);
@@ -253,7 +260,11 @@ export default {
       this.rule = {id};
 
       this.loading = true;
+      const hash = window.location.hash;
       this.$refs.ruleDetailDrawer.open();
+      if (hash === '#expanded') {
+        this.$nextTick().then(() => this.$refs.ruleDetailDrawer.toogleExpand());
+      }
       this.$ruleService.getRuleById(id, 'countRealizations', 3)
         .then(rule => {
           this.rule = rule;
@@ -289,9 +300,9 @@ export default {
     updatePagePath() {
       if (window.location.pathname.indexOf(this.linkBasePath) >= 0) {
         if (!this.drawer) {
-          window.history.replaceState('challenges', this.$t('program.actions'), this.linkBasePath);
+          this.drawerUrl = this.linkBasePath;
         } else if (this.rule.id) {
-          window.history.replaceState('challenges', this.$t('program.actions'), `${this.linkBasePath}/${this.rule.id}`);
+          this.drawerUrl = `${this.linkBasePath}/${this.rule.id}${this.expanded && '#expanded' || ''}`;
         }
       }
     },
