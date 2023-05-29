@@ -52,7 +52,13 @@
       @filter-button-click="$refs.rulesFilterDrawer.open()" />
     <v-card flat>
       <engagement-center-result-not-found
-        v-if="displayWelcomeMessage"
+        v-if="ruleNotFound"
+        :display-back-arrow="false"
+        :message-title="$t('actions.ruleNotFoundMessage')"
+        :button-text="$t('actions.exploreActions')"
+        @button-event="ruleNotFound = false" />
+      <engagement-center-result-not-found
+        v-else-if="displayWelcomeMessage"
         :display-back-arrow="false"
         :message-title="$t('actions.welcomeMessage')"
         :message-info-one="$t('actions.welcomeMessageForRegularUser')" />
@@ -104,6 +110,7 @@ export default {
     term: '',
     type: 'ALL',
     status: 'STARTED',
+    ruleNotFound: false,
     linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
   }),
   computed: {
@@ -171,6 +178,8 @@ export default {
   },
   created() {
     this.$root.$on('rule-delete-confirm', this.confirmDelete);
+    this.$root.$on('rule-access-denied', this.displayRuleNotFoundMessage);
+    this.$root.$on('rule-not-found', this.displayRuleNotFoundMessage);
     if (window.location.hash) {
       this.tabName = this.extractSelectedTabFromPath();
     }
@@ -185,6 +194,13 @@ export default {
     this.$root.$off('rule-delete-confirm', this.confirmDelete);
   },
   methods: {
+    reset() {
+      this.tabName = 'TRENDS';
+      this.ruleNotFound = false;
+    },
+    displayRuleNotFoundMessage() {
+      this.ruleNotFound = true;
+    },
     setRulesSize(rulesSize) {
       this.rulesSize = rulesSize;
     },
