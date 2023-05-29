@@ -89,6 +89,14 @@
     <engagement-center-rule-achievements-drawer
       ref="achievementsDrawer"
       :action-value-extensions="actionValueExtensions" />
+    <engagement-center-rule-form-drawer ref="ruleFormDrawer" />
+    <exo-confirm-dialog
+      ref="deleteRuleConfirmDialog"
+      :title="$t('programs.details.title.confirmDeleteRule')"
+      :message="$t('actions.deleteConfirmMessage')"
+      :ok-label="$t('programs.details.ok.button')"
+      :cancel-label="$t('programs.details.cancel.button')"
+      @ok="deleteRule" />
   </v-app>
 </template>
 <script>
@@ -100,6 +108,7 @@ export default {
     filter: 'STARTED',
     period: 'WEEK',
     loading: true,
+    selectedRule: null,
     rules: [],
     orderByRealizations: true,
     extensionApp: 'engagementCenterActions',
@@ -129,6 +138,9 @@ export default {
     });
     this.retrieveRules();
     this.$root.$on('announcement-added', this.retrieveRules);
+    this.$root.$on('rule-updated', this.retrieveRules);
+    this.$root.$on('rule-deleted', this.retrieveRules);
+    this.$root.$on('rule-delete-confirm', this.confirmDelete);
   },
   methods: {
     retrieveRules() {
@@ -163,6 +175,30 @@ export default {
       if (changed) {
         this.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
       }
+    },
+    deleteRule() {
+      this.loading = true;
+      this.$ruleService.deleteRule(this.selectedRule.id)
+        .then(() => {
+          this.$root.$emit('alert-message', this.$t('programs.details.ruleDeleteSuccess'), 'success');
+          this.$root.$emit('rule-deleted', this.selectedRule);
+        })
+        .catch(e => {
+          let msg = '';
+          if (e.message === '401' || e.message === '403') {
+            msg = this.$t('actions.deletePermissionDenied');
+          } else if (e.message  === '404') {
+            msg = this.$t('actions.notFound');
+          } else  {
+            msg = this.$t('actions.deleteError');
+          }
+          this.$root.$emit('alert-message', msg, 'error');
+        })
+        .finally(() => this.loading = false);
+    },
+    confirmDelete(rule) {
+      this.selectedRule = rule;
+      this.$refs.deleteRuleConfirmDialog.open();
     },
   },
 };

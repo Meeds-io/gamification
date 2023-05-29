@@ -25,10 +25,14 @@
     v-model="drawer"
     :right="!$vuetify.rtl"
     allow-expand
-    @closed="clear"
+    @closed="onClose"
     @expand-updated="expanded = $event">
     <template #title>
-      <span class="pb-2"> {{ $t('rule.detail.letsSeeWhatToDo') }} </span>
+      {{ $t('rule.detail.letsSeeWhatToDo') }}
+    </template>
+    <template v-if="canEdit" #titleIcons>
+      <engagement-center-rule-menu
+        :rule="rule" />
     </template>
     <template v-if="!loading" #content>
       <v-row class="ma-0 py-0 px-2 text-color">
@@ -185,6 +189,9 @@ export default {
         || this.isPrerequisitesInvalid
         || false;
     },
+    canEdit() {
+      return this.rule?.userInfo?.canEdit;
+    },
     hasRecurrence() {
       return this.rule?.recurrence && this.rule?.recurrence !== 'NONE' || false;
     },
@@ -232,7 +239,12 @@ export default {
         this.$refs.ruleDetailDrawer.endLoading();
         this.updatePagePath();
       }
-    }, 
+    },
+    drawer() {
+      if (!this.drawer) {
+        this.updatePagePath();
+      }
+    },
     expanded() {
       this.updatePagePath();
     }, 
@@ -245,6 +257,8 @@ export default {
   created() {
     this.$root.$on('rule-detail-drawer', this.open);
     this.$root.$on('rule-detail-drawer-by-id', this.openById);
+    this.$root.$on('rule-form-drawer-opened', this.close);
+    this.$root.$on('rule-deleted', this.close);
     document.addEventListener('rule-detail-drawer', event => this.open(event?.detail));
     document.addEventListener('rule-detail-drawer-by-id', event => this.openById(event?.detail));
   },
@@ -265,21 +279,22 @@ export default {
         .then(rule => {
           this.rule = rule;
           this.$refs.ruleDetailDrawer.open();
-          this.loading = false; // Kept to allow displaying this.$refs.ruleAnnouncementForm
           return this.$nextTick();
         })
         .then(() => {
+          this.loading = false; // Kept to allow displaying this.$refs.ruleAnnouncementForm
           if (hash === '#expanded') {
-            return this.$nextTick().then(() => this.$refs.ruleDetailDrawer.toogleExpand());
+            return this.$refs.ruleDetailDrawer.toogleExpand();
           }
+          return this.$nextTick();
         })
         .then(() => {
           if (displayAnnouncementForm) {
-            this.$nextTick().then(() => window.setTimeout(() => {
+            window.setTimeout(() => {
               if (this.$refs.ruleAnnouncementForm) {
                 this.$refs.ruleAnnouncementForm.displayForm();
               }
-            }, 200));
+            }, 200);
           }
           this.collectRuleVisit();
         })
@@ -296,6 +311,9 @@ export default {
     },
     close() {
       this.$refs.ruleDetailDrawer.close();
+    },
+    onClose() {
+      this.clear();
     },
     clear() {
       this.rule = {};
