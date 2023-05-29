@@ -19,7 +19,11 @@
 
 -->
 <template>
-  <div v-if="prerequisitesTitle" class="rule-prerequisites grey">
+  <v-card
+    v-if="prerequisitesTitle"
+    max-width="380"
+    class="rule-prerequisites grey"
+    flat>
     <div class="d-flex align-center pt-4 px-2">
       <v-avatar
         size="32"
@@ -42,7 +46,7 @@
         :rule="rule"
         :prerequisite-rule="r" />
     </div>
-  </div>
+  </v-card>
 </template>
 <script>
 export default {

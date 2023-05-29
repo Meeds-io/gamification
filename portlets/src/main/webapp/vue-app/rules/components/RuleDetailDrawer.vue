@@ -101,7 +101,10 @@
                 <engagement-center-rule-recurrence-validity
                   :rule="rule" />
               </v-col>
-              <v-col v-else-if="isPrerequisitesInvalid" cols="12">
+              <v-col
+                v-else-if="isPrerequisitesInvalid"
+                cols="12"
+                class="px-0">
                 <engagement-center-rule-prerequisites
                   :rule="rule"
                   class="rounded" />
