@@ -60,7 +60,7 @@
       </v-card-title>
       <v-card-text
         v-sanitized-html="description"
-        class="rule-card-description text-truncate-2 pb-0" />
+        class="rule-card-description rich-editor-content text-truncate-2 pb-0" />
       <template v-if="isEnabled">
         <v-spacer />
         <v-card-text v-if="rule.recurrence">

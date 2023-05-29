@@ -77,8 +77,16 @@ export function getRules(filter) {
   });
 }
 
-export function getRuleById(id, expand) {
-  const extraParams = expand && `?expand=${expand}` || '';
+export function getRuleById(id, expand, realizationsLimit) {
+  const formData = new FormData();
+  if (expand) {
+    formData.append('expand', expand);
+  }
+  if (realizationsLimit) {
+    formData.append('realizationsLimit', realizationsLimit);
+  }
+  const params = new URLSearchParams(formData).toString();
+  const extraParams = params && `?${params}` || '';
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules/${id}${extraParams}`, {
     method: 'GET',
     credentials: 'include',

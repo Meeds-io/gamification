@@ -19,28 +19,34 @@
 
 -->
 <template>
-  <v-tooltip :disabled="$root.isMobile" bottom>
-    <template #activator="{ on, attrs }">
-      <v-btn
-        :loading="loading"
-        :class="prerequisiteRuleValid && 'btn' || 'btn-primary'"
-        max-width="250"
-        class="mb-4"
-        v-bind="attrs"
-        v-on="on"
-        @click="openRule">
-        <v-card
-          :class="!prerequisiteRuleValid && 'white--text'"
-          max-width="220"
-          color="transparent"
-          class="text-truncate"
-          flat>
-          {{ buttonLabel }}
-        </v-card>
-      </v-btn>
-    </template>
-    <span>{{ buttonLabel }}</span>
-  </v-tooltip>
+  <v-card
+    max-width="250"
+    color="white"
+    class="width-fit-content mb-4"
+    flat
+    rounded>
+    <v-tooltip :disabled="$root.isMobile" bottom>
+      <template #activator="{ on, attrs }">
+        <v-btn
+          :loading="loading"
+          max-width="250"
+          class="primary-border-color primary--text no-box-shadow"
+          outlined
+          v-bind="attrs"
+          v-on="on"
+          @click="openRule">
+          <v-card
+            max-width="220"
+            color="transparent"
+            class="text-truncate primary--text"
+            flat>
+            {{ prerequisiteRule.title }}
+          </v-card>
+        </v-btn>
+      </template>
+      <span>{{ buttonLabel }}</span>
+    </v-tooltip>
+  </v-card>
 </template>
 <script>
 export default {
@@ -72,10 +78,7 @@ export default {
   },
   methods: {
     openRule() {
-      this.loading = true;
-      this.$ruleService.getRuleById(this.prerequisiteRule.id, 'countRealizations')
-        .then(rule => this.$root.$emit('rule-detail-drawer', rule))
-        .finally(() => this.loading = false);
+      this.$root.$emit('rule-detail-drawer-by-id', this.prerequisiteRule.id);
     },
   },
 };
