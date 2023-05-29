@@ -21,7 +21,10 @@
 <template>
   <div v-if="prerequisitesTitle" class="rule-prerequisites grey">
     <div class="d-flex align-center pt-4 px-2">
-      <v-avatar size="32" class="me-2" tile>
+      <v-avatar
+        size="32"
+        class="me-2"
+        tile>
         <v-icon
           class="white--text"
           size="30">
