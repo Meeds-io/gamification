@@ -37,13 +37,17 @@
             :rule="rule"
             :expanded="expandedView"
             :action-value-extensions="actionValueExtensions" />
+          <v-divider v-if="!expandedView" class="mt-3 mb-1" />
         </v-col>
         <v-col v-if="expandedView" cols="6">
           <engagement-center-rule-program
             :rule="rule" />
         </v-col>
 
-        <v-col :cols="expandedView && 6 || 12" class="py-0">
+        <v-col
+          :cols="expandedView && 6 || 12"
+          :class="!expandedView && 'px-8'"
+          class="py-0">
           <v-row class="ma-0 pa-0">
             <v-col cols="6" class="px-0">
               <engagement-center-rule-points
@@ -51,19 +55,23 @@
             </v-col>
             <v-col cols="6" class="px-0">
               <engagement-center-rule-achievements
-                :rule="rule" />
+                :rule="rule"
+                :class="!expandedView && 'align-end d-flex flex-column'" />
             </v-col>
             <v-col
               v-if="expanded"
               cols="12"
-              class="px-0">
+              class="px-0 py-6">
               <engagement-center-rule-description
                 :rule="rule" />
             </v-col>
           </v-row>
         </v-col>
 
-        <v-col :cols="expandedView && 6 || 12" class="py-0">
+        <v-col
+          :cols="expandedView && 6 || 12"
+          :class="!expandedView && 'px-8'"
+          class="py-0">
           <v-row class="ma-0 pa-0">
             <v-col
               v-if="showEndDate"
@@ -74,10 +82,12 @@
             </v-col>
             <v-col
               v-if="hasRecurrence"
-              cols="6"
-              class="px-0">
+              :class="showEndDate && 'align-end'"
+              class="px-0"
+              cols="6">
               <engagement-center-rule-recurrence
-                :rule="rule" />
+                :rule="rule"
+                :class="showEndDate && !expandedView && 'align-end d-flex flex-column'" />
             </v-col>
             <v-col v-if="canAnnounce" cols="12">
               <engagement-center-rule-announcement-form
@@ -88,32 +98,28 @@
                 @sending="sending = $event"
                 @sent="close" />
             </v-col>
-            <template v-else>
-              <v-col v-if="alreadyEnded" cols="12">
-                <engagement-center-rule-date-over
-                  :rule="rule" />
-              </v-col>
-              <v-col v-else-if="!alreadyStarted" cols="12">
-                <engagement-center-rule-date-start
-                  :rule="rule" />
-              </v-col>
-              <v-col v-else-if="isRecurrenceInvalid" cols="12">
-                <engagement-center-rule-recurrence-validity
-                  :rule="rule" />
-              </v-col>
-              <v-col
+            <v-col
+              v-if="hasValidityMessage"
+              cols="12"
+              class="px-0 py-6">
+              <engagement-center-rule-date-over
+                v-if="alreadyEnded"
+                :rule="rule" />
+              <engagement-center-rule-date-start
+                v-else-if="!alreadyStarted"
+                :rule="rule" />
+              <engagement-center-rule-recurrence-validity
+                v-else-if="isRecurrenceInvalid"
+                :rule="rule" />
+              <engagement-center-rule-prerequisites
                 v-else-if="isPrerequisitesInvalid"
-                cols="12"
-                class="px-0">
-                <engagement-center-rule-prerequisites
-                  :rule="rule"
-                  class="rounded" />
-              </v-col>
-            </template>
+                :rule="rule"
+                class="rounded" />
+            </v-col>
           </v-row>
         </v-col>
 
-        <v-col v-if="!expanded">
+        <v-col v-if="!expanded" :class="!expandedView && 'px-8'">
           <engagement-center-rule-description
             :rule="rule" />
         </v-col>
@@ -162,6 +168,12 @@ export default {
   computed: {
     expandedView() {
       return !this.$root.isMobile && this.expanded;
+    },
+    hasValidityMessage() {
+      return this.alreadyEnded
+        || !this.alreadyStarted
+        || this.isRecurrenceInvalid
+        || this.isPrerequisitesInvalid;
     },
     hasRecurrence() {
       return this.rule?.recurrence && this.rule?.recurrence !== 'NONE';
