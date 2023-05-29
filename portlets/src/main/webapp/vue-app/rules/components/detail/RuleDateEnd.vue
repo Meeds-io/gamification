@@ -19,12 +19,17 @@
 
 -->
 <template>
-  <div class="rule-description">
-    <div class="subtitle-1 font-weight-bold mb-2">
-      {{ $t('rules.description') }}
+  <div class="rule-end-date">
+    <div class="text-sub-title font-italic mb-1">
+      {{ $t('actions.label.endsInShort') }}
     </div>
-    <div class="d-flex flex-row rich-editor-content text-break overflow-hidden">
-      <span v-sanitized-html="rule.description"></span>
+    <div class="d-flex align-center">
+      <v-icon size="26" class="primary--text me-2">
+        fa-calendar-check
+      </v-icon>
+      <engagement-center-rule-date-info
+        :rule="rule"
+        small />
     </div>
   </div>
 </template>

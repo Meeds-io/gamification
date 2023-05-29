@@ -185,7 +185,7 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
       queryContent = querySelect + " WHERE " + StringUtils.join(predicates, " AND ");
     }
     if (!count) {
-      queryContent += " ORDER BY d.title ASC";
+      queryContent += " ORDER BY d.title ASC, d.id DESC";
     }
     return queryContent;
   }
