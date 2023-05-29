@@ -29,53 +29,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <engagement-center-rule-header
         :rule="rule"
         :action-value-extensions="actionValueExtensions"
-        class="pa-4" />
+        class="pa-4"
+        reduced />
       <v-list-item>
         <v-list-item-title class="text-color font-weight-bold">
           {{ $t('rules.latestAchievements') }}
         </v-list-item-title>
       </v-list-item>
-      <v-list-item
+      <engagement-center-rule-achievement-item
         v-for="realization in realizations"
-        :key="realization.user">
-        <v-list-item-content class="d-inline">
-          <exo-user-avatar
-            :profile-id="realization.user"
-            :size="44"
-            bold-title
-            link-style
-            popover>
-            <template slot="subTitle">
-              <a :href="getLinkActivity(realization.activityId)">
-                <relative-date-format
-                  class="text-capitalize-first-letter text-light-color text-truncate"
-                  :value="realization.createDate" />
-              </a>
-            </template>
-          </exo-user-avatar>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-tooltip :disabled="$root.isMobile" bottom>
-            <template #activator="{ on }">
-              <div v-on="on">
-                <v-btn
-                  :href="`${basePath}/activity?id=${realization.activityId}`"
-                  :disabled="!realization.activityId"
-                  icon>
-                  <v-icon
-                    size="16"
-                    class="icon-default-color">
-                    fas fa-eye
-                  </v-icon>
-                </v-btn>
-              </div>
-            </template>
-            <span>{{ realization.activityId && $t('program.winner.label.checkActivity') || noActivityLabel }}</span>
-          </v-tooltip>
-        </v-list-item-action>
-      </v-list-item>
+        :key="realization.id"
+        :realization="realization"
+        :rule="rule" />
     </template>
-    <template v-if="hasMore" slot="footer">
+    <template v-if="hasMore" #footer>
       <v-btn
         :loading="loading"
         class="btn ma-auto"
@@ -110,16 +77,9 @@ export default {
       realizations: [],
       earnerType: 'USER',
       status: 'ACCEPTED',
-      basePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}`,
     };
   },
   computed: {
-    noActivityLabel() {
-      return this.$t(`program.winner.label.${this.automaticRule ? 'noActivity' : 'activityDeleted'}`);
-    },
-    automaticRule() {
-      return this.rule?.type === 'AUTOMATIC';
-    },
     ruleId() {
       return this.rule?.id;
     },
@@ -148,7 +108,7 @@ export default {
       this.limit = this.pageSize;
       this.rule = rule;
       this.realizationsCount = rule?.realizationsCount;
-      this.realizations = rule?.realizations || [];
+      this.realizations = [];
       this.retrieveRealizations();
       this.$refs.drawer.open();
     },
@@ -171,19 +131,18 @@ export default {
         .then(data => {
           this.realizationsCount = data.size || 0;
           if (data.realizations?.length) {
-            this.realizations = data.realizations
-              .map(realization => {
-                const user = realization?.earner?.remoteId;
-                if (user) {
-                  const activityId = realization.activityId || (realization.objectType === 'activity' && realization.objectId);
-                  return {
-                    id: realization.id,
-                    user,
-                    activityId,
-                    createDate: realization.createdDate,
-                  };
-                }
-              }).filter(a => !!a);
+            data.realizations
+              .filter(realization => !this.realizations.find(r => r.id === realization.id) && realization?.earner?.remoteId)
+              .forEach(realization => {// Avoid blink effect when loading more, thus add one by one
+                const activityId = realization.activityId || (realization.objectType === 'activity' && realization.objectId);
+                this.realizations.push({
+                  id: realization.id,
+                  user: realization?.earner?.remoteId,
+                  activityId,
+                  createDate: realization.createdDate,
+                });
+                this.realizations = this.realizations.slice();
+              });
           } else {
             this.realizations = [];
           }

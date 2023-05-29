@@ -19,13 +19,11 @@
 
 -->
 <template>
-  <div class="rule-description">
-    <div class="subtitle-1 font-weight-bold mb-2">
-      {{ $t('rules.description') }}
-    </div>
-    <div class="d-flex flex-row rich-editor-content text-break overflow-hidden">
-      <span v-sanitized-html="rule.description"></span>
-    </div>
+  <div class="rule-end-date-over d-flex align-center justify-center">
+    <v-icon size="26" class="primary--text me-2">
+      far fa-calendar-check
+    </v-icon>
+    <span>{{ $t('rules.datesOverDescription') }}</span>
   </div>
 </template>
 <script>

@@ -40,7 +40,13 @@ export default {
       return this.rule?.userInfo?.context?.validRecurrence;
     },
     nextOccurenceDaysLeft() {
-      return this.rule?.userInfo?.context?.nextOccurenceDaysLeft;
+      const diff = this.rule?.userInfo?.context?.nextOccurenceMillis;
+      if (diff) {
+        const days = Math.floor(diff / 1000 / (60 * 60 * 24));
+        return days + 1;
+      } else {
+        return 0;
+      }
     },
     recurrenceTitle() {
       if (!this.nextOccurenceDaysLeft
@@ -48,7 +54,7 @@ export default {
           && (this.recurrence === 'DAILY'
               || this.recurrence === 'WEEKLY'
               || this.recurrence === 'MONTHLY')) {
-        return this.$t('rules.card.actionAlreadyDone');
+        return this.$t('rules.card.actionCantAchieveAgainBeforeEndDate');
       }
       switch (this.recurrence) {
       case 'ONCE':

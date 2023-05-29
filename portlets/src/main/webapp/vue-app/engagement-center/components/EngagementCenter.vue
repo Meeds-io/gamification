@@ -22,9 +22,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-model="tab"
         slider-size="4"
         class="mb-4">
-        <v-tab class="px-5">{{ $t('engagementCenter.label.programs') }}</v-tab>
-        <v-tab class="px-5">{{ $t('engagementCenter.label.actions') }}</v-tab>
-        <v-tab class="px-5">{{ $t('engagementCenter.label.achievements') }}</v-tab>
+        <v-tab class="px-5" @click="resetSelection">{{ $t('engagementCenter.label.programs') }}</v-tab>
+        <v-tab class="px-5" @click="resetSelection">{{ $t('engagementCenter.label.actions') }}</v-tab>
+        <v-tab class="px-5" @click="resetSelection">{{ $t('engagementCenter.label.achievements') }}</v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item>
@@ -122,10 +122,8 @@ export default {
     },
   },
   created() {
-    this.$root.$on('open-program-detail', program => {
-      this.program = program;
-      this.displayProgramDetail = true;
-    });
+    this.$root.$on('program-added', this.openProgramDetail);
+    this.$root.$on('open-program-detail', this.openProgramDetail);
     this.$root.$on('close-program-detail', () => this.displayProgramDetail = false);
     this.initTabs();
     this.$ruleService.getEvents()
@@ -142,6 +140,14 @@ export default {
         this.avoidAddToHistory = true;
       }
       this.switchTabs();
+    },
+    resetSelection() {
+      this.displayProgramDetail = false;
+      this.$nextTick().then(() => this.program = null);
+    },
+    openProgramDetail(program) {
+      this.program = program;
+      this.displayProgramDetail = true;
     },
     switchTabs() {
       const urlPath = document.location.pathname;

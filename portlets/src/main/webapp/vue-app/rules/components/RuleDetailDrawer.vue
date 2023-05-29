@@ -25,35 +25,106 @@
     v-model="drawer"
     :right="!$vuetify.rtl"
     allow-expand
-    @closed="clear">
+    @closed="clear"
+    @expand-updated="expanded = $event">
     <template #title>
       <span class="pb-2"> {{ $t('rule.detail.letsSeeWhatToDo') }} </span>
     </template>
     <template v-if="!loading" #content>
-      <v-card-text>
-        <engagement-center-rule-header
-          :rule="rule"
-          :action-value-extensions="actionValueExtensions" />
-        <engagement-center-rule-description
-          :rule="rule" />
-        <engagement-center-rule-program
-          :rule="rule" />
-        <engagement-center-rule-achievements
-          :rule="rule" />
-        <engagement-center-rule-recurrence
-          :rule="rule" />
-        <engagement-center-rule-dates
-          :rule="rule" />
-        <engagement-center-rule-prerequisites
-          :rule="rule" />
-        <engagement-center-rule-announcement-form
-          ref="ruleAnnouncementForm"
-          v-model="validAnnouncement"
-          :rule="rule"
-          @form-opened="announcementFormOpened = $event"
-          @sending="sending = $event"
-          @sent="close" />
-      </v-card-text>
+      <v-row class="ma-0 py-0 px-2 text-color">
+        <v-col :cols="expandedView && 6 || 12">
+          <engagement-center-rule-header
+            :rule="rule"
+            :expanded="expandedView"
+            :action-value-extensions="actionValueExtensions" />
+          <v-divider v-if="!expandedView" class="mt-3 mb-1" />
+        </v-col>
+        <v-col v-if="expandedView" cols="6">
+          <engagement-center-rule-program
+            :rule="rule" />
+        </v-col>
+
+        <v-col
+          :cols="expandedView && 6 || 12"
+          :class="!expandedView && 'px-8'"
+          class="py-0">
+          <v-row class="ma-0 pa-0">
+            <v-col cols="6" class="px-0">
+              <engagement-center-rule-points
+                :rule="rule" />
+            </v-col>
+            <v-col cols="6" class="px-0">
+              <engagement-center-rule-achievements
+                :rule="rule"
+                :class="!expandedView && 'align-end d-flex flex-column'" />
+            </v-col>
+            <v-col
+              v-if="expanded"
+              cols="12"
+              class="px-0 py-6">
+              <engagement-center-rule-description
+                :rule="rule" />
+            </v-col>
+          </v-row>
+        </v-col>
+
+        <v-col
+          v-if="hasDetails"
+          :cols="expandedView && 6 || 12"
+          :class="!expandedView && 'px-8'"
+          class="py-0">
+          <v-row class="ma-0 pa-0">
+            <v-col
+              v-if="showEndDate"
+              cols="6"
+              class="px-0">
+              <engagement-center-rule-date-end
+                :rule="rule" />
+            </v-col>
+            <v-col
+              v-if="hasRecurrence"
+              :class="showEndDate && 'align-end'"
+              class="px-0"
+              cols="6">
+              <engagement-center-rule-recurrence
+                :rule="rule"
+                :class="showEndDate && !expandedView && 'align-end d-flex flex-column'" />
+            </v-col>
+            <v-col v-if="canAnnounce" cols="12">
+              <engagement-center-rule-announcement-form
+                ref="ruleAnnouncementForm"
+                v-model="validAnnouncement"
+                :rule="rule"
+                @form-opened="announcementFormOpened = $event"
+                @sending="sending = $event"
+                @sent="close" />
+            </v-col>
+            <v-col
+              v-else-if="hasValidityMessage"
+              cols="12"
+              class="px-0 py-6">
+              <engagement-center-rule-date-over
+                v-if="alreadyEnded"
+                :rule="rule" />
+              <engagement-center-rule-date-start
+                v-else-if="!alreadyStarted"
+                :rule="rule" />
+              <engagement-center-rule-recurrence-validity
+                v-else-if="isRecurrenceInvalid"
+                :rule="rule" />
+              <engagement-center-rule-prerequisites
+                v-else-if="isPrerequisitesInvalid"
+                :rule="rule"
+                class="rounded" />
+            </v-col>
+          </v-row>
+        </v-col>
+
+        <v-col v-if="!expanded" :class="!expandedView && 'px-8'">
+          <engagement-center-rule-description
+            :rule="rule" />
+        </v-col>
+      </v-row>
     </template>
     <template v-if="announcementFormOpened" #footer>
       <div class="d-flex mr-2">
@@ -87,6 +158,7 @@ export default {
   },
   data: () => ({
     drawer: false,
+    expanded: false,
     rule: {},
     loading: false,
     linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
@@ -94,6 +166,56 @@ export default {
     sending: false,
     announcementFormOpened: false,
   }),
+  computed: {
+    expandedView() {
+      return !this.$root.isMobile && this.expanded;
+    },
+    hasDetails() {
+      return this.hasValidityMessage
+        || this.canAnnounce
+        || this.hasRecurrence
+        || this.showEndDate
+        || false;
+    },
+    hasValidityMessage() {
+      return this.alreadyEnded
+        || !this.alreadyStarted
+        || this.isRecurrenceInvalid
+        || this.isPrerequisitesInvalid
+        || false;
+    },
+    hasRecurrence() {
+      return this.rule?.recurrence && this.rule?.recurrence !== 'NONE' || false;
+    },
+    isRecurrenceInvalid() {
+      return this.hasRecurrence && !this.rule?.userInfo?.context?.validRecurrence;
+    },
+    isPrerequisitesInvalid() {
+      const prerequisitesStatus = this.rule?.userInfo?.context?.validPrerequisites;
+      if (!prerequisitesStatus || !this.rule?.prerequisiteRules?.length) {
+        return false;
+      }
+      return this.rule.prerequisiteRules.filter(r => !prerequisitesStatus[`${r.id}`]).length;
+    },
+    startDateMillis() {
+      return this.rule?.startDate && new Date(this.rule?.startDate).getTime() || 0;
+    },
+    endDateMillis() {
+      return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
+    },
+    alreadyStarted() {
+      return !this.startDateMillis || this.startDateMillis < Date.now();
+    },
+    alreadyEnded() {
+      return this.endDateMillis && this.endDateMillis < Date.now();
+    },
+    showEndDate() {
+      return !this.alreadyEnded && this.alreadyStarted && this.endDateMillis || false;
+    },
+    canAnnounce() {
+      return this.rule?.userInfo?.context?.valid && this.rule?.type === 'MANUAL';
+    },
+  },
   watch: {
     sending() {
       if (this.sending) {
@@ -132,15 +254,17 @@ export default {
 
       this.loading = true;
       this.$refs.ruleDetailDrawer.open();
-      this.$ruleService.getRuleById(id, 'countRealizations')
+      this.$ruleService.getRuleById(id, 'countRealizations', 3)
         .then(rule => {
           this.rule = rule;
           this.loading = false; // Kept to allow displaying this.$refs.ruleAnnouncementForm
-          this.$nextTick().then(() => window.setTimeout(() => {
-            if (this.$refs.ruleAnnouncementForm && displayAnnouncementForm) {
-              this.$refs.ruleAnnouncementForm.displayForm();
-            }
-          }, 200));
+          if (displayAnnouncementForm) {
+            this.$nextTick().then(() => window.setTimeout(() => {
+              if (this.$refs.ruleAnnouncementForm) {
+                this.$refs.ruleAnnouncementForm.displayForm();
+              }
+            }, 200));
+          }
           this.collectRuleVisit();
         })
         .finally(() => this.loading = false);
