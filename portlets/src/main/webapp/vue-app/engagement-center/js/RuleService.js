@@ -94,7 +94,7 @@ export function getRuleById(id, expand, realizationsLimit) {
     if (resp?.ok) {
       return resp.json();
     } else {
-      throw new Error(`Error retrieving rule by id ${id}`);
+      throw new Error(`Error retrieving rule. Status code: ${resp.status}`);
     }
   });
 }

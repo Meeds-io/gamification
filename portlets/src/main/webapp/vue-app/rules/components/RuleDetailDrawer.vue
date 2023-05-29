@@ -258,17 +258,22 @@ export default {
       }
       this.clear();
       this.rule = {id};
+      const hash = window.location.hash;
 
       this.loading = true;
-      const hash = window.location.hash;
-      this.$refs.ruleDetailDrawer.open();
-      if (hash === '#expanded') {
-        this.$nextTick().then(() => this.$refs.ruleDetailDrawer.toogleExpand());
-      }
       this.$ruleService.getRuleById(id, 'countRealizations', 3)
         .then(rule => {
           this.rule = rule;
+          this.$refs.ruleDetailDrawer.open();
           this.loading = false; // Kept to allow displaying this.$refs.ruleAnnouncementForm
+          return this.$nextTick();
+        })
+        .then(() => {
+          if (hash === '#expanded') {
+            return this.$nextTick().then(() => this.$refs.ruleDetailDrawer.toogleExpand());
+          }
+        })
+        .then(() => {
           if (displayAnnouncementForm) {
             this.$nextTick().then(() => window.setTimeout(() => {
               if (this.$refs.ruleAnnouncementForm) {
@@ -277,6 +282,15 @@ export default {
             }, 200));
           }
           this.collectRuleVisit();
+        })
+        .catch(e => {
+          this.$refs.ruleDetailDrawer.close();
+          const message = `${e}`;
+          if (message.includes('403') || message.includes('401')) {
+            this.$root.$emit('rule-access-denied', id);
+          } else {
+            this.$root.$emit('rule-not-found', id);
+          }
         })
         .finally(() => this.loading = false);
     },
