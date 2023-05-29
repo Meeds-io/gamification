@@ -11,6 +11,7 @@ import RuleAchievements from './components/detail/RuleAchievements.vue';
 import RuleAchievementItem from './components/detail/RuleAchievementItem.vue';
 import RuleProgram from './components/detail/RuleProgram.vue';
 import RuleHeader from './components/detail/RuleHeader.vue';
+import RuleMenu from './components/detail/RuleMenu.vue';
 import RuleDescription from './components/detail/RuleDescription.vue';
 import RuleRecurrence from './components/detail/RuleRecurrence.vue';
 import RuleRecurrenceValidity from './components/detail/RuleRecurrenceValidity.vue';
@@ -36,6 +37,7 @@ const components = {
 
   'engagement-center-rule-detail-drawer': RuleDetailDrawer,
   'engagement-center-rule-header': RuleHeader,
+  'engagement-center-rule-menu': RuleMenu,
   'engagement-center-rule-description': RuleDescription,
   'engagement-center-rule-program': RuleProgram,
   'engagement-center-rule-achievements': RuleAchievements,
