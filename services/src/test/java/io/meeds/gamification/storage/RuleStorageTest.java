@@ -106,14 +106,6 @@ public class RuleStorageTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetAllEvents() {
-    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
-    newRule("rule1", 1L);
-    newRule("rule2", 2L);
-    assertEquals(ruleStorage.getAllEvents().size(), 2);
-  }
-
-  @Test
   public void testDeleteRule() throws ObjectNotFoundException {
     assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule = newRuleDTO();

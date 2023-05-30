@@ -211,7 +211,7 @@ export default {
           } else  {
             msg = this.$t('challenges.announcementErrorSave');
           }
-          this.$engagementCenterUtils.displayAlert(msg, 'error');
+          this.$root.$emit('alert-message', msg, 'error');
         })
         .finally(() => this.sending = false);
     },

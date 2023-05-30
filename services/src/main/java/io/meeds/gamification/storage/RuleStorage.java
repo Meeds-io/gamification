@@ -80,10 +80,6 @@ public class RuleStorage {
     return ruleDAO.findRulesIdsByFilter(new RuleFilter(), offset, limit);
   }
 
-  public List<String> getAllEvents() {
-    return ruleDAO.getAllEvents();
-  }
-
   public RuleDTO deleteRuleById(long ruleId, String userId) throws ObjectNotFoundException {
     return deleteRuleById(ruleId, userId, false);
   }
