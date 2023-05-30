@@ -141,16 +141,6 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     return score == null ? 0 : score.intValue();
   }
 
-  public List<String> getAllEvents() throws PersistenceException {
-    TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getEventList", String.class);
-    query.setParameter("type", EntityType.AUTOMATIC);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
-  }
-
   public List<Long> findRulesIdsByFilter(RuleFilter filter, int offset, int limit) {
     TypedQuery<Tuple> query = buildQueryFromFilter(filter, Tuple.class, false);
     if (offset > 0) {
