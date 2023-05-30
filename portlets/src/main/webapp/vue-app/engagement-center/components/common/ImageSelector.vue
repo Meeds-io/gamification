@@ -79,11 +79,11 @@ export default {
     uploadCover(file) {
       if (file && file.size) {
         if (file.type && file.type.indexOf('image/') !== 0) {
-          this.$engagementCenterUtils.displayAlert(this.$t('engagementCenter.error.uploadUnsupportedFileType'), 'error');
+          this.$root.$emit('alert-message', this.$t('engagementCenter.error.uploadUnsupportedFileType'), 'error');
           return;
         }
         if (file.size > this.maxUploadsSize) {
-          this.$engagementCenterUtils.displayAlert(this.$t('programs.imageSize.errorMessage'), 'error');
+          this.$root.$emit('alert-message', this.$t('programs.imageSize.errorMessage'), 'error');
           return;
         }
         const thiss = this;
@@ -97,9 +97,7 @@ export default {
             reader.readAsDataURL(file);
             this.$emit('updated', uploadId);
           })
-          .catch(() =>
-            this.$engagementCenterUtils.displayAlert(this.$t('programs.cover.uploadErrorMessage'), 'error')
-          );
+          .catch(() => this.$root.$emit('alert-message', this.$t('programs.cover.uploadErrorMessage'), 'error'));
       }
     },
     reset() {

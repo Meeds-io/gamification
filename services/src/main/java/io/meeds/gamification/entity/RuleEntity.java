@@ -74,11 +74,6 @@ import lombok.EqualsAndHashCode;
       + " AND rule.type = :type"
 )
 @NamedQuery(
-  name = "Rule.getEventList",
-  query = "SELECT DISTINCT(rule.event) FROM Rule rule" +
-      " WHERE rule.type = :type"
-)
-@NamedQuery(
  name = "Rule.getRulesTotalScoreByDomain",
  query =
     " SELECT SUM(rule.score) FROM Rule rule " +

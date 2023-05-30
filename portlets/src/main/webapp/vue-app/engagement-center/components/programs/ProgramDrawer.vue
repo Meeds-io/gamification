@@ -341,12 +341,12 @@ export default {
           .then((program) => {
             this.originalProgram = null;
             this.$root.$emit('program-updated', program);
-            this.$engagementCenterUtils.displayAlert(this.$t('programs.programUpdateSuccess'));
+            this.$root.$emit('alert-message', this.$t('programs.programUpdateSuccess'), 'success');
             return this.$nextTick();
           })
           .then(() => this.close())
           .catch(() => {
-            this.$engagementCenterUtils.displayAlert(this.$t('programs.programUpdateError'), 'error');
+            this.$root.$emit('alert-message', this.$t('programs.programUpdateError'), 'error');
           })
           .finally(() => this.loading = false);
       } else {
@@ -354,12 +354,12 @@ export default {
           .then((program) => {
             this.originalProgram = null;
             this.$root.$emit('program-added', program);
-            this.$engagementCenterUtils.displayAlert(this.$t('programs.programCreateSuccess'));
+            this.$root.$emit('alert-message', this.$t('programs.programCreateSuccess'), 'success');
             return this.$nextTick();
           })
           .then(() => this.close())
           .catch(() => {
-            this.$engagementCenterUtils.displayAlert(this.$t('programs.programCreateError'), 'error');
+            this.$root.$emit('alert-message', this.$t('programs.programCreateError'), 'error');
           })
           .finally(() => this.loading = false);
       }
