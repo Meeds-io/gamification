@@ -20,6 +20,7 @@ import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -52,6 +53,8 @@ public class RuleServiceImpl implements RuleService {
   private final SpaceService    spaceService;
 
   private final ListenerService listenerService;
+
+  private final List<String>    automaticEventNames           = new ArrayList<>();
 
   public RuleServiceImpl(ProgramService programService,
                          RuleStorage ruleStorage,
@@ -149,7 +152,14 @@ public class RuleServiceImpl implements RuleService {
 
   @Override
   public List<String> getAllEvents() {
-    return ruleStorage.getAllEvents();
+    return Collections.unmodifiableList(automaticEventNames);
+  }
+
+  @Override
+  public void addAutomaticEvent(String eventName) {
+    if (!automaticEventNames.contains(eventName)) {
+      automaticEventNames.add(eventName);
+    }
   }
 
   @Override

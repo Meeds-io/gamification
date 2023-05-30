@@ -95,6 +95,13 @@ public interface RuleService {
   List<String> getAllEvents();
 
   /**
+   * Add automatic event name
+   * 
+   * @param eventName Automatic Rule Event Name
+   */
+  void addAutomaticEvent(String eventName);
+
+  /**
    * Deletes an existing rule
    *
    * @param  ruleId                  Rule technical identifier to delete
