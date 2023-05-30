@@ -28,7 +28,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="btn btn-primary"
           @click="openChallengeDrawer">
           <v-icon small>fas fa-plus</v-icon>
-          <span class="mx-2 d-none d-lg-inline text-capitalize-first-letter subtitle-1">
+          <span 
+            :class="textNone"
+            class="mx-2 d-none d-lg-inline text-capitalize-first-letter subtitle-1">
             {{ $t('challenges.button.addChallenge') }}
           </span>
         </v-btn>
@@ -199,6 +201,10 @@ export default {
     providedId() {
       return this.challengeIdFromUrl ? this.challengeIdFromUrl : this.challengeId;
     },
+    
+    textNone() {
+      return eXo.env.portal.language === 'de' && 'text-none' || '';
+    }
   },
   watch: {
     search()  {
