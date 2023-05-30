@@ -78,6 +78,7 @@ import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.BadgeService;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
+import io.meeds.gamification.service.RuleRegistry;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.ProgramStorage;
 import io.meeds.gamification.storage.RealizationStorage;
@@ -158,6 +159,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RuleService                  ruleService;
 
+  protected RuleRegistry                 ruleRegistry;
+
   protected RealizationService           realizationService;
 
   protected BadgeDAO                     badgeStorage;
@@ -208,6 +211,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     badgeService = ExoContainerContext.getService(BadgeService.class);
     programService = ExoContainerContext.getService(ProgramService.class);
     ruleService = ExoContainerContext.getService(RuleService.class);
+    ruleRegistry = ExoContainerContext.getService(RuleRegistry.class);
     realizationService = ExoContainerContext.getService(RealizationService.class);
     entityManagerService = ExoContainerContext.getService(EntityManagerService.class);
     manageBadgesEndpoint = ExoContainerContext.getService(BadgeRest.class);
