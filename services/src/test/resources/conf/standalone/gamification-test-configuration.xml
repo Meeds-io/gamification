@@ -103,6 +103,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
+        <key>io.meeds.gamification.service.RuleRegistry</key>
+        <type>io.meeds.gamification.service.impl.RuleRegistryImpl</type>
+    </component>
+
+    <component>
         <type>org.exoplatform.commons.search.es.client.ElasticIndexingAuditTrail</type>
     </component>
 

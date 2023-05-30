@@ -212,11 +212,12 @@ export default {
     deleteProgram() {
       this.loading = true;
       this.$programService.deleteProgram(this.selectedProgram.id)
+        .then(() => this.retrievePrograms())
         .then(() => {
+          this.$root.$emit('alert-message', this.$t('programs.programDeleteSuccess'), 'success');
           this.$root.$emit('program-deleted', this.selectedProgram);
-          this.$engagementCenterUtils.displayAlert(this.$t('programs.programDeleteSuccess'));
-          this.retrievePrograms();
         })
+        .catch(() => this.$root.$emit('alert-message', this.$t('programs.programDeleteError'), 'success'))
         .finally(() => this.loading = false);
     },
     confirmDelete(program) {
