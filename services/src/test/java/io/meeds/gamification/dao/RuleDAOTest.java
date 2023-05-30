@@ -71,16 +71,6 @@ public class RuleDAOTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetAllEvents() {
-    assertEquals(ruleDAO.findAll().size(), 0);
-    ProgramEntity domainEntity = newDomain();
-    newRule("rule1", domainEntity.getId());
-    newRule("rule1", domainEntity.getId());
-    newRule("rule2", domainEntity.getId());
-    assertEquals(ruleDAO.getAllEvents().size(), 2);
-  }
-
-  @Test
   public void testFindHighestBudgetDomainIds() {
     ProgramEntity firstDomain = newDomain("firstDomain");
     ProgramEntity secondDomain = newDomain("secondDomain");

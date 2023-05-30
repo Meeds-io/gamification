@@ -69,15 +69,6 @@ export function getFromDate(date) {
   return `${date.toLocaleDateString(lang || 'en', options)} ${day}, ${year}` ;
 }
 
-export function displayAlert(message, type) {
-  document.dispatchEvent(new CustomEvent('notification-alert', {
-    detail: {
-      message,
-      type: type || 'success',
-    }
-  }));
-}
-
 export const getIsoDate = (time) => {
   const date = new Date(time);
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T00:00:00`;
