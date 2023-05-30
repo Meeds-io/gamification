@@ -27,6 +27,8 @@ import java.util.List;
 import org.junit.Test;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.container.xml.ValueParam;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.MembershipEntry;
 
@@ -40,6 +42,7 @@ import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.RuleFilter;
+import io.meeds.gamification.plugin.RuleConfigPlugin;
 import io.meeds.gamification.storage.mapper.RuleMapper;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
@@ -107,15 +110,32 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetAllEvents() {
-    assertEquals(ruleDAO.findAll().size(), 0);
-    ProgramEntity firstDomain = newDomain("firstDomain");
-    ProgramEntity secondDomain = newDomain("secondDomain");
-    ProgramEntity thirdDomain = newDomain("thirdDomain");
-    newRule("rule1", firstDomain.getId());
-    newRule("rule1", secondDomain.getId());
-    newRule("rule2", thirdDomain.getId());
-    assertEquals(ruleService.getAllEvents().size(), 2);
+  public void testGetAllEvents() throws Exception {
+    List<String> allEvents = ruleService.getAllEvents();
+    int initialSize = allEvents.size();
+    String eventName1 = "test-event1";
+    String eventName2 = "test-event2";
+
+    InitParams params = new InitParams();
+    ValueParam valueParam = new ValueParam();
+    valueParam.setName("rule-event");
+    valueParam.setValue(eventName1);
+    params.addParameter(valueParam);
+    params.addParameter(valueParam);
+    ruleRegistry.addPlugin(new RuleConfigPlugin(params));
+
+    params = new InitParams();
+    valueParam = new ValueParam();
+    valueParam.setName("rule-title");
+    valueParam.setValue(eventName2);
+    params.addParameter(valueParam);
+    params.addParameter(valueParam);
+    ruleRegistry.addPlugin(new RuleConfigPlugin(params));
+
+    allEvents = ruleService.getAllEvents();
+    assertEquals(initialSize + 2, allEvents.size());
+    assertTrue(allEvents.contains(eventName1));
+    assertTrue(allEvents.contains(eventName2));
   }
 
   @Test
