@@ -484,7 +484,7 @@ export default {
           .then(rule => {
             this.originalRule = null;
             this.$root.$emit('rule-updated', rule);
-            this.displayAlert(this.$t('programs.details.ruleUpdateSuccess'));
+            this.$root.$emit('alert-message', this.$t('programs.details.ruleUpdateSuccess'), 'success');
             return this.$nextTick();
           })
           .then(() => this.close())
@@ -498,7 +498,7 @@ export default {
           .then(rule => {
             this.originalRule = null;
             this.$root.$emit('rule-created', rule);
-            this.displayAlert(this.$t('programs.details.ruleCreationSuccess'));
+            this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationSuccess'), 'success');
             return this.$nextTick();
           })
           .then(() => this.close())
@@ -550,12 +550,6 @@ export default {
     updatePrerequisiteRuleCondition() {
       this.prerequisiteRuleCondition = !this.prerequisiteRuleCondition;
       this.$set(this.rule,'prerequisiteRules', []);
-    },
-    displayAlert(message, type) {
-      document.dispatchEvent(new CustomEvent('notification-alert', {detail: {
-        message,
-        type: type || 'success',
-      }}));
     },
     nextStep(event) {
       if (event) {

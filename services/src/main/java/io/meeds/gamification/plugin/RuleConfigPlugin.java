@@ -17,7 +17,6 @@
 package io.meeds.gamification.plugin;
 
 import org.exoplatform.container.component.BaseComponentPlugin;
-import org.exoplatform.container.configuration.ConfigurationException;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.ValueParam;
 
@@ -40,9 +39,7 @@ public class RuleConfigPlugin extends BaseComponentPlugin {
 
         ValueParam titleParam = params.getValueParam("rule-title");
 
-        if (titleParam == null) {
-            throw new ConfigurationException("No 'rule-title' parameter found");
-        } else {
+        if (titleParam != null) {
             title = titleParam.getValue();
         }
 
