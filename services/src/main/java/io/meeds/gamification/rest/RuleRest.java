@@ -75,6 +75,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Path("/gamification/rules")
 @Tag(name = "/gamification/rules", description = "Manages rules")
 public class RuleRest implements ResourceContainer {
+
   private final CacheControl   cacheControl;
 
   protected ProgramService     programService;
@@ -174,6 +175,9 @@ public class RuleRest implements ResourceContainer {
                            @QueryParam("returnSize")
                            @DefaultValue("false")
                            boolean returnSize,
+                           @Parameter(description = "Used to retrieve the title and description in requested language")
+                           @QueryParam("lang")
+                           String lang,
                            @Parameter(description = "Asking for a full representation of a specific subresource, ex: userRealizations")
                            @QueryParam("expand")
                            String expand) {
@@ -188,6 +192,7 @@ public class RuleRest implements ResourceContainer {
     String currentUser = Utils.getCurrentUser();
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setTerm(term);
+    ruleFilter.setLocale(getLocale(lang));
     ruleFilter.setDateFilterType(dateFilter == null ? DateFilterType.ALL : dateFilter);
     ruleFilter.setEntityFilterType(ruleType == null ? EntityFilterType.ALL : ruleType);
     ruleFilter.setEntityStatusType(ruleStatus == null ? EntityStatusType.ALL : ruleStatus);
@@ -208,7 +213,7 @@ public class RuleRest implements ResourceContainer {
         RuleList ruleList = new RuleList();
         List<RuleRestEntity> ruleEntities = getUserRulesByProgram(ruleFilter,
                                                                   periodType,
-                                                                  getLocale(request),
+                                                                  getLocale(lang),
                                                                   expandFields,
                                                                   currentUser,
                                                                   offset,
@@ -233,7 +238,7 @@ public class RuleRest implements ResourceContainer {
           ruleFilter.setProgramId(program.getId());
           List<RuleRestEntity> ruleEntities = getUserRulesByProgram(ruleFilter,
                                                                     periodType,
-                                                                    getLocale(request),
+                                                                    getLocale(lang),
                                                                     expandFields,
                                                                     currentUser,
                                                                     offset,
@@ -276,6 +281,9 @@ public class RuleRest implements ResourceContainer {
                           @Schema(defaultValue = "0")
                           @QueryParam("realizationsLimit")
                           int realizationsLimit,
+                          @Parameter(description = "Used to retrieve the title and description in requested language")
+                          @QueryParam("lang")
+                          String lang,
                           @Parameter(description = "Asking for a full representation of a specific subresource, ex: countRealizations", required = false)
                           @QueryParam("expand")
                           String expand) {
@@ -289,7 +297,7 @@ public class RuleRest implements ResourceContainer {
                                                            realizationService,
                                                            translationService,
                                                            rule,
-                                                           getLocale(request),
+                                                           getLocale(lang),
                                                            expandFields,
                                                            realizationsLimit,
                                                            false,
@@ -398,6 +406,10 @@ public class RuleRest implements ResourceContainer {
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     }
+  }
+
+  private Locale getLocale(String lang) {
+    return StringUtils.isBlank(lang) ? null : Locale.forLanguageTag(lang);
   }
 
   private Locale getLocale(HttpServletRequest request) {

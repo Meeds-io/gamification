@@ -346,6 +346,7 @@ export default {
         limit: itemsPerPage,
         realizationsLimit: this.realizationsLimit,
         returnSize: true,
+        lang: eXo.env.portal.language,
       })
         .then((data) => {
           this.programRules = data.rules || [];
