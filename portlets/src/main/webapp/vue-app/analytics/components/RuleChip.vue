@@ -62,7 +62,9 @@ export default {
     if (this.ruleId) {
       this.loading = true;
       this.error = false;
-      this.$ruleService.getRuleById(this.ruleId)
+      this.$ruleService.getRuleById(this.ruleId, {
+        lang: eXo.env.portal.language,
+      })
         .then(rule => this.rule = rule)
         .catch(() => this.error = true)
         .finally(() => this.loading = false);

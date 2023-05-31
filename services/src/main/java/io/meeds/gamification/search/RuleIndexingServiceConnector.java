@@ -15,45 +15,61 @@
  */
 package io.meeds.gamification.search;
 
+import static io.meeds.gamification.utils.Utils.removeSpecialCharacters;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.search.domain.Document;
 import org.exoplatform.commons.search.index.impl.ElasticIndexingServiceConnector;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.resources.LocaleConfig;
+import org.exoplatform.services.resources.LocaleConfigService;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.plugin.RuleTranslationPlugin;
 import io.meeds.gamification.storage.RuleStorage;
 import io.meeds.gamification.utils.Utils;
+import io.meeds.social.translation.model.TranslationField;
+import io.meeds.social.translation.service.TranslationService;
 
 public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnector {
 
-  public static final String INDEX = "rules";
+  public static final String  INDEX = "rules";
 
-  private static final Log   LOG   = ExoLogger.getLogger(RuleIndexingServiceConnector.class);
+  private static final Log    LOG   = ExoLogger.getLogger(RuleIndexingServiceConnector.class);
 
-  private RuleStorage        ruleStorage;
+  private TranslationService  translationService;
 
-  private IdentityManager    identityManager;
+  private RuleStorage         ruleStorage;
+
+  private LocaleConfigService localeConfigService;
+
+  private IdentityManager     identityManager;
 
   public RuleIndexingServiceConnector(RuleStorage ruleStorage,
+                                      TranslationService translationService,
                                       IdentityManager identityManager,
+                                      LocaleConfigService localeConfigService,
                                       InitParams initParams) {
     super(initParams);
     this.ruleStorage = ruleStorage;
+    this.translationService = translationService;
     this.identityManager = identityManager;
+    this.localeConfigService = localeConfigService;
   }
 
   @Override
@@ -82,18 +98,21 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     }
     LOG.debug("Index document for rule with id={}", id);
 
+    Long ruleId = Long.valueOf(id);
     RuleDTO rule = ruleStorage.findRuleById(Long.valueOf(id));
     if (rule == null) {
       throw new IllegalStateException("rule with id '" + id + "' not found");
     }
     Map<String, String> fields = new HashMap<>();
-    fields.put("id", Long.toString(rule.getId()));
-    fields.put("title", rule.getTitle());
-    fields.put("description", StringEscapeUtils.unescapeHtml(rule.getDescription()));
+    fields.put("id", Long.toString(ruleId));
+    addTranslationLabels(ruleId, RuleTranslationPlugin.RULE_TITLE_FIELD_NAME, fields, rule.getTitle());
+    addTranslationLabels(ruleId, RuleTranslationPlugin.RULE_DESCRIPTION_FIELD_NAME, fields, rule.getDescription());
+
     fields.put("score", String.valueOf(rule.getScore()));
     fields.put("event", rule.getEvent());
     fields.put("startDate", toMilliSecondsString(rule.getStartDate()));
-    fields.put("endDate", toMilliSecondsString(rule.getEndDate()));
+    // To add end of the day
+    fields.put("endDate", toMilliSecondsString(rule.getEndDate()) + 86400000l);
     fields.put("createdBy", getUserIdentityId(rule.getCreatedBy()));
     fields.put("createdDate", toMilliSecondsString(rule.getCreatedDate()));
     fields.put("lastModifiedBy", getUserIdentityId(rule.getLastModifiedBy()));
@@ -118,6 +137,27 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     return document;
   }
 
+  private void addTranslationLabels(Long ruleId, String fieldName, Map<String, String> fields, String defaultLabel) {
+    try {
+      TranslationField translationField = translationService.getTranslationField(RuleTranslationPlugin.RULE_OBJECT_TYPE,
+                                                                                 ruleId,
+                                                                                 fieldName);
+      translationField.getLabels()
+                      .forEach((locale, label) -> addLocalizedLabel(fields, fieldName, locale, label));
+      List<Locale> supportedLocales = localeConfigService.getLocalConfigs().stream().map(LocaleConfig::getLocale).toList();
+      supportedLocales.stream()
+                      .filter(locale -> !translationField.getLabels().containsKey(locale))
+                      .forEach(locale -> addLocalizedLabel(fields, fieldName, locale, defaultLabel));
+    } catch (ObjectNotFoundException e) {
+      LOG.warn("Error retrieving Translation Labels of rule {}", ruleId, e);
+    }
+  }
+
+  private String addLocalizedLabel(Map<String, String> fields, String fieldName, Locale locale, String label) {
+    return fields.put(fieldName + "_" + locale.toLanguageTag(),
+                      StringUtils.lowerCase(removeSpecialCharacters(label)));
+  }
+
   private String getUserIdentityId(String username) {
     String userIdentityId = "0";
     if (StringUtils.isNotBlank(username)) {
@@ -132,4 +172,5 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
   private String toMilliSecondsString(String date) {
     return date != null ? String.valueOf(Utils.parseSimpleDate(date).getTime()) : "0";
   }
+
 }

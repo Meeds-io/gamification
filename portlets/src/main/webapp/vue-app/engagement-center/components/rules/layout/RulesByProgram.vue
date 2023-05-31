@@ -130,6 +130,7 @@ export default {
         sortBy: 'title',
         limit,
         expand: 'countRealizations',
+        lang: eXo.env.portal.language,
       })
         .then(data => {
           if (categoryId) {
