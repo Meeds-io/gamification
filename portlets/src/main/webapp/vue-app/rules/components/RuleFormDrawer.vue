@@ -20,8 +20,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     v-model="drawer"
     :confirm-close="ruleChanged"
     :confirm-close-labels="confirmCloseLabels"
-    body-classes="hide-scroll decrease-z-index-more"
-    class="EngagementCenterDrawer"
+    class="EngagementCenterDrawer overflow-initial"
     right
     allow-expand
     @opened="stepper = 1"
@@ -63,28 +62,48 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               {{ $t('rule.form.label.rules') }}
             </v-card-text>
             <v-card-text class="d-flex pa-0">
-              <input
-                id="ruleTitle"
+              <translation-text-field
                 ref="ruleTitle"
-                v-model="rule.title"
+                id="ruleTitle"
+                v-model="ruleTitleTranslations"
+                :field-value.sync="ruleTitle"
                 :placeholder="$t('rule.form.label.rules.placeholder')"
-                type="text"
-                maxlength="50"
-                class="ignore-vuetify-classes flex-grow-1"
-                required>
+                :maxlength="maxTitleLength"
+                :object-id="rule.id"
+                object-type="rule"
+                field-name="title"
+                drawer-title="rule.form.translateTitle"
+                class="width-auto flex-grow-1"
+                back-icon
+                autofocus
+                required
+                @initialized="setFormInitialized" />
             </v-card-text>
             <v-card-text class="pa-0">
-              <engagement-center-description-editor
-                id="ruleDescription"
-                ref="ruleDescription"
-                v-model="rule.description"
-                :label="$t('rule.form.label.description')"
-                :placeholder="$t('rule.form.label.description.placeholder')"
-                :max-length="500"
-                :visible="drawer"
-                ck-editor-type="rule"
-                @addDescription="addDescription($event)"
-                @validity-updated=" validDescription = $event" />
+              <translation-text-field
+                ref="ruleDescriptionTranslation"
+                v-model="ruleDescriptionTranslations"
+                :field-value.sync="ruleDescription"
+                :object-id="rule.id"
+                :maxlength="maxDescriptionLength"
+                object-type="rule"
+                field-name="description"
+                drawer-title="rule.form.translateDescription"
+                button-class="mt-10"
+                back-icon
+                rich-editor>
+                <engagement-center-description-editor
+                  id="ruleDescription"
+                  ref="ruleDescriptionEditor"
+                  v-model="ruleDescription"
+                  :label="$t('rule.form.label.description')"
+                  :placeholder="$t('rule.form.label.description.placeholder')"
+                  :max-length="maxDescriptionLength"
+                  :visible="drawer"
+                  ck-editor-type="rule"
+                  @addDescription="ruleDescription = $event || ruleDescription"
+                  @validity-updated=" validDescription = $event" />
+              </translation-text-field>
             </v-card-text>
             <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
               {{ $t('rule.form.label.rewards') }}
@@ -122,10 +141,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </v-btn>
             </div>
             <div v-if="automaticType">
-              <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
+              <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
                 {{ $t('rule.form.label.selectEvent') }}
               </v-card-text>
-              <v-card-text v-if="eventNames.length" class="py-0">
+              <v-card-text v-if="eventNames.length" class="pa-0">
                 <v-autocomplete
                   id="EventSelectAutoComplete"
                   ref="EventSelectAutoComplete"
@@ -151,12 +170,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   </template>
                 </v-autocomplete>
               </v-card-text>
-              <v-card-text v-if="eventExist" class="error--text py-0">
+              <v-card-text v-if="eventExist" class="error--text pa-0">
                 {{ $t('rule.form.error.sameEventExistsInProgram') }}
               </v-card-text>
             </div>
             <div v-if="ruleId">
-              <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
+              <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
                 {{ $t('rule.form.label.status') }}
               </v-card-text>
               <div class="d-flex flex-row">
@@ -268,8 +287,12 @@ export default {
   data: () => ({
     rule: {},
     program: null,
+    ruleTitle: null,
+    ruleDescription: null,
     originalRule: null,
     ruleToUpdate: {},
+    ruleTitleTranslations: {},
+    ruleDescriptionTranslations: {},
     saving: false,
     eventMapping: [],
     value: '',
@@ -279,6 +302,8 @@ export default {
     stepper: 0,
     programCoverSize: 40,
     isValidForm: true,
+    maxTitleLength: 500,
+    maxDescriptionLength: 500,
     drawer: false,
     scoreRules: [
       v => ( v && v <= 10000 ),
@@ -314,9 +339,6 @@ export default {
     },
     programId() {
       return this.program?.id;
-    },
-    ruleTitle() {
-      return this.rule?.title;
     },
     ruleId() {
       return this.rule?.id;
@@ -389,6 +411,18 @@ export default {
         this.validEvent = this.value && this.value !== '';
       }
     },
+    ruleDescription() {
+      if (this.$refs.ruleDescriptionTranslation) {
+        this.$refs.ruleDescriptionTranslation.setValue(this.ruleDescription);
+      }
+    },
+    saving() {
+      if (this.saving) {
+        this.$refs.ruleFormDrawer.startLoading();
+      } else {
+        this.$refs.ruleFormDrawer.endLoading();
+      }
+    },
   },
   created() {
     this.$root.$on('rule-form-drawer', this.open);
@@ -404,22 +438,22 @@ export default {
           };
 
           this.program = this.rule?.program || program;
+          this.ruleTitle = this.rule?.title || '';
+          this.ruleTitleTranslations = {};
+          this.ruleDescription = this.rule?.description || '';
+          this.ruleDescriptionTranslations = {};
           this.durationCondition = this.rule.startDate || this.rule.endDate;
           this.recurrenceCondition = !!this.rule.recurrence;
           this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
           this.eventExist = false;
-          this.originalRule = this.computeRuleModel(this.rule, this.program);
           if (this.$refs.ruleFormDrawer) {
             this.$refs.ruleFormDrawer.open();
           }
           window.setTimeout(() => {
-            if (this.$refs.ruleTitle) {
-              this.$refs.ruleTitle.focus();
-              if (this.$refs.ruleDescription) {
-                this.$refs.ruleDescription.initCKEditor();
-              }
+            if (this.$refs.ruleDescriptionEditor) {
+              this.$refs.ruleDescriptionEditor.initCKEditor();
             }
-          }, 200);
+          }, 50);
           this.$nextTick().then(() => {
             this.$root.$emit('rule-form-drawer-opened', this.rule);
             this.value = this.eventMapping.find(event => event.name === rule?.event) || '';
@@ -436,11 +470,11 @@ export default {
       }
     },
     close() {
-      this.$refs.ruleDescription?.destroyCKEditor();
+      this.$refs.ruleDescriptionEditor?.destroyCKEditor();
       this.$refs.ruleFormDrawer.close();
     },
     clear() {
-      this.$refs.ruleDescription?.destroyCKEditor();
+      this.$refs.ruleDescriptionEditor?.destroyCKEditor();
       this.stepper = 0;
       this.rule.enabled = true;
       this.rule.event = null;
@@ -478,42 +512,51 @@ export default {
     },
     saveRule() {
       this.saving = true;
-      this.$refs.ruleFormDrawer.startLoading();
       if (this.rule.id) {
-        this.$ruleService.updateRule(this.ruleToSave)
+        this.$translationService.saveTranslations('rule', this.rule.id, 'title', this.ruleTitleTranslations)
+          .then(() => this.$translationService.saveTranslations('rule', this.rule.id, 'description', this.ruleDescriptionTranslations))
+          .then(() => this.$ruleService.updateRule(this.ruleToSave))
           .then(rule => {
             this.originalRule = null;
             this.$root.$emit('rule-updated', rule);
+          })
+          .then(() => {
             this.$root.$emit('alert-message', this.$t('programs.details.ruleUpdateSuccess'), 'success');
+            this.saving = false; // To Keep to be able to close drawer
             return this.$nextTick();
           })
           .then(() => this.close())
-          .catch(e => this.eventExist = e.message === '409')
-          .finally(() => {
-            this.saving = false;
-            this.$refs.ruleFormDrawer.endLoading();
-          });
+          .catch(e => {
+            console.error(e);
+            this.eventExist = e.message === '409';
+          })
+          .finally(() => this.saving = false);
       } else {
         this.$ruleService.createRule(this.ruleToSave)
           .then(rule => {
-            this.originalRule = null;
+            this.originalRule = rule;
             this.$root.$emit('rule-created', rule);
+            return this.$translationService.saveTranslations('rule', this.originalRule.id, 'title', this.ruleTitleTranslations);
+          })
+          .then(() => this.$translationService.saveTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
+          .then(() => {
             this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationSuccess'), 'success');
+            this.saving = false; // To Keep to be able to close drawer
             return this.$nextTick();
           })
           .then(() => this.close())
-          .catch(e => this.eventExist = e.message === '409')
-          .finally(() => {
-            this.saving = false;
-            this.$refs.ruleFormDrawer.endLoading();
-          });
+          .catch(e => {
+            console.error(e);
+            this.eventExist = e.message === '409';
+          })
+          .finally(() => this.saving = false);
       }
     },
     computeRuleModel(rule, program) {
       const ruleModel = {
         id: rule?.id,
-        title: rule?.title,
-        description: rule?.description,
+        title: this.ruleTitle,
+        description: this.ruleDescription,
         score: rule?.score,
         program: program && JSON.parse(JSON.stringify(program)),
         enabled: rule?.enabled,
@@ -557,6 +600,9 @@ export default {
         event.stopPropagation();
       }
       this.stepper++;
+    },
+    setFormInitialized() {
+      this.originalRule = this.computeRuleModel(this.rule, this.program);
     },
     previousStep(event) {
       if (event) {

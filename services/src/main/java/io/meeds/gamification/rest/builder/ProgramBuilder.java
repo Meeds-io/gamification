@@ -19,8 +19,11 @@ package io.meeds.gamification.rest.builder;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
@@ -37,24 +40,52 @@ import io.meeds.gamification.model.UserInfoContext;
 import io.meeds.gamification.rest.model.ProgramRestEntity;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.utils.Utils;
+import io.meeds.social.translation.service.TranslationService;
 
 public class ProgramBuilder {
 
   private static final Log LOG = ExoLogger.getLogger(ProgramBuilder.class);
+
+  private static final String PROGRAM_DESCRIPTION_FIELD_NAME = "description";
+
+  private static final String PROGRAM_TITLE_FIELD_NAME       = "title";
+
+  private static final String PROGRAM_OBJECT_TYPE            = "program";
 
   private ProgramBuilder() {
     // Class with static methods
   }
 
   public static ProgramRestEntity toRestEntity(ProgramService programService,
+                                               TranslationService translationService,
                                                ProgramDTO program,
+                                               Locale locale,
                                                String username) {
     if (program == null) {
       return null;
     }
+    String title = program.getTitle();
+    String description = program.getDescription();
+    if (locale != null) {
+      String translatedTitle = translationService.getTranslationLabel(PROGRAM_OBJECT_TYPE,
+                                                                      program.getId(),
+                                                                      PROGRAM_TITLE_FIELD_NAME,
+                                                                      locale);
+      if (StringUtils.isNotBlank(translatedTitle)) {
+        title = translatedTitle;
+      }
+      String translatedDescription = translationService.getTranslationLabel(PROGRAM_OBJECT_TYPE,
+                                                                            program.getId(),
+                                                                            PROGRAM_DESCRIPTION_FIELD_NAME,
+                                                                            locale);
+      if (StringUtils.isNotBlank(translatedDescription)) {
+        description = translatedDescription;
+      }
+    }
+
     return new ProgramRestEntity(program.getId(), // NOSONAR
-                                 program.getTitle(),
-                                 program.getDescription(),
+                                 title,
+                                 description,
                                  program.getAudienceId(),
                                  program.getPriority(),
                                  program.getCreatedBy(),
@@ -76,9 +107,11 @@ public class ProgramBuilder {
   }
 
   public static List<ProgramRestEntity> toRestEntities(ProgramService programService,
+                                                       TranslationService translationService,
+                                                       Locale locale,
                                                        List<ProgramDTO> programs,
                                                        String username) {
-    return programs.stream().map(program -> toRestEntity(programService, program, username)).toList();
+    return programs.stream().map(program -> toRestEntity(programService, translationService, program, locale, username)).toList();
   }
 
   private static List<UserInfo> getProgramOwnersByIds(Set<Long> ids, long spaceId) {

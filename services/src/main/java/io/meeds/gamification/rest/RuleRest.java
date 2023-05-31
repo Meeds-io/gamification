@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -62,6 +63,7 @@ import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.utils.Utils;
+import io.meeds.social.translation.service.TranslationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -81,11 +83,14 @@ public class RuleRest implements ResourceContainer {
 
   protected RealizationService realizationService;
 
+  protected TranslationService translationService;
+
   protected IdentityManager    identityManager;
 
   public RuleRest(ProgramService programService,
                   RuleService ruleService,
                   RealizationService realizationService,
+                  TranslationService translationService,
                   IdentityManager identityManager) {
     cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
@@ -93,6 +98,7 @@ public class RuleRest implements ResourceContainer {
     this.programService = programService;
     this.ruleService = ruleService;
     this.realizationService = realizationService;
+    this.translationService = translationService;
     this.identityManager = identityManager;
   }
 
@@ -107,6 +113,8 @@ public class RuleRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response getRules(// NOSONAR
+                           @Context
+                           HttpServletRequest request,
                            @Parameter(description = "Offset of results to retrieve", required = false)
                            @QueryParam("offset")
                            @DefaultValue("0")
@@ -200,6 +208,7 @@ public class RuleRest implements ResourceContainer {
         RuleList ruleList = new RuleList();
         List<RuleRestEntity> ruleEntities = getUserRulesByProgram(ruleFilter,
                                                                   periodType,
+                                                                  getLocale(request),
                                                                   expandFields,
                                                                   currentUser,
                                                                   offset,
@@ -224,6 +233,7 @@ public class RuleRest implements ResourceContainer {
           ruleFilter.setProgramId(program.getId());
           List<RuleRestEntity> ruleEntities = getUserRulesByProgram(ruleFilter,
                                                                     periodType,
+                                                                    getLocale(request),
                                                                     expandFields,
                                                                     currentUser,
                                                                     offset,
@@ -257,6 +267,8 @@ public class RuleRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   public Response getRule(
+                          @Context
+                          HttpServletRequest request,
                           @Parameter(description = "Rule technical identifier")
                           @PathParam("id")
                           long id,
@@ -275,7 +287,9 @@ public class RuleRest implements ResourceContainer {
       RuleRestEntity ruleEntity = RuleBuilder.toRestEntity(programService,
                                                            ruleService,
                                                            realizationService,
+                                                           translationService,
                                                            rule,
+                                                           getLocale(request),
                                                            expandFields,
                                                            realizationsLimit,
                                                            false,
@@ -302,6 +316,8 @@ public class RuleRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response createRule(
+                             @Context
+                             HttpServletRequest request,
                              @RequestBody(description = "rule object to save", required = true)
                              RuleDTO ruleDTO) {
     if (ruleDTO == null) {
@@ -310,7 +326,7 @@ public class RuleRest implements ResourceContainer {
     String username = Utils.getCurrentUser();
     try {
       ruleDTO = ruleService.createRule(ruleDTO, username);
-      return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO)).build();
+      return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO, getLocale(request))).build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (ObjectNotFoundException e) {
@@ -344,7 +360,7 @@ public class RuleRest implements ResourceContainer {
     }
     try {
       ruleDTO = ruleService.updateRule(ruleDTO, username);
-      return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO)).build();
+      return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO, getLocale(request))).build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (ObjectNotFoundException e) {
@@ -365,6 +381,8 @@ public class RuleRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response deleteRule(
+                             @Context
+                             HttpServletRequest request,
                              @Parameter(description = "Rule technical identifier", required = true)
                              @PathParam("ruleId")
                              long ruleId) {
@@ -374,7 +392,7 @@ public class RuleRest implements ResourceContainer {
     String username = Utils.getCurrentUser();
     try {
       RuleDTO ruleDTO = ruleService.deleteRuleById(ruleId, username);
-      return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO)).build();
+      return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO, getLocale(request))).build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
     } catch (IllegalAccessException e) {
@@ -382,8 +400,13 @@ public class RuleRest implements ResourceContainer {
     }
   }
 
+  private Locale getLocale(HttpServletRequest request) {
+    return request == null ? null : request.getLocale();
+  }
+
   private List<RuleRestEntity> getUserRulesByProgram(RuleFilter filter, // NOSONAR
                                                      PeriodType periodType,
+                                                     Locale locale,
                                                      List<String> expandFields,
                                                      String username,
                                                      int offset,
@@ -395,7 +418,9 @@ public class RuleRest implements ResourceContainer {
                 .map(rule -> RuleBuilder.toRestEntity(programService,
                                                       ruleService,
                                                       realizationService,
+                                                      translationService,
                                                       rule,
+                                                      locale,
                                                       expandFields,
                                                       realizationsLimit,
                                                       noProgram,
@@ -403,11 +428,13 @@ public class RuleRest implements ResourceContainer {
                 .toList();
   }
 
-  private RuleRestEntity toRestEntity(RuleDTO rule) {
+  private RuleRestEntity toRestEntity(RuleDTO rule, Locale locale) {
     return RuleBuilder.toRestEntity(programService,
                                     ruleService,
                                     realizationService,
+                                    translationService,
                                     rule,
+                                    locale,
                                     null,
                                     0,
                                     false,
