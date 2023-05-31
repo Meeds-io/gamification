@@ -163,6 +163,7 @@ export default {
         sortDescending: false,
         expand: 'countRealizations',
         returnSize: false,
+        lang: eXo.env.portal.language,
       })
         .then(data => this.endingSoonRules = data.rules || [])
         .finally(() => this.loading--);
@@ -179,6 +180,7 @@ export default {
         sortDescending: true,
         expand: 'countRealizations',
         returnSize: false,
+        lang: eXo.env.portal.language,
       })
         .then(data => this.newestRules = data.rules || [])
         .finally(() => this.loading--);
@@ -195,6 +197,7 @@ export default {
         sortDescending: true,
         expand: 'countRealizations',
         returnSize: false,
+        lang: eXo.env.portal.language,
       })
         .then(data => this.startingSoonRules = data.rules || [])
         .finally(() => this.loading--);

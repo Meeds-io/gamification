@@ -48,11 +48,11 @@ import io.meeds.gamification.utils.Utils;
 
 public class RealizationServiceITTest extends AbstractServiceTest {
 
-  private final Identity adminAclIdentity   =
+  private final Identity adminAclIdentity     =
                                           new Identity("root1",
                                                        Collections.singleton(new MembershipEntry("/platform/rewarding")));
 
-  private final Identity regularAclIdentity =
+  private final Identity regularAclIdentity   =
                                             new Identity("root10", Collections.singleton(new MembershipEntry("/platform/users")));
 
   private final Identity spaceHostAclIdentity =
@@ -106,6 +106,34 @@ public class RealizationServiceITTest extends AbstractServiceTest {
     assertEquals(TEST_USER_RECEIVER, realizationEntity.getReceiver());
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.SPACE, realizationEntity.getEarnerType());
+  }
+
+  public void testCancelRealizations() {
+    List<RealizationEntity> realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 0);
+    RuleDTO ruleDTO = newRuleDTO();
+
+    List<RealizationDTO> createdRealizations = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                                                     TEST_USER_EARNER,
+                                                                                     TEST_USER_RECEIVER,
+                                                                                     ACTIVITY_ID,
+                                                                                     ACTIVITY_OBJECT_TYPE);
+    RealizationDTO realization = createdRealizations.get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 1);
+
+    List<RealizationDTO> canceledRealizations = realizationService.cancelRealizations(ruleDTO.getEvent(),
+                                                                                      TEST_USER_EARNER,
+                                                                                      TEST_USER_RECEIVER,
+                                                                                      ACTIVITY_ID,
+                                                                                      ACTIVITY_OBJECT_TYPE);
+    assertNotNull(canceledRealizations);
+    assertEquals(createdRealizations.size(), canceledRealizations.size());
+    RealizationDTO canceledRealization = canceledRealizations.get(0);
+    assertEquals(canceledRealization.getId(), realization.getId());
+    assertEquals(canceledRealization.getStatus(), RealizationStatus.CANCELED.name());
   }
 
   @Test
