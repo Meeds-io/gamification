@@ -201,6 +201,8 @@ export default {
         status: 'ENABLED',
         offset: 0,
         limit: limit || 10,
+        returnSize: false,
+        lang: eXo.env.portal.language,
       })
         .then(data => {
           this.rules = this.excludePrerequisites

@@ -64,6 +64,9 @@ export function getRules(filter) {
   if (filter?.expand) {
     formData.append('expand', filter.expand);
   }
+  if (filter?.lang) {
+    formData.append('lang', filter.lang);
+  }
   const params = new URLSearchParams(formData).toString();
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules?${params}`, {
     method: 'GET',
@@ -77,13 +80,16 @@ export function getRules(filter) {
   });
 }
 
-export function getRuleById(id, expand, realizationsLimit) {
+export function getRuleById(id, filter) {
   const formData = new FormData();
-  if (expand) {
-    formData.append('expand', expand);
+  if (filter?.realizationsLimit) {
+    formData.append('realizationsLimit', filter.realizationsLimit);
   }
-  if (realizationsLimit) {
-    formData.append('realizationsLimit', realizationsLimit);
+  if (filter?.expand) {
+    formData.append('expand', filter.expand);
+  }
+  if (filter?.lang) {
+    formData.append('lang', filter.lang);
   }
   const params = new URLSearchParams(formData).toString();
   const extraParams = params && `?${params}` || '';
