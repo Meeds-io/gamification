@@ -188,6 +188,7 @@ public class RuleRest implements ResourceContainer {
     String currentUser = Utils.getCurrentUser();
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setTerm(term);
+    ruleFilter.setLocale(getLocale(request));
     ruleFilter.setDateFilterType(dateFilter == null ? DateFilterType.ALL : dateFilter);
     ruleFilter.setEntityFilterType(ruleType == null ? EntityFilterType.ALL : ruleType);
     ruleFilter.setEntityStatusType(ruleStatus == null ? EntityStatusType.ALL : ruleStatus);
@@ -401,7 +402,7 @@ public class RuleRest implements ResourceContainer {
   }
 
   private Locale getLocale(HttpServletRequest request) {
-    return request == null ? null : request.getLocale();
+    return request == null ? Locale.ENGLISH : request.getLocale();
   }
 
   private List<RuleRestEntity> getUserRulesByProgram(RuleFilter filter, // NOSONAR

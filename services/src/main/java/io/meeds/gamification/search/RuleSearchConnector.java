@@ -15,8 +15,9 @@
  */
 package io.meeds.gamification.search;
 
+import static io.meeds.gamification.utils.Utils.removeSpecialCharacters;
+
 import java.io.InputStream;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,10 +44,7 @@ import org.exoplatform.container.xml.PropertiesParam;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-import io.meeds.gamification.constant.DateFilterType;
-import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.RuleFilter;
-import io.meeds.gamification.storage.RuleStorage;
 
 public class RuleSearchConnector {
 
@@ -54,31 +52,7 @@ public class RuleSearchConnector {
 
   private static final String          SEARCH_QUERY_FILE_PATH_PARAM = "query.file.path";
 
-  private static final String          START_DATE                   = "startDate";
-
-  private static final String          END_DATE                     = "endDate";
-
-  private static final String          DATE_FIELD                   = "@dateField@";
-
-  private static final String          START_DATE_QUERY             = "@startDateQuery@";
-
-  private static final String          END_DATE_QUERY               = "@endDateQuery@";
-
-  private static final String          DATE_CONDITION               = "@condition@";
-
-  private static final String          DATE                         = "@date@";
-
-  private static final String          DATE_FILTERING               = "@date_filtering@";
-
-  private static final String          DATE_FIELD_FILTERING_QUERY   = """
-           {
-             "range": {
-               "@dateField@": {
-                 "@condition@": "@date@"
-               }
-             }
-           }
-      """;
+  private static final String          LANG                         = "@lang@";
 
   private static final String          DOMAIN_FILTERING_QUERY       = """
             ,{
@@ -100,8 +74,6 @@ public class RuleSearchConnector {
             }
       """;
 
-  private static final String          DATE_FILTERING_QUERY         = ", \n @startDateQuery@ @endDateQuery@ \n";
-
   private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"*~&|#%@";
 
   private final ConfigurationManager   configurationManager;
@@ -114,13 +86,9 @@ public class RuleSearchConnector {
 
   private String                       searchQuery;
 
-  private RuleStorage                  ruleStorage;
-
   public RuleSearchConnector(ConfigurationManager configurationManager,
-                             RuleStorage ruleStorage,
                              ElasticSearchingClient client,
                              InitParams initParams) {
-    this.ruleStorage = ruleStorage;
     this.configurationManager = configurationManager;
     this.client = client;
 
@@ -136,7 +104,7 @@ public class RuleSearchConnector {
     }
   }
 
-  public List<RuleDTO> search(RuleFilter filter, long offset, long limit) {
+  public List<Long> search(RuleFilter filter, long offset, long limit) {
     if (offset < 0) {
       throw new IllegalArgumentException("Offset must be positive");
     }
@@ -146,6 +114,9 @@ public class RuleSearchConnector {
     if (StringUtils.isBlank(filter.getTerm())) {
       throw new IllegalArgumentException("Filter term is mandatory");
     }
+    if (filter.getLocale() == null) {
+      throw new IllegalArgumentException("Filter locale is mandatory");
+    }
     String esQuery = buildQueryStatement(filter, offset, limit);
     if (StringUtils.isBlank(esQuery)) {
       return Collections.emptyList();
@@ -154,23 +125,8 @@ public class RuleSearchConnector {
     return buildSearchResult(jsonResponse);
   }
 
-  public int count(RuleFilter filter) {
-    if (StringUtils.isBlank(filter.getTerm())) {
-      throw new IllegalArgumentException("Filter term is mandatory");
-    }
-    String esQuery = buildQueryStatement(filter, 0, 0);
-    if (StringUtils.isBlank(esQuery)) {
-      return 0;
-    }
-    String jsonResponse = this.client.sendRequest(esQuery, this.index);
-    return buildCountResult(jsonResponse);
-  }
-
   private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
-    String term = removeSpecialCharacters(filter.getTerm());
-    Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds())
-                                  .map(HashSet::new)
-                                  .orElse(new HashSet<>());
+    String term = StringUtils.lowerCase(removeSpecialCharacters(filter.getTerm()));
     term = escapeIllegalCharacterInQuery(term);
     if (StringUtils.isBlank(term)) {
       return null;
@@ -195,46 +151,14 @@ public class RuleSearchConnector {
     } else {
       query = query.replace("@audience_filtering@", "");
     }
-    DateFilterType dateFilterType = filter.getDateFilterType();
-    if (dateFilterType != null) {
-      String date = String.valueOf(System.currentTimeMillis());
-      switch (dateFilterType) {
-      case STARTED:
-        query = query.replace(DATE_FILTERING, DATE_FILTERING_QUERY);
-        query = query.replace(START_DATE_QUERY, DATE_FIELD_FILTERING_QUERY)
-                     .replace(DATE_FIELD, START_DATE)
-                     .replace(DATE_CONDITION, "lte")
-                     .replace(DATE, date);
-        query = query.replace(END_DATE_QUERY, "," + DATE_FIELD_FILTERING_QUERY)
-                     .replace(DATE_FIELD, END_DATE)
-                     .replace(DATE_CONDITION, "gte")
-                     .replace(DATE, date);
-        break;
-      case NOT_STARTED:
-        query = query.replace(DATE_FILTERING, DATE_FILTERING_QUERY);
-        query = query.replace(START_DATE_QUERY, DATE_FIELD_FILTERING_QUERY)
-                     .replace(END_DATE_QUERY, "")
-                     .replace(DATE_FIELD, START_DATE)
-                     .replace(DATE_CONDITION, "gt")
-                     .replace(DATE, date);
-        break;
-      case ENDED:
-        query = query.replace(DATE_FILTERING, DATE_FILTERING_QUERY);
-        query = query.replace(END_DATE_QUERY, DATE_FIELD_FILTERING_QUERY)
-                     .replace(START_DATE_QUERY, "")
-                     .replace(DATE_FIELD, END_DATE)
-                     .replace(DATE_CONDITION, "lt")
-                     .replace(DATE, date);
-        break;
-      default:
-        query = query.replace(DATE_FILTERING, "");
-      }
-    } else {
-      query = query.replace(DATE_FILTERING, "");
-    }
+
+    Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds())
+                                  .map(HashSet::new)
+                                  .orElse(new HashSet<>());
 
     return query.replace("@domainId@", String.valueOf(filter.getProgramId()))
                 .replace("@term@", term)
+                .replace(LANG, filter.getLocale().toLanguageTag())
                 .replace("@term_query@", termQuery)
                 .replace("@spaceList@", StringUtils.join(spaceList, ","))
                 .replace("@offset@", String.valueOf(offset))
@@ -242,10 +166,8 @@ public class RuleSearchConnector {
   }
 
   @SuppressWarnings("rawtypes")
-  private List<RuleDTO> buildSearchResult(String jsonResponse) {
-    LOG.debug("Search Query response from ES : {} ", jsonResponse);
-
-    List<RuleDTO> results = new ArrayList<>();
+  private List<Long> buildSearchResult(String jsonResponse) {
+    List<Long> results = new ArrayList<>();
     JSONParser parser = new JSONParser();
 
     Map json = null;
@@ -260,14 +182,13 @@ public class RuleSearchConnector {
       return results;
     }
 
-    //
     JSONArray jsonHits = (JSONArray) jsonResult.get("hits");
     for (Object jsonHit : jsonHits) {
       try {
         JSONObject jsonHitObject = (JSONObject) jsonHit;
         JSONObject hitSource = (JSONObject) jsonHitObject.get("_source");
         long id = parseLong(hitSource, "id");
-        results.add(ruleStorage.findRuleById(id));
+        results.add(id);
       } catch (Exception e) {
         LOG.warn("Error processing rules search result item, ignore it from results", e);
       }
@@ -275,32 +196,9 @@ public class RuleSearchConnector {
     return results;
   }
 
-  @SuppressWarnings("rawtypes")
-  private int buildCountResult(String jsonResponse) {
-    Map json = null;
-    JSONParser parser = new JSONParser();
-    try {
-      json = (Map) parser.parse(jsonResponse);
-    } catch (ParseException e) {
-      throw new ElasticSearchException("Unable to parse JSON response", e);
-    }
-    JSONObject jsonResult = (JSONObject) json.get("hits");
-    if (jsonResult == null) {
-      return 0;
-    }
-    JSONObject total = (JSONObject) jsonResult.get("total");
-    return Integer.parseInt(total.get("value").toString());
-  }
-
   private long parseLong(JSONObject hitSource, String key) {
     String value = (String) hitSource.get(key);
     return StringUtils.isBlank(value) ? 0 : Long.parseLong(value);
-  }
-
-  private String removeSpecialCharacters(String string) {
-    string = Normalizer.normalize(string, Normalizer.Form.NFD);
-    string = string.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
-    return string;
   }
 
   private static String escapeIllegalCharacterInQuery(String query) {

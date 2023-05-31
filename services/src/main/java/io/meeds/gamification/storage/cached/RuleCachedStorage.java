@@ -59,7 +59,7 @@ public class RuleCachedStorage extends RuleStorage {
         } else if (context.getContext() == RULE_TITLE_CONTEXT) {
           return RuleCachedStorage.super.findRuleByTitle(context.getTitle());
         } else if (context.getContext() == RULES_BY_FILTER_CONTEXT) {
-          return RuleCachedStorage.super.findRulesIdsByFilter(context.getRuleFilter(), context.getOffset(), context.getLimit());
+          return RuleCachedStorage.super.findRuleIdsByFilter(context.getRuleFilter(), context.getOffset(), context.getLimit());
         } else {
           throw new IllegalStateException("Unknown context id " + context);
         }

@@ -31,7 +31,11 @@ import io.meeds.social.translation.plugin.TranslationPlugin;
 
 public class ProgramTranslationPlugin extends TranslationPlugin {
 
-  public static final String PROGRAM_OBJECT_TYPE = "program";
+  public static final String PROGRAM_OBJECT_TYPE            = "program";
+
+  public static final String PROGRAM_DESCRIPTION_FIELD_NAME = "description";
+
+  public static final String PROGRAM_TITLE_FIELD_NAME       = "title";
 
   private ProgramService     programService;
 
