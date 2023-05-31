@@ -18,6 +18,9 @@ package io.meeds.gamification.rest.builder;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+
+import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -37,8 +40,15 @@ import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.utils.Utils;
+import io.meeds.social.translation.service.TranslationService;
 
 public class RuleBuilder {
+
+  private static final String RULE_DESCRIPTION_FIELD_NAME = "description";
+
+  private static final String RULE_TITLE_FIELD_NAME       = "title";
+
+  private static final String RULE_OBJECT_TYPE            = "rule";
 
   private RuleBuilder() {
     // Class with static methods
@@ -47,7 +57,9 @@ public class RuleBuilder {
   public static RuleRestEntity toRestEntity(ProgramService programService, // NOSONAR
                                             RuleService ruleService,
                                             RealizationService realizationService,
+                                            TranslationService translationService,
                                             RuleDTO rule,
+                                            Locale locale,
                                             List<String> expandFields,
                                             int realizationsLimit,
                                             boolean noProgram,
@@ -84,9 +96,29 @@ public class RuleBuilder {
                                                 realizationService,
                                                 rule,
                                                 Utils.getCurrentUser());
+    String title = rule.getTitle();
+    String description = rule.getDescription();
+
+    if (locale != null) {
+      String translatedTitle = translationService.getTranslationLabel(RULE_OBJECT_TYPE,
+                                                                      rule.getId(),
+                                                                      RULE_TITLE_FIELD_NAME,
+                                                                      locale);
+      if (StringUtils.isNotBlank(translatedTitle)) {
+        title = translatedTitle;
+      }
+      String translatedDescription = translationService.getTranslationLabel(RULE_OBJECT_TYPE,
+                                                                            rule.getId(),
+                                                                            RULE_DESCRIPTION_FIELD_NAME,
+                                                                            locale);
+      if (StringUtils.isNotBlank(translatedDescription)) {
+        description = translatedDescription;
+      }
+    }
+
     return new RuleRestEntity(rule.getId(),
-                              rule.getTitle(),
-                              rule.getDescription(),
+                              title,
+                              description,
                               rule.getScore(),
                               program,
                               rule.isEnabled(),

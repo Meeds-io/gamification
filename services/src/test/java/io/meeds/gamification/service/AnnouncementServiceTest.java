@@ -17,6 +17,8 @@
 
 package io.meeds.gamification.service;
 
+import static io.meeds.gamification.mock.SpaceServiceMock.SPACE_GROUP_ID;
+import static io.meeds.gamification.mock.SpaceServiceMock.SPACE_PRETTY_NAME;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ID_TEMPLATE_PARAM;
@@ -57,6 +59,7 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.mock.SpaceServiceMock;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.AnnouncementActivity;
 import io.meeds.gamification.model.ProgramDTO;
@@ -142,7 +145,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     Identity spaceIdentity = new Identity();
     spaceIdentity.setId("1");
     spaceIdentity.setProviderId("space");
-    spaceIdentity.setRemoteId("test_space");
+    spaceIdentity.setRemoteId(SPACE_PRETTY_NAME);
     Identity rootIdentity = new Identity();
     rootIdentity.setId("1");
     rootIdentity.setProviderId("organization");
@@ -153,9 +156,9 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     };
     Space space = new Space();
     space.setId("1");
-    space.setPrettyName("test_space");
+    space.setPrettyName(SPACE_PRETTY_NAME);
     space.setDisplayName("test space");
-    space.setGroupId("/spaces/test_space");
+    space.setGroupId(SPACE_GROUP_ID);
     space.setManagers(spaceMembers);
     space.setMembers(spaceMembers);
     space.setRedactors(new String[0]);
@@ -232,16 +235,16 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     Identity spaceIdentity = new Identity();
     spaceIdentity.setId("1");
     spaceIdentity.setProviderId("space");
-    spaceIdentity.setRemoteId("test_space");
+    spaceIdentity.setRemoteId(SPACE_PRETTY_NAME);
 
     String[] spaceMembers = {
         "root"
     };
     Space space = new Space();
     space.setId("1");
-    space.setPrettyName("test_space");
+    space.setPrettyName(SPACE_PRETTY_NAME);
     space.setDisplayName("test space");
-    space.setGroupId("/spaces/test_space");
+    space.setGroupId(SPACE_GROUP_ID);
     space.setManagers(spaceMembers);
     space.setMembers(spaceMembers);
     space.setRedactors(new String[0]);
@@ -336,7 +339,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     Identity spaceIdentity = new Identity();
     spaceIdentity.setId("1");
     spaceIdentity.setProviderId("space");
-    spaceIdentity.setRemoteId("test_space");
+    spaceIdentity.setRemoteId(SPACE_PRETTY_NAME);
     Identity rootIdentity = new Identity();
     rootIdentity.setId("1");
     rootIdentity.setProviderId("organization");
@@ -347,9 +350,9 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     };
     Space space = new Space();
     space.setId("1");
-    space.setPrettyName("test_space");
+    space.setPrettyName(SPACE_PRETTY_NAME);
     space.setDisplayName("test space");
-    space.setGroupId("/spaces/test_space");
+    space.setGroupId(SPACE_GROUP_ID);
     space.setManagers(spaceMembers);
     space.setMembers(spaceMembers);
     space.setRedactors(new String[0]);

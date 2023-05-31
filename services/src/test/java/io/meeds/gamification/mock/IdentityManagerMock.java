@@ -75,6 +75,16 @@ public class IdentityManagerMock implements IdentityManager {
   }
 
   @Override
+  public Identity getOrCreateSpaceIdentity(String spacePrettyName) {
+    return getOrCreateIdentity(SpaceIdentityProvider.NAME, spacePrettyName);
+  }
+
+  @Override
+  public Identity getOrCreateUserIdentity(String username) {
+    return getOrCreateIdentity(OrganizationIdentityProvider.NAME, username);
+  }
+
+  @Override
   public Identity getIdentity(String identityId, boolean isProfileLoaded) {
     return identities.stream()
                      .filter(identity -> StringUtils.equals(identity.getId(), identityId))
@@ -315,11 +325,6 @@ public class IdentityManagerMock implements IdentityManager {
 
   @Override
   public void unregisterProfileListener(ProfileListener listener) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public List<String> sortIdentities(List<String> identityRemoteIds, String sortField) {
     throw new UnsupportedOperationException();
   }
 
