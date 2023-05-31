@@ -32,7 +32,11 @@ import io.meeds.social.translation.plugin.TranslationPlugin;
 
 public class RuleTranslationPlugin extends TranslationPlugin {
 
-  public static final String RULE_OBJECT_TYPE = "rule";
+  public static final String RULE_OBJECT_TYPE            = "rule";
+
+  public static final String RULE_DESCRIPTION_FIELD_NAME = "description";
+
+  public static final String RULE_TITLE_FIELD_NAME       = "title";
 
   private RuleService        ruleService;
 

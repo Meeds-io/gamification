@@ -131,7 +131,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     filter.setProgramId(domain1.getId());
     filter.setSpaceIds(Collections.singletonList(domain1.getAudienceId()));
 
-    List<Long> rules = ruleStorage.findRulesIdsByFilter(filter, 0, 10);
+    List<Long> rules = ruleStorage.findRuleIdsByFilter(filter, 0, 10);
     assertEquals(0, rules.size());
 
     RuleDTO rule1 = new RuleDTO();
@@ -180,7 +180,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule2 = ruleStorage.saveRule(rule2);
     rule3 = ruleStorage.saveRule(rule3);
 
-    rules = ruleStorage.findRulesIdsByFilter(filter, 0, 10);
+    rules = ruleStorage.findRuleIdsByFilter(filter, 0, 10);
     assertEquals(2, rules.size());
     assertEquals(rule1.getId(), rules.get(0));
     assertEquals(rule2.getId(), rules.get(1));
@@ -188,20 +188,20 @@ public class RuleStorageTest extends AbstractServiceTest {
     filter.setProgramId(domain2.getId());
     filter.setSpaceIds(Collections.singletonList(domain2.getAudienceId()));
 
-    rules = ruleStorage.findRulesIdsByFilter(filter, 0, 10);
+    rules = ruleStorage.findRuleIdsByFilter(filter, 0, 10);
     assertEquals(1, rules.size());
     assertEquals(rule3.getId(), rules.get(0));
 
     filter.setProgramId(domain1.getId());
     filter.setSpaceIds(Collections.singletonList(domain2.getAudienceId()));
 
-    rules = ruleStorage.findRulesIdsByFilter(filter, 0, 10);
+    rules = ruleStorage.findRuleIdsByFilter(filter, 0, 10);
     assertEquals(0, rules.size());
 
     filter.setProgramId(0);
     filter.setSpaceIds(Collections.singletonList(domain2.getAudienceId()));
 
-    rules = ruleStorage.findRulesIdsByFilter(filter, 0, 10);
+    rules = ruleStorage.findRuleIdsByFilter(filter, 0, 10);
     assertEquals(1, rules.size());
     assertEquals(rule3.getId(), rules.get(0));
   }

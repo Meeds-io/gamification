@@ -198,6 +198,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (CollectionUtils.isNotEmpty(filter.getExcludedRuleIds())) {
       query.setParameter("excludedIds", filter.getExcludedRuleIds());
     }
+    if (CollectionUtils.isNotEmpty(filter.getRuleIds())) {
+      query.setParameter("ruleIds", filter.getRuleIds());
+    }
     DateFilterType dateFilterType = filter.getDateFilterType();
     if (dateFilterType != null && dateFilterType != DateFilterType.ALL) {
       query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
@@ -280,6 +283,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     predicates.add("r.isDeleted = false");
     predicates.add("r.domainEntity.isDeleted = false");
 
+    if (CollectionUtils.isNotEmpty(filter.getRuleIds())) {
+      suffixes.add("RuleIds");
+      predicates.add("r.id IN :ruleIds");
+    }
     if (StringUtils.isNotBlank(filter.getTerm())) {
       suffixes.add("Term");
       predicates.add("LOWER(r.title) LIKE :term");

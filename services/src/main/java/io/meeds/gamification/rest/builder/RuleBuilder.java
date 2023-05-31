@@ -16,6 +16,10 @@
  */
 package io.meeds.gamification.rest.builder;
 
+import static io.meeds.gamification.plugin.RuleTranslationPlugin.RULE_DESCRIPTION_FIELD_NAME;
+import static io.meeds.gamification.plugin.RuleTranslationPlugin.RULE_OBJECT_TYPE;
+import static io.meeds.gamification.plugin.RuleTranslationPlugin.RULE_TITLE_FIELD_NAME;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -43,12 +47,6 @@ import io.meeds.gamification.utils.Utils;
 import io.meeds.social.translation.service.TranslationService;
 
 public class RuleBuilder {
-
-  private static final String RULE_DESCRIPTION_FIELD_NAME = "description";
-
-  private static final String RULE_TITLE_FIELD_NAME       = "title";
-
-  private static final String RULE_OBJECT_TYPE            = "rule";
 
   private RuleBuilder() {
     // Class with static methods
