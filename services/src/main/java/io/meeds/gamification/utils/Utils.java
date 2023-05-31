@@ -4,6 +4,7 @@ import static org.exoplatform.analytics.utils.AnalyticsUtils.addSpaceStatistics;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -419,6 +420,12 @@ public class Utils {
     statisticData.addParameter(STATISTICS_ANNOUNCE_COMMENT_PARAM, announcement.getComment());
 
     addRuleStatisticParameters(identityManager, spaceService, rule, statisticData, username);
+  }
+
+  public static String removeSpecialCharacters(String content) {
+    return Normalizer.normalize(StringEscapeUtils.unescapeHtml(content), Normalizer.Form.NFD)
+                     .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
+                     .replace("'", "");
   }
 
 }
