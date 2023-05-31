@@ -65,7 +65,6 @@ export default {
     newestRulesToDisplay() {
       return this.newestRules
         .filter(r => !this.endingSoonRules?.find(e => e.id === r.id))
-        .filter(r => r.createdDate && (Date.now() - new Date(r.createdDate).getTime()) < this.weekInMs)
         .slice(0, this.limit * 3 - (this.startingSoonCategory && 3 || 0) - (this.endingSoonCategory && 3 || 0));
     },
     startingSoonRulesToDisplay() {
