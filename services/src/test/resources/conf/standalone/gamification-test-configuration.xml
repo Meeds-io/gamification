@@ -504,6 +504,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
 
+  <external-component-plugins>
+    <target-component>io.meeds.social.translation.service.TranslationService</target-component>
+    <component-plugin>
+      <name>rule</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.RuleTranslationPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>program</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.ProgramTranslationPlugin</type>
+    </component-plugin>
+  </external-component-plugins>
+
   <remove-configuration>org.exoplatform.portal.config.UserPortalConfigListener</remove-configuration>
   <remove-configuration>org.exoplatform.portal.config.GroupPortalConfigListener</remove-configuration>
 </configuration>
