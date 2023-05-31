@@ -39,19 +39,21 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 @SuppressWarnings("all")
 public class SpaceServiceMock implements SpaceService {
 
-  private static final String       SPACE_PRETTY_NAME  = "test_space";
+  public static final String       SPACE_PRETTY_NAME  = "space100";
 
-  private static final String       SPACE_DISPLAY_NAME = "test space";
+  public static final String       SPACE_GROUP_ID     = "/spaces/" + SPACE_PRETTY_NAME;
 
-  private static final String       SPACE_ID           = "1";
+  public static final String       SPACE_DISPLAY_NAME = "test space";
 
-  private static final List<String> SPACE_MEMBERS      = Arrays.asList(new String[] {
+  public static final String       SPACE_ID           = "1";
+
+  public static final List<String> SPACE_MEMBERS      = Arrays.asList(new String[] {
       "root10",
       "root5",
       "root1"
   });
 
-  private static final List<String> SPACE_MANAGERS     = Arrays.asList(new String[] {
+  public static final List<String> SPACE_MANAGERS     = Arrays.asList(new String[] {
       "root",
       "root5",
       "root1"
@@ -66,7 +68,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public Space getSpaceByGroupId(String groupId) {
-    if (groupId.equals("/spaces/test_space")) {
+    if (groupId.equals(SPACE_GROUP_ID)) {
       return getSpace();
     } else {
       throw new UnsupportedOperationException();

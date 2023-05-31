@@ -16,10 +16,10 @@
  */
 
 package io.meeds.gamification.utils;
-
 import static io.meeds.gamification.utils.Utils.DEFAULT_IMAGE_REMOTE_ID;
 import static io.meeds.gamification.utils.Utils.TYPE;
 import static io.meeds.gamification.utils.Utils.isAttachmentTokenValid;
+import static io.meeds.gamification.mock.SpaceServiceMock.*;
 
 import java.util.Date;
 import java.util.TimeZone;
@@ -153,7 +153,7 @@ public class UtilsTest extends AbstractServiceTest {
 
   @Test
   public void testGetSpaceFromObjectId() {
-    String ObjectId = "/portal/g/:spaces:test_space";
+    String ObjectId = "/portal/g/:spaces:" + SPACE_PRETTY_NAME;
     String spaceDisplayName = Utils.getSpaceFromObjectID("test");
     assertNull(spaceDisplayName);
     spaceDisplayName = Utils.getSpaceFromObjectID("");
@@ -170,9 +170,9 @@ public class UtilsTest extends AbstractServiceTest {
     };
     Space space = new Space();
     space.setId("1");
-    space.setPrettyName("test_space");
+    space.setPrettyName(SPACE_PRETTY_NAME);
     space.setDisplayName("test space");
-    space.setGroupId("/spaces/test_space");
+    space.setGroupId(SPACE_GROUP_ID);
     space.setManagers(spaceMembers);
     space.setMembers(spaceMembers);
     space.setRedactors(new String[0]);
@@ -205,9 +205,9 @@ public class UtilsTest extends AbstractServiceTest {
 
     Space space = new Space();
     space.setId("1");
-    space.setPrettyName("test_space");
+    space.setPrettyName(SPACE_PRETTY_NAME);
     space.setDisplayName("test space");
-    space.setGroupId("/spaces/test_space");
+    space.setGroupId(SPACE_GROUP_ID);
 
     Space savedSpace = Utils.getSpaceById("");
     assertNull(savedSpace);
