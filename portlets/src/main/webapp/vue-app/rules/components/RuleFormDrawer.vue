@@ -517,12 +517,10 @@ export default {
           .then(() => this.$translationService.saveTranslations('rule', this.rule.id, 'description', this.ruleDescriptionTranslations))
           .then(() => this.$ruleService.updateRule(this.ruleToSave))
           .then(rule => {
-            this.originalRule = null;
             this.$root.$emit('rule-updated', rule);
-          })
-          .then(() => {
             this.$root.$emit('alert-message', this.$t('programs.details.ruleUpdateSuccess'), 'success');
             this.saving = false; // To Keep to be able to close drawer
+            this.originalRule = null;
             return this.$nextTick();
           })
           .then(() => this.close())
@@ -542,6 +540,7 @@ export default {
           .then(() => {
             this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationSuccess'), 'success');
             this.saving = false; // To Keep to be able to close drawer
+            this.originalRule = null;
             return this.$nextTick();
           })
           .then(() => this.close())
