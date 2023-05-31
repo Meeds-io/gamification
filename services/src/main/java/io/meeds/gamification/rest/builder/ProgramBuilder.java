@@ -17,6 +17,10 @@
 
 package io.meeds.gamification.rest.builder;
 
+import static io.meeds.gamification.plugin.ProgramTranslationPlugin.PROGRAM_DESCRIPTION_FIELD_NAME;
+import static io.meeds.gamification.plugin.ProgramTranslationPlugin.PROGRAM_OBJECT_TYPE;
+import static io.meeds.gamification.plugin.ProgramTranslationPlugin.PROGRAM_TITLE_FIELD_NAME;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -45,12 +49,6 @@ import io.meeds.social.translation.service.TranslationService;
 public class ProgramBuilder {
 
   private static final Log LOG = ExoLogger.getLogger(ProgramBuilder.class);
-
-  private static final String PROGRAM_DESCRIPTION_FIELD_NAME = "description";
-
-  private static final String PROGRAM_TITLE_FIELD_NAME       = "title";
-
-  private static final String PROGRAM_OBJECT_TYPE            = "program";
 
   private ProgramBuilder() {
     // Class with static methods

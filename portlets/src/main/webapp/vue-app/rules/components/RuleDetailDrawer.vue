@@ -275,7 +275,11 @@ export default {
       const hash = window.location.hash;
 
       this.loading = true;
-      this.$ruleService.getRuleById(id, 'countRealizations', 3)
+      this.$ruleService.getRuleById(id, {
+        lang: eXo.env.portal.language,
+        expand: 'countRealizations',
+        realizationsLimit: 3,
+      })
         .then(rule => {
           this.rule = rule;
           this.$refs.ruleDetailDrawer.open();
