@@ -64,7 +64,7 @@ public class RuleStorage {
     return RuleMapper.fromEntity(programStorage, ruleDAO.findActiveRuleByEventAndProgramId(event, programId));
   }
 
-  public List<Long> findRulesIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {
+  public List<Long> findRuleIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {
     return ruleDAO.findRulesIdsByFilter(ruleFilter, offset, limit);
   }
 

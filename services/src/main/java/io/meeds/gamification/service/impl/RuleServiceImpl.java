@@ -37,6 +37,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.RuleFilter;
+import io.meeds.gamification.search.RuleSearchConnector;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.RuleStorage;
@@ -44,26 +45,32 @@ import io.meeds.gamification.utils.Utils;
 
 public class RuleServiceImpl implements RuleService {
 
-  private static final String   USERNAME_IS_MANDATORY_MESSAGE = "Username is mandatory";
+  private static final int MAX_RULES_TO_SEARCH = 100;
 
-  private final ProgramService  programService;
+  private static final String       USERNAME_IS_MANDATORY_MESSAGE = "Username is mandatory";
 
-  private final RuleStorage     ruleStorage;
+  private final ProgramService      programService;
 
-  private final SpaceService    spaceService;
+  private final RuleStorage         ruleStorage;
 
-  private final ListenerService listenerService;
+  private final RuleSearchConnector ruleSearchConnector;
 
-  private final List<String>    automaticEventNames           = new ArrayList<>();
+  private final SpaceService        spaceService;
+
+  private final ListenerService     listenerService;
+
+  private final List<String>        automaticEventNames           = new ArrayList<>();
 
   public RuleServiceImpl(ProgramService programService,
                          RuleStorage ruleStorage,
+                         RuleSearchConnector ruleSearchConnector,
                          SpaceService spaceService,
                          ListenerService listenerService) {
     this.programService = programService;
     this.listenerService = listenerService;
     this.spaceService = spaceService;
     this.ruleStorage = ruleStorage;
+    this.ruleSearchConnector = ruleSearchConnector;
   }
 
   @Override
@@ -131,8 +138,21 @@ public class RuleServiceImpl implements RuleService {
   public List<RuleDTO> getRules(RuleFilter ruleFilter,
                                 int offset,
                                 int limit) {
-    List<Long> rulesIds = ruleStorage.findRulesIdsByFilter(ruleFilter, offset, limit);
-    return rulesIds.stream().map(this::findRuleById).toList();
+    List<Long> ruleIds;
+    if (StringUtils.isNotBlank(ruleFilter.getTerm()) && ruleFilter.getLocale() != null) {
+      int searchLimit = offset + limit * 2;
+      ruleIds = ruleSearchConnector.search(ruleFilter, 0, searchLimit);
+      if (CollectionUtils.isEmpty(ruleIds)) {
+        return Collections.emptyList();
+      } else {
+        ruleFilter.setTerm(null);
+        ruleFilter.setRuleIds(ruleIds);
+        ruleIds = ruleStorage.findRuleIdsByFilter(ruleFilter, offset, limit);
+      }
+    } else {
+      ruleIds = ruleStorage.findRuleIdsByFilter(ruleFilter, offset, limit);
+    }
+    return ruleIds.stream().map(this::findRuleById).toList();
   }
 
   @Override
@@ -147,7 +167,18 @@ public class RuleServiceImpl implements RuleService {
 
   @Override
   public int countRules(RuleFilter ruleFilter) {
-    return ruleStorage.countRulesByFilter(ruleFilter);
+    if (StringUtils.isNotBlank(ruleFilter.getTerm()) && ruleFilter.getLocale() != null) {
+      List<Long> ruleIds = ruleSearchConnector.search(ruleFilter, 0, MAX_RULES_TO_SEARCH);
+      if (CollectionUtils.isEmpty(ruleIds)) {
+        return 0;
+      } else {
+        ruleFilter.setTerm(null);
+        ruleFilter.setRuleIds(ruleIds);
+        return ruleStorage.countRulesByFilter(ruleFilter);
+      }
+    } else {
+      return ruleStorage.countRulesByFilter(ruleFilter);
+    }
   }
 
   @Override
