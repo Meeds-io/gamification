@@ -23,8 +23,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -64,6 +66,7 @@ import io.meeds.gamification.rest.model.ProgramList;
 import io.meeds.gamification.rest.model.ProgramRestEntity;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.utils.Utils;
+import io.meeds.social.translation.service.TranslationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -72,39 +75,43 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Path("/gamification/programs")
 public class ProgramRest implements ResourceContainer {
 
-  private static final String       DEFAULT_COVER_PATH       =
+  private static final String       DEFAULT_COVER_PATH        =
                                                        System.getProperty("meeds.engagementCenter.program.defaultCoverPath",
                                                                           "/skin/images/program_default_cover_back.png");
 
   private static final String       PROGRAM_NOT_FOUND_MESSAGE = "The program doesn't exit";
 
-  private static final Log          LOG                      = ExoLogger.getLogger(ProgramRest.class);
+  private static final Log          LOG                       = ExoLogger.getLogger(ProgramRest.class);
 
   // 7 days
-  private static final int          CACHE_IN_SECONDS         = 604800;
+  private static final int          CACHE_IN_SECONDS          = 604800;
 
-  private static final int          CACHE_IN_MILLI_SECONDS   = CACHE_IN_SECONDS * 1000;
+  private static final int          CACHE_IN_MILLI_SECONDS    = CACHE_IN_SECONDS * 1000;
 
-  private static final CacheControl CACHECONTROL             = new CacheControl();
+  private static final CacheControl CACHECONTROL              = new CacheControl();
 
   static {
     CACHECONTROL.setMaxAge(CACHE_IN_SECONDS);
     CACHECONTROL.setPrivate(false);
   }
 
-  protected PortalContainer portalContainer;
+  protected PortalContainer    portalContainer;
 
-  protected ProgramService  programService;
+  protected ProgramService     programService;
 
-  protected IdentityManager identityManager;
+  protected IdentityManager    identityManager;
 
-  public byte[]             defaultProgramCover = null; // NOSONAR
+  protected TranslationService translationService;
+
+  public byte[]                defaultProgramCover = null; // NOSONAR
 
   public ProgramRest(PortalContainer portalContainer,
                      ProgramService programService,
+                     TranslationService translationService,
                      IdentityManager identityManager) {
     this.portalContainer = portalContainer;
     this.programService = programService;
+    this.translationService = translationService;
     this.identityManager = identityManager;
   }
 
@@ -121,6 +128,8 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response getPrograms(
+                              @Context
+                              HttpServletRequest request,
                               @Parameter(description = "Offset of results to retrieve")
                               @QueryParam("offset")
                               @DefaultValue("0")
@@ -172,7 +181,7 @@ public class ProgramRest implements ResourceContainer {
     String currentUser = Utils.getCurrentUser();
     try {
       ProgramList programList = new ProgramList();
-      List<ProgramRestEntity> programs = getProgramsRestEntitiesByFilter(programFilter, offset, limit, currentUser);
+      List<ProgramRestEntity> programs = getProgramsRestEntitiesByFilter(programFilter, getLocale(request), offset, limit, currentUser);
       if (returnSize) {
         int programsSize = programService.countPrograms(programFilter, currentUser);
         programList.setSize(programsSize);
@@ -200,6 +209,8 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response createProgram(
+                                @Context
+                                HttpServletRequest request,
                                 @Parameter(description = "Program object to create", required = true)
                                 ProgramDTO program) {
     if (program == null) {
@@ -208,7 +219,12 @@ public class ProgramRest implements ResourceContainer {
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
       program = programService.createProgram(program, identity);
-      return Response.ok(ProgramBuilder.toRestEntity(programService, program, identity.getUserId())).build();
+      return Response.ok(ProgramBuilder.toRestEntity(programService,
+                                                     translationService,
+                                                     program,
+                                                     getLocale(request),
+                                                     identity.getUserId()))
+                     .build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
     }
@@ -227,6 +243,8 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response updateProgram(
+                                @Context
+                                HttpServletRequest request,
                                 @Parameter(description = "Program id", required = true)
                                 @PathParam("id")
                                 long programId,
@@ -242,7 +260,12 @@ public class ProgramRest implements ResourceContainer {
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
       program = programService.updateProgram(program, identity);
-      return Response.ok(ProgramBuilder.toRestEntity(programService, program, identity.getUserId())).build();
+      return Response.ok(ProgramBuilder.toRestEntity(programService,
+                                                     translationService,
+                                                     program,
+                                                     getLocale(request),
+                                                     identity.getUserId()))
+                     .build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (ObjectNotFoundException e) {
@@ -262,6 +285,8 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response deleteProgramById(
+                                    @Context
+                                    HttpServletRequest request,
                                     @Parameter(description = "Program id to be deleted", required = true)
                                     @PathParam("programId")
                                     long programId) {
@@ -353,6 +378,8 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response getProgramById(
+                                 @Context
+                                 HttpServletRequest request,
                                  @Parameter(description = "Program technical identifier", required = true)
                                  @PathParam("programId")
                                  long programId) {
@@ -362,7 +389,12 @@ public class ProgramRest implements ResourceContainer {
     String currentUser = Utils.getCurrentUser();
     try {
       ProgramDTO program = programService.getProgramById(programId, currentUser);
-      return Response.ok(ProgramBuilder.toRestEntity(programService, program, currentUser)).build();
+      return Response.ok(ProgramBuilder.toRestEntity(programService,
+                                                     translationService,
+                                                     program,
+                                                     getLocale(request),
+                                                     currentUser))
+                     .build();
     } catch (IllegalArgumentException e) {
       return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
     } catch (IllegalAccessException e) {
@@ -372,12 +404,17 @@ public class ProgramRest implements ResourceContainer {
     }
   }
 
+  private Locale getLocale(HttpServletRequest request) {
+    return request == null ? null : request.getLocale();
+  }
+
   private List<ProgramRestEntity> getProgramsRestEntitiesByFilter(ProgramFilter filter,
-                                                                 int offset,
-                                                                 int limit,
-                                                                 String currentUser) throws IllegalAccessException {
+                                                                  Locale locale,
+                                                                  int offset,
+                                                                  int limit,
+                                                                  String currentUser) throws IllegalAccessException {
     List<ProgramDTO> programs = programService.getPrograms(filter, currentUser, offset, limit);
-    return ProgramBuilder.toRestEntities(programService, programs, currentUser);
+    return ProgramBuilder.toRestEntities(programService, translationService, locale, programs, currentUser);
   }
 
   private InputStream getDefaultCoverInputStream() throws IOException {
