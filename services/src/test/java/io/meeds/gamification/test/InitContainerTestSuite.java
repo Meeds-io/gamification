@@ -38,6 +38,8 @@ import io.meeds.gamification.listener.GamificationProfileListenerTest;
 import io.meeds.gamification.listener.GamificationRelationshipListenerTest;
 import io.meeds.gamification.listener.GamificationSpaceListenerTest;
 import io.meeds.gamification.listener.RulesESListenerTest;
+import io.meeds.gamification.plugin.ProgramTranslationPluginTest;
+import io.meeds.gamification.plugin.RuleTranslationPluginTest;
 import io.meeds.gamification.rest.TestAnnouncementRest;
 import io.meeds.gamification.rest.TestBadgeRest;
 import io.meeds.gamification.rest.TestGamificationInformationsEndpoint;
@@ -78,6 +80,8 @@ import io.meeds.gamification.utils.UtilsTest;
     RuleStorageTest.class,
     AnnouncementServiceTest.class,
     RuleServiceTest.class,
+    RuleTranslationPluginTest.class,
+    ProgramTranslationPluginTest.class,
     RealizationServiceTest.class,
     UtilsTest.class,
     TestGamificationInformationsEndpoint.class,
