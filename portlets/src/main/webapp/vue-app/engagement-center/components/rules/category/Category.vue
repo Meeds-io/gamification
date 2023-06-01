@@ -100,7 +100,11 @@ export default {
   methods: {
     onRuleUpdated(rule) {
       if (this.rules.find(r => r.id === rule.id)) {
-        return this.$ruleService.getRuleById(rule.id, 'countRealizations', 3)
+        return this.$ruleService.getRuleById(rule.id, {
+          lang: eXo.env.portal.language,
+          expand: 'countRealizations',
+          realizationsLimit: 3,
+        })
           .then(r => this.$set(this.updatedRules, r.id, r));
       }
     },
