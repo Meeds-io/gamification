@@ -156,6 +156,7 @@ export default {
         orderByRealizations: this.orderByRealizations,
         period: this.period,
         expand: 'countRealizations',
+        lang: eXo.env.portal.language,
       })
         .then(result => {
           this.rules = result?.rules || [];
