@@ -72,6 +72,7 @@ public class ProgramDTO implements Serializable, Cloneable {
   /**
    * Deprecated should be renamed to spaceId knowing that audienceId
    * should reference an identity id instead
+   * @return space technical identifier
    * @deprecated user spaceId instead
    */
   @Deprecated(forRemoval = true, since = "1.5.0")
@@ -82,6 +83,7 @@ public class ProgramDTO implements Serializable, Cloneable {
   /**
    * Deprecated should be renamed to spaceId knowing that audienceId
    * should reference an identity id instead
+   * @param spaceId space technical identifier
    * @deprecated user spaceId instead
    */
   @Deprecated(forRemoval = true, since = "1.5.0")

@@ -76,7 +76,7 @@ public class RuleDTO implements Serializable {
    */
   @Deprecated(forRemoval = true, since = "1.5.0")
   public long getAudienceId() {
-    return program == null ? 0 : program.getSpaceId();
+    return getSpaceId();
   }
 
   public long getProgramId() {
@@ -84,7 +84,7 @@ public class RuleDTO implements Serializable {
   }
 
   public long getSpaceId() {
-    return getAudienceId();
+    return program == null ? 0 : program.getSpaceId();
   }
 
   public Set<Long> getManagers() {
