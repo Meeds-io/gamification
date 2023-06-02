@@ -101,6 +101,7 @@ export default {
         type: this.type,
         status: this.status,
         sortByBudget: true,
+        lang: eXo.env.portal.language,
       })
         .then((data) => {
           this.programs = (data?.programs || []).sort((p1, p2) => p2.rulesTotalScore - p1.rulesTotalScore);

@@ -19,6 +19,7 @@ package io.meeds.gamification.plugin;
 
 import static org.junit.Assert.assertThrows;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
 
@@ -29,13 +30,15 @@ import org.exoplatform.services.security.MembershipEntry;
 
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.test.AbstractServiceTest;
+import io.meeds.gamification.utils.Utils;
 import io.meeds.social.translation.model.TranslationField;
 import io.meeds.social.translation.service.TranslationService;
 
 public class ProgramTranslationPluginTest extends AbstractServiceTest {
   private final Identity     adminAclIdentity =
                                               new Identity("root1",
-                                                           Collections.singleton(new MembershipEntry("/platform/administrators")));
+                                                           Arrays.asList(new MembershipEntry(Utils.ADMINS_GROUP),
+                                                                         new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
 
   private TranslationService translationService;
 

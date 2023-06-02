@@ -87,11 +87,13 @@ public class ProgramStorage {
     return ProgramMapper.fromEntity(ruleDAO, programDAO.getProgramByTitle(programTitle));
   }
 
-  public List<Long> findHighestBudgetProgramIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
-    if (CollectionUtils.isNotEmpty(spacesIds)) {
-      return ruleDAO.findHighestBudgetProgramIdsBySpacesIds(spacesIds, offset, limit);
-    } else {
+  public List<Long> findHighestBudgetProgramIdsBySpacesIds(ProgramFilter programFilter, int offset, int limit) {
+    if (CollectionUtils.isNotEmpty(programFilter.getSpacesIds())) {
+      return ruleDAO.findHighestBudgetProgramIdsBySpacesIds(programFilter.getSpacesIds(), offset, limit);
+    } else if (programFilter.isAllSpaces()) {
       return ruleDAO.findHighestBudgetProgramIds(offset, limit);
+    } else {
+      return ruleDAO.findHighestBudgetOpenProgramIds(offset, limit);
     }
   }
 

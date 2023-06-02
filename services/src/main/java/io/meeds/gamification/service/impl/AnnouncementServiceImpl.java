@@ -98,7 +98,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     Identity identity = identityManager.getOrCreateUserIdentity(username);
     if (identity == null || !canAnnounce(rule, identity.getId())) {
       throw new IllegalAccessException("user " + username + " is not allowed to announce a challenge on space with id "
-          + rule.getAudienceId());
+          + rule.getSpaceId());
     }
 
     long creatorId = Long.parseLong(identity.getId());
@@ -180,14 +180,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       if (templateParams == null) {
         templateParams = new HashMap<>();
       }
-      Space space = spaceService.getSpaceById(String.valueOf(rule.getAudienceId()));
-      if (space == null) {
-        throw new ObjectNotFoundException("space doesn't exists");
-      }
-      Identity spaceIdentity = identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
-      if (spaceIdentity == null) {
-        throw new ObjectNotFoundException("space doesn't exists");
-      }
       ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
       activity.setType(ANNOUNCEMENT_ACTIVITY_TYPE);
       activity.setTitle(announcement.getComment());
@@ -196,8 +188,23 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       templateParams.put(ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM, rule.getTitle());
       buildActivityParams(activity, templateParams);
 
-      activityManager.saveActivityNoReturn(spaceIdentity, activity);
-      long activityId = Long.parseLong(activity.getId());
+      long activityId;
+      if (rule.isOpen()) {
+        Identity userIdentity = identityManager.getIdentity(activity.getUserId());
+        activityManager.saveActivityNoReturn(userIdentity, activity);
+        activityId = Long.parseLong(activity.getId());
+      } else {
+        Space space = spaceService.getSpaceById(String.valueOf(rule.getSpaceId()));
+        if (space == null) {
+          throw new ObjectNotFoundException("space doesn't exists");
+        }
+        Identity spaceIdentity = identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
+        if (spaceIdentity == null) {
+          throw new ObjectNotFoundException("space doesn't exists");
+        }
+        activityManager.saveActivityNoReturn(spaceIdentity, activity);
+        activityId = Long.parseLong(activity.getId());
+      }
       announcementStorage.updateAnnouncementActivityId(announcement.getId(), activityId);
       announcement.setActivityId(activityId);
     } catch (Exception e) {

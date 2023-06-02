@@ -112,7 +112,7 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     fields.put("event", rule.getEvent());
     fields.put("startDate", toMilliSecondsString(rule.getStartDate()));
     // To add end of the day
-    fields.put("endDate", toMilliSecondsString(rule.getEndDate()) + 86400000l);
+    fields.put("endDate", toMilliSecondsPlusAdayString(rule.getEndDate()));
     fields.put("createdBy", getUserIdentityId(rule.getCreatedBy()));
     fields.put("createdDate", toMilliSecondsString(rule.getCreatedDate()));
     fields.put("lastModifiedBy", getUserIdentityId(rule.getLastModifiedBy()));
@@ -127,7 +127,7 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
       document.addListField("managers", Collections.emptyList());
     } else {
       document.addField("domainId", String.valueOf(program.getId()));
-      document.addField("audience", String.valueOf(program.getAudienceId()));
+      document.addField("audience", String.valueOf(program.getSpaceId()));
       if (CollectionUtils.isNotEmpty(program.getOwnerIds())) {
         document.addListField("managers", program.getOwnerIds().stream().map(String::valueOf).toList());
       } else {
@@ -171,6 +171,10 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
 
   private String toMilliSecondsString(String date) {
     return date != null ? String.valueOf(Utils.parseSimpleDate(date).getTime()) : "0";
+  }
+
+  private String toMilliSecondsPlusAdayString(String date) {
+    return date != null ? String.valueOf(Utils.parseSimpleDate(date).getTime() + 86400000l) : "0";
   }
 
 }

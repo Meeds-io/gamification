@@ -73,8 +73,10 @@ public class RuleBuilder {
                                                           periodType,
                                                           realizationsLimit);
       realizationEntities = RealizationBuilder.toRestEntities(ruleService,
+                                                              translationService,
                                                               ExoContainerContext.getService(IdentityManager.class),
-                                                              realizations);
+                                                              realizations,
+                                                              null);
     }
 
     boolean countRealizations = retrieveRealizations || (expandFields != null && expandFields.contains("countRealizations"));
@@ -94,29 +96,11 @@ public class RuleBuilder {
                                                 realizationService,
                                                 rule,
                                                 Utils.getCurrentUser());
-    String title = rule.getTitle();
-    String description = rule.getDescription();
-
-    if (locale != null) {
-      String translatedTitle = translationService.getTranslationLabel(RULE_OBJECT_TYPE,
-                                                                      rule.getId(),
-                                                                      RULE_TITLE_FIELD_NAME,
-                                                                      locale);
-      if (StringUtils.isNotBlank(translatedTitle)) {
-        title = translatedTitle;
-      }
-      String translatedDescription = translationService.getTranslationLabel(RULE_OBJECT_TYPE,
-                                                                            rule.getId(),
-                                                                            RULE_DESCRIPTION_FIELD_NAME,
-                                                                            locale);
-      if (StringUtils.isNotBlank(translatedDescription)) {
-        description = translatedDescription;
-      }
-    }
+    translatedLabels(translationService, rule, locale);
 
     return new RuleRestEntity(rule.getId(),
-                              title,
-                              description,
+                              rule.getTitle(),
+                              rule.getDescription(),
                               rule.getScore(),
                               program,
                               rule.isEnabled(),
@@ -131,12 +115,33 @@ public class RuleBuilder {
                               rule.getPrerequisiteRuleIds(),
                               rule.getType(),
                               rule.getRecurrence(),
-                              rule.getAudienceId(),
+                              rule.getSpaceId(),
                               rule.getManagers(),
                               realizationEntities,
                               realizationsCount,
                               userContext,
                               prerequisiteRules);
+  }
+
+  public static void translatedLabels(TranslationService translationService, RuleDTO rule, Locale locale) {
+    if (rule == null || locale == null) {
+      return;
+    }
+    String translatedTitle = translationService.getTranslationLabel(RULE_OBJECT_TYPE,
+                                                                    rule.getId(),
+                                                                    RULE_TITLE_FIELD_NAME,
+                                                                    locale);
+    if (StringUtils.isNotBlank(translatedTitle)) {
+      rule.setTitle(translatedTitle);
+    }
+    String translatedDescription = translationService.getTranslationLabel(RULE_OBJECT_TYPE,
+                                                                          rule.getId(),
+                                                                          RULE_DESCRIPTION_FIELD_NAME,
+                                                                          locale);
+    if (StringUtils.isNotBlank(translatedDescription)) {
+      rule.setDescription(translatedDescription);
+    }
+    ProgramBuilder.translatedLabels(translationService, rule.getProgram(), locale);
   }
 
   public static UserInfoContext toUserContext(ProgramService programService,
