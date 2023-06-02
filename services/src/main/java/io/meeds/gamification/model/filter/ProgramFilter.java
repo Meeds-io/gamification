@@ -48,6 +48,8 @@ public class ProgramFilter implements Serializable {
 
   private long              ownerId;
 
+  private boolean           allSpaces;
+
   public ProgramFilter clone() { // NOSONAR
     return new ProgramFilter(entityFilterType,
                              entityStatusType,
@@ -55,7 +57,8 @@ public class ProgramFilter implements Serializable {
                              includeDeleted,
                              sortByBudget,
                              spacesIds == null ? null : new ArrayList<>(spacesIds),
-                             ownerId);
+                             ownerId,
+                             allSpaces);
   }
 
 }

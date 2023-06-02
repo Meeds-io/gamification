@@ -130,6 +130,7 @@ export default {
   created() {
     this.$root.$on('program-added', this.openProgramDetail);
     this.$root.$on('open-program-detail', this.openProgramDetail);
+    this.$root.$on('open-program-detail-by-id', this.openProgramDetailById);
     this.$root.$on('close-program-detail', () => this.displayProgramDetail = false);
     this.$root.$on('rule-delete-confirm', this.confirmDelete);
     this.initTabs();
@@ -151,9 +152,20 @@ export default {
         this.$refs.rules.reset();
       }
     },
+    openProgramDetailById(id) {
+      this.$programService.getProgramById(id, {
+        lang: eXo.env.portal.language
+      })
+        .then(program => {
+          if (program?.id) {
+            this.openProgramDetail(program);
+          }
+        });
+    },
     openProgramDetail(program) {
       this.program = program;
       this.displayProgramDetail = true;
+      window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${this.programsLinkBasePath}/${program.id}`);
     },
     switchTabs() {
       const urlPath = document.location.pathname;
@@ -161,11 +173,12 @@ export default {
       if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`) >= 0) {
         this.tab = 0;
         if (id) {
-          this.$programService.getProgramById(id)
+          this.$programService.getProgramById(id, {
+            lang: eXo.env.portal.language
+          })
             .then(program => {
               if (program && program.id) {
                 this.$root.$emit('open-program-detail', program);
-                window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${this.programsLinkBasePath}/${program.id}`);
               }
             });
         }

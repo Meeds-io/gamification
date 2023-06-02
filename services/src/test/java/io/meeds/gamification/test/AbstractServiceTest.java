@@ -17,7 +17,7 @@
 package io.meeds.gamification.test;
 
 import java.security.Principal;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -260,21 +260,50 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     resourceBinder.addResource(resourceClass, null);
   }
 
-  protected ConversationState startSessionAs(String user) {
-    org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity(user);
+  protected ConversationState startSessionAs(String username) {
+    org.exoplatform.services.security.Identity identity = registerInternalUser(username);
     ConversationState state = new ConversationState(identity);
     ConversationState.setCurrent(state);
-    userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, user);
+    userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, username);
+    return state;
+  }
+
+  protected ConversationState startExternalSessionAs(String username) {
+    org.exoplatform.services.security.Identity identity = registerExternalUser(username);
+    ConversationState state = new ConversationState(identity);
+    ConversationState.setCurrent(state);
+    userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, username);
     return state;
   }
 
   protected void startSessionAsAdministrator(String user) {
-    org.exoplatform.services.security.Identity identity =
-                                                        new org.exoplatform.services.security.Identity(user,
-                                                                                                       Collections.singleton(new MembershipEntry("/platform/administrators")));
+    org.exoplatform.services.security.Identity identity = registerAdministratorUser(user);
     ConversationState state = new ConversationState(identity);
     ConversationState.setCurrent(state);
     userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, user);
+  }
+
+  protected org.exoplatform.services.security.Identity registerAdministratorUser(String user) {
+    org.exoplatform.services.security.Identity identity =
+                                                        new org.exoplatform.services.security.Identity(user,
+                                                                                                       Arrays.asList(new MembershipEntry(Utils.ADMINS_GROUP),
+                                                                                                                     new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
+    identityRegistry.register(identity);
+    return identity;
+  }
+
+  protected org.exoplatform.services.security.Identity registerExternalUser(String username) {
+    org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity(username,
+                                                                                                         Arrays.asList(new MembershipEntry("/platform/externals")));
+    identityRegistry.register(identity);
+    return identity;
+  }
+
+  protected org.exoplatform.services.security.Identity registerInternalUser(String username) {
+    org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity(username,
+                                                                                                         Arrays.asList(new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
+    identityRegistry.register(identity);
+    return identity;
   }
 
   protected RuleEntity newRule() {
@@ -401,6 +430,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected ProgramEntity newDomain(EntityType entityType, String name, boolean status, Set<Long> owners) {
+    return newDomain(entityType, name, status, owners, 1l);
+  }
+
+  protected ProgramEntity newDomain(EntityType entityType, String name, boolean status, Set<Long> owners, Long audienceId) {
     ProgramEntity domain = new ProgramEntity();
     domain.setTitle(name);
     domain.setDescription("Description");
@@ -413,7 +446,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     domain.setCreatedDate(new Date());
     domain.setBudget(20L);
     domain.setCoverFileId(1L);
-    domain.setAudienceId(1L);
+    domain.setAudienceId(audienceId);
     domain.setOwners(owners);
     ProgramEntity createdDomain = programDAO.create(domain);
     domainStorage.clearCache();
@@ -423,6 +456,23 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected ProgramDTO newProgram(EntityType entityType, String name, boolean status, Set<Long> owners) {
     return ProgramMapper.fromEntity(ruleDAO, newDomain(entityType, name, status, owners));
+  }
+
+  protected ProgramEntity newOpenProgram(String name) {
+    ProgramEntity domain = new ProgramEntity();
+    domain.setTitle(name);
+    domain.setDescription(name);
+    domain.setCreatedBy(TEST_USER_EARNER);
+    domain.setLastModifiedBy(TEST_USER_EARNER);
+    domain.setDeleted(false);
+    domain.setEnabled(true);
+    domain.setLastModifiedDate(new Date());
+    domain.setType(EntityType.AUTOMATIC);
+    domain.setCreatedDate(new Date());
+    domain = programDAO.create(domain);
+    domainStorage.clearCache();
+    restartTransaction();
+    return domain;
   }
 
   protected ProgramEntity newDomain(String name) {

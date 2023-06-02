@@ -84,6 +84,9 @@ public class RuleTranslationPlugin extends TranslationPlugin {
   @Override
   public long getAudienceId(long ruleId) throws ObjectNotFoundException {
     long spaceId = getSpaceId(ruleId);
+    if (spaceId == 0) {
+      return 0;
+    }
     Space space = spaceService.getSpaceById(String.valueOf(spaceId));
     if (space == null) {
       throw new ObjectNotFoundException(String.format("Space with id %s wasn't found",
@@ -100,7 +103,7 @@ public class RuleTranslationPlugin extends TranslationPlugin {
       throw new ObjectNotFoundException(String.format("Rule with id %s wasn't found",
                                                       ruleId));
     }
-    return rule.getProgram().getAudienceId();
+    return rule.getProgram().getSpaceId();
   }
 
 }

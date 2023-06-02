@@ -20,7 +20,6 @@ package io.meeds.gamification.service;
 import static io.meeds.gamification.constant.GamificationConstant.ACTIVITY_OBJECT_TYPE;
 import static org.junit.Assert.assertThrows;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +29,6 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.ValueParam;
 import org.exoplatform.services.security.Identity;
-import org.exoplatform.services.security.MembershipEntry;
 
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
@@ -45,18 +43,23 @@ import io.meeds.gamification.model.filter.RuleFilter;
 import io.meeds.gamification.plugin.RuleConfigPlugin;
 import io.meeds.gamification.storage.mapper.RuleMapper;
 import io.meeds.gamification.test.AbstractServiceTest;
-import io.meeds.gamification.utils.Utils;
 
 public class RuleServiceTest extends AbstractServiceTest {
-  private final Identity adminAclIdentity =
-                                          new Identity("root1",
-                                                       Collections.singleton(new MembershipEntry("/platform/administrators")));
+
+  private static final String INTERNAL_USER     = "root50";
+
+  private static final String SPACE_MEMBER_USER = "root10";
+
+  private static final String ADMIN_USER        = "root1";
+
+  private Identity            adminAclIdentity;
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    Identity adminAclIdentity = new Identity("root", Collections.singleton(new MembershipEntry(Utils.REWARDING_GROUP)));
-    identityRegistry.register(adminAclIdentity);
+    adminAclIdentity = registerAdministratorUser(ADMIN_USER);
+    registerInternalUser(SPACE_MEMBER_USER);
+    registerInternalUser(INTERNAL_USER);
   }
 
   @Test
@@ -82,11 +85,11 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertNotNull(rule);
 
     Long ruleId = rule.getId();
-    RuleDTO foundRule = ruleService.findRuleById(ruleId, "root1");
+    RuleDTO foundRule = ruleService.findRuleById(ruleId, ADMIN_USER);
     assertNotNull(foundRule);
 
-    ruleService.deleteRuleById(ruleId, "root1");
-    assertThrows(ObjectNotFoundException.class, () -> ruleService.findRuleById(ruleId, "root1"));
+    ruleService.deleteRuleById(ruleId, ADMIN_USER);
+    assertThrows(ObjectNotFoundException.class, () -> ruleService.findRuleById(ruleId, ADMIN_USER));
   }
 
   @Test
@@ -98,15 +101,15 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertNotNull(program);
 
     assertNotNull(ruleService.findRuleById(rule.getId()));
-    program.setAudienceId(program.getAudienceId() + 1);
+    program.setSpaceId(program.getSpaceId() + 1);
     ProgramDTO updatedProgram = programService.updateProgram(program, adminAclIdentity);
 
     RuleDTO updatedRuleAudience = ruleService.findRuleById(rule.getId());
     assertNotNull(updatedRuleAudience);
     assertNotNull(updatedRuleAudience.getProgram());
-    assertEquals(updatedRuleAudience.getProgram().getId(), program.getId());
-    assertEquals(updatedRuleAudience.getProgram().getAudienceId(), program.getAudienceId());
-    assertEquals(updatedRuleAudience.getProgram().getAudienceId(), updatedProgram.getAudienceId());
+    assertEquals(program.getId(), updatedRuleAudience.getProgram().getId());
+    assertEquals(program.getSpaceId(), updatedRuleAudience.getProgram().getSpaceId());
+    assertEquals(updatedProgram.getSpaceId(), updatedRuleAudience.getProgram().getSpaceId());
   }
 
   @Test
@@ -142,7 +145,7 @@ public class RuleServiceTest extends AbstractServiceTest {
   public void testDeleteRule() throws Exception {
     RuleEntity ruleEntity = newRule();
     assertFalse(ruleEntity.isDeleted());
-    ruleService.deleteRuleById(ruleEntity.getId(), "root1");
+    ruleService.deleteRuleById(ruleEntity.getId(), ADMIN_USER);
     assertTrue(ruleEntity.isDeleted());
     assertThrows(IllegalArgumentException.class, () -> ruleService.deleteRuleById(null, "root"));
   }
@@ -168,7 +171,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertNotNull(latestRealization);
     assertEquals(realization.getId(), latestRealization.getId());
 
-    RuleDTO rule = ruleService.deleteRuleById(ruleEntity.getId(), "root1");
+    RuleDTO rule = ruleService.deleteRuleById(ruleEntity.getId(), ADMIN_USER);
     assertNotNull(rule);
     assertTrue(rule.isDeleted());
 
@@ -179,14 +182,15 @@ public class RuleServiceTest extends AbstractServiceTest {
     realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
     assertNotNull(realizations);
     assertEquals(1, realizations.size());
-    latestRealization = realizations.get(0);    assertNotNull(latestRealization);
+    latestRealization = realizations.get(0);
+    assertNotNull(latestRealization);
     assertEquals(realization.getId(), latestRealization.getId());
   }
 
   @Test
   public void testAddRule() throws Exception {
     assertEquals(ruleDAO.findAll().size(), 0);
-    assertThrows(IllegalArgumentException.class, () -> ruleService.createRule(null, "root10"));
+    assertThrows(IllegalArgumentException.class, () -> ruleService.createRule(null, SPACE_MEMBER_USER));
     RuleEntity rule = new RuleEntity();
     rule.setScore(Integer.parseInt(TEST__SCORE));
     rule.setTitle(RULE_NAME);
@@ -201,7 +205,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setDomainEntity(newDomain(GAMIFICATION_DOMAIN));
     rule.setType(EntityType.AUTOMATIC);
     rule.setRecurrence(RecurrenceType.NONE);
-    ruleService.createRule(RuleMapper.fromEntity(domainStorage, rule), "root1");
+    ruleService.createRule(RuleMapper.fromEntity(domainStorage, rule), ADMIN_USER);
     assertEquals(ruleDAO.findAll().size(), 1);
   }
 
@@ -211,40 +215,132 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertThrows(ObjectNotFoundException.class, () -> ruleService.updateRule(new RuleDTO(), "root"));
     RuleEntity ruleEntity = newRule();
     ruleEntity.setDescription("new_description");
-    ruleService.updateRule(RuleMapper.fromEntity(domainStorage, ruleEntity), "root1");
+    ruleService.updateRule(RuleMapper.fromEntity(domainStorage, ruleEntity), ADMIN_USER);
     RuleDTO rule = ruleService.findRuleById(ruleEntity.getId());
     assertEquals(ruleEntity.getDescription(), rule.getDescription());
+    assertThrows(IllegalAccessException.class, () -> ruleService.updateRule(rule, SPACE_MEMBER_USER));
 
-    ruleService.deleteRuleById(rule.getId(), "root1");
+    ruleService.deleteRuleById(rule.getId(), ADMIN_USER);
     assertThrows(ObjectNotFoundException.class, () -> ruleService.updateRule(rule, "root"));
   }
 
   @Test
-  public void testGetRulesByFilter() throws Exception {
+  public void testGetRulesByAdmin() throws Exception {
     newRuleDTO();
     ProgramEntity domainEntity1 = newDomain("domain1");
     ProgramEntity domainEntity2 = newDomain("domain2");
     RuleDTO ruleDTO1 = newRuleDTO("rule1", domainEntity1.getId());
     ruleDTO1.setEnabled(false);
-    ruleService.updateRule(ruleDTO1, "root1");
+    ruleService.updateRule(ruleDTO1, ADMIN_USER);
     RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
     ruleDTO2.setEnabled(false);
-    ruleService.updateRule(ruleDTO2, "root1");
+    ruleService.updateRule(ruleDTO2, ADMIN_USER);
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(1, ruleService.getRules(ruleFilter, "root1",0, 10).size());
+    assertEquals(1, ruleService.getRules(ruleFilter, ADMIN_USER, 0, 10).size());
     ruleFilter.setEntityStatusType(EntityStatusType.DISABLED);
-    assertEquals(2, ruleService.getRules(ruleFilter, "root1",0, 10).size());
+    assertEquals(2, ruleService.getRules(ruleFilter, ADMIN_USER, 0, 10).size());
     ruleFilter.setEntityStatusType(EntityStatusType.ALL);
     ProgramDTO domain = programService.getProgramByTitle(GAMIFICATION_DOMAIN);
     long domainId = domain.getId();
     ruleFilter.setProgramId(domainId);
-    assertEquals(1, ruleService.getRules(ruleFilter, "root1",0, 10).size());
+    assertEquals(1, ruleService.getRules(ruleFilter, ADMIN_USER, 0, 10).size());
     ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(0, ruleService.getRules(ruleFilter, "root1",0, 10).size());
+    assertEquals(0, ruleService.getRules(ruleFilter, ADMIN_USER, 0, 10).size());
     ruleFilter = new RuleFilter();
     ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(3, ruleService.getRules(ruleFilter, "root1",0, 10).size());
+    assertEquals(3, ruleService.getRules(ruleFilter, ADMIN_USER, 0, 10).size());
+    assertEquals(3, ruleDAO.count().intValue());
+  }
+
+  @Test
+  public void testGetRulesBySpaceMember() throws Exception {
+    newRuleDTO();
+    ProgramEntity domainEntity1 = newDomain("domain1");
+    ProgramEntity domainEntity2 = newDomain("domain2");
+    RuleDTO ruleDTO1 = newRuleDTO("rule1", domainEntity1.getId());
+    ruleDTO1.setEnabled(false);
+    ruleService.updateRule(ruleDTO1, ADMIN_USER);
+    RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
+    ruleDTO2.setEnabled(false);
+    ruleService.updateRule(ruleDTO2, ADMIN_USER);
+    RuleFilter ruleFilter = new RuleFilter();
+    ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(1, ruleService.getRules(ruleFilter, SPACE_MEMBER_USER, 0, 10).size());
+    ruleFilter.setEntityStatusType(EntityStatusType.DISABLED);
+    assertEquals(2, ruleService.getRules(ruleFilter, SPACE_MEMBER_USER, 0, 10).size());
+    ruleFilter.setEntityStatusType(EntityStatusType.ALL);
+    ProgramDTO domain = programService.getProgramByTitle(GAMIFICATION_DOMAIN);
+    long domainId = domain.getId();
+    ruleFilter.setProgramId(domainId);
+    assertEquals(1, ruleService.getRules(ruleFilter, SPACE_MEMBER_USER, 0, 10).size());
+    ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(0, ruleService.getRules(ruleFilter, SPACE_MEMBER_USER, 0, 10).size());
+    ruleFilter = new RuleFilter();
+    ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(3, ruleService.getRules(ruleFilter, SPACE_MEMBER_USER, 0, 10).size());
+    assertEquals(3, ruleDAO.count().intValue());
+  }
+
+  @Test
+  public void testGetRulesByNonMemberUser() throws Exception {
+    newRuleDTO();
+    ProgramEntity domainEntity1 = newDomain("domain1");
+    ProgramEntity domainEntity2 = newDomain("domain2");
+    RuleDTO ruleDTO1 = newRuleDTO("rule1", domainEntity1.getId());
+    ruleDTO1.setEnabled(false);
+    ruleService.updateRule(ruleDTO1, ADMIN_USER);
+    RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
+    ruleDTO2.setEnabled(false);
+    ruleService.updateRule(ruleDTO2, ADMIN_USER);
+    RuleFilter ruleFilter = new RuleFilter();
+    ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(0, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
+    ruleFilter.setEntityStatusType(EntityStatusType.DISABLED);
+    assertEquals(0, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
+    ruleFilter.setEntityStatusType(EntityStatusType.ALL);
+    ProgramDTO domain = programService.getProgramByTitle(GAMIFICATION_DOMAIN);
+    long domainId = domain.getId();
+    ruleFilter.setProgramId(domainId);
+    assertEquals(0, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
+    ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(0, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
+    ruleFilter = new RuleFilter();
+    ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(0, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
+    assertEquals(3, ruleDAO.count().intValue());
+  }
+
+  @Test
+  public void testGetOpenRulesByInternalUser() throws Exception {
+    RuleDTO ruleDTO = newRuleDTO();
+    ProgramDTO program = ruleDTO.getProgram();
+    program.setOpen(true);
+    programService.updateProgram(program, adminAclIdentity);
+
+    ProgramEntity domainEntity1 = newOpenProgram("domain1");
+    ProgramEntity domainEntity2 = newOpenProgram("domain2");
+    RuleDTO ruleDTO1 = newRuleDTO("rule1", domainEntity1.getId());
+    ruleDTO1.setEnabled(false);
+    ruleService.updateRule(ruleDTO1, ADMIN_USER);
+    RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
+    ruleDTO2.setEnabled(false);
+    ruleService.updateRule(ruleDTO2, ADMIN_USER);
+    RuleFilter ruleFilter = new RuleFilter();
+    ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(1, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
+    ruleFilter.setEntityStatusType(EntityStatusType.DISABLED);
+    assertEquals(2, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
+    ruleFilter.setEntityStatusType(EntityStatusType.ALL);
+    ProgramDTO domain = programService.getProgramByTitle(GAMIFICATION_DOMAIN);
+    long domainId = domain.getId();
+    ruleFilter.setProgramId(domainId);
+    assertEquals(1, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
+    ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(0, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
+    ruleFilter = new RuleFilter();
+    ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(3, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
     assertEquals(3, ruleDAO.count().intValue());
   }
 

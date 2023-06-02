@@ -144,7 +144,23 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
 
     response = getResponse("GET", getURLResource(restPath), null);
     assertNotNull(response);
-    assertEquals(401, response.getStatus());
+    assertEquals(200, response.getStatus());
+    realizationList = (RealizationList) response.getEntity();
+    assertNotNull(realizationList);
+    assertEquals(1, realizationList.getSize());
+    assertEquals(1, realizationList.getRealizations().size());
+
+    startSessionAs("notMemberUser");
+    restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
+        + "&offset=0&limit=10" + "&returnType=" + JSON_TYPE + "&returnSize=true";
+
+    response = getResponse("GET", getURLResource(restPath), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    realizationList = (RealizationList) response.getEntity();
+    assertNotNull(realizationList);
+    assertEquals(0, realizationList.getSize());
+    assertEquals(0, realizationList.getRealizations().size());
   }
 
   @Test

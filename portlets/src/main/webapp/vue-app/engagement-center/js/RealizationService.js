@@ -104,6 +104,8 @@ function getRealizationsFormData(filter) {
   }
   if (filter?.sortDescending) {
     formData.append('sortDescending', 'true');
+  } else {
+    formData.append('sortDescending', 'false');
   }
   if (filter?.offset) {
     formData.append('offset', filter.offset);
