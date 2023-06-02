@@ -33,7 +33,6 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -62,29 +61,12 @@ public class ProgramBuilder {
     if (program == null) {
       return null;
     }
-    String title = program.getTitle();
-    String description = program.getDescription();
-    if (locale != null) {
-      String translatedTitle = translationService.getTranslationLabel(PROGRAM_OBJECT_TYPE,
-                                                                      program.getId(),
-                                                                      PROGRAM_TITLE_FIELD_NAME,
-                                                                      locale);
-      if (StringUtils.isNotBlank(translatedTitle)) {
-        title = translatedTitle;
-      }
-      String translatedDescription = translationService.getTranslationLabel(PROGRAM_OBJECT_TYPE,
-                                                                            program.getId(),
-                                                                            PROGRAM_DESCRIPTION_FIELD_NAME,
-                                                                            locale);
-      if (StringUtils.isNotBlank(translatedDescription)) {
-        description = translatedDescription;
-      }
-    }
+    translatedLabels(translationService, program, locale);
 
     return new ProgramRestEntity(program.getId(), // NOSONAR
-                                 title,
-                                 description,
-                                 program.getAudienceId(),
+                                 program.getTitle(),
+                                 program.getDescription(),
+                                 program.getSpaceId(),
                                  program.getPriority(),
                                  program.getCreatedBy(),
                                  program.getCreatedDate(),
@@ -99,9 +81,30 @@ public class ProgramBuilder {
                                  program.getCoverUrl(),
                                  program.getOwnerIds(),
                                  program.getRulesTotalScore(),
-                                 program.getAudienceId() > 0 ? Utils.getSpaceById(String.valueOf(program.getAudienceId())) : null,
+                                 program.isOpen(),
+                                 program.getSpaceId() > 0 ? Utils.getSpaceById(String.valueOf(program.getSpaceId())) : null,
                                  toUserContext(programService, program, username),
-                                 getProgramOwnersByIds(program.getOwnerIds(), program.getAudienceId()));
+                                 getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId()));
+  }
+
+  public static void translatedLabels(TranslationService translationService, ProgramDTO program, Locale locale) {
+    if (program == null || locale == null) {
+      return;
+    }
+    String translatedTitle = translationService.getTranslationLabel(PROGRAM_OBJECT_TYPE,
+                                                                    program.getId(),
+                                                                    PROGRAM_TITLE_FIELD_NAME,
+                                                                    locale);
+    if (StringUtils.isNotBlank(translatedTitle)) {
+      program.setTitle(translatedTitle);
+    }
+    String translatedDescription = translationService.getTranslationLabel(PROGRAM_OBJECT_TYPE,
+                                                                          program.getId(),
+                                                                          PROGRAM_DESCRIPTION_FIELD_NAME,
+                                                                          locale);
+    if (StringUtils.isNotBlank(translatedDescription)) {
+      program.setDescription(translatedDescription);
+    }
   }
 
   public static List<ProgramRestEntity> toRestEntities(ProgramService programService,
@@ -118,16 +121,18 @@ public class ProgramBuilder {
     }
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    Space space = spaceService.getSpaceById(String.valueOf(spaceId));
+    Space space = spaceId > 0 ? spaceService.getSpaceById(String.valueOf(spaceId)) : null;
     return ids.stream()
               .distinct()
               .map(id -> {
                 try {
                   Identity identity = identityManager.getIdentity(String.valueOf(id));
                   if (identity != null
-                      && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())
-                      && !spaceService.isManager(space, identity.getRemoteId())
-                      && spaceService.isMember(space, identity.getRemoteId())) {
+                      && identity.isUser()
+                      && (spaceId == 0
+                          || (space != null
+                              && !spaceService.isManager(space, identity.getRemoteId())
+                              && spaceService.isMember(space, identity.getRemoteId())))) {
                     return toUserInfo(identity);
                   }
                 } catch (Exception e) {
@@ -147,8 +152,8 @@ public class ProgramBuilder {
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
     Identity identity = identityManager.getOrCreateUserIdentity(username);
     mapUserInfo(userContext, identity);
-    if (program != null) {
-      long spaceId = program.getAudienceId();
+    if (program != null && !program.isOpen()) {
+      long spaceId = program.getSpaceId();
       SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
       Space space = spaceService.getSpaceById(String.valueOf(spaceId));
       if (space != null) {

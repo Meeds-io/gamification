@@ -54,8 +54,10 @@ public class ProgramMapper {
     programEntity.setLastModifiedBy(program.getLastModifiedBy());
     programEntity.setDeleted(program.isDeleted());
     programEntity.setEnabled(program.isEnabled());
-    if (program.getAudienceId() > 0) {
-      programEntity.setAudienceId(program.getAudienceId());
+    if (program.getSpaceId() > 0 && !program.isOpen()) {
+      programEntity.setAudienceId(program.getSpaceId());
+    } else {
+      programEntity.setAudienceId(null);
     }
     if (program.getCreatedDate() != null) {
       programEntity.setCreatedDate(Utils.parseRFC3339Date(program.getCreatedDate()));
@@ -91,7 +93,7 @@ public class ProgramMapper {
     program.setTitle(programEntity.getTitle());
     program.setDescription(programEntity.getDescription());
     if (programEntity.getAudienceId() != null) {
-      program.setAudienceId(programEntity.getAudienceId());
+      program.setSpaceId(programEntity.getAudienceId());
     }
     program.setCreatedBy(programEntity.getCreatedBy());
     program.setCreatedDate(Utils.toRFC3339Date(programEntity.getCreatedDate()));
@@ -104,6 +106,7 @@ public class ProgramMapper {
     program.setCoverFileId(programEntity.getCoverFileId());
     program.setCoverUrl(coverUrl);
     program.setOwnerIds(programEntity.getOwners());
+    program.setOpen(programEntity.getAudienceId() == null);
     program.setRulesTotalScore(programEntity.isDeleted() || !programEntity.isEnabled() ? 0
                                                                                        : ruleDAO.getRulesTotalScoreByProgramId(programEntity.getId()));
     return program;

@@ -189,6 +189,7 @@ export default {
             query: this.searchTerm,
             includeDeleted: this.includeDeleted,
             owned: this.onlyOwned,
+            lang: eXo.env.portal.language,
           })
             .then(data => this.programs = data.programs);
         }

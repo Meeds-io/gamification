@@ -160,7 +160,10 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
       }
     } else if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
       suffixes.add("Audience");
-      predicates.add("(d.audienceId in (:spacesIds) OR d.audienceId IS NULL)");
+      predicates.add("(d.audienceId IS NULL OR d.audienceId in (:spacesIds))");
+    } else if (!filter.isAllSpaces()) {
+      suffixes.add("OpenAudience");
+      predicates.add("d.audienceId IS NULL");
     }
   }
 

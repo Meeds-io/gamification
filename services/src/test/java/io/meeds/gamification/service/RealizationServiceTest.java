@@ -1,6 +1,6 @@
 /**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2022 Meeds Association
+ * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,46 +14,30 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 package io.meeds.gamification.service;
 
 import static io.meeds.gamification.constant.GamificationConstant.ACTIVITY_OBJECT_TYPE;
 import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
-import org.exoplatform.services.security.IdentityRegistry;
-import org.exoplatform.services.security.MembershipEntry;
-import org.exoplatform.social.core.manager.IdentityManager;
-import org.exoplatform.social.core.space.spi.SpaceService;
 
-import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
+import io.meeds.gamification.constant.RealizationStatus;
+import io.meeds.gamification.constant.RecurrenceType;
+import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RealizationEntity;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
@@ -61,363 +45,849 @@ import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.LeaderboardFilter;
 import io.meeds.gamification.model.filter.RealizationFilter;
-import io.meeds.gamification.service.impl.RealizationServiceImpl;
-import io.meeds.gamification.storage.RealizationStorage;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 
-@RunWith(MockitoJUnitRunner.class)
 public class RealizationServiceTest extends AbstractServiceTest {
 
-  private static final Random RANDOM = new Random();
+  private static final String INTERNAL_USER     = "root50";
 
-  protected static final long                      MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
+  private static final String SPACE_HOST_USER   = "root5";
 
-  protected static final Date                      fromDate        = new Date();
+  private static final String SPACE_MEMBER_USER = "root10";
 
-  protected static final Date                      toDate          = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
+  private static final String ADMIN_USER        = "root1";
 
-  protected static final int                       offset          = 0;
+  private Identity            adminAclIdentity;
 
-  protected static final int                       limit           = 3;
+  private String              adminIdentityId;
 
-  private static MockedStatic<ExoContainerContext> CONTAINER_CONTEXT;
+  private Identity            spaceMemberAclIdentity;
 
-  @Mock
-  IdentityManager                                  identityManager;
+  private String              spaceMemberIdentityId;
 
-  @Mock
-  ProgramService                                   programService;
+  private Identity            spaceHostAclIdentity;
 
-  @Mock
-  RuleService                                      ruleService;
+  private String              spaceHostIdentityId;
 
-  @Mock
-  SpaceService                                     spaceService;
+  private Identity            internalUserAclIdentity;
 
-  @Mock
-  RealizationStorage                               realizationsStorage;
+  private String              internalUserIdentityId;
 
-  @Mock
-  IdentityRegistry                                 identityRegistry;
-
-  RealizationService                               realizationService;
-
-  @BeforeClass
-  public static void initClassContext() {
-    CONTAINER_CONTEXT = mockStatic(ExoContainerContext.class);
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    adminAclIdentity = registerAdministratorUser(ADMIN_USER);
+    adminIdentityId = identityManager.getOrCreateUserIdentity(ADMIN_USER).getId();
+    spaceHostAclIdentity = registerInternalUser(SPACE_HOST_USER);
+    spaceHostIdentityId = identityManager.getOrCreateUserIdentity(SPACE_HOST_USER).getId();
+    spaceMemberAclIdentity = registerInternalUser(SPACE_MEMBER_USER);
+    spaceMemberIdentityId = identityManager.getOrCreateUserIdentity(SPACE_MEMBER_USER).getId();
+    internalUserAclIdentity = registerInternalUser(INTERNAL_USER);
+    internalUserIdentityId = identityManager.getOrCreateUserIdentity(INTERNAL_USER).getId();
   }
 
-  @AfterClass
-  public static void endClassContext() {
-    CONTAINER_CONTEXT.close();
-  }
+  public void testCreateRealizationsByAdmin() throws IllegalAccessException {
+    List<RealizationEntity> realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 0);
+    RuleDTO rule = newRuleDTO();
 
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    realizationService = new RealizationServiceImpl(programService,
-                                                    ruleService,
-                                                    identityManager,
-                                                    spaceService,
-                                                    realizationsStorage,
-                                                    null);
-  }
+    RealizationDTO realization = realizationService.createRealizations(rule.getEvent(),
+                                                                       adminIdentityId,
+                                                                       adminIdentityId,
+                                                                       ACTIVITY_ID,
+                                                                       ACTIVITY_OBJECT_TYPE)
+                                                   .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 1);
 
-  @SuppressWarnings("deprecation")
-  @Test
-  public void testGetRealizationsByFilter() throws IllegalAccessException {
-    // Given
-    RealizationFilter filter = new RealizationFilter();
-    Identity adminAclIdentity = new Identity("root1");
-    org.exoplatform.social.core.identity.model.Identity adminIdentity =
-                                                                     mock(org.exoplatform.social.core.identity.model.Identity.class);
-    when(adminIdentity.getId()).thenReturn("2");
-    when(adminIdentity.getRemoteId()).thenReturn(adminAclIdentity.getUserId());
-
-    ConversationState.setCurrent(new ConversationState(adminAclIdentity));
-    List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
-    adminAclIdentity.setMemberships(memberships);
-    CONTAINER_CONTEXT.when(() -> ExoContainerContext.getService(IdentityRegistry.class)).thenReturn(identityRegistry);
-    when(identityRegistry.getIdentity(adminIdentity.getRemoteId())).thenReturn(adminAclIdentity);
-
-    RealizationDTO gHistory1 = newRealizationDTO();
-    RealizationDTO gHistory2 = newRealizationDTO();
-    RealizationDTO gHistory3 = newRealizationDTO();
-    List<RealizationDTO> realizations = new ArrayList<>();
-    realizations.add(gHistory1);
-    realizations.add(gHistory2);
-    realizations.add(gHistory3);
-    when(realizationsStorage.getRealizationsByFilter(filter, offset, limit)).thenReturn(realizations);
-    when(identityManager.getOrCreateUserIdentity(adminAclIdentity.getUserId())).thenReturn(adminIdentity);
-    assertThrows(IllegalArgumentException.class,
-                 () -> realizationService.getRealizationsByFilter(null, adminAclIdentity, offset, limit));
-    assertThrows(IllegalArgumentException.class, () -> realizationService.getRealizationsByFilter(filter, null, offset, limit));
-
-    // When
-    filter.setFromDate(fromDate);
-    filter.setToDate(toDate);
-    assertThrows(IllegalAccessException.class,
-                 () -> realizationService.getRealizationsByFilter(filter, adminAclIdentity, offset, limit));
-    assertThrows(IllegalAccessException.class, () -> realizationService.countRealizationsByFilter(filter, adminAclIdentity));
-
-    filter.setEarnerIds(Collections.singletonList(adminIdentity.getId()));
-    List<RealizationDTO> createdRealizations =
-                                             realizationService.getRealizationsByFilter(filter,
-                                                                                        adminAclIdentity,
-                                                                                        offset,
-                                                                                        limit);
-    // Then
-    assertNotNull(createdRealizations);
-    assertEquals(3, createdRealizations.size());
-
-    MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
-    memberships.add(membershipentry);
-    adminAclIdentity.setMemberships(memberships);
-
-
-    filter.setFromDate(toDate);
-    filter.setToDate(fromDate);
-    assertThrows(IllegalArgumentException.class,
-                 () -> realizationService.getRealizationsByFilter(filter, adminAclIdentity, offset, limit));
-    assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(filter, adminAclIdentity));
-
-    filter.setFromDate(fromDate);
-    filter.setToDate(toDate);
-    assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(null, adminAclIdentity));
-    assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(filter, null));
-
-    // When
-    filter.setEarnerIds(null);
-
-    createdRealizations =
-                        realizationService.getRealizationsByFilter(filter,
-                                                                   adminAclIdentity,
-                                                                   offset,
-                                                                   limit);
-    // Then
-    assertNotNull(createdRealizations);
-    assertEquals(3, createdRealizations.size());
-  }
-
-  @Test
-  public void updateRealizationStatus() throws ObjectNotFoundException, IllegalAccessException {
-    // Given
-    RealizationDTO gHistory1 = newRealizationDTO();
-    RealizationDTO gHistory2 = newRealizationDTO();
-    gHistory2.setStatus(RealizationStatus.REJECTED.name());
-    when(realizationsStorage.getRealizationById(gHistory1.getId())).thenReturn(gHistory1);
-    when(realizationsStorage.getRealizationById(gHistory2.getId())).thenReturn(gHistory2);
-    when(realizationsStorage.updateRealization(gHistory1)).thenReturn(gHistory1);
-    when(realizationsStorage.updateRealization(gHistory2)).thenReturn(gHistory2);
-    // When
-    assertThrows(IllegalArgumentException.class, // NOSONAR
-                 () -> realizationService.updateRealizationStatus(gHistory1.getId(), null));
-    assertThrows(IllegalAccessException.class,
-                 () -> realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.ACCEPTED, null));
-    assertThrows(IllegalArgumentException.class, // NOSONAR
-                 () -> realizationService.updateRealizationStatus(gHistory1.getId(), null, "test"));
-    assertThrows(ObjectNotFoundException.class,
-                 () -> realizationService.updateRealizationStatus(5000l, RealizationStatus.ACCEPTED));
-    assertThrows(ObjectNotFoundException.class,
-                 () -> realizationService.updateRealizationStatus(5000l, RealizationStatus.ACCEPTED, "test"));
-    assertThrows(IllegalArgumentException.class, // NOSONAR
-                 () -> realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.CANCELED, "root1"));
-    assertThrows(IllegalArgumentException.class, // NOSONAR
-                 () -> realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.DELETED, "root1"));
-
-    realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.REJECTED);
-    assertEquals(RealizationStatus.REJECTED.name(), realizationService.getRealizationById(gHistory1.getId()).getStatus());
-
-    realizationService.updateRealizationStatus(gHistory2.getId(), RealizationStatus.ACCEPTED);
-    assertEquals(RealizationStatus.ACCEPTED.name(), realizationService.getRealizationById(gHistory2.getId()).getStatus());
-
-    realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.REJECTED, "root1");
-    assertEquals(RealizationStatus.REJECTED.name(), realizationService.getRealizationById(gHistory1.getId()).getStatus());
-
-    realizationService.updateRealizationStatus(gHistory2.getId(), RealizationStatus.ACCEPTED, "root1");
-    assertEquals(RealizationStatus.ACCEPTED.name(), realizationService.getRealizationById(gHistory2.getId()).getStatus());
-  }
-
-  public void testBuildHistory() {
-    // root11 is not a member of domain audience
-    RuleDTO ruleDTO = newRuleDTO();
-    List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                                              "11",
-                                                                              TEST_USER_RECEIVER,
-                                                                              ACTIVITY_ID,
-                                                                              ACTIVITY_OBJECT_TYPE);
-    assertTrue(CollectionUtils.isEmpty(realizations));
-
-    // case of deleted domain
-    ProgramDTO program = newProgram();
-    program.setDeleted(true);
-    ruleDTO.setProgram(program);
-    realizations = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                         TEST_USER_EARNER,
-                                                         TEST_USER_RECEIVER,
-                                                         ACTIVITY_ID,
-                                                         ACTIVITY_OBJECT_TYPE);
-    assertTrue(CollectionUtils.isEmpty(realizations));
-
-    ruleDTO = newRuleDTO();
-    realizations = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                         TEST_USER_EARNER,
-                                                         TEST_USER_RECEIVER,
-                                                         ACTIVITY_ID,
-                                                         ACTIVITY_OBJECT_TYPE);
-    assertTrue(CollectionUtils.isNotEmpty(realizations));
-  }
-
-  public void testCreateRealizations() {
-    List<RealizationEntity> realizationEntities = realizationDAO.findAll();
-    assertEquals(realizationEntities.size(), 0);
-    RuleDTO ruleDTO = newRuleDTO();
-
-    List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                                              TEST_USER_EARNER,
-                                                                              TEST_USER_RECEIVER,
-                                                                              ACTIVITY_ID,
-                                                                              ACTIVITY_OBJECT_TYPE);
-    assertTrue(CollectionUtils.isNotEmpty(realizations));
-
-    realizationEntities = realizationDAO.findAll();
-    assertEquals(realizationEntities.size(), 1);
-
-    RealizationEntity realizationEntity = realizationEntities.get(0);
-    assertEquals(TEST_USER_EARNER, realizationEntity.getEarnerId());
-    assertEquals(TEST_USER_RECEIVER, realizationEntity.getReceiver());
+    RealizationEntity realizationEntity = realizations.get(0);
+    assertEquals(adminIdentityId, realizationEntity.getEarnerId());
+    assertEquals(adminIdentityId, realizationEntity.getReceiver());
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
 
-    realizations = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                         TEST_SPACE_ID,
-                                                         TEST_USER_RECEIVER,
-                                                         ACTIVITY_ID,
-                                                         ACTIVITY_OBJECT_TYPE);
-    assertTrue(CollectionUtils.isNotEmpty(realizations));
+    realization = realizationService.createRealizations(rule.getEvent(),
+                                                        TEST_SPACE_ID,
+                                                        adminIdentityId,
+                                                        ACTIVITY_ID,
+                                                        ACTIVITY_OBJECT_TYPE)
+                                    .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
 
-    realizationEntities = realizationDAO.findAll();
-    assertEquals(realizationEntities.size(), 2);
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 2);
 
-    realizationEntity = realizationEntities.get(1);
+    realizationEntity = realizations.get(1);
     assertEquals(TEST_SPACE_ID, realizationEntity.getEarnerId());
-    assertEquals(TEST_USER_RECEIVER, realizationEntity.getReceiver());
+    assertEquals(adminIdentityId, realizationEntity.getReceiver());
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.SPACE, realizationEntity.getEarnerType());
   }
 
+  public void testCreateRealizationsBySpaceHost() {
+    List<RealizationEntity> realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 0);
+    RuleDTO ruleDTO = newRuleDTO();
+
+    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                                       spaceHostIdentityId,
+                                                                       spaceMemberIdentityId,
+                                                                       ACTIVITY_ID,
+                                                                       ACTIVITY_OBJECT_TYPE)
+                                                   .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 1);
+
+    RealizationEntity realizationEntity = realizations.get(0);
+    assertEquals(spaceHostIdentityId, realizationEntity.getEarnerId());
+    assertEquals(spaceMemberIdentityId, realizationEntity.getReceiver());
+    assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
+    assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
+
+    realization = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                        TEST_SPACE_ID,
+                                                        spaceHostIdentityId,
+                                                        ACTIVITY_ID,
+                                                        ACTIVITY_OBJECT_TYPE)
+                                    .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 2);
+
+    realizationEntity = realizations.get(1);
+    assertEquals(TEST_SPACE_ID, realizationEntity.getEarnerId());
+    assertEquals(spaceHostIdentityId, realizationEntity.getReceiver());
+    assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
+    assertEquals(IdentityType.SPACE, realizationEntity.getEarnerType());
+  }
+
+  public void testCreateRealizationsBySpaceMember() {
+    List<RealizationEntity> realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 0);
+    RuleDTO ruleDTO = newRuleDTO();
+
+    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                                       spaceMemberIdentityId,
+                                                                       spaceHostIdentityId,
+                                                                       ACTIVITY_ID,
+                                                                       ACTIVITY_OBJECT_TYPE)
+                                                   .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 1);
+
+    RealizationEntity realizationEntity = realizations.get(0);
+    assertEquals(spaceMemberIdentityId, realizationEntity.getEarnerId());
+    assertEquals(spaceHostIdentityId, realizationEntity.getReceiver());
+    assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
+    assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
+
+    realization = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                        TEST_SPACE_ID,
+                                                        spaceMemberIdentityId,
+                                                        ACTIVITY_ID,
+                                                        ACTIVITY_OBJECT_TYPE)
+                                    .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 2);
+
+    realizationEntity = realizations.get(1);
+    assertEquals(TEST_SPACE_ID, realizationEntity.getEarnerId());
+    assertEquals(spaceMemberIdentityId, realizationEntity.getReceiver());
+    assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
+    assertEquals(IdentityType.SPACE, realizationEntity.getEarnerType());
+  }
+
+  public void testCreateRealizationsByInternalUserInSpaceRule() {
+    RuleDTO ruleDTO = newRuleDTO();
+
+    List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                                              internalUserIdentityId,
+                                                                              spaceHostIdentityId,
+                                                                              ACTIVITY_ID,
+                                                                              ACTIVITY_OBJECT_TYPE);
+    assertTrue(realizations.isEmpty());
+    assertEquals(realizations.size(), realizationDAO.count().intValue());
+
+    realizations = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                         TEST_SPACE_ID,
+                                                         internalUserIdentityId,
+                                                         ACTIVITY_ID,
+                                                         ACTIVITY_OBJECT_TYPE);
+    assertNotNull(realizations);
+    assertEquals(1, realizations.size());
+    assertEquals(realizations.size(), realizationDAO.count().intValue());
+
+    RealizationDTO realization = realizations.get(0);
+    assertEquals(TEST_SPACE_ID, realization.getEarnerId());
+    assertEquals(internalUserIdentityId, realization.getReceiver());
+    assertEquals(ACTIVITY_ID, realization.getObjectId());
+    assertEquals(IdentityType.SPACE.name(), realization.getEarnerType());
+  }
+
+  public void testCreateRealizationsByInternalUser() {
+    List<RealizationEntity> realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 0);
+    ProgramEntity openProgram = newOpenProgram("testProgram");
+    RuleDTO ruleDTO = newRuleDTO("testRule", openProgram.getId());
+
+    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                                       internalUserIdentityId,
+                                                                       spaceHostIdentityId,
+                                                                       ACTIVITY_ID,
+                                                                       ACTIVITY_OBJECT_TYPE)
+                                                   .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 1);
+
+    RealizationEntity realizationEntity = realizations.get(0);
+    assertEquals(internalUserIdentityId, realizationEntity.getEarnerId());
+    assertEquals(spaceHostIdentityId, realizationEntity.getReceiver());
+    assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
+    assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
+
+    realization = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                        TEST_SPACE_ID,
+                                                        internalUserIdentityId,
+                                                        ACTIVITY_ID,
+                                                        ACTIVITY_OBJECT_TYPE)
+                                    .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 2);
+
+    realizationEntity = realizations.get(1);
+    assertEquals(TEST_SPACE_ID, realizationEntity.getEarnerId());
+    assertEquals(internalUserIdentityId, realizationEntity.getReceiver());
+    assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
+    assertEquals(IdentityType.SPACE, realizationEntity.getEarnerType());
+  }
+
+  public void testCancelRealizations() {
+    List<RealizationEntity> realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 0);
+    RuleDTO ruleDTO = newRuleDTO();
+
+    List<RealizationDTO> createdRealizations = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                                                     adminIdentityId,
+                                                                                     spaceMemberIdentityId,
+                                                                                     ACTIVITY_ID,
+                                                                                     ACTIVITY_OBJECT_TYPE);
+    RealizationDTO realization = createdRealizations.get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 1);
+
+    List<RealizationDTO> canceledRealizations = realizationService.cancelRealizations(ruleDTO.getEvent(),
+                                                                                      adminIdentityId,
+                                                                                      spaceMemberIdentityId,
+                                                                                      ACTIVITY_ID,
+                                                                                      ACTIVITY_OBJECT_TYPE);
+    assertNotNull(canceledRealizations);
+    assertEquals(createdRealizations.size(), canceledRealizations.size());
+    RealizationDTO canceledRealization = canceledRealizations.get(0);
+    assertEquals(canceledRealization.getId(), realization.getId());
+    assertEquals(canceledRealization.getStatus(), RealizationStatus.CANCELED.name());
+  }
+
+  @Test
+  public void testHadOwnedProgram() throws IllegalAccessException, ObjectNotFoundException {
+    assertFalse(realizationService.isRealizationManager(spaceMemberAclIdentity.getUserId()));
+    assertTrue(realizationService.isRealizationManager(adminAclIdentity.getUserId()));
+    assertFalse(realizationService.isRealizationManager(spaceHostAclIdentity.getUserId()));
+
+    ProgramDTO program = newProgram();
+
+    assertTrue(realizationService.isRealizationManager(spaceHostAclIdentity.getUserId()));
+
+    org.exoplatform.social.core.identity.model.Identity regularUserIdentity =
+                                                                            identityManager.getOrCreateUserIdentity(spaceMemberAclIdentity.getUserId());
+
+    program.setOwnerIds(Collections.singleton(Long.parseLong(regularUserIdentity.getId())));
+    programService.updateProgram(program, adminAclIdentity);
+    assertTrue(realizationService.isRealizationManager(spaceMemberAclIdentity.getUserId()));
+
+    programService.deleteProgramById(program.getId(), adminAclIdentity);
+    assertTrue(realizationService.isRealizationManager(spaceMemberAclIdentity.getUserId()));
+  }
+
+  public void testCreateRealizationsOnOutdatedRules() throws ObjectNotFoundException {
+    assertEquals(0l, realizationDAO.count().longValue());
+
+    RuleDTO rule = newRuleDTO();
+    rule.setEndDate(Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() - MILLIS_IN_A_DAY)));
+    ruleService.updateRule(rule);
+
+    List<RealizationDTO> realizations = realizationService.createRealizations(rule.getEvent(),
+                                                                              adminIdentityId,
+                                                                              spaceMemberIdentityId,
+                                                                              ACTIVITY_ID,
+                                                                              ACTIVITY_OBJECT_TYPE);
+    assertNotNull(realizations);
+    assertTrue(realizations.isEmpty());
+    assertEquals(0l, realizationDAO.count().longValue());
+
+    rule.setEndDate(null);
+    rule.setStartDate(Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + MILLIS_IN_A_DAY)));
+    ruleService.updateRule(rule);
+    realizations = realizationService.createRealizations(rule.getEvent(),
+                                                         adminIdentityId,
+                                                         spaceMemberIdentityId,
+                                                         ACTIVITY_ID,
+                                                         ACTIVITY_OBJECT_TYPE);
+    assertNotNull(realizations);
+    assertTrue(realizations.isEmpty());
+    assertEquals(0l, realizationDAO.count().longValue());
+
+    rule.setStartDate(Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() - 2 * MILLIS_IN_A_DAY)));
+    rule.setEndDate(Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() - MILLIS_IN_A_DAY)));
+    ruleService.updateRule(rule);
+    realizations = realizationService.createRealizations(rule.getEvent(),
+                                                         adminIdentityId,
+                                                         spaceMemberIdentityId,
+                                                         ACTIVITY_ID,
+                                                         ACTIVITY_OBJECT_TYPE);
+    assertNotNull(realizations);
+    assertTrue(realizations.isEmpty());
+    assertEquals(0l, realizationDAO.count().longValue());
+
+    rule.setEndDate(Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + MILLIS_IN_A_DAY)));
+    ruleService.updateRule(rule);
+    realizations = realizationService.createRealizations(rule.getEvent(),
+                                                         adminIdentityId,
+                                                         spaceMemberIdentityId,
+                                                         ACTIVITY_ID,
+                                                         ACTIVITY_OBJECT_TYPE);
+    assertNotNull(realizations);
+    assertEquals(1, realizations.size());
+    assertEquals(1l, realizationDAO.count().longValue());
+
+    RealizationDTO realization = realizations.get(0);
+
+    assertEquals(adminIdentityId, realization.getEarnerId());
+    assertEquals(spaceMemberIdentityId, realization.getReceiver());
+    assertEquals(ACTIVITY_ID, realization.getObjectId());
+    assertEquals(ACTIVITY_OBJECT_TYPE, realization.getObjectType());
+    assertEquals(rule.getScore(), realization.getActionScore());
+  }
+
+  public void testCreateRealizationOnOnceRule() throws ObjectNotFoundException {
+    makeRecurrenceTypeChecks(RecurrenceType.DAILY);
+    assertEquals(2, realizationDAO.count().intValue());
+  }
+
+  public void testCreateRealizationOnDailyRule() throws ObjectNotFoundException {
+    makeRecurrenceTypeChecks(RecurrenceType.DAILY);
+    assertEquals(2, realizationDAO.count().intValue());
+  }
+
+  public void testCreateRealizationOnWeeklyRule() throws ObjectNotFoundException {
+    makeRecurrenceTypeChecks(RecurrenceType.DAILY);
+    assertEquals(2, realizationDAO.count().intValue());
+  }
+
+  public void testCreateRealizationOnMonthlyRule() throws ObjectNotFoundException {
+    makeRecurrenceTypeChecks(RecurrenceType.DAILY);
+    assertEquals(2, realizationDAO.count().intValue());
+  }
+
+  public void testCreateRealizationWithPrerequisiteRule() throws ObjectNotFoundException, IllegalAccessException {
+    List<RealizationEntity> realizationEntities = realizationDAO.findAll();
+    assertEquals(0, realizationEntities.size());
+    RuleDTO rule = newRuleDTO();
+
+    RuleDTO prerequisiteRule1 = newRuleDTO();
+    prerequisiteRule1.setEvent("prerequisiteEvent1");
+    prerequisiteRule1 = ruleService.updateRule(prerequisiteRule1);
+
+    RuleDTO prerequisiteRule2 = newRuleDTO();
+    prerequisiteRule2.setEvent("prerequisiteEvent2");
+    prerequisiteRule2 = ruleService.updateRule(prerequisiteRule2);
+
+    rule.setPrerequisiteRuleIds(new HashSet<>(Arrays.asList(prerequisiteRule1.getId(), prerequisiteRule2.getId())));
+    rule = ruleService.updateRule(rule);
+
+    realizationService.createRealizations(rule.getEvent(),
+                                          adminIdentityId,
+                                          spaceMemberIdentityId,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(0, realizationDAO.count().intValue());
+
+    realizationService.createRealizations(prerequisiteRule1.getEvent(),
+                                          adminIdentityId,
+                                          spaceMemberIdentityId,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(1, realizationDAO.count().intValue());
+
+    realizationService.createRealizations(rule.getEvent(),
+                                          adminIdentityId,
+                                          spaceMemberIdentityId,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(1, realizationDAO.count().intValue());
+
+    realizationService.createRealizations(prerequisiteRule2.getEvent(),
+                                          adminIdentityId,
+                                          spaceMemberIdentityId,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(2, realizationDAO.count().intValue());
+
+    realizationService.createRealizations(rule.getEvent(),
+                                          adminIdentityId,
+                                          spaceMemberIdentityId,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(3, realizationDAO.count().intValue());
+
+    ruleService.deleteRuleById(prerequisiteRule2.getId(), ADMIN_USER);
+    realizationService.createRealizations(rule.getEvent(),
+                                          adminIdentityId,
+                                          spaceMemberIdentityId,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(4, realizationDAO.count().intValue());
+
+    ruleService.deleteRuleById(prerequisiteRule1.getId(), ADMIN_USER);
+    realizationService.createRealizations(rule.getEvent(),
+                                          adminIdentityId,
+                                          spaceMemberIdentityId,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    assertEquals(5, realizationDAO.count().intValue());
+  }
+
+  public void testGetRealizations() throws IllegalAccessException, ObjectNotFoundException { // NOSONAR
+    List<RealizationEntity> realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 0);
+    RuleDTO rule = newRuleDTO();
+
+    RealizationDTO realization = realizationService.createRealizations(rule.getEvent(),
+                                                                       adminIdentityId,
+                                                                       adminIdentityId,
+                                                                       ACTIVITY_ID,
+                                                                       ACTIVITY_OBJECT_TYPE)
+                                                   .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 1);
+
+    RealizationEntity realizationEntity = realizations.get(0);
+    assertEquals(adminIdentityId, realizationEntity.getEarnerId());
+    assertEquals(adminIdentityId, realizationEntity.getReceiver());
+    assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
+    assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
+
+    realization = realizationService.createRealizations(rule.getEvent(),
+                                                        TEST_SPACE_ID,
+                                                        adminIdentityId,
+                                                        ACTIVITY_ID,
+                                                        ACTIVITY_OBJECT_TYPE)
+                                    .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 2);
+
+    realizationEntity = realizations.get(1);
+    assertEquals(TEST_SPACE_ID, realizationEntity.getEarnerId());
+    assertEquals(adminIdentityId, realizationEntity.getReceiver());
+    assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
+    assertEquals(IdentityType.SPACE, realizationEntity.getEarnerType());
+
+    RealizationFilter filter = new RealizationFilter();
+    filter.setOwned(true);
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setOwned(false);
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setEarnerIds(Collections.singletonList(adminIdentityId));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setEarnerType(IdentityType.USER);
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setEarnerIds(null);
+    filter.setEarnerType(IdentityType.SPACE);
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setEarnerType(IdentityType.USER);
+    filter.setProgramIds(Collections.singletonList(rule.getProgramId()));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertThrows(IllegalAccessException.class,
+                 () -> realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setProgramIds(Collections.singletonList(5555l));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertThrows(IllegalAccessException.class, () -> realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertThrows(IllegalAccessException.class,
+                 () -> realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertThrows(IllegalAccessException.class,
+                 () -> realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setProgramIds(null);
+    filter.setRuleIds(Collections.singletonList(rule.getId()));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertThrows(IllegalAccessException.class,
+                 () -> realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setEarnerType(null);
+    filter.setEarnerIds(null);
+    filter.setRuleIds(null);
+    filter.setStatus(RealizationStatus.ACCEPTED);
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    List<RealizationDTO> allRealizations = realizationService.getRealizationsByFilter(filter, spaceMemberAclIdentity, 0, 0);
+    assertEquals(2, allRealizations.size());
+
+    allRealizations = realizationService.getRealizationsByFilter(filter, spaceMemberAclIdentity, 0, 1);
+    assertEquals(1, allRealizations.size());
+    RealizationDTO lastRealization = allRealizations.get(0);
+    assertNotNull(lastRealization);
+    assertThrows(IllegalArgumentException.class, // NOSONAR
+                 () -> realizationService.updateRealizationStatus(lastRealization.getId(),
+                                                                  RealizationStatus.CANCELED,
+                                                                  ADMIN_USER));
+    assertThrows(IllegalArgumentException.class, // NOSONAR
+                 () -> realizationService.updateRealizationStatus(lastRealization.getId(),
+                                                                  RealizationStatus.DELETED,
+                                                                  ADMIN_USER));
+    realizationService.updateRealizationStatus(lastRealization.getId(), RealizationStatus.REJECTED, SPACE_HOST_USER);
+
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setStatus(RealizationStatus.REJECTED);
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setStatus(RealizationStatus.CANCELED);
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+  }
+
+  public void testGetRealizationsOnOpenProgram() throws IllegalAccessException, ObjectNotFoundException { // NOSONAR
+    List<RealizationEntity> realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 0);
+    ProgramEntity openProgramEntity = newOpenProgram("testProgram");
+    ProgramDTO openProgram = programService.getProgramById(openProgramEntity.getId());
+    openProgram.setOwnerIds(Collections.singleton(Long.parseLong(spaceHostIdentityId)));
+    assertThrows(IllegalAccessException.class, () -> programService.updateProgram(openProgram, spaceHostAclIdentity));
+    programService.updateProgram(openProgram, adminAclIdentity);
+    // Test has became Program Manager
+    programService.updateProgram(openProgram, spaceHostAclIdentity); // 
+
+    RuleDTO rule = newRuleDTO("testRule", openProgram.getId());
+
+    RealizationDTO realization = realizationService.createRealizations(rule.getEvent(),
+                                                                       internalUserIdentityId,
+                                                                       spaceMemberIdentityId,
+                                                                       ACTIVITY_ID,
+                                                                       ACTIVITY_OBJECT_TYPE)
+                                                   .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 1);
+
+    RealizationEntity realizationEntity = realizations.get(0);
+    assertEquals(internalUserIdentityId, realizationEntity.getEarnerId());
+    assertEquals(spaceMemberIdentityId, realizationEntity.getReceiver());
+    assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
+    assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
+
+    realization = realizationService.createRealizations(rule.getEvent(),
+                                                        TEST_SPACE_ID,
+                                                        spaceMemberIdentityId,
+                                                        ACTIVITY_ID,
+                                                        ACTIVITY_OBJECT_TYPE)
+                                    .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 2);
+
+    realizationEntity = realizations.get(1);
+    assertEquals(TEST_SPACE_ID, realizationEntity.getEarnerId());
+    assertEquals(spaceMemberIdentityId, realizationEntity.getReceiver());
+    assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
+    assertEquals(IdentityType.SPACE, realizationEntity.getEarnerType());
+
+    RealizationFilter filter = new RealizationFilter();
+    filter.setOwned(true);
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setOwned(false);
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setEarnerIds(Collections.singletonList(adminIdentityId));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setEarnerIds(Collections.singletonList(internalUserIdentityId));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setEarnerType(IdentityType.USER);
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setEarnerIds(null);
+    filter.setEarnerType(IdentityType.SPACE);
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setEarnerType(IdentityType.USER);
+    filter.setProgramIds(Collections.singletonList(rule.getProgramId()));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setProgramIds(Collections.singletonList(5555l));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertThrows(IllegalAccessException.class, () -> realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertThrows(IllegalAccessException.class,
+                 () -> realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertThrows(IllegalAccessException.class,
+                 () -> realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setProgramIds(null);
+    filter.setRuleIds(Collections.singletonList(rule.getId()));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setEarnerType(null);
+    filter.setEarnerIds(null);
+    filter.setRuleIds(null);
+    filter.setStatus(RealizationStatus.ACCEPTED);
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(2, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    List<RealizationDTO> allRealizations = realizationService.getRealizationsByFilter(filter, spaceMemberAclIdentity, 0, 0);
+    assertEquals(2, allRealizations.size());
+
+    allRealizations = realizationService.getRealizationsByFilter(filter, spaceMemberAclIdentity, 0, 1);
+    assertEquals(1, allRealizations.size());
+    RealizationDTO lastRealization = allRealizations.get(0);
+    assertNotNull(lastRealization);
+    assertThrows(IllegalArgumentException.class, // NOSONAR
+                 () -> realizationService.updateRealizationStatus(lastRealization.getId(),
+                                                                  RealizationStatus.CANCELED,
+                                                                  ADMIN_USER));
+    assertThrows(IllegalArgumentException.class, // NOSONAR
+                 () -> realizationService.updateRealizationStatus(lastRealization.getId(),
+                                                                  RealizationStatus.DELETED,
+                                                                  ADMIN_USER));
+    assertThrows(IllegalAccessException.class, // NOSONAR
+                 () -> realizationService.updateRealizationStatus(lastRealization.getId(),
+                                                                  RealizationStatus.REJECTED,
+                                                                  INTERNAL_USER));
+    assertThrows(IllegalAccessException.class, // NOSONAR
+                 () -> realizationService.updateRealizationStatus(lastRealization.getId(),
+                                                                  RealizationStatus.REJECTED,
+                                                                  SPACE_MEMBER_USER));
+    realizationService.updateRealizationStatus(lastRealization.getId(), RealizationStatus.REJECTED, SPACE_HOST_USER);
+
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setStatus(RealizationStatus.REJECTED);
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(1, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+
+    filter.setStatus(RealizationStatus.CANCELED);
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+  }
+
   public void testComputeTotalScore() {
     RuleDTO ruleDTO = newRuleDTO();
+    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                                       adminIdentityId,
+                                                                       spaceMemberIdentityId,
+                                                                       ACTIVITY_ID,
+                                                                       ACTIVITY_OBJECT_TYPE)
+                                                   .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+
     RealizationDTO realization1 = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                                        TEST_USER_EARNER,
-                                                                        TEST_USER_RECEIVER,
+                                                                        adminIdentityId,
+                                                                        spaceMemberIdentityId,
                                                                         ACTIVITY_ID,
                                                                         ACTIVITY_OBJECT_TYPE)
                                                     .get(0);
+    assertNotNull(realization1);
+    assertTrue(realization1.getId() > 0);
 
-    RealizationDTO realization2 = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                                        TEST_USER_EARNER,
-                                                                        TEST_USER_RECEIVER,
-                                                                        ACTIVITY_ID,
-                                                                        ACTIVITY_OBJECT_TYPE)
-                                                    .get(0);
-
-    assertEquals(realization1.getActionScore() + realization2.getActionScore(), realizationDAO.getTotalScore(TEST_USER_EARNER));
+    assertEquals(realization.getActionScore() + realization1.getActionScore(),
+                 realizationDAO.getTotalScore(adminIdentityId));
   }
 
   public void testLeaderboardRank() {
     ProgramDTO program = newProgram();
-    RuleDTO ruleDTO = newRuleDTO(RULE_NAME, program.getId());
-    realizationService.createRealizations(ruleDTO.getEvent(),
-                                          TEST_USER_EARNER,
-                                          TEST_USER_RECEIVER,
+    RuleDTO rule = newRuleDTO(RULE_NAME, program.getId());
+    realizationService.createRealizations(rule.getEvent(),
+                                          adminIdentityId,
+                                          spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
-                                          TEST_USER_EARNER,
-                                          TEST_USER_RECEIVER,
+    realizationService.createRealizations(rule.getEvent(),
+                                          adminIdentityId,
+                                          spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
-                                          TEST_USER_RECEIVER,
-                                          TEST_USER_RECEIVER,
+    realizationService.createRealizations(rule.getEvent(),
+                                          spaceMemberIdentityId,
+                                          spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE_ID,
-                                          TEST_USER_RECEIVER,
+                                          spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE_ID,
-                                          TEST_USER_RECEIVER,
+                                          spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE_ID,
-                                          TEST_USER_RECEIVER,
+                                          spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE2_ID,
-                                          TEST_USER_RECEIVER,
+                                          spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE2_ID,
-                                          TEST_USER_RECEIVER,
+                                          spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE2_ID,
-                                          TEST_USER_RECEIVER,
+                                          spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(rule.getEvent(),
                                           TEST_SPACE2_ID,
-                                          TEST_USER_RECEIVER,
+                                          spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     Date date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-    int rankUser1 = realizationService.getLeaderboardRank(TEST_USER_EARNER, date, program.getId());
-    int rankUser2 = realizationService.getLeaderboardRank(TEST_USER_RECEIVER, date, program.getId());
-    assertEquals(1, rankUser1);
-    assertEquals(2, rankUser2);
+    assertEquals(1, realizationService.getLeaderboardRank(adminIdentityId, date, program.getId()));
+    assertEquals(2, realizationService.getLeaderboardRank(spaceMemberIdentityId, date, program.getId()));
 
-    int rankSpace2 = realizationService.getLeaderboardRank(TEST_SPACE2_ID, date, program.getId());
-    int rankSpace1 = realizationService.getLeaderboardRank(TEST_SPACE_ID, date, program.getId());
-    assertEquals(1, rankSpace2);
-    assertEquals(2, rankSpace1);
+    assertEquals(1, realizationService.getLeaderboardRank(TEST_SPACE2_ID, date, program.getId()));
+    assertEquals(2, realizationService.getLeaderboardRank(TEST_SPACE_ID, date, program.getId()));
   }
 
   public void testFindUserReputationBySocialId() {
     RuleDTO ruleDTO = newRuleDTO();
-    assertEquals(realizationService.getScoreByIdentityId(TEST_USER_EARNER), 0);
+    assertEquals(realizationService.getScoreByIdentityId(adminIdentityId), 0);
     realizationService.createRealizations(ruleDTO.getEvent(),
-                                          TEST_USER_EARNER,
-                                          TEST_USER_RECEIVER,
+                                          adminIdentityId,
+                                          adminIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     realizationService.createRealizations(ruleDTO.getEvent(),
                                           TEST_SPACE_ID,
-                                          TEST_USER_RECEIVER,
+                                          adminIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-
-    assertTrue(realizationService.getScoreByIdentityId(TEST_USER_EARNER) > 0);
+    assertTrue(realizationService.getScoreByIdentityId(adminIdentityId) > 0);
     assertTrue(realizationService.getScoreByIdentityId(TEST_SPACE_ID) > 0);
   }
 
   public void testBuildDomainScoreByUserId() {
     RuleDTO ruleDTO = newRuleDTO();
-    assertEquals(0, realizationService.getScorePerProgramByIdentityId(TEST_USER_EARNER).size());
+    assertEquals(0, realizationService.getScorePerProgramByIdentityId(adminIdentityId).size());
     realizationService.createRealizations(ruleDTO.getEvent(),
-                                          TEST_USER_EARNER,
-                                          TEST_USER_RECEIVER,
+                                          adminIdentityId,
+                                          adminIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    assertEquals(1, realizationService.getScorePerProgramByIdentityId(TEST_USER_EARNER).size());
+    assertEquals(1, realizationService.getScorePerProgramByIdentityId(adminIdentityId).size());
   }
 
   public void testFilterByDomainId() {
@@ -431,29 +901,29 @@ public class RealizationServiceTest extends AbstractServiceTest {
     assertEquals(0, filteredLeaderboard.size());
 
     realizationService.createRealizations(ruleDTO.getEvent(),
-                                          TEST_USER_EARNER,
-                                          TEST_USER_RECEIVER,
+                                          adminIdentityId,
+                                          adminIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
 
     filteredLeaderboard = realizationService.getLeaderboard(filter);
     assertEquals(1, filteredLeaderboard.size());
     StandardLeaderboard userLeaderboard = filteredLeaderboard.get(0);
-    assertEquals(TEST_USER_EARNER, userLeaderboard.getEarnerId());
+    assertEquals(adminIdentityId, userLeaderboard.getEarnerId());
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setPeriod(Period.WEEK.name());
     filteredLeaderboard = realizationService.getLeaderboard(filter);
     assertEquals(1, filteredLeaderboard.size());
     userLeaderboard = filteredLeaderboard.get(0);
-    assertEquals(TEST_USER_EARNER, userLeaderboard.getEarnerId());
+    assertEquals(adminIdentityId, userLeaderboard.getEarnerId());
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setPeriod(Period.MONTH.name());
     filteredLeaderboard = realizationService.getLeaderboard(filter);
     assertEquals(1, filteredLeaderboard.size());
     userLeaderboard = filteredLeaderboard.get(0);
-    assertEquals(TEST_USER_EARNER, userLeaderboard.getEarnerId());
+    assertEquals(adminIdentityId, userLeaderboard.getEarnerId());
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setIdentityType(IdentityType.SPACE);
@@ -465,57 +935,82 @@ public class RealizationServiceTest extends AbstractServiceTest {
     ProgramDTO program = newProgram();
     RuleDTO ruleDTO = newRuleDTO(RULE_NAME, program.getId());
     realizationService.createRealizations(ruleDTO.getEvent(),
-                                          TEST_USER_EARNER,
-                                          TEST_USER_RECEIVER,
+                                          adminIdentityId,
+                                          adminIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     realizationService.createRealizations(ruleDTO.getEvent(),
-                                          TEST_USER_RECEIVER,
-                                          TEST_USER_EARNER,
+                                          adminIdentityId,
+                                          adminIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
 
-    List<RealizationDTO> realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
+    List<RealizationDTO> realizations = realizationService.findRealizationsByIdentityId(adminIdentityId, 1);
     assertNotNull(realizations);
     assertEquals(1, realizations.size());
     RealizationDTO lastRealization = realizations.get(0);
-    assertEquals(RealizationStatus.ACCEPTED, lastRealization.getStatus());
+    assertEquals(RealizationStatus.ACCEPTED.name(), lastRealization.getStatus());
 
-    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_RECEIVER, 1);
+    realizations = realizationService.findRealizationsByIdentityId(adminIdentityId, 1);
     assertNotNull(realizations);
     assertEquals(1, realizations.size());
     lastRealization = realizations.get(0);
-    assertEquals(RealizationStatus.ACCEPTED, lastRealization.getStatus());
+    assertEquals(RealizationStatus.ACCEPTED.name(), lastRealization.getStatus());
 
     realizationService.deleteRealizations(ACTIVITY_ID, ACTIVITY_OBJECT_TYPE);
 
-    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
+    realizations = realizationService.findRealizationsByIdentityId(adminIdentityId, 1);
     assertNotNull(realizations);
-    assertEquals(1, realizations.size());
-    lastRealization = realizations.get(0);
-    assertEquals(RealizationStatus.DELETED, lastRealization.getStatus());
+    assertEquals(0, realizations.size());
 
-    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_RECEIVER, 1);
+    realizations = realizationService.findRealizationsByIdentityId(adminIdentityId, 1);
     assertNotNull(realizations);
-    assertEquals(1, realizations.size());
-    lastRealization = realizations.get(0);
-    assertEquals(RealizationStatus.DELETED, lastRealization.getStatus());
+    assertEquals(0, realizations.size());
   }
 
-  protected RealizationDTO newRealizationDTO() {
-    RealizationDTO gHistory = new RealizationDTO();
-    gHistory.setId(RANDOM.nextLong(1, 10000));
-    gHistory.setStatus(RealizationStatus.ACCEPTED.name());
-    gHistory.setProgram(new ProgramDTO());
-    gHistory.setReceiver("1");
-    gHistory.setEarnerId("1L");
-    gHistory.setEarnerType(IdentityType.USER.name());
-    gHistory.setActionTitle("gamification title");
-    gHistory.setActionScore(10);
-    gHistory.setGlobalScore(10);
-    gHistory.setRuleId(1L);
-    gHistory.setCreatedDate(Utils.toRFC3339Date(fromDate));
-    return gHistory;
-  }
+  private void makeRecurrenceTypeChecks(RecurrenceType recurrenceType) throws ObjectNotFoundException {
+    List<RealizationEntity> realizationEntities = realizationDAO.findAll();
+    assertEquals(0, realizationEntities.size());
+    RuleDTO ruleDTO = newRuleDTO();
+    ruleDTO.setRecurrence(recurrenceType);
+    ruleDTO = ruleService.updateRule(ruleDTO);
 
+    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                                       adminIdentityId,
+                                                                       adminIdentityId,
+                                                                       ACTIVITY_ID,
+                                                                       ACTIVITY_OBJECT_TYPE)
+                                                   .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+    realizationEntities = realizationDAO.findAll();
+    assertEquals(1, realizationEntities.size());
+
+    List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                                              adminIdentityId,
+                                                                              adminIdentityId,
+                                                                              ACTIVITY_ID,
+                                                                              ACTIVITY_OBJECT_TYPE);
+    assertNotNull(realizations);
+    assertTrue(realizations.isEmpty());
+
+    realizationEntities = realizationDAO.findAll();
+    assertEquals(1, realizationEntities.size());
+
+    RealizationEntity realizationEntity = realizationEntities.get(0);
+    realizationEntity.setCreatedDate(new Date(recurrenceType.getPeriodStartDate().getTime() - 1));
+
+    realizationDAO.update(realizationEntity);
+
+    realizations = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                         TEST_SPACE_ID,
+                                                         adminIdentityId,
+                                                         ACTIVITY_ID,
+                                                         ACTIVITY_OBJECT_TYPE);
+    assertNotNull(realizations);
+    assertEquals(1, realizations.size());
+
+    realizationEntities = realizationDAO.findAll();
+    assertEquals(2, realizationEntities.size());
+  }
 }
