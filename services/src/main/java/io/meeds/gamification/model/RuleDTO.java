@@ -68,16 +68,31 @@ public class RuleDTO implements Serializable {
 
   protected RecurrenceType  recurrence;
 
+  /**
+   * Deprecated should be renamed to spaceId knowing that audienceId
+   * should reference an identity id instead
+   * @return Space Id attached to program
+   * @deprecated user spaceId instead
+   */
+  @Deprecated(forRemoval = true, since = "1.5.0")
   public long getAudienceId() {
-    return program == null ? 0 : program.getAudienceId();
+    return program == null ? 0 : program.getSpaceId();
   }
 
   public long getProgramId() {
     return program == null ? 0 : program.getId();
   }
 
+  public long getSpaceId() {
+    return getAudienceId();
+  }
+
   public Set<Long> getManagers() {
     return program == null ? Collections.emptySet() : program.getOwnerIds();
+  }
+
+  public boolean isOpen() {
+    return program != null && program.isOpen();
   }
 
   @Override
@@ -100,4 +115,5 @@ public class RuleDTO implements Serializable {
                        type,
                        recurrence);
   }
+
 }

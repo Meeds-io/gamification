@@ -74,6 +74,9 @@ public class ProgramTranslationPlugin extends TranslationPlugin {
   @Override
   public long getAudienceId(long programId) throws ObjectNotFoundException {
     long spaceId = getSpaceId(programId);
+    if (spaceId == 0) {
+      return 0;
+    }
     Space space = spaceService.getSpaceById(String.valueOf(spaceId));
     if (space == null) {
       throw new ObjectNotFoundException(String.format("Space with id %s wasn't found",
@@ -90,7 +93,7 @@ public class ProgramTranslationPlugin extends TranslationPlugin {
       throw new ObjectNotFoundException(String.format("Program with id %s wasn't found",
                                                       programId));
     }
-    return program.getAudienceId();
+    return program.getSpaceId();
   }
 
 }

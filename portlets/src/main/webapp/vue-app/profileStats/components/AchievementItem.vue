@@ -91,11 +91,11 @@ export default {
     achievementUrl() {
       return this.achievement.objectId && this.achievement.objectId.replace('/portal/intranet/', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/`);
     },
-    program() {
-      return this.getLabel('exoplatform.gamification.leaderboard.domain', this.achievement.program);
+    programTitle() {
+      return this.getLabel('exoplatform.gamification.leaderboard.domain', this.achievement.program?.title);
     },
     actionDetail() {
-      return `${this.dateTime} - ${this.$t('exoplatform.gamification.gamificationinformation.Domain')}: ${this.program}`;
+      return `${this.dateTime} - ${this.$t('exoplatform.gamification.gamificationinformation.Domain')}: ${this.programTitle}`;
     },
     actionTitle() {
       return this.getLabel('exoplatform.gamification.gamificationinformation.rule.title', this.achievement.actionTitle);
@@ -107,6 +107,7 @@ export default {
   },
   methods: {
     getLabel(base, key) {
+      console.warn('getLabel', base, key);
       const label = `${base}.${key}`;
       const translation = this.$t(label);
       return translation === label && key || translation;

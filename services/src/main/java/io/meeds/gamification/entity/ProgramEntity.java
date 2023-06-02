@@ -18,7 +18,6 @@
 package io.meeds.gamification.entity;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -26,6 +25,8 @@ import javax.persistence.*;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 import io.meeds.gamification.constant.EntityType;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity(name = "GamificationDomain")
 @ExoEntity
@@ -34,6 +35,8 @@ import io.meeds.gamification.constant.EntityType;
 @NamedQuery(name = "GamificationDomain.findByIdWithOwners", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.id = :id")
 @NamedQuery(name = "GamificationDomain.findDomainByTitle", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.title = :domainTitle")
 @NamedQuery(name = "GamificationDomain.deleteDomainByTitle", query = "DELETE FROM GamificationDomain domain WHERE domain.title = :domainTitle")
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class ProgramEntity extends AbstractAuditingEntity implements Serializable {
 
   private static final long serialVersionUID = 6578902752036385060L;
@@ -75,118 +78,5 @@ public class ProgramEntity extends AbstractAuditingEntity implements Serializabl
   @CollectionTable(name = "GAMIFICATION_DOMAIN_OWNERS", joinColumns = @JoinColumn(name = "DOMAIN_ID"))
   @Column(name = "IDENTITY_ID")
   private Set<Long>         owners;
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public int getPriority() {
-    return priority;
-  }
-
-  public void setPriority(int priority) {
-    this.priority = priority;
-  }
-
-  public boolean isDeleted() {
-    return isDeleted;
-  }
-
-  public void setDeleted(boolean deleted) {
-    isDeleted = deleted;
-  }
-
-  public boolean isEnabled() {
-    return isEnabled;
-  }
-
-  public void setEnabled(boolean enabled) {
-    isEnabled = enabled;
-  }
-
-  public long getBudget() {
-    return budget;
-  }
-
-  public void setBudget(long budget) {
-    this.budget = budget;
-  }
-
-  public long getCoverFileId() {
-    return coverFileId;
-  }
-
-  public void setCoverFileId(long coverFileId) {
-    this.coverFileId = coverFileId;
-  }
-
-  public Long getAudienceId() {
-    return audienceId;
-  }
-
-  public void setAudienceId(Long audience) {
-    this.audienceId = audience;
-  }
-
-  public Set<Long> getOwners() {
-    return owners;
-  }
-
-  public void setOwners(Set<Long> owners) {
-    this.owners = owners;
-  }
-
-  public EntityType getType() {
-    return type;
-  }
-
-  public void setType(EntityType type) {
-    this.type = type;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(budget, coverFileId, description, id, isDeleted, isEnabled, owners, priority, title, type);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    ProgramEntity other = (ProgramEntity) obj;
-    return Objects.equals(budget, other.budget) && Objects.equals(coverFileId, other.coverFileId)
-        && Objects.equals(description, other.description) && Objects.equals(id, other.id) && isDeleted == other.isDeleted
-        && isEnabled == other.isEnabled && Objects.equals(owners, other.owners) && priority == other.priority
-        && Objects.equals(title, other.title) && type == other.type;
-  }
-
-  @Override
-  public String toString() {
-    return "Domain{" + "title='" + title + '\'' + ", description='" + description + '\'' + "}";
-  }
 
 }

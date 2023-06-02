@@ -350,7 +350,7 @@ export default {
             subModule: 'rule',
             userId: eXo.env.portal.userIdentityId,
             userName: eXo.env.portal.userName,
-            spaceId: this.rule.program?.audienceId || 0,
+            spaceId: this.rule.program?.spaceId || 0,
             operation: 'viewRule',
             timestamp: Date.now(),
             parameters: {

@@ -48,7 +48,7 @@ public class ProgramRestEntity extends ProgramDTO {
   public ProgramRestEntity(long id, // NOSONAR
                            String title,
                            String description,
-                           long audienceId,
+                           long spaceId,
                            int priority,
                            String createdBy,
                            String createdDate,
@@ -63,13 +63,14 @@ public class ProgramRestEntity extends ProgramDTO {
                            String coverUrl,
                            Set<Long> ownerIds,
                            long rulesTotalScore,
+                           boolean open,
                            Space space,
                            UserInfo userInfo,
                            List<UserInfo> owners) {
     super(id,
           title,
           description,
-          audienceId,
+          spaceId,
           priority,
           createdBy,
           createdDate,
@@ -83,7 +84,8 @@ public class ProgramRestEntity extends ProgramDTO {
           coverFileId,
           coverUrl,
           ownerIds,
-          rulesTotalScore);
+          rulesTotalScore,
+          open);
     this.space = space;
     this.userInfo = userInfo;
     this.owners = owners;

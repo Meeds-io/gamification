@@ -144,6 +144,8 @@ public class Utils {
 
   public static final String            REWARDING_GROUP                         = "/platform/rewarding";
 
+  public static final String            INTERNAL_USERS_GROUP                    = "/platform/users";
+
   public static final String            ADMINS_GROUP                            = "/platform/administrators";
 
   public static final String            BLACK_LIST_GROUP                        = "/leaderboard-blacklist-users";
@@ -345,6 +347,11 @@ public class Utils {
     return aclIdentity != null && (aclIdentity.isMemberOf(REWARDING_GROUP) || aclIdentity.isMemberOf(ADMINS_GROUP));
   }
 
+  public static boolean isInternalUser(String username) {
+    org.exoplatform.services.security.Identity aclIdentity = getUserAclIdentity(username);
+    return aclIdentity != null && aclIdentity.isMemberOf(INTERNAL_USERS_GROUP);
+  }
+
   public static org.exoplatform.services.security.Identity getUserAclIdentity(String username) {
     IdentityRegistry identityRegistry = ExoContainerContext.getService(IdentityRegistry.class);
     org.exoplatform.services.security.Identity aclIdentity = identityRegistry.getIdentity(username);
@@ -373,8 +380,8 @@ public class Utils {
     statisticData.addParameter(STATISTICS_PROGRAM_TYPE_PARAM, program.getType());
     statisticData.addParameter(STATISTICS_PROGRAM_COVERFILEID_PARAM, program.getCoverFileId());
     statisticData.addParameter(STATISTICS_PROGRAM_OWNERS_PARAM, program.getOwnerIds());
-    if (program.getAudienceId() > 0) {
-      Space space = spaceService.getSpaceById(String.valueOf(program.getAudienceId()));
+    if (program.getSpaceId() > 0) {
+      Space space = spaceService.getSpaceById(String.valueOf(program.getSpaceId()));
       if (space != null) {
         addSpaceStatistics(statisticData, space);
       }

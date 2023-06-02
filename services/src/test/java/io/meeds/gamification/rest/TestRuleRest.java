@@ -58,7 +58,7 @@ public class TestRuleRest extends AbstractServiceTest {
   @Before
   public void setUp() throws Exception {
     super.setUp();
-    Identity userAclIdentity = new Identity("user", Collections.singleton(new MembershipEntry("/platform/users")));
+    Identity userAclIdentity = new Identity("user", Collections.singleton(new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
     Identity adminAclIdentity = new Identity("root1", Collections.singleton(new MembershipEntry(Utils.REWARDING_GROUP)));
     identityRegistry.register(userAclIdentity);
     identityRegistry.register(adminAclIdentity);
