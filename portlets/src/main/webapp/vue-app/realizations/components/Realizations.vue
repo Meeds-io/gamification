@@ -57,14 +57,14 @@
       height="2"
       color="primary" />
     <div v-else-if="!displaySearchResult">
-      <engagement-center-result-not-found 
+      <engagement-center-result-not-found
         v-if="filterActivated"
         :display-back-arrow="false"
         :message-info-one="$t('challenge.realization.noFilterResult.messageOne')"
         :message-info-two="$t('challenge.realization.noFilterResult.messageTwo')"
         :button-text="$t('challenge.button.resetFilter')"
         @button-event="reset" />
-      <engagement-center-result-not-found 
+      <engagement-center-result-not-found
         v-else
         :display-back-arrow="false"
         :message-title="$t('appCenter.welcomeMessage')"

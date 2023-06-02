@@ -134,6 +134,7 @@ export default {
         status: this.status,
         query: searchingKey,
         includeDeleted: true,
+        lang: eXo.env.portal.language,
       })
         .then((programsList) => {
           this.size = programsList.size;

@@ -91,9 +91,9 @@ public class TestAnnouncementRest extends AbstractServiceTest { // NOSONAR
     rule.setScore(10);
     rule.setType(EntityType.MANUAL);
     rule = ruleService.updateRule(rule);
-    String restPath = ANNOUNCEMENTS_REST_BASE_PATH;
+    String announcementRestPath = ANNOUNCEMENTS_REST_BASE_PATH;
     EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
+    HttpServletRequest httpRequest = new MockHttpServletRequest(announcementRestPath, null, 0, "POST", null);
     envctx.put(HttpServletRequest.class, httpRequest);
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     StringWriter writer = new StringWriter();
@@ -120,21 +120,21 @@ public class TestAnnouncementRest extends AbstractServiceTest { // NOSONAR
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
     h.putSingle("content-type", "application/json");
     h.putSingle("content-length", "" + data.length);
-    ContainerResponse response = launcher.service("POST", restPath, "", h, null, envctx);
+    ContainerResponse response = launcher.service("POST", announcementRestPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
     ConversationState.setCurrent(null);
-    response = launcher.service("POST", restPath, "", h, data, envctx);
+    response = launcher.service("POST", announcementRestPath, "", h, data, envctx);
     assertNotNull(response);
     assertEquals(401, response.getStatus());
 
     startSessionAs("root2");
-    response = launcher.service("POST", restPath, "", h, data, envctx);
+    response = launcher.service("POST", announcementRestPath, "", h, data, envctx);
     assertNotNull(response);
     assertEquals(401, response.getStatus());
 
     startSessionAs("root1");
-    response = launcher.service("POST", restPath, "", h, data, envctx);
+    response = launcher.service("POST", announcementRestPath, "", h, data, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
@@ -163,7 +163,7 @@ public class TestAnnouncementRest extends AbstractServiceTest { // NOSONAR
     h.putSingle("content-type", "application/json");
     h.putSingle("content-length", "" + data.length);
     // test id != 0
-    response = launcher.service("POST", restPath, "", h, data, envctx);
+    response = launcher.service("POST", announcementRestPath, "", h, data, envctx);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
@@ -190,7 +190,133 @@ public class TestAnnouncementRest extends AbstractServiceTest { // NOSONAR
     h = new MultivaluedMapImpl();
     h.putSingle("content-type", "application/json");
     h.putSingle("content-length", "" + data.length);
-    response = launcher.service("POST", restPath, "", h, data, envctx);
+    response = launcher.service("POST", announcementRestPath, "", h, data, envctx);
+    assertNotNull(response);
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
+  public void testCreatAnnouncementInOpenProgram() throws Exception {
+    Identity identity = identityManager.getOrCreateUserIdentity("root1");
+    long identityId = Long.parseLong(identity.getId());
+
+    ConversationState conversationState = startSessionAs("root1");
+
+    RuleDTO rule = newRuleDTO();
+
+    ProgramDTO program = rule.getProgram();
+    program.setOwnerIds(Collections.singleton(identityId));
+    program.setOpen(true);
+    programService.updateProgram(program, conversationState.getIdentity());
+
+    rule.setTitle("update challenge");
+    rule.setDescription("challenge description");
+    rule.setStartDate(START_DATE);
+    rule.setEndDate(END_DATE);
+    rule.setEnabled(true);
+    rule.setScore(10);
+    rule.setType(EntityType.MANUAL);
+    rule = ruleService.updateRule(rule);
+    String announcementRestPath = ANNOUNCEMENTS_REST_BASE_PATH;
+    EnvironmentContext envctx = new EnvironmentContext();
+    HttpServletRequest httpRequest = new MockHttpServletRequest(announcementRestPath, null, 0, "POST", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    StringWriter writer = new StringWriter();
+    JSONWriter jsonWriter = new JSONWriter(writer);
+    jsonWriter.object()
+              .key("id")
+              .value("0")
+              .key("challengeId")
+              .value(rule.getId())
+              .key("assignee")
+              .value("1")
+              .key("challengeTitle")
+              .value("challengeTitle")
+              .key("comment")
+              .value("announcement comment")
+              .key("creator")
+              .value("root1")
+              .key("createdDate")
+              .value(DATE)
+              .key("templateParams")
+              .value(new HashMap<>())
+              .endObject();
+    byte[] data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
+    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
+    h.putSingle("content-type", "application/json");
+    h.putSingle("content-length", "" + data.length);
+    ContainerResponse response = launcher.service("POST", announcementRestPath, "", h, null, envctx);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+    ConversationState.setCurrent(null);
+    response = launcher.service("POST", announcementRestPath, "", h, data, envctx);
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
+
+    startSessionAs("root2");
+    response = launcher.service("POST", announcementRestPath, "", h, data, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    startSessionAs("root1");
+    response = launcher.service("POST", announcementRestPath, "", h, data, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    writer = new StringWriter();
+    jsonWriter = new JSONWriter(writer);
+    jsonWriter.object()
+              .key("id")
+              .value("100")
+              .key("challengeId")
+              .value(1000)
+              .key("assignee")
+              .value("1")
+              .key("challengeTitle")
+              .value("challengeTitle")
+              .key("comment")
+              .value("announcement comment")
+              .key("creator")
+              .value("root1")
+              .key("createdDate")
+              .value(DATE)
+              .key("templateParams")
+              .value(new HashMap<>())
+              .endObject();
+    data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
+    h = new MultivaluedMapImpl();
+    h.putSingle("content-type", "application/json");
+    h.putSingle("content-length", "" + data.length);
+    // test id != 0
+    response = launcher.service("POST", announcementRestPath, "", h, data, envctx);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+
+    // challenge do not exist
+    writer = new StringWriter();
+    jsonWriter = new JSONWriter(writer);
+    jsonWriter.object()
+              .key("id")
+              .value("0")
+              .key("challengeId")
+              .value(1000)
+              .key("assignee")
+              .value("1")
+              .key("comment")
+              .value("announcement comment")
+              .key("creator")
+              .value("root1")
+              .key("createdDate")
+              .value(DATE)
+              .key("templateParams")
+              .value(new HashMap<>())
+              .endObject();
+    data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
+    h = new MultivaluedMapImpl();
+    h.putSingle("content-type", "application/json");
+    h.putSingle("content-length", "" + data.length);
+    response = launcher.service("POST", announcementRestPath, "", h, data, envctx);
     assertNotNull(response);
     assertEquals(404, response.getStatus());
   }

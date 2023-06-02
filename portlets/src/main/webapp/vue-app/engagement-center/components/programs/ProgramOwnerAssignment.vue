@@ -121,8 +121,9 @@ export default {
     relationsType(){
       if (this.audience) {
         return 'member_of_space';
+      } else {
+        return 'mention_activity_stream';
       }
-      return '';
     },
     searchOptions() {
       const options = {currentUser: ''};
@@ -193,7 +194,7 @@ export default {
   },
   methods: {
     assignToMe() {
-      if (!this.isAssigned(this.currentUser)){
+      if (!this.isAssigned(this.currentUser)) {
         this.$identityService.getIdentityByProviderIdAndRemoteId('organization',this.currentUser).then(user => {
           const newManager= {
             id: user.profile.id,
@@ -201,7 +202,7 @@ export default {
             fullName: user.profile.fullname,
             avatarUrl: user.profile.avatar,
           };
-          if (!this.multiple){
+          if (!this.multiple) {
             this.assigneeObj =[];
           }
           this.assigneeObj.push(newManager);

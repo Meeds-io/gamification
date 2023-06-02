@@ -194,7 +194,7 @@ public class AnalyticsProgramListenerTest {
     program.setEnabled(true);
     program.setCoverFileId(2l);
     program.setType(EntityType.AUTOMATIC.name());
-    program.setAudienceId(AUDIENCE_ID);
+    program.setSpaceId(AUDIENCE_ID);
     HashSet<Long> owners = new HashSet<Long>();
     owners.add(1L);
     program.setOwnerIds(owners);

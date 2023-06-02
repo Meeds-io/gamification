@@ -161,6 +161,9 @@ public class ProgramRest implements ResourceContainer {
                               @QueryParam("returnSize")
                               @DefaultValue("false")
                               boolean returnSize,
+                              @Parameter(description = "Used to retrieve the title and description in requested language")
+                              @QueryParam("lang")
+                              String lang,
                               @Parameter(description = "Term to search.")
                               @QueryParam("query")
                               String query) {
@@ -181,7 +184,7 @@ public class ProgramRest implements ResourceContainer {
     String currentUser = Utils.getCurrentUser();
     try {
       ProgramList programList = new ProgramList();
-      List<ProgramRestEntity> programs = getProgramsRestEntitiesByFilter(programFilter, getLocale(request), offset, limit, currentUser);
+      List<ProgramRestEntity> programs = getProgramsRestEntitiesByFilter(programFilter, getLocale(lang), offset, limit, currentUser);
       if (returnSize) {
         int programsSize = programService.countPrograms(programFilter, currentUser);
         programList.setSize(programsSize);
@@ -382,7 +385,10 @@ public class ProgramRest implements ResourceContainer {
                                  HttpServletRequest request,
                                  @Parameter(description = "Program technical identifier", required = true)
                                  @PathParam("programId")
-                                 long programId) {
+                                 long programId,
+                                 @Parameter(description = "Used to retrieve the title and description in requested language")
+                                 @QueryParam("lang")
+                                 String lang) {
     if (programId == 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Program Id must be not null").build();
     }
@@ -392,7 +398,7 @@ public class ProgramRest implements ResourceContainer {
       return Response.ok(ProgramBuilder.toRestEntity(programService,
                                                      translationService,
                                                      program,
-                                                     getLocale(request),
+                                                     getLocale(lang),
                                                      currentUser))
                      .build();
     } catch (IllegalArgumentException e) {
@@ -402,6 +408,10 @@ public class ProgramRest implements ResourceContainer {
     } catch (ObjectNotFoundException e) {
       return Response.status(Status.NOT_FOUND).entity(e.getMessage()).build();
     }
+  }
+
+  private Locale getLocale(String lang) {
+    return StringUtils.isBlank(lang) ? null : Locale.forLanguageTag(lang);
   }
 
   private Locale getLocale(HttpServletRequest request) {

@@ -82,6 +82,24 @@ public interface ProgramService {
                            int limit);
 
   /**
+   * @param  username user name
+   * @param  offset   start index for fetch
+   * @param  limit    limit to fetch
+   * @return          {@link List} of {@link ProgramDTO} id of programs where
+   *                  the user is owner
+   */
+  List<Long> getOwnedProgramIds(String username, int offset, int limit);
+
+  /**
+   * @param  username user name
+   * @param  offset   start index for fetch
+   * @param  limit    limit to fetch
+   * @return          {@link List} of {@link ProgramDTO} id of programs where
+   *                  the user is member of
+   */
+  List<Long> getMemberProgramIds(String username, int offset, int limit);
+
+  /**
    * Find a Program by title
    * 
    * @param  programTitle : Program title
@@ -180,6 +198,20 @@ public interface ProgramService {
    * @return               Programs count
    */
   int countPrograms(ProgramFilter programFilter);
+
+  /**
+   * @param  username User name accessing Programs
+   * @return          Owned Programs count for a given user identified by its
+   *                  name
+   */
+  int countOwnedPrograms(String username);
+
+  /**
+   * @param  username User name accessing Programs
+   * @return          Programs as member count for a given user identified by
+   *                  its name
+   */
+  int countMemberPrograms(String username);
 
   /**
    * Retrieves a cover identified by Program technical identifier.

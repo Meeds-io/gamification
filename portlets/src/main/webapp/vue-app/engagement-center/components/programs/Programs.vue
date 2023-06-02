@@ -31,7 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         items: programStatus,
       }"
       hide-cone-button
-      @left-button-click="$root.$emit('open-program-drawer')"
+      @left-button-click="$root.$emit('program-form-open')"
       @filter-select-change="status = $event" />
 
     <v-layout class="py-3 px-4">
@@ -77,7 +77,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :message-info-one="$t('programs.label.welcomeMessageForManager')"
           :message-info-three="$t('programs.label.seeYouSoon')"
           :button-text="$t('programs.button.addProgram')"
-          @button-event="$root.$emit('open-program-drawer')" />
+          @button-event="$root.$emit('program-form-open')" />
       </div>
       <div v-else>
         <div v-if="isExternal">
@@ -184,6 +184,7 @@ export default {
         limit: this.limitToFetch,
         type: this.type,
         status: this.status,
+        lang: eXo.env.portal.language,
       })
         .then((data) => {
           this.programs = data.programs;
