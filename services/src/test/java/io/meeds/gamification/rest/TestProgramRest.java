@@ -26,8 +26,6 @@ import org.junit.Test;
 
 import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.services.security.Identity;
-import org.exoplatform.services.security.MembershipEntry;
 
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.ProgramDTO;
@@ -49,10 +47,6 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
   @Before
   public void setUp() throws Exception {
     super.setUp();
-    Identity userAclIdentity = new Identity("user", Collections.singleton(new MembershipEntry("/platform/users")));
-    Identity adminAclIdentity = new Identity("root1", Collections.singleton(new MembershipEntry(Utils.REWARDING_GROUP)));
-    identityRegistry.register(userAclIdentity);
-    identityRegistry.register(adminAclIdentity);
     autoDomain = newProgram(EntityType.AUTOMATIC, "domain1", true, Collections.singleton(1L));
     manualDomain = newProgram(EntityType.MANUAL, "domain2", true, Collections.singleton(1L));
     ConversationState.setCurrent(null);
@@ -101,6 +95,11 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     startSessionAs("root1");
     response = getResponse("POST", getURLResource("programs"), domainData.toString());
     assertNotNull(response);
+    assertEquals(401, response.getStatus());
+
+    startSessionAsAdministrator("root1");
+    response = getResponse("POST", getURLResource("programs"), domainData.toString());
+    assertNotNull(response);
     assertEquals(200, response.getStatus());
 
     ProgramRestEntity program = (ProgramRestEntity) response.getEntity();
@@ -136,7 +135,7 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     domainData.put("id", domain.getId());
     domainData.put("title", domain.getTitle());
     domainData.put("description", domain.getDescription());
-    startSessionAs("root1");
+    startSessionAsAdministrator("root1");
     response = getResponse("PUT", getURLResource("programs/" + domain.getId()), domainData.toString());
     assertNotNull(response);
     assertEquals(200, response.getStatus());

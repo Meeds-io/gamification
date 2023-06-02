@@ -3,6 +3,7 @@ package io.meeds.gamification.rest;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +37,7 @@ import io.meeds.gamification.rest.model.RealizationRestEntity;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.utils.Utils;
+import io.meeds.social.translation.service.TranslationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -46,16 +48,20 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "/gamification/realizations", description = "Manages users realizations")
 public class RealizationRest implements ResourceContainer {
 
-  private RuleService        ruleService;
+  private RuleService          ruleService;
 
-  private RealizationService realizationService;
+  private RealizationService   realizationService;
 
-  private IdentityManager    identityManager;
+  private IdentityManager      identityManager;
+
+  protected TranslationService translationService;
 
   public RealizationRest(RuleService ruleService,
+                         TranslationService translationService,
                          RealizationService realizationService,
                          IdentityManager identityManager) {
     this.ruleService = ruleService;
+    this.translationService = translationService;
     this.realizationService = realizationService;
     this.identityManager = identityManager;
   }
@@ -75,7 +81,7 @@ public class RealizationRest implements ResourceContainer {
   })
   public Response getRealizations(
                                   @Context
-                                  HttpServletRequest httpRequest,
+                                  HttpServletRequest request,
                                   @Parameter(description = "result fromDate", required = true)
                                   @QueryParam("fromDate")
                                   String fromDateRfc3339,
@@ -157,7 +163,7 @@ public class RealizationRest implements ResourceContainer {
     try {
       if (isXlsx) {
         String filename = "report_Actions";
-        InputStream xlsxInputStream = realizationService.exportXlsx(filter, identity, filename, httpRequest.getLocale());
+        InputStream xlsxInputStream = realizationService.exportXlsx(filter, identity, filename, request.getLocale());
         return Response.ok(xlsxInputStream)
                        .header("Content-Disposition", "attachment; filename=" + filename + ".xlsx")
                        .header("Content-Type", "application/vnd.ms-excel")
@@ -168,8 +174,10 @@ public class RealizationRest implements ResourceContainer {
                                                                                        offset,
                                                                                        limit);
         List<RealizationRestEntity> realizationRestEntities = RealizationBuilder.toRestEntities(ruleService,
+                                                                                                translationService,
                                                                                                 identityManager,
-                                                                                                realizations);
+                                                                                                realizations,
+                                                                                                getLocale(request));
         RealizationList realizationList = new RealizationList();
         realizationList.setRealizations(realizationRestEntities);
         realizationList.setOffset(offset);
@@ -228,6 +236,10 @@ public class RealizationRest implements ResourceContainer {
     } catch (IllegalArgumentException e) {
       return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
     }
+  }
+
+  private Locale getLocale(HttpServletRequest request) {
+    return request == null ? null : request.getLocale();
   }
 
 }

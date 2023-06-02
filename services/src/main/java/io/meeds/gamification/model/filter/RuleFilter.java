@@ -61,6 +61,12 @@ public class RuleFilter implements Serializable {
 
   private boolean           sortDescending   = true;
 
+  private boolean           allSpaces;
+
+  public RuleFilter(boolean allSpaces) {
+    this.allSpaces = allSpaces;
+  }
+
   public RuleFilter clone() { // NOSONAR
     return new RuleFilter(term,
                           locale,
@@ -74,7 +80,8 @@ public class RuleFilter implements Serializable {
                           orderByRealizations,
                           excludedRuleIds == null ? null : new ArrayList<>(excludedRuleIds),
                           sortBy,
-                          sortDescending);
+                          sortDescending,
+                          allSpaces);
   }
 
 }

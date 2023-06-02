@@ -42,7 +42,9 @@ export function getPrograms(filter) {
   if (filter?.owned) {
     formData.append('owned', 'true');
   }
-
+  if (filter?.lang) {
+    formData.append('lang', filter.lang);
+  }
   const params = new URLSearchParams(formData).toString();
 
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs?returnSize=true&${params}`, {
@@ -91,8 +93,14 @@ export function updateProgram(program) {
   });
 }
 
-export function getProgramById(id) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs/${id}`, {
+export function getProgramById(id, filter) {
+  const formData = new FormData();
+  if (filter?.lang) {
+    formData.append('lang', filter.lang);
+  }
+  const params = new URLSearchParams(formData).toString();
+  const extraParams = params && `?${params}` || '';
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs/${id}${extraParams}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

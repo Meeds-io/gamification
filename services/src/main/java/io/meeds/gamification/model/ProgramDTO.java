@@ -37,7 +37,7 @@ public class ProgramDTO implements Serializable, Cloneable {
 
   protected String          description;
 
-  protected long            audienceId;
+  protected long            spaceId;
 
   protected int             priority;
 
@@ -67,12 +67,36 @@ public class ProgramDTO implements Serializable, Cloneable {
 
   protected long            rulesTotalScore;
 
+  protected boolean         open;
+
+  /**
+   * Deprecated should be renamed to spaceId knowing that audienceId
+   * should reference an identity id instead
+   * @return space technical identifier
+   * @deprecated user spaceId instead
+   */
+  @Deprecated(forRemoval = true, since = "1.5.0")
+  public long getAudienceId() {
+    return spaceId;
+  }
+
+  /**
+   * Deprecated should be renamed to spaceId knowing that audienceId
+   * should reference an identity id instead
+   * @param spaceId space technical identifier
+   * @deprecated user spaceId instead
+   */
+  @Deprecated(forRemoval = true, since = "1.5.0")
+  public void setAudienceId(long spaceId) {
+    this.spaceId = spaceId;
+  }
+
   @Override
   public ProgramDTO clone() { // NOSONAR
     return new ProgramDTO(id,
                           title,
                           description,
-                          audienceId,
+                          spaceId,
                           priority,
                           createdBy,
                           createdDate,
@@ -86,7 +110,8 @@ public class ProgramDTO implements Serializable, Cloneable {
                           coverFileId,
                           coverUrl,
                           ownerIds == null ? null : new HashSet<>(ownerIds),
-                          rulesTotalScore);
+                          rulesTotalScore,
+                          open);
   }
 
 }

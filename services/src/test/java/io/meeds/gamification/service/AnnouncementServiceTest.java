@@ -59,7 +59,6 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.mock.SpaceServiceMock;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.AnnouncementActivity;
 import io.meeds.gamification.model.ProgramDTO;
@@ -470,7 +469,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     ProgramDTO program = new ProgramDTO();
     program.setId(1l);
     program.setTitle("gamification");
-    program.setAudienceId(1l);
+    program.setSpaceId(1l);
     program.setEnabled(true);
     return program;
   }

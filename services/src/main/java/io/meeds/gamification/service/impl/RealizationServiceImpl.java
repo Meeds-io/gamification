@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -66,7 +67,6 @@ import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.LeaderboardFilter;
-import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.model.filter.RealizationFilter;
 import io.meeds.gamification.model.filter.RuleFilter;
 import io.meeds.gamification.rest.model.RealizationValidityContext;
@@ -145,7 +145,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                                       int offset,
                                                       int limit) throws IllegalAccessException {
     realizationFilter = computeProgramFilter(realizationFilter, userAclIdentity);
-    return getRealizationsByFilter(realizationFilter, offset, limit);
+    if (realizationFilter == null) {
+      return Collections.emptyList();
+    } else {
+      return getRealizationsByFilter(realizationFilter, offset, limit);
+    }
   }
 
   @Override
@@ -159,7 +163,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   public int countRealizationsByFilter(RealizationFilter realizationFilter,
                                        Identity userAclIdentity) throws IllegalAccessException {
     realizationFilter = computeProgramFilter(realizationFilter, userAclIdentity);
-    return countRealizationsByFilter(realizationFilter);
+    if (realizationFilter == null) {
+      return 0;
+    } else {
+      return countRealizationsByFilter(realizationFilter);
+    }
   }
 
   @Override
@@ -379,12 +387,15 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       }
     }
     if (realizationRestriction.isValid() && rule.getType() == EntityType.MANUAL) { // NOSONAR
-      Space space = spaceService.getSpaceById(String.valueOf(rule.getAudienceId()));
-      if (space == null) {
-        realizationRestriction.setValidAudience(false);
-      } else if (!spaceService.canRedactOnSpace(space, Utils.getUserAclIdentity(identity.getRemoteId()))) { // NOSONAR
-        realizationRestriction.setValidRedactor(false);
-      } else if (isUserBlacklisted(identity.getRemoteId())) {
+      if (!rule.isOpen()) {
+        Space space = spaceService.getSpaceById(String.valueOf(rule.getSpaceId()));
+        if (space == null) {
+          realizationRestriction.setValidAudience(false);
+        } else if (!spaceService.canRedactOnSpace(space, Utils.getUserAclIdentity(identity.getRemoteId()))) { // NOSONAR
+          realizationRestriction.setValidRedactor(false);
+        }
+      }
+      if (isUserBlacklisted(identity.getRemoteId())) { // NOSONAR
         realizationRestriction.setValidWhitelist(false);
       }
     }
@@ -488,14 +499,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (Utils.isRewardingManager(username)) {
       return true;
     }
-    ProgramFilter programFilter = new ProgramFilter();
-    programFilter.setIncludeDeleted(true);
-    programFilter.setOwnerId(Utils.getUserIdentityId(username));
-    programFilter.setSpacesIds(spaceService.getManagerSpacesIds(username, 0, -1)
-                                           .stream()
-                                           .map(Long::parseLong)
-                                           .toList());
-    return programService.countPrograms(programFilter) > 0;
+    return programService.countOwnedPrograms(username) > 0;
   }
 
   @Override
@@ -631,44 +635,62 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       return realizationFilter;
     }
 
-    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    List<Long> filterProgramIds = realizationFilter.getProgramIds();
-
-    boolean isSelfFilter = CollectionUtils.isNotEmpty(realizationFilter.getEarnerIds())
-        && realizationFilter.getEarnerIds().size() == 1
-        && realizationFilter.getEarnerIds().get(0).equals(userIdentity.getId());
+    List<Long> filterProgramIds = computeFilteredPrograms(realizationFilter);
     boolean isFilterByPrograms = CollectionUtils.isNotEmpty(filterProgramIds);
 
-    if (isSelfFilter) {
-      if (isFilterByPrograms && !isProgramsMember(filterProgramIds, userAclIdentity.getUserId())) {
-        throw new IllegalAccessException("User is not member of one or several selected programs :"
-            + filterProgramIds);
+    if (realizationFilter.isOwned()) {
+      if (isFilterByPrograms && !isProgramsOwner(filterProgramIds, userAclIdentity.getUserId())) {
+        throw new IllegalAccessException("User is not owner of one or several selected programs :" + filterProgramIds);
+      } else if (!isFilterByPrograms) {
+        List<Long> ownedProgramIds = programService.getOwnedProgramIds(userAclIdentity.getUserId(), 0, -1);
+        if (CollectionUtils.isEmpty(ownedProgramIds)) {
+          return null;
+        } else {
+          realizationFilter.setProgramIds(ownedProgramIds);
+        }
       }
-    } else if (isFilterByPrograms && !isProgramsOwner(filterProgramIds, userAclIdentity.getUserId())) {
-      throw new IllegalAccessException("User is not owner of one or several selected programs :" + filterProgramIds);
-    } else if (realizationFilter.isOwned()) {
-      List<Long> ownedProgramIds = getOwnedProgramIds(userIdentity);
-      if (CollectionUtils.isEmpty(ownedProgramIds)) {
-        throw new IllegalAccessException("User is not owner of any program");
+    } else if (isFilterByPrograms && !isProgramsMember(filterProgramIds, userAclIdentity.getUserId())) {
+      throw new IllegalAccessException("User is not member of one or several selected programs :" + filterProgramIds);
+    } else if (!isFilterByPrograms && !isSelfFilter(realizationFilter, username)) {
+      List<Long> memberProgramIds = programService.getMemberProgramIds(userAclIdentity.getUserId(), 0, -1);
+      if (CollectionUtils.isEmpty(memberProgramIds)) {
+        return null;
+      } else {
+        realizationFilter.setProgramIds(memberProgramIds);
       }
-      realizationFilter.setProgramIds(ownedProgramIds);
-    } else if (!isFilterByPrograms) {
-      throw new IllegalAccessException("User is not allowed to search for realizations of all programs");
     }
     return realizationFilter;
   }
 
-  private List<Long> getOwnedProgramIds(org.exoplatform.social.core.identity.model.Identity userIdentity) throws IllegalAccessException {
-    ProgramFilter programFilter = new ProgramFilter();
-    programFilter.setOwnerId(Long.parseLong(userIdentity.getId()));
-    List<String> managedSpaceIds = spaceService.getManagerSpacesIds(userIdentity.getRemoteId(), 0, -1);
-    if (CollectionUtils.isEmpty(managedSpaceIds)) {
-      programFilter.setSpacesIds(Collections.emptyList());
-    } else {
-      programFilter.setSpacesIds(managedSpaceIds.stream().map(Long::parseLong).toList());
+  private boolean isSelfFilter(RealizationFilter realizationFilter, String username) {
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
+    boolean filterByEarner = CollectionUtils.isNotEmpty(realizationFilter.getEarnerIds());
+    return filterByEarner
+        && realizationFilter.getEarnerIds().size() == 1
+        && userIdentity != null
+        && realizationFilter.getEarnerIds().get(0).equals(userIdentity.getId());
+  }
+
+  @SuppressWarnings("unchecked")
+  private List<Long> computeFilteredPrograms(RealizationFilter realizationFilter) {
+    List<Long> filterProgramIds = realizationFilter.getProgramIds();
+    List<Long> ruleIds = realizationFilter.getRuleIds();
+    if (CollectionUtils.isNotEmpty(ruleIds)) {
+      Set<Long> programIds = ruleIds.stream().map(ruleId -> {
+        RuleDTO rule = ruleService.findRuleById(ruleId);
+        return rule == null || rule.getProgramId() == 0 ? null : rule.getProgramId();
+      })
+                                    .filter(Objects::nonNull)
+                                    .collect(Collectors.toSet());
+      if (CollectionUtils.isEmpty(filterProgramIds)) {
+        return programIds.stream().toList();
+      } else {
+        return CollectionUtils.intersection(filterProgramIds, programIds)
+                              .stream()
+                              .toList();
+      }
     }
-    programFilter.setIncludeDeleted(true);
-    return programService.getProgramIds(programFilter, userIdentity.getRemoteId(), 0, -1);
+    return filterProgramIds;
   }
 
   private boolean isProgramsOwner(List<Long> programIds, String username) {
@@ -763,6 +785,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (earnerIdentity != null && earnerIdentity.isUser()) {
       return ruleService.getRules(ruleFilter, earnerIdentity.getRemoteId(), 0, -1);
     } else {
+      ruleFilter.setAllSpaces(true);
       return ruleService.getRules(ruleFilter, 0, -1);
     }
   }

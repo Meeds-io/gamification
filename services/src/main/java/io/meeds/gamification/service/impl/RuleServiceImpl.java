@@ -127,11 +127,7 @@ public class RuleServiceImpl implements RuleService {
                                 int offset,
                                 int limit) {
     ruleFilter = computeUserSpaces(ruleFilter, username);
-    if (ruleFilter == null) {
-      return Collections.emptyList();
-    } else {
-      return getRules(ruleFilter, offset, limit);
-    }
+    return getRules(ruleFilter, offset, limit);
   }
 
   @Override
@@ -158,11 +154,7 @@ public class RuleServiceImpl implements RuleService {
   @Override
   public int countRules(RuleFilter ruleFilter, String username) {
     ruleFilter = computeUserSpaces(ruleFilter, username);
-    if (ruleFilter == null) {
-      return 0;
-    } else {
-      return countRules(ruleFilter);
-    }
+    return countRules(ruleFilter);
   }
 
   @Override
@@ -310,18 +302,14 @@ public class RuleServiceImpl implements RuleService {
   @SuppressWarnings("unchecked")
   private RuleFilter computeUserSpaces(RuleFilter ruleFilter, String username) {
     ruleFilter = ruleFilter.clone();
-    if (StringUtils.isBlank(username)) {
-      return null;
-    } else if (Utils.isRewardingManager(username)) {
+    if (Utils.isRewardingManager(username)) {
+      ruleFilter.setAllSpaces(true);
       return ruleFilter;
     }
     List<Long> memberSpacesIds = spaceService.getMemberSpacesIds(username, 0, -1)
                                              .stream()
                                              .map(Long::parseLong)
                                              .toList();
-    if (CollectionUtils.isEmpty(memberSpacesIds)) {
-      return null;
-    }
     if (CollectionUtils.isNotEmpty(ruleFilter.getSpaceIds())) {
       memberSpacesIds = (List<Long>) CollectionUtils.intersection(memberSpacesIds, ruleFilter.getSpaceIds());
     }

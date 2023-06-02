@@ -74,6 +74,24 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
+  public List<Long> findHighestBudgetOpenProgramIds(int offset, int limit) {
+    TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetOpenDomainIds", Tuple.class);
+    query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
+    List<Tuple> result = query.getResultList();
+    if (result == null) {
+      return Collections.emptyList();
+    } else {
+      Stream<Long> resultStream = result.stream().map(tuple -> tuple.get(0, Long.class));
+      if (offset > 0) {
+        resultStream = resultStream.skip(offset);
+      }
+      if (limit > 0) {
+        resultStream = resultStream.limit(limit);
+      }
+      return resultStream.toList();
+    }
+  }
+
   public List<Long> findHighestBudgetProgramIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIdsBySpacesIds", Tuple.class);
     query.setParameter("spacesIds", spacesIds);
@@ -301,7 +319,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
       suffixes.add("Audience");
-      predicates.add("(r.domainEntity.audienceId in (:ids) OR r.domainEntity.audienceId IS NULL)");
+      predicates.add("(r.domainEntity.audienceId IS NULL OR r.domainEntity.audienceId in (:ids))");
+    } else if (!filter.isAllSpaces()) {
+      suffixes.add("OpenAudience");
+      predicates.add("r.domainEntity.audienceId IS NULL");
     }
     if (CollectionUtils.isNotEmpty(filter.getExcludedRuleIds())) {
       suffixes.add("ExcludeIds");
