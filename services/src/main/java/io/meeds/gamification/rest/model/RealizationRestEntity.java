@@ -43,6 +43,10 @@ public class RealizationRestEntity implements Cloneable {
 
   private Long           activityId;
 
+  private boolean        actionLabelChanged;
+
+  private boolean        programLabelChanged;
+
   @Override
   public RealizationRestEntity clone() { // NOSONAR
     return new RealizationRestEntity(id,
@@ -58,6 +62,8 @@ public class RealizationRestEntity implements Cloneable {
                                      space,
                                      objectId,
                                      objectType,
-                                     activityId);
+                                     activityId,
+                                     actionLabelChanged,
+                                     programLabelChanged);
   }
 }

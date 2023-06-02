@@ -65,11 +65,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </div>
       <v-spacer />
       <engagement-center-avatars-list
+        v-if="owners.length"
         :avatars="owners"
         :max-avatars-to-show="4"
         :avatars-count="ownersCount"
         :size="25"
         @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
+      <v-chip
+        v-else
+        small
+        class="ms-sm-auto">
+        {{ $t('programs.label.rewardAdmins') }}
+      </v-chip>
     </div>
   </v-card>
 </template>
@@ -99,7 +106,7 @@ export default {
       return this.program?.rulesTotalScore || 0;
     },
     addedOwnersList() {
-      return (this.program?.owners || []).filter(owner => !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
+      return (this.program?.owners || []).filter(owner => !this.program?.space || !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
         userName: owner.remoteId
       }));
     },
@@ -121,7 +128,6 @@ export default {
   methods: {
     openProgramDetail() {
       this.$root.$emit('open-program-detail', this.program);
-      window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
     },
   }
 };

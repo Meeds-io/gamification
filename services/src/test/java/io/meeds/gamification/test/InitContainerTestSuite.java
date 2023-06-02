@@ -55,8 +55,8 @@ import io.meeds.gamification.service.AnnouncementServiceTest;
 import io.meeds.gamification.service.BadgeRegistryTest;
 import io.meeds.gamification.service.BadgeServiceTest;
 import io.meeds.gamification.service.ProgramServiceTest;
-import io.meeds.gamification.service.RealizationServiceITTest;
 import io.meeds.gamification.service.RealizationServiceTest;
+import io.meeds.gamification.service.RealizationServiceMockTest;
 import io.meeds.gamification.service.RuleServiceTest;
 import io.meeds.gamification.storage.AnnouncementStorageTest;
 import io.meeds.gamification.storage.ProgramStorageTest;
@@ -66,7 +66,7 @@ import io.meeds.gamification.utils.UtilsTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-    RealizationServiceITTest.class,
+    RealizationServiceTest.class,
     BadgeServiceTest.class,
     BadgeRegistryTest.class,
     ProgramServiceTest.class,
@@ -82,7 +82,7 @@ import io.meeds.gamification.utils.UtilsTest;
     RuleServiceTest.class,
     RuleTranslationPluginTest.class,
     ProgramTranslationPluginTest.class,
-    RealizationServiceTest.class,
+    RealizationServiceMockTest.class,
     UtilsTest.class,
     TestGamificationInformationsEndpoint.class,
     TestProgramRest.class,

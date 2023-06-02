@@ -66,6 +66,7 @@ public class ProgramStorageTest extends AbstractServiceTest {
     ProgramFilter filter = new ProgramFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setAllSpaces(true);
     assertEquals(0, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
@@ -99,6 +100,7 @@ public class ProgramStorageTest extends AbstractServiceTest {
     ProgramFilter filter = new ProgramFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setAllSpaces(true);
     assertEquals(0, domainStorage.countPrograms(filter));
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());

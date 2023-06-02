@@ -64,25 +64,32 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-list-item-content>
           </v-list-item>
         </div>
-        <div class="pt-sm-5 px-0 col-sm-3">
+        <div class="d-flex flex-column pt-sm-5 px-0 col-sm-3">
           <div class="dark-grey-color text-subtitle-1 font-weight-bold width-fit-content ms-sm-auto">
             {{ $t('programs.details.label.programOwners') }}
           </div>
-          <engagement-center-avatars-list
-            :avatars="owners"
-            :max-avatars-to-show="3"
-            :avatars-count="ownersCount"
-            :size="25"
-            class="d-flex justify-sm-end pt-2"
-            @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
-          <div class="dark-grey-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
-            {{ $t('programs.details.label.audienceSpace') }}
+          <div v-if="owners.length">
+            <engagement-center-avatars-list
+              :avatars="owners"
+              :max-avatars-to-show="3"
+              :avatars-count="ownersCount"
+              :size="25"
+              class="d-flex justify-sm-end pt-2"
+              @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
+            <template v-if="space">
+              <div class="dark-grey-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
+                {{ $t('programs.details.label.audienceSpace') }}
+              </div>
+              <exo-space-avatar
+                :space="space"
+                :size="32"
+                class="d-flex justify-sm-end pt-2"
+                popover />
+            </template>
           </div>
-          <exo-space-avatar
-            :space="space"
-            :size="32"
-            class="d-flex justify-sm-end pt-2"
-            popover />
+          <v-chip v-else class="ms-sm-auto mt-2">
+            {{ $t('programs.label.rewardAdmins') }}
+          </v-chip>
         </div>
       </div>
       <div class="pt-5">
@@ -247,9 +254,10 @@ export default {
       }));
     },
     addedOwners() {
-      return (this.program?.owners || []).filter(owner => !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
-        userName: owner.remoteId
-      }));
+      return (this.program?.owners || []).filter(owner => !this.program?.space || !this.program?.space?.managers.includes(owner.remoteId))
+        .map(owner => ({
+          userName: owner.remoteId
+        }));
     },
     owners() {
       return this.addedOwners.concat(this.spaceManagersList);
