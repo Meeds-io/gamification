@@ -222,7 +222,7 @@ public class AnalyticsRuleListenerTest {
     program.setDeleted(false);
     program.setEnabled(true);
     program.setType(EntityType.AUTOMATIC.name());
-    program.setAudienceId(AUDIENCE_ID);
+    program.setSpaceId(AUDIENCE_ID);
     HashSet<Long> owners = new HashSet<Long>();
     owners.add(1L);
     program.setOwnerIds(owners);

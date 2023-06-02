@@ -58,7 +58,7 @@ public class GamificationDomainListener extends Listener<ProgramDTO, String> {
     ProgramDTO program = event.getSource();
     String username = event.getData();
     String action = event.getEventName();
-    RuleFilter ruleFilter = new RuleFilter();
+    RuleFilter ruleFilter = new RuleFilter(true);
     ruleFilter.setProgramId(program.getId());
     List<RuleDTO> rules = ruleService.getRules(ruleFilter, 0, -1);
     List<BadgeDTO> badges = badgeService.findBadgesByProgramId(program.getId());

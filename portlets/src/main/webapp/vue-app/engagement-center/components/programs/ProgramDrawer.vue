@@ -1,168 +1,259 @@
 <!--
-This file is part of the Meeds project (https://meeds.io/).
-Copyright (C) 2022 Meeds Association
-contact@meeds.io
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 3 of the License, or (at your option) any later version.
-This program is distributed in the hope that it will be useful,5
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-You should have received a copy of the GNU Lesser General Public License
-along with this program; if not, write to the Free Software Foundation,
-Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+  This file is part of the Meeds project (https://meeds.io/).
+
+  Copyright (C) 2023 Meeds Association contact@meeds.io
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 3 of the License, or (at your option) any later version.
+  This program is distributed in the hope that it will be useful,5
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 -->
 <template>
   <exo-drawer
     ref="programDrawer"
-    class="EngagementCenterDrawer"
     v-model="drawer"
     :right="!$vuetify.rtl"
     :confirm-close="programChanged"
     :confirm-close-labels="confirmCloseLabels"
-    eager>
-    <template slot="title">
-      <span class="pb-2"> {{ drawerTitle }} </span>
+    :allow-expand="!$root.isMobile"
+    class="EngagementCenterDrawer overflow-initial"
+    eager
+    @opened="stepper = 1"
+    @closed="clear"
+    @expand-updated="expanded = $event">
+    <template #title>
+      {{ drawerTitle }}
     </template>
-    <template v-if="drawer" #content>
-      <v-card-text v-if="program">
-        <v-form
-          id="EngagementCenterProgramDrawerForm"
-          ref="form"
-          v-model="isValidForm"
-          @submit="
-            $event.preventDefault();
-            $event.stopPropagation();
-          ">
-          <v-textarea
-            id="EngagementCenterProgramDrawerTitleTextArea"
-            v-model="program.title"
-            :rules="[rules.length]"
-            :placeholder="$t('programs.label.enterProgramTitle') "
-            name="programTitle"
-            class="pl-0 pt-0 EngagementCenter-title"
-            auto-grow
-            rows="1"
-            row-height="13"
-            required
-            autofocus />
-          <v-divider class="my-2" />
-          <div class="py-2">
-            <span class="subtitle-1"> {{ $t('programs.label.programCover') }}</span>
-            <engagement-center-image-selector
-              id="engagementCenterProgramDrawerImageSelector"
-              ref="programCover"
-              v-model="program.coverUrl"
-              class="mb-2"
-              @updated="addCover" />
-            <span class="caption mt-2 text-light-color">
-              <v-icon class="mb-1" small>fas fa-info-circle</v-icon>
-              {{ $t('programs.label.coverWarning') }}
-            </span>
+    <template v-if="drawer && !initiliazing && program" #content>
+      <v-form
+        id="EngagementCenterProgramDrawerForm"
+        ref="form"
+        v-model="isValidForm"
+        class="pa-0"
+        @submit="
+          $event.preventDefault();
+          $event.stopPropagation();
+        ">
+        <v-stepper
+          v-model="stepper"
+          :class="expanded && 'flex-row' || 'flex-column'"
+          class="ma-0 py-0 d-flex"
+          vertical
+          flat>
+          <div :class="expanded && 'col-6'" class="flex-grow-1 flex-shrink-0">
+            <v-stepper-step
+              step="1"
+              class="ma-0 px-6">
+              <span class="font-weight-bold dark-grey-color text-subtitle-1">
+                {{ $t('programs.label.introduceYourProgram') }}
+              </span>
+            </v-stepper-step>
+            <v-slide-y-transition>
+              <div v-show="expanded || stepper === 1" class="px-6">
+                <div class="pt-2">
+                  <span class="subtitle-1">
+                    {{ $t('programs.label.programCover') }}
+                  </span>
+                  <engagement-center-image-selector
+                    id="engagementCenterProgramDrawerImageSelector"
+                    ref="programCover"
+                    v-model="program.coverUrl"
+                    class="mb-2"
+                    @updated="addCover" />
+                  <span class="caption mt-2 text-light-color">
+                    <v-icon class="mb-1" small>fas fa-info-circle</v-icon>
+                    {{ $t('programs.label.coverWarning') }}
+                  </span>
+                </div>
+                <translation-text-field
+                  ref="programTitle"
+                  id="programTitle"
+                  v-model="programTitleTranslations"
+                  :rules="[rules.length]"
+                  :field-value.sync="programTitle"
+                  :placeholder="$t('programs.label.enterProgramTitle')"
+                  :maxlength="maxTitleLength"
+                  :object-id="programId"
+                  object-type="program"
+                  field-name="title"
+                  drawer-title="program.form.translateTitle"
+                  name="programTitle"
+                  class="width-auto flex-grow-1 pt-4"
+                  back-icon
+                  autofocus
+                  required
+                  @initialized="setFormInitialized">
+                  <template #title>
+                    <div class="text-subtitle-1">
+                      {{ $t('programs.label.nameYourProgram') }}
+                    </div>
+                  </template>
+                </translation-text-field>
+                <translation-text-field
+                  ref="programDescriptionTranslation"
+                  v-model="programDescriptionTranslations"
+                  :field-value.sync="programDescription"
+                  :object-id="programId"
+                  :maxlength="maxDescriptionLength"
+                  object-type="program"
+                  field-name="description"
+                  drawer-title="program.form.translateDescription"
+                  class="width-auto flex-grow-1 pt-4"
+                  back-icon
+                  rich-editor
+                  @initialized="setFormInitialized">
+                  <template #title>
+                    <div class="text-subtitle-1">
+                      {{ $t('programs.label.describeProgram') }}
+                    </div>
+                  </template>
+                  <engagement-center-description-editor
+                    id="programDescription"
+                    ref="programDescriptionEditor"
+                    v-model="programDescription"
+                    :placeholder="$t('programs.placeholder.describeProgram')"
+                    :visible="drawer"
+                    :max-length="maxDescriptionLength"
+                    ck-editor-type="program"
+                    @addDescription="programDescription = $event || programDescription"
+                    @validity-updated="validDescription = $event" />
+                </translation-text-field>
+              </div>
+            </v-slide-y-transition>
           </div>
-          <div class="py-2">
-            <engagement-center-description-editor
-              id="engagementCenterProgramDrawerDescriptionEditor"
-              ref="programDescription"
-              v-model="program.description"
-              :label="$t('programs.label.describeProgram')"
-              :visible="drawer"
-              ck-editor-type="program"
-              @validity-updated="validDescription = $event" />
+          <div :class="expanded && 'col-6'" class="flex-grow-1 flex-shrink-0">
+            <v-stepper-step
+              step="2"
+              class="ma-0 px-6">
+              <span class="font-weight-bold dark-grey-color text-subtitle-1">
+                {{ $t('programs.label.introduceProgramDetais') }}
+              </span>
+            </v-stepper-step>
+            <v-slide-y-transition>
+              <div v-show="expanded || stepper > 1" class="px-6">
+                <div class="mt-4">
+                  <span class="subtitle-1 d-flex align-center">
+                    {{ $t('programs.label.audienceSpace') }}
+                    <v-divider class="ms-4" />
+                  </span>
+                  <div class="mt-4">
+                    <div class="d-flex align-center">
+                      <span class="me-auto">{{ $t('programs.label.programAudience.all') }}</span>
+                      <v-switch
+                        id="engagementCenterProgramPublicSwitch"
+                        v-model="program.open"
+                        class="ms-0 me-n1 mt-0 mb-n2 pt-0" />
+                    </div>
+                    <div class="caption text-light-color">
+                      <v-icon class="me-1" small>fas fa-info-circle</v-icon>
+                      {{ $t('programs.subtitle.programAudience.all') }}
+                    </div>
+                  </div>
+                </div>
+                <div v-if="!openProgram" class="d-flex flex-column justify-center mt-4">
+                  <div>
+                    {{ $t('programs.label.spaceMembersOf') }}
+                  </div>
+                  <exo-identity-suggester
+                    id="EngagementCenterProgramDrawerSpaceSuggester"
+                    ref="programSpaceSuggester"
+                    name="programSpaceAutocomplete"
+                    v-model="audience"
+                    :items="audience && [audience] || []"
+                    :search-options="audienceSearchOptions"
+                    :labels="suggesterLabels"
+                    :width="220"
+                    sugester-class="ma-0 no-box-shadow border-color"
+                    include-spaces />
+                </div>
+                <div class="mt-4">
+                  <span class="subtitle-1 d-flex align-center">
+                    {{ $t('programs.label.programOwners') }}
+                    <v-divider class="ms-4" />
+                  </span>
+                  <div class="d-flex align-center">
+                    <v-icon class="me-1" small>fas fa-info-circle</v-icon>
+                    <span class="caption text-light-color"> {{ $t('programs.label.accessPermission') }}</span>
+                  </div>
+                </div>
+                <v-row v-if="audience" class="mt-4 mx-0">
+                  <v-col class="pa-0 d-flex align-center">
+                    <span> {{ $t('programs.label.spaceHostsOf') }}</span>
+                  </v-col>
+                  <v-col class="pa-0 d-flex align-center">
+                    <exo-space-avatar
+                      v-if="spaceId"
+                      :space-id="spaceId"
+                      extra-class="ms-auto d-flex align-center primary--text" />
+                  </v-col>
+                </v-row>
+                <v-chip v-else-if="openProgram" class="mt-4">
+                  {{ $t('programs.label.anyRewardAdmin') }}
+                </v-chip>
+                <engagement-center-program-owner-assignment
+                  v-if="audience || openProgram"
+                  id="engagementCenterProgramOwnerAssignee"
+                  ref="programAssignment"
+                  v-model="programOwners"
+                  :audience="audience"
+                  multiple />
+                <div v-if="isExternalOwner" class="error--text mt-1">
+                  {{ $t('programs.label.externalOwner.warning') }}
+                </div>
+                <div v-if="programId" class="mt-4">
+                  <div class="d-flex align-center">
+                    <span class="subtitle-1 me-auto">{{ $t('programs.label.status') }}</span>
+                    <v-switch
+                      id="engagementCenterProgramDrawerSwitch"
+                      v-model="program.enabled"
+                      class="my-0 ms-0 me-n1" />
+                  </div>
+                  <div class="caption text-light-color">
+                    <v-icon class="me-1" small>fas fa-info-circle</v-icon>
+                    {{ $t('programs.label.programStatusSubtitle') }}
+                  </div>
+                </div>
+              </div>
+            </v-slide-y-transition>
           </div>
-          <div
-            v-if="showBudget"
-            class="mt-4">
-            <span class="subtitle-1">{{ $t('programs.label.budget') }}</span>
-            <template>
-              <v-list-item
-                flat
-                dense
-                class="px-0">
-                <v-list-item-content class="f me-2 points">
-                  <v-text-field
-                    id="EngagementCenterProgramDrawerBudget"
-                    v-model="program.budget"
-                    :rules="[rules.value]"
-                    class="pt-2 points mt-n3"
-                    type="number"
-                    outlined
-                    required />
-                </v-list-item-content>
-                <v-list-item-content class="flex flex-grow-0 flex-shrink-0 me-2">
-                  <span class="caption mx-2 text-light-color"> {{ $t('programs.label.budgetPerWeek') }} </span>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
-          </div>
-          <span class="subtitle-1">{{ $t('programs.label.audienceSpace') }}</span>
-          <exo-identity-suggester
-            id="EngagementCenterProgramDrawerSpaceSuggester"
-            ref="programSpaceSuggester"
-            name="programSpaceAutocomplete"
-            v-model="audience"
-            :items="audience && [audience] || []"
-            :search-options="audienceSearchOptions"
-            :labels="suggesterLabels"
-            :width="220"
-            include-spaces />
-          <div class="mt-4">
-            <span class="subtitle-1"> {{ $t('programs.label.programOwners') }}</span>
-            <div class="d-flex">
-              <v-icon class="me-1" small>fas fa-info-circle</v-icon>
-              <span class="caption text-light-color"> {{ $t('programs.label.accessPermission') }}</span>
-            </div>
-          </div>
-          <v-row v-if="audience" class="pa-0 mx-0 mt-4 mb-2">
-            <v-col class="pa-0 d-flex align-center">
-              <span> {{ $t('programs.label.spaceHostsOf') }}</span>
-            </v-col>
-            <v-col class="pa-0 d-flex align-center">
-              <exo-space-avatar
-                v-if="spaceId"
-                :space-id="spaceId"
-                extra-class=" ms-auto d-flex align-center primary--text" />
-            </v-col>
-          </v-row>
-          <engagement-center-program-owner-assignment
-            v-if="audience"
-            id="engagementCenterProgramOwnerAssignee"
-            ref="programAssignment"
-            v-model="programOwners"
-            :audience="audience"
-            class="mt-4"
-            multiple />
-          <div v-if="isExternalOwner" class="error--text mt-1">
-            {{ $t('programs.label.externalOwner.warning') }}
-          </div>
-          <div class="mt-4">
-            <div class="d-flex">
-              <span class="subtitle-1 me-auto">{{ $t('programs.label.status') }}</span>
-              <v-switch
-                id="engagementCenterProgramDrawerSwitch"
-                v-model="program.enabled"
-                class="my-0 ms-0 me-n1" />
-            </div>
-            <div class="caption text-light-color">
-              <v-icon class="me-1" small>fas fa-info-circle</v-icon>
-              {{ $t('programs.label.programStatusSubtitle') }}
-            </div>
-          </div>
-        </v-form>
-      </v-card-text>
+        </v-stepper>
+      </v-form>
     </template>
-    <template slot="footer">
+    <template #footer>
       <div class="d-flex mr-2">
         <v-spacer />
         <v-btn
+          v-if="stepper === 2"
           :disabled="loading"
-          class="btn mx-1"
-          @click="close">
-          {{ $t('engagementCenter.button.cancel') }}
+          class="btn me-2"
+          @click.prevent.stop="stepper--">
+          {{ $t('rule.form.label.button.back') }}
         </v-btn>
         <v-btn
+          v-else
+          :disabled="loading"
+          class="btn me-2"
+          @click="close">
+          {{ $t('rule.form.label.button.cancel') }}
+        </v-btn>
+        <v-btn
+          v-if="stepper === 1"
+          :disabled="disableNextButton"
+          class="btn btn-primary"
+          @click.prevent.stop="stepper++">
+          {{ $t('rule.form.label.button.next') }}
+        </v-btn>
+        <v-btn
+          v-else
           :disabled="disabledSave"
           :loading="loading"
           class="btn btn-primary"
@@ -183,17 +274,25 @@ export default {
     }
   },
   data: () => ({
+    stepper: 0,
     program: null,
     originalProgram: null,
     programOwners: [],
+    maxTitleLength: 50,
+    maxDescriptionLength: 1300,
+    programTitle: null,
+    programDescription: null,
+    programTitleTranslations: {},
+    programDescriptionTranslations: {},
     audience: null,
     isValidForm: true,
     drawer: false,
+    initiliazing: false,
     showMenu: false,
     loading: false,
-    showBudget: false,
     validDescription: false,
     programSpace: null,
+    expanded: false,
   }),
   computed: {
     audienceSearchOptions() {
@@ -203,22 +302,27 @@ export default {
         filterType: 'manager',
       };
     },
+    programId() {
+      return this.program?.id;
+    },
+    openProgram() {
+      return this.program?.open;
+    },
     drawerTitle() {
       return this.program?.id ? this.$t('programs.button.editProgram') : this.$t('programs.button.addProgram');
     },
     disabledSave() {
-      return !this.isValidForm
-          || !this.audienceId
-          || !this.validDescription
+      return this.disableNextButton
+          || (!this.spaceId && !this.openProgram)
           || this.isExternalOwner;
+    },
+    disableNextButton() {
+      return !this.isValidForm || !this.validDescription;
     },
     buttonName() {
       return this.program && this.program.id && this.$t('engagementCenter.button.save') || this.$t('engagementCenter.button.create');
     },
     spaceId() {
-      return this.audience?.spaceId;
-    },
-    audienceId() {
       return Number(this.audience?.spaceId) || 0;
     },
     suggesterLabels() {
@@ -239,7 +343,7 @@ export default {
     programToSave() {
       return this.computeProgramModel(
         this.program,
-        this.audienceId,
+        this.spaceId,
         this.programOwners?.map(owner => owner.id).filter(id => !!id)
       );
     },
@@ -263,6 +367,18 @@ export default {
         this.$refs.programDrawer.endLoading();
       }
     },
+    openProgram() {
+      if (this.openProgram) {
+        this.audience = null;
+      }
+    },
+    initiliazing() {
+      if (this.initiliazing) {
+        this.$refs.programDrawer.startLoading();
+      } else {
+        this.$refs.programDrawer.endLoading();
+      }
+    },
     audience() {
       if (this.drawer && !this.audience?.spaceId) {
         this.program.space = null;
@@ -270,10 +386,28 @@ export default {
         document.dispatchEvent(new CustomEvent('audienceChanged'));
       }
     },
+    programDescription() {
+      if (this.$refs.programDescriptionTranslation) {
+        this.$refs.programDescriptionTranslation.setValue(this.programDescription);
+      }
+    },
+    expanded() {
+      if (this.expanded) {
+        this.stepper = 2;
+      } else {
+        this.stepper = 1;
+      }
+    },
+    saving() {
+      if (this.saving) {
+        this.$refs.programDrawer.startLoading();
+      } else {
+        this.$refs.programDrawer.endLoading();
+      }
+    },
   },
   created() {
-    this.$root.$on('edit-program-details', this.open);
-    this.$root.$on('open-program-drawer', this.open);
+    this.$root.$on('program-form-open', this.open);
     $(document).mousedown(() => {
       if (this.showMenu) {
         window.setTimeout(() => {
@@ -283,13 +417,26 @@ export default {
     });
   },
   methods: {
-    open(program) {
+    open(program, freshInstance) {
+      if (program && !freshInstance) {
+        this.initiliazing = true;
+        this.$refs.programDrawer.open();
+        return this.$programService.getProgramById(program.id)
+          .then(freshProgram => this.open(freshProgram, true));
+      }
       this.program = program && JSON.parse(JSON.stringify(program)) || {
+        title: null,
+        description: null,
         budget: 0,
+        open: false,
         enabled: true,
         owners: []
       };
       this.programOwners = this.program?.owners?.slice() || [];
+      this.programTitle = this.program?.title || '';
+      this.programTitleTranslations = {};
+      this.programDescription = this.program?.description || '';
+      this.programDescriptionTranslations = {};
 
       if (this.program?.id && this.program?.space) {
         const space = this.program?.space;
@@ -311,11 +458,16 @@ export default {
 
       this.originalProgram = this.computeProgramModel(
         this.program,
-        this.audienceId,
+        this.spaceId,
         this.programOwners?.map(owner => owner.id).filter(id => !!id)
       );
+      this.initiliazing = false;
       this.$refs.programDrawer.open();
-      this.$nextTick().then(() => this.$refs.programDescription.initCKEditor());
+      this.$nextTick().then(() => {
+        if (this.$refs.programDescriptionEditor) {
+          this.$refs.programDescriptionEditor.initCKEditor();
+        }
+      });
     },
     close() {
       this.$refs.programDrawer.close();
@@ -331,15 +483,21 @@ export default {
         this.$set(this.program, 'coverUploadId', value);
       }
     },
+    clear() {
+      this.stepper = 0;
+    },
     save() {
       if (this.disabledSave) {
         return;
       }
       this.loading = true;
       if (this.program?.id) {
-        this.$programService.updateProgram(this.programToSave)
+        this.$translationService.saveTranslations('program', this.program.id, 'title', this.programTitleTranslations)
+          .then(() => this.$translationService.saveTranslations('program', this.program.id, 'description', this.programDescriptionTranslations))
+          .then(() => this.$programService.updateProgram(this.programToSave))
           .then((program) => {
             this.originalProgram = null;
+            this.loading = false;
             this.$root.$emit('program-updated', program);
             this.$root.$emit('alert-message', this.$t('programs.programUpdateSuccess'), 'success');
             return this.$nextTick();
@@ -352,9 +510,15 @@ export default {
       } else {
         this.$programService.createProgram(this.programToSave)
           .then((program) => {
-            this.originalProgram = null;
             this.$root.$emit('program-added', program);
+            this.originalProgram = program;
+            return this.$translationService.saveTranslations('program', this.originalProgram.id, 'title', this.programTitleTranslations);
+          })
+          .then(() => this.$translationService.saveTranslations('program', this.originalProgram.id, 'description', this.programDescriptionTranslations))
+          .then(() => {
             this.$root.$emit('alert-message', this.$t('programs.programCreateSuccess'), 'success');
+            this.loading = false; // To Keep to be able to close drawer
+            this.originalProgram = null;
             return this.$nextTick();
           })
           .then(() => this.close())
@@ -364,16 +528,23 @@ export default {
           .finally(() => this.loading = false);
       }
     },
-    computeProgramModel(program, audienceId, ownerIds) {
+    computeProgramModel(program, spaceId, ownerIds) {
       return {
         id: program?.id,
-        title: program?.title,
-        description: program?.description,
+        title: this.programTitle,
+        description: this.programDescription,
         coverUploadId: program?.coverUploadId,
-        audienceId: audienceId || program?.audienceId || 0,
+        spaceId: spaceId || program?.spaceId || 0,
         ownerIds: ownerIds || program?.ownerIds || null,
-        enabled: program?.enabled,
+        open: program?.open || false,
+        enabled: program?.enabled || false,
       };
+    },
+    setFormInitialized() {
+      if (this.originalProgram) {
+        this.originalProgram.title = this.programTitle;
+        this.originalProgram.description = this.programDescription;
+      }
     },
   }
 };

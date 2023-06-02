@@ -16,10 +16,11 @@
  */
 
 package io.meeds.gamification.utils;
+import static io.meeds.gamification.mock.SpaceServiceMock.SPACE_GROUP_ID;
+import static io.meeds.gamification.mock.SpaceServiceMock.SPACE_PRETTY_NAME;
 import static io.meeds.gamification.utils.Utils.DEFAULT_IMAGE_REMOTE_ID;
 import static io.meeds.gamification.utils.Utils.TYPE;
 import static io.meeds.gamification.utils.Utils.isAttachmentTokenValid;
-import static io.meeds.gamification.mock.SpaceServiceMock.*;
 
 import java.util.Date;
 import java.util.TimeZone;

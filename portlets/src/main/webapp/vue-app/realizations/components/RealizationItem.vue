@@ -40,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :action-u-r-l="realizationLink"
           class="width-fit-content" />
         <v-tooltip
-          v-if="ruleTitleChanged"
+          v-if="actionLabelChanged"
           z-index="4"
           max-width="300"
           bottom>
@@ -149,8 +149,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <span>{{ statusLabel }}</span>
       </v-tooltip>
     </td>
-    <td v-if="isAdministrator && hasActions" class="text-truncate actions align-center">
+    <td v-if="isAdministrator" class="text-truncate actions align-center">
       <v-menu
+        v-if="hasActions"
         v-model="menu"
         :left="!$vuetify.rtl"
         :right="$vuetify.rtl"
@@ -317,18 +318,15 @@ export default {
     realizationActionLabel() {
       return this.realization?.actionLabel;
     },
-    ruleTitleChanged() {
-      if (this.isAutomaticType) {
-        return this.realizationActionLabel !== this.eventName && this.realizationActionLabel !== this.actionLabel;
-      }
-      return this.realizationActionLabel !== this.actionLabel;
+    actionLabelChanged() {
+      return this.realization?.actionLabelChanged;
     },
     programLabel() {
       return this.realization?.programLabel;
     },
     programLabelChanged() {
-      return this.programLabel !== this.programTitle;
-    }
+      return this.realization?.programLabelChanged;
+    },
   },
   created() {
     // Workaround to fix closing menu when clicking outside
@@ -352,13 +350,7 @@ export default {
         });
     },
     openProgramDetail() {
-      this.$programService.getProgramById(this.program.id)
-        .then(program => {
-          if (program && program.id) {
-            this.$root.$emit('open-program-detail', program);
-            window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
-          }
-        });
+      this.$root.$emit('open-program-detail-by-id', this.program.id);
     },
     retrieveRealizationLink() {
       if (this.status === 'DELETED' || this.status === 'CANCELED') {
