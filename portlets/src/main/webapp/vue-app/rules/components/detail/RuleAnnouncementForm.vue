@@ -24,6 +24,7 @@
       <div class="d-flex flex-row pt-3">
         <v-list-item class="text-truncate px-0">
           <exo-space-avatar
+            v-if="spaceId"
             :space-id="spaceId"
             :space="space"
             :size="30"
@@ -31,8 +32,8 @@
             avatar />
           <exo-user-avatar
             :profile-id="username"
-            :size="25"
-            extra-class="ms-n4 mt-6"
+            :size="spaceId && 25 || 30"
+            :extra-class="spaceId && 'ms-n4 mt-6' || ''"
             avatar />
           <v-list-item-content class="py-0 accountTitleLabel text-truncate">
             <v-list-item-title class="font-weight-bold d-flex body-2 mb-0">
@@ -113,7 +114,7 @@ export default {
   }),
   computed: {
     spaceId() {
-      return this.rule?.program?.audienceId;
+      return this.rule?.program?.spaceId;
     },
     validComment() {
       return this.comment?.length > 0 && this.validLength;

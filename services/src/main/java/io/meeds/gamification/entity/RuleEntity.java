@@ -98,6 +98,21 @@ import lombok.EqualsAndHashCode;
     " ORDER BY totalScore DESC"
 )
 @NamedQuery(
+  name = "Rule.getHighestBudgetOpenDomainIds",
+  query =
+    " SELECT rule.domainEntity.id, SUM(rule.score) as totalScore FROM Rule rule" +
+    " INNER JOIN rule.domainEntity domain" +
+    "   ON domain.isEnabled = true" +
+    "  AND domain.isDeleted = false" +
+    "  AND domain.audienceId IS NULL" +
+    " WHERE rule.isEnabled = true" +
+    "   AND rule.isDeleted = false" +
+    "   AND (rule.startDate IS NULL OR rule.startDate <= :date)" +
+    "   AND (rule.endDate IS NULL OR rule.endDate >= :date)" +
+    " GROUP BY rule.domainEntity.id " +
+    " ORDER BY totalScore DESC"
+)
+@NamedQuery(
   name = "Rule.getHighestBudgetDomainIdsBySpacesIds",
   query =
     " SELECT rule.domainEntity.id, SUM(rule.score) as totalScore FROM Rule rule" +

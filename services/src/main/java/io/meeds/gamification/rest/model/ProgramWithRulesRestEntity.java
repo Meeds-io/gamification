@@ -41,7 +41,7 @@ public class ProgramWithRulesRestEntity extends ProgramDTO {
     super(program.getId(),
           program.getTitle(),
           program.getDescription(),
-          program.getAudienceId(),
+          program.getSpaceId(),
           program.getPriority(),
           program.getCreatedBy(),
           program.getCreatedDate(),
@@ -55,7 +55,8 @@ public class ProgramWithRulesRestEntity extends ProgramDTO {
           program.getCoverFileId(),
           program.getCoverUrl(),
           program.getOwnerIds(),
-          program.getRulesTotalScore());
+          program.getRulesTotalScore(),
+          program.isOpen());
   }
 
 }

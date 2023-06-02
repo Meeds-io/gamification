@@ -71,37 +71,78 @@ public class RuleDAOTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testFindHighestBudgetDomainIds() {
+  public void testFindHighestBudgetProgramIds() {
     ProgramEntity firstDomain = newDomain("firstDomain");
     ProgramEntity secondDomain = newDomain("secondDomain");
     ProgramEntity thirdDomain = newDomain("thirdDomain");
     RuleEntity r11 = newRule("rule1-1", firstDomain.getId());
-    RuleEntity r12 = newRule("rule1-2", firstDomain.getId());
-    RuleEntity r13 = newRule("rule1-3", firstDomain.getId());
-    RuleEntity r21 = newRule("rule2-1", secondDomain.getId());
-    RuleEntity r22 = newRule("rule2-2", secondDomain.getId());
-    RuleEntity r23 = newRule("rule2-3", secondDomain.getId());
-    RuleEntity r31 = newRule("rule3-1", thirdDomain.getId());
-    RuleEntity r32 = newRule("rule3-2", thirdDomain.getId());
-    RuleEntity r33 = newRule("rule3-3", thirdDomain.getId());
     r11.setScore(100);
     ruleDAO.update(r11);
+
+    RuleEntity r12 = newRule("rule1-2", firstDomain.getId());
     r12.setScore(10);
     ruleDAO.update(r12);
+
+    RuleEntity r13 = newRule("rule1-3", firstDomain.getId());
     r13.setScore(10);
     ruleDAO.update(r13);
+
+    RuleEntity r21 = newRule("rule2-1", secondDomain.getId());
     r21.setScore(60);
     ruleDAO.update(r21);
+
+    RuleEntity r22 = newRule("rule2-2", secondDomain.getId());
     r22.setScore(60);
     ruleDAO.update(r22);
+
+    RuleEntity r23 = newRule("rule2-3", secondDomain.getId());
     r23.setScore(60);
     ruleDAO.update(r23);
+
+    RuleEntity r31 = newRule("rule3-1", thirdDomain.getId());
     r31.setScore(20);
     ruleDAO.update(r31);
+
+    RuleEntity r32 = newRule("rule3-2", thirdDomain.getId());
     r32.setScore(200);
     ruleDAO.update(r32);
+
+    RuleEntity r33 = newRule("rule3-3", thirdDomain.getId());
     r33.setScore(2);
     ruleDAO.update(r33);
+
+    assertEquals(thirdDomain.getId(), ruleDAO.findHighestBudgetProgramIds(0, 1).get(0));
+    assertEquals(secondDomain.getId(), ruleDAO.findHighestBudgetProgramIds(1, 1).get(0));
+    assertEquals(firstDomain.getId(), ruleDAO.findHighestBudgetProgramIds(2, 1).get(0));
+    r32.setEnabled(false);
+    ruleDAO.update(r32);
+
+    assertEquals(secondDomain.getId(), ruleDAO.findHighestBudgetProgramIds(0, 1).get(0));
+    assertEquals(firstDomain.getId(), ruleDAO.findHighestBudgetProgramIds(1, 1).get(0));
+    assertEquals(thirdDomain.getId(), ruleDAO.findHighestBudgetProgramIds(2, 1).get(0));
+
+    // find highest budget domain Ids by spaces Ids
+    assertTrue(ruleDAO.findHighestBudgetProgramIdsBySpacesIds(new ArrayList<>(Collections.singleton(10L)), 0, 3).isEmpty());
+    assertEquals(secondDomain.getId(),
+                 ruleDAO.findHighestBudgetProgramIdsBySpacesIds(new ArrayList<>(Collections.singleton(1L)), 0, 3).get(0));
+  }
+
+  @Test
+  public void testFindHighestBudgetOpenProgramIds() {
+    ProgramEntity firstDomain = newOpenProgram("firstDomain");
+    ProgramEntity secondDomain = newOpenProgram("secondDomain");
+    ProgramEntity thirdDomain = newOpenProgram("thirdDomain");
+
+    newOpenRule(100, "rule1-1", firstDomain.getId());
+    newOpenRule(10, "rule1-2", firstDomain.getId());
+    newOpenRule(10, "rule1-3", firstDomain.getId());
+    newOpenRule(60, "rule2-1", secondDomain.getId());
+    newOpenRule(60, "rule2-2", secondDomain.getId());
+    newOpenRule(60, "rule2-3", secondDomain.getId());
+    newOpenRule(20, "rule3-1", thirdDomain.getId());
+    RuleEntity r32 = newOpenRule(200, "rule3-2", thirdDomain.getId());
+    newOpenRule(2, "rule3-3", thirdDomain.getId());
+
     assertEquals(thirdDomain.getId(), ruleDAO.findHighestBudgetProgramIds(0, 1).get(0));
     assertEquals(secondDomain.getId(), ruleDAO.findHighestBudgetProgramIds(1, 1).get(0));
     assertEquals(firstDomain.getId(), ruleDAO.findHighestBudgetProgramIds(2, 1).get(0));
@@ -112,9 +153,12 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertEquals(thirdDomain.getId(), ruleDAO.findHighestBudgetProgramIds(2, 1).get(0));
 
     // find highest budget domain Ids by spaces Ids
-    assertTrue(ruleDAO.findHighestBudgetProgramIdsBySpacesIds(new ArrayList<>(Collections.singleton(10L)), 0, 3).isEmpty());
-    assertEquals(secondDomain.getId(),
-                 ruleDAO.findHighestBudgetProgramIdsBySpacesIds(new ArrayList<>(Collections.singleton(1L)), 0, 3).get(0));
+    List<Long> programIds = ruleDAO.findHighestBudgetOpenProgramIds(0, 3);
+    assertNotNull(programIds);
+    assertEquals(3, programIds.size());
+    assertEquals(secondDomain.getId(), programIds.get(0));
+    assertEquals(firstDomain.getId(), programIds.get(1));
+    assertEquals(thirdDomain.getId(), programIds.get(2));
   }
 
   @Test
@@ -237,6 +281,7 @@ public class RuleDAOTest extends AbstractServiceTest {
   @Test
   public void testSortRulesByFilter() { // NOSONAR
     RuleFilter filter = new RuleFilter();
+    filter.setAllSpaces(true);
     ProgramEntity domainEntity1 = newDomain();
     ProgramEntity domainEntity2 = newDomain();
 
@@ -371,6 +416,12 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertEquals(2, ruleDAO.countRulesByFilter(filter));
     newRule("rule3", domainEntity2.getId());
     assertEquals(2, ruleDAO.countRulesByFilter(filter));
+  }
+
+  private RuleEntity newOpenRule(int score, String title, Long domainId) {
+    RuleEntity ruleEntity = newRule(title, domainId);
+    ruleEntity.setScore(score);
+    return ruleDAO.update(ruleEntity);
   }
 
 }

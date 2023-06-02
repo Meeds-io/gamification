@@ -77,7 +77,7 @@ public class RuleStorage {
   }
 
   public List<Long> findAllRulesIds(int offset, int limit) {
-    return ruleDAO.findRulesIdsByFilter(new RuleFilter(), offset, limit);
+    return ruleDAO.findRulesIdsByFilter(new RuleFilter(true), offset, limit);
   }
 
   public RuleDTO deleteRuleById(long ruleId, String userId) throws ObjectNotFoundException {

@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.filter.RealizationFilter;

@@ -511,7 +511,10 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   }
 
   private void buildPredicates(RealizationFilter filter, List<String> suffixes, List<String> predicates) {
-    predicates.add("g.earnerType = :" + EARNER_TYPE_PARAM_NAME);
+    if (filter.getEarnerType() != null) {
+      suffixes.add("EarnerType");
+      predicates.add("g.earnerType = :" + EARNER_TYPE_PARAM_NAME);
+    }
 
     if (filter.getFromDate() != null && filter.getToDate() != null) {
       suffixes.add("Interval");
@@ -572,7 +575,9 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   }
 
   private <T> void addQueryFilterParameters(RealizationFilter filter, TypedQuery<T> query) {
-    query.setParameter(EARNER_TYPE_PARAM_NAME, filter.getEarnerType());
+    if (filter.getEarnerType() != null) {
+      query.setParameter(EARNER_TYPE_PARAM_NAME, filter.getEarnerType());
+    }
     if (filter.getFromDate() != null && filter.getToDate() != null) {
       query.setParameter(FROM_DATE_PARAM_NAME, filter.getFromDate());
       query.setParameter(TO_DATE_PARAM_NAME, filter.getToDate());

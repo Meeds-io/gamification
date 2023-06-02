@@ -107,7 +107,7 @@ export default {
         event.preventDefault();
         event.stopPropagation();
       }
-      this.$root.$emit('edit-program-details', this.program);
+      this.$root.$emit('program-form-open', this.program);
     },
     deleteProgram(event) {
       if (event) {

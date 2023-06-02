@@ -20,15 +20,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     v-model="drawer"
     :confirm-close="ruleChanged"
     :confirm-close-labels="confirmCloseLabels"
-    class="EngagementCenterDrawer overflow-initial"
+    class="EngagementCenterDrawer"
     right
     allow-expand
     @opened="stepper = 1"
     @closed="clear">
-    <template slot="title">
+    <template #title>
       {{ drawerTitle }}
     </template>
-    <template v-if="drawer" slot="content">
+    <template v-if="drawer" #content>
       <v-stepper
         v-model="stepper"
         vertical
@@ -58,9 +58,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :max-height="programCoverSize"
                 :max-width="programCoverSize" /><span class="my-auto ms-3">{{ programTitle }}</span>
             </v-card-text>
-            <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-1">
-              {{ $t('rule.form.label.rules') }}
-            </v-card-text>
             <v-card-text class="d-flex pa-0">
               <translation-text-field
                 ref="ruleTitle"
@@ -69,35 +66,45 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :field-value.sync="ruleTitle"
                 :placeholder="$t('rule.form.label.rules.placeholder')"
                 :maxlength="maxTitleLength"
-                :object-id="rule.id"
+                :object-id="ruleId"
                 object-type="rule"
                 field-name="title"
                 drawer-title="rule.form.translateTitle"
-                class="width-auto flex-grow-1"
+                class="width-auto flex-grow-1 pb-1 pt-4"
                 back-icon
                 autofocus
                 required
-                @initialized="setFormInitialized" />
+                @initialized="setFormInitialized">
+                <template #title>
+                  <div class="text-subtitle-1">
+                    {{ $t('rule.form.label.rules') }}
+                  </div>
+                </template>
+              </translation-text-field>
             </v-card-text>
             <v-card-text class="pa-0">
               <translation-text-field
                 ref="ruleDescriptionTranslation"
                 v-model="ruleDescriptionTranslations"
                 :field-value.sync="ruleDescription"
-                :object-id="rule.id"
+                :object-id="ruleId"
                 :maxlength="maxDescriptionLength"
+                class="ma-1px mt-4"
                 object-type="rule"
                 field-name="description"
                 drawer-title="rule.form.translateDescription"
-                button-class="mt-10"
                 back-icon
                 rich-editor
                 @initialized="setFormInitialized">
+                <template #title>
+                  <div class="text-subtitle-1">
+                    {{ $t('rule.form.label.description') }}
+                  </div>
+                </template>
                 <engagement-center-description-editor
                   id="ruleDescription"
                   ref="ruleDescriptionEditor"
                   v-model="ruleDescription"
-                  :label="$t('rule.form.label.description')"
                   :placeholder="$t('rule.form.label.description.placeholder')"
                   :max-length="maxDescriptionLength"
                   :visible="drawer"
@@ -249,7 +256,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-stepper-content>
       </v-stepper>
     </template>
-    <template slot="footer">
+    <template #footer>
       <div class="d-flex">
         <v-spacer />
         <v-btn
@@ -303,7 +310,7 @@ export default {
     stepper: 0,
     programCoverSize: 40,
     isValidForm: true,
-    maxTitleLength: 500,
+    maxTitleLength: 50,
     maxDescriptionLength: 500,
     drawer: false,
     scoreRules: [

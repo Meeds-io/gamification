@@ -31,7 +31,6 @@ import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.User;
 import org.exoplatform.services.security.Identity;
-import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.mock.MockUploadService;
 import org.exoplatform.upload.UploadService;
 
@@ -46,63 +45,165 @@ import io.meeds.gamification.test.AbstractServiceTest;
 
 public class ProgramServiceTest extends AbstractServiceTest {
 
-  private final Identity adminAclIdentity   =
-                                          new Identity("root1",
-                                                       Collections.singleton(new MembershipEntry("/platform/administrators")));
+  private static final String INTERNAL_USER     = "internalUser";
 
-  private final Identity regularAclIdentity =
-                                            new Identity("root10", Collections.singleton(new MembershipEntry("/platform/users")));
+  private static final String SPACE_MEMBER_USER = "root10";
+
+  private static final String ADMIN_USER        = "root1";
+
+  private Identity            adminAclIdentity;
+
+  private Identity            spaceMemberAclIdentity;
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    identityRegistry.register(adminAclIdentity);
-    identityRegistry.register(regularAclIdentity);
+    adminAclIdentity = registerAdministratorUser(ADMIN_USER);
+    spaceMemberAclIdentity = registerInternalUser(SPACE_MEMBER_USER);
+    registerInternalUser(INTERNAL_USER);
   }
 
   @Test
-  public void testGetDomains() throws IllegalAccessException {
-
+  public void testGetProgramsAsAdmin() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(0, programService.getPrograms(filter, "root1", offset, 10).size());
+    assertEquals(0, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
     newDomain(EntityType.AUTOMATIC, "domain3", true, new HashSet<>());
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
-    assertEquals(4, programService.getPrograms(filter, "root1", offset, 10).size());
+    assertEquals(4, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
 
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(2, programService.getPrograms(filter, "root1", offset, 10).size());
+    assertEquals(2, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
-    assertEquals(2, programService.getPrograms(filter, "root1", offset, 10).size());
+    assertEquals(2, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
 
     filter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(2, programService.getPrograms(filter, "root1", offset, 10).size());
+    assertEquals(2, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
-    assertEquals(2, programService.getPrograms(filter, "root1", offset, 10).size());
+    assertEquals(2, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
 
     filter.setEntityStatusType(EntityStatusType.ALL);
     filter.setEntityFilterType(EntityFilterType.ALL);
-    assertEquals(6, programService.getPrograms(filter, "root1", offset, 10).size());
+    assertEquals(6, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
     filter.setEntityStatusType(EntityStatusType.DISABLED);
-    assertEquals(2, programService.getPrograms(filter, "root1", offset, 10).size());
+    assertEquals(2, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(1, programService.getPrograms(filter, "root1", offset, 10).size());
+    assertEquals(1, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
     filter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(1, programService.getPrograms(filter, "root1", offset, 10).size());
+    assertEquals(1, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
   }
 
   @Test
-  public void testGetDomainsByFilter() throws IllegalAccessException {
+  public void testGetProgramsAsInternalUser() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(0, programService.getPrograms(filter, "root1", offset, 10).size());
+    assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+    newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
+    newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
+    newDomain(EntityType.AUTOMATIC, "domain3", true, new HashSet<>());
+    newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
+    assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+    newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
+    assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+
+    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+    newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
+    assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+
+    filter.setEntityStatusType(EntityStatusType.ALL);
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+  }
+
+  @Test
+  public void testGetOpenProgramsAsInternalUser() throws IllegalAccessException {
+    ProgramFilter filter = new ProgramFilter();
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+    newDomain(EntityType.MANUAL, "domain1", true, null, null);
+    newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>(), null);
+    newDomain(EntityType.AUTOMATIC, "domain3", true, new HashSet<>(), null);
+    newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>(), null);
+    assertEquals(4, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(2, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+    newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>(), null);
+    assertEquals(2, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+
+    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(2, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+    newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>(), null);
+    assertEquals(2, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+
+    filter.setEntityStatusType(EntityStatusType.ALL);
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    assertEquals(6, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    assertEquals(2, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(1, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(1, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
+  }
+
+  @Test
+  public void testGetProgramsAsSpaceMemberUser() throws IllegalAccessException {
+    ProgramFilter filter = new ProgramFilter();
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(0, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
+    newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
+    newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
+    newDomain(EntityType.AUTOMATIC, "domain3", true, new HashSet<>());
+    newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
+    assertEquals(4, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
+
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(2, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
+    newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
+    assertEquals(2, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
+
+    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(2, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
+    newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
+    assertEquals(2, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
+
+    filter.setEntityStatusType(EntityStatusType.ALL);
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    assertEquals(6, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
+    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    assertEquals(2, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(1, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
+    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(1, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
+  }
+
+  @Test
+  public void testGetProgramsByFilter() throws IllegalAccessException {
+    ProgramFilter filter = new ProgramFilter();
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(0, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
     newDomain(EntityType.AUTOMATIC, "domain5", true, new HashSet<>());
     filter.setOwnerId(1);
-    assertEquals(1, programService.getPrograms(filter, "root1", offset, 10).size());
+    assertEquals(1, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
   }
 
   @Test
@@ -110,15 +211,15 @@ public class ProgramServiceTest extends AbstractServiceTest {
     ProgramFilter filter = new ProgramFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(0, programService.getPrograms(filter, "root10", offset, 10).size());
+    assertEquals(0, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
     ProgramEntity domainEntity = newDomain(EntityType.AUTOMATIC, "domain10", true, Collections.emptySet());
     filter.setOwnerId(10);
-    assertEquals(0, programService.getPrograms(filter, "root10", offset, 10).size());
+    assertEquals(0, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
 
     domainEntity.setOwners(Collections.singleton(10l));
     programDAO.update(domainEntity);
 
-    assertEquals(1, programService.getPrograms(filter, "root10", offset, 10).size());
+    assertEquals(1, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
   }
 
   @Test
@@ -126,15 +227,15 @@ public class ProgramServiceTest extends AbstractServiceTest {
     ProgramFilter filter = new ProgramFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(0, programService.getPrograms(filter, "root10", offset, 10).size());
+    assertEquals(0, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
     ProgramEntity domainEntity = newDomain(EntityType.AUTOMATIC, "domain10", true, Collections.emptySet());
     filter.setOwnerId(10);
-    assertEquals(0, programService.countPrograms(filter, "root10"));
+    assertEquals(0, programService.countPrograms(filter, SPACE_MEMBER_USER));
 
     domainEntity.setOwners(Collections.singleton(10l));
     programDAO.update(domainEntity);
 
-    assertEquals(1, programService.countPrograms(filter, "root10"));
+    assertEquals(1, programService.countPrograms(filter, SPACE_MEMBER_USER));
   }
 
   @Test
@@ -142,32 +243,32 @@ public class ProgramServiceTest extends AbstractServiceTest {
     ProgramFilter filter = new ProgramFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(0, programService.countPrograms(filter, "root1"));
+    assertEquals(0, programService.countPrograms(filter, ADMIN_USER));
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
     newDomain(EntityType.AUTOMATIC, "domain3", true, new HashSet<>());
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
-    assertEquals(4, programService.countPrograms(filter, "root1"));
+    assertEquals(4, programService.countPrograms(filter, ADMIN_USER));
 
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(2, programService.countPrograms(filter, "root1"));
+    assertEquals(2, programService.countPrograms(filter, ADMIN_USER));
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
-    assertEquals(2, programService.countPrograms(filter, "root1"));
+    assertEquals(2, programService.countPrograms(filter, ADMIN_USER));
 
     filter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(2, programService.countPrograms(filter, "root1"));
+    assertEquals(2, programService.countPrograms(filter, ADMIN_USER));
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
-    assertEquals(2, programService.countPrograms(filter, "root1"));
+    assertEquals(2, programService.countPrograms(filter, ADMIN_USER));
 
     filter.setEntityStatusType(EntityStatusType.ALL);
     filter.setEntityFilterType(EntityFilterType.ALL);
-    assertEquals(6, programService.countPrograms(filter, "root1"));
+    assertEquals(6, programService.countPrograms(filter, ADMIN_USER));
     filter.setEntityStatusType(EntityStatusType.DISABLED);
-    assertEquals(2, programService.countPrograms(filter, "root1"));
+    assertEquals(2, programService.countPrograms(filter, ADMIN_USER));
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(1, programService.countPrograms(filter, "root1"));
+    assertEquals(1, programService.countPrograms(filter, ADMIN_USER));
     filter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(1, programService.countPrograms(filter, "root1"));
+    assertEquals(1, programService.countPrograms(filter, ADMIN_USER));
   }
 
   @Test
@@ -197,7 +298,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
     programToSave.setOwnerIds(Collections.emptySet());
     programToSave.setCoverFileId(1L);
     programToSave.setType(EntityType.MANUAL.name());
-    assertThrows(IllegalAccessException.class, () -> programService.createProgram(programToSave, regularAclIdentity));
+    assertThrows(IllegalAccessException.class, () -> programService.createProgram(programToSave, spaceMemberAclIdentity));
 
     ProgramDTO savedDomain = programService.createProgram(programToSave, adminAclIdentity);
     assertNotNull(savedDomain);
@@ -233,10 +334,10 @@ public class ProgramServiceTest extends AbstractServiceTest {
     domain.setTitle(newTitle);
     domain.setBudget(newBudget);
     domain.setEnabled(true);
-    assertThrows(IllegalAccessException.class, () -> programService.updateProgram(domain, regularAclIdentity));
+    assertThrows(IllegalAccessException.class, () -> programService.updateProgram(domain, spaceMemberAclIdentity));
 
     OrganizationService organizationService = ExoContainerContext.getService(OrganizationService.class);
-    User user = organizationService.getUserHandler().createUserInstance(regularAclIdentity.getUserId());
+    User user = organizationService.getUserHandler().createUserInstance(spaceMemberAclIdentity.getUserId());
     user.setFirstName("Regular");
     user.setLastName("User");
     user.setEmail("regularuser@localhost.com");
@@ -261,7 +362,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
     assertTrue(storedDomain.isEnabled());
 
     programService.deleteProgramById(storedDomain.getId(), adminAclIdentity);
-    assertThrows(ObjectNotFoundException.class, () -> programService.updateProgram(updatedDomain, regularAclIdentity));
+    assertThrows(ObjectNotFoundException.class, () -> programService.updateProgram(updatedDomain, spaceMemberAclIdentity));
   }
 
   @Test
@@ -271,7 +372,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
     domain.setDeleted(true);
 
     assertThrows(ObjectNotFoundException.class, () -> programService.deleteProgramById(20000L, adminAclIdentity));
-    assertThrows(IllegalAccessException.class, () -> programService.deleteProgramById(domain.getId(), regularAclIdentity));
+    assertThrows(IllegalAccessException.class, () -> programService.deleteProgramById(domain.getId(), spaceMemberAclIdentity));
 
     programService.deleteProgramById(domain.getId(), adminAclIdentity);
     ProgramEntity domainEntity = programDAO.find(domain.getId());
@@ -310,31 +411,31 @@ public class ProgramServiceTest extends AbstractServiceTest {
   @Test
   public void testGetProgramByIdAndUser() throws IllegalAccessException, ObjectNotFoundException {
     assertEquals(programDAO.findAll().size(), 0);
-    assertThrows(IllegalArgumentException.class, () -> programService.getProgramById(-1L, "root1"));
-    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramById(5000L, "root1"));
+    assertThrows(IllegalArgumentException.class, () -> programService.getProgramById(-1L, ADMIN_USER));
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramById(5000L, ADMIN_USER));
 
     ProgramDTO program = newProgram();
     assertNotNull(program);
 
     long programId = program.getId();
 
-    ProgramDTO foundProgram = programService.getProgramById(programId, "root1");
+    ProgramDTO foundProgram = programService.getProgramById(programId, ADMIN_USER);
     assertNotNull(foundProgram);
     assertEquals(programId, foundProgram.getId());
     assertTrue(program.isEnabled());
-    assertNotNull(programService.getProgramById(programId, "root10"));
+    assertNotNull(programService.getProgramById(programId, SPACE_MEMBER_USER));
     assertThrows(IllegalAccessException.class, () -> programService.getProgramById(programId, "demo"));
 
     program.setEnabled(false);
     program = programService.updateProgram(program, adminAclIdentity);
 
-    assertNotNull(programService.getProgramById(programId, "root1"));
-    assertThrows(IllegalAccessException.class, () -> programService.getProgramById(programId, "root10"));
+    assertNotNull(programService.getProgramById(programId, ADMIN_USER));
+    assertThrows(IllegalAccessException.class, () -> programService.getProgramById(programId, SPACE_MEMBER_USER));
     assertThrows(IllegalAccessException.class, () -> programService.getProgramById(programId, "demo"));
 
     programService.deleteProgramById(programId, adminAclIdentity);
-    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramById(programId, "root1"));
-    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramById(programId, "root10"));
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramById(programId, ADMIN_USER));
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramById(programId, SPACE_MEMBER_USER));
     assertThrows(ObjectNotFoundException.class, () -> programService.getProgramById(programId, "demo"));
   }
 
@@ -359,19 +460,19 @@ public class ProgramServiceTest extends AbstractServiceTest {
   @Test
   public void testCanAddDomain() {
     assertFalse(programService.canAddProgram(null));
-    assertFalse(programService.canAddProgram(regularAclIdentity));
+    assertFalse(programService.canAddProgram(spaceMemberAclIdentity));
     assertTrue(programService.canAddProgram(adminAclIdentity));
   }
 
   @Test
   public void testCanUpdateDomain() throws IllegalAccessException, ObjectNotFoundException {
     ProgramDTO domain = newProgram();
-    assertFalse(programService.isProgramOwner(domain.getId(), regularAclIdentity.getUserId()));
+    assertFalse(programService.isProgramOwner(domain.getId(), spaceMemberAclIdentity.getUserId()));
     assertTrue(programService.isProgramOwner(domain.getId(), adminAclIdentity.getUserId()));
-    assertFalse(programService.isProgramOwner(0, regularAclIdentity.getUserId()));
-    String identityId = identityManager.getOrCreateUserIdentity(regularAclIdentity.getUserId()).getId();
+    assertFalse(programService.isProgramOwner(0, spaceMemberAclIdentity.getUserId()));
+    String identityId = identityManager.getOrCreateUserIdentity(spaceMemberAclIdentity.getUserId()).getId();
     domain.setOwnerIds(Collections.singleton(Long.parseLong(identityId)));
     programService.updateProgram(domain, adminAclIdentity);
-    assertTrue(programService.isProgramOwner(domain.getId(), regularAclIdentity.getUserId()));
+    assertTrue(programService.isProgramOwner(domain.getId(), spaceMemberAclIdentity.getUserId()));
   }
 }

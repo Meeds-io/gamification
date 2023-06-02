@@ -17,7 +17,6 @@
 package io.meeds.gamification.entity;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,8 +34,10 @@ import javax.persistence.Table;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.RealizationStatus;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @ExoEntity
 @Entity(name = "RealizationEntity")
@@ -140,6 +141,8 @@ import io.meeds.gamification.constant.IdentityType;
     +
     " WHERE g.objectId = :objectId" +
     " AND g.objectType = :objectType")
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class RealizationEntity extends AbstractAuditingEntity implements Serializable {
 
   private static final long serialVersionUID = 2554394120711454093L;
@@ -204,196 +207,5 @@ public class RealizationEntity extends AbstractAuditingEntity implements Seriali
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "TYPE", nullable = false)
   private EntityType        type;
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getEarnerId() {
-    return earnerId;
-  }
-
-  public void setEarnerId(String earnerId) {
-    this.earnerId = earnerId;
-  }
-
-  public IdentityType getEarnerType() {
-    return earnerType;
-  }
-
-  public void setEarnerType(IdentityType earnerType) {
-    this.earnerType = earnerType;
-  }
-
-  public long getGlobalScore() {
-    return globalScore;
-  }
-
-  public void setGlobalScore(long globalScore) {
-    this.globalScore = globalScore;
-  }
-
-  public String getActionTitle() {
-    return actionTitle;
-  }
-
-  public void setActionTitle(String actionTitle) {
-    this.actionTitle = actionTitle;
-  }
-
-  public String getDomain() {
-    return domain;
-  }
-
-  public void setDomain(String domain) {
-    this.domain = domain;
-  }
-
-  public String getContext() {
-    return context;
-  }
-
-  public void setContext(String context) {
-    this.context = context;
-  }
-
-  public long getActionScore() {
-    return actionScore;
-  }
-
-  public void setActionScore(long actionScore) {
-    this.actionScore = actionScore;
-  }
-
-  public String getReceiver() {
-    return receiver;
-  }
-
-  public void setReceiver(String receiver) {
-    this.receiver = receiver;
-  }
-
-  public String getObjectId() {
-    return objectId;
-  }
-
-  public void setObjectId(String objectId) {
-    this.objectId = objectId;
-  }
-
-  public String getObjectType() {
-    return objectType;
-  }
-
-  public void setObjectType(String objectType) {
-    this.objectType = objectType;
-  }
-
-  public ProgramEntity getDomainEntity() {
-    return domainEntity;
-  }
-
-  public void setDomainEntity(ProgramEntity domainEntity) {
-    this.domainEntity = domainEntity;
-  }
-
-  public RuleEntity getRuleEntity() {
-    return ruleEntity;
-  }
-
-  public void setRuleEntity(RuleEntity ruleEntity) {
-    this.ruleEntity = ruleEntity;
-  }
-
-  public Long getActivityId() {
-    return activityId;
-  }
-
-  public void setActivityId(Long activityId) {
-    this.activityId = activityId;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  public Long getCreator() {
-    return creator;
-  }
-
-  public void setCreator(Long creator) {
-    this.creator = creator;
-  }
-
-  public RealizationStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(RealizationStatus status) {
-    this.status = status;
-  }
-
-  public EntityType getType() {
-    return type;
-  }
-
-  public void setType(EntityType type) {
-    this.type = type;
-  }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = super.hashCode();
-    result = prime * result + Objects.hash(actionScore,
-                                           actionTitle,
-                                           activityId,
-                                           comment,
-                                           context,
-                                           creator,
-                                           domain,
-                                           domainEntity,
-                                           earnerId,
-                                           earnerType,
-                                           globalScore,
-                                           id,
-                                           objectId,
-                                           objectType,
-                                           receiver,
-                                           ruleEntity,
-                                           status,
-                                           type);
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof RealizationEntity)) {
-      return false;
-    }
-    if (this == obj) {
-      return true;
-    }
-    if (!super.equals(obj)) {
-      return false;
-    }
-    RealizationEntity other = (RealizationEntity) obj;
-    return actionScore == other.actionScore && Objects.equals(actionTitle, other.actionTitle)
-        && Objects.equals(activityId, other.activityId) && Objects.equals(comment, other.comment)
-        && Objects.equals(context, other.context) && Objects.equals(creator, other.creator)
-        && Objects.equals(domain, other.domain) && Objects.equals(domainEntity, other.domainEntity)
-        && Objects.equals(earnerId, other.earnerId) && earnerType == other.earnerType && globalScore == other.globalScore
-        && Objects.equals(id, other.id) && Objects.equals(objectId, other.objectId)
-        && Objects.equals(objectType, other.objectType) && Objects.equals(receiver, other.receiver)
-        && Objects.equals(ruleEntity, other.ruleEntity) && status == other.status && type == other.type;
-  }
 
 }
