@@ -23,6 +23,7 @@ import io.meeds.gamification.model.ProgramDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+@SuppressWarnings("deprecation")
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ProgramWithRulesRestEntity extends ProgramDTO {

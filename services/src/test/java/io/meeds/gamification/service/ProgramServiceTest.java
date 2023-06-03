@@ -43,6 +43,7 @@ import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.test.AbstractServiceTest;
 
+@SuppressWarnings("deprecation")
 public class ProgramServiceTest extends AbstractServiceTest {
 
   private static final String INTERNAL_USER     = "internalUser";
@@ -66,8 +67,8 @@ public class ProgramServiceTest extends AbstractServiceTest {
   @Test
   public void testGetProgramsAsAdmin() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
-    filter.setEntityFilterType(EntityFilterType.ALL);
-    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
     assertEquals(0, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
@@ -75,32 +76,32 @@ public class ProgramServiceTest extends AbstractServiceTest {
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
     assertEquals(4, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
 
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(2, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
     assertEquals(2, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
 
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(2, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
     assertEquals(2, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
 
-    filter.setEntityStatusType(EntityStatusType.ALL);
-    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ALL);
+    filter.setType(EntityFilterType.ALL);
     assertEquals(6, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
-    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    filter.setStatus(EntityStatusType.DISABLED);
     assertEquals(2, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(1, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(1, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
   }
 
   @Test
   public void testGetProgramsAsInternalUser() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
-    filter.setEntityFilterType(EntityFilterType.ALL);
-    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
     assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
@@ -108,32 +109,32 @@ public class ProgramServiceTest extends AbstractServiceTest {
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
     assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
 
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
     assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
 
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
     assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
 
-    filter.setEntityStatusType(EntityStatusType.ALL);
-    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ALL);
+    filter.setType(EntityFilterType.ALL);
     assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
-    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    filter.setStatus(EntityStatusType.DISABLED);
     assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
   }
 
   @Test
   public void testGetOpenProgramsAsInternalUser() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
-    filter.setEntityFilterType(EntityFilterType.ALL);
-    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
     assertEquals(0, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain1", true, null, null);
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>(), null);
@@ -141,32 +142,32 @@ public class ProgramServiceTest extends AbstractServiceTest {
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>(), null);
     assertEquals(4, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
 
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(2, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>(), null);
     assertEquals(2, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
 
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(2, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>(), null);
     assertEquals(2, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
 
-    filter.setEntityStatusType(EntityStatusType.ALL);
-    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ALL);
+    filter.setType(EntityFilterType.ALL);
     assertEquals(6, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
-    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    filter.setStatus(EntityStatusType.DISABLED);
     assertEquals(2, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(1, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(1, programService.getPrograms(filter, INTERNAL_USER, offset, 10).size());
   }
 
   @Test
   public void testGetProgramsAsSpaceMemberUser() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
-    filter.setEntityFilterType(EntityFilterType.ALL);
-    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
     assertEquals(0, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
@@ -174,32 +175,32 @@ public class ProgramServiceTest extends AbstractServiceTest {
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
     assertEquals(4, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
 
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(2, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
     assertEquals(2, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
 
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(2, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
     assertEquals(2, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
 
-    filter.setEntityStatusType(EntityStatusType.ALL);
-    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ALL);
+    filter.setType(EntityFilterType.ALL);
     assertEquals(6, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
-    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    filter.setStatus(EntityStatusType.DISABLED);
     assertEquals(2, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(1, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(1, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
   }
 
   @Test
   public void testGetProgramsByFilter() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
-    filter.setEntityFilterType(EntityFilterType.ALL);
-    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
     assertEquals(0, programService.getPrograms(filter, ADMIN_USER, offset, 10).size());
     newDomain(EntityType.AUTOMATIC, "domain5", true, new HashSet<>());
     filter.setOwnerId(1);
@@ -209,8 +210,8 @@ public class ProgramServiceTest extends AbstractServiceTest {
   @Test
   public void testGetDomainsByOwner() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
-    filter.setEntityFilterType(EntityFilterType.ALL);
-    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
     assertEquals(0, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
     ProgramEntity domainEntity = newDomain(EntityType.AUTOMATIC, "domain10", true, Collections.emptySet());
     filter.setOwnerId(10);
@@ -225,8 +226,8 @@ public class ProgramServiceTest extends AbstractServiceTest {
   @Test
   public void testCountDomainsByOwner() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
-    filter.setEntityFilterType(EntityFilterType.ALL);
-    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
     assertEquals(0, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
     ProgramEntity domainEntity = newDomain(EntityType.AUTOMATIC, "domain10", true, Collections.emptySet());
     filter.setOwnerId(10);
@@ -241,8 +242,8 @@ public class ProgramServiceTest extends AbstractServiceTest {
   @Test
   public void testCountDomains() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
-    filter.setEntityFilterType(EntityFilterType.ALL);
-    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
     assertEquals(0, programService.countPrograms(filter, ADMIN_USER));
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
@@ -250,24 +251,24 @@ public class ProgramServiceTest extends AbstractServiceTest {
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
     assertEquals(4, programService.countPrograms(filter, ADMIN_USER));
 
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(2, programService.countPrograms(filter, ADMIN_USER));
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
     assertEquals(2, programService.countPrograms(filter, ADMIN_USER));
 
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(2, programService.countPrograms(filter, ADMIN_USER));
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
     assertEquals(2, programService.countPrograms(filter, ADMIN_USER));
 
-    filter.setEntityStatusType(EntityStatusType.ALL);
-    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ALL);
+    filter.setType(EntityFilterType.ALL);
     assertEquals(6, programService.countPrograms(filter, ADMIN_USER));
-    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    filter.setStatus(EntityStatusType.DISABLED);
     assertEquals(2, programService.countPrograms(filter, ADMIN_USER));
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(1, programService.countPrograms(filter, ADMIN_USER));
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(1, programService.countPrograms(filter, ADMIN_USER));
   }
 

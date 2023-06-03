@@ -45,6 +45,7 @@ import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.storage.ProgramStorage;
 import io.meeds.gamification.utils.Utils;
 
+@SuppressWarnings("deprecation")
 public class ProgramServiceImpl implements ProgramService {
 
   private static final Log        LOG = ExoLogger.getLogger(ProgramServiceImpl.class);
