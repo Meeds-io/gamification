@@ -34,6 +34,7 @@ import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 
+@SuppressWarnings("deprecation")
 public class ProgramStorageTest extends AbstractServiceTest {
 
   @Test
@@ -57,15 +58,15 @@ public class ProgramStorageTest extends AbstractServiceTest {
     assertNotEquals(0, savedDomain.getId());
 
     domain.setCoverUploadId("1");
-    assertThrows(IllegalStateException.class, () ->  domainStorage.saveProgram(domain));
+    assertThrows(IllegalStateException.class, () -> domainStorage.saveProgram(domain));
 
   }
 
   @Test
   public void testGetAllDomains() {
     ProgramFilter filter = new ProgramFilter();
-    filter.setEntityFilterType(EntityFilterType.ALL);
-    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
     filter.setAllSpaces(true);
     assertEquals(0, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
@@ -74,32 +75,32 @@ public class ProgramStorageTest extends AbstractServiceTest {
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
     assertEquals(4, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
 
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(2, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
     assertEquals(2, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
 
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(2, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
     assertEquals(2, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
 
-    filter.setEntityStatusType(EntityStatusType.ALL);
-    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ALL);
+    filter.setType(EntityFilterType.ALL);
     assertEquals(6, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
-    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    filter.setStatus(EntityStatusType.DISABLED);
     assertEquals(2, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(1, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(1, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
   }
 
   @Test
   public void testCountDomains() {
     ProgramFilter filter = new ProgramFilter();
-    filter.setEntityFilterType(EntityFilterType.ALL);
-    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
     filter.setAllSpaces(true);
     assertEquals(0, domainStorage.countPrograms(filter));
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
@@ -108,24 +109,24 @@ public class ProgramStorageTest extends AbstractServiceTest {
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
     assertEquals(4, domainStorage.countPrograms(filter));
 
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(2, domainStorage.countPrograms(filter));
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
     assertEquals(2, domainStorage.countPrograms(filter));
 
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(2, domainStorage.countPrograms(filter));
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
     assertEquals(2, programDAO.countPrograms(filter));
 
-    filter.setEntityStatusType(EntityStatusType.ALL);
-    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ALL);
+    filter.setType(EntityFilterType.ALL);
     assertEquals(6, domainStorage.countPrograms(filter));
-    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    filter.setStatus(EntityStatusType.DISABLED);
     assertEquals(2, domainStorage.countPrograms(filter));
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(1, domainStorage.countPrograms(filter));
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(1, domainStorage.countPrograms(filter));
   }
 }

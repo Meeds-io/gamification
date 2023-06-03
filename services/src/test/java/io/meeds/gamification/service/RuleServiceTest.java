@@ -147,7 +147,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertFalse(ruleEntity.isDeleted());
     ruleService.deleteRuleById(ruleEntity.getId(), ADMIN_USER);
     assertTrue(ruleEntity.isDeleted());
-    assertThrows(IllegalArgumentException.class, () -> ruleService.deleteRuleById(null, "root"));
+    assertThrows(IllegalArgumentException.class, () -> ruleService.deleteRuleById(0, "root"));
   }
 
   @Test
@@ -235,21 +235,21 @@ public class RuleServiceTest extends AbstractServiceTest {
     RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
     ruleDTO2.setEnabled(false);
     ruleService.updateRule(ruleDTO2, ADMIN_USER);
-    RuleFilter ruleFilter = new RuleFilter();
-    ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(1, ruleService.getRules(ruleFilter, ADMIN_USER, 0, 10).size());
-    ruleFilter.setEntityStatusType(EntityStatusType.DISABLED);
-    assertEquals(2, ruleService.getRules(ruleFilter, ADMIN_USER, 0, 10).size());
-    ruleFilter.setEntityStatusType(EntityStatusType.ALL);
+    RuleFilter filter = new RuleFilter();
+    filter.setStatus(EntityStatusType.ENABLED);
+    assertEquals(1, ruleService.getRules(filter, ADMIN_USER, 0, 10).size());
+    filter.setStatus(EntityStatusType.DISABLED);
+    assertEquals(2, ruleService.getRules(filter, ADMIN_USER, 0, 10).size());
+    filter.setStatus(EntityStatusType.ALL);
     ProgramDTO domain = programService.getProgramByTitle(GAMIFICATION_DOMAIN);
     long domainId = domain.getId();
-    ruleFilter.setProgramId(domainId);
-    assertEquals(1, ruleService.getRules(ruleFilter, ADMIN_USER, 0, 10).size());
-    ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(0, ruleService.getRules(ruleFilter, ADMIN_USER, 0, 10).size());
-    ruleFilter = new RuleFilter();
-    ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(3, ruleService.getRules(ruleFilter, ADMIN_USER, 0, 10).size());
+    filter.setProgramId(domainId);
+    assertEquals(1, ruleService.getRules(filter, ADMIN_USER, 0, 10).size());
+    filter.setType(EntityFilterType.MANUAL);
+    assertEquals(0, ruleService.getRules(filter, ADMIN_USER, 0, 10).size());
+    filter = new RuleFilter();
+    filter.setType(EntityFilterType.AUTOMATIC);
+    assertEquals(3, ruleService.getRules(filter, ADMIN_USER, 0, 10).size());
     assertEquals(3, ruleDAO.count().intValue());
   }
 
@@ -264,21 +264,21 @@ public class RuleServiceTest extends AbstractServiceTest {
     RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
     ruleDTO2.setEnabled(false);
     ruleService.updateRule(ruleDTO2, ADMIN_USER);
-    RuleFilter ruleFilter = new RuleFilter();
-    ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(1, ruleService.getRules(ruleFilter, SPACE_MEMBER_USER, 0, 10).size());
-    ruleFilter.setEntityStatusType(EntityStatusType.DISABLED);
-    assertEquals(2, ruleService.getRules(ruleFilter, SPACE_MEMBER_USER, 0, 10).size());
-    ruleFilter.setEntityStatusType(EntityStatusType.ALL);
+    RuleFilter filter = new RuleFilter();
+    filter.setStatus(EntityStatusType.ENABLED);
+    assertEquals(1, ruleService.getRules(filter, SPACE_MEMBER_USER, 0, 10).size());
+    filter.setStatus(EntityStatusType.DISABLED);
+    assertEquals(2, ruleService.getRules(filter, SPACE_MEMBER_USER, 0, 10).size());
+    filter.setStatus(EntityStatusType.ALL);
     ProgramDTO domain = programService.getProgramByTitle(GAMIFICATION_DOMAIN);
     long domainId = domain.getId();
-    ruleFilter.setProgramId(domainId);
-    assertEquals(1, ruleService.getRules(ruleFilter, SPACE_MEMBER_USER, 0, 10).size());
-    ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(0, ruleService.getRules(ruleFilter, SPACE_MEMBER_USER, 0, 10).size());
-    ruleFilter = new RuleFilter();
-    ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(3, ruleService.getRules(ruleFilter, SPACE_MEMBER_USER, 0, 10).size());
+    filter.setProgramId(domainId);
+    assertEquals(1, ruleService.getRules(filter, SPACE_MEMBER_USER, 0, 10).size());
+    filter.setType(EntityFilterType.MANUAL);
+    assertEquals(0, ruleService.getRules(filter, SPACE_MEMBER_USER, 0, 10).size());
+    filter = new RuleFilter();
+    filter.setType(EntityFilterType.AUTOMATIC);
+    assertEquals(3, ruleService.getRules(filter, SPACE_MEMBER_USER, 0, 10).size());
     assertEquals(3, ruleDAO.count().intValue());
   }
 
@@ -293,21 +293,21 @@ public class RuleServiceTest extends AbstractServiceTest {
     RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
     ruleDTO2.setEnabled(false);
     ruleService.updateRule(ruleDTO2, ADMIN_USER);
-    RuleFilter ruleFilter = new RuleFilter();
-    ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(0, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
-    ruleFilter.setEntityStatusType(EntityStatusType.DISABLED);
-    assertEquals(0, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
-    ruleFilter.setEntityStatusType(EntityStatusType.ALL);
+    RuleFilter filter = new RuleFilter();
+    filter.setStatus(EntityStatusType.ENABLED);
+    assertEquals(0, ruleService.getRules(filter, INTERNAL_USER, 0, 10).size());
+    filter.setStatus(EntityStatusType.DISABLED);
+    assertEquals(0, ruleService.getRules(filter, INTERNAL_USER, 0, 10).size());
+    filter.setStatus(EntityStatusType.ALL);
     ProgramDTO domain = programService.getProgramByTitle(GAMIFICATION_DOMAIN);
     long domainId = domain.getId();
-    ruleFilter.setProgramId(domainId);
-    assertEquals(0, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
-    ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(0, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
-    ruleFilter = new RuleFilter();
-    ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(0, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
+    filter.setProgramId(domainId);
+    assertEquals(0, ruleService.getRules(filter, INTERNAL_USER, 0, 10).size());
+    filter.setType(EntityFilterType.MANUAL);
+    assertEquals(0, ruleService.getRules(filter, INTERNAL_USER, 0, 10).size());
+    filter = new RuleFilter();
+    filter.setType(EntityFilterType.AUTOMATIC);
+    assertEquals(0, ruleService.getRules(filter, INTERNAL_USER, 0, 10).size());
     assertEquals(3, ruleDAO.count().intValue());
   }
 
@@ -326,21 +326,21 @@ public class RuleServiceTest extends AbstractServiceTest {
     RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
     ruleDTO2.setEnabled(false);
     ruleService.updateRule(ruleDTO2, ADMIN_USER);
-    RuleFilter ruleFilter = new RuleFilter();
-    ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(1, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
-    ruleFilter.setEntityStatusType(EntityStatusType.DISABLED);
-    assertEquals(2, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
-    ruleFilter.setEntityStatusType(EntityStatusType.ALL);
+    RuleFilter filter = new RuleFilter();
+    filter.setStatus(EntityStatusType.ENABLED);
+    assertEquals(1, ruleService.getRules(filter, INTERNAL_USER, 0, 10).size());
+    filter.setStatus(EntityStatusType.DISABLED);
+    assertEquals(2, ruleService.getRules(filter, INTERNAL_USER, 0, 10).size());
+    filter.setStatus(EntityStatusType.ALL);
     ProgramDTO domain = programService.getProgramByTitle(GAMIFICATION_DOMAIN);
     long domainId = domain.getId();
-    ruleFilter.setProgramId(domainId);
-    assertEquals(1, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
-    ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(0, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
-    ruleFilter = new RuleFilter();
-    ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(3, ruleService.getRules(ruleFilter, INTERNAL_USER, 0, 10).size());
+    filter.setProgramId(domainId);
+    assertEquals(1, ruleService.getRules(filter, INTERNAL_USER, 0, 10).size());
+    filter.setType(EntityFilterType.MANUAL);
+    assertEquals(0, ruleService.getRules(filter, INTERNAL_USER, 0, 10).size());
+    filter = new RuleFilter();
+    filter.setType(EntityFilterType.AUTOMATIC);
+    assertEquals(3, ruleService.getRules(filter, INTERNAL_USER, 0, 10).size());
     assertEquals(3, ruleDAO.count().intValue());
   }
 

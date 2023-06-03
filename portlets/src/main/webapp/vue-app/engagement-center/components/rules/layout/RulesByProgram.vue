@@ -41,10 +41,14 @@ export default {
       type: String,
       default: () => 'STARTED',
     },
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     loading: true,
-    applyfilters: false,
+    applyFilters: false,
     categories: [],
     pageSize: 6,
   }),
@@ -65,18 +69,18 @@ export default {
   },
   watch: {
     term() {
-      this.applyfilters = true;
+      this.applyFilters = true;
     },
     type() {
-      this.applyfilters = true;
+      this.applyFilters = true;
     },
     status() {
-      this.applyfilters = true;
+      this.applyFilters = true;
     },
-    applyfilters() {
-      if (this.applyfilters) {
+    applyFilters() {
+      if (this.applyFilters) {
         this.retrieveRules()
-          .finally(() => this.applyfilters = false);
+          .finally(() => this.applyFilters = false);
       }
     },
     rulesSize() {
@@ -118,12 +122,17 @@ export default {
     retrieveRules(categoryId) { // NOSONAR
       const limit = this.pageSize + (categoryId && this.categoriesById[categoryId]?.limit || 0);
 
+      const programStatus = this.isAdministrator ? (this.status === 'DISABLED' && 'DISABLED') || (this.status === 'ALL' && 'ALL') || 'ENABLED'
+        : 'ENABLED';
+      const status = this.isAdministrator ? (this.status === 'DISABLED' && 'DISABLED') || (this.status === 'ALL' && 'ALL') || 'ENABLED'
+        : 'ENABLED';
       this.loading = true;
       return this.$ruleService.getRules({
         programId: categoryId,
         term: this.term,
         dateFilter: this.status === 'DISABLED' && 'ALL' || this.status,
-        status: this.status === 'DISABLED' && 'DISABLED' || 'ENABLED',
+        status,
+        programStatus,
         type: this.type,
         returnSize: true,
         groupByProgram: true,

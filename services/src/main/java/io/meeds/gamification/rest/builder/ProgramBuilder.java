@@ -45,6 +45,7 @@ import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.utils.Utils;
 import io.meeds.social.translation.service.TranslationService;
 
+@SuppressWarnings("deprecation")
 public class ProgramBuilder {
 
   private static final Log LOG = ExoLogger.getLogger(ProgramBuilder.class);
