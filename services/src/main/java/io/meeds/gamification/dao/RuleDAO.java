@@ -223,9 +223,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (dateFilterType != null && dateFilterType != DateFilterType.ALL) {
       query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
     }
-    EntityFilterType entityFilterType = filter.getEntityFilterType();
+    EntityFilterType entityFilterType = filter.getType();
     if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
-      query.setParameter("filterType", EntityType.valueOf(filter.getEntityFilterType().name()));
+      query.setParameter("filterType", EntityType.valueOf(filter.getType().name()));
     }
   }
 
@@ -330,12 +330,13 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
 
     DateFilterType dateFilterType = filter.getDateFilterType();
-    EntityStatusType entityStatusType = filter.getEntityStatusType();
-    EntityFilterType entityFilterType = filter.getEntityFilterType();
+    EntityStatusType ruleStatus = filter.getStatus();
+    EntityStatusType programStatus = filter.getProgramStatus();
+    EntityFilterType ruleType = filter.getType();
 
     applyDateFilter(suffixes, predicates, dateFilterType);
-    applyTypeFilter(suffixes, predicates, entityFilterType);
-    applyStatusFilter(suffixes, predicates, entityStatusType);
+    applyTypeFilter(suffixes, predicates, ruleType);
+    applyStatusFilter(suffixes, predicates, ruleStatus, programStatus);
   }
 
   private void applyTypeFilter(List<String> suffixes, List<String> predicates, EntityFilterType entityFilterType) {
@@ -353,12 +354,12 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     case STARTED:
       suffixes.add("StartDateAndEndDate");
       predicates.add("((r.startDate IS NULL OR r.startDate <= :date)" +
-          " AND (r.endDate IS NULL OR r.endDate >= :date))");
+          " AND (r.endDate IS NULL OR r.endDate > :date))");
       break;
     case STARTED_WITH_END:
       suffixes.add("StartDateAndEndDateNotNull");
       predicates.add("r.endDate IS NOT NULL");
-      predicates.add("r.endDate >= :date");
+      predicates.add("r.endDate > :date");
       predicates.add("(r.startDate IS NULL OR r.startDate <= :date)");
       break;
     case NOT_STARTED:
@@ -368,24 +369,34 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       break;
     case ENDED:
       suffixes.add("EndDate");
-      predicates.add("r.endDate < :date");
+      predicates.add("r.endDate <= :date");
       break;
     default:
       break;
     }
   }
 
-  private void applyStatusFilter(List<String> suffixes,
+  private void applyStatusFilter(List<String> suffixes, // NOSONAR
                                  List<String> predicates,
-                                 EntityStatusType entityStatusType) {
-    if (entityStatusType == null || entityStatusType == EntityStatusType.ALL) {
-      return;
-    }
-    boolean filterEnabledRules = entityStatusType == EntityStatusType.ENABLED;
-    suffixes.add(filterEnabledRules ? "StatusEnabled" : "StatusDisabled");
-    predicates.add("r.isEnabled = " + filterEnabledRules);
-    if (filterEnabledRules) {
-      predicates.add("r.domainEntity.isEnabled = true");
+                                 EntityStatusType ruleStatus,
+                                 EntityStatusType programStatus) {
+    boolean filterByProgramStatus = programStatus != null && programStatus != EntityStatusType.ALL;
+    boolean filterByRuleStatus = ruleStatus != null && ruleStatus != EntityStatusType.ALL;
+    boolean enabledRules = ruleStatus == EntityStatusType.ENABLED;
+    boolean enabledPrograms = programStatus == EntityStatusType.ENABLED;
+    if (filterByRuleStatus && filterByProgramStatus && !enabledRules && !enabledPrograms) { // Disabled
+                                                                                            // Rules
+      suffixes.add("StatusDeactivated");
+      predicates.add("(r.isEnabled = false OR r.domainEntity.isEnabled = false)");
+    } else {
+      if (filterByRuleStatus) {
+        suffixes.add(enabledRules ? "StatusEnabled" : "StatusDisabled");
+        predicates.add("r.isEnabled = " + enabledRules);
+      }
+      if (filterByProgramStatus) {
+        suffixes.add(enabledPrograms ? "ProgramStatusEnabled" : "ProgramStatusDisabled");
+        predicates.add("r.domainEntity.isEnabled = " + enabledPrograms);
+      }
     }
   }
 

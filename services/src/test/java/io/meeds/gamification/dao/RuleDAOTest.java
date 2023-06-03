@@ -215,9 +215,9 @@ public class RuleDAOTest extends AbstractServiceTest {
     newManualRule("rule3", domainEntity3.getId());
     assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     filter.setDateFilterType(DateFilterType.STARTED);
-    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    filter.setType(EntityFilterType.AUTOMATIC);
     assertEquals(0, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
-    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    filter.setType(EntityFilterType.MANUAL);
     assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     filter.setDateFilterType(DateFilterType.NOT_STARTED);
     RuleEntity ruleEntityNotStarted = new RuleEntity();
@@ -254,27 +254,36 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleEntityEnded.setDomainEntity(domainEntity1);
     ruleEntityEnded.setType(EntityType.MANUAL);
     ruleEntityEnded.setRecurrence(RecurrenceType.NONE);
-    ruleEntityEnded.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
-        - 2 * MILLIS_IN_A_DAY))));
+    ruleEntityEnded.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date())));
     ruleEntityEnded.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
         - 5 * MILLIS_IN_A_DAY))));
     ruleEntityEnded = ruleDAO.create(ruleEntityEnded);
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
 
     filter.setDateFilterType(DateFilterType.ALL);
-    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    filter.setStatus(EntityStatusType.DISABLED);
     assertEquals(0, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
 
-    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setStatus(EntityStatusType.ENABLED);
     assertEquals(4, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
 
+    filter.setDateFilterType(DateFilterType.ENDED);
+    assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
+
+    filter.setDateFilterType(DateFilterType.STARTED_WITH_END);
+    assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
+
+    filter.setDateFilterType(DateFilterType.STARTED);
+    assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
+
+    filter.setDateFilterType(DateFilterType.ALL);
     ruleEntityEnded.setEnabled(false);
     ruleDAO.update(ruleEntityEnded);
 
-    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    filter.setStatus(EntityStatusType.ENABLED);
     assertEquals(3, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
 
-    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    filter.setStatus(EntityStatusType.DISABLED);
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
   }
 
@@ -408,9 +417,9 @@ public class RuleDAOTest extends AbstractServiceTest {
     ProgramEntity domainEntity = newDomain();
     ProgramEntity domainEntity2 = newDomain();
     assertEquals(0, ruleDAO.countRulesByFilter(filter));
-    RuleEntity ruleEntity1 = newRule("rule1", domainEntity.getId());
-    filter.setProgramId(ruleEntity1.getDomainEntity().getId());
-    filter.setSpaceIds(Collections.singletonList(1L));
+    newRule("rule1", domainEntity.getId());
+    filter.setProgramId(domainEntity.getId());
+    filter.setSpaceIds(Collections.singletonList(domainEntity.getAudienceId()));
     assertEquals(1, ruleDAO.countRulesByFilter(filter));
     newRule("rule2", domainEntity.getId());
     assertEquals(2, ruleDAO.countRulesByFilter(filter));

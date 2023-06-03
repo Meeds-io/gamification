@@ -49,9 +49,11 @@ public class RuleFilter implements Serializable {
 
   private DateFilterType    dateFilterType;
 
-  private EntityFilterType  entityFilterType;
+  private EntityFilterType  type             = EntityFilterType.ALL;
 
-  private EntityStatusType  entityStatusType;
+  private EntityStatusType  status           = EntityStatusType.ALL;
+
+  private EntityStatusType  programStatus    = EntityStatusType.ALL;
 
   private boolean           orderByRealizations;
 
@@ -75,8 +77,9 @@ public class RuleFilter implements Serializable {
                           spaceIds == null ? null : new ArrayList<>(spaceIds),
                           ruleIds == null ? null : new ArrayList<>(ruleIds),
                           dateFilterType,
-                          entityFilterType,
-                          entityStatusType,
+                          type,
+                          status,
+                          programStatus,
                           orderByRealizations,
                           excludedRuleIds == null ? null : new ArrayList<>(excludedRuleIds),
                           sortBy,

@@ -3,6 +3,8 @@ package io.meeds.gamification.storage;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 import io.meeds.gamification.dao.ProgramDAO;
@@ -81,22 +83,16 @@ public class RuleStorage {
   }
 
   public RuleDTO deleteRuleById(long ruleId, String userId) throws ObjectNotFoundException {
-    return deleteRuleById(ruleId, userId, false);
-  }
-
-  public RuleDTO deleteRuleById(long ruleId, String userId, boolean force) throws ObjectNotFoundException {
     RuleEntity ruleEntity = ruleDAO.find(ruleId);
     if (ruleEntity == null) {
       throw new ObjectNotFoundException("Rule with id " + ruleId + " does not exist");
     }
-    if (force) {
-      ruleDAO.delete(ruleEntity);
-    } else {
+    if (StringUtils.isNotBlank(userId)) {
       ruleEntity.setLastModifiedBy(userId);
       ruleEntity.setLastModifiedDate(new Date());
-      ruleEntity.setDeleted(true);
-      ruleDAO.update(ruleEntity);
     }
+    ruleEntity.setDeleted(true);
+    ruleDAO.update(ruleEntity);
     return RuleMapper.fromEntity(programStorage, ruleEntity);
   }
 

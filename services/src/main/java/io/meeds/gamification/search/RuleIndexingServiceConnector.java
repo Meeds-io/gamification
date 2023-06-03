@@ -112,7 +112,7 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     fields.put("event", rule.getEvent());
     fields.put("startDate", toMilliSecondsString(rule.getStartDate()));
     // To add end of the day
-    fields.put("endDate", toMilliSecondsPlusAdayString(rule.getEndDate()));
+    fields.put("endDate", toMilliSecondsString(rule.getEndDate()));
     fields.put("createdBy", getUserIdentityId(rule.getCreatedBy()));
     fields.put("createdDate", toMilliSecondsString(rule.getCreatedDate()));
     fields.put("lastModifiedBy", getUserIdentityId(rule.getLastModifiedBy()));
@@ -171,10 +171,6 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
 
   private String toMilliSecondsString(String date) {
     return date != null ? String.valueOf(Utils.parseSimpleDate(date).getTime()) : "0";
-  }
-
-  private String toMilliSecondsPlusAdayString(String date) {
-    return date != null ? String.valueOf(Utils.parseSimpleDate(date).getTime() + 86400000l) : "0";
   }
 
 }
