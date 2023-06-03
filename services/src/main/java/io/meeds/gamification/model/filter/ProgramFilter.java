@@ -34,9 +34,15 @@ public class ProgramFilter implements Serializable {
 
   private static final long serialVersionUID = -610860313235738916L;
 
-  private EntityFilterType  entityFilterType = EntityFilterType.ALL;
+  private EntityStatusType  status           = EntityStatusType.ALL;
 
-  private EntityStatusType  entityStatusType = EntityStatusType.ALL;
+  /**
+   * @deprecated There is no difference anymore between Automatic or Manual
+   *             Domain/Program. This is preserved for future usages, but not
+   *             used
+   */
+  @Deprecated(forRemoval = false, since = "1.5.0")
+  private EntityFilterType  type             = EntityFilterType.ALL;
 
   private String            programTitle;
 
@@ -51,8 +57,8 @@ public class ProgramFilter implements Serializable {
   private boolean           allSpaces;
 
   public ProgramFilter clone() { // NOSONAR
-    return new ProgramFilter(entityFilterType,
-                             entityStatusType,
+    return new ProgramFilter(status,
+                             type,
                              programTitle,
                              includeDeleted,
                              sortByBudget,

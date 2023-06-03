@@ -57,7 +57,6 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.rest.api.RestUtils;
 
-import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
@@ -138,14 +137,10 @@ public class ProgramRest implements ResourceContainer {
                               @QueryParam("limit")
                               @DefaultValue("0")
                               int limit,
-                              @Parameter(description = "Programs type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = AUTOMATIC.", required = false)
-                              @QueryParam("type")
-                              @DefaultValue("ALL")
-                              String type,
                               @Parameter(description = "Programs status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false)
                               @QueryParam("status")
                               @DefaultValue("ENABLED")
-                              String status,
+                              EntityStatusType programStatus,
                               @Parameter(description = "Whether retrieve owned programs only or not")
                               @QueryParam("owned")
                               boolean owned,
@@ -171,10 +166,7 @@ public class ProgramRest implements ResourceContainer {
     ProgramFilter programFilter = new ProgramFilter();
     programFilter.setSortByBudget(sortByBudget);
     programFilter.setIncludeDeleted(includeDeleted);
-    EntityFilterType filterType = StringUtils.isBlank(type) ? EntityFilterType.ALL : EntityFilterType.valueOf(type);
-    programFilter.setEntityFilterType(filterType);
-    EntityStatusType statusType = StringUtils.isBlank(status) ? EntityStatusType.ENABLED : EntityStatusType.valueOf(status);
-    programFilter.setEntityStatusType(statusType);
+    programFilter.setStatus(programStatus);
     if (StringUtils.isNotEmpty(query)) {
       programFilter.setProgramTitle(query);
     }
@@ -184,7 +176,11 @@ public class ProgramRest implements ResourceContainer {
     String currentUser = Utils.getCurrentUser();
     try {
       ProgramList programList = new ProgramList();
-      List<ProgramRestEntity> programs = getProgramsRestEntitiesByFilter(programFilter, getLocale(lang), offset, limit, currentUser);
+      List<ProgramRestEntity> programs = getProgramsRestEntitiesByFilter(programFilter,
+                                                                         getLocale(lang),
+                                                                         offset,
+                                                                         limit,
+                                                                         currentUser);
       if (returnSize) {
         int programsSize = programService.countPrograms(programFilter, currentUser);
         programList.setSize(programsSize);

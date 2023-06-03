@@ -107,7 +107,6 @@ export default {
   },
   methods: {
     getLabel(base, key) {
-      console.warn('getLabel', base, key);
       const label = `${base}.${key}`;
       const translation = this.$t(label);
       return translation === label && key || translation;

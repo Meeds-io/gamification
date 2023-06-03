@@ -24,9 +24,6 @@ export function getPrograms(filter) {
   if (filter?.limit) {
     formData.append('limit', filter.limit);
   }
-  if (filter?.type) {
-    formData.append('type', filter.type.toUpperCase());
-  }
   if (filter?.status) {
     formData.append('status', filter.status.toUpperCase());
   }

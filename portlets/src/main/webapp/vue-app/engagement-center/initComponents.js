@@ -20,12 +20,10 @@
  
 import ProgramSuggester from './components/common/ProgramSuggester.vue';
 import EngagementCenter from './components/EngagementCenter.vue';
+
 import NoResultFound from './components/common/NoResultFound.vue';
 import ResultNotFound from './components/common/ResultNotFound.vue';
-import RulesToolbar from './components/programs/RulesToolbar.vue';
-import NoRuleFound from './components/programs/NoRuleFound.vue';
-import RuleTitle from './components/programs/RuleTitle.vue';
-import RuleItem from './components/programs/RuleItem.vue';
+import CardMask from './components/common/CardMask.vue';
 
 import Programs from './components/programs/Programs.vue';
 import ProgramCard from './components/programs/ProgramCard.vue';
@@ -34,11 +32,15 @@ import ProgramDrawer from './components/programs/ProgramDrawer.vue';
 import ProgramOwnersDrawer from './components/programs/ProgramOwnersDrawer.vue';
 import ProgramDetail from './components/programs/ProgramDetail.vue';
 import ProgramOwnerAssignment from './components/programs/ProgramOwnerAssignment.vue';
+import RulesToolbar from './components/programs/RulesToolbar.vue';
+import NoRuleFound from './components/programs/NoRuleFound.vue';
+import RuleTitle from './components/programs/RuleTitle.vue';
+import RuleItem from './components/programs/RuleItem.vue';
+import ProgramDisabledMaskContent from './components/programs/ProgramDisabledMaskContent.vue';
 
 import Rules from './components/rules/Rules.vue';
 
 import RuleCard from './components/rules/card/RuleCard.vue';
-import RuleCardMask from './components/rules/card/RuleCardMask.vue';
 import RuleCardMaskContent from './components/rules/card/RuleCardMaskContent.vue';
 import RuleCardMaskPrequisiteRules from './components/rules/card/RuleCardMaskPrequisiteRules.vue';
 import RuleCardMaskRemainingDates from './components/rules/card/RuleCardMaskRemainingDates.vue';
@@ -64,10 +66,11 @@ import RuleActionValue from './components/actionValues/RuleActionValue.vue';
 import ChallengeActionValue from './components/actionValues/ChallengeActionValue.vue';
 
 const components = {
+  'engagement-center': EngagementCenter,
   'program-suggester': ProgramSuggester,
   'engagement-center-no-results': NoResultFound,
   'engagement-center-result-not-found': ResultNotFound,
-  'engagement-center': EngagementCenter,
+  'engagement-center-card-mask': CardMask,
   'engagement-center-programs': Programs,
   'engagement-center-program-card': ProgramCard,
   'engagement-center-program-menu': ProgramMenu,
@@ -77,6 +80,7 @@ const components = {
   'engagement-center-program-owner-assignment': ProgramOwnerAssignment,
   'engagement-center-rules-toolbar': RulesToolbar,
   'engagement-center-rule-item': RuleItem,
+  'engagement-center-program-disabled-mask-content': ProgramDisabledMaskContent,
   'engagement-center-rule-title': RuleTitle,
   'engagement-center-no-rule-found': NoRuleFound,
   'engagement-center-rules': Rules,
@@ -86,7 +90,6 @@ const components = {
   'engagement-center-rules-by-trend': RulesByTrend,
   'engagement-center-rules-filter-drawer': RulesFilterDrawer,
   'engagement-center-rule-card': RuleCard,
-  'engagement-center-rule-card-mask': RuleCardMask,
   'engagement-center-rule-card-mask-content': RuleCardMaskContent,
   'engagement-center-rule-card-mask-prequisite-rules': RuleCardMaskPrequisiteRules,
   'engagement-center-rule-card-mask-remaining-dates': RuleCardMaskRemainingDates,
