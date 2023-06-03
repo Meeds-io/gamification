@@ -516,7 +516,12 @@ export default {
           })
           .then(() => this.$translationService.saveTranslations('program', this.originalProgram.id, 'description', this.programDescriptionTranslations))
           .then(() => {
-            this.$root.$emit('alert-message', this.$t('programs.programCreateSuccess'), 'success');
+            this.$root.$emit('alert-message-html', `
+                <div class="text-start">
+                  <div>${ this.$t('programs.programCreateSuccess') }</div>
+                  <div>${ this.$t('programs.programCreateSuccessPart2') }</div>
+                </div>
+              `, 'success');
             this.loading = false; // To Keep to be able to close drawer
             this.originalProgram = null;
             return this.$nextTick();

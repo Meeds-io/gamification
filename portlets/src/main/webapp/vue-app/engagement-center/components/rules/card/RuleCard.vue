@@ -35,10 +35,10 @@
               small />
           </div>
         </div>
-        <engagement-center-rule-card-mask>
+        <engagement-center-card-mask>
           <engagement-center-rule-card-mask-content
             v-if="!isEnabled"
-            :text="$t('challenges.label.disabled')"
+            :text="rule.enabled && $t('actions.label.disabledProgram') || $t('actions.label.disabled')"
             class="rule-card-mask-disabled" />
           <engagement-center-rule-card-mask-remaining-dates
             v-else-if="!isValidDates"
@@ -49,7 +49,7 @@
           <engagement-center-rule-card-mask-prequisite-rules
             v-else-if="!isValidPrerequities"
             :rule="ruleWithProgram" />
-        </engagement-center-rule-card-mask>
+        </engagement-center-card-mask>
       </div>
       <v-card-title class="rule-card-title d-flex flex-nowrap pb-0 text-break">
         <div :title="title" class="text-truncate flex-grow-1">

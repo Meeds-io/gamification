@@ -96,8 +96,8 @@ public class RuleCachedStorage extends RuleStorage {
   }
 
   @Override
-  public RuleDTO deleteRuleById(long ruleId, String userId, boolean force) throws ObjectNotFoundException {
-    RuleDTO rule = super.deleteRuleById(ruleId, userId, force);
+  public RuleDTO deleteRuleById(long ruleId, String userId) throws ObjectNotFoundException {
+    RuleDTO rule = super.deleteRuleById(ruleId, userId);
     clearCache(rule);
     return rule;
   }
