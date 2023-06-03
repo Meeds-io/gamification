@@ -37,6 +37,7 @@ import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.model.filter.ProgramFilter;
 
+@SuppressWarnings("deprecation")
 public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implements GenericDAO<ProgramEntity, Long> {
 
   private static final String        QUERY_FILTER_FIND_PREFIX  = "GamificationDomain.findDomains";
@@ -106,9 +107,9 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
       query.setParameter("spacesIds", filter.getSpacesIds());
     }
-    EntityFilterType entityFilterType = filter.getEntityFilterType();
-    if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
-      query.setParameter("type", EntityType.valueOf(entityFilterType.name()));
+    EntityFilterType type = filter.getType();
+    if (type != null && type != EntityFilterType.ALL) {
+      query.setParameter("type", EntityType.valueOf(type.name()));
     }
     if (StringUtils.isNotEmpty(filter.getProgramTitle())) {
       query.setParameter("searchingKey", "%" + filter.getProgramTitle() + "%");
@@ -122,7 +123,7 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
   }
 
   private void buildPredicates(ProgramFilter filter, List<String> suffixes, List<String> predicates) {
-    if (filter.getEntityFilterType() != null && filter.getEntityFilterType() != EntityFilterType.ALL) {
+    if (filter.getType() != null && filter.getType() != EntityFilterType.ALL) {
       suffixes.add("Type");
       predicates.add("d.type = :type");
     }
@@ -135,9 +136,9 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     } else {
       predicates.add("d.isDeleted = false");
     }
-    EntityStatusType entityStatusType = filter.getEntityStatusType();
-    if (entityStatusType != null && entityStatusType != EntityStatusType.ALL) {
-      switch (entityStatusType) {
+    EntityStatusType programStatus = filter.getStatus();
+    if (programStatus != null && programStatus != EntityStatusType.ALL) {
+      switch (programStatus) {
       case ENABLED:
         suffixes.add("EnabledStatus");
         predicates.add("d.isEnabled = true");

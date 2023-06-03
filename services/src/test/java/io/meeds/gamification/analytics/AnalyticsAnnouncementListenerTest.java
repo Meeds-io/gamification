@@ -71,6 +71,7 @@ import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.service.RuleService;
 
+@SuppressWarnings("deprecation")
 @RunWith(MockitoJUnitRunner.class)
 public class AnalyticsAnnouncementListenerTest {
 

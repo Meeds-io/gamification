@@ -113,7 +113,15 @@ public interface RuleService {
    * @throws ObjectNotFoundException when the rule identified by its technical
    *                                   identifier is not found
    */
-  RuleDTO deleteRuleById(Long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException;
+  RuleDTO deleteRuleById(long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException;
+
+  /**
+   * Deletes an existing rule
+   *
+   * @param  ruleId Rule technical identifier to delete
+   * @return        deleted {@link RuleDTO}
+   */
+  RuleDTO deleteRuleById(long ruleId);
 
   /**
    * Add Rule to DB

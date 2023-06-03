@@ -32,6 +32,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.model.ProgramDTO;
@@ -45,7 +47,9 @@ import io.meeds.gamification.utils.Utils;
 
 public class RuleServiceImpl implements RuleService {
 
-  private static final int MAX_RULES_TO_SEARCH = 100;
+  private static final Log          LOG                           = ExoLogger.getLogger(RuleServiceImpl.class);
+
+  private static final int          MAX_RULES_TO_SEARCH           = 100;
 
   private static final String       USERNAME_IS_MANDATORY_MESSAGE = "Username is mandatory";
 
@@ -186,11 +190,11 @@ public class RuleServiceImpl implements RuleService {
   }
 
   @Override
-  public RuleDTO deleteRuleById(Long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException {
+  public RuleDTO deleteRuleById(long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException {
     if (username == null) {
       throw new IllegalArgumentException(USERNAME_IS_MANDATORY_MESSAGE);
     }
-    if (ruleId == null || ruleId <= 0) {
+    if (ruleId <= 0) {
       throw new IllegalArgumentException("ruleId must be positive");
     }
     RuleDTO rule = ruleStorage.findRuleById(ruleId);
@@ -200,9 +204,19 @@ public class RuleServiceImpl implements RuleService {
     if (!isRuleManager(rule, username)) {
       throw new IllegalAccessException("The user is not authorized to delete a rule");
     }
-    rule = ruleStorage.deleteRuleById(ruleId, username);
-    Utils.broadcastEvent(listenerService, POST_DELETE_RULE_EVENT, rule, username);
-    return rule;
+    return deleteRule(ruleId, username);
+  }
+
+  @Override
+  public RuleDTO deleteRuleById(long ruleId) {
+    try {
+      return deleteRule(ruleId, null);
+    } catch (ObjectNotFoundException e) {
+      LOG.debug("Rule with id {} not found. Continue processing without interrupting current operation.",
+                ruleId,
+                e);
+      return null;
+    }
   }
 
   @Override
@@ -364,6 +378,12 @@ public class RuleServiceImpl implements RuleService {
     } else {
       return programService.isProgramOwner(program.getId(), username);
     }
+  }
+
+  private RuleDTO deleteRule(Long ruleId, String username) throws ObjectNotFoundException {
+    RuleDTO rule = ruleStorage.deleteRuleById(ruleId, username);
+    Utils.broadcastEvent(listenerService, POST_DELETE_RULE_EVENT, rule, username);
+    return rule;
   }
 
 }

@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               class="width-auto ms-n3"
               icon
               v-on="on"
-              @click="backToProgramList()">
+              @click="backToProgramList">
               <v-icon size="18" class="icon-default-color mx-2">fa-arrow-left</v-icon>
             </v-btn>
             <div class="text-header-title"> {{ programTitle }}</div>
@@ -34,62 +34,68 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-spacer />
         <span class="text-header-title d-none d-sm-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
       </div>
-      <div class="d-flex flex-grow-1">
-        <v-img
-          :src="programCover"
-          :alt="$t('programs.cover.default')"
-          :min-height="36"
-          :max-height="height"
-          height="auto"
-          min-width="100%"
-          width="100%"
-          class="d-flex primary--text border-color">
-          <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
-        </v-img>
-      </div>
-      <div class="d-sm-flex">
-        <div class="me-auto pe-sm-6 pt-5">
-          <v-list-item two-line class="px-0">
-            <v-list-item-content class="pa-0">
-              <div class="text-subtitle-1 dark-grey-color font-weight-bold mb-0">
-                {{ $t('programs.details.label.description') }}
-              </div>
-              <v-list-item-subtitle class="text-color pt-2">
-                <div class="d-flex flex-grow-0 flex-shrink-1 pb-sm-5 rich-editor-content">
-                  <span
-                    class="mt-1 align-self-center text-wrap text-left text-break"
-                    v-sanitized-html="programDescription"></span>
-                </div>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+      <div class="position-relative">
+        <engagement-center-card-mask v-if="!program.enabled" class="z-index-one">
+          <engagement-center-program-disabled-mask-content
+            :program="program" />
+        </engagement-center-card-mask>
+        <div class="d-flex flex-grow-1">
+          <v-img
+            :src="programCover"
+            :alt="$t('programs.cover.default')"
+            :min-height="36"
+            :max-height="height"
+            height="auto"
+            min-width="100%"
+            width="100%"
+            class="d-flex primary--text border-color">
+            <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
+          </v-img>
         </div>
-        <div class="d-flex flex-column pt-sm-5 px-0 col-sm-3">
-          <div class="dark-grey-color text-subtitle-1 font-weight-bold width-fit-content ms-sm-auto">
-            {{ $t('programs.details.label.programOwners') }}
+        <div class="d-sm-flex">
+          <div class="me-auto pe-sm-6 pt-5">
+            <v-list-item two-line class="px-0">
+              <v-list-item-content class="pa-0">
+                <div class="text-subtitle-1 dark-grey-color font-weight-bold mb-0">
+                  {{ $t('programs.details.label.description') }}
+                </div>
+                <v-list-item-subtitle class="text-color pt-2">
+                  <div class="d-flex flex-grow-0 flex-shrink-1 pb-sm-5 rich-editor-content">
+                    <span
+                      class="mt-1 align-self-center text-wrap text-left text-break"
+                      v-sanitized-html="programDescription"></span>
+                  </div>
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
           </div>
-          <div v-if="owners.length">
-            <engagement-center-avatars-list
-              :avatars="owners"
-              :max-avatars-to-show="3"
-              :avatars-count="ownersCount"
-              :size="25"
-              class="d-flex justify-sm-end pt-2"
-              @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
-            <template v-if="space">
-              <div class="dark-grey-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
-                {{ $t('programs.details.label.audienceSpace') }}
-              </div>
-              <exo-space-avatar
-                :space="space"
-                :size="32"
+          <div class="d-flex flex-column pt-sm-5 px-0 col-sm-3">
+            <div class="dark-grey-color text-subtitle-1 font-weight-bold width-fit-content ms-sm-auto">
+              {{ $t('programs.details.label.programOwners') }}
+            </div>
+            <div v-if="owners.length">
+              <engagement-center-avatars-list
+                :avatars="owners"
+                :max-avatars-to-show="3"
+                :avatars-count="ownersCount"
+                :size="25"
                 class="d-flex justify-sm-end pt-2"
-                popover />
-            </template>
+                @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
+              <template v-if="space">
+                <div class="dark-grey-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
+                  {{ $t('programs.details.label.audienceSpace') }}
+                </div>
+                <exo-space-avatar
+                  :space="space"
+                  :size="32"
+                  class="d-flex justify-sm-end pt-2"
+                  popover />
+              </template>
+            </div>
+            <v-chip v-else class="ms-sm-auto mt-2">
+              {{ $t('programs.label.rewardAdmins') }}
+            </v-chip>
           </div>
-          <v-chip v-else class="ms-sm-auto mt-2">
-            {{ $t('programs.label.rewardAdmins') }}
-          </v-chip>
         </div>
       </div>
       <div class="pt-5">
@@ -99,46 +105,87 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-list-item-title class="dark-grey-color font-weight-bold">
               {{ $t('programs.details.label.rulesOfProgram') }}
             </v-list-item-title>
-            <engagement-center-rules-toolbar
-              :can-manage-rule="canManageRule"
-              :keyword="keyword"
-              :program="program"
-              @keyword-changed="keyword = $event"
-              @filter-changed="updateFilter" />
-            <v-list-item-subtitle class="text-color pt-4">
-              <v-data-table
-                :headers="rulesHeaders"
-                :items="programRulesToDisplay"
-                :options.sync="options"
-                :server-items-length="totalSize"
-                :show-rows-border="false"
-                mobile-breakpoint="0"
-                hide-default-footer
-                disable-sort>
-                <template slot="item" slot-scope="props">
-                  <engagement-center-rule-item
-                    :rule="props.item"
-                    :can-manage-rule="canManageRule"
-                    :action-value-extensions="actionValueExtensions" />
-                </template>
-                <template slot="no-data">
-                  <engagement-center-no-rule-found v-if="keyword" @keyword-changed="keyword = $event" />
-                  <span v-else> {{ $t('programs.details.rules.noRules') }}</span>
-                </template>
-                <template v-if="displayFooter" #footer="{props}">
-                  <v-divider />
-                  <div class="text-center">
-                    <v-pagination
-                      v-model="options.page"
-                      :length="props.pagination.pageCount"
-                      circle
-                      light
-                      flat
-                      @input="retrieveProgramRules" />
-                  </div>
-                </template>
-              </v-data-table>
-            </v-list-item-subtitle>
+            <div v-if="newlyCreated" class="d-flex flex-column align-center justify-center">
+              <span class="subtitle-1 pt-14">
+                {{ $t('programs.details.label.newProgramIntroduction') }}
+              </span>
+              <span class="py-10">
+                <v-btn
+                  color="primary"
+                  depressed
+                  large
+                  @click="$root.$emit('rule-form-drawer', null, program)">
+                  <v-icon class="font-weight-bold" dark>
+                    mdi-plus
+                  </v-icon>
+                  <span class="ms-2 d-none d-lg-inline title font-weight-bold">
+                    {{ $t('programs.details.rule.button.addIncentive') }}
+                  </span>
+                </v-btn>
+              </span>
+              <div class="pb-12 subtitle-1 text-wrap">
+                <div class="d-flex align-center">
+                  <v-card
+                    class="d-flex justify-center me-3"
+                    min-width="50"
+                    flat>
+                    <v-icon color="primary" size="30">fa-trophy</v-icon>
+                  </v-card>
+                  {{ $t('programs.details.label.manualActionIntroduction') }}
+                </div>
+                <div class="d-flex align-center pt-4">
+                  <v-card
+                    class="d-flex justify-center me-3"
+                    min-width="50"
+                    flat>
+                    <v-icon color="primary" size="30">fa-award</v-icon>
+                  </v-card>
+                  {{ $t('programs.details.label.automaticActionIntroduction') }}
+                </div>
+              </div>
+            </div>
+            <template v-else>
+              <engagement-center-rules-toolbar
+                :can-manage-rule="canManageRule"
+                :keyword="keyword"
+                :program="program"
+                @keyword-changed="keyword = $event"
+                @filter-changed="updateFilter" />
+              <v-list-item-subtitle class="text-color pt-4">
+                <v-data-table
+                  :headers="rulesHeaders"
+                  :items="programRulesToDisplay"
+                  :options.sync="options"
+                  :server-items-length="totalSize"
+                  :show-rows-border="false"
+                  mobile-breakpoint="0"
+                  hide-default-footer
+                  disable-sort>
+                  <template slot="item" slot-scope="props">
+                    <engagement-center-rule-item
+                      :rule="props.item"
+                      :can-manage-rule="canManageRule"
+                      :action-value-extensions="actionValueExtensions" />
+                  </template>
+                  <template slot="no-data">
+                    <engagement-center-no-rule-found v-if="keyword" @keyword-changed="keyword = $event" />
+                    <span v-else> {{ $t('programs.details.rules.noRules') }}</span>
+                  </template>
+                  <template v-if="displayFooter" #footer="{props}">
+                    <v-divider />
+                    <div class="text-center">
+                      <v-pagination
+                        v-model="options.page"
+                        :length="props.pagination.pageCount"
+                        circle
+                        light
+                        flat
+                        @input="retrieveProgramRules" />
+                    </div>
+                  </template>
+                </v-data-table>
+              </v-list-item-subtitle>
+            </template>
           </v-list-item-content>
         </v-list-item>
       </div>
@@ -162,6 +209,10 @@ export default {
     tab: {
       type: Number,
       default: () => 0,
+    },
+    newlyCreated: {
+      type: Boolean,
+      default: false,
     },
     isAdministrator: {
       type: Boolean,
@@ -299,9 +350,7 @@ export default {
     this.$root.$on('rule-updated', this.retrieveProgramRules);
     this.$root.$on('rule-deleted', this.retrieveProgramRules);
     this.$root.$on('announcement-added', this.retrieveProgramRules);
-    window.addEventListener('popstate', () => {
-      this.backToProgramList();
-    });
+    window.addEventListener('popstate', this.backToProgramList);
   },
   mounted() {
     if (this.programId) {
@@ -329,6 +378,15 @@ export default {
       }));
     }
   },
+  beforeDestroy() {
+    this.$root.$off('program-deleted', this.backToProgramList);
+    this.$root.$off('program-updated', this.programUpdated);
+    this.$root.$off('rule-created', this.retrieveProgramRules);
+    this.$root.$off('rule-updated', this.retrieveProgramRules);
+    this.$root.$off('rule-deleted', this.retrieveProgramRules);
+    this.$root.$off('announcement-added', this.retrieveProgramRules);
+    window.removeEventListener('popstate', this.backToProgramList);
+  },
   methods: {
     programUpdated(program) {
       if (program.id === this.program.id) {
@@ -349,6 +407,7 @@ export default {
         term: this.keyword,
         programId: this.programId,
         status: this.status,
+        programStatus: 'ALL',
         dateFilter: this.dateFilter,
         offset,
         limit: itemsPerPage,

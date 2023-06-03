@@ -148,6 +148,7 @@ export default {
       return this.$ruleService.getRules({
         term: this.search,
         status: 'ENABLED',
+        programStatus: 'ENABLED',
         type: 'MANUAL',
         dateFilter: this.filter,
         offset: 0,

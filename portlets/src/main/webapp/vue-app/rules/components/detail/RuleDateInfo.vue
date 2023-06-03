@@ -43,7 +43,7 @@ export default {
       return this.rule?.startDate && new Date(this.rule?.startDate).getTime() || 0;
     },
     endDateMillis() {
-      return this.rule?.endDate && (new Date(this.rule?.endDate).getTime() + 86400000) || 0;
+      return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
     },
     notStartedYet() {
       return this.startDateMillis && this.startDateMillis > Date.now();
