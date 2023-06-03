@@ -35,6 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <engagement-center-program-detail
             v-if="displayProgramDetail"
             :program="program"
+            :newly-created="newlyCreated"
             :is-administrator="isAdministrator"
             :action-value-extensions="actionValueExtensions" />
         </v-tab-item>
@@ -52,6 +53,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <engagement-center-program-detail
             v-if="displayProgramDetail"
             :program="program"
+            :newly-created="newlyCreated"
             :is-administrator="isAdministrator"
             :action-value-extensions="actionValueExtensions"
             :tab="2" />
@@ -95,6 +97,7 @@ export default {
     program: null,
     selectedRule: null,
     displayProgramDetail: false,
+    newlyCreated: false,
     avoidAddToHistory: false,
     extensionApp: 'engagementCenterActions',
     actionValueExtensionType: 'user-actions',
@@ -128,7 +131,8 @@ export default {
     },
   },
   created() {
-    this.$root.$on('program-added', this.openProgramDetail);
+    this.$root.$on('program-added', this.openCreatedProgramDetail);
+    this.$root.$on('rule-created', this.resetNewlyCreated);
     this.$root.$on('open-program-detail', this.openProgramDetail);
     this.$root.$on('open-program-detail-by-id', this.openProgramDetailById);
     this.$root.$on('close-program-detail', () => this.displayProgramDetail = false);
@@ -145,6 +149,9 @@ export default {
       }
       this.switchTabs();
     },
+    resetNewlyCreated() {
+      this.newlyCreated = false;
+    },
     resetSelection() {
       this.displayProgramDetail = false;
       this.$nextTick().then(() => this.program = null);
@@ -152,17 +159,21 @@ export default {
         this.$refs.rules.reset();
       }
     },
-    openProgramDetailById(id) {
+    openProgramDetailById(id, newlyCreated) {
       this.$programService.getProgramById(id, {
         lang: eXo.env.portal.language
       })
         .then(program => {
           if (program?.id) {
-            this.openProgramDetail(program);
+            this.openProgramDetail(program, newlyCreated);
           }
         });
     },
-    openProgramDetail(program) {
+    openCreatedProgramDetail(program) {
+      this.openProgramDetail(program, true);
+    },
+    openProgramDetail(program, newlyCreated) {
+      this.newlyCreated = newlyCreated || false;
       this.program = program;
       this.displayProgramDetail = true;
       window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${this.programsLinkBasePath}/${program.id}`);

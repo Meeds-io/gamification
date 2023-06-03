@@ -131,6 +131,10 @@ public class RuleRest implements ResourceContainer {
                            @QueryParam("type")
                            @DefaultValue("ALL")
                            EntityFilterType ruleType,
+                           @Parameter(description = "Programs status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false)
+                           @QueryParam("programStatus")
+                           @DefaultValue("ALL")
+                           EntityStatusType programStatus,
                            @Parameter(description = "Rules status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ALL.", required = false)
                            @QueryParam("status")
                            @DefaultValue("ALL")
@@ -194,8 +198,9 @@ public class RuleRest implements ResourceContainer {
     ruleFilter.setTerm(term);
     ruleFilter.setLocale(getLocale(lang));
     ruleFilter.setDateFilterType(dateFilter == null ? DateFilterType.ALL : dateFilter);
-    ruleFilter.setEntityFilterType(ruleType == null ? EntityFilterType.ALL : ruleType);
-    ruleFilter.setEntityStatusType(ruleStatus == null ? EntityStatusType.ALL : ruleStatus);
+    ruleFilter.setType(ruleType == null ? EntityFilterType.ALL : ruleType);
+    ruleFilter.setStatus(ruleStatus == null ? EntityStatusType.ALL : ruleStatus);
+    ruleFilter.setProgramStatus(programStatus == null ? EntityStatusType.ALL : programStatus);
     ruleFilter.setOrderByRealizations(orderByRealizations);
     ruleFilter.setExcludedRuleIds(excludedRuleIds);
     ruleFilter.setProgramId(programId);
@@ -229,8 +234,7 @@ public class RuleRest implements ResourceContainer {
         return Response.ok(ruleList).build();
       } else {
         ProgramFilter programFilter = new ProgramFilter();
-        programFilter.setEntityFilterType(EntityFilterType.ALL);
-        programFilter.setEntityStatusType(EntityStatusType.ENABLED);
+        programFilter.setStatus(programStatus);
         List<ProgramDTO> programs = programService.getPrograms(programFilter, currentUser, 0, -1);
         List<ProgramWithRulesRestEntity> programsWithRules = new ArrayList<>();
         for (ProgramDTO program : programs) {

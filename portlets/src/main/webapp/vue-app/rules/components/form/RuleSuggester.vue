@@ -199,6 +199,7 @@ export default {
         programId: this.programId,
         excludedRuleIds: this.excludedIds || [],
         status: 'ENABLED',
+        programStatus: 'ENABLED',
         offset: 0,
         limit: limit || 10,
         returnSize: false,
