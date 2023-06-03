@@ -73,6 +73,7 @@
         :term="term"
         :type="type"
         :status="status"
+        :is-administrator="isAdministrator"
         @loading="loading = $event"
         @initialized="setRulesSize" />
       <engagement-center-rules-by-trend

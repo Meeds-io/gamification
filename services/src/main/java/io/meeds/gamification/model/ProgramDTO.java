@@ -55,6 +55,12 @@ public class ProgramDTO implements Serializable, Cloneable {
 
   protected long            budget;
 
+  /**
+   * @deprecated There is no difference anymore between Automatic or Manual
+   *             Domain/Program. This is preserved for future usages, but not
+   *             used
+   */
+  @Deprecated(forRemoval = false, since = "1.5.0")
   protected String          type;
 
   protected String          coverUploadId;

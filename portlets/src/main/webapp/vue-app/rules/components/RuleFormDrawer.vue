@@ -497,6 +497,7 @@ export default {
       return this.$ruleService.getRules({
         programId: this.programId,
         status: 'ENABLED',
+        programStatus: 'ALL',
         type: 'AUTOMATIC',
         offset: 0,
         limit: this.events?.length || 10,

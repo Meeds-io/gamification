@@ -16,16 +16,10 @@
  */
 package io.meeds.gamification.listener;
 
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_DELETE_LISTENER;
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_DISABLE_LISTENER;
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_ENABLE_LISTENER;
-
 import java.util.List;
 
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 
 import io.meeds.gamification.model.BadgeDTO;
 import io.meeds.gamification.model.ProgramDTO;
@@ -35,9 +29,7 @@ import io.meeds.gamification.service.BadgeService;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RuleService;
 
-public class GamificationDomainListener extends Listener<ProgramDTO, String> {
-
-  private static final Log LOG = ExoLogger.getLogger(GamificationDomainListener.class);
+public class ProgramDeletedListener extends Listener<ProgramDTO, String> {
 
   protected ProgramService programService;
 
@@ -45,9 +37,9 @@ public class GamificationDomainListener extends Listener<ProgramDTO, String> {
 
   protected BadgeService   badgeService;
 
-  public GamificationDomainListener(ProgramService programService,
-                                    RuleService ruleService,
-                                    BadgeService badgeService) {
+  public ProgramDeletedListener(ProgramService programService,
+                                RuleService ruleService,
+                                BadgeService badgeService) {
     this.programService = programService;
     this.ruleService = ruleService;
     this.badgeService = badgeService;
@@ -56,52 +48,19 @@ public class GamificationDomainListener extends Listener<ProgramDTO, String> {
   @Override
   public void onEvent(Event<ProgramDTO, String> event) throws Exception { // NOSONAR
     ProgramDTO program = event.getSource();
-    String username = event.getData();
-    String action = event.getEventName();
     RuleFilter ruleFilter = new RuleFilter(true);
     ruleFilter.setProgramId(program.getId());
     List<RuleDTO> rules = ruleService.getRules(ruleFilter, 0, -1);
     List<BadgeDTO> badges = badgeService.findBadgesByProgramId(program.getId());
-    switch (action) {
-    case GAMIFICATION_DOMAIN_DELETE_LISTENER:
-      for (RuleDTO rule : rules) {
-        if (!rule.isDeleted()) {
-          ruleService.deleteRuleById(rule.getId(), username);
-        }
+    for (RuleDTO rule : rules) {
+      if (!rule.isDeleted()) {
+        ruleService.deleteRuleById(rule.getId());
       }
-      for (BadgeDTO badge : badges) {
-        badge.setEnabled(false);
-        badge.setProgram(null);
-        badgeService.updateBadge(badge);
-      }
-      break;
-    case GAMIFICATION_DOMAIN_DISABLE_LISTENER:
-      for (RuleDTO rule : rules) {
-        if (!rule.isDeleted()) {
-          rule.setEnabled(false);
-          ruleService.updateRule(rule);
-        }
-      }
-      for (BadgeDTO badge : badges) {
-        badge.setEnabled(false);
-        badgeService.updateBadge(badge);
-      }
-      break;
-    case GAMIFICATION_DOMAIN_ENABLE_LISTENER:
-      for (RuleDTO rule : rules) {
-        if (!rule.isDeleted()) {
-          rule.setEnabled(true);
-          ruleService.updateRule(rule);
-        }
-      }
-      for (BadgeDTO badge : badges) {
-        badge.setEnabled(true);
-        badgeService.updateBadge(badge);
-      }
-      break;
-    default:
-      LOG.warn("Unknown  triggered action name {}", action);
-      break;
+    }
+    for (BadgeDTO badge : badges) {
+      badge.setEnabled(false);
+      badge.setProgram(null);
+      badgeService.updateBadge(badge);
     }
   }
 }

@@ -156,7 +156,7 @@ export default {
       return this.$ruleService.getRules({
         dateFilter: 'STARTED_WITH_END',
         status: 'ENABLED',
-        type: 'ALL',
+        programStatus: 'ENABLED',
         offset: 0,
         limit: this.limit,
         sortBy: 'endDate',
@@ -173,7 +173,7 @@ export default {
       return this.$ruleService.getRules({
         dateFilter: 'STARTED',
         status: 'ENABLED',
-        type: 'ALL',
+        programStatus: 'ENABLED',
         offset: 0,
         limit: this.limit * 3,
         sortBy: 'createdDate',
@@ -190,7 +190,7 @@ export default {
       return this.$ruleService.getRules({
         dateFilter: 'NOT_STARTED',
         status: 'ENABLED',
-        type: 'ALL',
+        programStatus: 'ENABLED',
         offset: 0,
         limit: this.limit,
         sortBy: 'startDate',

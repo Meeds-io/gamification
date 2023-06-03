@@ -779,8 +779,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                                         org.exoplatform.social.core.identity.model.Identity earnerIdentity) {
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setDateFilterType(DateFilterType.STARTED);
-    ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
+    ruleFilter.setType(EntityFilterType.AUTOMATIC);
+    ruleFilter.setStatus(EntityStatusType.ENABLED);
+    ruleFilter.setProgramStatus(EntityStatusType.ENABLED);
     ruleFilter.setEventName(eventName);
     if (earnerIdentity != null && earnerIdentity.isUser()) {
       return ruleService.getRules(ruleFilter, earnerIdentity.getRemoteId(), 0, -1);

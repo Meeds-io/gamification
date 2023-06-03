@@ -64,6 +64,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.ProgramDTO;
 
+@SuppressWarnings("deprecation")
 @RunWith(MockitoJUnitRunner.class)
 public class AnalyticsProgramListenerTest {
 
