@@ -39,23 +39,6 @@ import io.meeds.gamification.utils.Utils;
 public class RuleDAOTest extends AbstractServiceTest {
 
   @Test
-  @SuppressWarnings("unused")
-  public void testFindEnabledRulesByEvent() {
-    assertEquals(ruleDAO.findAll().size(), 0);
-    assertEquals(ruleDAO.findActiveRulesByEvent("rule1").size(), 0);
-    ProgramEntity firstDomain = newDomain("firstDomain");
-    ProgramEntity secondDomain = newDomain("secondDomain");
-    ProgramEntity thirdDomain = newDomain("thirdDomain");
-    RuleEntity r1 = newRule("rule1", firstDomain.getId());
-    RuleEntity r2 = newRule("rule1", secondDomain.getId());
-    RuleEntity r3 = newRule("rule1", thirdDomain.getId());
-    assertEquals(ruleDAO.findActiveRulesByEvent("rule1").size(), 3);
-    r1.setEnabled(false);
-    ruleDAO.update(r1);
-    assertEquals(ruleDAO.findActiveRulesByEvent("rule1").size(), 2);
-  }
-
-  @Test
   public void testFindRuleByTitle() {
     assertEquals(ruleDAO.findAll().size(), 0);
     newRule();

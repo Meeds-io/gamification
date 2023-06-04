@@ -16,7 +16,7 @@
  */
 package io.meeds.gamification.rest;
 
-import static io.meeds.gamification.utils.Utils.DEFAULT_LAST_MODIFIED;
+import static io.meeds.gamification.utils.Utils.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -64,7 +64,7 @@ import io.meeds.gamification.rest.builder.ProgramBuilder;
 import io.meeds.gamification.rest.model.ProgramList;
 import io.meeds.gamification.rest.model.ProgramRestEntity;
 import io.meeds.gamification.service.ProgramService;
-import io.meeds.gamification.utils.Utils;
+import io.meeds.gamification.service.RuleService;
 import io.meeds.social.translation.service.TranslationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -102,6 +102,8 @@ public class ProgramRest implements ResourceContainer {
 
   protected ProgramService     programService;
 
+  protected RuleService        ruleService;
+
   protected IdentityManager    identityManager;
 
   protected TranslationService translationService;
@@ -112,10 +114,12 @@ public class ProgramRest implements ResourceContainer {
 
   public ProgramRest(PortalContainer portalContainer,
                      ProgramService programService,
+                     RuleService ruleService,
                      TranslationService translationService,
                      IdentityManager identityManager) {
     this.portalContainer = portalContainer;
     this.programService = programService;
+    this.ruleService = ruleService;
     this.translationService = translationService;
     this.identityManager = identityManager;
   }
@@ -177,9 +181,9 @@ public class ProgramRest implements ResourceContainer {
       programFilter.setProgramTitle(query);
     }
     if (owned) {
-      programFilter.setOwnerId(Utils.getCurrentUserIdentityId());
+      programFilter.setOwnerId(getCurrentUserIdentityId());
     }
-    String currentUser = Utils.getCurrentUser();
+    String currentUser = getCurrentUser();
     try {
       ProgramList programList = new ProgramList();
       List<ProgramRestEntity> programs = getProgramsRestEntitiesByFilter(programFilter,
@@ -225,9 +229,11 @@ public class ProgramRest implements ResourceContainer {
     try {
       program = programService.createProgram(program, identity);
       return Response.ok(ProgramBuilder.toRestEntity(programService,
+                                                     ruleService,
                                                      translationService,
                                                      program,
                                                      getLocale(request),
+                                                     null,
                                                      identity.getUserId()))
                      .build();
     } catch (IllegalAccessException e) {
@@ -266,9 +272,11 @@ public class ProgramRest implements ResourceContainer {
     try {
       program = programService.updateProgram(program, identity);
       return Response.ok(ProgramBuilder.toRestEntity(programService,
+                                                     ruleService,
                                                      translationService,
                                                      program,
                                                      getLocale(request),
+                                                     null,
                                                      identity.getUserId()))
                      .build();
     } catch (IllegalAccessException e) {
@@ -332,11 +340,11 @@ public class ProgramRest implements ResourceContainer {
                                   @Parameter(description = "A mandatory valid token that is used to authorize anonymous request", required = true)
                                   @QueryParam("r")
                                   String token) throws IOException {
-    boolean isDefault = StringUtils.equals(Utils.DEFAULT_COVER_REMOTE_ID, programId);
+    boolean isDefault = StringUtils.equals(DEFAULT_COVER_REMOTE_ID, programId);
     String lastUpdated = null;
     ProgramDTO program = null;
     if (isDefault) {
-      lastUpdated = Utils.toRFC3339Date(new Date(DEFAULT_LAST_MODIFIED));
+      lastUpdated = toRFC3339Date(new Date(DEFAULT_LAST_MODIFIED));
     } else {
       program = programService.getProgramById(Long.valueOf(programId));
       if (program == null) {
@@ -348,7 +356,7 @@ public class ProgramRest implements ResourceContainer {
 
     try {
       if (!isDefault && RestUtils.isAnonymous()
-          && !Utils.isAttachmentTokenValid(token, programId, Utils.ATTACHMENT_COVER_TYPE, lastModified)) {
+          && !isAttachmentTokenValid(token, programId, ATTACHMENT_COVER_TYPE, lastModified)) {
         LOG.warn("An anonymous user attempts to access avatar of space {} without a valid access token", programId);
         return Response.status(Response.Status.FORBIDDEN).build();
       }
@@ -362,7 +370,7 @@ public class ProgramRest implements ResourceContainer {
       }
       if (lastModified != null) {
         builder.cacheControl(CACHECONTROL);
-        builder.lastModified(Utils.parseRFC3339Date(lastUpdated));
+        builder.lastModified(parseRFC3339Date(lastUpdated));
         builder.expires(new Date(System.currentTimeMillis() + CACHE_IN_MILLI_SECONDS));
       }
       return builder.build();
@@ -394,11 +402,11 @@ public class ProgramRest implements ResourceContainer {
                                    @Parameter(description = "A mandatory valid token that is used to authorize anonymous request", required = true)
                                    @QueryParam("r")
                                    String token) throws IOException {
-    boolean isDefault = StringUtils.equals(Utils.DEFAULT_AVATAR_REMOTE_ID, programId);
+    boolean isDefault = StringUtils.equals(DEFAULT_AVATAR_REMOTE_ID, programId);
     String lastUpdated = null;
     ProgramDTO program = null;
     if (isDefault) {
-      lastUpdated = Utils.toRFC3339Date(new Date(DEFAULT_LAST_MODIFIED));
+      lastUpdated = toRFC3339Date(new Date(DEFAULT_LAST_MODIFIED));
     } else {
       program = programService.getProgramById(Long.valueOf(programId));
       if (program == null) {
@@ -410,7 +418,7 @@ public class ProgramRest implements ResourceContainer {
 
     try {
       if (!isDefault && RestUtils.isAnonymous()
-          && !Utils.isAttachmentTokenValid(token, programId, Utils.ATTACHMENT_AVATAR_TYPE, lastModified)) {
+          && !isAttachmentTokenValid(token, programId, ATTACHMENT_AVATAR_TYPE, lastModified)) {
         LOG.warn("An anonymous user attempts to access avatar of space {} without a valid access token", programId);
         return Response.status(Response.Status.FORBIDDEN).build();
       }
@@ -424,7 +432,7 @@ public class ProgramRest implements ResourceContainer {
       }
       if (lastModified != null) {
         builder.cacheControl(CACHECONTROL);
-        builder.lastModified(Utils.parseRFC3339Date(lastUpdated));
+        builder.lastModified(parseRFC3339Date(lastUpdated));
         builder.expires(new Date(System.currentTimeMillis() + CACHE_IN_MILLI_SECONDS));
       }
       return builder.build();
@@ -505,17 +513,23 @@ public class ProgramRest implements ResourceContainer {
                                  long programId,
                                  @Parameter(description = "Used to retrieve the title and description in requested language")
                                  @QueryParam("lang")
-                                 String lang) {
+                                 String lang,
+                                 @Parameter(description = "Used to retrieve extra information about the program")
+                                 @QueryParam("expand")
+                                 String expand) {
     if (programId == 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Program Id must be not null").build();
     }
-    String currentUser = Utils.getCurrentUser();
+    String currentUser = getCurrentUser();
     try {
       ProgramDTO program = programService.getProgramById(programId, currentUser);
+      List<String> expandFields = getExpandOptions(expand);
       return Response.ok(ProgramBuilder.toRestEntity(programService,
+                                                     ruleService,
                                                      translationService,
                                                      program,
                                                      getLocale(lang),
+                                                     expandFields,
                                                      currentUser))
                      .build();
     } catch (IllegalArgumentException e) {
@@ -541,7 +555,13 @@ public class ProgramRest implements ResourceContainer {
                                                                   int limit,
                                                                   String currentUser) throws IllegalAccessException {
     List<ProgramDTO> programs = programService.getPrograms(filter, currentUser, offset, limit);
-    return ProgramBuilder.toRestEntities(programService, translationService, locale, programs, currentUser);
+    return ProgramBuilder.toRestEntities(programService,
+                                         ruleService,
+                                         translationService,
+                                         locale,
+                                         programs,
+                                         null,
+                                         currentUser);
   }
 
   private InputStream getDefaultCoverInputStream() throws IOException {

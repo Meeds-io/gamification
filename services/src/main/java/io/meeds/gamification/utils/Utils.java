@@ -10,7 +10,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -442,6 +445,11 @@ public class Utils {
     return Normalizer.normalize(StringEscapeUtils.unescapeHtml(content), Normalizer.Form.NFD)
                      .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
                      .replace("'", "");
+  }
+
+  public static List<String> getExpandOptions(String expand) {
+    String[] expandFieldsArray = StringUtils.split(expand, ",");
+    return expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
   }
 
 }

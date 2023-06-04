@@ -3,9 +3,10 @@
     <span></span>
     <v-icon color="white" size="60">fa-slash</v-icon>
     <span class="headline">
-      {{ $t('programs.label.programDisabledIntroduction') }}
+      {{ program.activeRulesCount && $t('programs.label.programDisabledIntroduction') || $t('programs.label.programDeactivatedDueToLackOfRules') }}
     </span>
     <v-btn
+      v-if="program.activeRulesCount && canManageProgram"
       color="primary"
       depressed
       large
@@ -22,6 +23,10 @@ export default {
       type: Object,
       default: null
     },
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     loading: false,
@@ -33,6 +38,11 @@ export default {
       } else {
         document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
       }
+    },
+  },
+  computed: {
+    canManageProgram() {
+      return this.isAdministrator || this.program?.userInfo?.canEdit;
     },
   },
   methods: {
