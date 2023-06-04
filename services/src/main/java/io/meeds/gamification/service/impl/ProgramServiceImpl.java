@@ -205,15 +205,22 @@ public class ProgramServiceImpl implements ProgramService {
     program.setCoverFileId(storedProgram.getCoverFileId());
     program.setAvatarFileId(storedProgram.getAvatarFileId());
 
-    program = programStorage.saveProgram(program);
-    if (storedProgram.isEnabled() && !program.isEnabled()) {
-      broadcast(GAMIFICATION_DOMAIN_DISABLE_LISTENER, program, username);
-    } else if (!storedProgram.isEnabled() && program.isEnabled()) {
-      broadcast(GAMIFICATION_DOMAIN_ENABLE_LISTENER, program, username);
-    } else {
-      broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, program, username);
+    return saveProgramAndBroadcast(program, storedProgram, username);
+  }
+
+  @Override
+  public ProgramDTO updateProgram(ProgramDTO program) throws ObjectNotFoundException {
+    ProgramDTO storedProgram = programStorage.getProgramById(program.getId());
+    if (storedProgram == null) {
+      throw new ObjectNotFoundException("Program doesn't exist");
     }
-    return getProgramById(program.getId());
+    if (storedProgram.isDeleted()) {
+      throw new ObjectNotFoundException("Program is marked as deleted");
+    }
+    if (program.isOpen()) {
+      program.setSpaceId(0);
+    }
+    return saveProgramAndBroadcast(program, storedProgram, null);
   }
 
   @Override
@@ -494,6 +501,18 @@ public class ProgramServiceImpl implements ProgramService {
       }
     }
     return programFilter;
+  }
+
+  private ProgramDTO saveProgramAndBroadcast(ProgramDTO program, ProgramDTO storedProgram, String username) {
+    program = programStorage.saveProgram(program);
+    if (storedProgram.isEnabled() && !program.isEnabled()) {
+      broadcast(GAMIFICATION_DOMAIN_DISABLE_LISTENER, program, username);
+    } else if (!storedProgram.isEnabled() && program.isEnabled()) {
+      broadcast(GAMIFICATION_DOMAIN_ENABLE_LISTENER, program, username);
+    } else {
+      broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, program, username);
+    }
+    return getProgramById(program.getId());
   }
 
 }

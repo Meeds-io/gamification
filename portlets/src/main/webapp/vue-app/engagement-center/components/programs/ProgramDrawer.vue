@@ -218,7 +218,7 @@
                 <div v-if="isExternalOwner" class="error--text mt-1">
                   {{ $t('programs.label.externalOwner.warning') }}
                 </div>
-                <div v-if="programId" class="mt-4">
+                <div v-if="programId && activeRulesCount" class="mt-4">
                   <div class="d-flex align-center">
                     <span class="subtitle-1 me-auto">{{ $t('programs.label.status') }}</span>
                     <v-switch
@@ -322,6 +322,9 @@ export default {
     },
     programId() {
       return this.program?.id;
+    },
+    activeRulesCount() {
+      return this.program?.activeRulesCount;
     },
     openProgram() {
       return this.program?.open;
@@ -442,7 +445,9 @@ export default {
       if (program && !freshInstance) {
         this.initiliazing = true;
         this.$refs.programDrawer.open();
-        return this.$programService.getProgramById(program.id)
+        return this.$programService.getProgramById(program.id, {
+          expand: 'countActiveRules',
+        })
           .then(freshProgram => this.open(freshProgram, true));
       }
       this.program = program && JSON.parse(JSON.stringify(program)) || {
@@ -450,7 +455,7 @@ export default {
         description: null,
         budget: 0,
         open: false,
-        enabled: true,
+        enabled: false,
         owners: []
       };
       this.programOwners = this.program?.owners?.slice() || [];
@@ -496,7 +501,6 @@ export default {
     },
     close() {
       this.$refs.programDrawer.close();
-      this.program = {};
     },
     addDescription(value) {
       if (value) {

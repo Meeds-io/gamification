@@ -56,6 +56,10 @@ public class ProgramFilter implements Serializable {
 
   private boolean           allSpaces;
 
+  public ProgramFilter(boolean allSpaces) {
+    this.allSpaces = allSpaces;
+  }
+
   public ProgramFilter clone() { // NOSONAR
     return new ProgramFilter(status,
                              type,

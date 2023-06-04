@@ -3,7 +3,8 @@
     v-model="showMenu"
     :left="!$vuetify.rtl"
     :right="$vuetify.rtl"
-    bottom
+    :top="top"
+    :bottom="!top"
     offset-y
     attach>
     <template #activator="{ on, attrs }">
@@ -44,6 +45,10 @@ export default {
     rule: {
       type: Object,
       default: null
+    },
+    top: {
+      type: Boolean,
+      default: false,
     },
     dark: {
       type: Boolean,
