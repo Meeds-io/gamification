@@ -1,5 +1,6 @@
 @import "variables.less";
 @import "mixins.less";
+@import (css) "/platform-ui/skin/css/component/ImageCropper/cropper.min.css";
 
 #rulesList {
   background-color: @white !important;
@@ -225,33 +226,6 @@
           width: 100%;
         }
       }
-    }
-  }
-}
-
-.EngagementCenterImageSelector{
-    .v-image__image {
-      filter: brightness(70%);
-    }
-  .changeImgButton {
-    top: 20%;
-    left: 45%;
-    position: absolute;
-
-    .v-input__prepend-outer {
-      margin: 0;
-
-      button {
-        color: @lightWhite;
-        padding: 3px;
-        size: 34px;
-      }
-    }
-
-    .v-input__control {
-      visibility: hidden;
-      width: 0;
-      height: 0;
     }
   }
 }

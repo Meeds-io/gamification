@@ -38,6 +38,7 @@ import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 
+@SuppressWarnings("deprecation")
 public class Utils {
 
   public static final String            ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM = "announcementDescription";
@@ -46,7 +47,7 @@ public class Utils {
 
   public static final String            ANNOUNCEMENT_ACTIVITY_EVENT             = "challenge.announcement.activity";
 
-  public static final long              DEFAULT_COVER_LAST_MODIFIED             = System.currentTimeMillis();
+  public static final long              DEFAULT_LAST_MODIFIED                   = System.currentTimeMillis();
 
   public static final DateTimeFormatter RFC_3339_FORMATTER                      =
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
@@ -88,7 +89,9 @@ public class Utils {
 
   public static final String            STATISTICS_PROGRAM_TYPE_PARAM           = "programType";
 
-  public static final String            STATISTICS_PROGRAM_COVERFILEID_PARAM    = "programCoverFileId";
+  public static final String            STATISTICS_PROGRAM_COVER_FILEID_PARAM   = "programCoverFileId";
+
+  public static final String            STATISTICS_PROGRAM_AVATAR_FILEID_PARAM  = "programAvatarFileId";
 
   public static final String            STATISTICS_PROGRAM_OWNERS_PARAM         = "programOwners";
 
@@ -138,9 +141,13 @@ public class Utils {
 
   public static final String            BASE_URL_PROGRAMS_REST_API              = "/gamification/programs";
 
-  public static final String            DEFAULT_IMAGE_REMOTE_ID                 = "default-cover";
+  public static final String            DEFAULT_COVER_REMOTE_ID                 = "default-cover";
 
-  public static final String            TYPE                                    = "cover";
+  public static final String            DEFAULT_AVATAR_REMOTE_ID                = "default-avatar";
+
+  public static final String            ATTACHMENT_COVER_TYPE                   = "cover";
+
+  public static final String            ATTACHMENT_AVATAR_TYPE                  = "avatar";
 
   public static final String            REWARDING_GROUP                         = "/platform/rewarding";
 
@@ -270,14 +277,15 @@ public class Utils {
     return message;
   }
 
-  public static String buildAttachmentUrl(String programId, Long lastModifiedDate, String type, boolean isDefault) {
+  public static String buildAttachmentUrl(String programId, Long lastModifiedDate, String type, String defaultId,
+                                          boolean isDefault) {
     if (Long.valueOf(programId) == 0) {
       return null;
     }
 
     if (isDefault) {
-      programId = DEFAULT_IMAGE_REMOTE_ID;
-      lastModifiedDate = DEFAULT_COVER_LAST_MODIFIED;
+      programId = defaultId;
+      lastModifiedDate = DEFAULT_LAST_MODIFIED;
     }
 
     String token = generateAttachmentToken(programId, type, lastModifiedDate);
@@ -378,7 +386,8 @@ public class Utils {
     statisticData.addParameter(STATISTICS_PROGRAM_TITLE_PARAM, program.getTitle());
     statisticData.addParameter(STATISTICS_PROGRAM_BUDGET_PARAM, program.getBudget());
     statisticData.addParameter(STATISTICS_PROGRAM_TYPE_PARAM, program.getType());
-    statisticData.addParameter(STATISTICS_PROGRAM_COVERFILEID_PARAM, program.getCoverFileId());
+    statisticData.addParameter(STATISTICS_PROGRAM_COVER_FILEID_PARAM, program.getCoverFileId());
+    statisticData.addParameter(STATISTICS_PROGRAM_AVATAR_FILEID_PARAM, program.getAvatarFileId());
     statisticData.addParameter(STATISTICS_PROGRAM_OWNERS_PARAM, program.getOwnerIds());
     if (program.getSpaceId() > 0) {
       Space space = spaceService.getSpaceById(String.valueOf(program.getSpaceId()));

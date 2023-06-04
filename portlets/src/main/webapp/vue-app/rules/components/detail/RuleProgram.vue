@@ -30,7 +30,7 @@
         :size="programCoverSize"
         class="border-color"
         rounded>
-        <v-img :src="programCoverUrl" />
+        <v-img :src="programAvatarUrl" />
       </v-avatar>
     </v-list-item-avatar>
     <v-list-item-content>
@@ -55,8 +55,8 @@ export default {
     programId() {
       return this.rule?.program?.id;
     },
-    programCoverUrl() {
-      return this.rule?.program?.coverUrl;
+    programAvatarUrl() {
+      return this.rule?.program?.avatarUrl;
     },
     programTitle() {
       return this.rule?.program?.title;
