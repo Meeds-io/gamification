@@ -31,7 +31,7 @@
         :size="programCoverSize"
         class="rule-program-cover border-color primary--text"
         rounded>
-        <v-img :src="programCoverUrl" />
+        <v-img :src="programAvatarUrl" />
       </v-avatar>
       <v-avatar
         :size="programCoverSize"
@@ -101,8 +101,8 @@ export default {
     actionIcon() {
       return this.rule?.type === 'AUTOMATIC' ? this.extension?.icon : 'fas fa-trophy';
     },
-    programCoverUrl() {
-      return this.rule?.program?.coverUrl;
+    programAvatarUrl() {
+      return this.rule?.program?.avatarUrl;
     },
   },
 };
