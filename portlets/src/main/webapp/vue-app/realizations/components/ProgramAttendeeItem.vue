@@ -22,7 +22,7 @@ export default {
   },
   computed: {
     avatarUrl() {
-      return this.program?.coverUrl || '';
+      return this.program?.avatarUrl || '';
     },
     displayName() {
       return this.program?.title;

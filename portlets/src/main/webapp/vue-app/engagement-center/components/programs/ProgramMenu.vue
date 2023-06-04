@@ -59,38 +59,9 @@ export default {
     showMenu: false,
   }),
   computed: {
-    programCover() {
-      return this.program?.coverUrl || '';
-    },
-    programBudgetLabel() {
-      return {0: `<span>${this.programBudget} ${this.$t('programs.details.label.points')}</span>`};
-    },
-    programBudget() {
-      return this.program?.rulesTotalScore || 0;
-    },
     showActionsMenu() {
       return this.isAdministrator || this.program?.userInfo?.canEdit;
     },
-    addedOwnersList() {
-      return (this.program?.owners || []).filter(owner => !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
-        userName: owner.remoteId
-      }));
-    },
-    spaceManagers() {
-      return this.program?.space?.managers;
-    },
-    spaceManagersList() {
-      return (this.spaceManagers || []).map(owner => ({
-        userName: owner
-      }));
-    },
-    owners() {
-      return this.addedOwnersList.concat(this.spaceManagersList);
-    },
-
-    ownersCount() {
-      return this.owners?.length;
-    }
   },
   created() {
     $(document).mousedown(() => {
