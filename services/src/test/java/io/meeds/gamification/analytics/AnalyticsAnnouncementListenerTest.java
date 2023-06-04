@@ -26,8 +26,9 @@ import static io.meeds.gamification.utils.Utils.STATISTICS_ANNOUNCE_COMMENT_PARA
 import static io.meeds.gamification.utils.Utils.STATISTICS_ANNOUNCE_ID_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_CREATE_ANNOUNCE_OPERATION;
 import static io.meeds.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_AVATAR_FILEID_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_BUDGET_PARAM;
-import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_COVERFILEID_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_COVER_FILEID_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_ID_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_OWNERS_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_TITLE_PARAM;
@@ -208,7 +209,9 @@ public class AnalyticsAnnouncementListenerTest {
       assertEquals(String.valueOf(ruleDTO.getProgram().getType()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_TYPE_PARAM)));
       assertEquals(String.valueOf(ruleDTO.getProgram().getCoverFileId()),
-                   String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_COVERFILEID_PARAM)));
+                   String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_COVER_FILEID_PARAM)));
+      assertEquals(String.valueOf(ruleDTO.getProgram().getAvatarFileId()),
+                   String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_AVATAR_FILEID_PARAM)));
       assertEquals(String.valueOf(ruleDTO.getProgram().getOwnerIds()),
                    String.valueOf(statisticData.getListParameters().get(STATISTICS_PROGRAM_OWNERS_PARAM)));
       assertEquals(String.valueOf(announcement.getId()),

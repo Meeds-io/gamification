@@ -37,6 +37,8 @@ import NoRuleFound from './components/programs/NoRuleFound.vue';
 import RuleTitle from './components/programs/RuleTitle.vue';
 import RuleItem from './components/programs/RuleItem.vue';
 import ProgramDisabledMaskContent from './components/programs/ProgramDisabledMaskContent.vue';
+import ProgramImageSelector from './components/programs/ProgramImageSelector.vue';
+import ProgramImageSelectorButtons from './components/programs/ProgramImageSelectorButtons.vue';
 
 import Rules from './components/rules/Rules.vue';
 
@@ -59,7 +61,6 @@ import RulesFilterDrawer from './components/rules/filter/RulesFilterDrawer.vue';
 
 import Assignment from './components/common/Assignment.vue';
 import AvatarsList from './components/common/AvatarsList.vue';
-import ImageSelector from './components/common/ImageSelector.vue';
 import WelcomeMessage from './components/common/WelcomeMessage.vue';
 
 import RuleActionValue from './components/actionValues/RuleActionValue.vue';
@@ -78,9 +79,11 @@ const components = {
   'engagement-center-program-owners-drawer': ProgramOwnersDrawer,
   'engagement-center-program-detail': ProgramDetail,
   'engagement-center-program-owner-assignment': ProgramOwnerAssignment,
+  'engagement-center-program-image-selector': ProgramImageSelector,
+  'engagement-center-program-image-selector-buttons': ProgramImageSelectorButtons,
+  'engagement-center-program-disabled-mask-content': ProgramDisabledMaskContent,
   'engagement-center-rules-toolbar': RulesToolbar,
   'engagement-center-rule-item': RuleItem,
-  'engagement-center-program-disabled-mask-content': ProgramDisabledMaskContent,
   'engagement-center-rule-title': RuleTitle,
   'engagement-center-no-rule-found': NoRuleFound,
   'engagement-center-rules': Rules,
@@ -99,7 +102,6 @@ const components = {
   'engagement-center-rule-card-remaining-dates': RuleCardRemainingDates,
   'engagement-center-assignment': Assignment,
   'engagement-center-avatars-list': AvatarsList,
-  'engagement-center-image-selector': ImageSelector,
   'engagement-center-welcome-message': WelcomeMessage,
   'rule-action-value': RuleActionValue,
   'challenge-action-value': ChallengeActionValue,
