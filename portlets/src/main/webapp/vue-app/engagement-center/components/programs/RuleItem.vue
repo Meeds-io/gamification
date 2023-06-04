@@ -47,7 +47,8 @@
           </div>
           <engagement-center-rule-menu
             v-if="canManageRule"
-            :rule="rule" />
+            :rule="rule"
+            top />
         </div>
       </td>
       <td class="no-border-bottom d-none d-sm-inline">

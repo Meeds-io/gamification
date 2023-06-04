@@ -163,6 +163,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <set-method>addListener</set-method>
       <type>io.meeds.gamification.listener.RulesESListener</type>
     </component-plugin>
+    <component-plugin>
+      <name>rule.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
+    </component-plugin>
   </external-component-plugins>
 
   <external-component-plugins>
@@ -179,4 +189,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component-plugin>
   </external-component-plugins>
 
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.scheduler.JobSchedulerService</target-component>
+    <component-plugin>
+      <name>ProgramAutoDisableJob</name>
+      <set-method>addCronJob</set-method>
+      <type>org.exoplatform.services.scheduler.CronJob</type>
+      <description>Configuration for Program auto disable Job when no active rules</description>
+      <init-params>
+        <properties-param>
+          <name>cronjob.info</name>
+          <description>Configuration for Program auto disable Job when no active rules</description>
+          <property name="jobName" value="ProgramAutoDisableJob"/>
+          <property name="groupName" value="Gamification"/>
+          <property name="job" value="io.meeds.gamification.scheduled.ProgramAutoDisableJob"/>
+          <property name="expression" value="${io.meeds.gamification.ProgramAutoDisableJob.expression:5 0 0 * * ?}"/><!-- Every midnight + 5 seconds -->
+        </properties-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
 </configuration>
