@@ -36,6 +36,8 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import io.meeds.gamification.constant.DateFilterType;
+import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.RuleFilter;
@@ -175,6 +177,16 @@ public class RuleServiceImpl implements RuleService {
     } else {
       return ruleStorage.countRulesByFilter(ruleFilter);
     }
+  }
+
+  @Override
+  public int countActiveRules(long programId) {
+    RuleFilter ruleFilter = new RuleFilter(true);
+    ruleFilter.setStatus(EntityStatusType.ENABLED);
+    ruleFilter.setProgramStatus(EntityStatusType.ALL);
+    ruleFilter.setProgramId(programId);
+    ruleFilter.setDateFilterType(DateFilterType.STARTED);
+    return countRules(ruleFilter);
   }
 
   @Override
