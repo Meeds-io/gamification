@@ -58,16 +58,6 @@ import lombok.EqualsAndHashCode;
     " AND rule.type = :type"
 )
 @NamedQuery(
-  name = "Rule.findActiveRulesByEvent",
-  query = "SELECT rule FROM Rule rule" +
-    " WHERE LOWER(rule.event) = LOWER(:event)" +
-    " AND rule.isEnabled = true" +
-    " AND rule.isDeleted = false" +
-    " AND (rule.startDate IS NULL OR rule.startDate <= :date)" +
-    " AND (rule.endDate IS NULL OR rule.endDate > :date)" +
-    " AND rule.type = :type"
-)
-@NamedQuery(
   name = "Rule.findRuleByTitle",
   query = "SELECT rule FROM Rule rule"
       + " WHERE LOWER(rule.title) = LOWER(:ruleTitle)"

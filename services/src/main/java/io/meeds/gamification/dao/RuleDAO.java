@@ -111,18 +111,6 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  public List<RuleEntity> findActiveRulesByEvent(String event) throws PersistenceException {
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findActiveRulesByEvent", RuleEntity.class)
-                                                     .setParameter(EVENT_PARAM_NAME, event)
-                                                     .setParameter("type", EntityType.AUTOMATIC)
-                                                     .setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
-  }
-
   public RuleEntity findRuleByTitle(String ruleTitle) throws PersistenceException {
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByTitle", RuleEntity.class);
     query.setParameter("ruleTitle", ruleTitle);
