@@ -38,7 +38,7 @@ import io.meeds.gamification.storage.ProgramStorage;
 
 public class ProgramCachedStorage extends ProgramStorage {
 
-  private static final String                                PROGRAM_CACHE_NAME = "gamification.domain";
+  private static final String                      PROGRAM_CACHE_NAME = "gamification.domain";
 
   private FutureExoCache<Long, ProgramDTO, Object> programFutureCache;
 
@@ -76,6 +76,15 @@ public class ProgramCachedStorage extends ProgramStorage {
   public ProgramDTO getProgramById(Long id) {
     ProgramDTO program = this.programFutureCache.get(null, id);
     return program == null ? null : program.clone();
+  }
+
+  @Override
+  public void deleteImage(long fileId) {
+    try {
+      super.deleteImage(fileId);
+    } finally {
+      clearCache();
+    }
   }
 
   @Override

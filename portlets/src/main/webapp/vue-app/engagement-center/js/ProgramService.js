@@ -119,3 +119,25 @@ export function deleteProgram(programId) {
     }
   });
 }
+
+export function deleteProgramCover(programId) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs/${programId}/cover`, {
+    method: 'DELETE',
+    credentials: 'include',
+  }).then((resp) => {
+    if (!resp?.ok) {
+      throw new Error('Response code indicates a server error', resp);
+    }
+  });
+}
+
+export function deleteProgramAvatar(programId) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs/${programId}/avatar`, {
+    method: 'DELETE',
+    credentials: 'include',
+  }).then((resp) => {
+    if (!resp?.ok) {
+      throw new Error('Response code indicates a server error', resp);
+    }
+  });
+}
