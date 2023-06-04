@@ -163,15 +163,15 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
-  public void testGetDomainAvatarById() throws Exception {
+  public void testGetProgramCoverById() throws Exception {
     long lastUpdateCoverTime = Utils.parseRFC3339Date(manualDomain.getLastModifiedDate()).getTime();
     String token = URLEncoder.encode(Utils.generateAttachmentToken(String.valueOf(manualDomain.getId()),
-                                                                   Utils.TYPE,
+                                                                   Utils.ATTACHMENT_COVER_TYPE,
                                                                    lastUpdateCoverTime),
                                      StandardCharsets.UTF_8);
 
     ContainerResponse response = getResponse("GET",
-                                             getURLResource("programs/" + Utils.DEFAULT_IMAGE_REMOTE_ID + "/cover?lastModified="
+                                             getURLResource("programs/" + Utils.DEFAULT_COVER_REMOTE_ID + "/cover?lastModified="
                                                  + lastUpdateCoverTime + "&r=" + token),
                                              null);
     assertNotNull(response);
@@ -182,14 +182,53 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     assertEquals(404, response.getStatus());
 
     response = getResponse("GET",
-                           getURLResource("programs/" + manualDomain.getId() + "/cover?lastModified=" + lastUpdateCoverTime + "&r="
+                           getURLResource("programs/" + manualDomain.getId() + "/cover?lastModified=" + lastUpdateCoverTime
+                               + "&r="
                                + token),
                            null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
     response = getResponse("GET",
-                           getURLResource("programs/" + manualDomain.getId() + "/cover?lastModified=" + lastUpdateCoverTime + "&r="
+                           getURLResource("programs/" + manualDomain.getId() + "/cover?lastModified=" + lastUpdateCoverTime
+                               + "&r="
+                               + "wrongToken"),
+                           null);
+    assertNotNull(response);
+    assertEquals(403, response.getStatus());
+  }
+
+  @Test
+  public void testGetProgramAvatarById() throws Exception {
+    long lastUpdateAvatarTime = Utils.parseRFC3339Date(manualDomain.getLastModifiedDate()).getTime();
+    String token = URLEncoder.encode(Utils.generateAttachmentToken(String.valueOf(manualDomain.getId()),
+                                                                   Utils.ATTACHMENT_AVATAR_TYPE,
+                                                                   lastUpdateAvatarTime),
+                                     StandardCharsets.UTF_8);
+
+    ContainerResponse response = getResponse("GET",
+                                             getURLResource("programs/" + Utils.DEFAULT_AVATAR_REMOTE_ID + "/avatar?lastModified="
+                                                 + lastUpdateAvatarTime + "&r=" + token),
+                                             null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    response =
+             getResponse("GET", getURLResource("programs/155/avatar?lastModified=" + lastUpdateAvatarTime + "&r=" + token), null);
+    assertNotNull(response);
+    assertEquals(404, response.getStatus());
+
+    response = getResponse("GET",
+                           getURLResource("programs/" + manualDomain.getId() + "/avatar?lastModified=" + lastUpdateAvatarTime
+                               + "&r="
+                               + token),
+                           null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    response = getResponse("GET",
+                           getURLResource("programs/" + manualDomain.getId() + "/avatar?lastModified=" + lastUpdateAvatarTime
+                               + "&r="
                                + "wrongToken"),
                            null);
     assertNotNull(response);

@@ -53,8 +53,11 @@ public class ProgramWithRulesRestEntity extends ProgramDTO {
           program.getBudget(),
           program.getType(),
           program.getCoverUploadId(),
+          program.getAvatarUploadId(),
           program.getCoverFileId(),
+          program.getAvatarFileId(),
           program.getCoverUrl(),
+          program.getAvatarUrl(),
           program.getOwnerIds(),
           program.getRulesTotalScore(),
           program.isOpen());

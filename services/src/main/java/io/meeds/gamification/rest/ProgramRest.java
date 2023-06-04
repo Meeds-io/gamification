@@ -16,7 +16,7 @@
  */
 package io.meeds.gamification.rest;
 
-import static io.meeds.gamification.utils.Utils.DEFAULT_COVER_LAST_MODIFIED;
+import static io.meeds.gamification.utils.Utils.DEFAULT_LAST_MODIFIED;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -76,7 +76,11 @@ public class ProgramRest implements ResourceContainer {
 
   private static final String       DEFAULT_COVER_PATH        =
                                                        System.getProperty("meeds.engagementCenter.program.defaultCoverPath",
-                                                                          "/skin/images/program_default_cover_back.png");
+                                                                          "/skin/images/program_default_cover.png");
+
+  private static final String       DEFAULT_AVATAR_PATH       =
+                                                        System.getProperty("meeds.engagementCenter.program.defaultAvatarPath",
+                                                                           "/skin/images/program_default_avatar.png");
 
   private static final String       PROGRAM_NOT_FOUND_MESSAGE = "The program doesn't exit";
 
@@ -102,7 +106,9 @@ public class ProgramRest implements ResourceContainer {
 
   protected TranslationService translationService;
 
-  public byte[]                defaultProgramCover = null; // NOSONAR
+  public byte[]                defaultProgramCover  = null; // NOSONAR
+
+  public byte[]                defaultProgramAvatar = null; // NOSONAR
 
   public ProgramRest(PortalContainer portalContainer,
                      ProgramService programService,
@@ -273,7 +279,7 @@ public class ProgramRest implements ResourceContainer {
   }
 
   @DELETE
-  @RolesAllowed("administrators")
+  @RolesAllowed("users")
   @Path("{programId}")
   @Operation(summary = "Deletes an existing program identified by its id", method = "DELETE")
   @ApiResponses(value = {
@@ -283,12 +289,12 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "404", description = "Object not found"),
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
-  public Response deleteProgramById(
-                                    @Context
-                                    HttpServletRequest request,
-                                    @Parameter(description = "Program id to be deleted", required = true)
-                                    @PathParam("programId")
-                                    long programId) {
+  public Response deleteProgram(
+                                @Context
+                                HttpServletRequest request,
+                                @Parameter(description = "Program id to be deleted", required = true)
+                                @PathParam("programId")
+                                long programId) {
     if (programId <= 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("The parameter 'id' must be positive integer").build();
     }
@@ -314,23 +320,23 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "403", description = "Forbidden request"),
       @ApiResponse(responseCode = "404", description = "Resource not found")
   })
-  public Response getProgramCoverById(
-                                      @Context
-                                      Request request,
-                                      @Parameter(description = "The value of lastModified parameter will determine whether the query should be cached by browser or not. If not set, no 'expires HTTP Header will be sent'")
-                                      @QueryParam("lastModified")
-                                      Long lastModified,
-                                      @Parameter(description = "program id", required = true)
-                                      @PathParam("id")
-                                      String programId,
-                                      @Parameter(description = "A mandatory valid token that is used to authorize anonymous request", required = true)
-                                      @QueryParam("r")
-                                      String token) throws IOException {
-    boolean isDefault = StringUtils.equals(Utils.DEFAULT_IMAGE_REMOTE_ID, programId);
+  public Response getProgramCover(
+                                  @Context
+                                  Request request,
+                                  @Parameter(description = "The value of lastModified parameter will determine whether the query should be cached by browser or not. If not set, no 'expires HTTP Header will be sent'")
+                                  @QueryParam("lastModified")
+                                  Long lastModified,
+                                  @Parameter(description = "program id", required = true)
+                                  @PathParam("id")
+                                  String programId,
+                                  @Parameter(description = "A mandatory valid token that is used to authorize anonymous request", required = true)
+                                  @QueryParam("r")
+                                  String token) throws IOException {
+    boolean isDefault = StringUtils.equals(Utils.DEFAULT_COVER_REMOTE_ID, programId);
     String lastUpdated = null;
     ProgramDTO program = null;
     if (isDefault) {
-      lastUpdated = Utils.toRFC3339Date(new Date(DEFAULT_COVER_LAST_MODIFIED));
+      lastUpdated = Utils.toRFC3339Date(new Date(DEFAULT_LAST_MODIFIED));
     } else {
       program = programService.getProgramById(Long.valueOf(programId));
       if (program == null) {
@@ -341,7 +347,8 @@ public class ProgramRest implements ResourceContainer {
     }
 
     try {
-      if (!isDefault && RestUtils.isAnonymous() && !Utils.isAttachmentTokenValid(token, programId, Utils.TYPE, lastModified)) {
+      if (!isDefault && RestUtils.isAnonymous()
+          && !Utils.isAttachmentTokenValid(token, programId, Utils.ATTACHMENT_COVER_TYPE, lastModified)) {
         LOG.warn("An anonymous user attempts to access avatar of space {} without a valid access token", programId);
         return Response.status(Response.Status.FORBIDDEN).build();
       }
@@ -349,7 +356,7 @@ public class ProgramRest implements ResourceContainer {
       Response.ResponseBuilder builder = request.evaluatePreconditions(eTag);
       if (builder == null) {
         InputStream stream = isDefault ? getDefaultCoverInputStream()
-                                       : programService.getFileDetailAsStream(Long.valueOf(programId));
+                                       : programService.getProgramCoverStream(Long.valueOf(programId));
         builder = Response.ok(stream, "image/png");
         builder.tag(eTag);
       }
@@ -361,6 +368,120 @@ public class ProgramRest implements ResourceContainer {
       return builder.build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity(PROGRAM_NOT_FOUND_MESSAGE).build();
+    }
+  }
+
+  @GET
+  @Path("{id}/avatar")
+  @Produces("image/png")
+  @Operation(summary = "Gets a program avatar", method = "GET")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "403", description = "Forbidden request"),
+      @ApiResponse(responseCode = "404", description = "Resource not found")
+  })
+  public Response getProgramAvatar(
+                                   @Context
+                                   Request request,
+                                   @Parameter(description = "The value of lastModified parameter will determine whether the query should be cached by browser or not. If not set, no 'expires HTTP Header will be sent'")
+                                   @QueryParam("lastModified")
+                                   Long lastModified,
+                                   @Parameter(description = "program id", required = true)
+                                   @PathParam("id")
+                                   String programId,
+                                   @Parameter(description = "A mandatory valid token that is used to authorize anonymous request", required = true)
+                                   @QueryParam("r")
+                                   String token) throws IOException {
+    boolean isDefault = StringUtils.equals(Utils.DEFAULT_AVATAR_REMOTE_ID, programId);
+    String lastUpdated = null;
+    ProgramDTO program = null;
+    if (isDefault) {
+      lastUpdated = Utils.toRFC3339Date(new Date(DEFAULT_LAST_MODIFIED));
+    } else {
+      program = programService.getProgramById(Long.valueOf(programId));
+      if (program == null) {
+        return Response.status(Response.Status.NOT_FOUND).entity(PROGRAM_NOT_FOUND_MESSAGE).build();
+      }
+      isDefault = program.getAvatarFileId() == 0;
+      lastUpdated = program.getLastModifiedDate();
+    }
+
+    try {
+      if (!isDefault && RestUtils.isAnonymous()
+          && !Utils.isAttachmentTokenValid(token, programId, Utils.ATTACHMENT_AVATAR_TYPE, lastModified)) {
+        LOG.warn("An anonymous user attempts to access avatar of space {} without a valid access token", programId);
+        return Response.status(Response.Status.FORBIDDEN).build();
+      }
+      EntityTag eTag = new EntityTag(lastUpdated);
+      Response.ResponseBuilder builder = request.evaluatePreconditions(eTag);
+      if (builder == null) {
+        InputStream stream = isDefault ? getDefaultAvatarInputStream()
+                                       : programService.getProgramAvatarStream(Long.valueOf(programId));
+        builder = Response.ok(stream, "image/png");
+        builder.tag(eTag);
+      }
+      if (lastModified != null) {
+        builder.cacheControl(CACHECONTROL);
+        builder.lastModified(Utils.parseRFC3339Date(lastUpdated));
+        builder.expires(new Date(System.currentTimeMillis() + CACHE_IN_MILLI_SECONDS));
+      }
+      return builder.build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity(PROGRAM_NOT_FOUND_MESSAGE).build();
+    }
+  }
+
+  @DELETE
+  @RolesAllowed("users")
+  @Path("{programId}/cover")
+  @Operation(summary = "Deletes program cover identified by program id", method = "DELETE")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "404", description = "Object not found"),
+  })
+  public Response deleteProgramCover(
+                                     @Context
+                                     HttpServletRequest request,
+                                     @Parameter(description = "Program identifier", required = true)
+                                     @PathParam("programId")
+                                     long programId) {
+    org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
+    try {
+      programService.deleteProgramCoverById(programId, identity);
+      return Response.noContent().build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+    }
+  }
+
+  @DELETE
+  @RolesAllowed("users")
+  @Path("{programId}/avatar")
+  @Operation(summary = "Deletes program avatar identified by program id", method = "DELETE")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "404", description = "Object not found"),
+  })
+  public Response deleteProgramAvatar(
+                                      @Context
+                                      HttpServletRequest request,
+                                      @Parameter(description = "Program identifier", required = true)
+                                      @PathParam("programId")
+                                      long programId) {
+    org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
+    try {
+      programService.deleteProgramAvatarById(programId, identity);
+      return Response.noContent().build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     }
   }
 
@@ -433,6 +554,18 @@ public class ProgramRest implements ResourceContainer {
       }
     }
     return new ByteArrayInputStream(defaultProgramCover);
+  }
+
+  private InputStream getDefaultAvatarInputStream() throws IOException {
+    if (defaultProgramAvatar == null) {
+      InputStream is = portalContainer.getPortalContext().getResourceAsStream(DEFAULT_AVATAR_PATH);
+      if (is == null) {
+        defaultProgramAvatar = new byte[] {};
+      } else {
+        defaultProgramAvatar = IOUtil.getStreamContentAsBytes(is);
+      }
+    }
+    return new ByteArrayInputStream(defaultProgramAvatar);
   }
 
 }

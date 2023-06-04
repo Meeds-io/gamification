@@ -678,4 +678,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <column name="RULE_ID" type="BIGINT" />
       </createIndex>
     </changeSet>
+
+    <changeSet  author="exo-gamification" id="1.0.0-60">
+      <addColumn tableName="GAMIFICATION_DOMAIN">
+        <column name="AVATAR_FILE_ID" type="BIGINT" defaultValueNumeric="0" />
+      </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

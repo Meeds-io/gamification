@@ -52,11 +52,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-card-text>
             <v-card-text class="d-flex pa-0">
               <v-img
-                :src="programCover"
-                :height="programCoverSize"
-                :width="programCoverSize"
-                :max-height="programCoverSize"
-                :max-width="programCoverSize" /><span class="my-auto ms-3">{{ programTitle }}</span>
+                :src="programAvatar"
+                :height="programAvatarSize"
+                :width="programAvatarSize"
+                :max-height="programAvatarSize"
+                :max-width="programAvatarSize" /><span class="my-auto ms-3">{{ programTitle }}</span>
             </v-card-text>
             <v-card-text class="d-flex pa-0">
               <translation-text-field
@@ -308,7 +308,7 @@ export default {
     validDescription: false,
     validEvent: false,
     stepper: 0,
-    programCoverSize: 40,
+    programAvatarSize: 40,
     isValidForm: true,
     maxTitleLength: 50,
     maxDescriptionLength: 500,
@@ -339,8 +339,8 @@ export default {
       });
       return this.eventMapping;
     },
-    programCover() {
-      return this.program?.coverUrl || '';
+    programAvatar() {
+      return this.program?.avatarUrl || '';
     },
     programTitle() {
       return this.program?.title;
