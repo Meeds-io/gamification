@@ -232,7 +232,7 @@
       <div class="d-flex mr-2">
         <v-spacer />
         <v-btn
-          v-if="stepper === 2"
+          v-if="stepper === 2 && !expanded"
           :disabled="loading"
           class="btn me-2"
           @click.prevent.stop="stepper--">
@@ -279,7 +279,7 @@ export default {
     originalProgram: null,
     programOwners: [],
     maxTitleLength: 50,
-    maxDescriptionLength: 1300,
+    maxDescriptionLength: 500,
     programTitle: null,
     programDescription: null,
     programTitleTranslations: {},
@@ -333,7 +333,7 @@ export default {
     },
     rules() {
       return {
-        length: (v) => (v && v.length < 50) || this.$t('programs.label.TitleLengthExceed'),
+        length: (v) => (v && v.length < this.maxTitleLength) || this.$t('programs.label.TitleLengthExceed'),
         value: (v) => (v >= 0 && v <= 9999) || this.$t('challenges.label.pointsValidation')
       };
     },
