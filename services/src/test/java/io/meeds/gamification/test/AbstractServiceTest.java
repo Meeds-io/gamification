@@ -446,6 +446,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     domain.setCreatedDate(new Date());
     domain.setBudget(20L);
     domain.setCoverFileId(1L);
+    domain.setAvatarFileId(2L);
     domain.setAudienceId(audienceId);
     domain.setOwners(owners);
     ProgramEntity createdDomain = programDAO.create(domain);

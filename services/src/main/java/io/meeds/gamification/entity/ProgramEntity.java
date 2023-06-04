@@ -71,6 +71,9 @@ public class ProgramEntity extends AbstractAuditingEntity implements Serializabl
   @Column(name = "COVER_FILE_ID")
   protected long            coverFileId;
 
+  @Column(name = "AVATAR_FILE_ID")
+  protected long            avatarFileId;
+
   @Column(name = "AUDIENCE_ID")
   protected Long            audienceId;
 

@@ -28,7 +28,7 @@ import static io.meeds.gamification.utils.Utils.STATISTICS_DISABLE_PROGRAM_OPERA
 import static io.meeds.gamification.utils.Utils.STATISTICS_ENABLE_PROGRAM_OPERATION;
 import static io.meeds.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_BUDGET_PARAM;
-import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_COVERFILEID_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_COVER_FILEID_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_ID_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_OWNERS_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_SUBMODULE;
@@ -179,7 +179,7 @@ public class AnalyticsProgramListenerTest {
       assertEquals(String.valueOf(program.getType()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_TYPE_PARAM)));
       assertEquals(String.valueOf(program.getCoverFileId()),
-                   String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_COVERFILEID_PARAM)));
+                   String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_COVER_FILEID_PARAM)));
       assertEquals(String.valueOf(program.getOwnerIds()),
                    String.valueOf(statisticData.getListParameters().get(STATISTICS_PROGRAM_OWNERS_PARAM)));
       return true;

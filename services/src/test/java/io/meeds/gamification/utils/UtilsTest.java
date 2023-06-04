@@ -18,8 +18,8 @@
 package io.meeds.gamification.utils;
 import static io.meeds.gamification.mock.SpaceServiceMock.SPACE_GROUP_ID;
 import static io.meeds.gamification.mock.SpaceServiceMock.SPACE_PRETTY_NAME;
-import static io.meeds.gamification.utils.Utils.DEFAULT_IMAGE_REMOTE_ID;
-import static io.meeds.gamification.utils.Utils.TYPE;
+import static io.meeds.gamification.utils.Utils.DEFAULT_COVER_REMOTE_ID;
+import static io.meeds.gamification.utils.Utils.ATTACHMENT_COVER_TYPE;
 import static io.meeds.gamification.utils.Utils.isAttachmentTokenValid;
 
 import java.util.Date;
@@ -222,23 +222,23 @@ public class UtilsTest extends AbstractServiceTest {
   @Test
   public void testBuildAttachmentUrl() {
     Long lastModifiedDate = System.currentTimeMillis();
-    String attachementURl = Utils.buildAttachmentUrl("0", lastModifiedDate, TYPE, false);
+    String attachementURl = Utils.buildAttachmentUrl("0", lastModifiedDate, ATTACHMENT_COVER_TYPE, DEFAULT_COVER_REMOTE_ID, false);
     assertNull(attachementURl);
-    attachementURl = Utils.buildAttachmentUrl("1", 0l, TYPE, true);
+    attachementURl = Utils.buildAttachmentUrl("1", 0l, ATTACHMENT_COVER_TYPE, DEFAULT_COVER_REMOTE_ID, true);
     assertNotNull(attachementURl);
-    assertTrue(attachementURl.contains(DEFAULT_IMAGE_REMOTE_ID));
-    attachementURl = Utils.buildAttachmentUrl("1", lastModifiedDate, TYPE, false);
+    assertTrue(attachementURl.contains(DEFAULT_COVER_REMOTE_ID));
+    attachementURl = Utils.buildAttachmentUrl("1", lastModifiedDate, ATTACHMENT_COVER_TYPE, DEFAULT_COVER_REMOTE_ID, false);
     assertNotNull(attachementURl);
-    assertFalse(attachementURl.contains(DEFAULT_IMAGE_REMOTE_ID));
+    assertFalse(attachementURl.contains(DEFAULT_COVER_REMOTE_ID));
   }
 
   @Test
   public void testIsAttachmentTokenValid() {
     long lastModifiedTime = System.currentTimeMillis();
     String domainId = "1";
-    String token = Utils.generateAttachmentToken(domainId, TYPE, lastModifiedTime);
+    String token = Utils.generateAttachmentToken(domainId, ATTACHMENT_COVER_TYPE, lastModifiedTime);
 
-    assertTrue(isAttachmentTokenValid(token, domainId, TYPE, lastModifiedTime));
-    assertFalse(isAttachmentTokenValid("", domainId, TYPE, lastModifiedTime));
+    assertTrue(isAttachmentTokenValid(token, domainId, ATTACHMENT_COVER_TYPE, lastModifiedTime));
+    assertFalse(isAttachmentTokenValid("", domainId, ATTACHMENT_COVER_TYPE, lastModifiedTime));
   }
 }

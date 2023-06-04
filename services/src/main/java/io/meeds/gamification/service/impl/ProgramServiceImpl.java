@@ -27,8 +27,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.commons.file.model.FileItem;
-import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -58,18 +56,14 @@ public class ProgramServiceImpl implements ProgramService {
 
   protected final SpaceService    spaceService;
 
-  protected final FileService     fileService;
-
   public ProgramServiceImpl(ProgramStorage programStorage,
                             ListenerService listenerService,
                             IdentityManager identityManager,
-                            SpaceService spaceService,
-                            FileService fileService) {
+                            SpaceService spaceService) {
     this.programStorage = programStorage;
     this.listenerService = listenerService;
     this.identityManager = identityManager;
     this.spaceService = spaceService;
-    this.fileService = fileService;
   }
 
   @Override
@@ -209,6 +203,7 @@ public class ProgramServiceImpl implements ProgramService {
     program.setCreatedDate(storedProgram.getCreatedDate());
     program.setDeleted(storedProgram.isDeleted());
     program.setCoverFileId(storedProgram.getCoverFileId());
+    program.setAvatarFileId(storedProgram.getAvatarFileId());
 
     program = programStorage.saveProgram(program);
     if (storedProgram.isEnabled() && !program.isEnabled()) {
@@ -224,7 +219,6 @@ public class ProgramServiceImpl implements ProgramService {
   @Override
   public ProgramDTO deleteProgramById(long programId, Identity aclIdentity) throws IllegalAccessException,
                                                                             ObjectNotFoundException {
-    String date = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
     ProgramDTO program = programStorage.getProgramById(programId);
     if (program == null) {
       throw new ObjectNotFoundException("program doesn't exist");
@@ -233,10 +227,49 @@ public class ProgramServiceImpl implements ProgramService {
       throw new IllegalAccessException("The user is not authorized to delete the program");
     }
     program.setDeleted(true);
-    program.setLastModifiedDate(date);
     program = programStorage.saveProgram(program);
     broadcast(GAMIFICATION_DOMAIN_DELETE_LISTENER, program, aclIdentity.getUserId());
     return program;
+  }
+
+  @Override
+  public void deleteProgramCoverById(long programId, Identity aclIdentity) throws ObjectNotFoundException,
+                                                                           IllegalAccessException {
+    ProgramDTO program = programStorage.getProgramById(programId);
+    if (program == null) {
+      throw new ObjectNotFoundException("program doesn't exist");
+    }
+    if (aclIdentity == null || !isProgramOwner(programId, aclIdentity.getUserId())) {
+      throw new IllegalAccessException("The user is not authorized to delete the program cover");
+    }
+    long coverFileId = program.getCoverFileId();
+    if (coverFileId <= 0) {
+      throw new ObjectNotFoundException("program cover doesn't exist");
+    }
+    programStorage.deleteImage(coverFileId);
+    program.setCoverFileId(0);
+    program = programStorage.saveProgram(program);
+    broadcast(GAMIFICATION_DOMAIN_DELETE_LISTENER, program, aclIdentity.getUserId());
+  }
+
+  @Override
+  public void deleteProgramAvatarById(long programId, Identity aclIdentity) throws ObjectNotFoundException,
+                                                                           IllegalAccessException {
+    ProgramDTO program = programStorage.getProgramById(programId);
+    if (program == null) {
+      throw new ObjectNotFoundException("program doesn't exist");
+    }
+    if (aclIdentity == null || !isProgramOwner(programId, aclIdentity.getUserId())) {
+      throw new IllegalAccessException("The user is not authorized to delete the program avatar");
+    }
+    long avatarFileId = program.getAvatarFileId();
+    if (avatarFileId <= 0) {
+      throw new ObjectNotFoundException("program avatar doesn't exist");
+    }
+    programStorage.deleteImage(avatarFileId);
+    program.setAvatarFileId(0);
+    program = programStorage.saveProgram(program);
+    broadcast(GAMIFICATION_DOMAIN_DELETE_LISTENER, program, aclIdentity.getUserId());
   }
 
   @Override
@@ -267,22 +300,27 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public InputStream getFileDetailAsStream(long programId) throws ObjectNotFoundException {
+  public InputStream getProgramCoverStream(long programId) throws ObjectNotFoundException {
     ProgramDTO program = programStorage.getProgramById(programId);
     if (program == null) {
       throw new ObjectNotFoundException("program with id " + programId + " doesn't exist");
     }
     if (program.getCoverFileId() == 0) {
-      throw new ObjectNotFoundException("program with id " + programId + " doesn't have a coverdId");
+      throw new ObjectNotFoundException("program with id " + programId + " doesn't have a coverId");
     }
-    FileItem fileItem;
-    try {
-      fileItem = fileService.getFile(program.getCoverFileId());
-      return fileItem == null || fileItem.getFileInfo() == null ? null : fileItem.getAsStream();
-    } catch (Exception e) {
-      LOG.warn("Error retrieving image with id {}", programId, e);
-      return null;
+    return programStorage.getImageAsStream(program.getCoverFileId());
+  }
+
+  @Override
+  public InputStream getProgramAvatarStream(long programId) throws ObjectNotFoundException {
+    ProgramDTO program = programStorage.getProgramById(programId);
+    if (program == null) {
+      throw new ObjectNotFoundException("program with id " + programId + " doesn't exist");
     }
+    if (program.getAvatarFileId() == 0) {
+      throw new ObjectNotFoundException("program with id " + programId + " doesn't have an avatarId");
+    }
+    return programStorage.getImageAsStream(program.getAvatarFileId());
   }
 
   @Override

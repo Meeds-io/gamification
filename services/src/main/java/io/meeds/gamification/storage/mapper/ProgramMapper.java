@@ -28,6 +28,7 @@ import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.utils.Utils;
 
+@SuppressWarnings("deprecation")
 public class ProgramMapper {
 
   private ProgramMapper() {
@@ -66,6 +67,7 @@ public class ProgramMapper {
     programEntity.setPriority(program.getPriority());
     programEntity.setBudget(program.getBudget());
     programEntity.setCoverFileId(program.getCoverFileId());
+    programEntity.setAvatarFileId(program.getAvatarFileId());
     if (StringUtils.isBlank(program.getType())) {
       programEntity.setType(EntityType.AUTOMATIC);
     } else {
@@ -86,8 +88,14 @@ public class ProgramMapper {
     long lastUpdateTime = programEntity.getLastModifiedDate() == null ? 0 : programEntity.getLastModifiedDate().getTime();
     String coverUrl = Utils.buildAttachmentUrl(String.valueOf(programEntity.getId()),
                                                lastUpdateTime,
-                                               Utils.TYPE,
+                                               Utils.ATTACHMENT_COVER_TYPE,
+                                               Utils.DEFAULT_COVER_REMOTE_ID,
                                                programEntity.getCoverFileId() == 0);
+    String avatarUrl = Utils.buildAttachmentUrl(String.valueOf(programEntity.getId()),
+                                               lastUpdateTime,
+                                               Utils.ATTACHMENT_AVATAR_TYPE,
+                                               Utils.DEFAULT_AVATAR_REMOTE_ID,
+                                               programEntity.getAvatarFileId() == 0);
     ProgramDTO program = new ProgramDTO();
     program.setId(programEntity.getId());
     program.setTitle(programEntity.getTitle());
@@ -104,7 +112,9 @@ public class ProgramMapper {
     program.setBudget(programEntity.getBudget());
     program.setType(programEntity.getType().name());
     program.setCoverFileId(programEntity.getCoverFileId());
+    program.setAvatarFileId(programEntity.getAvatarFileId());
     program.setCoverUrl(coverUrl);
+    program.setAvatarUrl(avatarUrl);
     program.setOwnerIds(programEntity.getOwners());
     program.setOpen(programEntity.getAudienceId() == null);
     program.setRulesTotalScore(programEntity.isDeleted() || !programEntity.isEnabled() ? 0

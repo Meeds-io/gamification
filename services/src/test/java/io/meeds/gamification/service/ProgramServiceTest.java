@@ -298,6 +298,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
     programToSave.setBudget(20L);
     programToSave.setOwnerIds(Collections.emptySet());
     programToSave.setCoverFileId(1L);
+    programToSave.setAvatarFileId(2L);
     programToSave.setType(EntityType.MANUAL.name());
     assertThrows(IllegalAccessException.class, () -> programService.createProgram(programToSave, spaceMemberAclIdentity));
 
@@ -312,6 +313,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
     assertTrue(programToSave.isEnabled());
     assertEquals(20L, programToSave.getBudget());
     assertEquals(1L, programToSave.getCoverFileId());
+    assertEquals(2L, programToSave.getAvatarFileId());
     assertEquals(EntityType.MANUAL.name(), savedDomain.getType());
     assertNotNull(programToSave.getCreatedDate());
     assertNotNull(programToSave.getLastModifiedDate());
@@ -441,21 +443,81 @@ public class ProgramServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetFileDetailAsStream() throws Exception {
-    assertThrows(ObjectNotFoundException.class, () -> programService.getFileDetailAsStream(0));
-    assertThrows(ObjectNotFoundException.class, () -> programService.getFileDetailAsStream(150L));
+  public void testGetProgramCoverAsStream() throws Exception {
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramCoverStream(0));
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramCoverStream(150L));
 
     String uplaodId = "uplaodId" + new Random().nextInt();
     File tempFile = File.createTempFile("image", "temp");
     ProgramDTO domain = newProgram();
     long domainId = domain.getId();
 
-    assertThrows(ObjectNotFoundException.class, () -> programService.getFileDetailAsStream(domainId));
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramCoverStream(domainId));
     MockUploadService uploadService = (MockUploadService) ExoContainerContext.getService(UploadService.class);
     uploadService.createUploadResource(uplaodId, tempFile.getPath(), "cover.png", "image/png");
     domain.setCoverUploadId(uplaodId);
     domain = programService.updateProgram(domain, adminAclIdentity);
-    assertNotNull(programService.getFileDetailAsStream(domain.getId()));
+    assertNotNull(programService.getProgramCoverStream(domain.getId()));
+  }
+
+  @Test
+  public void testGetProgramAvatarAsStream() throws Exception {
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramAvatarStream(0));
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramAvatarStream(150L));
+
+    String uplaodId = "uplaodId" + new Random().nextInt();
+    File tempFile = File.createTempFile("image", "temp");
+    ProgramDTO domain = newProgram();
+    long domainId = domain.getId();
+
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramAvatarStream(domainId));
+    MockUploadService uploadService = (MockUploadService) ExoContainerContext.getService(UploadService.class);
+    uploadService.createUploadResource(uplaodId, tempFile.getPath(), "avatar.png", "image/png");
+    domain.setAvatarUploadId(uplaodId);
+    domain = programService.updateProgram(domain, adminAclIdentity);
+    assertNotNull(programService.getProgramAvatarStream(domain.getId()));
+  }
+
+  @Test
+  public void testDeleteProgramCover() throws Exception {
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramCoverStream(0));
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramCoverStream(150L));
+
+    String uplaodId = "uplaodId" + new Random().nextInt();
+    File tempFile = File.createTempFile("image", "temp");
+    ProgramDTO domain = newProgram();
+    long domainId = domain.getId();
+
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramCoverStream(domainId));
+    MockUploadService uploadService = (MockUploadService) ExoContainerContext.getService(UploadService.class);
+    uploadService.createUploadResource(uplaodId, tempFile.getPath(), "cover.png", "image/png");
+    domain.setCoverUploadId(uplaodId);
+    domain = programService.updateProgram(domain, adminAclIdentity);
+    assertNotNull(programService.getProgramCoverStream(domain.getId()));
+
+    programService.deleteProgramCoverById(domainId, adminAclIdentity);
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramCoverStream(domainId));
+  }
+
+  @Test
+  public void testDeleteProgramAvatar() throws Exception {
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramAvatarStream(0));
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramAvatarStream(150L));
+
+    String uplaodId = "uplaodId" + new Random().nextInt();
+    File tempFile = File.createTempFile("image", "temp");
+    ProgramDTO domain = newProgram();
+    long domainId = domain.getId();
+
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramAvatarStream(domainId));
+    MockUploadService uploadService = (MockUploadService) ExoContainerContext.getService(UploadService.class);
+    uploadService.createUploadResource(uplaodId, tempFile.getPath(), "avatar.png", "image/png");
+    domain.setAvatarUploadId(uplaodId);
+    domain = programService.updateProgram(domain, adminAclIdentity);
+    assertNotNull(programService.getProgramAvatarStream(domain.getId()));
+
+    programService.deleteProgramAvatarById(domainId, adminAclIdentity);
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramAvatarStream(domainId));
   }
 
   @Test

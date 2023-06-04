@@ -39,18 +39,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <engagement-center-program-disabled-mask-content
             :program="program" />
         </engagement-center-card-mask>
-        <div class="d-flex flex-grow-1">
-          <v-img
-            :src="programCover"
-            :alt="$t('programs.cover.default')"
-            :min-height="36"
-            :max-height="height"
+        <div class="d-flex flex-column flex-grow-1">
+          <div class="position-relative d-flex flex-column align-end full-width">
+            <div class="position-absolute z-index-one">
+              <engagement-center-program-menu
+                :is-administrator="isAdministrator"
+                :program="program" />
+            </div>
+          </div>
+          <v-avatar
+            class="align-start flex-grow-1"
             height="auto"
             min-width="100%"
             width="100%"
-            class="d-flex primary--text border-color">
-            <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
-          </v-img>
+            tile>
+            <img
+              id="engagementCenterCoverImage"
+              :src="programCover"
+              :alt="$t('programs.cover.default')"
+              class="full-width border-color rounded"
+              role="presentation">
+          </v-avatar>
         </div>
         <div class="d-sm-flex">
           <div class="me-auto pe-sm-6 pt-5">
@@ -243,7 +252,7 @@ export default {
       status: 'ENABLED',
       keyword: null,
       realizationsLimit: 3,
-      programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`
+      programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`,
     };
   },
   computed: {
