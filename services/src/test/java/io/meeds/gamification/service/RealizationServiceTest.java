@@ -370,6 +370,11 @@ public class RealizationServiceTest extends AbstractServiceTest {
 
     rule.setEndDate(Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + MILLIS_IN_A_DAY)));
     ruleService.updateRule(rule);
+
+    ProgramDTO program = programService.getProgramById(rule.getProgramId());
+    program.setEnabled(true); // Program was disabled automatically
+    programService.updateProgram(program);
+
     realizations = realizationService.createRealizations(rule.getEvent(),
                                                          adminIdentityId,
                                                          spaceMemberIdentityId,

@@ -146,6 +146,18 @@ public interface ProgramService {
   ProgramDTO updateProgram(ProgramDTO program, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException;
 
   /**
+   * Update an existing Program
+   * 
+   * @param  program                  : an instance of type ProgramDTO
+   * @return                          updated object {@link ProgramDTO}
+   * @throws IllegalArgumentException when user is not authorized to update the
+   *                                    Program
+   * @throws ObjectNotFoundException  when the Program identified by its
+   *                                    technical identifier is not found
+   */
+  ProgramDTO updateProgram(ProgramDTO program) throws ObjectNotFoundException;
+
+  /**
    * Deletes an existing Program by id
    *
    * @param  programId               Program technical identifier to delete

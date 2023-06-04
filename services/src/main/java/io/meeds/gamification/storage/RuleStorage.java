@@ -53,11 +53,6 @@ public class RuleStorage {
     return RuleMapper.fromEntity(programStorage, ruleDAO.find(id));
   }
 
-  public List<RuleDTO> findActiveRulesByEvent(String event) {
-    List<RuleEntity> entities = ruleDAO.findActiveRulesByEvent(event);
-    return RuleMapper.fromEntities(programStorage, entities);
-  }
-
   public RuleDTO findRuleByTitle(String ruleTitle) {
     return RuleMapper.fromEntity(programStorage, ruleDAO.findRuleByTitle(ruleTitle));
   }

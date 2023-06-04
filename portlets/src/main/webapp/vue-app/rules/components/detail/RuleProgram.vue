@@ -25,7 +25,7 @@
     class="rule-program pa-0"
     dense
     ripple>
-    <v-list-item-avatar class="me-2">
+    <v-list-item-avatar class="me-2" tile>
       <v-avatar
         :size="programCoverSize"
         class="border-color"
