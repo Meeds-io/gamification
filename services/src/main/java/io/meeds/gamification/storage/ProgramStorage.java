@@ -28,6 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.IdentityConstants;
 import org.exoplatform.upload.UploadResource;
 import org.exoplatform.upload.UploadService;
@@ -40,6 +42,8 @@ import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.storage.mapper.ProgramMapper;
 
 public class ProgramStorage {
+
+  private static final Log    LOG                 = ExoLogger.getLogger(ProgramStorage.class);
 
   private static final String FILE_API_NAME_SPACE = "gamification";
 
@@ -64,8 +68,12 @@ public class ProgramStorage {
   public ProgramDTO saveProgram(ProgramDTO program) {
     ProgramEntity programEntity = ProgramMapper.toEntity(program);
     if (StringUtils.isNotBlank(program.getCoverUploadId())) {
-      Long coverFileId = saveProgramCover(program.getCoverUploadId());
+      Long coverFileId = saveProgramImage(program.getCoverUploadId());
       programEntity.setCoverFileId(coverFileId);
+    }
+    if (StringUtils.isNotBlank(program.getAvatarUploadId())) {
+      Long avatarFileId = saveProgramImage(program.getAvatarUploadId());
+      programEntity.setAvatarFileId(avatarFileId);
     }
     if (CollectionUtils.isEmpty(programEntity.getOwners())) {
       programEntity.setOwners(new HashSet<>());
@@ -76,8 +84,10 @@ public class ProgramStorage {
     }
     if (programEntity.getId() == null || programEntity.getId() == 0) {
       programEntity.setId(null);
+      programEntity.setCreatedDate(new Date());
       programEntity = programDAO.create(programEntity);
     } else {
+      programEntity.setLastModifiedDate(new Date());
       programEntity = programDAO.update(programEntity);
     }
     return ProgramMapper.fromEntity(ruleDAO, programEntity);
@@ -110,11 +120,32 @@ public class ProgramStorage {
     return ProgramMapper.fromEntity(ruleDAO, programEntity);
   }
 
+  public InputStream getImageAsStream(long fileId) {
+    try {
+      FileItem fileItem = fileService.getFile(fileId);
+      return fileItem == null || fileItem.getFileInfo() == null ? null : fileItem.getAsStream();
+    } catch (Exception e) {
+      LOG.warn("Error retrieving image with id {}", fileId, e);
+      return null;
+    }
+  }
+
+  public void deleteImage(long fileId) {
+    try {
+      FileItem fileItem = fileService.getFile(fileId);
+      if (fileItem != null && fileItem.getFileInfo() != null && !fileItem.getFileInfo().isDeleted()) {
+        fileService.deleteFile(fileId);
+      }
+    } catch (Exception e) {
+      LOG.warn("Error deleting file image with id {}", fileId, e);
+    }
+  }
+
   public void clearCache() {// NOSONAR
     // implemented in cached storage
   }
 
-  private Long saveProgramCover(String uploadId) {
+  private Long saveProgramImage(String uploadId) {
     if (uploadId == null || uploadId.isBlank()) {
       throw new IllegalArgumentException("uploadId is mandatory");
     }
@@ -136,9 +167,10 @@ public class ProgramStorage {
       fileItem = fileService.writeFile(fileItem);
       return fileItem != null && fileItem.getFileInfo() != null ? fileItem.getFileInfo().getId() : null;
     } catch (Exception e) {
-      throw new IllegalStateException("Error while saving Program cover file", e);
+      throw new IllegalStateException("Error while saving Program image file", e);
     } finally {
       uploadService.removeUploadResource(uploadResource.getUploadId());
     }
   }
+
 }

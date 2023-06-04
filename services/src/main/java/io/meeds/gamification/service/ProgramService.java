@@ -159,6 +159,30 @@ public interface ProgramService {
   ProgramDTO deleteProgramById(long programId, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException; // NOSONAR
 
   /**
+   * Delete program Cover identified by program id
+   * 
+   * @param  programId               {@link ProgramDTO} technical identifier
+   * @param  aclIdentity             Security identity of user attempting to
+   *                                   delete the program cover
+   * @throws IllegalAccessException  when user is not authorized to delete
+   *                                   program cover
+   * @throws ObjectNotFoundException program not found
+   */
+  void deleteProgramCoverById(long programId, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException; // NOSONAR
+
+  /**
+   * Delete program Avatar identified by program id
+   * 
+   * @param  programId               {@link ProgramDTO} technical identifier
+   * @param  aclIdentity             Security identity of user attempting to
+   *                                   delete the program avatar
+   * @throws IllegalAccessException  when user is not authorized to delete
+   *                                   program avatar
+   * @throws ObjectNotFoundException program not found
+   */
+  void deleteProgramAvatarById(long programId, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException;
+
+  /**
    * Retrieves a program identified by its technical identifier.
    * 
    * @param  programId : program id
@@ -214,13 +238,24 @@ public interface ProgramService {
   int countMemberPrograms(String username);
 
   /**
-   * Retrieves a cover identified by Program technical identifier.
+   * Retrieves the program cover identified by Program technical identifier.
    *
    * @param  programId               Program unique identifier
    * @return                         found {@link InputStream}
-   * @throws ObjectNotFoundException Program not found
+   * @throws ObjectNotFoundException When program not found or file attachment
+   *                                   not found
    */
-  InputStream getFileDetailAsStream(long programId) throws ObjectNotFoundException;
+  InputStream getProgramCoverStream(long programId) throws ObjectNotFoundException;
+
+  /**
+   * Retrieves the program avatar identified by Program technical identifier.
+   *
+   * @param  programId               Program unique identifier
+   * @return                         found {@link InputStream}
+   * @throws ObjectNotFoundException When program not found or file attachment
+   *                                   not found
+   */
+  InputStream getProgramAvatarStream(long programId) throws ObjectNotFoundException;
 
   /**
    * Check whether user can add programs or not

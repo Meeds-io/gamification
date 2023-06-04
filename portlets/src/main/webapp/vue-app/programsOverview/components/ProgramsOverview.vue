@@ -47,7 +47,7 @@
                   two-line>
                   <v-list-item-icon class="mx-2">
                     <v-img
-                      :src="item.coverUrl"
+                      :src="item.avatarUrl"
                       height="40"
                       width="55" />
                   </v-list-item-icon>

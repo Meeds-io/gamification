@@ -95,6 +95,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>translationField</module>
       </depends>
       <depends>
+        <module>imageCropper</module>
+      </depends>
+      <depends>
         <module>extensionRegistry</module>
       </depends>
       <depends>

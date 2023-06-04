@@ -65,9 +65,15 @@ public class ProgramDTO implements Serializable, Cloneable {
 
   protected String          coverUploadId;
 
+  protected String          avatarUploadId;
+
   protected long            coverFileId;
 
+  protected long            avatarFileId;
+
   protected String          coverUrl;
+
+  protected String          avatarUrl;
 
   protected Set<Long>       ownerIds;                                // NOSONAR
 
@@ -76,9 +82,10 @@ public class ProgramDTO implements Serializable, Cloneable {
   protected boolean         open;
 
   /**
-   * Deprecated should be renamed to spaceId knowing that audienceId
-   * should reference an identity id instead
-   * @return space technical identifier
+   * Deprecated should be renamed to spaceId knowing that audienceId should
+   * reference an identity id instead
+   * 
+   * @return     space technical identifier
    * @deprecated user spaceId instead
    */
   @Deprecated(forRemoval = true, since = "1.5.0")
@@ -87,10 +94,11 @@ public class ProgramDTO implements Serializable, Cloneable {
   }
 
   /**
-   * Deprecated should be renamed to spaceId knowing that audienceId
-   * should reference an identity id instead
-   * @param spaceId space technical identifier
-   * @deprecated user spaceId instead
+   * Deprecated should be renamed to spaceId knowing that audienceId should
+   * reference an identity id instead
+   * 
+   * @param      spaceId space technical identifier
+   * @deprecated         user spaceId instead
    */
   @Deprecated(forRemoval = true, since = "1.5.0")
   public void setAudienceId(long spaceId) {
@@ -113,8 +121,11 @@ public class ProgramDTO implements Serializable, Cloneable {
                           budget,
                           type,
                           coverUploadId,
+                          avatarUploadId,
                           coverFileId,
+                          avatarFileId,
                           coverUrl,
+                          avatarUrl,
                           ownerIds == null ? null : new HashSet<>(ownerIds),
                           rulesTotalScore,
                           open);

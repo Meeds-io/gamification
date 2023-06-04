@@ -63,16 +63,25 @@
                   <span class="subtitle-1">
                     {{ $t('programs.label.programCover') }}
                   </span>
-                  <engagement-center-image-selector
+                  <engagement-center-program-image-selector
                     id="engagementCenterProgramDrawerImageSelector"
                     ref="programCover"
                     v-model="program.coverUrl"
-                    class="mb-2"
-                    @updated="addCover" />
-                  <span class="caption mt-2 text-light-color">
-                    <v-icon class="mb-1" small>fas fa-info-circle</v-icon>
-                    {{ $t('programs.label.coverWarning') }}
+                    image-type="cover"
+                    @updated="addCover"
+                    @deleted="removeCover" />
+                </div>
+                <div class="pt-4">
+                  <span class="subtitle-1">
+                    {{ $t('programs.label.programAvatar') }}
                   </span>
+                  <engagement-center-program-image-selector
+                    id="engagementCenterProgramDrawerImageSelector"
+                    ref="programAvatar"
+                    v-model="program.avatarUrl"
+                    image-type="avatar"
+                    @updated="addAvatar"
+                    @deleted="removeAvatar" />
                 </div>
                 <translation-text-field
                   ref="programTitle"
@@ -271,7 +280,11 @@ export default {
     isAdministrator: {
       type: Boolean,
       default: false,
-    }
+    },
+    maxUploadSize: {
+      type: Number,
+      default: () => 2,
+    },
   },
   data: () => ({
     stepper: 0,
@@ -293,6 +306,11 @@ export default {
     validDescription: false,
     programSpace: null,
     expanded: false,
+    imageType: 'banner',
+    deleteCover: false,
+    defaultCover: false,
+    deleteAvatar: false,
+    defaultAvatar: false,
   }),
   computed: {
     audienceSearchOptions() {
@@ -314,6 +332,7 @@ export default {
     disabledSave() {
       return this.disableNextButton
           || (!this.spaceId && !this.openProgram)
+          || !this.programChanged
           || this.isExternalOwner;
     },
     disableNextButton() {
@@ -348,7 +367,9 @@ export default {
       );
     },
     programChanged() {
-      return this.originalProgram && JSON.stringify(this.programToSave) !== JSON.stringify(this.originalProgram);
+      return this.deleteCover
+          || this.deleteAvatar
+          || this.originalProgram && JSON.stringify(this.programToSave) !== JSON.stringify(this.originalProgram);
     },
     confirmCloseLabels() {
       return {
@@ -437,6 +458,10 @@ export default {
       this.programTitleTranslations = {};
       this.programDescription = this.program?.description || '';
       this.programDescriptionTranslations = {};
+      this.deleteCover = false;
+      this.deleteAvatar = false;
+      this.defaultCover = !this.program?.id || !this.program?.coverUrl || this.program.coverUrl.includes('default');
+      this.defaultAvatar = !this.program?.id || !this.program?.avatarUrl || this.program.avatarUrl.includes('default');
 
       if (this.program?.id && this.program?.space) {
         const space = this.program?.space;
@@ -479,9 +504,20 @@ export default {
       }
     },
     addCover(value) {
-      if (value) {
-        this.$set(this.program, 'coverUploadId', value);
-      }
+      this.deleteCover = false;
+      this.$set(this.program, 'coverUploadId', value);
+    },
+    addAvatar(value) {
+      this.deleteAvatar = false;
+      this.$set(this.program, 'avatarUploadId', value);
+    },
+    removeCover() {
+      this.deleteCover = !this.defaultCover;
+      this.$set(this.program, 'coverUploadId', null);
+    },
+    removeAvatar() {
+      this.deleteAvatar = !this.defaultAvatar;
+      this.$set(this.program, 'avatarUploadId', null);
     },
     clear() {
       this.stepper = 0;
@@ -494,6 +530,18 @@ export default {
       if (this.program?.id) {
         this.$translationService.saveTranslations('program', this.program.id, 'title', this.programTitleTranslations)
           .then(() => this.$translationService.saveTranslations('program', this.program.id, 'description', this.programDescriptionTranslations))
+          .then(() => {
+            if (this.deleteCover) {
+              return this.$programService.deleteProgramCover(this.program.id)
+                .finally(() => this.deleteCover = false);
+            }
+          })
+          .then(() => {
+            if (this.deleteAvatar) {
+              return this.$programService.deleteProgramAvatar(this.program.id)
+                .finally(() => this.deleteAvatar = false);
+            }
+          })
           .then(() => this.$programService.updateProgram(this.programToSave))
           .then((program) => {
             this.originalProgram = null;
@@ -539,6 +587,7 @@ export default {
         title: this.programTitle,
         description: this.programDescription,
         coverUploadId: program?.coverUploadId,
+        avatarUploadId: program?.avatarUploadId,
         spaceId: spaceId || program?.spaceId || 0,
         ownerIds: ownerIds || program?.ownerIds || null,
         open: program?.open || false,
