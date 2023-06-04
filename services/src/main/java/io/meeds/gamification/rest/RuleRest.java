@@ -16,6 +16,8 @@
  */
 package io.meeds.gamification.rest;
 
+import static io.meeds.gamification.utils.Utils.getCurrentUser;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,7 +64,6 @@ import io.meeds.gamification.rest.model.RuleRestEntity;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
-import io.meeds.gamification.utils.Utils;
 import io.meeds.social.translation.service.TranslationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -193,7 +194,7 @@ public class RuleRest implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
 
-    String currentUser = Utils.getCurrentUser();
+    String currentUser = getCurrentUser();
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setTerm(term);
     ruleFilter.setLocale(getLocale(lang));
@@ -206,8 +207,7 @@ public class RuleRest implements ResourceContainer {
     ruleFilter.setProgramId(programId);
     ruleFilter.setSortBy(sortField);
     ruleFilter.setSortDescending(sortDescending);
-    String[] expandFieldsArray = StringUtils.split(expand, ",");
-    List<String> expandFields = expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
+    List<String> expandFields = getExpandOptions(expand);
 
     if (periodType == null) {
       periodType = PeriodType.WEEK;
@@ -291,11 +291,10 @@ public class RuleRest implements ResourceContainer {
                           @Parameter(description = "Asking for a full representation of a specific subresource, ex: countRealizations", required = false)
                           @QueryParam("expand")
                           String expand) {
-    String currentUser = Utils.getCurrentUser();
+    String currentUser = getCurrentUser();
     try {
       RuleDTO rule = ruleService.findRuleById(id, currentUser);
-      String[] expandFieldsArray = StringUtils.split(expand, ",");
-      List<String> expandFields = expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
+      List<String> expandFields = getExpandOptions(expand);
       RuleRestEntity ruleEntity = RuleBuilder.toRestEntity(programService,
                                                            ruleService,
                                                            realizationService,
@@ -335,7 +334,7 @@ public class RuleRest implements ResourceContainer {
     if (ruleDTO == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Rule object is mandatory").build();
     }
-    String username = Utils.getCurrentUser();
+    String username = getCurrentUser();
     try {
       ruleDTO = ruleService.createRule(ruleDTO, username);
       return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO, getLocale(request))).build();
@@ -365,7 +364,7 @@ public class RuleRest implements ResourceContainer {
                              HttpServletRequest request,
                              @RequestBody(description = "rule object to update", required = true)
                              RuleDTO ruleDTO) {
-    String username = Utils.getCurrentUser();
+    String username = getCurrentUser();
 
     if (ruleDTO == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Rule object is mandatory").build();
@@ -401,7 +400,7 @@ public class RuleRest implements ResourceContainer {
     if (ruleId <= 0) {
       return Response.status(Status.BAD_REQUEST).entity("Rule technical identifier must be positive").build();
     }
-    String username = Utils.getCurrentUser();
+    String username = getCurrentUser();
     try {
       RuleDTO ruleDTO = ruleService.deleteRuleById(ruleId, username);
       return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO, getLocale(request))).build();
@@ -418,6 +417,11 @@ public class RuleRest implements ResourceContainer {
 
   private Locale getLocale(HttpServletRequest request) {
     return request == null ? null : request.getLocale();
+  }
+
+  private List<String> getExpandOptions(String expand) {
+    String[] expandFieldsArray = StringUtils.split(expand, ",");
+    return expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
   }
 
   private List<RuleRestEntity> getUserRulesByProgram(RuleFilter filter, // NOSONAR

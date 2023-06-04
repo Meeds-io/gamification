@@ -133,6 +133,8 @@ export default {
   created() {
     this.$root.$on('program-added', this.openCreatedProgramDetail);
     this.$root.$on('rule-created', this.resetNewlyCreated);
+    this.$root.$on('rule-updated', this.updateOpenedProgram);
+    this.$root.$on('rule-deleted', this.updateOpenedProgram);
     this.$root.$on('open-program-detail', this.openProgramDetail);
     this.$root.$on('open-program-detail-by-id', this.openProgramDetailById);
     this.$root.$on('close-program-detail', () => this.displayProgramDetail = false);
@@ -151,6 +153,12 @@ export default {
     },
     resetNewlyCreated() {
       this.newlyCreated = false;
+      this.updateOpenedProgram();
+    },
+    updateOpenedProgram() {
+      if (this.displayProgramDetail && this.program?.id) {
+        this.openProgramDetailById(this.program.id);
+      }
     },
     resetSelection() {
       this.displayProgramDetail = false;
@@ -161,7 +169,8 @@ export default {
     },
     openProgramDetailById(id, newlyCreated) {
       this.$programService.getProgramById(id, {
-        lang: eXo.env.portal.language
+        lang: eXo.env.portal.language,
+        expand: 'countActiveRules',
       })
         .then(program => {
           if (program?.id) {
@@ -184,14 +193,7 @@ export default {
       if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`) >= 0) {
         this.tab = 0;
         if (id) {
-          this.$programService.getProgramById(id, {
-            lang: eXo.env.portal.language
-          })
-            .then(program => {
-              if (program && program.id) {
-                this.$root.$emit('open-program-detail', program);
-              }
-            });
+          this.openProgramDetailById(id);
         }
       } else if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`) >= 0
               || urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contibutions/challenges`) >= 0) {

@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -42,6 +43,7 @@ import io.meeds.gamification.model.UserInfo;
 import io.meeds.gamification.model.UserInfoContext;
 import io.meeds.gamification.rest.model.ProgramRestEntity;
 import io.meeds.gamification.service.ProgramService;
+import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.utils.Utils;
 import io.meeds.social.translation.service.TranslationService;
 
@@ -55,14 +57,21 @@ public class ProgramBuilder {
   }
 
   public static ProgramRestEntity toRestEntity(ProgramService programService,
+                                               RuleService ruleService,
                                                TranslationService translationService,
                                                ProgramDTO program,
                                                Locale locale,
+                                               List<String> expandFields,
                                                String username) {
     if (program == null) {
       return null;
     }
     translatedLabels(translationService, program, locale);
+
+    int activeRulesCount = 0;
+    if (CollectionUtils.isNotEmpty(expandFields) && expandFields.contains("countActiveRules")) {
+      activeRulesCount = ruleService.countActiveRules(program.getId());
+    }
 
     return new ProgramRestEntity(program.getId(), // NOSONAR
                                  program.getTitle(),
@@ -88,7 +97,8 @@ public class ProgramBuilder {
                                  program.isOpen(),
                                  program.getSpaceId() > 0 ? Utils.getSpaceById(String.valueOf(program.getSpaceId())) : null,
                                  toUserContext(programService, program, username),
-                                 getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId()));
+                                 getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId()),
+                                 activeRulesCount);
   }
 
   public static void translatedLabels(TranslationService translationService, ProgramDTO program, Locale locale) {
@@ -112,11 +122,21 @@ public class ProgramBuilder {
   }
 
   public static List<ProgramRestEntity> toRestEntities(ProgramService programService,
+                                                       RuleService ruleService,
                                                        TranslationService translationService,
                                                        Locale locale,
                                                        List<ProgramDTO> programs,
+                                                       List<String> expandFields,
                                                        String username) {
-    return programs.stream().map(program -> toRestEntity(programService, translationService, program, locale, username)).toList();
+    return programs.stream()
+                   .map(program -> toRestEntity(programService,
+                                                ruleService,
+                                                translationService,
+                                                program,
+                                                locale,
+                                                expandFields,
+                                                username))
+                   .toList();
   }
 
   private static List<UserInfo> getProgramOwnersByIds(Set<Long> ids, long spaceId) {
