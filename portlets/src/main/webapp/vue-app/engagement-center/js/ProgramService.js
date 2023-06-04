@@ -95,6 +95,9 @@ export function getProgramById(id, filter) {
   if (filter?.lang) {
     formData.append('lang', filter.lang);
   }
+  if (filter?.expand) {
+    formData.append('expand', filter.expand);
+  }
   const params = new URLSearchParams(formData).toString();
   const extraParams = params && `?${params}` || '';
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs/${id}${extraParams}`, {

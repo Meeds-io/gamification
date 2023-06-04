@@ -45,6 +45,8 @@ public class ProgramRestEntity extends ProgramDTO {
 
   private List<UserInfo>    owners;                                  // NOSONAR
 
+  private int               activeRulesCount;                        // NOSONAR
+
   public ProgramRestEntity(long id, // NOSONAR
                            String title,
                            String description,
@@ -69,7 +71,8 @@ public class ProgramRestEntity extends ProgramDTO {
                            boolean open,
                            Space space,
                            UserInfo userInfo,
-                           List<UserInfo> owners) {
+                           List<UserInfo> owners,
+                           int activeRulesCount) {
     super(id,
           title,
           description,
@@ -95,6 +98,7 @@ public class ProgramRestEntity extends ProgramDTO {
     this.space = space;
     this.userInfo = userInfo;
     this.owners = owners;
+    this.activeRulesCount = activeRulesCount;
   }
 
 }

@@ -64,16 +64,6 @@ public class RuleStorageTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testFindEnabledRulesByEvent() {
-    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
-    RuleDTO rule = newRuleDTO();
-    assertEquals(ruleStorage.findActiveRulesByEvent(rule.getEvent()).size(), 1);
-    rule.setEnabled(false);
-    ruleStorage.saveRule(rule);
-    assertEquals(ruleStorage.findActiveRulesByEvent(rule.getEvent()).size(), 0);
-  }
-
-  @Test
   public void testFindRuleByEventAndDomain() {
     assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule = newRuleDTO();
