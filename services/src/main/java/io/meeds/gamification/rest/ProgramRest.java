@@ -171,7 +171,10 @@ public class ProgramRest implements ResourceContainer {
                               String lang,
                               @Parameter(description = "Term to search.")
                               @QueryParam("query")
-                              String query) {
+                              String query,
+                              @Parameter(description = "Used to retrieve extra information about the program")
+                              @QueryParam("expand")
+                              String expand) {
 
     ProgramFilter programFilter = new ProgramFilter();
     programFilter.setSortByBudget(sortByBudget);
@@ -183,6 +186,8 @@ public class ProgramRest implements ResourceContainer {
     if (owned) {
       programFilter.setOwnerId(getCurrentUserIdentityId());
     }
+    List<String> expandFields = getExpandOptions(expand);
+
     String currentUser = getCurrentUser();
     try {
       ProgramList programList = new ProgramList();
@@ -190,6 +195,7 @@ public class ProgramRest implements ResourceContainer {
                                                                          getLocale(lang),
                                                                          offset,
                                                                          limit,
+                                                                         expandFields,
                                                                          currentUser);
       if (returnSize) {
         int programsSize = programService.countPrograms(programFilter, currentUser);
@@ -553,6 +559,7 @@ public class ProgramRest implements ResourceContainer {
                                                                   Locale locale,
                                                                   int offset,
                                                                   int limit,
+                                                                  List<String> expandFields,
                                                                   String currentUser) throws IllegalAccessException {
     List<ProgramDTO> programs = programService.getPrograms(filter, currentUser, offset, limit);
     return ProgramBuilder.toRestEntities(programService,
@@ -560,7 +567,7 @@ public class ProgramRest implements ResourceContainer {
                                          translationService,
                                          locale,
                                          programs,
-                                         null,
+                                         expandFields,
                                          currentUser);
   }
 
