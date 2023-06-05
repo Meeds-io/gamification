@@ -172,15 +172,15 @@ public class BadgeService {
    * @throws ObjectAlreadyExistsException when badge already exists
    */
   public BadgeDTO updateBadge(BadgeDTO badgeDTO) throws ObjectAlreadyExistsException {
-    BadgeEntity badgeEntity = null;
-    badgeEntity = badgeDAO.findBadgeByTitleAndProgramId(badgeDTO.getTitle(), badgeDTO.getProgram().getId());
-    if (badgeEntity != null && badgeDTO.getId() != null && badgeEntity.getId().longValue() != badgeDTO.getId().longValue()) {
-      throw new ObjectAlreadyExistsException("Badge with same title and program already exist");
-    }
-    if (badgeDTO.getProgram() == null || !badgeDTO.getProgram().isEnabled()) {
+    if (badgeDTO.getProgram() == null || !badgeDTO.getProgram().isEnabled() || badgeDTO.getProgram().isDeleted()) {
       badgeDTO.setEnabled(false);
+    } else {
+      BadgeEntity similarBadgeEntity = badgeDAO.findBadgeByTitleAndProgramId(badgeDTO.getTitle(), badgeDTO.getProgram().getId());
+      if (similarBadgeEntity != null && badgeDTO.getId() != null && similarBadgeEntity.getId().longValue() != badgeDTO.getId().longValue()) {
+        throw new ObjectAlreadyExistsException("Badge with same title and program already exist");
+      }
     }
-    badgeEntity = badgeDAO.update(BadgeMapper.toEntity(badgeDTO));
+    BadgeEntity badgeEntity = badgeDAO.update(BadgeMapper.toEntity(badgeDTO));
     return BadgeMapper.fromEntity(programStorage, badgeEntity);
   }
 

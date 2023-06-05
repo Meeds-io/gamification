@@ -43,6 +43,7 @@
         :rules="rulesToDisplay"
         :program="program"
         :size="sizeToDisplay"
+        :action-value-extensions="actionValueExtensions"
         class="pa-0" />
     </v-list-item>
   </v-list-group>
@@ -61,6 +62,10 @@ export default {
     disabledCollapsing: {
       type: Boolean,
       default: false,
+    },
+    actionValueExtensions: {
+      type: Object,
+      default: null,
     },
   },
   data: () => ({

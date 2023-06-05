@@ -28,7 +28,13 @@ export function init() {
   exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       Vue.createApp({
+        data: {
+          now: Date.now(),
+        },
         template: `<gamification-overview-challenges id="${appId}" />`,
+        created() {
+          window.setInterval(() => this.now = Date.now(), 1000);
+        },
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'Challenges Overview');
