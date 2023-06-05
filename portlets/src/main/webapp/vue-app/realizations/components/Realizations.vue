@@ -20,7 +20,7 @@
 <template>
   <div class="Realizations border-box-sizing">
     <application-toolbar
-      :center-button-toggle="isRealizationManager && !isMobile && {
+      :center-button-toggle="isProgramManager && !isMobile && {
         selected: tabName,
         hide: false,
         buttons: [{
@@ -140,6 +140,10 @@
 <script>
 export default {
   props: {
+    isProgramManager: {
+      type: Boolean,
+      default: false,
+    },
     earnerId: {
       type: Number,
       default: () => 0,
@@ -187,7 +191,6 @@ export default {
     selected: 'Date',
     programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`,
     tabName: 'YOURS',
-    isRealizationManager: false,
   }),
   computed: {
     administrationMode() {
@@ -342,8 +345,6 @@ export default {
         this.availableSortBy.push(header);
       }
     });
-    this.$realizationService.isRealizationManager()
-      .then(manager => this.isRealizationManager = manager);
     // Workaround to fix closing menu when clicking outside
     $(document).mousedown(() => {
       if (this.$refs.select) {

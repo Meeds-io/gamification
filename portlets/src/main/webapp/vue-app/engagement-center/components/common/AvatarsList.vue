@@ -16,7 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <div class="d-flex">
-    <v-tooltip bottom>
+    <v-tooltip :disabled="$root.isMobile" bottom>
       <template #activator="{on}">
         <div v-on="on">
           <exo-user-avatars-list
