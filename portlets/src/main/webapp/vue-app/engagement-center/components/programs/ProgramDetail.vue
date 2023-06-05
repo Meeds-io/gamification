@@ -20,14 +20,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="py-2 py-sm-5 d-flex align-center">
         <v-tooltip :disabled="$root.isMobile" bottom>
           <template #activator="{ on }">
-            <v-btn
-              class="width-auto ms-n3"
-              icon
+            <v-card
+              class="d-flex align-center"
+              flat
               v-on="on"
               @click="backToProgramList">
-              <v-icon size="18" class="icon-default-color mx-2">fa-arrow-left</v-icon>
-            </v-btn>
-            <div class="text-header-title"> {{ programTitle }}</div>
+              <v-btn
+                class="width-auto ms-n3"
+                icon>
+                <v-icon size="18" class="icon-default-color mx-2">fa-arrow-left</v-icon>
+              </v-btn>
+              <div class="text-header-title"> {{ programTitle }}</div>
+            </v-card>
           </template>
           <span>{{ $t('programs.details.label.BackToList') }}</span>
         </v-tooltip>
