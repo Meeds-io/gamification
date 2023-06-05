@@ -18,7 +18,7 @@
 
 -->
 <template>
-  <div>
+  <v-card max-width="450" flat>
     <v-card-text class="d-flex flex-grow-1 text-left text-subtitle-1 px-0 py-2">
       {{ $t('gamification.achievementCanBeSubmitted') }}
     </v-card-text>
@@ -63,7 +63,7 @@
         {{ $t('gamification.achivementRecurrence.monthly') }}
       </engagement-center-button-group-item>
     </v-btn-toggle>
-  </div>
+  </v-card>
 </template>
 <script>
 export default {
