@@ -94,6 +94,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isProgramManager: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     selectedRuleId: null,

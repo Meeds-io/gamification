@@ -21,8 +21,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     role="main"
     flat>
     <application-toolbar
-      v-if="isAdministrator"
-      :left-button="!displayNoSearchResult && {
+      v-if="isProgramManager"
+      :left-button="isAdministrator && !displayNoSearchResult && {
         icon: 'fa-plus',
         text: $t('programs.button.addProgram'),
       }"
@@ -106,7 +106,11 @@ export default {
     isAdministrator: {
       type: Boolean,
       default: false,
-    }
+    },
+    isProgramManager: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -184,6 +188,7 @@ export default {
         limit: this.limitToFetch,
         type: this.type,
         status: this.status,
+        owned: !this.isAdministrator && this.isStatusDisabled,
         lang: eXo.env.portal.language,
       })
         .then((data) => {
