@@ -25,6 +25,7 @@
       class="pt-2 pb-6">
       <engagement-center-rules-category
         :category="category"
+        :action-value-extensions="actionValueExtensions"
         disabled-collapsing>
         <v-card-title class="px-0 py-1 text-color font-weight-bold text-break">
           {{ category.title }}
@@ -47,6 +48,10 @@ export default {
       default: function() {
         return [];
       },
+    },
+    actionValueExtensions: {
+      type: Object,
+      default: null,
     },
   },
   data: () => ({

@@ -20,14 +20,10 @@
 -->
 <template>
   <div v-if="show" class="rule-card-dates d-flex align-center">
-    <v-icon
-      class="primary--text me-2 mb-1"
-      size="18">
-      fas fa-calendar-check
-    </v-icon>
-    <engagement-center-rule-date-info
+    <engagement-center-rule-date-info-chip
       v-model="datesInfo"
       :rule="rule"
+      separator
       @input="initialized = true" />
   </div>
 </template>

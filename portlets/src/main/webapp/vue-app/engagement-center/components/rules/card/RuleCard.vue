@@ -35,7 +35,7 @@
               small />
           </div>
         </div>
-        <engagement-center-card-mask>
+        <engagement-center-card-mask class="z-index-one rounded">
           <engagement-center-rule-card-mask-content
             v-if="!isEnabled"
             :text="rule.enabled && $t('actions.label.disabledProgram') || $t('actions.label.disabled')"
@@ -51,9 +51,14 @@
             :rule="ruleWithProgram" />
         </engagement-center-card-mask>
       </div>
-      <v-card-title class="rule-card-title d-flex flex-nowrap pb-0 text-break">
-        <div :title="title" class="text-truncate flex-grow-1">
-          {{ title }}
+      <v-card-title class="rule-card-title d-flex flex-nowrap pb-4 text-break">
+        <div :title="title" class="d-flex align-center flex-grow-1 text-truncate">
+          <v-icon size="16" class="rule-icon primary--text me-2">
+            {{ actionIcon }}
+          </v-icon>
+          <span class="text-truncate subtitle-1">
+            {{ title }}
+          </span>
         </div>
         <div v-if="canEdit && hover && isValid" class="flex-grow-0 d-flex align-center">
           <engagement-center-rule-menu
@@ -63,7 +68,7 @@
       </v-card-title>
       <v-card-text
         v-sanitized-html="description"
-        class="rule-card-description rich-editor-content text-truncate-2 pb-0" />
+        class="rule-card-description rich-editor-content text-truncate-3 pb-0" />
       <template v-if="isEnabled">
         <v-spacer />
         <v-card-text v-if="rule.recurrence">
@@ -89,6 +94,10 @@ export default {
     program: {
       type: Object,
       default: null
+    },
+    actionValueExtensions: {
+      type: Object,
+      default: null,
     },
   },
   data: () => ({
@@ -130,6 +139,17 @@ export default {
     },
     isValidRecurrence() {
       return this.rule?.userInfo?.context?.validRecurrence;
+    },
+    extension() {
+      if (this.actionValueExtensions) {
+        return Object.values(this.actionValueExtensions)
+          .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
+          .find(extension => extension.match && extension.match(this.rule.event)) || null;
+      }
+      return null;
+    },
+    actionIcon() {
+      return this.rule?.type === 'AUTOMATIC' ? this.extension?.icon : 'fas fa-trophy';
     },
   },
   created() {
