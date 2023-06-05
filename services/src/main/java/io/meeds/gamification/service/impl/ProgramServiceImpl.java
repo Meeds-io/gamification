@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -178,34 +177,25 @@ public class ProgramServiceImpl implements ProgramService {
     if (storedProgram.isDeleted()) {
       throw new ObjectNotFoundException("Program is marked as deleted");
     }
-    if (program.isOpen()) {
-      program.setSpaceId(0);
-    }
 
     if (aclIdentity == null
         || !isProgramOwner(storedProgram.getId(), aclIdentity.getUserId())) {
       throw new IllegalAccessException("The user is not authorized to update program " + program);
     }
-    String username = aclIdentity.getUserId();
-    if (storedProgram.getSpaceId() != program.getSpaceId()
-        && !isProgramOwner(program.getSpaceId(),
-                           getOwnerIdsIntersection(program, storedProgram),
-                           program.isOpen(),
-                           identityManager.getOrCreateUserIdentity(username))) {
-      throw new IllegalAccessException("The user is not authorized to modify program " + program + " audience to the new one");
-    }
-    program.setLastModifiedBy(username);
-    program.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
+    ProgramDTO programToSave = storedProgram.clone();
+    programToSave.setLastModifiedBy(aclIdentity.getUserId());
+    programToSave.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
+    programToSave.setAvatarUploadId(program.getAvatarUploadId());
+    programToSave.setCoverUploadId(program.getCoverUploadId());
+    programToSave.setDescription(program.getDescription());
+    programToSave.setTitle(program.getTitle());
+    programToSave.setEnabled(program.isEnabled());
+    programToSave.setOpen(program.isOpen());
+    programToSave.setBudget(program.getBudget());
+    programToSave.setOwnerIds(program.getOwnerIds());
+    programToSave.setSpaceId(program.isOpen() ? 0 : program.getSpaceId());
 
-    // Preserve non modifiable attributes
-    program.setType(storedProgram.getType());
-    program.setCreatedBy(storedProgram.getCreatedBy());
-    program.setCreatedDate(storedProgram.getCreatedDate());
-    program.setDeleted(storedProgram.isDeleted());
-    program.setCoverFileId(storedProgram.getCoverFileId());
-    program.setAvatarFileId(storedProgram.getAvatarFileId());
-
-    return saveProgramAndBroadcast(program, storedProgram, username);
+    return saveProgramAndBroadcast(programToSave, storedProgram, aclIdentity.getUserId());
   }
 
   @Override
@@ -256,12 +246,12 @@ public class ProgramServiceImpl implements ProgramService {
     programStorage.deleteImage(coverFileId);
     program.setCoverFileId(0);
     program = programStorage.saveProgram(program);
-    broadcast(GAMIFICATION_DOMAIN_DELETE_LISTENER, program, aclIdentity.getUserId());
+    broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, program, aclIdentity.getUserId());
   }
 
   @Override
   public void deleteProgramAvatarById(long programId, Identity aclIdentity) throws ObjectNotFoundException,
-                                                                           IllegalAccessException {
+                                                                            IllegalAccessException {
     ProgramDTO program = programStorage.getProgramById(programId);
     if (program == null) {
       throw new ObjectNotFoundException("program doesn't exist");
@@ -276,7 +266,7 @@ public class ProgramServiceImpl implements ProgramService {
     programStorage.deleteImage(avatarFileId);
     program.setAvatarFileId(0);
     program = programStorage.saveProgram(program);
-    broadcast(GAMIFICATION_DOMAIN_DELETE_LISTENER, program, aclIdentity.getUserId());
+    broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, program, aclIdentity.getUserId());
   }
 
   @Override
@@ -399,16 +389,6 @@ public class ProgramServiceImpl implements ProgramService {
       programFilter.setSpacesIds(memberSpacesIds);
     }
     return programFilter;
-  }
-
-  @SuppressWarnings("unchecked")
-  private Set<Long> getOwnerIdsIntersection(ProgramDTO program, ProgramDTO storedProgram) {
-    return (CollectionUtils.isEmpty(storedProgram.getOwnerIds())
-        || CollectionUtils.isEmpty(program.getOwnerIds())) ? null
-                                                           : (Set<Long>) CollectionUtils.intersection(storedProgram.getOwnerIds(),
-                                                                                                      program.getOwnerIds())
-                                                                                        .stream()
-                                                                                        .collect(Collectors.toSet());
   }
 
   private void broadcast(String eventName, ProgramDTO program, String userName) {
