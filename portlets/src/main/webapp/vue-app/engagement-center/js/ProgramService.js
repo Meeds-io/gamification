@@ -42,6 +42,9 @@ export function getPrograms(filter) {
   if (filter?.lang) {
     formData.append('lang', filter.lang);
   }
+  if (filter?.expand) {
+    formData.append('expand', filter.expand);
+  }
   const params = new URLSearchParams(formData).toString();
 
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs?returnSize=true&${params}`, {

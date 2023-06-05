@@ -189,6 +189,7 @@ export default {
         type: this.type,
         status: this.status,
         owned: !this.isAdministrator && this.isStatusDisabled,
+        expand: 'countActiveRulesWhenDisabled',
         lang: eXo.env.portal.language,
       })
         .then((data) => {
