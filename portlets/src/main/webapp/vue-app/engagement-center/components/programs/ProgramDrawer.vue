@@ -67,6 +67,7 @@
                     id="engagementCenterProgramDrawerImageSelector"
                     ref="programCover"
                     v-model="program.coverUrl"
+                    :no-expand="!expanded"
                     image-type="cover"
                     @updated="addCover"
                     @deleted="removeCover" />
@@ -92,6 +93,7 @@
                   :placeholder="$t('programs.label.enterProgramTitle')"
                   :maxlength="maxTitleLength"
                   :object-id="programId"
+                  :no-expand-icon="!expanded"
                   object-type="program"
                   field-name="title"
                   drawer-title="program.form.translateTitle"
@@ -113,6 +115,7 @@
                   :field-value.sync="programDescription"
                   :object-id="programId"
                   :maxlength="maxDescriptionLength"
+                  :no-expand-icon="!expanded"
                   object-type="program"
                   field-name="description"
                   drawer-title="program.form.translateDescription"
