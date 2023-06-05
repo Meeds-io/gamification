@@ -46,10 +46,10 @@ export default {
       return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
     },
     notStartedYet() {
-      return this.startDateMillis && this.startDateMillis > Date.now();
+      return this.startDateMillis && this.startDateMillis > this.$root.now;
     },
     alreadyEnded() {
-      return this.endDateMillis && this.endDateMillis < Date.now();
+      return this.endDateMillis && this.endDateMillis < this.$root.now;
     },
     lessThanADay() {
       if (this.alreadyEnded) {
@@ -104,11 +104,11 @@ export default {
       }
     },
     getRemainingDays(timeInMs) {
-      const remainingSeconds = parseInt((timeInMs - Date.now()) / 1000);
+      const remainingSeconds = parseInt((timeInMs - this.$root.now) / 1000);
       return Math.floor(remainingSeconds / (60 * 60 * 24));
     },
     getRemainingDateLabel(timeInMs) {
-      const remainingSeconds = parseInt((timeInMs - Date.now()) / 1000);
+      const remainingSeconds = parseInt((timeInMs - this.$root.now) / 1000);
       const days = Math.floor(remainingSeconds / (60 * 60 * 24));
       const hours = Math.floor((remainingSeconds % (60 * 60 * 24)) / (60 * 60));
       if (days === 0) {

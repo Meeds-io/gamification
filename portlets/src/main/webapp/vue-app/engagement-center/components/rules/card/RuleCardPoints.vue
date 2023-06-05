@@ -19,9 +19,9 @@
 
 -->
 <template>
-  <div class="font-weight-bold text--secondary text-subtitle-2">
-    {{ rule.score }} {{ $t('challenges.label.points') }}
-  </div>
+  <v-chip class="secondary secondary-border-color content-box-sizing white--text" small>
+    <span class="subtitle-2">+ {{ rule.score }}</span>
+  </v-chip>
 </template>
 <script>
 export default {
