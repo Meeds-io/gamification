@@ -68,7 +68,6 @@ public class ProgramDeletedListener extends Listener<ProgramDTO, String> {
     }
     for (BadgeDTO badge : badges) {
       badge.setEnabled(false);
-      badge.setProgram(null);
       badgeService.updateBadge(badge);
     }
   }

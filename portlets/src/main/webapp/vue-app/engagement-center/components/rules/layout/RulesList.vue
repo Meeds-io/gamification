@@ -28,6 +28,7 @@
         sm="6"
         lg="4">
         <engagement-center-rule-card
+          :action-value-extensions="actionValueExtensions"
           :rule="rule"
           :program="program"
           :category-id="categoryId" />
@@ -69,6 +70,10 @@ export default {
     loading: {
       type: Boolean,
       default: false,
+    },
+    actionValueExtensions: {
+      type: Object,
+      default: null,
     },
   },
   computed: {
