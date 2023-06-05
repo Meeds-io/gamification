@@ -46,6 +46,9 @@ export function init(isAdministrator, isProgramManager) {
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
+      data: {
+        now: Date.now(),
+      },
       computed: {
         isMobile() {
           return this.$vuetify.breakpoint.xsOnly;
@@ -53,6 +56,7 @@ export function init(isAdministrator, isProgramManager) {
       },
       created() {
         document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+        window.setInterval(() => this.now = Date.now(), 1000);
       },
       template: `<engagement-center id="${appId}" :is-administrator="${isAdministrator}" :is-program-manager="${isProgramManager}" />`,
       vuetify,

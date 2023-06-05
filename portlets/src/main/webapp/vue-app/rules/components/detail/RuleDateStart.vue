@@ -24,10 +24,9 @@
       far fa-calendar-plus
     </v-icon>
     <span>{{ $t('rules.availableIn') }}</span>
-    <engagement-center-rule-date-info
+    <engagement-center-rule-date-info-chip
       :rule="rule"
-      class="ms-1"
-      small />
+      class="ms-1" />
   </div>
 </template>
 <script>
