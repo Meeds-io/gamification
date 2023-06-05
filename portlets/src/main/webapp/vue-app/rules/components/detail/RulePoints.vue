@@ -24,7 +24,7 @@
       {{ $t('rules.achieveItFor') }}
     </div>
     <v-chip class="secondary secondary-border-color content-box-sizing white--text" small>
-      <span class="subtitle-2">{{ $t('rules.pointsShort', {0: rule.score}) }}</span>
+      <span class="subtitle-2">+ {{ rule.score }}</span>
     </v-chip>
   </div>
 </template>
