@@ -53,6 +53,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :drawer-title="imageCropperDrawerTitle"
       :max-file-size="maxUploadSizeInBytes"
       :max-image-width="maxImageWidth"
+      :no-expand-icon="noExpand"
       back-icon
       @input="updateUploadId"
       @data="imageData = $event" />
@@ -72,6 +73,10 @@ export default {
     maxUploadSize: {
       type: Number,
       default: () => 2,
+    },
+    noExpand: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
