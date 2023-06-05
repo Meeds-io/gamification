@@ -69,7 +69,9 @@ public class ProgramBuilder {
     translatedLabels(translationService, program, locale);
 
     int activeRulesCount = 0;
-    if (CollectionUtils.isNotEmpty(expandFields) && expandFields.contains("countActiveRules")) {
+    if (CollectionUtils.isNotEmpty(expandFields)
+        && (expandFields.contains("countActiveRules")
+            || (expandFields.contains("countActiveRulesWhenDisabled") && !program.isEnabled()))) {
       activeRulesCount = ruleService.countActiveRules(program.getId());
     }
 
