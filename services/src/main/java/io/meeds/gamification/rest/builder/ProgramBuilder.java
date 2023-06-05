@@ -176,19 +176,29 @@ public class ProgramBuilder {
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
     Identity identity = identityManager.getOrCreateUserIdentity(username);
     mapUserInfo(userContext, identity);
-    if (program != null && !program.isOpen()) {
-      long spaceId = program.getSpaceId();
-      SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-      Space space = spaceService.getSpaceById(String.valueOf(spaceId));
-      if (space != null) {
-        boolean isSuperManager = spaceService.isSuperManager(username);
-        boolean isManager = isSuperManager || spaceService.isManager(space, username);
-        boolean isMember = isManager || spaceService.isMember(space, username);
-        boolean isRedactor = isManager || spaceService.isRedactor(space, username);
-        userContext.setManager(isManager);
+    if (program != null) {
+      boolean isOwner = programService.isProgramOwner(program.getId(), username);
+      if (program.isOpen()) {
+        boolean isMember = programService.isProgramMember(program.getId(), username);
+        userContext.setManager(isOwner);
+        userContext.setCanEdit(isOwner);
         userContext.setMember(isMember);
-        userContext.setRedactor(isRedactor);
-        userContext.setCanEdit(programService.isProgramOwner(program.getId(), username));
+        userContext.setProgramOwner(isOwner);
+        userContext.setRedactor(true);
+      } else {
+        Space space = Utils.getSpaceById(String.valueOf(program.getSpaceId()));
+        if (space != null) {
+          SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+          boolean isSuperManager = spaceService.isSuperManager(username);
+          boolean isManager = isSuperManager || spaceService.isManager(space, username);
+          boolean isMember = isManager || spaceService.isMember(space, username);
+          boolean isRedactor = isManager || spaceService.isRedactor(space, username);
+          userContext.setManager(isManager);
+          userContext.setMember(isMember);
+          userContext.setProgramOwner(isOwner);
+          userContext.setCanEdit(isOwner && !program.isDeleted());
+          userContext.setRedactor(isRedactor);
+        }
       }
     }
     return userContext;
