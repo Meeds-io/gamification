@@ -23,6 +23,7 @@ import RuleDateStart from './components/detail/RuleDateStart.vue';
 import RuleDateOver from './components/detail/RuleDateOver.vue';
 import RuleDateEnd from './components/detail/RuleDateEnd.vue';
 import RuleDateInfo from './components/detail/RuleDateInfo.vue';
+import RuleDateInfoChip from './components/detail/RuleDateInfoChip.vue';
 
 import RuleAchievementsDrawer from './components/RuleAchievementsDrawer.vue';
 
@@ -45,6 +46,7 @@ const components = {
   'engagement-center-rule-recurrence': RuleRecurrence,
   'engagement-center-rule-recurrence-validity': RuleRecurrenceValidity,
   'engagement-center-rule-date-info': RuleDateInfo,
+  'engagement-center-rule-date-info-chip': RuleDateInfoChip,
   'engagement-center-rule-date-start': RuleDateStart,
   'engagement-center-rule-date-end': RuleDateEnd,
   'engagement-center-rule-date-over': RuleDateOver,
