@@ -230,9 +230,7 @@ export default {
     },
     actionValueExtensions: {
       type: Object,
-      default: function() {
-        return null;
-      },
+      default: null,
     },
   },
   data() {
