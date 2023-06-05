@@ -14,17 +14,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
+<%@page import="io.meeds.gamification.service.ProgramService"%>
+<%@page import="org.exoplatform.container.ExoContainerContext"%>
 <%@ page import="io.meeds.gamification.utils.Utils" %>
 <%@ page import="org.exoplatform.services.security.ConversationState" %>
 
 <%
 boolean isAdministrator = Utils.isRewardingManager(ConversationState.getCurrent().getIdentity().getUserId());
+boolean isProgramManager = isAdministrator || ExoContainerContext.getService(ProgramService.class).countOwnedPrograms(ConversationState.getCurrent().getIdentity().getUserId()) > 0;
 %>
 
 <div class="VuetifyApp singlePageApplication">
   <div id="EngagementCenterApplication">
     <script type="text/javascript">
-      require(['PORTLET/gamification-portlets/EngagementCenter'], app => app.init(<%=isAdministrator%>));
+      require(['PORTLET/gamification-portlets/EngagementCenter'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>));
     </script>
   </div>
 </div>
