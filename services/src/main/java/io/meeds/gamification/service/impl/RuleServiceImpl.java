@@ -274,9 +274,12 @@ public class RuleServiceImpl implements RuleService {
     if (rule.getId() == null || rule.getId() == 0) {
       throw new ObjectNotFoundException("Rule with id 0 doesn't exist");
     }
-    RuleDTO oldRule = ruleStorage.findRuleById(rule.getId());
-    if (oldRule == null) {
+    RuleDTO storedRule = ruleStorage.findRuleById(rule.getId());
+    if (storedRule == null) {
       throw new ObjectNotFoundException("Rule doesn't exist");
+    }
+    if (storedRule.isDeleted()) {
+      throw new ObjectNotFoundException("Rule with id '" + storedRule.getId() + "' was deleted");
     }
     if (rule.getProgram() == null) {
       throw new IllegalArgumentException("Program is mandatory");
@@ -286,17 +289,14 @@ public class RuleServiceImpl implements RuleService {
     if (rule.getProgram() == null) {
       throw new IllegalArgumentException("Program with id " + rule.getProgram().getId() + " wasn't found");
     }
-    if (oldRule.isDeleted()) {
-      throw new ObjectNotFoundException("Rule with id '" + oldRule.getId() + "' was deleted");
-    }
-    if (!isRuleManager(oldRule, username)) {
+    if (!isRuleManager(storedRule, username)) {
       throw new IllegalAccessException("The user is not authorized to update a rule");
     }
-    checkPermissionAndDates(oldRule, username); // Test if user was manager
+    checkPermissionAndDates(storedRule, username); // Test if user was manager
     checkPermissionAndDates(rule, username); // Test if user is remaining
                                              // manager
-    rule.setCreatedDate(oldRule.getCreatedDate());
-    rule.setCreatedBy(oldRule.getCreatedBy());
+    rule.setCreatedDate(storedRule.getCreatedDate());
+    rule.setCreatedBy(storedRule.getCreatedBy());
     return updateRuleAndBroadcast(rule, username);
   }
 
