@@ -25,20 +25,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :image-type="imageType"
       @edit="$refs.imageCropDrawer.open()"
       @remove="reset" />
-    <v-avatar
-      id="engagementCenterImgSelectorAvatar"
-      :height="isAvatar && 50 || 'auto'"
-      :max-width="isAvatar && 50 || '100%'"
-      :min-width="isAvatar && 50 || '100%'"
-      class="align-start flex-grow-0 content-box-sizing border-color rounded position-relative"
-      tile>
-      <img
-        id="engagementCenterImgSelectorImg"
-        :src="imageSrc"
-        class="full-width"
-        role="presentation"
-        alt="">
-    </v-avatar>
+    <v-tooltip :disabled="$root.isMobile" bottom>
+      <template #activator="{ on }">
+        <v-card flat v-on="on">
+          <v-avatar
+            id="engagementCenterImgSelectorAvatar"
+            :height="isAvatar && 50 || 'auto'"
+            :max-width="isAvatar && 50 || '100%'"
+            :min-width="isAvatar && 50 || '100%'"
+            class="align-start flex-grow-0 content-box-sizing border-color rounded position-relative"
+            tile>
+            <img
+              id="engagementCenterImgSelectorImg"
+              :src="imageSrc"
+              class="full-width"
+              role="presentation"
+              alt="">
+          </v-avatar>
+        </v-card>
+      </template>
+      <span>{{ tooltip }}</span>
+    </v-tooltip>
     <image-crop-drawer
       ref="imageCropDrawer"
       :src="imageCropperSrc"
@@ -100,6 +107,9 @@ export default {
     },
     imageCropperDrawerTitle() {
       return this.isAvatar && this.$t('programs.details.addProgramAvatar') || this.$t('programs.details.addProgramCover');
+    },
+    tooltip() {
+      return this.isAvatar && this.$t('programs.label.programAvatarTooltip') || this.$t('programs.label.programCoverTooltip');
     },
     maxUploadSizeInBytes() {
       return this.maxUploadSize * 1024 * 1024;
