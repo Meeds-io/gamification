@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 
 import io.meeds.gamification.model.BadgeDTO;
 import io.meeds.gamification.model.ProgramDTO;
@@ -30,6 +32,8 @@ import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RuleService;
 
 public class ProgramDeletedListener extends Listener<ProgramDTO, String> {
+
+  private static final Log LOG = ExoLogger.getLogger(ProgramDeletedListener.class);
 
   protected ProgramService programService;
 
@@ -48,6 +52,11 @@ public class ProgramDeletedListener extends Listener<ProgramDTO, String> {
   @Override
   public void onEvent(Event<ProgramDTO, String> event) throws Exception { // NOSONAR
     ProgramDTO program = event.getSource();
+    if (!program.isDeleted()) {
+      LOG.warn("Program {} seems not deleted. Ignore marking Program rules as deleted as well.",
+               program.getId());
+      return;
+    }
     RuleFilter ruleFilter = new RuleFilter(true);
     ruleFilter.setProgramId(program.getId());
     List<RuleDTO> rules = ruleService.getRules(ruleFilter, 0, -1);
