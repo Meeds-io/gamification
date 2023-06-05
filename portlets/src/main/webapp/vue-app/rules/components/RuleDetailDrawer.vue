@@ -94,7 +94,10 @@
                 :rule="rule"
                 :class="showEndDate && !expandedView && 'align-end d-flex flex-column'" />
             </v-col>
-            <v-col v-if="canAnnounce" cols="12">
+            <v-col
+              v-if="canAnnounce"
+              cols="12"
+              class="px-0">
               <engagement-center-rule-announcement-form
                 ref="ruleAnnouncementForm"
                 v-model="validAnnouncement"
