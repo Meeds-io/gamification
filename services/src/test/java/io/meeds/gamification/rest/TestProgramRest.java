@@ -28,7 +28,9 @@ import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.security.ConversationState;
 
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.model.ProgramDTO;
+import io.meeds.gamification.model.UserInfoContext;
 import io.meeds.gamification.rest.model.ProgramRestEntity;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
@@ -236,7 +238,7 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
-  public void testGetDomainById() throws Exception {
+  public void testGetProgramById() throws Exception {
     startSessionAs("root1");
     ContainerResponse response = getResponse("GET", getURLResource("programs/0"), null);
     assertNotNull(response);
@@ -252,5 +254,55 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     ProgramRestEntity savedDomain = (ProgramRestEntity) response.getEntity();
     assertNotNull(savedDomain);
     assertEquals(autoDomain.getId(), savedDomain.getId());
+  }
+
+  @Test
+  public void testGetOpenProgramById() throws Exception {
+    ProgramEntity programEntity = newOpenProgram("openProgram");
+
+    startSessionAsAdministrator("root1");
+    ContainerResponse response = getResponse("GET", getURLResource("programs/" + programEntity.getId()), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    ProgramRestEntity savedProgram = (ProgramRestEntity) response.getEntity();
+    assertNotNull(savedProgram);
+    assertEquals(programEntity.getId().longValue(), savedProgram.getId());
+    assertTrue(((UserInfoContext) savedProgram.getUserInfo()).isCanEdit());
+    assertTrue(((UserInfoContext) savedProgram.getUserInfo()).isManager());
+    assertTrue(((UserInfoContext) savedProgram.getUserInfo()).isMember());
+    assertTrue(((UserInfoContext) savedProgram.getUserInfo()).isMember());
+
+    startSessionAs("root10");
+    response = getResponse("GET", getURLResource("programs/" + programEntity.getId()), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    savedProgram = (ProgramRestEntity) response.getEntity();
+    assertNotNull(savedProgram);
+    assertEquals(programEntity.getId().longValue(), savedProgram.getId());
+    assertFalse(((UserInfoContext) savedProgram.getUserInfo()).isCanEdit());
+    assertFalse(((UserInfoContext) savedProgram.getUserInfo()).isManager());
+    assertTrue(((UserInfoContext) savedProgram.getUserInfo()).isMember());
+    assertFalse(((UserInfoContext) savedProgram.getUserInfo()).isProgramOwner());
+
+    startExternalSessionAs("root15");
+    response = getResponse("GET", getURLResource("programs/" + programEntity.getId()), null);
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
+
+    ProgramDTO program = programService.getProgramById(programEntity.getId());
+    program.setOwnerIds(Collections.singleton(Long.parseLong(identityManager.getOrCreateUserIdentity("root10").getId())));
+    programService.updateProgram(program);
+
+    startSessionAs("root10");
+    response = getResponse("GET", getURLResource("programs/" + programEntity.getId()), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    savedProgram = (ProgramRestEntity) response.getEntity();
+    assertNotNull(savedProgram);
+    assertEquals(programEntity.getId().longValue(), savedProgram.getId());
+    assertTrue(((UserInfoContext) savedProgram.getUserInfo()).isCanEdit());
+    assertTrue(((UserInfoContext) savedProgram.getUserInfo()).isManager());
+    assertTrue(((UserInfoContext) savedProgram.getUserInfo()).isMember());
+    assertTrue(((UserInfoContext) savedProgram.getUserInfo()).isProgramOwner());
   }
 }

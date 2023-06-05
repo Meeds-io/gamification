@@ -33,7 +33,7 @@
     <template #title>
       {{ drawerTitle }}
     </template>
-    <template v-if="drawer && !initiliazing && program" #content>
+    <template v-if="showDrawerContent" #content>
       <v-form
         id="EngagementCenterProgramDrawerForm"
         ref="form"
@@ -166,7 +166,6 @@
                         class="ms-0 me-n1 mt-0 mb-n2 pt-0" />
                     </div>
                     <div class="caption text-light-color">
-                      <v-icon class="me-1" small>fas fa-info-circle</v-icon>
                       {{ $t('programs.subtitle.programAudience.all') }}
                     </div>
                   </div>
@@ -193,7 +192,6 @@
                     <v-divider class="ms-4" />
                   </span>
                   <div class="d-flex align-center">
-                    <v-icon class="me-1" small>fas fa-info-circle</v-icon>
                     <span class="caption text-light-color"> {{ $t('programs.label.accessPermission') }}</span>
                   </div>
                 </div>
@@ -230,7 +228,6 @@
                       class="my-0 ms-0 me-n1" />
                   </div>
                   <div class="caption text-light-color">
-                    <v-icon class="me-1" small>fas fa-info-circle</v-icon>
                     {{ $t('programs.label.programStatusSubtitle') }}
                   </div>
                 </div>
@@ -316,6 +313,9 @@ export default {
     defaultAvatar: false,
   }),
   computed: {
+    showDrawerContent() {
+      return this.drawer && !this.initiliazing && !!this.program;
+    },
     audienceSearchOptions() {
       return this.isAdministrator && {
         filterType: 'all',
@@ -404,6 +404,11 @@ export default {
         this.$refs.programDrawer.startLoading();
       } else {
         this.$refs.programDrawer.endLoading();
+      }
+    },
+    showDrawerContent(newVal, oldVal) {
+      if (newVal && newVal !== oldVal) {
+        this.initDescriptionCKEditor();
       }
     },
     audience() {
@@ -496,11 +501,6 @@ export default {
       );
       this.initiliazing = false;
       this.$refs.programDrawer.open();
-      this.$nextTick().then(() => {
-        if (this.$refs.programDescriptionEditor) {
-          this.$refs.programDescriptionEditor.initCKEditor();
-        }
-      });
     },
     close() {
       this.$refs.programDrawer.close();
@@ -508,6 +508,16 @@ export default {
     addDescription(value) {
       if (value) {
         this.$set(this.program, 'description', value);
+      }
+    },
+    initDescriptionCKEditor() {
+      if (!this.showDrawerContent) {
+        return;
+      }
+      if (this.$refs.programDescriptionEditor) {
+        this.$refs.programDescriptionEditor.initCKEditor();
+      } else {
+        window.setTimeout(() => this.initDescriptionCKEditor(), 50);
       }
     },
     addCover(value) {
