@@ -24,12 +24,8 @@
       {{ $t('actions.label.endsInShort') }}
     </div>
     <div class="d-flex align-center">
-      <v-icon size="26" class="primary--text me-2">
-        fa-calendar-check
-      </v-icon>
-      <engagement-center-rule-date-info
-        :rule="rule"
-        small />
+      <engagement-center-rule-date-info-chip
+        :rule="rule" />
     </div>
   </div>
 </template>

@@ -212,10 +212,10 @@ export default {
       return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
     },
     alreadyStarted() {
-      return !this.startDateMillis || this.startDateMillis < Date.now();
+      return !this.startDateMillis || this.startDateMillis < this.$root.now;
     },
     alreadyEnded() {
-      return this.endDateMillis && this.endDateMillis < Date.now();
+      return this.endDateMillis && this.endDateMillis < this.$root.now;
     },
     showEndDate() {
       return !this.alreadyEnded && this.alreadyStarted && this.endDateMillis || false;
