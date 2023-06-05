@@ -177,7 +177,7 @@ export default {
     openProgramDetailById(id, newlyCreated) {
       this.$programService.getProgramById(id, {
         lang: eXo.env.portal.language,
-        expand: 'countActiveRules',
+        expand: 'countActiveRulesWhenDisabled',
       })
         .then(program => {
           if (program?.id) {
