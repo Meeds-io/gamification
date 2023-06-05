@@ -194,6 +194,7 @@ export default {
             `,
             alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${createdAnnouncement.activityId}`,
             alertLinkText: this.$t('announcement.alert.see'),
+            alertLinkTarget: '_self',
           }}));
           this.$root.$emit('announcement-added', {detail: {
             announcement: createdAnnouncement,
