@@ -60,6 +60,14 @@ export default {
           this.$root.$emit('program-updated', program);
           this.$root.$emit('alert-message', this.$t('programs.label.programEnabledSuccess'), 'success');
         })
+        .catch(e => {
+          const error = String(e);
+          if (this.$te(error)) {
+            this.$root.$emit('alert-message', this.$t(error), 'error');
+          } else {
+            this.$root.$emit('alert-message', this.$t('program.form.errorSavingProgram'), 'error');
+          }
+        })
         .finally(() => this.loading = false);
     },
   },
