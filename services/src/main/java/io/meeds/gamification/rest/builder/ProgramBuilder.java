@@ -78,6 +78,7 @@ public class ProgramBuilder {
     return new ProgramRestEntity(program.getId(), // NOSONAR
                                  program.getTitle(),
                                  program.getDescription(),
+                                 program.getColor(),
                                  program.getSpaceId(),
                                  program.getPriority(),
                                  program.getCreatedBy(),

@@ -37,6 +37,8 @@ public class ProgramDTO implements Serializable, Cloneable {
 
   protected String          description;
 
+  protected String          color;
+
   protected long            spaceId;
 
   protected int             priority;
@@ -110,6 +112,7 @@ public class ProgramDTO implements Serializable, Cloneable {
     return new ProgramDTO(id,
                           title,
                           description,
+                          color,
                           spaceId,
                           priority,
                           createdBy,

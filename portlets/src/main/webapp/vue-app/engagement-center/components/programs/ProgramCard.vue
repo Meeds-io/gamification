@@ -17,12 +17,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-card
     id="engagementCenterProgramCard"
-    class="card engagement-center-card"
+    :style="programStyle"
+    class="card engagement-center-card rounded"
     height="240"
     max-height="240"
     outlined
     hover>
-    <div @click="openProgramDetail">
+    <div @click="openProgramDetail" class="rounded">
       <v-img
         :src="programCover"
         :alt="$t('programs.cover.default')"
@@ -31,7 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         min-height="70"
         min-width="70"
         max-height="100"
-        class="primary--text">
+        class="primary--text rounded">
         <engagement-center-program-menu
           :is-administrator="isAdministrator"
           :program="program" />
@@ -125,7 +126,10 @@ export default {
     },
     ownersCount() {
       return this.owners?.length;
-    }
+    },
+    programStyle() {
+      return this.program?.color && `border: 1px solid ${this.program.color} !important;` || '';
+    },
   },
   methods: {
     openProgramDetail() {

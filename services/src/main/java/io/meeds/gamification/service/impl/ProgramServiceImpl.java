@@ -36,6 +36,7 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.model.ProgramColorAlreadyExists;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.service.ProgramService;
@@ -194,6 +195,7 @@ public class ProgramServiceImpl implements ProgramService {
     programToSave.setBudget(program.getBudget());
     programToSave.setOwnerIds(program.getOwnerIds());
     programToSave.setSpaceId(program.isOpen() ? 0 : program.getSpaceId());
+    programToSave.setColor(program.getColor());
 
     return saveProgramAndBroadcast(programToSave, storedProgram, aclIdentity.getUserId());
   }
@@ -358,6 +360,15 @@ public class ProgramServiceImpl implements ProgramService {
         || isSpaceMember(program.getSpaceId(), username);
   }
 
+  @Override
+  public boolean canUseProgramColor(long programId, String color) {
+    if (StringUtils.isBlank(color)) {
+      return true;
+    }
+    ProgramDTO program = programId > 0 ? programStorage.getProgramById(programId) : null;
+    return canUseProgramColor(color, program == null ? null : program.getColor());
+  }
+
   @SuppressWarnings("unchecked")
   private ProgramFilter computeUserSpaces(ProgramFilter programFilter, String username) throws IllegalAccessException { // NOSONAR
     programFilter = programFilter.clone();
@@ -412,7 +423,18 @@ public class ProgramServiceImpl implements ProgramService {
     if (program.isOpen()) {
       program.setSpaceId(0);
     }
+    checkProgramColorUnicity(program.getColor(), null);
     return programStorage.saveProgram(program);
+  }
+
+  private void checkProgramColorUnicity(String newColor, String storedColor) {
+    if (StringUtils.isNotBlank(newColor) && !canUseProgramColor(newColor, storedColor)) {
+      throw new ProgramColorAlreadyExists();
+    }
+  }
+
+  private boolean canUseProgramColor(String newColor, String storedColor) {
+    return StringUtils.equals(newColor, storedColor) || !programStorage.isProgramColorExists(newColor);
   }
 
   private boolean isProgramOwner(long spaceId,
@@ -484,14 +506,14 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   private ProgramDTO saveProgramAndBroadcast(ProgramDTO program, ProgramDTO storedProgram, String username) {
+    checkProgramColorUnicity(program.getColor(), storedProgram.getColor());
     program = programStorage.saveProgram(program);
     if (storedProgram.isEnabled() && !program.isEnabled()) {
       broadcast(GAMIFICATION_DOMAIN_DISABLE_LISTENER, program, username);
     } else if (!storedProgram.isEnabled() && program.isEnabled()) {
       broadcast(GAMIFICATION_DOMAIN_ENABLE_LISTENER, program, username);
-    } else {
-      broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, program, username);
     }
+    broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, program, username);
     return getProgramById(program.getId());
   }
 
