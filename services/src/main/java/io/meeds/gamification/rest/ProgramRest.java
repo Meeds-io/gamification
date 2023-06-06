@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -321,6 +322,24 @@ public class ProgramRest implements ResourceContainer {
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     }
+  }
+
+  @POST
+  @Path("{id}/color")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces(MediaType.TEXT_PLAIN)
+  @Operation(summary = "Returns true if the color can be used, else return false", method = "POST")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled")
+  })
+  public Response checkProgramColorValidity(
+                                            @Parameter(description = "program id", required = true)
+                                            @PathParam("id")
+                                            long programId,
+                                            @Parameter(description = "Program color to check its validity", required = true)
+                                            @FormParam("color")
+                                            String color) {
+    return Response.ok(String.valueOf(programService.canUseProgramColor(programId, color))).build();
   }
 
   @GET

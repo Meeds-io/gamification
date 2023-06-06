@@ -154,6 +154,18 @@
               <div v-show="expanded || stepper > 1" class="px-6">
                 <div class="mt-4">
                   <span class="subtitle-1 d-flex align-center">
+                    {{ $t('program.form.programColorTitle') }}
+                    <v-divider class="ms-4" />
+                  </span>
+                  <engagement-center-program-color-picker
+                    id="engagementCenterProgramColorPicker"
+                    v-model="program.color"
+                    :program="program"
+                    :allow-expand="expanded"
+                    class="mt-4" />
+                </div>
+                <div class="mt-4">
+                  <span class="subtitle-1 d-flex align-center">
                     {{ $t('programs.label.audienceSpace') }}
                     <v-divider class="ms-4" />
                   </span>
@@ -603,6 +615,7 @@ export default {
         id: program?.id,
         title: this.programTitle,
         description: this.programDescription,
+        color: program?.color,
         coverUploadId: program?.coverUploadId,
         avatarUploadId: program?.avatarUploadId,
         spaceId: spaceId || program?.spaceId || 0,

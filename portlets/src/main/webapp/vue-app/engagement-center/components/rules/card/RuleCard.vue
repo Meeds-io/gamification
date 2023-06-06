@@ -20,6 +20,7 @@
 <template>
   <v-hover v-slot="{ hover }">
     <v-card
+      :style="programStyle"
       class="mx-auto d-flex flex-column rule-card-info mx-2"
       height="230"
       max-height="230"
@@ -56,7 +57,7 @@
           <v-icon size="16" class="rule-icon primary--text me-2">
             {{ actionIcon }}
           </v-icon>
-          <span class="text-truncate subtitle-1">
+          <span class="text-truncate subtitle-1 pt-2px">
             {{ title }}
           </span>
         </div>
@@ -99,6 +100,10 @@ export default {
       type: Object,
       default: null,
     },
+    noValidation: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     showMenu: false,
@@ -125,7 +130,7 @@ export default {
       return this.rule?.description;
     },
     isValid() {
-      return this.rule?.userInfo?.context?.valid;
+      return this.noValidation || this.rule?.userInfo?.context?.valid;
     },
     isValidDates() {
       return this.rule?.userInfo?.context?.validDates;
@@ -141,8 +146,9 @@ export default {
       return this.rule?.userInfo?.context?.validRecurrence;
     },
     extension() {
-      if (this.actionValueExtensions) {
-        return Object.values(this.actionValueExtensions)
+      const extensions = this.actionValueExtensions || this.$root.actionValueExtensions;
+      if (extensions) {
+        return Object.values(extensions)
           .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
           .find(extension => extension.match && extension.match(this.rule.event)) || null;
       }
@@ -150,6 +156,9 @@ export default {
     },
     actionIcon() {
       return this.rule?.type === 'AUTOMATIC' ? this.extension?.icon : 'fas fa-trophy';
+    },
+    programStyle() {
+      return this.ruleProgram?.color && `border: 1px solid ${this.ruleProgram.color} !important;` || '';
     },
   },
   created() {

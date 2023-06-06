@@ -50,7 +50,7 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
 
   public ProgramEntity findByIdWithOwners(Long id) {
     TypedQuery<ProgramEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findByIdWithOwners",
-                                                                         ProgramEntity.class);
+                                                                          ProgramEntity.class);
     query.setParameter("id", id);
     try {
       return query.getSingleResult();
@@ -61,7 +61,7 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
 
   public ProgramEntity getProgramByTitle(String domainTitle) {
     TypedQuery<ProgramEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findDomainByTitle",
-                                                                         ProgramEntity.class);
+                                                                          ProgramEntity.class);
     query.setParameter(DOMAIN_TITLE, domainTitle);
     List<ProgramEntity> domainEntities = query.getResultList();
     return !domainEntities.isEmpty() ? domainEntities.get(0) : null;
@@ -81,6 +81,18 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
   public int countPrograms(ProgramFilter filter) {
     TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, true);
     return query.getSingleResult().intValue();
+  }
+
+  public int countProgramColor(String color) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationDomain.countProgramColor",
+                                                                 Long.class);
+    query.setParameter("color", StringUtils.upperCase(color));
+    try {
+      Long result = query.getSingleResult();
+      return result == null ? 0 : result.intValue();
+    } catch (NoResultException e) {
+      return 0;
+    }
   }
 
   private <T> TypedQuery<T> buildQueryFromFilter(ProgramFilter filter, Class<T> clazz, boolean count) {
