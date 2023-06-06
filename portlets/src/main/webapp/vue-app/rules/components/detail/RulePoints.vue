@@ -23,7 +23,7 @@
     <div class="text-sub-title font-italic mb-1">
       {{ $t('rules.achieveItFor') }}
     </div>
-    <v-chip class="secondary secondary-border-color content-box-sizing white--text" small>
+    <v-chip class="error-color-background opacity-8 content-box-sizing white--text" small>
       <span class="subtitle-2">+ {{ rule.score }}</span>
     </v-chip>
   </div>
