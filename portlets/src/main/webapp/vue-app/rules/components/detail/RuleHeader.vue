@@ -29,6 +29,7 @@
     <div v-else class="d-flex flex-column pe-4">
       <v-avatar
         :size="programCoverSize"
+        :style="programStyle"
         class="rule-program-cover border-color primary--text"
         rounded>
         <v-img :src="programAvatarUrl" />
@@ -103,6 +104,9 @@ export default {
     },
     programAvatarUrl() {
       return this.rule?.program?.avatarUrl;
+    },
+    programStyle() {
+      return this.rule?.program?.color && `border: 1px solid ${this.rule.program.color} !important;` || '';
     },
   },
 };

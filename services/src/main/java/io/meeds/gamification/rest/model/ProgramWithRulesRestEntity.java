@@ -42,6 +42,7 @@ public class ProgramWithRulesRestEntity extends ProgramDTO {
     super(program.getId(),
           program.getTitle(),
           program.getDescription(),
+          program.getColor(),
           program.getSpaceId(),
           program.getPriority(),
           program.getCreatedBy(),

@@ -39,6 +39,8 @@ import RuleItem from './components/programs/RuleItem.vue';
 import ProgramDisabledMaskContent from './components/programs/ProgramDisabledMaskContent.vue';
 import ProgramImageSelector from './components/programs/ProgramImageSelector.vue';
 import ProgramImageSelectorButtons from './components/programs/ProgramImageSelectorButtons.vue';
+import ProgramColorPicker from './components/programs/ProgramColorPicker.vue';
+import ProgramColorPickerDrawer from './components/programs/ProgramColorPickerDrawer.vue';
 
 import Rules from './components/rules/Rules.vue';
 
@@ -82,6 +84,8 @@ const components = {
   'engagement-center-program-image-selector': ProgramImageSelector,
   'engagement-center-program-image-selector-buttons': ProgramImageSelectorButtons,
   'engagement-center-program-disabled-mask-content': ProgramDisabledMaskContent,
+  'engagement-center-program-color-picker': ProgramColorPicker,
+  'engagement-center-program-color-picker-drawer': ProgramColorPickerDrawer,
   'engagement-center-rules-toolbar': RulesToolbar,
   'engagement-center-rule-item': RuleItem,
   'engagement-center-rule-title': RuleTitle,

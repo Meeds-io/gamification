@@ -30,6 +30,7 @@ export function init() {
       Vue.createApp({
         data: {
           now: Date.now(),
+          actionValueExtensions: {},
         },
         template: `<gamification-overview-challenges id="${appId}" />`,
         created() {
