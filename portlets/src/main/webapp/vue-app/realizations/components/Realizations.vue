@@ -74,7 +74,7 @@
         :button-url="programsUrl" />
     </div>
     <v-data-table
-      v-else-if="displaySearchResult && !isMobile"
+      v-else-if="initialized && displaySearchResult && !isMobile"
       :headers="realizationsHeaders"
       :items="realizationsToDisplay"
       :sort-by.sync="sortBy"
@@ -297,6 +297,7 @@ export default {
         this.filterActivated = false;
         this.fromDate = new Date(newValue.min).toISOString() ;
         this.toDate = new Date(newValue.max).toISOString();
+        this.realizations = [];
         this.loadRealizations();
       }
     },
@@ -366,6 +367,7 @@ export default {
     sortUpdated() {
       if (!this.loading) {
         this.loading = true;
+        this.realizations = [];
         this.loadRealizations();
       }
     },
@@ -404,6 +406,8 @@ export default {
     },
     filterByPrograms(programs, grantees) {
       this.filterActivated = true;
+      this.initialized = false;
+      this.realizations = [];
       this.searchList = programs.map(program => program.id);
       this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
       this.loadRealizations();
@@ -414,6 +418,7 @@ export default {
     reset() {
       this.searchList = [];
       this.earnerIds = [];
+      this.realizations = [];
       this.loadRealizations();
       this.$root.$emit('reset-filter-values');
     }
