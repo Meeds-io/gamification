@@ -63,7 +63,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </div>
     </div>
     <div class="d-flex mb-0 mx-2">
-      <div class="pa-1">
+      <div class="pa-1 d-none d-sm-inline">
         <span class="my-auto caption text-light-color"> {{ $t('programs.details.label.hosts') }} </span>
       </div>
       <v-spacer />
@@ -73,11 +73,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :max-avatars-to-show="4"
         :avatars-count="ownersCount"
         :size="25"
+        class="my-auto"
         @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
       <v-chip
         v-else
         small
-        class="ms-sm-auto">
+        class="ms-sm-auto my-auto">
         {{ $t('programs.label.rewardAdmins') }}
       </v-chip>
     </div>
