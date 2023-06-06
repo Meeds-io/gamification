@@ -279,6 +279,15 @@ public interface ProgramService {
   boolean canAddProgram(Identity aclIdentity);
 
   /**
+   * Return true if the color isn't used by any other program, else return false
+   * 
+   * @param programId
+   * @param color
+   * @return true if not used, else false
+   */
+  boolean canUseProgramColor(long programId, String color);
+
+  /**
    * Check whether user can add programs or not
    * 
    * @param  programId technical identifier of program

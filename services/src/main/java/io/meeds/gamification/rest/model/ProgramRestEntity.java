@@ -50,6 +50,7 @@ public class ProgramRestEntity extends ProgramDTO {
   public ProgramRestEntity(long id, // NOSONAR
                            String title,
                            String description,
+                           String color,
                            long spaceId,
                            int priority,
                            String createdBy,
@@ -76,6 +77,7 @@ public class ProgramRestEntity extends ProgramDTO {
     super(id,
           title,
           description,
+          color,
           spaceId,
           priority,
           createdBy,
