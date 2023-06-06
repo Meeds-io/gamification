@@ -59,7 +59,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     :height="programAvatarSize"
                     :width="programAvatarSize"
                     :max-height="programAvatarSize"
-                    :max-width="programAvatarSize" /><span class="my-auto ms-3">{{ programTitle }}</span>
+                    :max-width="programAvatarSize"
+                    :style="programStyle"
+                    class="rounded border-color" />
+                  <span class="my-auto ms-3">{{ programTitle }}</span>
                 </v-card-text>
                 <v-card-text class="d-flex pa-0">
                   <translation-text-field
@@ -421,6 +424,9 @@ export default {
         ok: this.$t('confirm.yes'),
         cancel: this.$t('confirm.no'),
       };
+    },
+    programStyle() {
+      return this.program?.color && `border: 1px solid ${this.program.color} !important;` || '';
     },
   },
   watch: {

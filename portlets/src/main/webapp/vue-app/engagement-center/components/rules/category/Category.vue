@@ -32,7 +32,8 @@
       <v-list-item-title
         v-else
         :disabled="disabledCollapsing"
-        class="text-color d-flex align-center ms-n6">
+        :style="programStyle"
+        class="text-color d-flex align-center ms-n6 font-weight-bold">
         {{ title }}
         <v-divider v-if="!disabledCollapsing" class="ms-4" />
       </v-list-item-title>
@@ -96,6 +97,18 @@ export default {
     },
     sizeToDisplay() {
       return this.size - Object.keys(this.deletedRuleIds).length;
+    },
+    categoryId() {
+      return this.category?.id;
+    },
+    programId() {
+      return this.program.id;
+    },
+    categoryByProgram() {
+      return this.categoryId === this.programId;
+    },
+    programStyle() {
+      return this.categoryByProgram && this.program?.color && `color: ${this.program.color} !important;` || '';
     },
   },
   created() {
