@@ -20,6 +20,7 @@
 -->
 <template>
   <engagement-center-rule-card-mask-content
+    :title="rule.title"
     :text="recurrenceTitle"
     icon="fas fa-check"
     class="rule-card-mask-recurrence" />
