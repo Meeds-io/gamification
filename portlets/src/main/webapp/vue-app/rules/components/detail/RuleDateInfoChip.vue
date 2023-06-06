@@ -19,12 +19,7 @@
 
 -->
 <template>
-  <div v-if="alreadyEnded" class="d-flex align-center justify-center">
-    <v-icon
-      class="primary--text me-2 mb-1"
-      size="18">
-      fas fa-calendar-check
-    </v-icon>
+  <div v-if="alreadyEnded">
     <span class="error--text">{{ $t('challenges.label.over') }}</span>
   </div>
   <div v-else-if="notStartedYet || hasEndDate" class="d-flex align-center justify-center">
@@ -36,8 +31,7 @@
         flat>
         {{ $t('rules.card.daysShort', {0: remainingDays}) }}
       </v-card>
-      <span v-if="separator" class="mx-1">-</span>
-      <span v-else class="mx-1"></span>
+      <span class="mx-1">-</span>
     </template>
     <v-card
       :class="backgroundColor"
@@ -47,8 +41,7 @@
       flat>
       {{ $t('rules.card.hoursShort', {0: remainingHours}) }}
     </v-card>
-    <span v-if="separator" class="mx-1">-</span>
-    <span v-else class="mx-1"></span>
+    <span class="mx-1">-</span>
     <v-card
       :class="backgroundColor"
       class="rounded white--text caption px-1px align-center justify-center d-flex"
@@ -58,8 +51,7 @@
       {{ $t('rules.card.minutesShort', {0: remainingMinutes}) }}
     </v-card>
     <template v-if="lessThanADay">
-      <span v-if="separator" class="mx-1">-</span>
-      <span v-else class="mx-1"></span>
+      <span class="mx-1">-</span>
       <v-card
         min-width="25"
         min-height="25"
@@ -76,10 +68,6 @@ export default {
     rule: {
       type: Object,
       default: null,
-    },
-    separator: {
-      type: Boolean,
-      default: false,
     },
   },
   computed: {

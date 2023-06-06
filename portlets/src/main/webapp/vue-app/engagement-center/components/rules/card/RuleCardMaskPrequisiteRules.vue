@@ -21,12 +21,9 @@
 <template>
   <engagement-center-rule-card-mask-content
     v-if="hasRemainingPrerequisitesCount"
+    :title="rule.title"
     icon="fas fa-lock"
     class="rule-card-mask-prerequisites">
-    <div
-      v-sanitized-html="rule.title"
-      class="white--text text-wrap title px-2 text-truncate font-weight-bold">
-    </div>
     <div
       v-sanitized-html="prerequisitesTitle"
       class="white--text text-wrap subtitle-1 px-2 text-truncate-2">
