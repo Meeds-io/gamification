@@ -20,13 +20,12 @@
 -->
 <template>
   <engagement-center-rule-card-mask-content
-    v-if="show"
-    icon="fas fa-calendar-plus"
+    :title="rule.title"
+    :icon="alreadyEnded && 'fas fa-calendar-check' || 'fas fa-calendar-plus'"
     class="rule-card-mask-dates">
-    <engagement-center-rule-date-info
-      v-model="datesInfo"
+    <engagement-center-rule-date-info-chip
       :rule="rule"
-      @input="initialized = true" />
+      class="subtitle-1" />
   </engagement-center-rule-card-mask-content>
 </template>
 <script>
@@ -37,13 +36,12 @@ export default {
       default: null,
     },
   },
-  data: () => ({
-    datesInfo: null,
-    initialized: false,
-  }),
   computed: {
-    show() {
-      return !this.initialized || this.datesInfo;
+    endDateMillis() {
+      return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
+    },
+    alreadyEnded() {
+      return this.endDateMillis && this.endDateMillis < this.$root.now;
     },
   },
 };

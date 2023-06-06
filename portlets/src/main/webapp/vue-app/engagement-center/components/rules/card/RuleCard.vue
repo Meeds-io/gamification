@@ -21,7 +21,7 @@
   <v-hover v-slot="{ hover }">
     <v-card
       :style="programStyle"
-      class="mx-auto d-flex flex-column rule-card-info mx-2"
+      class="mx-auto d-flex flex-column rule-card-info mx-2 overflow-hidden"
       height="230"
       max-height="230"
       outlined
@@ -36,9 +36,10 @@
               small />
           </div>
         </div>
-        <engagement-center-card-mask class="z-index-one rounded">
+        <engagement-center-card-mask class="z-index-one pa-2">
           <engagement-center-rule-card-mask-content
             v-if="!isEnabled"
+            :title="rule.title"
             :text="rule.enabled && $t('actions.label.disabledProgram') || $t('actions.label.disabled')"
             class="rule-card-mask-disabled" />
           <engagement-center-rule-card-mask-remaining-dates
@@ -52,36 +53,45 @@
             :rule="ruleWithProgram" />
         </engagement-center-card-mask>
       </div>
-      <v-card-title class="rule-card-title d-flex flex-nowrap pb-4 text-break">
-        <div :title="title" class="d-flex align-center flex-grow-1 text-truncate">
-          <v-icon size="16" class="rule-icon primary--text me-2">
-            {{ actionIcon }}
-          </v-icon>
-          <span class="text-truncate subtitle-1 pt-2px">
-            {{ title }}
-          </span>
-        </div>
-        <div v-if="canEdit && hover && isValid" class="flex-grow-0 d-flex align-center">
-          <engagement-center-rule-menu
-            :rule="ruleWithProgram"
-            small />
-        </div>
-      </v-card-title>
-      <v-card-text
-        v-sanitized-html="description"
-        class="rule-card-description rich-editor-content text-truncate-3 pb-0" />
-      <template v-if="isEnabled">
-        <v-spacer />
-        <v-card-text v-if="rule.recurrence">
-          <engagement-center-rule-card-recurrence :rule="ruleWithProgram" />
-        </v-card-text>
-        <v-spacer />
-        <v-card-text class="d-flex align-center">
-          <engagement-center-rule-card-points :rule="ruleWithProgram" />
+      <v-card
+        :class="!isValid && 'filter-blur-3'"
+        class="d-flex flex-column full-height"
+        flat>
+        <v-card-title class="rule-card-title d-flex flex-nowrap pb-4 text-break">
+          <div :title="title" class="d-flex align-center flex-grow-1 text-truncate">
+            <v-icon size="16" class="rule-icon primary--text me-2">
+              {{ actionIcon }}
+            </v-icon>
+            <span class="text-truncate subtitle-1 pt-2px">
+              {{ title }}
+            </span>
+          </div>
+          <div v-if="canEdit && hover && isValid" class="flex-grow-0 d-flex align-center">
+            <engagement-center-rule-menu
+              :rule="ruleWithProgram"
+              small />
+          </div>
+        </v-card-title>
+        <v-card-text
+          v-sanitized-html="description"
+          :class="rule.recurrence && 'text-truncate-2' || 'text-truncate-3'"
+          class="rule-card-description rich-editor-content pb-0" />
+        <template v-if="isEnabled">
           <v-spacer />
-          <engagement-center-rule-card-remaining-dates :rule="ruleWithProgram" />
-        </v-card-text>
-      </template>
+          <div v-if="rule.recurrence" class="my-auto">
+            <engagement-center-rule-card-recurrence
+              :rule="ruleWithProgram" />
+          </div>
+          <v-spacer />
+          <v-card-text class="d-flex align-center pt-0">
+            <engagement-center-rule-card-points
+              :rule="ruleWithProgram" />
+            <v-spacer />
+            <engagement-center-rule-card-remaining-dates
+              :rule="ruleWithProgram" />
+          </v-card-text>
+        </template>
+      </v-card>
     </v-card>
   </v-hover>
 </template>
