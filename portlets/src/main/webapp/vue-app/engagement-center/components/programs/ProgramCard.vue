@@ -18,12 +18,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-card
     id="engagementCenterProgramCard"
     :style="programStyle"
-    class="card engagement-center-card rounded"
+    class="card engagement-center-card overflow-hidden rounded"
     height="240"
     max-height="240"
     outlined
     hover>
-    <div @click="openProgramDetail" class="rounded">
+    <div @click="openProgramDetail">
       <v-img
         :src="programCover"
         :alt="$t('programs.cover.default')"
@@ -32,7 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         min-height="70"
         min-width="70"
         max-height="100"
-        class="primary--text rounded">
+        class="primary--text">
         <engagement-center-program-menu
           :is-administrator="isAdministrator"
           :program="program" />
@@ -63,7 +63,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </div>
     </div>
     <div class="d-flex mb-0 mx-2">
-      <div class="pa-1">
+      <div class="pa-1 d-none d-sm-inline">
         <span class="my-auto caption text-light-color"> {{ $t('programs.details.label.hosts') }} </span>
       </div>
       <v-spacer />
@@ -73,11 +73,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :max-avatars-to-show="4"
         :avatars-count="ownersCount"
         :size="25"
+        class="my-auto"
         @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
       <v-chip
         v-else
         small
-        class="ms-sm-auto">
+        class="ms-sm-auto my-auto">
         {{ $t('programs.label.rewardAdmins') }}
       </v-chip>
     </div>
