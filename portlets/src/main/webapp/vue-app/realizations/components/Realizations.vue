@@ -79,7 +79,6 @@
       :items="realizationsToDisplay"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDescending"
-      :loading="loading"
       disable-pagination
       hide-default-footer
       must-sort

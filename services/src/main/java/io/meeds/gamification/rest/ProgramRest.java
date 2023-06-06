@@ -59,6 +59,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.rest.api.RestUtils;
 
 import io.meeds.gamification.constant.EntityStatusType;
+import io.meeds.gamification.model.ProgramColorAlreadyExists;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.rest.builder.ProgramBuilder;
@@ -245,6 +246,8 @@ public class ProgramRest implements ResourceContainer {
                      .build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+    } catch (ProgramColorAlreadyExists e) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("program.form.programColor.programColorAlreadyUsed").type(MediaType.TEXT_PLAIN).build();
     }
   }
 
@@ -290,6 +293,8 @@ public class ProgramRest implements ResourceContainer {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity(PROGRAM_NOT_FOUND_MESSAGE).build();
+    } catch (ProgramColorAlreadyExists e) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("program.form.programColor.programColorAlreadyUsed").type(MediaType.TEXT_PLAIN).build();
     }
   }
 
