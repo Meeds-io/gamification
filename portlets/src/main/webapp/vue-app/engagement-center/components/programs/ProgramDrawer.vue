@@ -580,8 +580,13 @@ export default {
             return this.$nextTick();
           })
           .then(() => this.close())
-          .catch(() => {
-            this.$root.$emit('alert-message', this.$t('programs.programUpdateError'), 'error');
+          .catch(e => {
+            const error = String(e);
+            if (this.$te(error)) {
+              this.$root.$emit('alert-message', this.$t(error), 'error');
+            } else {
+              this.$root.$emit('alert-message', this.$t('programs.programUpdateError'), 'error');
+            }
           })
           .finally(() => this.loading = false);
       } else {
@@ -604,8 +609,13 @@ export default {
             return this.$nextTick();
           })
           .then(() => this.close())
-          .catch(() => {
-            this.$root.$emit('alert-message', this.$t('programs.programCreateError'), 'error');
+          .catch(e => {
+            const error = String(e);
+            if (this.$te(error)) {
+              this.$root.$emit('alert-message', this.$t(error), 'error');
+            } else {
+              this.$root.$emit('alert-message', this.$t('programs.programCreateError'), 'error');
+            }
           })
           .finally(() => this.loading = false);
       }

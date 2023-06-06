@@ -71,7 +71,7 @@ export function createProgram(program) {
     if (resp?.ok) {
       return resp.json();
     } else {
-      throw new Error('Error saving program');
+      return resp.text().then(e => new Error(e));
     }
   });
 }
@@ -88,7 +88,7 @@ export function updateProgram(program) {
     if (resp?.ok) {
       return resp.json();
     } else {
-      throw new Error('Error updating program');
+      return resp.text().then(e => new Error(e));
     }
   });
 }
