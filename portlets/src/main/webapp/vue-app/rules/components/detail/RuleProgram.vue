@@ -28,6 +28,7 @@
     <v-list-item-avatar class="me-2" tile>
       <v-avatar
         :size="programCoverSize"
+        :style="programStyle"
         class="border-color"
         rounded>
         <v-img :src="programAvatarUrl" />
@@ -63,6 +64,9 @@ export default {
     },
     programUrl() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.programId}`;
+    },
+    programStyle() {
+      return this.rule?.program?.color && `border: 1px solid ${this.rule?.program.color} !important;` || '';
     },
   },
 };

@@ -33,6 +33,13 @@
         v-else
         :disabled="disabledCollapsing"
         class="text-color d-flex align-center ms-n6">
+        <v-avatar
+          :style="programStyle"
+          size="35"
+          class="border-color me-2"
+          rounded>
+          <v-img :src="program.avatarUrl" />
+        </v-avatar>
         {{ title }}
         <v-divider v-if="!disabledCollapsing" class="ms-4" />
       </v-list-item-title>
@@ -96,6 +103,18 @@ export default {
     },
     sizeToDisplay() {
       return this.size - Object.keys(this.deletedRuleIds).length;
+    },
+    categoryId() {
+      return this.category?.id;
+    },
+    programId() {
+      return this.program.id;
+    },
+    categoryByProgram() {
+      return this.categoryId === this.programId;
+    },
+    programStyle() {
+      return this.categoryByProgram && this.program?.color && `border: 1px solid ${this.program.color} !important;` || '';
     },
   },
   created() {
