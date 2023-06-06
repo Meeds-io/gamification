@@ -39,6 +39,7 @@ module.exports = {
     topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',
     challengesOverview: './src/main/webapp/vue-app/challengesOverview/main.js',
     programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
+    connectorsSettings: './src/main/webapp/vue-app/connectors-setting/main.js',
   },
   plugins: [
     new ESLintPlugin({
