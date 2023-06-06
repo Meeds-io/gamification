@@ -35,6 +35,7 @@ import lombok.EqualsAndHashCode;
 @NamedQuery(name = "GamificationDomain.findByIdWithOwners", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.id = :id")
 @NamedQuery(name = "GamificationDomain.findDomainByTitle", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.title = :domainTitle")
 @NamedQuery(name = "GamificationDomain.deleteDomainByTitle", query = "DELETE FROM GamificationDomain domain WHERE domain.title = :domainTitle")
+@NamedQuery(name = "GamificationDomain.countProgramColor", query = "SELECT COUNT(*) FROM GamificationDomain domain WHERE domain.color = :color AND domain.isDeleted = false")
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ProgramEntity extends AbstractAuditingEntity implements Serializable {
@@ -51,6 +52,9 @@ public class ProgramEntity extends AbstractAuditingEntity implements Serializabl
 
   @Column(name = "DESCRIPTION")
   protected String          description;
+
+  @Column(name = "COLOR")
+  protected String          color;
 
   @Column(name = "PRIORITY")
   protected int             priority;

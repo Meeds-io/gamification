@@ -38,6 +38,7 @@ import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.entity.ProgramEntity;
+import io.meeds.gamification.model.ProgramColorAlreadyExists;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
@@ -273,7 +274,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCreateDomain() throws IllegalAccessException {
+  public void testCreateDomain() throws IllegalAccessException { // NOSONAR
     assertEquals(0, programDAO.count().longValue());
     ProgramDTO program = new ProgramDTO();
     program.setTitle(GAMIFICATION_DOMAIN);
@@ -281,6 +282,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
     program.setDeleted(false);
     program.setEnabled(true);
     program.setBudget(20L);
+    program.setColor("#FFEECCDD");
     assertThrows(IllegalArgumentException.class, () -> programService.createProgram(null, adminAclIdentity));
     ProgramDTO domainWithId = new ProgramDTO();
     domainWithId.setId(150L);
@@ -296,12 +298,15 @@ public class ProgramServiceTest extends AbstractServiceTest {
     programToSave.setDeleted(false);
     programToSave.setEnabled(true);
     programToSave.setBudget(20L);
+    programToSave.setColor("#FFEECCdd");
     programToSave.setOwnerIds(Collections.emptySet());
     programToSave.setCoverFileId(1L);
     programToSave.setAvatarFileId(2L);
     programToSave.setType(EntityType.MANUAL.name());
     assertThrows(IllegalAccessException.class, () -> programService.createProgram(programToSave, spaceMemberAclIdentity));
+    assertThrows(ProgramColorAlreadyExists.class, () -> programService.createProgram(programToSave, adminAclIdentity));
 
+    programToSave.setColor("#FFEECCEE");
     ProgramDTO savedDomain = programService.createProgram(programToSave, adminAclIdentity);
     assertNotNull(savedDomain);
     savedDomain = programService.getProgramById(savedDomain.getId());
@@ -314,17 +319,31 @@ public class ProgramServiceTest extends AbstractServiceTest {
     assertEquals(20L, programToSave.getBudget());
     assertEquals(1L, programToSave.getCoverFileId());
     assertEquals(2L, programToSave.getAvatarFileId());
+    assertEquals("#FFEECCEE", programToSave.getColor());
     assertEquals(EntityType.MANUAL.name(), savedDomain.getType());
     assertNotNull(programToSave.getCreatedDate());
     assertNotNull(programToSave.getLastModifiedDate());
 
+    assertThrows(ProgramColorAlreadyExists.class, () -> programService.createProgram(programToSave, adminAclIdentity));
+    programToSave.setColor("#FFEECCBB");
+
     program = programService.createProgram(programToSave);
     assertNotNull(program);
     assertEquals(EntityType.AUTOMATIC.name(), program.getType());
+    assertEquals("#FFEECCBB", program.getColor());
   }
 
   @Test
   public void testUpdateDomain() throws Exception {
+    ProgramDTO programWithColor = new ProgramDTO();
+    programWithColor.setTitle(GAMIFICATION_DOMAIN);
+    programWithColor.setDescription("Description");
+    programWithColor.setDeleted(false);
+    programWithColor.setEnabled(true);
+    programWithColor.setBudget(20L);
+    programWithColor.setColor("#FFEECCDD");
+    programWithColor = programService.createProgram(programWithColor, adminAclIdentity);
+
     String newTitle = "title_2";
     String newDescription = "desc_2";
     long newBudget = 30;
@@ -332,12 +351,12 @@ public class ProgramServiceTest extends AbstractServiceTest {
     ProgramDTO notExistDomain = new ProgramDTO();
     notExistDomain.setId(150L);
     assertThrows(ObjectNotFoundException.class, () -> programService.updateProgram(notExistDomain, adminAclIdentity));
-    ProgramDTO domain = newProgram(EntityType.MANUAL, "domain1", true, Collections.singleton(1L));
-    domain.setDescription(newDescription);
-    domain.setTitle(newTitle);
-    domain.setBudget(newBudget);
-    domain.setEnabled(true);
-    assertThrows(IllegalAccessException.class, () -> programService.updateProgram(domain, spaceMemberAclIdentity));
+    ProgramDTO program = newProgram(EntityType.MANUAL, "domain1", true, Collections.singleton(1L));
+    program.setDescription(newDescription);
+    program.setTitle(newTitle);
+    program.setBudget(newBudget);
+    program.setEnabled(true);
+    assertThrows(IllegalAccessException.class, () -> programService.updateProgram(program, spaceMemberAclIdentity));
 
     OrganizationService organizationService = ExoContainerContext.getService(OrganizationService.class);
     User user = organizationService.getUserHandler().createUserInstance(spaceMemberAclIdentity.getUserId());
@@ -348,12 +367,13 @@ public class ProgramServiceTest extends AbstractServiceTest {
 
     String ownerId = identityManager.getOrCreateUserIdentity(user.getUserName()).getId();
     Set<Long> newOwners = Collections.singleton(Long.parseLong(ownerId));
-    domain.setOwnerIds(newOwners);
-    domain.setEnabled(false);
-    ProgramDTO updatedDomain = programService.updateProgram(domain, adminAclIdentity);
+    program.setOwnerIds(newOwners);
+    program.setEnabled(false);
+    ProgramDTO updatedDomain = programService.updateProgram(program, adminAclIdentity);
     assertFalse(updatedDomain.isEnabled());
 
     updatedDomain.setEnabled(true);
+    updatedDomain.setColor("#FFEECCEE");
     programService.updateProgram(updatedDomain, adminAclIdentity);
 
     ProgramDTO storedDomain = programService.getProgramById(updatedDomain.getId());
@@ -362,10 +382,39 @@ public class ProgramServiceTest extends AbstractServiceTest {
     assertEquals(newTitle, storedDomain.getTitle());
     assertEquals(newBudget, storedDomain.getBudget());
     assertEquals(newOwners, storedDomain.getOwnerIds());
+    assertEquals("#FFEECCEE", storedDomain.getColor());
     assertTrue(storedDomain.isEnabled());
 
+    updatedDomain = programService.updateProgram(updatedDomain, adminAclIdentity);
+    assertEquals("#FFEECCEE", storedDomain.getColor());
+
+    updatedDomain.setColor(programWithColor.getColor());
+    ProgramDTO programToUpdate = updatedDomain.clone();
+    assertThrows(ProgramColorAlreadyExists.class, () -> programService.updateProgram(programToUpdate, adminAclIdentity));
+
+    programService.deleteProgramById(programWithColor.getId(), adminAclIdentity);
+    updatedDomain = programService.updateProgram(programToUpdate, adminAclIdentity);
+    assertEquals(programWithColor.getColor(), updatedDomain.getColor());
+
     programService.deleteProgramById(storedDomain.getId(), adminAclIdentity);
-    assertThrows(ObjectNotFoundException.class, () -> programService.updateProgram(updatedDomain, spaceMemberAclIdentity));
+    assertThrows(ObjectNotFoundException.class, () -> programService.updateProgram(programToUpdate, spaceMemberAclIdentity));
+  }
+
+  @Test
+  public void testCanUseProgramColor() throws Exception {
+    ProgramDTO programWithColor = new ProgramDTO();
+    programWithColor.setTitle(GAMIFICATION_DOMAIN);
+    programWithColor.setDescription("Description");
+    programWithColor.setDeleted(false);
+    programWithColor.setEnabled(true);
+    programWithColor.setBudget(20L);
+    programWithColor.setColor("#FFEECCDD");
+    programWithColor = programService.createProgram(programWithColor, adminAclIdentity);
+
+    assertTrue(programService.canUseProgramColor(programWithColor.getId(), programWithColor.getColor()));
+    assertFalse(programService.canUseProgramColor(0, programWithColor.getColor()));
+    assertTrue(programService.canUseProgramColor(0, "#FFEECCCC"));
+    assertTrue(programService.canUseProgramColor(0, null));
   }
 
   @Test

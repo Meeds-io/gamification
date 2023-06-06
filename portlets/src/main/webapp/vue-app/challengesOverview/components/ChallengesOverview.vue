@@ -176,6 +176,7 @@ export default {
       // force update of attribute to re-render switch new extension type
       if (changed) {
         this.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
+        this.$root.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
       }
     },
     deleteRule() {

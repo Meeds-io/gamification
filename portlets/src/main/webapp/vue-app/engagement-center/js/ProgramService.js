@@ -147,3 +147,22 @@ export function deleteProgramAvatar(programId) {
     }
   });
 }
+
+export function checkColorValidity(programId, color) {
+  const formData = new FormData();
+  formData.append('color', color);
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs/${programId || 0}/color`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams(formData).toString(),
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.text();
+    } else {
+      throw new Error('Error saving program');
+    }
+  });
+}
