@@ -51,6 +51,7 @@ public class ProgramMapper {
     programEntity.setId(program.getId());
     programEntity.setTitle(program.getTitle());
     programEntity.setDescription(program.getDescription());
+    programEntity.setColor(StringUtils.upperCase(program.getColor()));
     programEntity.setCreatedBy(program.getCreatedBy());
     programEntity.setLastModifiedBy(program.getLastModifiedBy());
     programEntity.setDeleted(program.isDeleted());
@@ -100,6 +101,7 @@ public class ProgramMapper {
     program.setId(programEntity.getId());
     program.setTitle(programEntity.getTitle());
     program.setDescription(programEntity.getDescription());
+    program.setColor(StringUtils.upperCase(programEntity.getColor()));
     if (programEntity.getAudienceId() != null) {
       program.setSpaceId(programEntity.getAudienceId());
     }

@@ -120,6 +120,10 @@ public class ProgramStorage {
     return ProgramMapper.fromEntity(ruleDAO, programEntity);
   }
 
+  public boolean isProgramColorExists(String newColor) {
+    return programDAO.countProgramColor(newColor) > 0;
+  }
+
   public InputStream getImageAsStream(long fileId) {
     try {
       FileItem fileItem = fileService.getFile(fileId);
