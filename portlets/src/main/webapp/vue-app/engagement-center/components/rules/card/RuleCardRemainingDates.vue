@@ -23,7 +23,6 @@
     <engagement-center-rule-date-info-chip
       v-model="datesInfo"
       :rule="rule"
-      separator
       @input="initialized = true" />
   </div>
 </template>
