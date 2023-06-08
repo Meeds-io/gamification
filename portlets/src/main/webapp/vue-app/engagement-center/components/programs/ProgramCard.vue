@@ -18,25 +18,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-card
     id="engagementCenterProgramCard"
     :style="programStyle"
-    class="card engagement-center-card overflow-hidden rounded"
-    height="240"
-    max-height="240"
+    class="card engagement-center-card d-flex flex-column overflow-hidden rounded"
     outlined
     hover>
-    <div @click="openProgramDetail">
-      <v-img
-        :src="programCover"
-        :alt="$t('programs.cover.default')"
-        width="100%"
-        aspect-ratio="1"
-        min-height="70"
-        min-width="70"
+    <div @click="openProgramDetail" class="d-flex flex-column flex-grow-1">
+      <v-card
+        class="overflow-hidden position-relative d-flex align-center justify-center"
+        height="100"
         max-height="100"
-        class="primary--text">
-        <engagement-center-program-menu
-          :is-administrator="isAdministrator"
-          :program="program" />
-      </v-img>
+        flat
+        tile>
+        <img
+          :src="programCover"
+          :alt="$t('programs.cover.default')"
+          class="no-max-width full-height"
+          width="auto"
+          height="100%" />
+        <div class="position-absolute r-0 t-0">
+          <engagement-center-program-menu
+            :is-administrator="isAdministrator"
+            :program="program" />
+        </div>
+      </v-card>
+      <v-spacer />
       <v-list
         min-height="70"
         class="d-flex py-1"
@@ -57,12 +61,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <div class="d-flex justify-center pb-4 mt-n2">
+      <v-spacer />
+      <div class="d-flex justify-center py-2">
         <v-icon size="18" class="pe-2 primary--text">fas fa-trophy</v-icon>
         <span class="text-light-color text-caption" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
       </div>
     </div>
-    <div class="d-flex mb-0 mx-2">
+    <div class="d-flex ma-2">
       <div class="pa-1 d-none d-sm-inline">
         <span class="my-auto caption text-light-color"> {{ $t('programs.details.label.hosts') }} </span>
       </div>
