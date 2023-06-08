@@ -3,10 +3,10 @@
     <span></span>
     <v-icon color="white" size="60">fa-slash</v-icon>
     <span class="headline">
-      {{ program.activeRulesCount && $t('programs.label.programDisabledIntroduction') || $t('programs.label.programDeactivatedDueToLackOfRules') }}
+      {{ programSubtitle }}
     </span>
     <v-btn
-      v-if="program.activeRulesCount && canManageProgram"
+      v-if="canEnableProgram"
       color="primary"
       depressed
       large
@@ -43,6 +43,24 @@ export default {
   computed: {
     canManageProgram() {
       return this.isAdministrator || this.program?.userInfo?.canEdit;
+    },
+    isAudienceValid() {
+      return this.program.open || this.program.space;
+    },
+    hasActiveRules() {
+      return this.program.activeRulesCount;
+    },
+    canEnableProgram() {
+      return this.canManageProgram && this.hasActiveRules && this.isAudienceValid;
+    },
+    programSubtitle() {
+      if (!this.hasActiveRules) {
+        return this.$t('programs.label.programDeactivatedDueToLackOfRules');
+      } else if (!this.isAudienceValid) {
+        return this.$t('programs.label.programDeactivatedDueToMissingAudience');
+      } else {
+        this.$t('programs.label.programDisabledIntroduction');
+      }
     },
   },
   methods: {

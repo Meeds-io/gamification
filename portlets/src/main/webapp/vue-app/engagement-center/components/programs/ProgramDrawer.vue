@@ -557,7 +557,8 @@ export default {
       }
       this.loading = true;
       if (this.program?.id) {
-        this.$translationService.saveTranslations('program', this.program.id, 'title', this.programTitleTranslations)
+        this.$programService.updateProgram(this.programToSave)
+          .then(() => this.$translationService.saveTranslations('program', this.program.id, 'title', this.programTitleTranslations))
           .then(() => this.$translationService.saveTranslations('program', this.program.id, 'description', this.programDescriptionTranslations))
           .then(() => {
             if (this.deleteCover) {
@@ -571,7 +572,9 @@ export default {
                 .finally(() => this.deleteAvatar = false);
             }
           })
-          .then(() => this.$programService.updateProgram(this.programToSave))
+          .then(() => this.$programService.getProgramById(this.program.id, {
+            expand: 'countActiveRules',
+          }))
           .then((program) => {
             this.originalProgram = null;
             this.loading = false;
