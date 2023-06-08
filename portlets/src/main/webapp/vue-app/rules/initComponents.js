@@ -21,6 +21,8 @@ import RuleAnnouncementForm from './components/detail/RuleAnnouncementForm.vue';
 import RulePoints from './components/detail/RulePoints.vue';
 import RuleDateStart from './components/detail/RuleDateStart.vue';
 import RuleDateOver from './components/detail/RuleDateOver.vue';
+import RuleInvalidAudience from './components/detail/RuleInvalidAudience.vue';
+import RuleInvalidWhitelist from './components/detail/RuleInvalidWhitelist.vue';
 import RuleDateEnd from './components/detail/RuleDateEnd.vue';
 import RuleDateInfoChip from './components/detail/RuleDateInfoChip.vue';
 
@@ -48,6 +50,8 @@ const components = {
   'engagement-center-rule-date-start': RuleDateStart,
   'engagement-center-rule-date-end': RuleDateEnd,
   'engagement-center-rule-date-over': RuleDateOver,
+  'engagement-center-rule-invalid-whitelist': RuleInvalidWhitelist,
+  'engagement-center-rule-invalid-audience': RuleInvalidAudience,
   'engagement-center-rule-points': RulePoints,
   'engagement-center-rule-announcement-form': RuleAnnouncementForm,
   'engagement-center-rule-prerequisites': RulePrerequisites,
