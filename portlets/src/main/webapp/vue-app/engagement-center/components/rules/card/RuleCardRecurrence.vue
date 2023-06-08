@@ -20,15 +20,16 @@
 -->
 <template>
   <div class="rule-card-recurrence d-flex flex-nowrap justify-center">
-    <v-icon
-      size="18"
-      class="primary--text me-2">
-      fas fa-redo-alt
-    </v-icon>
-    <div
-      v-sanitized-html="recurrenceTitle"
-      class="text-wrap">
-    </div>
+    <v-tooltip top>
+      <template #activator="{on}">
+        <div
+          v-sanitized-html="recurrenceTitle"
+          class="text-wrap font-weight-bold"
+          v-on="on">
+        </div>
+      </template>
+      <span>{{ recurrenceTooltip }}</span>
+    </v-tooltip>
   </div>
 </template>
 <script>
@@ -43,13 +44,27 @@ export default {
     recurrenceTitle() {
       switch (this.rule?.recurrence) {
       case 'ONCE':
-        return this.$t('rules.card.recurrenceDoItOnce', {0: '<strong>', 1: '</strong>'});
+        return this.$t('gamification.achivementRecurrence.onceTitle', {0: '<strong>', 1: '</strong>'});
       case 'DAILY':
-        return this.$t('rules.card.recurrenceDoItOncePerDay', {0: '<strong>', 1: '</strong>'});
+        return this.$t('gamification.achivementRecurrence.dailyTitle', {0: '<strong>', 1: '</strong>'});
       case 'WEEKLY':
-        return this.$t('rules.card.recurrenceDoItOncePerWeek', {0: '<strong>', 1: '</strong>'});
+        return this.$t('gamification.achivementRecurrence.weeklyTitle', {0: '<strong>', 1: '</strong>'});
       case 'MONTHLY':
-        return this.$t('rules.card.recurrenceDoItOncePerMonth', {0: '<strong>', 1: '</strong>'});
+        return this.$t('gamification.achivementRecurrence.monthlyTitle', {0: '<strong>', 1: '</strong>'});
+      default:
+        return null;
+      }
+    },
+    recurrenceTooltip() {
+      switch (this.rule?.recurrence) {
+      case 'ONCE':
+        return this.$t('gamification.achivementRecurrence.onceTooltip', {0: '<strong>', 1: '</strong>'});
+      case 'DAILY':
+        return this.$t('gamification.achivementRecurrence.dailyTooltip', {0: '<strong>', 1: '</strong>'});
+      case 'WEEKLY':
+        return this.$t('gamification.achivementRecurrence.weeklyTooltip', {0: '<strong>', 1: '</strong>'});
+      case 'MONTHLY':
+        return this.$t('gamification.achivementRecurrence.monthlyTooltip', {0: '<strong>', 1: '</strong>'});
       default:
         return null;
       }
