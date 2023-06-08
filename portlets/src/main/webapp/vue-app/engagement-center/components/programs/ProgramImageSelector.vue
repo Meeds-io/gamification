@@ -96,10 +96,10 @@ export default {
       return this.isAvatar && this.defaultAvatarUrl || this.defaultCoverUrl;
     },
     maxImageWidth() {
-      return this.isAvatar && 500 || 1240;
+      return this.isAvatar && 500 || 1280;
     },
     imageAspectRatio() {
-      return this.isAvatar && 1 || 1240 / 175;
+      return this.isAvatar && 1 || (1248 / 225);
     },
     imageCropperOptions() {
       return {
