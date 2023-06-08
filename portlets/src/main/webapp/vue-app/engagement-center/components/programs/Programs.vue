@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       @filter-select-change="status = $event" />
 
     <v-layout class="py-3 px-4">
-      <v-row class="mx-n3">
+      <v-row class="mx-n3 overflow-hidden">
         <v-col
           v-for="program in programs"
           :key="program.id"
