@@ -110,8 +110,12 @@
               v-else-if="hasValidityMessage"
               cols="12"
               class="px-0 py-6">
+              <engagement-center-rule-invalid-audience
+                v-if="!isValidAudience" />
+              <engagement-center-rule-invalid-whitelist
+                v-else-if="!isValidWhitelist" />
               <engagement-center-rule-date-over
-                v-if="alreadyEnded"
+                v-else-if="alreadyEnded"
                 :rule="rule" />
               <engagement-center-rule-date-start
                 v-else-if="!alreadyStarted"
@@ -190,6 +194,8 @@ export default {
         || !this.alreadyStarted
         || this.isRecurrenceInvalid
         || this.isPrerequisitesInvalid
+        || !this.isValidAudience
+        || !this.isValidWhitelist
         || false;
     },
     canEdit() {
@@ -197,6 +203,12 @@ export default {
     },
     hasRecurrence() {
       return this.rule?.recurrence && this.rule?.recurrence !== 'NONE' || false;
+    },
+    isValidAudience() {
+      return this.rule?.userInfo?.context?.validAudience;
+    },
+    isValidWhitelist() {
+      return this.rule?.userInfo?.context?.validWhitelist;
     },
     isRecurrenceInvalid() {
       return this.hasRecurrence && !this.rule?.userInfo?.context?.validRecurrence;
