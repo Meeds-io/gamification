@@ -78,14 +78,13 @@
           class="rule-card-description rich-editor-content pb-0" />
         <template v-if="isEnabled">
           <v-spacer />
-          <div v-if="rule.recurrence" class="my-auto">
-            <engagement-center-rule-card-recurrence
-              :rule="ruleWithProgram" />
-          </div>
-          <v-spacer />
           <v-card-text class="d-flex align-center pt-0">
             <engagement-center-rule-card-points
               :rule="ruleWithProgram" />
+            <engagement-center-rule-card-recurrence
+              v-if="rule.recurrence" 
+              :rule="ruleWithProgram"
+              class="ms-2" />
             <v-spacer />
             <engagement-center-rule-card-remaining-dates
               :rule="ruleWithProgram" />
