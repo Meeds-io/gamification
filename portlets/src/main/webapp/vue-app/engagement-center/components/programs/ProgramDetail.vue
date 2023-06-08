@@ -53,17 +53,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </div>
           </div>
           <v-avatar
-            class="align-start flex-grow-1"
+            :style="programStyle"
+            class="d-flex align-center justify-center flex-grow-1 overflow-hidden border-color rounded"
             height="auto"
+            max-height="225"
             min-width="100%"
-            width="100%"
+            max-width="100%"
             tile>
             <img
               id="engagementCenterCoverImage"
               :src="programCover"
               :alt="$t('programs.cover.default')"
-              :style="programStyle"
-              class="full-width border-color rounded"
+              height="auto"
+              width="100%"
+              class="full-width"
               role="presentation">
           </v-avatar>
         </div>

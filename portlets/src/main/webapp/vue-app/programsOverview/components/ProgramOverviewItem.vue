@@ -16,20 +16,19 @@
 <template>
   <span>
     <v-list
-      class="pb-0"
+      class="pb-0 my-n1"
       subheader
       two-line>
       <v-list-item
         two-line>
-        <v-list-item-icon class="mx-2">
-          <v-img
-            :src="program.avatarUrl"
-            :style="programStyle"
-            class="border-color"
-            height="40"
-            width="55"
-            rounded />
-        </v-list-item-icon>
+        <v-list-item-avatar
+          :style="programStyle"
+          height="48"
+          width="48"
+          class="border-color rounded mx-2"
+          tile>
+          <v-img :src="program.avatarUrl" />
+        </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>
             {{ program.title }}
