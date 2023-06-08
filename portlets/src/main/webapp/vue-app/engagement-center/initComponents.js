@@ -49,6 +49,8 @@ import RuleCardMaskContent from './components/rules/card/RuleCardMaskContent.vue
 import RuleCardMaskPrequisiteRules from './components/rules/card/RuleCardMaskPrequisiteRules.vue';
 import RuleCardMaskRemainingDates from './components/rules/card/RuleCardMaskRemainingDates.vue';
 import RuleCardMaskRecurrence from './components/rules/card/RuleCardMaskRecurrence.vue';
+import RuleCardMaskAudience from './components/rules/card/RuleCardMaskAudience.vue';
+import RuleCardMaskWhitelist from './components/rules/card/RuleCardMaskWhitelist.vue';
 import RuleCardRecurrence from './components/rules/card/RuleCardRecurrence.vue';
 import RuleCardPoints from './components/rules/card/RuleCardPoints.vue';
 import RuleCardRemainingDates from './components/rules/card/RuleCardRemainingDates.vue';
@@ -101,6 +103,8 @@ const components = {
   'engagement-center-rule-card-mask-prequisite-rules': RuleCardMaskPrequisiteRules,
   'engagement-center-rule-card-mask-remaining-dates': RuleCardMaskRemainingDates,
   'engagement-center-rule-card-mask-recurrence': RuleCardMaskRecurrence,
+  'engagement-center-rule-card-mask-audience': RuleCardMaskAudience,
+  'engagement-center-rule-card-mask-whitelist': RuleCardMaskWhitelist,
   'engagement-center-rule-card-recurrence': RuleCardRecurrence,
   'engagement-center-rule-card-points': RuleCardPoints,
   'engagement-center-rule-card-remaining-dates': RuleCardRemainingDates,

@@ -42,6 +42,12 @@
             :title="rule.title"
             :text="rule.enabled && $t('actions.label.disabledProgram') || $t('actions.label.disabled')"
             class="rule-card-mask-disabled" />
+          <engagement-center-rule-card-mask-audience
+            v-else-if="!isValidAudience"
+            :rule="ruleWithProgram" />
+          <engagement-center-rule-card-mask-whitelist
+            v-else-if="!isValidWhitelist"
+            :rule="ruleWithProgram" />
           <engagement-center-rule-card-mask-remaining-dates
             v-else-if="!isValidDates"
             :rule="ruleWithProgram" />
@@ -153,6 +159,12 @@ export default {
     },
     isValidRecurrence() {
       return this.rule?.userInfo?.context?.validRecurrence;
+    },
+    isValidAudience() {
+      return this.rule?.userInfo?.context?.validAudience;
+    },
+    isValidWhitelist() {
+      return this.rule?.userInfo?.context?.validWhitelist;
     },
     extension() {
       const extensions = this.actionValueExtensions || this.$root.actionValueExtensions;

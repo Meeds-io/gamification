@@ -135,6 +135,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <set-method>registerSpaceListenerPlugin</set-method>
             <type>io.meeds.gamification.listener.GamificationSpaceListener</type>
         </component-plugin>
+        <component-plugin>
+            <name>ProgramSpaceListener</name>
+            <set-method>registerSpaceListenerPlugin</set-method>
+            <type>io.meeds.gamification.listener.ProgramSpaceListener</type>
+        </component-plugin>
     </external-component-plugins>
     <!-- Identity -->
     <external-component-plugins>
