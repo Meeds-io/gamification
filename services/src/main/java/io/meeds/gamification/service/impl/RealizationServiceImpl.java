@@ -236,8 +236,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     org.exoplatform.social.core.identity.model.Identity earnerIdentity = identityManager.getIdentity(earnerIdentityId);
     if (earnerIdentity == null
         || earnerIdentity.isDeleted()
-        || !earnerIdentity.isEnable()
-        || isUserBlacklisted(earnerIdentity.getRemoteId())) {
+        || !earnerIdentity.isEnable()) {
       return Collections.emptyList();
     }
 
@@ -353,12 +352,15 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         || (identity.isUser()
             && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId()))) {
       realizationRestriction.setValidIdentity(false);
+      return realizationRestriction;
     } else if (rule == null
         || rule.isDeleted()
         || !rule.isEnabled()) {
       realizationRestriction.setValidRule(false);
+      return realizationRestriction;
     } else if (!isValidProgram(rule.getProgram())) {
       realizationRestriction.setValidProgram(false);
+      return realizationRestriction;
     } else {
       if (!isValidDates(rule)) {
         realizationRestriction.setValidDates(false);
@@ -386,16 +388,18 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         });
       }
     }
-    if (realizationRestriction.isValid() && rule.getType() == EntityType.MANUAL) { // NOSONAR
+    if (realizationRestriction.isValid()) { // NOSONAR
       if (!rule.isOpen()) {
         Space space = spaceService.getSpaceById(String.valueOf(rule.getSpaceId()));
         if (space == null) {
           realizationRestriction.setValidAudience(false);
-        } else if (!spaceService.canRedactOnSpace(space, Utils.getUserAclIdentity(identity.getRemoteId()))) { // NOSONAR
+        } else if (identity.isUser()
+            && rule.getType() == EntityType.MANUAL
+            && !spaceService.canRedactOnSpace(space, Utils.getUserAclIdentity(identity.getRemoteId()))) { // NOSONAR
           realizationRestriction.setValidRedactor(false);
         }
       }
-      if (isUserBlacklisted(identity.getRemoteId())) { // NOSONAR
+      if (identity.isUser() && isUserBlacklisted(identity.getRemoteId())) { // NOSONAR
         realizationRestriction.setValidWhitelist(false);
       }
     }
