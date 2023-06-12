@@ -393,10 +393,6 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         Space space = spaceService.getSpaceById(String.valueOf(rule.getSpaceId()));
         if (space == null) {
           realizationRestriction.setValidAudience(false);
-        } else if (identity.isUser()
-            && rule.getType() == EntityType.MANUAL
-            && !spaceService.canRedactOnSpace(space, Utils.getUserAclIdentity(identity.getRemoteId()))) { // NOSONAR
-          realizationRestriction.setValidRedactor(false);
         }
       }
       if (identity.isUser() && isUserBlacklisted(identity.getRemoteId())) { // NOSONAR
