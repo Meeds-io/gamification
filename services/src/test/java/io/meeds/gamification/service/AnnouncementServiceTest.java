@@ -162,7 +162,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     space.setMembers(spaceMembers);
     space.setRedactors(new String[0]);
     when(spaceService.getSpaceById("1")).thenReturn(space);
-    when(spaceService.isRedactor(space, "root")).thenReturn(true);
+    when(spaceService.isRedactor(space, "root")).thenReturn(false);
     when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
@@ -248,7 +248,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     space.setMembers(spaceMembers);
     space.setRedactors(new String[0]);
     when(spaceService.getSpaceById("1")).thenReturn(space);
-    when(spaceService.isRedactor(space, "root")).thenReturn(true);
+    when(spaceService.isRedactor(space, "root")).thenReturn(false);
     when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(userIdentity);
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(userIdentity);
@@ -356,7 +356,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     space.setMembers(spaceMembers);
     space.setRedactors(new String[0]);
     when(spaceService.getSpaceById("1")).thenReturn(space);
-    when(spaceService.isRedactor(space, "root")).thenReturn(true);
+    when(spaceService.isRedactor(space, "root")).thenReturn(false);
     when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);

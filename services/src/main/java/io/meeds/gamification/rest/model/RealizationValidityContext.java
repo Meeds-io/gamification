@@ -42,8 +42,6 @@ public class RealizationValidityContext implements Cloneable {
 
   private boolean              validRecurrence     = true;
 
-  private boolean              validRedactor       = true;
-
   private boolean              validWhitelist      = true;
 
   private Map<String, Boolean> validPrerequisites  = null;
@@ -57,7 +55,6 @@ public class RealizationValidityContext implements Cloneable {
         && validRule
         && validDates
         && validRecurrence
-        && validRedactor
         && validWhitelist
         && (MapUtils.isEmpty(validPrerequisites) || validPrerequisites.values().stream().allMatch(Boolean::booleanValue));
   }
@@ -70,7 +67,6 @@ public class RealizationValidityContext implements Cloneable {
                                           validRule,
                                           validDates,
                                           validRecurrence,
-                                          validRedactor,
                                           validWhitelist,
                                           validPrerequisites,
                                           nextOccurenceMillis);
