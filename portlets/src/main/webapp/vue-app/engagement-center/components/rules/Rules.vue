@@ -128,7 +128,7 @@ export default {
       switch (this.status) {
       case 'ALL': return this.$t('rules.filter.incentives', {0: this.rulesSize});
       case 'STARTED': return this.$t('rules.filter.activeIncentives', {0: this.rulesSize});
-      case 'NOT_STARTED': return this.$t('rules.filter.upcomingIncentives', {0: this.rulesSize});
+      case 'UPCOMING': return this.$t('rules.filter.upcomingIncentives', {0: this.rulesSize});
       case 'ENDED': return this.$t('rules.filter.endedIncentives', {0: this.rulesSize});
       case 'DISABLED': return this.$t('rules.filter.disabledIncentives', {0: this.rulesSize});
       default: return '';
@@ -144,7 +144,7 @@ export default {
       return !this.loading && !this.hasItemsToDisplay && !this.term?.length && (this.status === 'ALL' || this.status === 'STARTED');
     },
     notFoundInfoMessage() {
-      if (this.status === 'NOT_STARTED' && !this.term?.length) {
+      if (this.status === 'UPCOMING' && !this.term?.length) {
         return this.$t('actions.filter.upcomingNoResultsMessage');
       } else if (this.status === 'ENDED' && !this.term?.length) {
         return this.$t('actions.filter.endedNoResultsMessage');
@@ -153,7 +153,7 @@ export default {
       }
     },
     welcomeMessage() {
-      if (this.status === 'NOT_STARTED' && this.status === 'ENDED' && !this.term?.length) {
+      if (this.status === 'UPCOMING' && this.status === 'ENDED' && !this.term?.length) {
         return this.$t('appCenter.welcomeMessage');
       } 
       return '';
