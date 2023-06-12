@@ -339,6 +339,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       return;
     }
     switch (dateFilterType) {
+    case ACTIVE:
+      suffixes.add("ActiveDate");
+      predicates.add("(r.endDate IS NULL OR r.endDate > :date)");
+      break;
     case STARTED:
       suffixes.add("StartDateAndEndDate");
       predicates.add("((r.startDate IS NULL OR r.startDate <= :date)" +
@@ -350,7 +354,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       predicates.add("r.endDate > :date");
       predicates.add("(r.startDate IS NULL OR r.startDate <= :date)");
       break;
-    case NOT_STARTED:
+    case UPCOMING:
       suffixes.add("StartDate");
       predicates.add("r.startDate IS NOT NULL");
       predicates.add("r.startDate > :date");

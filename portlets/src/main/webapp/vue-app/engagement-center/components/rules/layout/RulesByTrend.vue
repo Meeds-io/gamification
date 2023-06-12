@@ -193,7 +193,7 @@ export default {
     retrieveStartingSoonRules() {
       this.loading++;
       return this.$ruleService.getRules({
-        dateFilter: 'NOT_STARTED',
+        dateFilter: 'UPCOMING',
         status: 'ENABLED',
         programStatus: 'ENABLED',
         offset: 0,

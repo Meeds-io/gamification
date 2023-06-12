@@ -159,7 +159,7 @@ export default {
         value: 'STARTED',
       },{
         text: this.$t('rules.filter.upcoming'),
-        value: 'NOT_STARTED',
+        value: 'UPCOMING',
       },{
         text: this.$t('rules.filter.ended'),
         value: 'ENDED',
@@ -177,7 +177,7 @@ export default {
         value: 'STARTED',
       },{
         text: this.$t('rules.filter.upcoming'),
-        value: 'NOT_STARTED',
+        value: 'UPCOMING',
       },{
         text: this.$t('rules.filter.ended'),
         value: 'ENDED',

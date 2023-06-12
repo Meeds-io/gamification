@@ -88,7 +88,8 @@ public interface RuleService {
   int countRules(RuleFilter ruleFilter);
 
   /**
-   * Returns the count of active rules of a given program identified by its id
+   * Returns the count of active rules of a given program identified by its id.
+   * The list of active rules corresponds to enabled rules which started or is upcoming.
    * 
    * @param  programId Program technical identifier
    * @return           {@link Integer} got active rules count
