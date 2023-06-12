@@ -185,7 +185,7 @@ public class RuleServiceImpl implements RuleService {
     ruleFilter.setStatus(EntityStatusType.ENABLED);
     ruleFilter.setProgramStatus(EntityStatusType.ALL);
     ruleFilter.setProgramId(programId);
-    ruleFilter.setDateFilterType(DateFilterType.STARTED);
+    ruleFilter.setDateFilterType(DateFilterType.ACTIVE);
     return countRules(ruleFilter);
   }
 
