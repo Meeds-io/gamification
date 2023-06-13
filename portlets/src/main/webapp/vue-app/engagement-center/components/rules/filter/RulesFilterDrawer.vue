@@ -56,7 +56,7 @@
               value="STARTED" />
             <v-radio
               :label="$t('gamification.actions.filter.upcomingActions')"
-              value="NOT_STARTED" />
+              value="UPCOMING" />
             <v-radio
               :label="$t('gamification.actions.filter.endedActions')"
               value="ENDED" />

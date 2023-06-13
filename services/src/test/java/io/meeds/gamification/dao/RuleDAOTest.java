@@ -202,7 +202,6 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertEquals(0, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     filter.setType(EntityFilterType.MANUAL);
     assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
-    filter.setDateFilterType(DateFilterType.NOT_STARTED);
     RuleEntity ruleEntityNotStarted = new RuleEntity();
     ruleEntityNotStarted.setScore(Integer.parseInt(TEST__SCORE));
     ruleEntityNotStarted.setTitle("ruleEntityNotStarted");
@@ -221,9 +220,12 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleEntityNotStarted.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
         + 2 * MILLIS_IN_A_DAY))));
     ruleDAO.create(ruleEntityNotStarted);
+    filter.setDateFilterType(DateFilterType.UPCOMING);
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
 
-    filter.setDateFilterType(DateFilterType.ENDED);
+    filter.setDateFilterType(DateFilterType.ACTIVE);
+    assertEquals(3, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
+
     RuleEntity ruleEntityEnded = new RuleEntity();
     ruleEntityEnded.setScore(Integer.parseInt(TEST__SCORE));
     ruleEntityEnded.setTitle("ruleEntityEnded");
@@ -241,6 +243,8 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleEntityEnded.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
         - 5 * MILLIS_IN_A_DAY))));
     ruleEntityEnded = ruleDAO.create(ruleEntityEnded);
+
+    filter.setDateFilterType(DateFilterType.ENDED);
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
 
     filter.setDateFilterType(DateFilterType.ALL);
