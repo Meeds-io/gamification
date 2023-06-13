@@ -32,6 +32,7 @@ import org.junit.Test;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.MembershipEntry;
 
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
@@ -394,7 +395,7 @@ public class RealizationServiceTest extends AbstractServiceTest {
   }
 
   public void testCreateRealizationOnOnceRule() throws ObjectNotFoundException {
-    makeRecurrenceTypeChecks(RecurrenceType.DAILY);
+    makeRecurrenceTypeChecks(RecurrenceType.ONCE);
     assertEquals(2, realizationDAO.count().intValue());
   }
 
@@ -404,13 +405,39 @@ public class RealizationServiceTest extends AbstractServiceTest {
   }
 
   public void testCreateRealizationOnWeeklyRule() throws ObjectNotFoundException {
-    makeRecurrenceTypeChecks(RecurrenceType.DAILY);
+    makeRecurrenceTypeChecks(RecurrenceType.WEEKLY);
     assertEquals(2, realizationDAO.count().intValue());
   }
 
   public void testCreateRealizationOnMonthlyRule() throws ObjectNotFoundException {
-    makeRecurrenceTypeChecks(RecurrenceType.DAILY);
+    makeRecurrenceTypeChecks(RecurrenceType.MONTHLY);
     assertEquals(2, realizationDAO.count().intValue());
+  }
+
+  @SuppressWarnings("deprecation")
+  public void testCreateRealizationForBlacklistUser() throws ObjectNotFoundException {
+
+    List<RealizationEntity> realizationEntities = realizationDAO.findAll();
+    assertEquals(0, realizationEntities.size());
+    RuleDTO ruleDTO = newRuleDTO();
+
+    List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                                              spaceMemberIdentityId,
+                                                                              adminIdentityId,
+                                                                              ACTIVITY_ID,
+                                                                              ACTIVITY_OBJECT_TYPE);
+    assertEquals(1, realizations.size());
+
+    spaceMemberAclIdentity.setMemberships(Arrays.asList(new MembershipEntry(Utils.INTERNAL_USERS_GROUP),
+                                                        new MembershipEntry(Utils.BLACK_LIST_GROUP)));
+    identityRegistry.register(spaceMemberAclIdentity);
+
+    realizations = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                         spaceMemberIdentityId,
+                                                         adminIdentityId,
+                                                         ACTIVITY_ID,
+                                                         ACTIVITY_OBJECT_TYPE);
+    assertEquals(0, realizations.size());
   }
 
   public void testCreateRealizationWithPrerequisiteRule() throws ObjectNotFoundException, IllegalAccessException {
