@@ -16,6 +16,10 @@
  */
 package io.meeds.gamification.listener;
 
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER;
+import static io.meeds.gamification.constant.GamificationConstant.IDENTITY_OBJECT_TYPE;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -23,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -31,21 +36,50 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.model.Profile;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
+import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.cache.CachedActivityStorage;
 
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.service.AnnouncementService;
-import io.meeds.gamification.test.AbstractServiceTest;
+import io.meeds.gamification.service.RealizationService;
+import io.meeds.gamification.service.RuleService;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GamificationProfileListenerTest extends AbstractServiceTest {
+public class GamificationProfileListenerTest {
 
   @Mock
   private AnnouncementService   announcementService;
 
   @Mock
   private CachedActivityStorage activityStorage;
+
+  @Mock
+  private RealizationService    realizationService;
+
+  @Mock
+  private RuleService           ruleService;
+
+  @Mock
+  private SpaceService          spaceService;
+
+  @Mock
+  private IdentityManager       identityManager;
+
+  @Mock
+  private Identity              identity;
+
+  @Mock
+  private Profile               profile;
+
+  @Before
+  public void setup() {
+    when(identityManager.getOrCreateUserIdentity("root1")).thenReturn(identity);
+    when(identity.getId()).thenReturn("1");
+    when(identity.getProfile()).thenReturn(profile);
+    when(profile.getIdentity()).thenReturn(identity);
+  }
 
   @Test
   public void testUpdateContactSectionUpdated() {
@@ -71,4 +105,44 @@ public class GamificationProfileListenerTest extends AbstractServiceTest {
       }
     }));
   }
+
+  @Test
+  public void testUpdateUserAvatar() {
+    GamificationProfileListener gamificationProfileListener = new GamificationProfileListener(ruleService,
+                                                                                              identityManager,
+                                                                                              spaceService,
+                                                                                              realizationService,
+                                                                                              announcementService,
+                                                                                              activityStorage);
+    ProfileLifeCycleEvent event = new ProfileLifeCycleEvent(ProfileLifeCycleEvent.Type.AVATAR_UPDATED, "roo1", profile);
+    gamificationProfileListener.avatarUpdated(event);
+    verify(realizationService,
+           times(1)).createRealizationsAsync(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR,
+                                             identity.getId(),
+                                             identity.getId(),
+                                             identity.getId(),
+                                             IDENTITY_OBJECT_TYPE);
+
+  }
+
+  @Test
+  public void testUpdateUserBanner() {
+    GamificationProfileListener gamificationProfileListener = new GamificationProfileListener(ruleService,
+                                                                                              identityManager,
+                                                                                              spaceService,
+                                                                                              realizationService,
+                                                                                              announcementService,
+                                                                                              activityStorage);
+
+    ProfileLifeCycleEvent event = new ProfileLifeCycleEvent(ProfileLifeCycleEvent.Type.BANNER_UPDATED, "roo1", profile);
+    gamificationProfileListener.bannerUpdated(event);
+    verify(realizationService,
+           times(1)).createRealizationsAsync(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER,
+                                             identity.getId(),
+                                             identity.getId(),
+                                             identity.getId(),
+                                             IDENTITY_OBJECT_TYPE);
+
+  }
+
 }

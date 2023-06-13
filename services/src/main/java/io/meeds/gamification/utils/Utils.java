@@ -250,12 +250,7 @@ public class Utils {
       return null;
     }
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    Space space = spaceService.getSpaceById(spaceId);
-    if (space == null) {
-      LOG.warn("space with id {} do not exist", spaceId);
-      return null;
-    }
-    return space;
+    return spaceService.getSpaceById(spaceId);
   }
 
   public static String getSpaceFromObjectID(String objectId) {

@@ -67,16 +67,7 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
 
   @Override
   public void avatarUpdated(ProfileLifeCycleEvent event) {
-
-    Long lastUpdate = event.getProfile().getAvatarLastUpdated();
     String identityId = event.getProfile().getIdentity().getId();
-
-    // Do not reward a user when he update his avatar, reward user only when he
-    // add
-    // an avatar for the first time
-    if (lastUpdate != null) {
-      return;
-    }
     realizationService.createRealizationsAsync(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR,
                                                identityId,
                                                identityId,
@@ -86,17 +77,7 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
 
   @Override
   public void bannerUpdated(ProfileLifeCycleEvent event) {
-
-    Long lastUpdate = event.getProfile().getBannerLastUpdated();
     String identityId = event.getProfile().getIdentity().getId();
-
-    // Do not reward a user when he update his banner, reward user only when he
-    // add
-    // a banner for the first time
-    if (lastUpdate != null) {
-      return;
-    }
-
     realizationService.createRealizationsAsync(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER,
                                                identityId,
                                                identityId,
@@ -132,9 +113,7 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
 
   @Override
   public void aboutMeUpdated(ProfileLifeCycleEvent event) {
-
     String identityId = event.getProfile().getIdentity().getId();
-
     realizationService.createRealizationsAsync(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME,
                                                identityId,
                                                identityId,
