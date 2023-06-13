@@ -15,19 +15,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import ProgramsOverview from './components/ProgramsOverview.vue';
+import ProgramOverviewItem from './components/ProgramOverviewItem.vue';
 
 const components = {
   'gamification-overview-programs': ProgramsOverview,
+  'gamification-overview-program-item': ProgramOverviewItem,
 };
 
 for (const key in components) {
   Vue.component(key, components[key]);
-}
-
-import  * as programsServices  from '../engagement-center/js/programsServices';
-
-if (!Vue.prototype.$programsServices) {
-  window.Object.defineProperty(Vue.prototype, '$programsServices', {
-    value: programsServices,
-  });
 }

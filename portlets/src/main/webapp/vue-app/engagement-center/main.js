@@ -16,11 +16,10 @@
  */
 import './initComponents.js';
 import './services.js';
-import './extensions.js';
 
 // get overridden components if exists
 if (extensionRegistry) {
-  const components = extensionRegistry.loadComponents('Challenges');
+  const components = extensionRegistry.loadComponents('EngagementCenter');
   if (components && components.length > 0) {
     components.forEach(cmp => {
       Vue.component(cmp.componentName, cmp.componentOptions);
@@ -41,11 +40,26 @@ const urls = [
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`
 ];
 
-export function init(isAdministrator) {
+document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+
+export function init(isAdministrator, isProgramManager) {
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
-      template: `<engagement-center id="${appId}" :is-administrator="${isAdministrator}"/>`,
+      data: {
+        now: Date.now(),
+        actionValueExtensions: {},
+      },
+      computed: {
+        isMobile() {
+          return this.$vuetify.breakpoint.xsOnly;
+        },
+      },
+      created() {
+        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+        window.setInterval(() => this.now = Date.now(), 1000);
+      },
+      template: `<engagement-center id="${appId}" :is-administrator="${isAdministrator}" :is-program-manager="${isProgramManager}" />`,
       vuetify,
       i18n
     }, `#${appId}`, 'EngagementCenter');

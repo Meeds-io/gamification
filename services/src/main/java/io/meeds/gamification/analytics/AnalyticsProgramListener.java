@@ -15,11 +15,21 @@
  */
 package io.meeds.gamification.analytics;
 
-import static org.exoplatform.addons.gamification.utils.Utils.*;
-import static org.exoplatform.addons.gamification.service.configuration.DomainService.*;
+import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_CREATE_LISTENER;
+import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_DELETE_LISTENER;
+import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_DISABLE_LISTENER;
+import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_ENABLE_LISTENER;
+import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_UPDATE_LISTENER;
+import static io.meeds.gamification.utils.Utils.STATISTICS_CREATE_PROGRAM_OPERATION;
+import static io.meeds.gamification.utils.Utils.STATISTICS_DELETE_PROGRAM_OPERATION;
+import static io.meeds.gamification.utils.Utils.STATISTICS_DISABLE_PROGRAM_OPERATION;
+import static io.meeds.gamification.utils.Utils.STATISTICS_ENABLE_PROGRAM_OPERATION;
+import static io.meeds.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_SUBMODULE;
+import static io.meeds.gamification.utils.Utils.STATISTICS_UPDATE_PROGRAM_OPERATION;
+import static io.meeds.gamification.utils.Utils.addProgramStatisticParameters;
 import static org.exoplatform.analytics.utils.AnalyticsUtils.addStatisticData;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.analytics.model.StatisticData;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.services.listener.Asynchronous;
@@ -28,8 +38,10 @@ import org.exoplatform.services.listener.Listener;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import io.meeds.gamification.model.ProgramDTO;
+
 @Asynchronous
-public class AnalyticsProgramListener extends Listener<DomainDTO, String> {
+public class AnalyticsProgramListener extends Listener<ProgramDTO, String> {
 
   private IdentityManager identityManager;
 
@@ -42,10 +54,10 @@ public class AnalyticsProgramListener extends Listener<DomainDTO, String> {
 
   @Override
   @ExoTransactional
-  public void onEvent(Event<DomainDTO, String> event) throws Exception {
+  public void onEvent(Event<ProgramDTO, String> event) throws Exception {
     String userId = event.getData();
-    DomainDTO domain = event.getSource();
-    if (domain == null) {
+    ProgramDTO program = event.getSource();
+    if (program == null) {
       return;
     }
 
@@ -76,7 +88,7 @@ public class AnalyticsProgramListener extends Listener<DomainDTO, String> {
     default:
       throw new IllegalArgumentException("Unexpected listener event name: " + event.getEventName());
     }
-    addDomainStatisticParameters(identityManager, spaceService, domain, statisticData, userId);
+    addProgramStatisticParameters(identityManager, spaceService, program, statisticData, userId);
     addStatisticData(statisticData);
   }
 

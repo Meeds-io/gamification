@@ -14,6 +14,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+import './initComponents.js';
+import '../engagement-center/services.js';
+
 // get overridden components if exists
 if (extensionRegistry) {
   const components = extensionRegistry.loadComponents('Realizations');
@@ -23,23 +26,5 @@ if (extensionRegistry) {
     });
   }
 }
-const vuetify = Vue.prototype.vuetifyOptions;
 
-// getting language of user
-const lang = eXo  && eXo.env.portal.language || 'en';
-
-const resourceBundleName = 'locale.addon.Gamification';
-const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
-const appId = 'Realizations';
-
-export function init(isAdministrator) {
-  //getting locale ressources
-  exoi18n.loadLanguageAsync(lang, url).then(i18n => {
-    // init Vue app when locale ressources are ready
-    Vue.createApp({
-      template: `<realizations id="${appId}"  :is-administrator="${isAdministrator}"/>`,
-      i18n,
-      vuetify,
-    }, `#${appId}`, 'Realizations');
-  });
-}
+Vue.prototype.$utils.includeExtensions('engagementCenterActions');

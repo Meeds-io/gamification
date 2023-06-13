@@ -16,7 +16,7 @@
 <template>
   <v-app>
     <gamification-overview-widget
-      v-if="!displayChallenges"
+      v-if="!hasRules"
       :loading="loading">
       <template #title>
         {{ $t('gamification.overview.emptyChallengesOverviewTitle') }}
@@ -34,7 +34,7 @@
     </gamification-overview-widget>
     <gamification-overview-widget
       v-else
-      :see-all-url="challengesURL"
+      :see-all-url="actionsPageURL"
       :extra-class="'px-0 mt-1'">
       <template #title>
         {{ $t('gamification.overview.challengesOverviewTitle') }}
@@ -42,9 +42,9 @@
       <template #content>
         <gamification-overview-widget-row
           class="py-auto"                   
-          v-for="(item, index) in listChallenges" 
+          v-for="(item, index) in rules" 
           :key="index"
-          :click-event-param="`${item.challengeId}`"
+          :click-event-param="item"
           :is-challenge-id-provided="true">
           <template #icon>
             <v-icon
@@ -56,27 +56,24 @@
           </template>
           <template #content>
             <span>
-              <v-list
-                subheader
-                two-line>
-                <v-list-item
-                  two-line>
+              <v-list subheader two-line>
+                <v-list-item two-line>
                   <v-list-item-content>
-                    <v-list-item-title class="">
-                      {{ item.challengeTitle }}
+                    <v-list-item-title>
+                      {{ item.title }}
                     </v-list-item-title>
-                    <v-list-item-subtitle v-if="item.challengesAnnouncementsCount === 0"> 
+                    <v-list-item-subtitle v-if="item.realizationsCount === 0">
                       {{ $t('gamification.overview.label.firstAnnounecement') }}
                     </v-list-item-subtitle>
-                    <v-list-item-subtitle v-else-if="item.challengesAnnouncementsCount === 1"> 
-                      {{ item.challengesAnnouncementsCount }}  {{ $t('gamification.overview.label.participant') }}
+                    <v-list-item-subtitle v-else-if="item.realizationsCount === 1">
+                      1 {{ $t('gamification.overview.label.participant') }}
                     </v-list-item-subtitle>
-                    <v-list-item-subtitle v-else> 
-                      {{ item.challengesAnnouncementsCount }}  {{ $t('gamification.overview.label.participants') }}
+                    <v-list-item-subtitle v-else>
+                      {{ item.realizationsCount }} {{ $t('gamification.overview.label.participants') }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
                   <v-list-item-action>
-                    <v-list-item-action-text v-text="item.challengePoints + ' ' + $t('challenges.label.points') " class="mt-5" />
+                    <v-list-item-action-text v-text="item.score + ' ' + $t('challenges.label.points') " class="mt-5" />
                   </v-list-item-action>
                 </v-list-item>
               </v-list>
@@ -85,71 +82,126 @@
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
-    <rule-details-drawer
+    <engagement-center-rule-detail-drawer
       ref="challengeDetailsDrawer"
+      :action-value-extensions="actionValueExtensions"
       :is-overview-displayed="true" />
+    <engagement-center-rule-achievements-drawer
+      ref="achievementsDrawer"
+      :action-value-extensions="actionValueExtensions" />
+    <engagement-center-rule-form-drawer ref="ruleFormDrawer" />
+    <exo-confirm-dialog
+      ref="deleteRuleConfirmDialog"
+      :title="$t('programs.details.title.confirmDeleteRule')"
+      :message="$t('actions.deleteConfirmMessage')"
+      :ok-label="$t('programs.details.ok.button')"
+      :cancel-label="$t('programs.details.cancel.button')"
+      @ok="deleteRule" />
   </v-app>
 </template>
 <script>
 export default {
   data: () => ({
     search: '',
-    challengePerPage: 3,
-    announcementsPerChallenge: -1,
+    pageSize: 3,
+    realizationsPerRule: 3,
     filter: 'STARTED',
     period: 'WEEK',
     loading: true,
-    displayChallenges: false,
-    listChallenges: [],
-    listRealizations: [],
+    selectedRule: null,
+    rules: [],
     orderByRealizations: true,
+    extensionApp: 'engagementCenterActions',
+    actionValueExtensionType: 'user-actions',
+    actionValueExtensions: {},
+    actionsPageURL: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
   }),
   computed: {
     emptySummaryText() {
       return this.$t('gamification.overview.challengesOverviewSummary', {
-        0: `<a class="primary--text font-weight-bold" href="${this.challengesURL}">`,
+        0: `<a class="primary--text font-weight-bold" href="${this.actionsPageURL}">`,
         1: '</a>',
       });
     },
-    challengesURL() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
+    hasRules() {
+      return this.rules?.length;
     },
   },
   created() {
+    document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
+    this.refreshActionValueExtensions();
+
     document.addEventListener('widget-row-click-event', (event) => {
-      if (event) {
-        this.$challengesServices.getChallengeById(event.detail)
-          .then(challenge => {
-            document.dispatchEvent(new CustomEvent('rule-detail-drawer', { detail: challenge }));
-          });
-      }});
-    this.getChallenges();
+      if (event?.detail) {
+        document.dispatchEvent(new CustomEvent('rule-detail-drawer', { detail: event.detail }));
+      }
+    });
+    this.retrieveRules();
+    this.$root.$on('announcement-added', this.retrieveRules);
+    this.$root.$on('rule-updated', this.retrieveRules);
+    this.$root.$on('rule-deleted', this.retrieveRules);
+    this.$root.$on('rule-delete-confirm', this.confirmDelete);
   },
   methods: {
-    getChallenges() {
+    retrieveRules() {
       this.loading = true;
-      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter, this.orderByRealizations, this.listRealizations, this.period)
+      return this.$ruleService.getRules({
+        term: this.search,
+        status: 'ENABLED',
+        programStatus: 'ENABLED',
+        type: 'MANUAL',
+        dateFilter: this.filter,
+        offset: 0,
+        limit: this.pageSize,
+        realizationsLimit: this.realizationsPerRule,
+        orderByRealizations: this.orderByRealizations,
+        period: this.period,
+        expand: 'countRealizations',
+        lang: eXo.env.portal.language,
+      })
         .then(result => {
-          if (!result) {
-            return;
-          }
-          result.forEach(data => {
-            const challenge = {};
-            challenge.challengeId = data.id;
-            challenge.challengeTitle = data.title;
-            challenge.challengePoints =  data.points;
-            challenge.challengesAnnouncementsCount =  data.announcements.length;
-            this.listChallenges.push(challenge);
-            this.listRealizations.push(data.id);
-          });
-          if (this.listChallenges.length < this.challengePerPage && this.orderByRealizations) {
-            this.orderByRealizations = false;
-            this.challengePerPage -= this.listChallenges.length;
-            return this.getChallenges();
-          }
-          this.listChallenges = this.listChallenges.sort((challenge1, challenge2) => challenge2.challengePoints - challenge1.challengePoints);
-          this.displayChallenges = this.listChallenges.length > 0;
+          this.rules = result?.rules || [];
+          this.rules = this.rules.sort((challenge1, challenge2) => challenge2.score - challenge1.score);
         }).finally(() => this.loading = false);
+    },
+    refreshActionValueExtensions() {
+      const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
+      let changed = false;
+      extensions.forEach(extension => {
+        if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
+          this.actionValueExtensions[extension.type] = extension.options;
+          changed = true;
+        }
+      });
+      // force update of attribute to re-render switch new extension type
+      if (changed) {
+        this.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
+        this.$root.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
+      }
+    },
+    deleteRule() {
+      this.loading = true;
+      this.$ruleService.deleteRule(this.selectedRule.id)
+        .then(() => {
+          this.$root.$emit('alert-message', this.$t('programs.details.ruleDeleteSuccess'), 'success');
+          this.$root.$emit('rule-deleted', this.selectedRule);
+        })
+        .catch(e => {
+          let msg = '';
+          if (e.message === '401' || e.message === '403') {
+            msg = this.$t('actions.deletePermissionDenied');
+          } else if (e.message  === '404') {
+            msg = this.$t('actions.notFound');
+          } else  {
+            msg = this.$t('actions.deleteError');
+          }
+          this.$root.$emit('alert-message', msg, 'error');
+        })
+        .finally(() => this.loading = false);
+    },
+    confirmDelete(rule) {
+      this.selectedRule = rule;
+      this.$refs.deleteRuleConfirmDialog.open();
     },
   },
 };

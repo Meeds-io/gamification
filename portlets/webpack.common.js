@@ -21,23 +21,23 @@ const { VueLoaderPlugin } = require('vue-loader')
 module.exports = {
   context: path.resolve(__dirname, '.'),
   entry: {
+    engagementCenter: './src/main/webapp/vue-app/engagement-center/main.js',
+    engagementCenterActivityStreamExtension: './src/main/webapp/vue-app/engagement-center-activity-stream-extension/main.js',
+    realizationsComponents: './src/main/webapp/vue-app/realizations/main.js',
+    ruleComponents: './src/main/webapp/vue-app/rules/main.js',
     gamificationCommon: './src/main/webapp/vue-app/commons/main.js',
+    gamificationAnalytics: './src/main/webapp/vue-app/analytics/main.js',
     badge: './src/main/webapp/vue-app/badge/badge.js',
     profileStats: './src/main/webapp/vue-app/profileStats/main.js',
     myContributions: './src/main/webapp/vue-app/myContributions/main.js',
     popularSpaces: './src/main/webapp/vue-app/popularSpaces/main.js',
     usersLeaderboard: './src/main/webapp/vue-app/usersLeaderboard/main.js',
     badgesOverview: './src/main/webapp/vue-app/badgesOverview/main.js',
-    realizationsComponents: './src/main/webapp/vue-app/realizations/initComponents.js',
-    realizations: './src/main/webapp/vue-app/realizations/main.js',
-    engagementCenter: './src/main/webapp/vue-app/engagement-center/main.js',
-    engagementCenterActivityStreamExtension: './src/main/webapp/vue-app/engagement-center-activity-stream-extension/main.js',
     myReputation: './src/main/webapp/vue-app/myReputation/main.js',
     myRewards: './src/main/webapp/vue-app/myRewards/main.js',
     topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',
     challengesOverview: './src/main/webapp/vue-app/challengesOverview/main.js',
     programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
-    gamificationAnalytics: './src/main/webapp/vue-app/analytics/main.js',
   },
   plugins: [
     new ESLintPlugin({

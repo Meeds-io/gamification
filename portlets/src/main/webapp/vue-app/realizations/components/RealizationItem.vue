@@ -40,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :action-u-r-l="realizationLink"
           class="width-fit-content" />
         <v-tooltip
-          v-if="ruleTitleChanged"
+          v-if="actionLabelChanged"
           z-index="4"
           max-width="300"
           bottom>
@@ -171,19 +171,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-list dense class="pa-0">
           <template>
             <v-list-item
-              v-if="canEdit"
-              dense
-              @click="editRealization">
-              <v-icon size="13" class="dark-grey-color">fas fa-edit</v-icon>
-              <v-list-item-title class="text-justify ps-3">
-                {{ $t('realization.label.edit') }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item
               v-if="canAccept"
               dense
-              @click="updateRealizations('ACCEPTED')">
-              <v-icon size="13" class="dark-grey-color">fas fa-check</v-icon>
+              @click="updateRealizationStatus('ACCEPTED')">
+              <v-icon size="13" class="icon-default-color">fas fa-check</v-icon>
               <v-list-item-title class="text-justify ps-3">
                 {{ $t('realization.label.accept') }}
               </v-list-item-title>
@@ -191,8 +182,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-list-item
               v-if="canReject"
               dense
-              @click="updateRealizations('REJECTED')">
-              <v-icon size="13" class="dark-grey-color">fas fa-ban</v-icon>
+              @click="updateRealizationStatus('REJECTED')">
+              <v-icon size="13" class="icon-default-color">fas fa-ban</v-icon>
               <v-list-item-title class="text-justify ps-3">
                 {{ $t('realization.label.reject') }}
               </v-list-item-title>
@@ -258,7 +249,7 @@ export default {
       return this.realization?.action?.event;
     },
     program() {
-      return this.realization?.domain;
+      return this.realization?.program;
     },
     programTitle() {
       return this.program?.title || '-';
@@ -282,16 +273,13 @@ export default {
       return !this.realization.url && 'defaultCursor' || '';
     },
     canReject() {
-      return this.status === 'ACCEPTED' || this.status === 'EDITED';
+      return this.status === 'ACCEPTED';
     },
     canAccept() {
       return this.status === 'REJECTED';
     },
-    canEdit() {
-      return this.realization.action && this.realization.action.type === 'MANUAL';
-    },
     hasActions() {
-      return this.canReject || this.canAccept || this.canEdit;
+      return this.canReject || this.canAccept;
     },
     actionIcon() {
       return this.actionValueExtension?.icon;
@@ -330,18 +318,15 @@ export default {
     realizationActionLabel() {
       return this.realization?.actionLabel;
     },
-    ruleTitleChanged() {
-      if (this.isAutomaticType) {
-        return this.realizationActionLabel !== this.eventName && this.realizationActionLabel !== this.actionLabel;
-      }
-      return this.realizationActionLabel !== this.actionLabel;
+    actionLabelChanged() {
+      return this.realization?.actionLabelChanged;
     },
     programLabel() {
-      return this.realization?.domainLabel;
+      return this.realization?.programLabel;
     },
     programLabelChanged() {
-      return this.programLabel !== this.programTitle;
-    }
+      return this.realization?.programLabelChanged;
+    },
   },
   created() {
     // Workaround to fix closing menu when clicking outside
@@ -355,21 +340,17 @@ export default {
     this.retrieveRealizationLink();
   },
   methods: {
-    updateRealizations(status) {
-      this.$realizationsServices.updateRealization(this.realization.id, status)
-        .then((updatedRealization) => this.$emit('updated', updatedRealization));
-    },
-    editRealization() {
-      this.$root.$emit('realization-open-edit-drawer', this.realization, this.actionLabel);
+    updateRealizationStatus(status) {
+      this.$realizationService.updateRealizationStatus(this.realization.id, status)
+        .then(() => {
+          const updatedRealization = Object.assign(this.realization, {
+            status,
+          });
+          this.$emit('updated', updatedRealization);
+        });
     },
     openProgramDetail() {
-      this.$programsServices.getProgramById(this.program.id)
-        .then(program => {
-          if (program && program.id) {
-            this.$root.$emit('open-program-detail', program);
-            window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
-          }
-        });
+      this.$root.$emit('open-program-detail-by-id', this.program.id);
     },
     retrieveRealizationLink() {
       if (this.status === 'DELETED' || this.status === 'CANCELED') {

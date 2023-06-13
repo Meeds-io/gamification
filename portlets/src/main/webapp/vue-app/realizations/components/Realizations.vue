@@ -1,98 +1,93 @@
 <!--
-This file is part of the Meeds project (https://meeds.io/).
-Copyright (C) 2022 Meeds Association
-contact@meeds.io
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 3 of the License, or (at your option) any later version.
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-You should have received a copy of the GNU Lesser General Public License
-along with this program; if not, write to the Free Software Foundation,
-Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+  This file is part of the Meeds project (https://meeds.io/).
+
+  Copyright (C) 2023 Meeds Association contact@meeds.io
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 3 of the License, or (at your option) any later version.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 -->
 <template>
-  <v-app
-    class="Realizations border-box-sizing">
-    <div class="pt-5">
-      <div v-if="!isAdministrator" class="d-flex px-7">
-        <v-switch
-          id="realizationAdministrationSwitch"
-          v-model="administrationMode"
-          class="my-0 ms-0 me-n1 pt-0"
-          @change="switchToAdminMode()" />
-        <span class="me-auto text-sub-title ps-3">{{ $t("realization.label.switchAdministration") }}</span>
-      </div>
-      <div class="d-flex px-7">
-        <v-toolbar-title class="d-flex" v-if="!isMobile && displaySearchResult">
-          <v-btn class="btn btn-primary export" @click="exportFile()">
-            <span class="ms-2 d-none d-lg-inline">
-              {{ $t("realization.label.export") }}
-            </span>
-          </v-btn>
-        </v-toolbar-title>
-        <v-spacer v-if="!isMobile" />
-        <div class="mt-1 ml-n4 pe-3">
-          <select-period
-            v-model="selectedPeriod"
-            :left="!isMobile"
-            class="mx-2" />
-        </div>
-        <v-spacer v-if="isMobile" />
-        <div>
-          <v-btn
-            class="btn px-2 mt-1 btn-primary filterTasksSetting"
-            outlined
-            @click="openRealizationsFilterDrawer">
-            <i class="uiIcon uiIcon24x24 settingsIcon primary--text mr-1"></i>
-            <span class="d-none font-weight-regular caption d-sm-inline">
-              {{ $t('profile.label.search.openSearch') }}
-            </span>
-          </v-btn>
-        </div>
-      </div>
-    </div>
+  <div class="Realizations border-box-sizing">
+    <application-toolbar
+      :center-button-toggle="isProgramManager && !isMobile && {
+        selected: tabName,
+        hide: false,
+        buttons: [{
+          value: 'YOURS',
+          text: $t('gamification.achievement.yours'),
+          icon: 'fa-user',
+        }, {
+          value: 'OWNED',
+          text: $t('gamification.achievement.owned'),
+          icon: 'fa-users-cog',
+        }]
+      }"
+      :right-filter-button="{
+        text: $t('profile.label.search.openSearch'),
+      }"
+      :filters-count="filtersCount"
+      hide-cone-button
+      @toggle-select="tabName = $event"
+      @filter-button-click="$root.$emit('realization-open-filter-drawer')">
+      <template v-if="!$vuetify.breakpoint.mobile" #left>
+        <realizations-export-button :link="exportFileLink" />
+      </template>
+      <template #right>
+        <select-period
+          v-model="selectedPeriod"
+          :left="!$vuetify.breakpoint.mobile"
+          class="mx-2" />
+      </template>
+    </application-toolbar>
+
     <v-progress-linear
-      v-if="loading"
+      v-if="!initialized"
       indeterminate
       height="2"
       color="primary" />
     <div v-else-if="!displaySearchResult">
-      <engagement-center-result-not-found 
+      <engagement-center-result-not-found
         v-if="filterActivated"
         :display-back-arrow="false"
         :message-info-one="$t('challenge.realization.noFilterResult.messageOne')"
         :message-info-two="$t('challenge.realization.noFilterResult.messageTwo')"
         :button-text="$t('challenge.button.resetFilter')"
         @button-event="reset" />
-      <engagement-center-result-not-found 
+      <engagement-center-result-not-found
         v-else
         :display-back-arrow="false"
-        :message-title="$t('challenges.welcomeMessage')"
+        :message-title="$t('appCenter.welcomeMessage')"
         :message-info-one="$t('challenge.realization.noPeriodResult.messageOne')"
         :message-info-two="$t('challenge.realization.noPeriodResult.messageTwo')"
         :button-text="$t('programs.details.programDeleted.explore')"
         :button-url="programsUrl" />
     </div>
     <v-data-table
-      v-else-if="displaySearchResult && !isMobile"
+      v-else-if="initialized && displaySearchResult && !isMobile"
       :headers="realizationsHeaders"
       :items="realizationsToDisplay"
-      :loading="loading"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDescending"
       disable-pagination
       hide-default-footer
       must-sort
-      class="mx-6 mt-6 realizationsTable">
+      class="mx-3 mt-2 realizationsTable">
       <template slot="item" slot-scope="props">
         <realization-item
           :realization="props.item"
           :date-format="dateFormat"
-          :is-administrator="isAdministrator || administrationMode"
+          :is-administrator="administrationMode"
           :action-value-extensions="actionValueExtensions"
           @updated="realizationUpdated" />
       </template>
@@ -101,7 +96,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       v-if="displaySearchResult && isMobile"
       flat
       width="auto"
-      class="ms-3 me-7 mb-4">
+      class="px-4 mb-4">
       <v-select
         ref="select"
         class="pt-0"
@@ -115,14 +110,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-if="displaySearchResult && isMobile"
         :headers="realizationsHeaders"
         :realization="item"
-        :is-administrator="isAdministrator" 
+        :is-administrator="administrationMode" 
         :date-format="mobileDateFormat"
         :action-value-extensions="actionValueExtensions" />
     </template>
     <v-toolbar
       color="transparent"
-      flat
-      class="pa-2 mb-4">
+      flat>
       <v-btn
         v-if="hasMore && displaySearchResult"
         class="btn"
@@ -135,26 +129,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </span>
       </v-btn>
     </v-toolbar>
-    <edit-realization-drawer
-      ref="editRealizationDrawer"
-      @updated="realizationUpdated" />
     <filter-realizations-drawer
       ref="filterRealizationDrawer"
-      :is-administrator="isAdministrator || administrationMode"
+      :is-administrator="administrationMode"
       :administration-mode="administrationMode"
       @selectionConfirmed="filterByPrograms" />
-  </v-app>
+  </div>
 </template>
 <script>
 export default {
   props: {
+    isProgramManager: {
+      type: Boolean,
+      default: false,
+    },
     earnerId: {
       type: Number,
       default: () => 0,
-    },
-    isAdministrator: {
-      type: Boolean,
-      default: false,
     },
     actionValueExtensions: {
       type: Object,
@@ -175,6 +166,7 @@ export default {
     pageSize: 25,
     totalSize: 0,
     loading: true,
+    initialized: false,
     sortBy: 'date',
     sortDescending: true,
     limitReached: false,
@@ -197,36 +189,38 @@ export default {
     filterActivated: false,
     selected: 'Date',
     programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`,
-    administrationMode: false
+    tabName: 'YOURS',
   }),
-  beforeDestroy () {
-    if (typeof window === 'undefined') {return;}
-    window.removeEventListener('resize', this.onResize, { passive: true });
-  },
-  mounted () {
-    this.onResize();
-    window.addEventListener('resize', this.onResize, { passive: true });
-  },
-  created() {
-    this.realizationsHeaders.map((header) => {if (header.sortable && header.value !== 'type') {this.availableSortBy.push(header);}});
-    // Workaround to fix closing menu when clicking outside
-    $(document).mousedown(() => {
-      if (this.$refs.select) {
-        window.setTimeout(() => {
-          this.$refs.select.blur();
-        }, 200);
-      }
-    });
-  },
   computed: {
+    administrationMode() {
+      return this.tabName === 'OWNED';
+    },
+    filtersCount() {
+      return (this.searchList?.length && 1 || 0)
+        + (this.earnerIds?.length && 1 || 0);
+    },
     hasMore() {
       return this.limit < this.totalSize;
     },
     earnerIdToRetrieve() {
-      return this.isAdministrator || this.administrationMode ?  this.earnerIds : [this.earnerId];
+      return this.earnerIds?.length && this.earnerIds || (!this.administrationMode && [this.earnerId] || null);
     },
     realizationsToDisplay() {
       return this.realizations.slice(0, this.limit);
+    },
+    realizationsFilter() {
+      return {
+        fromDate: this.fromDate,
+        toDate: this.toDate,
+        earnerIds: this.earnerIdToRetrieve,
+        sortBy: this.sortBy,
+        sortDescending: this.sortDescending,
+        programIds: this.searchList,
+        owned: this.administrationMode,
+      };
+    },
+    exportFileLink() {
+      return this.$realizationService.getRealizationsExportLink(this.realizationsFilter);
     },
     realizationsHeaders() {
       const realizationsHeaders = [
@@ -246,16 +240,16 @@ export default {
         },
         {
           text: this.$t('realization.label.date'),
-          sortable: true,
           value: 'date',
+          sortable: true,
           class: 'actionHeader',
           width: '120'
         },
         {
           text: this.$t('realization.label.actionType'),
+          value: 'type',
           sortable: true,
           align: 'center',
-          value: 'type',
           class: 'actionHeader',
           width: '85',
         },
@@ -269,14 +263,14 @@ export default {
         },
         {
           text: this.$t('realization.label.status'),
+          value: 'status',
           sortable: true,
           align: 'center',
-          value: 'status',
           class: 'actionHeader',
           width: '95',
         },
       ];
-      if (this.isAdministrator || this.administrationMode) {
+      if (this.administrationMode) {
         realizationsHeaders.push({
           text: this.$t('realization.label.actions'),
           sortable: false,
@@ -285,10 +279,10 @@ export default {
         });
         realizationsHeaders.splice(3, 0,         
           {
+            value: 'grantee',
             text: this.$t('realization.label.grantee'),
             sortable: false,
             align: 'center',
-            value: 'grantee',
             class: 'actionHeader',
             width: '70',
           },);
@@ -302,6 +296,7 @@ export default {
         this.filterActivated = false;
         this.fromDate = new Date(newValue.min).toISOString() ;
         this.toDate = new Date(newValue.max).toISOString();
+        this.realizations = [];
         this.loadRealizations();
       }
     },
@@ -331,12 +326,47 @@ export default {
         this.limit = 25;
         this.pageSize = 25;
       }
-    }
+    },
+    administrationMode() {
+      this.realizations = [];
+      this.loadRealizations();
+    },
+    loading() {
+      if (this.loading) {
+        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      } else {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+      }
+    },
+  },
+  created() {
+    this.realizationsHeaders.map((header) => {
+      if (header.sortable && header.value !== 'type') {
+        this.availableSortBy.push(header);
+      }
+    });
+    // Workaround to fix closing menu when clicking outside
+    $(document).mousedown(() => {
+      if (this.$refs.select) {
+        window.setTimeout(() => {
+          this.$refs.select.blur();
+        }, 200);
+      }
+    });
+  },
+  mounted () {
+    this.onResize();
+    window.addEventListener('resize', this.onResize, { passive: true });
+  },
+  beforeDestroy () {
+    if (typeof window === 'undefined') {return;}
+    window.removeEventListener('resize', this.onResize, { passive: true });
   },
   methods: {
     sortUpdated() {
       if (!this.loading) {
         this.loading = true;
+        this.realizations = [];
         this.loadRealizations();
       }
     },
@@ -352,50 +382,34 @@ export default {
       return this.getRealizations()
         .finally(() => {
           this.loading = false;
+          this.initialized = true;
           this.$root.$applicationLoaded();
         });
     },
     getRealizations() {
-      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1, this.searchList)
+      return this.$realizationService.getRealizations(Object.assign({
+        offset: this.offset,
+        limit: this.limit,
+        returnSize: true,
+      }, this.realizationsFilter))
         .then(realizations => {
           this.realizations = realizations?.realizations || [];
           this.totalSize = realizations?.size || this.totalSize;
           this.displaySearchResult = this.searchList?.length >= 0 && this.realizations.length > 0;
         });
     },
-    exportFile() {
-      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.searchList);
-    },
     realizationUpdated(updatedRealization){
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
       this.realizations[index] = updatedRealization;
       this.$set(this.realizations,index,updatedRealization);
     },
-    openRealizationsFilterDrawer() {
-      this.$root.$emit('realization-open-filter-drawer');
-    },
     filterByPrograms(programs, grantees) {
       this.filterActivated = true;
+      this.initialized = false;
+      this.realizations = [];
       this.searchList = programs.map(program => program.id);
       this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
       this.loadRealizations();
-    },
-    switchToAdminMode() {
-      this.realizations = [];
-      if (this.administrationMode) {
-        this.$programsServices.retrievePrograms(0, -1, 'ALL', 'ENABLED', '', false, false, eXo.env.portal.userIdentityId)
-          .then(data => {
-            this.searchList = data.domains.map(program => program.id);
-            this.ownedPrograms = data.domains.map(program => program.id);
-            return this.$nextTick();
-          }).then(() => {
-            this.loadRealizations();
-          });
-      } else {
-        this.searchList = [];
-        this.loadRealizations();
-      }
-      this.$refs.filterRealizationDrawer.clear();
     },
     onResize () {
       this.isMobile = window.innerWidth < 1020;
@@ -403,6 +417,7 @@ export default {
     reset() {
       this.searchList = [];
       this.earnerIds = [];
+      this.realizations = [];
       this.loadRealizations();
       this.$root.$emit('reset-filter-values');
     }

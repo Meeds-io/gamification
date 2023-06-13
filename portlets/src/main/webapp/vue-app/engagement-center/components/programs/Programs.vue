@@ -20,66 +20,47 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     class="border-box-sizing"
     role="main"
     flat>
-    <v-toolbar
-      v-if="isAdministrator"
-      color="transparent"
-      max-height="64"
-      flat
-      class="px-4 mt-4">
-      <div v-if="!displayNoSearchResult" class="border-box-sizing clickable">
-        <v-btn
-          id="engagementCenterAddProgramBtn"
-          v-if="canAddProgram"
-          class="btn btn-primary"
-          @click="$root.$emit('open-program-drawer')">
-          <v-icon small>fas fa-plus</v-icon>
-          <span class="mx-2 d-none d-lg-inline text-capitalize-first-letter subtitle-1">
-            {{ $t('programs.button.addProgram') }}
-          </span>
-        </v-btn>
-      </div>
-      <v-spacer />
-      <select
-        id="EngagementCenterApplicationCProgramsQuickFilter"
-        v-model="status"
-        class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter width-auto"
-        @change="filter">
-        <option
-          v-for="stat in programStatus"
-          :key="stat.value"
-          :value="stat.value">
-          <span class="d-none d-lg-inline">
-            {{ stat.text }}
-          </span>
-        </option>
-      </select>
-    </v-toolbar>
-    <v-layout class="pa-3">
-      <v-row no-gutters>
+    <application-toolbar
+      v-if="isProgramManager"
+      :left-button="isAdministrator && !displayNoSearchResult && {
+        icon: 'fa-plus',
+        text: $t('programs.button.addProgram'),
+      }"
+      :right-select-box="{
+        selected: status,
+        items: programStatus,
+      }"
+      hide-cone-button
+      @left-button-click="$root.$emit('program-form-open')"
+      @filter-select-change="status = $event" />
+
+    <v-layout class="py-3 px-4">
+      <v-row class="mx-n3 overflow-hidden">
         <v-col
           v-for="program in programs"
           :key="program.id"
-          class="mb-4"
           cols="12"
           sm="6"
           lg="4">
           <engagement-center-program-card
             :program="program"
-            :is-administrator="isAdministrator"
-            class="mx-2" />
+            :is-administrator="isAdministrator" />
+        </v-col>
+        <v-col
+          v-if="hasMore"
+          cols="12"
+          class="px-3">
+          <v-btn
+            :loading="loading"
+            :disabled="loading"
+            class="loadMoreButton my-4 btn"
+            block
+            @click="$root.$emit('program-load-more')">
+            {{ $t('engagementCenter.button.ShowMore') }}
+          </v-btn>
         </v-col>
       </v-row>
     </v-layout>
-    <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4">
-      <v-btn
-        :loading="loading"
-        :disabled="loading"
-        class="loadMoreButton my-4 btn"
-        block
-        @click="$root.$emit('program-load-more')">
-        {{ $t('engagementCenter.button.ShowMore') }}
-      </v-btn>
-    </v-row>
     <exo-confirm-dialog
       v-if="confirmDelete"
       ref="deleteProgramConfirmDialog"
@@ -92,23 +73,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div v-if="isAdministrator">
         <engagement-center-result-not-found 
           :display-back-arrow="false"
-          :message-title="$t('challenges.welcomeMessage')"
+          :message-title="$t('appCenter.welcomeMessage')"
           :message-info-one="$t('programs.label.welcomeMessageForManager')"
           :message-info-three="$t('programs.label.seeYouSoon')"
           :button-text="$t('programs.button.addProgram')"
-          @button-event="$root.$emit('open-program-drawer')" />
+          @button-event="$root.$emit('program-form-open')" />
       </div>
       <div v-else>
         <div v-if="isExternal">
           <engagement-center-result-not-found 
             :display-back-arrow="false"
-            :message-title="$t('challenges.welcomeMessage')"
+            :message-title="$t('appCenter.welcomeMessage')"
             :message-info-one="$t('programs.label.welcomeMessageForExternal')" />
         </div>
         <div v-else>
           <engagement-center-result-not-found 
             :display-back-arrow="false"
-            :message-title="$t('challenges.welcomeMessage')"
+            :message-title="$t('appCenter.welcomeMessage')"
             :button-text="$t('programs.label.joinSpace')"
             :message-info-one="$t('programs.label.welcomeMessageForUser')"
             :message-info-three="$t('programs.label.welcomeMessageTwoForUser')"
@@ -125,20 +106,22 @@ export default {
     isAdministrator: {
       type: Boolean,
       default: false,
-    }
+    },
+    isProgramManager: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       programs: [],
       totalSize: 0,
       pageSize: 9,
-      loading: false,
-      canAddProgram: false,
+      loading: true,
       type: 'ALL',
       status: 'ENABLED',
       deleteConfirmMessage: '',
       selectedProgram: {},
-      initialized: false,
       offset: 0,
       limit: 9,
       users: [],
@@ -185,39 +168,35 @@ export default {
         document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
       }
     },
+    status() {
+      this.retrievePrograms();
+    },
   },
   created() {
     this.limitToFetch = this.originalLimitToFetch = this.limit;
-    const promises = [];
-    promises.push(this.computeCanAddProgram());
-    promises.push(this.retrievePrograms());
     this.$root.$on('program-load-more', this.loadMore);
-    this.$root.$on('program-added', this.refreshPrograms);
     this.$root.$on('program-updated', this.refreshPrograms);
     this.$root.$on('delete-program', this.confirmDelete);
-    Promise.all(promises)
+    this.retrievePrograms()
       .finally(() => this.$root.$applicationLoaded());
   },
   methods: {
-    computeCanAddProgram() {
-      return this.$programsServices.canAddProgram()
-        .then(canAddProgram => this.canAddProgram = canAddProgram);
-    },
     retrievePrograms() {
       this.loading = true;
-      return this.$programsServices
-        .retrievePrograms(this.offset, this.limitToFetch, this.type, this.status)
+      return this.$programService.getPrograms({
+        offset: this.offset,
+        limit: this.limitToFetch,
+        type: this.type,
+        status: this.status,
+        owned: !this.isAdministrator && this.isStatusDisabled,
+        expand: 'countActiveRulesWhenDisabled',
+        lang: eXo.env.portal.language,
+      })
         .then((data) => {
-          this.programs = data.domains;
-          this.totalSize = data.domainsSize || 0;
+          this.programs = data.programs;
+          this.totalSize = data.size || 0;
         })
-        .finally(() => {
-          if (!this.initialized) {
-            this.$root.$applicationLoaded();
-          }
-          this.loading = false;
-          this.initialized = true;
-        });
+        .finally(() => this.loading = false);
     },
     loadMore() {
       if (this.hasMore) {
@@ -239,12 +218,13 @@ export default {
     },
     deleteProgram() {
       this.loading = true;
-      this.$programsServices.deleteProgram(this.selectedProgram.id)
-        .then((deletedProgram) => {
-          this.$root.$emit('program-deleted', deletedProgram);
-          this.$engagementCenterUtils.displayAlert(this.$t('programs.programDeleteSuccess'));
-          this.retrievePrograms();
+      this.$programService.deleteProgram(this.selectedProgram.id)
+        .then(() => this.retrievePrograms())
+        .then(() => {
+          this.$root.$emit('alert-message', this.$t('programs.programDeleteSuccess'), 'success');
+          this.$root.$emit('program-deleted', this.selectedProgram);
         })
+        .catch(() => this.$root.$emit('alert-message', this.$t('programs.programDeleteError'), 'success'))
         .finally(() => this.loading = false);
     },
     confirmDelete(program) {

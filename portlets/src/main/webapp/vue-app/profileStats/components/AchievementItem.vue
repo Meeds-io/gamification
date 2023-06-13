@@ -91,11 +91,11 @@ export default {
     achievementUrl() {
       return this.achievement.objectId && this.achievement.objectId.replace('/portal/intranet/', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/`);
     },
-    domain() {
-      return this.getLabel('exoplatform.gamification.leaderboard.domain', this.achievement.domain);
+    programTitle() {
+      return this.getLabel('exoplatform.gamification.leaderboard.domain', this.achievement.program?.title);
     },
     actionDetail() {
-      return `${this.dateTime} - ${this.$t('exoplatform.gamification.gamificationinformation.Domain')}: ${this.domain}`;
+      return `${this.dateTime} - ${this.$t('exoplatform.gamification.gamificationinformation.Domain')}: ${this.programTitle}`;
     },
     actionTitle() {
       return this.getLabel('exoplatform.gamification.gamificationinformation.rule.title', this.achievement.actionTitle);

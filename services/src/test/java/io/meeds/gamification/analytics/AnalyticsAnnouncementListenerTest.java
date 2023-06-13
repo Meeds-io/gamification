@@ -17,28 +17,29 @@
  */
 package io.meeds.gamification.analytics;
 
-import static org.exoplatform.addons.gamification.utils.Utils.POST_CREATE_ANNOUNCEMENT_EVENT;
-import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_ANNOUNCEMENT_EVENT;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_ANNOUNCEMENT_SUBMODULE;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_ANNOUNCE_ACTIVITY_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_ANNOUNCE_ASSIGNEE_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_ANNOUNCE_COMMENT_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_ANNOUNCE_ID_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_CREATE_ANNOUNCE_OPERATION;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_BUDGET_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_COVERFILEID_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_ID_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_OWNERS_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_TITLE_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_PROGRAM_TYPE_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_RULE_DESCRIPTION_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_RULE_EVENT_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_RULE_ID_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_RULE_SCORE_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_RULE_TITLE_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_RULE_TYPE_PARAM;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_UPDATE_ANNOUNCE_OPERATION;
+import static io.meeds.gamification.utils.Utils.POST_CREATE_ANNOUNCEMENT_EVENT;
+import static io.meeds.gamification.utils.Utils.POST_UPDATE_ANNOUNCEMENT_EVENT;
+import static io.meeds.gamification.utils.Utils.STATISTICS_ANNOUNCEMENT_SUBMODULE;
+import static io.meeds.gamification.utils.Utils.STATISTICS_ANNOUNCE_ACTIVITY_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_ANNOUNCE_ASSIGNEE_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_ANNOUNCE_COMMENT_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_ANNOUNCE_ID_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_CREATE_ANNOUNCE_OPERATION;
+import static io.meeds.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_AVATAR_FILEID_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_BUDGET_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_COVER_FILEID_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_ID_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_OWNERS_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_TITLE_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_TYPE_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_DESCRIPTION_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_EVENT_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_ID_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_SCORE_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_TITLE_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_TYPE_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_UPDATE_ANNOUNCE_OPERATION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,11 +59,6 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.analytics.utils.AnalyticsUtils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -70,6 +66,13 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.model.Announcement;
+import io.meeds.gamification.model.ProgramDTO;
+import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.service.RuleService;
+
+@SuppressWarnings("deprecation")
 @RunWith(MockitoJUnitRunner.class)
 public class AnalyticsAnnouncementListenerTest {
 
@@ -197,17 +200,19 @@ public class AnalyticsAnnouncementListenerTest {
                    String.valueOf(statisticData.getParameters().get(STATISTICS_RULE_SCORE_PARAM)));
       assertEquals(String.valueOf(ruleDTO.getType()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_RULE_TYPE_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getDomainDTO().getId()),
+      assertEquals(String.valueOf(ruleDTO.getProgram().getId()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_ID_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getDomainDTO().getTitle()),
+      assertEquals(String.valueOf(ruleDTO.getProgram().getTitle()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_TITLE_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getDomainDTO().getBudget()),
+      assertEquals(String.valueOf(ruleDTO.getProgram().getBudget()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_BUDGET_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getDomainDTO().getType()),
+      assertEquals(String.valueOf(ruleDTO.getProgram().getType()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_TYPE_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getDomainDTO().getCoverFileId()),
-                   String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_COVERFILEID_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getDomainDTO().getOwners()),
+      assertEquals(String.valueOf(ruleDTO.getProgram().getCoverFileId()),
+                   String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_COVER_FILEID_PARAM)));
+      assertEquals(String.valueOf(ruleDTO.getProgram().getAvatarFileId()),
+                   String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_AVATAR_FILEID_PARAM)));
+      assertEquals(String.valueOf(ruleDTO.getProgram().getOwnerIds()),
                    String.valueOf(statisticData.getListParameters().get(STATISTICS_PROGRAM_OWNERS_PARAM)));
       assertEquals(String.valueOf(announcement.getId()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_ANNOUNCE_ID_PARAM)));
@@ -230,23 +235,23 @@ public class AnalyticsAnnouncementListenerTest {
     ruleDTO.setEnabled(true);
     ruleDTO.setDeleted(false);
     ruleDTO.setEvent(EVENT_NAME);
-    ruleDTO.setDomainDTO(newDomainDTO());
+    ruleDTO.setProgram(newProgram());
     ruleDTO.setType(EntityType.MANUAL);
     return ruleDTO;
   }
 
-  private DomainDTO newDomainDTO() {
-    DomainDTO domainDTO = new DomainDTO();
-    domainDTO.setTitle(PROGRAM_TITLE);
-    domainDTO.setDescription(PROGRAM_DESCRIPTION);
-    domainDTO.setDeleted(false);
-    domainDTO.setEnabled(true);
-    domainDTO.setType(EntityType.AUTOMATIC.name());
-    domainDTO.setAudienceId(AUDIENCE_ID);
+  private ProgramDTO newProgram() {
+    ProgramDTO program = new ProgramDTO();
+    program.setTitle(PROGRAM_TITLE);
+    program.setDescription(PROGRAM_DESCRIPTION);
+    program.setDeleted(false);
+    program.setEnabled(true);
+    program.setType(EntityType.AUTOMATIC.name());
+    program.setSpaceId(AUDIENCE_ID);
     HashSet<Long> owners = new HashSet<Long>();
     owners.add(1L);
-    domainDTO.setOwners(owners);
-    return domainDTO;
+    program.setOwnerIds(owners);
+    return program;
   }
 
 }

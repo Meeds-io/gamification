@@ -34,7 +34,7 @@
     <rest.api.doc.version>1.0</rest.api.doc.version>
     <rest.api.doc.description>Gamification addon rest endpoints</rest.api.doc.description>
 
-    <exo.test.coverage.ratio>0.63</exo.test.coverage.ratio>
+    <exo.test.coverage.ratio>0.72</exo.test.coverage.ratio>
   </properties>
 
   <dependencies>
@@ -104,6 +104,7 @@
     <!-- End Test-->
   </dependencies>
   <build>
+    <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -121,7 +122,7 @@
         <configuration>
           <useResourcePackagesChildren>true</useResourcePackagesChildren>
           <resourcePackages>
-            <locations>org.exoplatform.addons.gamification.rest</locations>
+            <locations>io.meeds.gamification.rest</locations>
           </resourcePackages>
           <swaggerConfig>
             <info>
@@ -157,6 +158,20 @@
               <org.apache.commons.logging.Log>org.apache.commons.logging.impl.SimpleLog</org.apache.commons.logging.Log>
               <org.apache.commons.logging.simplelog.defaultlog>info</org.apache.commons.logging.simplelog.defaultlog>
             </systemPropertyVariables>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <exclude>**/entity/*.class</exclude>
+              <exclude>**/model/*.class</exclude>
+              <exclude>**/constant/*.class</exclude>
+              <exclude>**/entity/**/*.class</exclude>
+              <exclude>**/model/**/*.class</exclude>
+              <exclude>**/constant/**/*.class</exclude>
+            </excludes>
           </configuration>
         </plugin>
       </plugins>

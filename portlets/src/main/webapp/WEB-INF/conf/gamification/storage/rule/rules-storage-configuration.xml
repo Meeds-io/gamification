@@ -23,41 +23,30 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <!-- Rules storage (JPA) -->
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.RuleDAO</type>
+        <type>io.meeds.gamification.dao.RuleDAO</type>
     </component>
     <component>
-        <key>org.exoplatform.addons.gamification.storage.RuleStorage</key>
-        <type>org.exoplatform.addons.gamification.storage.cached.RuleCachedStorage </type>
+        <key>io.meeds.gamification.storage.RuleStorage</key>
+        <type>io.meeds.gamification.storage.cached.RuleCachedStorage </type>
     </component>
     <!-- Rules Service Layer-->
     <component>
-        <key>org.exoplatform.addons.gamification.service.configuration.RuleService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.RuleServiceImpl</type>
+        <key>io.meeds.gamification.service.RuleService</key>
+        <type>io.meeds.gamification.service.impl.RuleServiceImpl</type>
     </component>
-
-
-    <!-- Rule entity Mapper -->
-    <component>
-        <type>org.exoplatform.addons.gamification.service.mapper.RuleMapper</type>
-    </component>
-
 
     <!-- Gamification Settings : Rule -->
     <component>
-        <key>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</key>
-        <type>org.exoplatform.addons.gamification.service.setting.rule.impl.RuleRegistryImpl</type>
+        <key>io.meeds.gamification.service.RuleRegistry</key>
+        <type>io.meeds.gamification.service.impl.RuleRegistryImpl</type>
     </component>
 
-
-
-
-<!--Upload and share document in Knowledge  -->
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
         <component-plugin>
             <name>rule.uploaddocumentOnNetworkStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -85,11 +74,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <!-- Gamification Rule Config -->
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
         <component-plugin>
             <name>rule.addCommentOnNetworkStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -118,11 +107,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <!-- ###################Gamification Rule Config : LIKE COMMENT FLOW ############################ -->
     <!-- ############################################################################################ -->
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
         <component-plugin>
             <name>rule.likeCommentOnSpaceStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -148,11 +137,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
         <component-plugin>
             <name>rule.likeCommentOnSpaceStreamTarget</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -178,11 +167,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
         <component-plugin>
             <name>rule.likeCommentOnNetworkStreamTarget</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -208,11 +197,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
         <component-plugin>
             <name>rule.likeCommentOnNetworkStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -238,11 +227,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
         <component-plugin>
             <name>rule.likeComment</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -271,11 +260,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <!-- ################### Gamification Rule Config : COMMENT FLOW ################################ -->
     <!-- ############################################################################################ -->
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
         <component-plugin>
             <name>rule.addCommentOnSpaceStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -302,11 +291,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </external-component-plugins>
 
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
         <component-plugin>
             <name>rule.receiveCommentOnNetworkStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -334,11 +323,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
         <component-plugin>
             <name>rule.receiveCommentOnSpaceStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -368,11 +357,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <!-- ################# Gamification Rule Config : ADD ACTIVITY FLOW ############################# -->
     <!-- ############################################################################################ -->
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
         <component-plugin>
             <name>rule.AddActivityOnSpaceStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -399,7 +388,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.AddActivityOnNetworkStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -426,7 +415,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.AddActivityOnSpaceStreamTarget</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -454,7 +443,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.AddActivityTargetUserStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -481,7 +470,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.AddActivityOnMyStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -511,7 +500,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.LikeActivityOnNetworkStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -538,7 +527,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.LikeActivityOnSpaceStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -565,7 +554,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.LikeActivityOnSpaceStreamTarget</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -592,7 +581,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.likeActivityTargetUserStream</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -622,7 +611,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.AddUserProfileAvatar</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -649,7 +638,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.AddUserProfileBanner</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -676,7 +665,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.AddUserProfileAboutMe</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -703,7 +692,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.AddSpace</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -730,7 +719,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.JoinSpace</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -757,7 +746,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.GrantUserAsLead</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -787,7 +776,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.SendRelationshipRequest</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -814,7 +803,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>rule.ReceiveRelationshipRequest</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
@@ -840,11 +829,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
         <component-plugin>
             <name>rule.userLogin</name>
             <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>

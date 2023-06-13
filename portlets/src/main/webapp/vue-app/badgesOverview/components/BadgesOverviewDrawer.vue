@@ -26,10 +26,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-tooltip bottom>
           <template #activator="{ on }">
             <div class="ms-1 text-truncate" v-on="on">
-              {{ domainLabel }}
+              {{ programLabel }}
             </div>
           </template>
-          <span>{{ domainLabel }}</span>
+          <span>{{ programLabel }}</span>
         </v-tooltip>
       </div>
     </template>
@@ -52,8 +52,8 @@ export default {
     };
   },
   computed: {
-    domainLabel() {
-      return this.badge?.domainLabel;
+    programLabel() {
+      return this.badge?.programLabel;
     },
   },
   created() {
@@ -79,7 +79,7 @@ export default {
         })
         .then(data => {
           let badges = data || [];
-          badges = badges.filter(tmp => tmp.domainDTO?.title === this.badge.zone);
+          badges = badges.filter(tmp => tmp.program?.title === this.badge.zone);
           badges.push({
             isCurrent: true,
             neededScore: this.badge.score,

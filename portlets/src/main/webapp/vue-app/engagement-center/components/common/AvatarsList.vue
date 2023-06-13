@@ -15,26 +15,22 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex align-center">
-    <div class="d-flex">
-      <exo-user-avatar
-        v-for="avatarToDisplay in avatarsTodisplay"
-        :key="avatarToDisplay.userName"
-        :profile-id="avatarToDisplay.userName"
-        :size="size"
-        popover
-        avatar 
-        extra-class="me-1" />
-    </div>
-    <a>
-      <v-avatar
-        v-if="seeMoreAvatarsToDisplay"
-        class="light-black-background icon-mini-size white--text font-weight-bold"
-        :size="size"
-        @click="$emit('open-avatars-drawer')">
-        +{{ showMoreAvatarsNumber }}
-      </v-avatar>
-    </a>
+  <div class="d-flex">
+    <v-tooltip :disabled="$root.isMobile" bottom>
+      <template #activator="{on}">
+        <div v-on="on">
+          <exo-user-avatars-list
+            :users="avatars"
+            :icon-size="size"
+            :max="maxAvatarsToShow"
+            :default-length="avatarsCount"
+            clickable
+            avatar-overlay-position
+            @open-detail="$emit('open-avatars-drawer')" />
+        </div>
+      </template>
+      <span>{{ $t('engagementCenter.avatarsTooltip') }}</span>
+    </v-tooltip>
   </div>
 </template>
 <script>
@@ -57,24 +53,5 @@ export default {
       default: null
     },
   },
-  computed: {
-    avatarsTodisplay() {
-      return this.avatars.slice(0, this.maxAvatarsToShow - 1);
-    },
-    seeMoreAvatarsToDisplay () {
-      return this.avatarsCount >= this.maxAvatarsToShow || null;
-    },
-    remainingAvatarsCount() {
-      return this.avatarsCount - this.maxAvatarsToShow + 1;
-    },
-    showMoreAvatarsNumber() {
-      return this.remainingAvatarsCount > 99 ? 99 : this.remainingAvatarsCount;
-    },
-  },
-  methods: {
-    openDrawer() {
-      this.$root.$emit('open-avatars-drawer', this.avatars);
-    },
-  }
 };
 </script>

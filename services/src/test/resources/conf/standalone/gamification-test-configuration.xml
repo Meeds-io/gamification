@@ -23,30 +23,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <!-- Badges Service Layer-->
     <component>
-        <key>org.exoplatform.addons.gamification.service.configuration.BadgeService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.BadgeService</type>
+        <type>io.meeds.gamification.service.BadgeService</type>
     </component>
 
     <!-- DOmains Service Layer-->
 
     <component>
-        <key>org.exoplatform.addons.gamification.service.configuration.DomainService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.DomainServiceImpl</type>
+        <key>io.meeds.gamification.service.ProgramService</key>
+        <type>io.meeds.gamification.service.impl.ProgramServiceImpl</type>
     </component>
     <!-- Domains storage Layer-->
     <component>
-        <key>org.exoplatform.addons.gamification.storage.DomainStorage</key>
-        <type>org.exoplatform.addons.gamification.storage.cached.DomainCachedStorage</type>
+        <key>io.meeds.gamification.storage.ProgramStorage</key>
+        <type>io.meeds.gamification.storage.cached.ProgramCachedStorage</type>
     </component>
 
     <component>
         <key>org.exoplatform.social.core.manager.IdentityManager</key>
-        <type>org.exoplatform.addons.gamification.mock.IdentityManagerMock</type>
+        <type>io.meeds.gamification.mock.IdentityManagerMock</type>
     </component>
 
     <component>
       <key>org.exoplatform.services.security.IdentityRegistry</key>
-      <type>org.exoplatform.addons.gamification.mock.IdentityRegistryMock</type>
+      <type>io.meeds.gamification.mock.IdentityRegistryMock</type>
     </component>
 
     <component>
@@ -56,81 +55,56 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <component>
         <key>org.exoplatform.social.core.space.spi.SpaceService</key>
-        <type>org.exoplatform.addons.gamification.mock.SpaceServiceMock</type>
-    </component>
-
-    <!-- Gamification Effective Service -->
-    <component>
-        <type>org.exoplatform.addons.gamification.service.effective.GamificationService</type>
+        <type>io.meeds.gamification.mock.SpaceServiceMock</type>
     </component>
 
     <!-- Rules Service Layer-->
     <component>
-        <key>org.exoplatform.addons.gamification.service.configuration.RuleService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.RuleServiceImpl</type>
+        <key>io.meeds.gamification.service.RuleService</key>
+        <type>io.meeds.gamification.service.impl.RuleServiceImpl</type>
     </component>
 
     <component>
-        <key>org.exoplatform.addons.gamification.storage.RuleStorage</key>
-        <type>org.exoplatform.addons.gamification.storage.cached.RuleCachedStorage</type>
+        <key>io.meeds.gamification.storage.RuleStorage</key>
+        <type>io.meeds.gamification.storage.cached.RuleCachedStorage</type>
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO</type>
+        <type>io.meeds.gamification.dao.RealizationDAO</type>
     </component>
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.BadgeDAO</type>
-    </component>
-
-    <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.DomainDAO</type>
+        <type>io.meeds.gamification.dao.BadgeDAO</type>
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.RuleDAO</type>
+        <type>io.meeds.gamification.dao.ProgramDAO</type>
     </component>
 
     <component>
-        <key>org.exoplatform.addons.gamification.service.RealizationsService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.RealizationsServiceImpl</type>
-    </component>
-    <component>
-        <type>org.exoplatform.addons.gamification.storage.RealizationsStorage</type>
+        <type>io.meeds.gamification.dao.RuleDAO</type>
     </component>
 
     <component>
-        <key>org.exoplatform.addons.gamification.storage.AnnouncementStorage</key>
-        <type>org.exoplatform.addons.gamification.storage.cached.AnnouncementCachedStorage</type>
+        <key>io.meeds.gamification.service.RealizationService</key>
+        <type>io.meeds.gamification.service.impl.RealizationServiceImpl</type>
     </component>
     <component>
-        <type>org.exoplatform.addons.gamification.rest.ChallengeRest</type>
-    </component>
-    <component>
-        <type>org.exoplatform.addons.gamification.rest.AnnouncementRest</type>
+      <key>io.meeds.gamification.storage.RealizationStorage</key>
+      <type>io.meeds.gamification.storage.cached.RealizationCachedStorage</type>
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.rest.GamificationRestEndpoint</type>
+        <type>io.meeds.gamification.storage.AnnouncementStorage</type>
     </component>
 
     <component>
-        <key>org.exoplatform.addons.gamification.service.AnnouncementService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.AnnouncementServiceImpl</type>
-    </component>
-    <component>
-        <key>org.exoplatform.addons.gamification.service.ChallengeService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl</type>
-        <init-params>
-            <value-param>
-                <name>challenge.creator.group</name>
-                <description>groups with membership type have permission to manage challenges</description>
-                <value>${exo.challenges.creators.group:/platform/administrators,/platform/rewarding}</value>
-            </value-param>
-        </init-params>
+        <key>io.meeds.gamification.service.AnnouncementService</key>
+        <type>io.meeds.gamification.service.impl.AnnouncementServiceImpl</type>
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.storage.ChallengeStorage</type>
+        <key>io.meeds.gamification.service.RuleRegistry</key>
+        <type>io.meeds.gamification.service.impl.RuleRegistryImpl</type>
     </component>
 
     <component>
@@ -142,7 +116,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.search.RuleSearchConnector</type>
+        <type>io.meeds.gamification.search.RuleSearchConnector</type>
         <init-params>
             <value-param>
                 <name>query.file.path</name>
@@ -178,7 +152,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector</type>
+        <type>io.meeds.gamification.search.RuleIndexingServiceConnector</type>
         <init-params>
             <value-param>
                 <name>mapping.file.path</name>
@@ -191,6 +165,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </properties-param>
         </init-params>
     </component>
+
+    <external-component-plugins>
+        <target-component>org.exoplatform.commons.api.persistence.DataInitializer</target-component>
+        <component-plugin>
+            <name>GamificationManagementChangeLogsPlugin</name>
+            <set-method>addChangeLogsPlugin</set-method>
+            <type>org.exoplatform.commons.persistence.impl.ChangeLogsPlugin</type>
+            <init-params>
+                <values-param>
+                    <name>changelogs</name>
+                    <description>Change logs of Gamification</description>
+                    <value>db/changelog/gamification.db.changelog-1.0.0.xml</value>
+                </values-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
 
     <external-component-plugins>
         <target-component>org.exoplatform.services.organization.OrganizationService</target-component>
@@ -498,21 +488,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </external-component-plugins>
 
     <external-component-plugins>
-        <target-component>org.exoplatform.services.rest.impl.RequestHandlerImpl</target-component>
-        <component-plugin>
-            <name>ws.rs.response.filter</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.services.rest.impl.ResponseFilterComponentPlugin</type>
-            <init-params>
-                <value-param>
-                    <name>ws.rs.response.social-response-filter</name>
-                    <value>org.exoplatform.social.rest.filter.SocialResponseFilter</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-    </external-component-plugins>
-
-    <external-component-plugins>
         <target-component>org.exoplatform.commons.file.services.NameSpaceService</target-component>
         <component-plugin>
             <name>SocialNameSpacePlugin</name>
@@ -528,6 +503,34 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </init-params>
         </component-plugin>
     </external-component-plugins>
+
+  <external-component-plugins>
+    <target-component>io.meeds.social.translation.service.TranslationService</target-component>
+    <component-plugin>
+      <name>rule</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.RuleTranslationPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>program</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.ProgramTranslationPlugin</type>
+    </component-plugin>
+  </external-component-plugins>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+    <component-plugin>
+      <name>rule.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
+    </component-plugin>
+  </external-component-plugins>
 
   <remove-configuration>org.exoplatform.portal.config.UserPortalConfigListener</remove-configuration>
   <remove-configuration>org.exoplatform.portal.config.GroupPortalConfigListener</remove-configuration>

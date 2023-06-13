@@ -27,17 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <component-plugin>
         <name>exo.gamification.domain.delete</name>
         <set-method>addListener</set-method>
-        <type>org.exoplatform.addons.gamification.listener.gamification.domain.GamificationDomainListener</type>
-      </component-plugin>
-      <component-plugin>
-        <name>exo.gamification.domain.disable</name>
-        <set-method>addListener</set-method>
-        <type>org.exoplatform.addons.gamification.listener.gamification.domain.GamificationDomainListener</type>
-      </component-plugin>
-      <component-plugin>
-        <name>exo.gamification.domain.enable</name>
-        <set-method>addListener</set-method>
-        <type>org.exoplatform.addons.gamification.listener.gamification.domain.GamificationDomainListener</type>
+        <type>io.meeds.gamification.listener.ProgramDeletedListener</type>
       </component-plugin>
       <component-plugin profiles="analytics">
         <name>exo.gamification.domain.delete</name>
@@ -96,17 +86,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>exo.gamification.generic.action</name>
             <set-method>addListener</set-method>
-            <type>org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener</type>
+            <type>io.meeds.gamification.listener.GamificationGenericListener</type>
         </component-plugin>
         <component-plugin>
             <name>gamification.cancel.event.action</name>
             <set-method>addListener</set-method>
-            <type>org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener</type>
+            <type>io.meeds.gamification.listener.GamificationGenericListener</type>
         </component-plugin>
         <component-plugin>
             <name>gamification.delete.event.action</name>
             <set-method>addListener</set-method>
-            <type>org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener</type>
+            <type>io.meeds.gamification.listener.GamificationGenericListener</type>
         </component-plugin>
     </external-component-plugins>
     <!-- User Listener -->
@@ -115,7 +105,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>exo.core.security.ConversationRegistry.register</name>
             <set-method>addListener</set-method>
-            <type>org.exoplatform.addons.gamification.listener.user.GamificationUserLoginListener</type>
+            <type>io.meeds.gamification.listener.GamificationUserLoginListener</type>
         </component-plugin>
     </external-component-plugins>
     <!-- Social listeners -->
@@ -125,7 +115,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>GamificationRelationshipTracker</name>
             <set-method>addListenerPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.listener.social.relationship.GamificationRelationshipListener</type>
+            <type>io.meeds.gamification.listener.GamificationRelationshipListener</type>
         </component-plugin>
     </external-component-plugins>
     <!-- Activities -->
@@ -134,7 +124,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>GamificationActivityTracker</name>
             <set-method>addActivityEventListener</set-method>
-            <type>org.exoplatform.addons.gamification.listener.social.activity.GamificationActivityListener</type>
+            <type>io.meeds.gamification.listener.GamificationActivityListener</type>
         </component-plugin>
     </external-component-plugins>
     <!-- Spaces -->
@@ -143,7 +133,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>GamificationSpaceTracker</name>
             <set-method>registerSpaceListenerPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.listener.social.space.GamificationSpaceListener</type>
+            <type>io.meeds.gamification.listener.GamificationSpaceListener</type>
+        </component-plugin>
+        <component-plugin>
+            <name>ProgramSpaceListener</name>
+            <set-method>registerSpaceListenerPlugin</set-method>
+            <type>io.meeds.gamification.listener.ProgramSpaceListener</type>
         </component-plugin>
     </external-component-plugins>
     <!-- Identity -->
@@ -152,7 +147,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>GamificationProfileTracker</name>
             <set-method>registerProfileListener</set-method>
-            <type>org.exoplatform.addons.gamification.listener.social.profile.GamificationProfileListener</type>
+            <type>io.meeds.gamification.listener.GamificationProfileListener</type>
         </component-plugin>
     </external-component-plugins>
 </configuration>

@@ -15,38 +15,27 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app id="ownersDetails">
-    <exo-drawer
-      ref="ownersDetails"
-      right
-      @closed="close">
-      <template slot="title">
-        <div>
-          <v-icon
-            v-if="back"
-            @click="close">
-            fas fa-arrow-left
-          </v-icon>
-          <span class="pb-2"> {{ $t('programs.label.programOwners') }}</span>
-        </div>
-      </template>
-      <template slot="content">
-        <exo-user-avatar
-          v-for="owner in listOwners" 
-          :key="owner.id"
-          :profile-id="owner.userName"
-          :size="44"
-          extra-class="px-4 py-3"
-          bold-title
-          link-style
-          popover /> 
-      </template>
-    </exo-drawer>
-  </v-app>
+  <exo-drawer
+    ref="ownersDetails"
+    right
+    @closed="close">
+    <template #title>
+      {{ $t('programs.label.programOwners') }}
+    </template>
+    <template #content>
+      <exo-user-avatar
+        v-for="owner in listOwners" 
+        :key="owner.userName"
+        :profile-id="owner.userName"
+        :size="44"
+        extra-class="px-4 py-3"
+        bold-title
+        link-style
+        popover /> 
+    </template>
+  </exo-drawer>
 </template>
-
 <script>
-
 export default {
   data() {
     return {

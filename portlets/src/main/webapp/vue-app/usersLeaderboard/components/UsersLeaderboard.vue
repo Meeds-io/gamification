@@ -31,14 +31,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </a>
         </div>
         <div class="flex-grow-1"></div>
-        <div class="align-end selectDomainFilterParent">
+        <div class="align-end selectProgramFilterParent">
           <select
-            v-model="selectedDomainId"
-            class="selectDomainFilter ignore-vuetify-classes mb-0">
+            v-model="selectedProgramId"
+            class="selectProgramFilter ignore-vuetify-classes mb-0">
             <users-leaderboard-domain-option
-              v-for="domain in domains"
-              :key="domain.id"
-              :domain="domain" />
+              v-for="program in programs"
+              :key="program.id"
+              :program="program" />
           </select>
         </div>
       </div>
@@ -64,7 +64,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :key="user.remoteId"
               :user="user"
               :rank="index + 1"
-              :domains="domains" />
+              :programs="programs" />
             <template v-if="currentRank">
               <v-divider class="ma-0" />
               <v-list-item class="disabled-background">
@@ -99,7 +99,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
   data: () => ({
-    domains: [],
+    programs: [],
     users: [],
     periods: [{
       value: 'WEEK',
@@ -114,7 +114,7 @@ export default {
     pageSize: 10,
     limit: 10,
     currentRank: null,
-    selectedDomainId: '0',
+    selectedProgramId: '0',
     loading: false,
     selectionChanged: false,
     selectedPeriod: 'WEEK',
@@ -137,7 +137,7 @@ export default {
         this.refreshBoard();
       }
     },
-    selectedDomainId(newVal, oldVal) {
+    selectedProgramId(newVal, oldVal) {
       if (oldVal) {
         this.selectionChanged = true;
         this.refreshBoard();
@@ -151,7 +151,7 @@ export default {
   },
   created() {
     this.loading = true;
-    this.retrieveDomains()
+    this.retrievePrograms()
       .then(this.refreshBoard)
       .then(() => {
         this.periods = [{
@@ -174,8 +174,8 @@ export default {
   methods: {
     refreshBoard() {
       const formData = new FormData();
-      if (this.selectedDomainId && this.selectedDomainId !== '0') {
-        formData.append('domainId', this.selectedDomainId);
+      if (this.selectedProgramId && this.selectedProgramId !== '0') {
+        formData.append('programId', this.selectedProgramId);
       }
       formData.append('period', this.selectedPeriod || 'WEEK');
       formData.append('capacity', this.limit);
@@ -184,7 +184,7 @@ export default {
       this.loading = true;
       return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard/filter?${params}`, {
         credentials: 'include',
-      }).then(resp => resp && resp.ok && resp.json())
+      }).then(resp => resp?.ok && resp.json())
         .then(data => {
           const currentUser = data && data.find(user => !user.socialId);
           this.currentRank = currentUser?.rank;
@@ -195,27 +195,27 @@ export default {
           this.selectionChanged = false;
         });
     },
-    retrieveDomains() {
-      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains?type=ALL&sortByBudget=true`, {
+    retrievePrograms() {
+      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs?type=ALL&sortByBudget=true`, {
         credentials: 'include',
-      }).then(resp => resp && resp.ok && resp.json())
+      }).then(resp => resp?.ok && resp.json())
         .then(data => {
-          const domains = data?.domains || [];
-          domains.forEach(domain => {
-            if (!domain || domain.label || !domain.title) {
+          const programs = data?.programs || [];
+          programs.forEach(program => {
+            if (!program || program.label || !program.title) {
               return;
             }
-            const domainKey = `exoplatform.gamification.gamificationinformation.domain.${domain.title}`;
-            const translation = this.$t(domainKey);
-            domain.label = translation === domainKey && this.$t(domain.title) || translation;
+            const programKey = `exoplatform.gamification.gamificationinformation.domain.${program.title}`;
+            const translation = this.$t(programKey);
+            program.label = translation === programKey && this.$t(program.title) || translation;
           });
-          const defaultDomain = {
+          const defaultProgram = {
             id: '0',
             title: 'All',
             label: this.$t('exoplatform.gamification.leaderboard.domain.all'),
           };
-          this.domains = [defaultDomain, ...domains];
-          this.selectedDomainId = '0';
+          this.programs = [defaultProgram, ...programs];
+          this.selectedProgramId = '0';
         });
     },
     loadNextPage() {

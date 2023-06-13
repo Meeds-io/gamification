@@ -24,7 +24,7 @@
         @mousedown="$event.preventDefault()"
         @click="editProgram">
         <v-layout class="me-3">
-          <v-icon size="13" class="dark-grey-color pb-2px">fas fa-edit</v-icon>
+          <v-icon size="13" class="icon-default-color pb-2px">fas fa-edit</v-icon>
         </v-layout>
         <v-list-item-title class="d-flex">{{ $t('programs.button.editProgram') }}</v-list-item-title>
       </v-list-item>
@@ -33,7 +33,7 @@
         @mousedown="$event.preventDefault()"
         @click="deleteProgram">
         <v-layout class="me-3">
-          <v-icon size="13" class="dark-grey-color pb-2px">fas fa-trash-alt</v-icon>
+          <v-icon size="13" class="icon-default-color pb-2px">fas fa-trash-alt</v-icon>
         </v-layout>
         <v-list-item-title class="d-flex">
           {{ $t('programs.button.deleteProgram') }}
@@ -59,38 +59,9 @@ export default {
     showMenu: false,
   }),
   computed: {
-    programCover() {
-      return this.program?.coverUrl || '';
-    },
-    programBudgetLabel() {
-      return {0: `<span>${this.programBudget} ${this.$t('programs.details.label.points')}</span>`};
-    },
-    programBudget() {
-      return this.program?.rulesTotalScore || 0;
-    },
     showActionsMenu() {
       return this.isAdministrator || this.program?.userInfo?.canEdit;
     },
-    addedOwnersList() {
-      return (this.program?.owners || []).filter(owner => owner.domainOwner && !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
-        userName: owner.remoteId
-      }));
-    },
-    spaceManagers() {
-      return this.program?.space?.managers;
-    },
-    spaceManagersList() {
-      return (this.spaceManagers || []).map(owner => ({
-        userName: owner
-      }));
-    },
-    owners() {
-      return this.addedOwnersList.concat(this.spaceManagersList);
-    },
-
-    ownersCount() {
-      return this.owners?.length;
-    }
   },
   created() {
     $(document).mousedown(() => {
@@ -107,7 +78,7 @@ export default {
         event.preventDefault();
         event.stopPropagation();
       }
-      this.$root.$emit('edit-program-details', this.program);
+      this.$root.$emit('program-form-open', this.program);
     },
     deleteProgram(event) {
       if (event) {

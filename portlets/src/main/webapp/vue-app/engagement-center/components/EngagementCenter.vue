@@ -16,71 +16,73 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <main v-if="!initialized">
-      <v-toolbar color="transparent" flat>
-        <v-spacer />
-        <v-progress-circular
-          color="primary"
-          class="mb-2"
-          indeterminate />
-        <v-spacer />
-      </v-toolbar>
-    </main>
     <main>
       <v-tabs
         id="engagementCenterTabs"
         v-model="tab"
         slider-size="4"
         class="mb-4">
-        <v-tab class="px-5">{{ $t('engagementCenter.label.programs') }}</v-tab>
-        <v-tab class="px-5">{{ $t('engagementCenter.label.challenges') }}</v-tab>
-        <v-tab class="px-5">{{ $t('engagementCenter.label.achievements') }}</v-tab>
+        <v-tab class="px-5" @click="resetSelection">{{ $t('engagementCenter.label.programs') }}</v-tab>
+        <v-tab class="px-5" @click="resetSelection">{{ $t('engagementCenter.label.actions') }}</v-tab>
+        <v-tab class="px-5" @click="resetSelection">{{ $t('engagementCenter.label.achievements') }}</v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item>
           <engagement-center-programs
             v-show="!displayProgramDetail"
             id="engagementCenterProgramsTab"
-            :is-administrator="isAdministrator" />
+            :is-administrator="isAdministrator"
+            :is-program-manager="isProgramManager" />
           <engagement-center-program-detail
             v-if="displayProgramDetail"
             :program="program"
-            :events="events"
+            :newly-created="newlyCreated"
             :is-administrator="isAdministrator"
             :action-value-extensions="actionValueExtensions" />
         </v-tab-item>
         <v-tab-item>
-          <challenges :challenge-id="challengeId" :can-add-challenge="canAddChallenge" />
+          <engagement-center-rules
+            ref="rules"
+            :is-administrator="isAdministrator"
+            :action-value-extensions="actionValueExtensions" />
         </v-tab-item>
         <v-tab-item>
           <realizations
             v-show="!displayProgramDetail"
             id="Realizations"
             :earner-id="earnerId"
-            :is-administrator="isAdministrator"
-            :action-value-extensions="actionValueExtensions" />
+            :action-value-extensions="actionValueExtensions"
+            :is-program-manager="isProgramManager" />
           <engagement-center-program-detail
             v-if="displayProgramDetail"
             :program="program"
-            :events="events"
+            :newly-created="newlyCreated"
             :is-administrator="isAdministrator"
             :action-value-extensions="actionValueExtensions"
             :tab="2" />
         </v-tab-item>
       </v-tabs-items>
     </main>
-    <challenge-drawer
-      ref="challengeDrawer"
-      :is-administrator="isAdministrator" />
     <engagement-center-rule-detail-drawer
       ref="ruleDetails"
       :tab="tab"
+      :action-value-extensions="actionValueExtensions"
+      :is-administrator="isAdministrator" />
+    <engagement-center-rule-achievements-drawer
+      ref="achievementsDrawer"
       :action-value-extensions="actionValueExtensions" />
-    <engagement-center-winners-details ref="winnersDetails" />
     <engagement-center-program-drawer
       ref="programDrawer"
       :is-administrator="isAdministrator" />
     <engagement-center-program-owners-drawer ref="ownersDetails" />
+    <engagement-center-rule-form-drawer ref="ruleFormDrawer" />
+    <exo-confirm-dialog
+      ref="deleteRuleConfirmDialog"
+      :title="$t('programs.details.title.confirmDeleteRule')"
+      :message="$t('actions.deleteConfirmMessage')"
+      :ok-label="$t('programs.details.ok.button')"
+      :cancel-label="$t('programs.details.cancel.button')"
+      @ok="deleteRule" />
   </v-app>
 </template>
 
@@ -91,30 +93,44 @@ export default {
       type: Boolean,
       default: false,
     },
+    isProgramManager: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
-    initialized: false,
     tab: null,
     earnerId: eXo.env.portal.userIdentityId,
-    challengeId: null,
     program: null,
-    canAddChallenge: false,
+    selectedRule: null,
     displayProgramDetail: false,
-    events: [],
+    newlyCreated: false,
     avoidAddToHistory: false,
     extensionApp: 'engagementCenterActions',
     actionValueExtensionType: 'user-actions',
     actionValueExtensions: {},
+    linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions`,
   }),
+  computed: {
+    programsLinkBasePath() {
+      return `${this.linkBasePath}/programs`;
+    },
+    rulesLinkBasePath() {
+      return `${this.linkBasePath}/actions`;
+    },
+    achievementsLinkBasePath() {
+      return `${this.linkBasePath}/achievements`;
+    },
+  },
   watch: {
     tab() {
       if (!this.avoidAddToHistory) {
-        if (this.tab === 0) {
-          window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`);
-        } else if (this.tab === 1) {
-          window.history.pushState('Engagement Center', this.$t('engagementCenter.label.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
-        } else if (this.tab === 2) {
-          window.history.pushState('Engagement Center', this.$t('engagementCenter.label.achievements'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`);
+        if (this.tab === 0 && window.location.pathname.indexOf(this.programsLinkBasePath) < 0) {
+          window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), this.programsLinkBasePath);
+        } else if (this.tab === 1 && window.location.pathname.indexOf(this.rulesLinkBasePath) < 0) {
+          window.history.pushState('Engagement Center', this.$t('engagementCenter.label.actions'), this.rulesLinkBasePath);
+        } else if (this.tab === 2 && window.location.pathname.indexOf(this.achievementsLinkBasePath) < 0) {
+          window.history.pushState('Engagement Center', this.$t('engagementCenter.label.achievements'), this.achievementsLinkBasePath);
         }
         this.displayProgramDetail = false;
       }
@@ -122,19 +138,15 @@ export default {
     },
   },
   created() {
-    this.$root.$on('open-program-detail', program => {
-      this.program = program;
-      this.displayProgramDetail = true;
-    });
+    this.$root.$on('program-added', this.openCreatedProgramDetail);
+    this.$root.$on('rule-created', this.resetNewlyCreated);
+    this.$root.$on('rule-updated', this.updateOpenedProgram);
+    this.$root.$on('rule-deleted', this.updateOpenedProgram);
+    this.$root.$on('open-program-detail', this.openProgramDetail);
+    this.$root.$on('open-program-detail-by-id', this.openProgramDetailById);
     this.$root.$on('close-program-detail', () => this.displayProgramDetail = false);
+    this.$root.$on('rule-delete-confirm', this.confirmDelete);
     this.initTabs();
-    this.$ruleServices.getEvents()
-      .then(events => {
-        this.events = events || [];
-      });
-    this.$challengesServices.canAddChallenge()
-      .then(canAddChallenge => this.canAddChallenge = canAddChallenge);
-    this.initialized = true;
     window.addEventListener('popstate', (event) => this.initTabs(event));
     document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
     this.refreshActionValueExtensions();
@@ -146,24 +158,58 @@ export default {
       }
       this.switchTabs();
     },
+    resetNewlyCreated() {
+      this.newlyCreated = false;
+      this.updateOpenedProgram();
+    },
+    updateOpenedProgram() {
+      if (this.displayProgramDetail && this.program?.id) {
+        this.openProgramDetailById(this.program.id);
+      }
+    },
+    resetSelection() {
+      this.displayProgramDetail = false;
+      this.$nextTick().then(() => this.program = null);
+      if (this.$refs.rules) {
+        this.$refs.rules.reset();
+      }
+    },
+    openProgramDetailById(id, newlyCreated) {
+      this.$programService.getProgramById(id, {
+        lang: eXo.env.portal.language,
+        expand: 'countActiveRulesWhenDisabled',
+      })
+        .then(program => {
+          if (program?.id) {
+            this.openProgramDetail(program, newlyCreated);
+          }
+        });
+    },
+    openCreatedProgramDetail(program) {
+      this.openProgramDetail(program, true);
+    },
+    openProgramDetail(program, newlyCreated) {
+      this.newlyCreated = newlyCreated || false;
+      this.program = program;
+      this.displayProgramDetail = true;
+      window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${this.programsLinkBasePath}/${program.id}`);
+    },
     switchTabs() {
-      const urlPath = document.location.search || document.location.pathname;
+      const urlPath = document.location.pathname;
       const id = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
-      if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`) > -1) {
-        if (id) {
-          this.$programsServices.getProgramById(id)
-            .then(program => {
-              if (program && program.id) {
-                this.$root.$emit('open-program-detail', program);
-                window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${program.id}`);
-              } 
-            });
-        }
+      if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`) >= 0) {
         this.tab = 0;
-      } else if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`) > -1 || urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`) > -1) {
+        if (id) {
+          this.openProgramDetailById(id);
+        }
+      } else if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`) >= 0
+              || urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contibutions/challenges`) >= 0) {
+        if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contibutions/challenges`) >= 0) {
+          window.history.replaceState('Engagement Center', this.$t('engagementCenter.label.actions'), urlPath.replace(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contibutions/challenges`, this.rulesLinkBasePath));
+        }
         this.id = id;
         this.tab = 1;
-      } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`) > -1) {
+      } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`) >= 0) {
         this.tab = 2;
       }
     },
@@ -179,7 +225,32 @@ export default {
       // force update of attribute to re-render switch new extension type
       if (changed) {
         this.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
+        this.$root.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
       }
+    },
+    deleteRule() {
+      this.loading = true;
+      this.$ruleService.deleteRule(this.selectedRule.id)
+        .then(() => {
+          this.$root.$emit('alert-message', this.$t('programs.details.ruleDeleteSuccess'), 'success');
+          this.$root.$emit('rule-deleted', this.selectedRule);
+        })
+        .catch(e => {
+          let msg = '';
+          if (e.message === '401' || e.message === '403') {
+            msg = this.$t('actions.deletePermissionDenied');
+          } else if (e.message  === '404') {
+            msg = this.$t('actions.notFound');
+          } else  {
+            msg = this.$t('actions.deleteError');
+          }
+          this.$root.$emit('alert-message', msg, 'error');
+        })
+        .finally(() => this.loading = false);
+    },
+    confirmDelete(rule) {
+      this.selectedRule = rule;
+      this.$refs.deleteRuleConfirmDialog.open();
     },
   }
 };

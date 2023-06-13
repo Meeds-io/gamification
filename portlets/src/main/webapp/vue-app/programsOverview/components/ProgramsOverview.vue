@@ -34,34 +34,11 @@
         <gamification-overview-widget-row
           v-show="programsDisplayed"
           class="py-auto"                   
-          v-for="(item, index) in programs" 
+          v-for="(program, index) in programs" 
           :key="index"
-          :redirection-url="`${programURL}/${item.id}`">
+          :redirection-url="`${programURL}/${program.id}`">
           <template #content>
-            <span>
-              <v-list
-                class="pb-0"
-                subheader
-                two-line>
-                <v-list-item
-                  two-line>
-                  <v-list-item-icon class="mx-2">
-                    <v-img
-                      :src="item.coverUrl"
-                      height="40"
-                      width="55" />
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      {{ item.title }}
-                    </v-list-item-title>
-                    <v-list-item-subtitle> 
-                      <span class="text-light-color" v-sanitized-html="$t('programs.budget', {0: `<span>${item.rulesTotalScore} ${$t('programs.details.label.points')}</span>`})"></span>
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </span>
+            <gamification-overview-program-item :program="program" />
           </template>
         </gamification-overview-widget-row>
       </template>
@@ -96,11 +73,16 @@ export default {
   },
   methods: {
     retrievePrograms() {
-      return this.$programsServices
-        .retrievePrograms(0, 3, this.type, this.status, '', false, true)
+      return this.$programService.getPrograms({
+        limit: 3,
+        type: this.type,
+        status: this.status,
+        sortByBudget: true,
+        lang: eXo.env.portal.language,
+      })
         .then((data) => {
-          this.programs = (data?.domains || []).sort((p1, p2) => p2.rulesTotalScore - p1.rulesTotalScore);
-          this.programsDisplayed = data.domainsSize > 0;
+          this.programs = (data?.programs || []).sort((p1, p2) => p2.rulesTotalScore - p1.rulesTotalScore);
+          this.programsDisplayed = data.size > 0;
           this.loading = false;
         });
     },

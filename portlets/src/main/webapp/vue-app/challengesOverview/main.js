@@ -15,6 +15,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './initComponents.js';
+import '../engagement-center/services.js';
 
 const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
 const urls = [
@@ -27,9 +28,16 @@ export function init() {
   exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       Vue.createApp({
+        data: {
+          now: Date.now(),
+          actionValueExtensions: {},
+        },
         template: `<gamification-overview-challenges id="${appId}" />`,
+        created() {
+          window.setInterval(() => this.now = Date.now(), 1000);
+        },
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'Challenges Overview');
-    });
+    }).finally(() => Vue.prototype.$utils.includeExtensions('engagementCenterActions'));
 }

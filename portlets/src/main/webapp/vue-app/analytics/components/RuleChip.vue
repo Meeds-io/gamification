@@ -55,14 +55,16 @@ export default {
   }),
   computed: {
     ruleLink() {
-      return this.rule?.type === 'MANUAL' && `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.ruleId}`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions/${this.ruleId}`;
     },
   },
   created() {
     if (this.ruleId) {
       this.loading = true;
       this.error = false;
-      this.$ruleServices.getRuleById(this.ruleId)
+      this.$ruleService.getRuleById(this.ruleId, {
+        lang: eXo.env.portal.language,
+      })
         .then(rule => this.rule = rule)
         .catch(() => this.error = true)
         .finally(() => this.loading = false);

@@ -148,7 +148,7 @@ export default {
       return this.realization.actionLabel;
     },
     program() {
-      return this.realization?.domain;
+      return this.realization?.program;
     },
     programTitle() {
       return this.program?.title || '-';
@@ -189,8 +189,7 @@ export default {
   methods: {
     openProgramDetail() {
       this.$root.$emit('open-program-detail', this.program);
-      window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
     },
-  }
+  },
 };
 </script>
