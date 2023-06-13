@@ -17,13 +17,14 @@
 package io.meeds.gamification.listener;
 
 import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_JOIN;
-import static io.meeds.gamification.listener.GamificationGenericListener.CANCEL_EVENT_NAME;
+import static io.meeds.gamification.listener.GamificationGenericListener.*;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Map;
 import java.util.Objects;
@@ -84,6 +85,35 @@ public class GamificationSpaceListenerTest extends AbstractServiceTest {
                                argThat((Map<String, String> source) -> source.get(EVENT_NAME)
                                                                              .equals(GAMIFICATION_SOCIAL_SPACE_JOIN)),
                                argThat(Objects::isNull));
+
+  }
+
+  @Test
+  public void testBecomeSpaceManager() throws Exception {
+    GamificationSpaceListener gamificationSpaceListener = new GamificationSpaceListener(ruleService,
+                                                                                        identityManager,
+                                                                                        spaceService,
+                                                                                        listenerService);
+    Identity userIdentity = mock(Identity.class);
+    when(userIdentity.getId()).thenReturn("1");
+    when(identityManager.getOrCreateUserIdentity("root")).thenReturn(userIdentity);
+
+    Space space = new Space();
+    space.setDisplayName("space1");
+    space.setPrettyName(space.getDisplayName());
+
+    Identity spaceIdentity = mock(Identity.class);
+    when(spaceIdentity.getId()).thenReturn("2");
+    when(identityManager.getOrCreateSpaceIdentity("space1")).thenReturn(spaceIdentity);
+
+    SpaceLifeCycleEvent spaceLifeCycleEvent = new SpaceLifeCycleEvent(space, "root", SpaceLifeCycleEvent.Type.GRANTED_LEAD);
+    gamificationSpaceListener.grantedLead(spaceLifeCycleEvent);
+
+    verify(listenerService,
+           times(2)).broadcast(eq(GENERIC_EVENT_NAME),
+                               argThat((Map<String, String> source) -> source.get(EVENT_NAME)
+                                                                             .equals(GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD)),
+                               eq(null));
 
   }
 
