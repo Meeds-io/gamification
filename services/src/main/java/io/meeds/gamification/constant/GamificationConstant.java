@@ -86,7 +86,7 @@ public interface GamificationConstant {
     /** JOIN SPACE  */
     String GAMIFICATION_SOCIAL_SPACE_JOIN                                              = "joinSpace";
     /** GRANT USER AS LEAD WITHIN SPACE */
-    String GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD                                     = "grantUserAsLead";
+    String GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD                                     = "becomeSpaceManager";
 
     /***************************************************************************************************************************************************/
     /*********************************************** CONSTANTS TO MANAGE RELATIONSHIP GAMIFICATION PROCESS *********************************************/
