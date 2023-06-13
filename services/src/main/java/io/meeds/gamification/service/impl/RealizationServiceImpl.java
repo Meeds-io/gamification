@@ -55,7 +55,6 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import io.meeds.gamification.constant.DateFilterType;
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
-import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.constant.RealizationStatus;
