@@ -140,7 +140,7 @@ export default {
     },
     actionLabel() {
       if (this.isAutomaticType) {
-        const key = `exoplatform.gamification.gamificationinformation.rule.description.${this.realization.actionLabel}`;
+        const key = `exoplatform.gamification.gamificationinformation.rule.title.${this.realization.actionLabel}`;
         if (this.$te(key)) {
           return this.$t(key);
         }
