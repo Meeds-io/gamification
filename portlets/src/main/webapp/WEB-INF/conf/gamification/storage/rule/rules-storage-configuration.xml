@@ -663,31 +663,48 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </init-params>
         </component-plugin>
         <component-plugin>
-            <name>rule.AddUserProfileAboutMe</name>
-            <set-method>addPlugin</set-method>
-            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>addUserProfileAboutMe</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You filled "About me" section on your profile</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>addUserProfileAboutMe</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>5</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>false</value>
-                </value-param>
-            </init-params>
+          <name>rule.AddUserProfileAboutMe</name>
+          <set-method>addPlugin</set-method>
+          <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+          <init-params>
+            <value-param>
+              <name>rule-event</name>
+              <value>addUserProfileAboutMe</value>
+            </value-param>
+          </init-params>
+        </component-plugin>
+        <component-plugin>
+          <name>rule.addUserProfileContactInformation</name>
+          <set-method>addPlugin</set-method>
+          <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+          <init-params>
+            <value-param>
+              <name>rule-event</name>
+              <value>addUserProfileContactInformation</value>
+            </value-param>
+          </init-params>
+        </component-plugin>
+        <component-plugin>
+          <name>rule.addUserProfileWorkExperience</name>
+          <set-method>addPlugin</set-method>
+          <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+          <init-params>
+            <value-param>
+              <name>rule-event</name>
+              <value>addUserProfileWorkExperience</value>
+            </value-param>
+          </init-params>
+        </component-plugin>
+        <component-plugin>
+          <name>rule.addUserProfileNotificationSetting</name>
+          <set-method>addPlugin</set-method>
+          <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+          <init-params>
+            <value-param>
+              <name>rule-event</name>
+              <value>addUserProfileNotificationSetting</value>
+            </value-param>
+          </init-params>
         </component-plugin>
         <component-plugin>
             <name>rule.AddSpace</name>
