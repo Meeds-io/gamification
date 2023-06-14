@@ -56,9 +56,12 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     rank: 20,
     icon: 'fas fa-user',
     match: (actionLabel) => [
+      'addUserProfileContactInformation',
+      'addUserProfileWorkExperience',
       'addUserProfileAboutMe',
       'addUserProfileAvatar',
       'addUserProfileBanner',
+      'addUserProfileNotificationSetting',
       'userLogin',
       'receiveRelationshipRequest',
       'sendRelationshipRequest'
