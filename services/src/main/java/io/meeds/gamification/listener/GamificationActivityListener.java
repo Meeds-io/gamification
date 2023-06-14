@@ -411,7 +411,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
+      LOG.warn(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
   }
 
@@ -429,7 +429,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(CANCEL_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
+      LOG.warn(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
   }
 
@@ -448,7 +448,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(CANCEL_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
+      LOG.warn(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
   }
 
@@ -466,7 +466,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
+      LOG.warn(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
   }
 
@@ -477,7 +477,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put(OBJECT_TYPE_PARAM, ACTIVITY_OBJECT_TYPE);
       listenerService.broadcast(DELETE_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
+      LOG.warn(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
   }
 
