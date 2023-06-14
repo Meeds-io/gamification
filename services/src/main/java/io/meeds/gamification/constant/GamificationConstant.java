@@ -73,10 +73,21 @@ public interface GamificationConstant {
     /***************************************************************************************************************************************************/
     /** ADD USER'S AVATAR  */
     String GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR                                     = "addUserProfileAvatar";
+
     /** ADD USER'S BANNER  */
     String GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER                                     = "addUserProfileBanner";
+
     /** ADD USER'S ABOUT ME  */
     String GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME                                    = "addUserProfileAboutMe";
+
+    /** ADD USER'S CONTACT INFORMATION */
+    String GAMIFICATION_SOCIAL_PROFILE_ADD_CONTACT_INFORMATION                        = "addUserProfileContactInformation";
+
+    /** ADD USER'S Work Experience */
+    String GAMIFICATION_SOCIAL_PROFILE_ADD_WORK_EXPERIENCE                            = "addUserProfileWorkExperience";
+
+    /** ADD USER'S Notification setting */
+    String GAMIFICATION_SOCIAL_PROFILE_ADD_NOTIFICATION_SETTING                       = "addUserProfileNotificationSetting";
 
     /***************************************************************************************************************************************************/
     /**************************************************** CONSTANTS TO MANAGE SPACE GAMIFICATION PROCESS ***********************************************/
