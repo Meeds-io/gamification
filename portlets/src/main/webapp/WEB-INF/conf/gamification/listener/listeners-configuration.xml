@@ -98,14 +98,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <set-method>addListener</set-method>
             <type>io.meeds.gamification.listener.GamificationGenericListener</type>
         </component-plugin>
-    </external-component-plugins>
-    <!-- User Listener -->
-    <external-component-plugins>
-        <target-component>org.exoplatform.services.listener.ListenerService</target-component>
         <component-plugin>
             <name>exo.core.security.ConversationRegistry.register</name>
             <set-method>addListener</set-method>
             <type>io.meeds.gamification.listener.GamificationUserLoginListener</type>
+        </component-plugin>
+        <component-plugin>
+          <name>notifications.userSettingModified</name>
+          <set-method>addListener</set-method>
+          <type>io.meeds.gamification.listener.GamificationNotificationListener</type>
         </component-plugin>
     </external-component-plugins>
     <!-- Social listeners -->
