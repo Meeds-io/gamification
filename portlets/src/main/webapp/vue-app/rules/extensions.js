@@ -42,7 +42,6 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
       'likeCommentOnNetworkStreamTarget',
       'likeCommentOnSpaceStream',
       'likeCommentOnSpaceStreamTarget',
-      'uploaddocumentOnNetworkStream'
     ].includes(actionLabel),
     getLink: (realization) => {
       Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${realization?.objectId}`);
