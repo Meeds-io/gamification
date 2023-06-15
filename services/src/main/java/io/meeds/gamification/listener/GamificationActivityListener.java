@@ -19,7 +19,6 @@ package io.meeds.gamification.listener;
 import static io.meeds.gamification.constant.GamificationConstant.ACTIVITY_OBJECT_TYPE;
 import static io.meeds.gamification.constant.GamificationConstant.BROADCAST_GAMIFICATION_EVENT_ERROR;
 import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_KNOWLEDGE_SHARE_UPLOAD__DOCUMENT_NETWORK_STREAM;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_ACTIVITY_MY_STREAM;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_ACTIVITY_NETWORK_STREAM;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_STREAM;
@@ -95,21 +94,6 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     // Target Activity
     ExoSocialActivity activity = event.getSource();
     // This listener track all kind of activities
-
-    /**
-     * Three usescase Case 1 : Assign XP to user who add an activity on space
-     * stream Case 2 : Assign XP to user who add an activity on his network
-     * stream Case 3 : Assign XP to user who add an activity on his own space
-     * Case 4 : Assign XP to owner of Stream on which an activity has been added
-     * (except the user himself) Case 5 : Assign XP to space's manager on which
-     * an activity has been added
-     */
-    if (isDocumentShareActivity(activity)) {
-      createActivityGamificationHistoryEntry(activity.getPosterId(),
-                                             activity.getPosterId(),
-                                             GAMIFICATION_KNOWLEDGE_SHARE_UPLOAD__DOCUMENT_NETWORK_STREAM,
-                                             activity.getId());
-    }
 
     // Add activity on Space Stream : Compute actor reward
     Space space = getSpaceOfActivity(activity);
@@ -394,11 +378,6 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   private boolean isSpaceActivity(ExoSocialActivity activity) {
     return activity.getActivityStream() != null && ActivityStream.Type.SPACE.equals(activity.getActivityStream().getType());
-  }
-
-  private boolean isDocumentShareActivity(ExoSocialActivity activity) {
-    return activity.getType() != null && (activity.getType().equalsIgnoreCase("files:spaces") || activity.getType().equalsIgnoreCase("DOC_ACTIVITY")
-        || activity.getType().equalsIgnoreCase("contents:spaces"));
   }
 
   private void createActivityGamificationHistoryEntry(String earnerIdentityId, String receiverId, String gamificationEventName, String activityId) {
