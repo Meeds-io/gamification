@@ -48,15 +48,15 @@ export default {
       immediate: true,
       deep: true,
       handler: function() {
-        if (this.connectors && this.connectors.length) {
-          this.enabledConnectors = this.connectors && this.connectors.filter(connector => connector.enabled) || [];
+        if (this.connectors?.length) {
+          this.enabledConnectors = this.connectors?.filter(connector => connector.enabled) || [];
         }
       }
     },
   },
   created() {
     document.addEventListener('hideSettingsApps', (event) => {
-      if (event && event.detail && this.id !== event.detail) {
+      if (event?.detail && this.id !== event.detail) {
         this.displayed = false;
       }
     });

@@ -37,7 +37,7 @@ export function saveUserConnector(connectorLoginRequest) {
     method: 'POST',
     body: JSON.stringify(connectorLoginRequest),
   }).then((resp) => {
-    if (!resp || !resp.ok) {
+    if (!resp?.ok) {
       return resp.text().then(() => {
         throw new Error('Error while validating access token');
       });
@@ -52,7 +52,7 @@ export function removeUserConnector(connector) {
     method: 'DELETE',
     credentials: 'include',
   }).then(resp => {
-    if (!resp || !resp.ok) {
+    if (!resp?.ok) {
       throw new Error('Response code indicates a server error', resp);
     }
   });
