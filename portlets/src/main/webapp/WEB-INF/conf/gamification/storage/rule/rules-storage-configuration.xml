@@ -41,37 +41,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <type>io.meeds.gamification.service.impl.RuleRegistryImpl</type>
     </component>
 
-    <external-component-plugins>
-        <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
-        <component-plugin>
-            <name>rule.uploaddocumentOnNetworkStream</name>
-            <set-method>addPlugin</set-method>
-            <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>uploaddocumentOnNetworkStream</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You uploaded a new document</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>uploaddocumentOnNetworkStream</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>15</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>false</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-    </external-component-plugins>
-
     <!-- Gamification Rule Config -->
     <external-component-plugins>
         <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
