@@ -20,7 +20,7 @@ import * as connectorService from './connectorService';
 const appId = 'connectorsSettingsApp';
 
 //getting language of the PLF
-const lang = eXo && eXo.env.portal.language || 'en';
+const lang = eXo.env.portal.language || 'en';
 
 //should expose the locale ressources as REST API 
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;

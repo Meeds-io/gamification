@@ -42,14 +42,14 @@ export default {
       const connectors = extensionRegistry.loadExtensions('gamification', 'connectors') || [];
       // Check connectors status from store
       this.$connectorService.getConnectors().then(connectorsList => {
-        if (connectorsList && connectorsList.length) {
+        if (connectorsList?.length) {
           connectors.forEach(connector => {
             const connectorObj = connectorsList.find(connectorSettings => connectorSettings.name === connector.name);
-            connector.apiKey = connectorObj && connectorObj.apiKey || '';
-            connector.redirectURL = connectorObj && connectorObj.redirectURL || '';
+            connector.apiKey = connectorObj?.apiKey || '';
+            connector.redirectURL = connectorObj?.redirectURL || '';
             connector.enabled = connectorObj != null;
-            connector.isSignedIn = connectorObj.connected;
-            connector.identifier = connectorObj.identifier || '';
+            connector.isSignedIn = connectorObj?.connected;
+            connector.identifier = connectorObj?.identifier || '';
             connector.user = eXo.env.portal.userName;
           });
         } else {
