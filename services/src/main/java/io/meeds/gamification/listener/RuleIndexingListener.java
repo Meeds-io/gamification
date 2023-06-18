@@ -29,14 +29,14 @@ import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.utils.Utils;
 
 @Asynchronous
-public class RulesESListener extends Listener<Object, String> {
-  private static final Log LOG = ExoLogger.getLogger(RulesESListener.class);
+public class RuleIndexingListener extends Listener<Object, String> {
+  private static final Log LOG = ExoLogger.getLogger(RuleIndexingListener.class);
 
   private IndexingService  indexingService;
 
   private RuleService      ruleService;
 
-  public RulesESListener(IndexingService indexingService,
+  public RuleIndexingListener(IndexingService indexingService,
                          RuleService ruleService) {
     this.indexingService = indexingService;
     this.ruleService = ruleService;

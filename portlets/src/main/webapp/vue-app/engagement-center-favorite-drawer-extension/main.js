@@ -17,7 +17,11 @@
  */
 
 import './initComponents.js';
-import './extensions.js';
 import '../engagement-center/services.js';
+import {initExtensions} from './extensions.js';
+
+export function init() {
+  initExtensions();
+}
 
 Vue.prototype.$utils.includeExtensions('engagementCenterActions');

@@ -40,7 +40,7 @@ import io.meeds.gamification.listener.GamificationRelationshipListenerTest;
 import io.meeds.gamification.listener.GamificationSpaceListenerTest;
 import io.meeds.gamification.listener.ProgramAutoDisableListenerTest;
 import io.meeds.gamification.listener.ProgramSpaceListenerTest;
-import io.meeds.gamification.listener.RulesESListenerTest;
+import io.meeds.gamification.listener.RuleIndexingListenerTest;
 import io.meeds.gamification.plugin.ProgramTranslationPluginTest;
 import io.meeds.gamification.plugin.RuleTranslationPluginTest;
 import io.meeds.gamification.rest.TestAnnouncementRest;
@@ -103,7 +103,7 @@ import io.meeds.gamification.utils.UtilsTest;
     AnnouncementActivityUpdaterTest.class,
     RuleSearchConnectorTest.class,
     RuleIndexingServiceConnectorTest.class,
-    RulesESListenerTest.class,
+    RuleIndexingListenerTest.class,
     GamificationRelationshipListenerTest.class,
     AnalyticsAnnouncementListenerTest.class,
     AnalyticsProgramListenerTest.class,
