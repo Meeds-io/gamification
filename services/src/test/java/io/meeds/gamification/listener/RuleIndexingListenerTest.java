@@ -34,7 +34,7 @@ import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RulesESListenerTest extends AbstractServiceTest {
+public class RuleIndexingListenerTest extends AbstractServiceTest {
 
   @Mock
   private IndexingService indexingService;
@@ -42,15 +42,15 @@ public class RulesESListenerTest extends AbstractServiceTest {
   @Test
   public void testIndexingRule() throws Exception {
     RuleDTO rule = newRuleDTO();
-    RulesESListener rulesESListener = new RulesESListener(indexingService, ruleService);
+    RuleIndexingListener ruleIndexingListener = new RuleIndexingListener(indexingService, ruleService);
 
     Event<Object, String> event = new Event<>(Utils.POST_CREATE_RULE_EVENT, rule.getId(), null);
-    rulesESListener.onEvent(event);
+    ruleIndexingListener.onEvent(event);
     verify(indexingService, times(1)).reindex(anyString(), anyString());
     verify(indexingService, times(0)).unindex(anyString(), anyString());
 
     event = new Event<>(Utils.POST_DELETE_RULE_EVENT, rule.getId(), null);
-    rulesESListener.onEvent(event);
+    ruleIndexingListener.onEvent(event);
     verify(indexingService, times(1)).reindex(anyString(), anyString());
     verify(indexingService, times(1)).unindex(anyString(), anyString());
   }

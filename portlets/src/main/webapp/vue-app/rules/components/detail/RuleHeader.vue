@@ -73,13 +73,6 @@ export default {
     },
   },
   data: () => ({
-    MAX_LENGTH: 1300,
-    editor: false,
-    comment: false,
-    sending: false,
-    templateParams: {},
-    userId: eXo.env.portal.userIdentityId,
-    username: eXo.env.portal.userName,
     programCoverSize: 35,
   }),
   computed: {
