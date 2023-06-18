@@ -63,26 +63,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-tab-item>
       </v-tabs-items>
     </main>
-    <engagement-center-rule-detail-drawer
-      ref="ruleDetails"
-      :tab="tab"
-      :action-value-extensions="actionValueExtensions"
-      :is-administrator="isAdministrator" />
-    <engagement-center-rule-achievements-drawer
-      ref="achievementsDrawer"
-      :action-value-extensions="actionValueExtensions" />
+    <engagement-center-rule-drawers />
     <engagement-center-program-drawer
       ref="programDrawer"
       :is-administrator="isAdministrator" />
     <engagement-center-program-owners-drawer ref="ownersDetails" />
-    <engagement-center-rule-form-drawer ref="ruleFormDrawer" />
-    <exo-confirm-dialog
-      ref="deleteRuleConfirmDialog"
-      :title="$t('programs.details.title.confirmDeleteRule')"
-      :message="$t('actions.deleteConfirmMessage')"
-      :ok-label="$t('programs.details.ok.button')"
-      :cancel-label="$t('programs.details.cancel.button')"
-      @ok="deleteRule" />
   </v-app>
 </template>
 
@@ -102,7 +87,6 @@ export default {
     tab: null,
     earnerId: eXo.env.portal.userIdentityId,
     program: null,
-    selectedRule: null,
     displayProgramDetail: false,
     newlyCreated: false,
     avoidAddToHistory: false,
@@ -145,7 +129,6 @@ export default {
     this.$root.$on('open-program-detail', this.openProgramDetail);
     this.$root.$on('open-program-detail-by-id', this.openProgramDetailById);
     this.$root.$on('close-program-detail', () => this.displayProgramDetail = false);
-    this.$root.$on('rule-delete-confirm', this.confirmDelete);
     this.initTabs();
     window.addEventListener('popstate', (event) => this.initTabs(event));
     document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
@@ -227,30 +210,6 @@ export default {
         this.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
         this.$root.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
       }
-    },
-    deleteRule() {
-      this.loading = true;
-      this.$ruleService.deleteRule(this.selectedRule.id)
-        .then(() => {
-          this.$root.$emit('alert-message', this.$t('programs.details.ruleDeleteSuccess'), 'success');
-          this.$root.$emit('rule-deleted', this.selectedRule);
-        })
-        .catch(e => {
-          let msg = '';
-          if (e.message === '401' || e.message === '403') {
-            msg = this.$t('actions.deletePermissionDenied');
-          } else if (e.message  === '404') {
-            msg = this.$t('actions.notFound');
-          } else  {
-            msg = this.$t('actions.deleteError');
-          }
-          this.$root.$emit('alert-message', msg, 'error');
-        })
-        .finally(() => this.loading = false);
-    },
-    confirmDelete(rule) {
-      this.selectedRule = rule;
-      this.$refs.deleteRuleConfirmDialog.open();
     },
   }
 };

@@ -55,6 +55,7 @@ import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.PeriodType;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.model.RulePublication;
 import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.model.filter.RuleFilter;
 import io.meeds.gamification.rest.builder.RuleBuilder;
@@ -330,14 +331,14 @@ public class RuleRest implements ResourceContainer {
                              @Context
                              HttpServletRequest request,
                              @RequestBody(description = "rule object to save", required = true)
-                             RuleDTO ruleDTO) {
-    if (ruleDTO == null) {
+                             RulePublication rule) {
+    if (rule == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Rule object is mandatory").build();
     }
     String username = getCurrentUser();
     try {
-      ruleDTO = ruleService.createRule(ruleDTO, username);
-      return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO, getLocale(request))).build();
+      RuleDTO createdRule = ruleService.createRule(rule, username);
+      return Response.ok().cacheControl(cacheControl).entity(toRestEntity(createdRule, getLocale(request))).build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (ObjectNotFoundException e) {
@@ -363,15 +364,15 @@ public class RuleRest implements ResourceContainer {
                              @Context
                              HttpServletRequest request,
                              @RequestBody(description = "rule object to update", required = true)
-                             RuleDTO ruleDTO) {
+                             RulePublication rule) {
     String username = getCurrentUser();
 
-    if (ruleDTO == null) {
+    if (rule == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Rule object is mandatory").build();
     }
     try {
-      ruleDTO = ruleService.updateRule(ruleDTO, username);
-      return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO, getLocale(request))).build();
+      RuleDTO updatedRule = ruleService.updateRule(rule, username);
+      return Response.ok().cacheControl(cacheControl).entity(toRestEntity(updatedRule, getLocale(request))).build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (ObjectNotFoundException e) {

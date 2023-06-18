@@ -5,6 +5,7 @@ import RuleLockInput from './components/form/RuleLockInput.vue';
 import ButtonGroupItem from './components/form/ButtonGroupItem.vue';
 import RuleSuggester from './components/form/RuleSuggester.vue';
 import DescriptionEditor from './components/form/DescriptionEditor.vue';
+import RulePublish from './components/form/RulePublish.vue';
 
 import RuleDetailDrawer from './components/RuleDetailDrawer.vue';
 import RuleAchievements from './components/detail/RuleAchievements.vue';
@@ -27,6 +28,7 @@ import RuleDateEnd from './components/detail/RuleDateEnd.vue';
 import RuleDateInfoChip from './components/detail/RuleDateInfoChip.vue';
 
 import RuleAchievementsDrawer from './components/RuleAchievementsDrawer.vue';
+import RuleDrawers from './components/RuleDrawers.vue';
 
 const components = {
   'engagement-center-rule-form-drawer': RuleFormDrawer,
@@ -34,6 +36,7 @@ const components = {
   'engagement-center-rule-dates-input': RuleDatesInput,
   'engagement-center-rule-recurrence-input': RuleRecurrenceInput,
   'engagement-center-rule-lock-input': RuleLockInput,
+  'engagement-center-rule-publish-editor': RulePublish,
   'engagement-center-description-editor': DescriptionEditor,
   'rule-suggester': RuleSuggester,
 
@@ -57,6 +60,7 @@ const components = {
   'engagement-center-rule-prerequisites': RulePrerequisites,
   'engagement-center-rule-prerequisite-item': RulePrerequisiteItem,
   'engagement-center-rule-achievements-drawer': RuleAchievementsDrawer,
+  'engagement-center-rule-drawers': RuleDrawers,
 };
 
 for (const key in components) {

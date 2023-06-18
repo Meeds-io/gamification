@@ -30,7 +30,7 @@
       :hide-no-data="!noDataLabel"
       append-icon=""
       menu-props="closeOnClick, closeOnContentClick, maxHeight = 100"
-      class="identitySuggester identitySuggesterInputStyle"
+      class="identitySuggester identitySuggesterInputStyle my-0"
       content-class="identitySuggesterContent"
       width="100%"
       max-width="100%"

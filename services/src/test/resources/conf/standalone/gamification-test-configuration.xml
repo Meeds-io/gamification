@@ -530,6 +530,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <set-method>addListener</set-method>
       <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
     </component-plugin>
+    <component-plugin>
+      <name>rule.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.RuleDeletedListener</type>
+    </component-plugin>
   </external-component-plugins>
 
   <remove-configuration>org.exoplatform.portal.config.UserPortalConfigListener</remove-configuration>
