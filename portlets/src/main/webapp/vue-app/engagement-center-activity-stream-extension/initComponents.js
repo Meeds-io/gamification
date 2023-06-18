@@ -1,7 +1,8 @@
 /**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2022 Meeds Association
- * contact@meeds.io
+ *
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -16,9 +17,15 @@
  */
 
 import ActivityAnnouncement from './components/ActivityAnnouncement.vue';
+import RuleActivity from './components/RuleActivity.vue';
+import RuleActivityAnnounceAction from './components/RuleActivityAnnounceAction.vue';
+import AvatarsList from '../engagement-center/components/common/AvatarsList.vue';
 
 const components = {
   'activity-announcement': ActivityAnnouncement,
+  'rule-activity': RuleActivity,
+  'rule-activity-announce-action': RuleActivityAnnounceAction,
+  'engagement-center-avatars-list': AvatarsList,
 };
 
 for (const key in components) {

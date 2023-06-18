@@ -27,6 +27,8 @@ import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.meeds.gamification.constant.IdentityType;
@@ -97,6 +99,7 @@ public class RuleBuilder {
                                                 rule,
                                                 Utils.getCurrentUser());
     translatedLabels(translationService, rule, locale);
+    boolean published = isPublished(rule);
 
     return new RuleRestEntity(rule.getId(),
                               rule.getTitle(),
@@ -112,6 +115,9 @@ public class RuleBuilder {
                               rule.getLastModifiedDate(),
                               rule.getStartDate(),
                               rule.getEndDate(),
+                              rule.getActivityId(),
+                              rule.getCacheTime(),
+                              published,
                               rule.getPrerequisiteRuleIds(),
                               rule.getType(),
                               rule.getRecurrence(),
@@ -184,6 +190,16 @@ public class RuleBuilder {
                                  IdentityType.USER,
                                  RealizationStatus.ACCEPTED,
                                  Collections.singletonList(ruleId));
+  }
+
+  private static boolean isPublished(RuleDTO rule) {
+    long activityId = rule.getActivityId();
+    if (activityId <= 0) {
+      return false;
+    }
+    ActivityManager activityManager = ExoContainerContext.getService(ActivityManager.class);
+    ExoSocialActivity activity = activityManager.getActivity(String.valueOf(activityId));
+    return activity != null && !activity.isHidden();
   }
 
 }

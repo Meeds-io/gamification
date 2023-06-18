@@ -215,6 +215,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-stepper-step>
             <v-slide-y-transition>
               <div v-show="expanded || stepper > 1" class="px-6">
+                <engagement-center-rule-publish-editor
+                  v-if="enablePublication"
+                  :enabled="!rule.id"
+                  :rule="rule"
+                  :program="program"
+                  :publish.sync="rule.publish"
+                  :space-id.sync="rule.spaceId"
+                  :message.sync="rule.message"
+                  :valid-message.sync="validMessage" />
+                <div class="pt-4 text-subtitle-1">{{ $t('rule.form.ruleConditionsLabel') }}</div>
                 <div class="ps-7">
                   <v-chip
                     class="ma-2"
@@ -335,6 +345,7 @@ export default {
     recurrenceCondition: false,
     prerequisiteRuleCondition: false,
     validDatesInput: false,
+    validMessage: false,
     events: [],
     programEvents: [],
   }),
@@ -394,7 +405,7 @@ export default {
       return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.isValidForm;
     },
     disableSaveButton() {
-      return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.durationValid || !this.recurrenceValid || !this.prerequisiteRuleValid || !this.isValidForm;
+      return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.durationValid || !this.recurrenceValid || !this.prerequisiteRuleValid || !this.isValidForm || !this.validMessage;
     },
     drawerTitle() {
       return this.ruleId ? this.$t('rule.form.label.edit') : this.$t('rule.form.label.add');
@@ -404,6 +415,13 @@ export default {
     },
     ruleType() {
       return this.rule?.type;
+    },
+    enablePublication() {
+      return this.rule?.enabled
+          && !this.rule?.deleted
+          && this.program?.enabled
+          && !this.program?.deleted
+          && (!this.rule.id || !this.rule.published);
     },
     automaticType() {
       return this.ruleType === 'AUTOMATIC';
@@ -467,6 +485,7 @@ export default {
           this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
             score: 20,
             enabled: true,
+            publish: true,
             area: this.programTitle
           };
 
@@ -554,7 +573,21 @@ export default {
           .then(() => this.$ruleService.updateRule(this.ruleToSave))
           .then(rule => {
             this.$root.$emit('rule-updated', rule);
-            this.$root.$emit('alert-message', this.$t('programs.details.ruleUpdateSuccess'), 'success');
+            if (this.ruleToSave.publish && rule.activityId) {
+              document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
+                alertType: 'success',
+                alertMessage: `
+                  <div class="d-flex flex-nowrap pt-1 justify-center">
+                    ${this.$t('programs.details.ruleUpdateAndPublishSuccess')}
+                  </div>
+                `,
+                alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${rule.activityId}`,
+                alertLinkText: this.$t('rule.alert.see'),
+                alertLinkTarget: '_self',
+              }}));
+            } else {
+              this.$root.$emit('alert-message', this.$t('programs.details.ruleUpdateSuccess'), 'success');
+            }
             this.saving = false; // To Keep to be able to close drawer
             this.originalRule = null;
             return this.$nextTick();
@@ -574,7 +607,21 @@ export default {
           })
           .then(() => this.$translationService.saveTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
           .then(() => {
-            this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationSuccess'), 'success');
+            if (this.ruleToSave.publish && this.originalRule.activityId) {
+              document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
+                alertType: 'success',
+                alertMessage: `
+                  <div class="d-flex flex-nowrap pt-1 justify-center">
+                    ${this.$t('programs.details.ruleCreationAndPublishSuccess')}
+                  </div>
+                `,
+                alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${this.originalRule.activityId}`,
+                alertLinkText: this.$t('rule.alert.see'),
+                alertLinkTarget: '_self',
+              }}));
+            } else {
+              this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationSuccess'), 'success');
+            }
             this.saving = false; // To Keep to be able to close drawer
             this.originalRule = null;
             return this.$nextTick();
@@ -598,6 +645,9 @@ export default {
         event: rule.type === 'AUTOMATIC' && rule?.event || null,
         startDate: rule?.startDate,
         endDate: rule?.endDate,
+        publish: rule?.publish,
+        message: rule?.message,
+        spaceId: rule?.spaceId,
       };
       if (rule.recurrence) {
         ruleModel.recurrence = rule.recurrence;
