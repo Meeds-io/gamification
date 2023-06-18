@@ -16,8 +16,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import './initComponents.js';
-import './extensions.js';
-import '../engagement-center/services.js';
+import RuleFavoriteItem from './components/RuleFavoriteItem.vue';
+const components = {
+  'rule-favorite-item': RuleFavoriteItem,
+};
 
-Vue.prototype.$utils.includeExtensions('engagementCenterActions');
+for (const key in components) {
+  Vue.component(key, components[key]);
+}

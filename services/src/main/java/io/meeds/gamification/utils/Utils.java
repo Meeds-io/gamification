@@ -100,6 +100,8 @@ public class Utils {
 
   public static final String            STATISTICS_RULE_ID_PARAM                = "ruleId";
 
+  public static final String            STATISTICS_RULE_ECTIVITY_ID_PARAM       = "ruleActivityId";
+
   public static final String            STATISTICS_RULE_TITLE_PARAM             = "ruleTitle";
 
   public static final String            STATISTICS_RULE_DESCRIPTION_PARAM       = "ruleDescription";
@@ -137,6 +139,18 @@ public class Utils {
   public static final String            POST_CREATE_ANNOUNCEMENT_EVENT          = "announcement.created";
 
   public static final String            POST_UPDATE_ANNOUNCEMENT_EVENT          = "announcement.updated";
+
+  public static final String            RULE_ACTIVITY_PARAM_RULE_ID             = "ruleId";
+
+  public static final String            RULE_ACTIVITY_PARAM_RULE_TITLE          = "ruleTitle";
+
+  public static final String            RULE_ACTIVITY_PARAM_RULE_DESCRIPTION    = "ruleTitle";
+
+  public static final String            RULE_ACTIVITY_PARAM_RULE_SCORE          = "ruleScore";
+
+  public static final String            RULE_ACTIVITY_OBJECT_TYPE               = "rule";
+
+  public static final String            RULE_ACTIVITY_TYPE                      = "gamificationRuleActivity";
 
   public static final String            ANNOUNCEMENT_ACTIVITY_TYPE              = "challenges-announcement";
 
@@ -410,6 +424,7 @@ public class Utils {
       return;
     }
     statisticData.addParameter(STATISTICS_RULE_ID_PARAM, rule.getId());
+    statisticData.addParameter(STATISTICS_RULE_ECTIVITY_ID_PARAM, rule.getActivityId());
     statisticData.addParameter(STATISTICS_RULE_TITLE_PARAM, rule.getTitle());
     statisticData.addParameter(STATISTICS_RULE_DESCRIPTION_PARAM, rule.getDescription());
     statisticData.addParameter(STATISTICS_RULE_EVENT_PARAM, rule.getEvent());

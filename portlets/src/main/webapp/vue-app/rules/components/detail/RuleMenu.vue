@@ -21,6 +21,27 @@
     </template>
     <v-list dense class="pa-0 white">
       <v-list-item
+        v-if="isEngagementCenterApp"
+        v-show="rule.activityId"
+        :href="activityLink"
+        :title="$t('rule.form.goToActivityTooltip')"
+        dense>
+        <v-icon size="13" class="icon-default-color me-2">fas fa-link</v-icon>
+        <v-list-item-title class="text-start">
+          {{ $t('rule.form.goToActivity') }}
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        v-else
+        :href="ruleLink"
+        :title="$t('rule.form.goToActionTooltip')"
+        dense>
+        <v-icon size="13" class="icon-default-color me-2">fas fa-link</v-icon>
+        <v-list-item-title class="text-start">
+          {{ $t('rule.form.goToAction') }}
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item
         dense
         @click.prevent.stop="editRule">
         <v-icon size="13" class="icon-default-color me-2">fas fa-edit</v-icon>
@@ -58,6 +79,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showActivityLink: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     showMenu: false,
@@ -71,6 +96,17 @@ export default {
         }, 200);
       }
     });
+  },
+  computed: {
+    activityLink() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${this.rule.activityId}`;
+    },
+    ruleLink() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions/${this.rule.id}`;
+    },
+    isEngagementCenterApp() {
+      return window.location.href.includes(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions`);
+    },
   },
   methods: {
     editRule(event) {

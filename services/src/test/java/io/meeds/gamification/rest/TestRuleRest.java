@@ -122,6 +122,10 @@ public class TestRuleRest extends AbstractServiceTest {
               .value(endDate)
               .key("points")
               .value("10")
+              .key("enabled")
+              .value(true)
+              .key("publish")
+              .value(false)
               .key("program")
               .object()
               .key("id")
@@ -135,6 +139,7 @@ public class TestRuleRest extends AbstractServiceTest {
     assertEquals(200, response.getStatus());
     RuleRestEntity rule = (RuleRestEntity) response.getEntity();
     assertNotNull(rule);
+    assertFalse(rule.isPublished());
     startSessionAs("root2");
     writer = new StringWriter();
     jsonWriter = new JSONWriter(writer);
@@ -210,6 +215,10 @@ public class TestRuleRest extends AbstractServiceTest {
               .value(endDate)
               .key("points")
               .value("100")
+              .key("enabled")
+              .value(true)
+              .key("publish")
+              .value(true)
               .key("program")
               .object()
               .key("id")
@@ -227,6 +236,9 @@ public class TestRuleRest extends AbstractServiceTest {
     response = getResponse("PUT", getURLResource("rules"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(200, response.getStatus());
+    rule = (RuleRestEntity) response.getEntity();
+    assertNotNull(rule);
+    assertTrue(rule.isPublished());
 
     writer = new StringWriter();
     jsonWriter = new JSONWriter(writer);
@@ -306,6 +318,7 @@ public class TestRuleRest extends AbstractServiceTest {
     RuleRestEntity savedRuleRestEntity = (RuleRestEntity) response.getEntity();
     assertNotNull(savedRuleRestEntity);
     assertEquals(ruleRestEntity.getId(), savedRuleRestEntity.getId());
+    assertFalse(savedRuleRestEntity.isPublished());
   }
 
   @SuppressWarnings("unchecked")
