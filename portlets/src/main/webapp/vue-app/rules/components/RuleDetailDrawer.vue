@@ -28,7 +28,11 @@
     @closed="onClose"
     @expand-updated="expanded = $event">
     <template #title>
-      {{ $t('rule.detail.letsSeeWhatToDo') }}
+      <span
+        :title="$t('rule.detail.letsSeeWhatToDo')"
+        class="text-truncate">
+        {{ $t('rule.detail.letsSeeWhatToDo') }}
+      </span>
     </template>
     <template v-if="canEdit" #titleIcons>
       <engagement-center-rule-menu
@@ -162,9 +166,7 @@ export default {
   props: {
     actionValueExtensions: {
       type: Object,
-      default: function() {
-        return null;
-      },
+      default: null,
     },
   },
   data: () => ({

@@ -1,7 +1,8 @@
 /**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2022 Meeds Association
- * contact@meeds.io
+ *
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,6 +16,50 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+const activityTypeExtensions = extensionRegistry.loadExtensions('activity', 'type');
+const defaultActivityOptions = Object.assign({}, activityTypeExtensions.find(extension => extension.type === 'default').options);
+extensionRegistry.registerExtension('activity', 'type', {
+  type: 'gamificationRuleActivity',
+  options: Object.assign(defaultActivityOptions, {
+    canDelete: () => false,
+    canShare: () => false,
+    canComment: () => false,
+    canHide: () => true,
+    canUnhide: activity => activity?.rule?.activityId === Number(activity.id),
+    init: activity => {
+      const lang = window.eXo.env.portal.language;
+      const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
+      const ruleId = activity?.templateParams?.ruleId;
+      if (!ruleId) {
+        return Promise.resolve();
+      } else if (activity.ruleFetched) {
+        return Promise.resolve(activity.rule);
+      } else {
+        activity.ruleFetched = true;
+        activity.rule = {
+          id: ruleId,
+          title: activity?.templateParams?.ruleTitle,
+          description: activity?.templateParams?.ruleDescription,
+          score: activity?.templateParams?.ruleScore,
+        };
+        return exoi18n.loadLanguageAsync(lang, url)
+          .then(() => ruleId && Vue.prototype.$ruleService.getRuleById(ruleId, {
+            lang: eXo.env.portal.language
+          }))
+          .then(rule => activity.rule = rule)
+          .catch(() => activity.ruleNotFound = true);
+      }
+    },
+  }),
+});
+
+extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
+  id: 'rule-activity',
+  isEnabled: params => params?.activity?.type === 'gamificationRuleActivity' && params?.activity?.templateParams?.ruleId,
+  vueComponent: Vue.options.components['rule-activity'],
+  rank: 3,
+});
+
 extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
   id: 'announcement',
   init: () => {
@@ -22,10 +67,7 @@ extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensi
     const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
     return exoi18n.loadLanguageAsync(lang, url);
   },
-  isEnabled: (params) => {
-    const activity = params && params.activity;
-    return activity.type === 'challenges-announcement';
-  },
+  isEnabled: (params) => params?.activity?.type === 'challenges-announcement',
   vueComponent: Vue.options.components['activity-announcement'],
   rank: 5,
 });
@@ -59,3 +101,15 @@ extensionRegistry.registerExtension('activity', 'action', {
   },
 });
 
+extensionRegistry.registerComponent('ActivityFooter', 'activity-footer-action', {
+  id: 'announce',
+  isEnabled: (params) => params.activity && !params.activity.originalActivity && params.activity?.type === 'gamificationRuleActivity',
+  vueComponent: Vue.options.components['rule-activity-announce-action'],
+  rank: 100,
+});
+
+extensionRegistry.registerComponent('ActivityStream', 'activity-stream-drawers', {
+  id: 'rule-drawers',
+  vueComponent: Vue.options.components['engagement-center-rule-drawers'],
+  rank: 20,
+});

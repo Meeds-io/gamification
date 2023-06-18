@@ -15,9 +15,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-import './initComponents.js';
-import './extensions.js';
-import '../engagement-center/services.js';
-
-Vue.prototype.$utils.includeExtensions('engagementCenterActions');
+extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
+  id: 'rule-activity',
+  isEnabled: params => params?.activity?.type === 'gamificationRuleActivity' && params?.activity?.templateParams?.ruleId,
+  vueComponent: Vue.options.components['rule-activity'],
+  rank: 3,
+});
