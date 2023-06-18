@@ -19,7 +19,7 @@
 -->
 <template>
   <div>
-    <v-card-text class="d-flex flex-grow-1 text-left text-subtitle-1 px-0 py-2">
+    <v-card-text class="d-flex flex-grow-1 text-left px-0 pt-4 pb-2">
       {{ $t('rule.form.label.action.title') }}
     </v-card-text>
     <rule-suggester
@@ -27,6 +27,7 @@
       :program-id="programId"
       :excluded-ids="excludedIds"
       :labels="labels"
+      
       multiple
       exclude-prerequisites />
   </div>

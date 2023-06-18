@@ -404,6 +404,33 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <depends>
       <module>commonVueComponents</module>
     </depends>
+    <depends>
+      <module>ruleComponents</module>
+    </depends>
+    <depends>
+      <module>jquery</module>
+      <as>$</as>
+    </depends>
+  </module>
+
+  <module>
+    <name>EngagementCenterFavoriteDrawerExtension</name>
+    <load-group>FavoriteDrawerGRP</load-group>
+    <script>
+      <path>/js/engagementCenterFavoriteDrawerExtension.bundle.js</path>
+    </script>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
   </module>
 
   <module>
