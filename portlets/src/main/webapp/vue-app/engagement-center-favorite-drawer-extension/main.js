@@ -16,14 +16,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import ActivityAnnouncement from './components/ActivityAnnouncement.vue';
-import RuleActivity from './components/RuleActivity.vue';
+import './initComponents.js';
+import '../engagement-center/services.js';
+import {initExtensions} from './extensions.js';
 
-const components = {
-  'rule-activity': RuleActivity,
-  'activity-announcement': ActivityAnnouncement,
-};
-
-for (const key in components) {
-  Vue.component(key, components[key]);
+export function init() {
+  initExtensions();
 }
+
+Vue.prototype.$utils.includeExtensions('engagementCenterActions');

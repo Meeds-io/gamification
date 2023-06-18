@@ -112,6 +112,8 @@ public class RuleBuilder {
                               rule.getLastModifiedDate(),
                               rule.getStartDate(),
                               rule.getEndDate(),
+                              rule.getActivityId(),
+                              rule.getCacheTime(),
                               rule.getPrerequisiteRuleIds(),
                               rule.getType(),
                               rule.getRecurrence(),

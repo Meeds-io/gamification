@@ -16,12 +16,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import ActivityAnnouncement from './components/ActivityAnnouncement.vue';
-import RuleActivity from './components/RuleActivity.vue';
-
+import RuleFavoriteItem from './components/RuleFavoriteItem.vue';
 const components = {
-  'rule-activity': RuleActivity,
-  'activity-announcement': ActivityAnnouncement,
+  'rule-favorite-item': RuleFavoriteItem,
 };
 
 for (const key in components) {

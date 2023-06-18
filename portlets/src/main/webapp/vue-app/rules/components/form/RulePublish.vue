@@ -1,0 +1,93 @@
+<template>
+  <div id="engagementCenterRulePublication" class="d-flex flex-column text-subtitle-1">
+    <div class="d-flex align-center">
+      <v-card
+        class="flex-grow-1 flex-shrink-0 text-wrap d-flex text-center me-2"
+        max-width="50%"
+        flat>
+        {{ $t('rule.form.publishLabel') }}
+        <template v-if="!spaceId">
+          {{ $t('rule.form.personalStream') }}
+        </template>
+      </v-card>
+      <div v-if="spaceId" class="flex-grow-1 flex-shrink-1 text-truncate">
+        <exo-space-avatar
+          :space-id="spaceId"
+          :space="space" />
+      </div>
+      <div class="flex-shrink-0 ms-2">
+        <v-switch
+          id="engagementCenterRulePublishSwitch"
+          v-model="publish"
+          class="my-0 ms-0 me-n1" />
+      </div>
+    </div>
+    <rich-editor
+      v-if="publish"
+      ref="rulePublicationEditor"
+      id="engagementCenterRulePublishMessage"
+      v-model="message"
+      :max-length="MAX_LENGTH"
+      :placeholder="$t('rule.form.rulePublicationPlaceholder')"
+      :tag-enabled="false"
+      :attachment-enabled="false"
+      ck-editor-type="rulePublicationContent"
+      class="flex my-3"
+      autofocus
+      @validity-updated="validMessage = $event" />
+  </div>
+</template>
+<script>
+export default {
+  props: {
+    program: {
+      type: Object,
+      default: null,
+    },
+    enabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data: () => ({
+    MAX_LENGTH: 500,
+    publish: false,
+    message: null,
+    userId: eXo.env.portal.userIdentityId,
+    username: eXo.env.portal.userName,
+    validMessage: false,
+  }),
+  computed: {
+    space() {
+      return this.program?.space;
+    },
+    spaceId() {
+      return this.program?.spaceId || this.program?.space?.id;
+    },
+  },
+  watch: {
+    publish() {
+      this.$emit('update:publish', this.publish);
+    },
+    message() {
+      this.$emit('update:message', this.message);
+    },
+    spaceId: {
+      immediate: true,
+      handler() {
+        this.$emit('update:spaceId', this.spaceId);
+      },
+    },
+    validMessage() {
+      this.$emit('update:validMessage', this.validMessage);
+    },
+  },
+  created() {
+    this.validMessage = true;
+    this.message = '';
+  },
+  mounted() {
+    this.publish = this.enabled;
+  },
+};
+</script>

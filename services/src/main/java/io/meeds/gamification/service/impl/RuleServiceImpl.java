@@ -19,14 +19,22 @@ package io.meeds.gamification.service.impl;
 import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
+import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_OBJECT_TYPE;
+import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_ID;
+import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_TITLE;
+import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_TYPE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.ObjectAlreadyExistsException;
@@ -34,12 +42,19 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.DateFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.model.RulePublication;
 import io.meeds.gamification.model.filter.RuleFilter;
 import io.meeds.gamification.search.RuleSearchConnector;
 import io.meeds.gamification.service.ProgramService;
@@ -63,6 +78,10 @@ public class RuleServiceImpl implements RuleService {
 
   private final SpaceService        spaceService;
 
+  private final ActivityManager     activityManager;
+
+  private final IdentityManager     identityManager;
+
   private final ListenerService     listenerService;
 
   private final List<String>        automaticEventNames           = new ArrayList<>();
@@ -71,10 +90,14 @@ public class RuleServiceImpl implements RuleService {
                          RuleStorage ruleStorage,
                          RuleSearchConnector ruleSearchConnector,
                          SpaceService spaceService,
+                         ActivityManager activityManager,
+                         IdentityManager identityManager,
                          ListenerService listenerService) {
     this.programService = programService;
     this.listenerService = listenerService;
     this.spaceService = spaceService;
+    this.activityManager = activityManager;
+    this.identityManager = identityManager;
     this.ruleStorage = ruleStorage;
     this.ruleSearchConnector = ruleSearchConnector;
   }
@@ -111,6 +134,9 @@ public class RuleServiceImpl implements RuleService {
             || rule.getProgram() == null
             || !programService.isProgramMember(rule.getProgram().getId(), username))) {
       throw new IllegalAccessException("Rule isn't accessible");
+    }
+    if (rule.getProgram() != null) {
+      computeActivity(rule, 0, null, false, null, true);
     }
     return rule;
   }
@@ -154,7 +180,13 @@ public class RuleServiceImpl implements RuleService {
     } else {
       ruleIds = ruleStorage.findRuleIdsByFilter(ruleFilter, offset, limit);
     }
-    return ruleIds.stream().map(this::findRuleById).toList();
+    return ruleIds.stream().map(id -> {
+      RuleDTO rule = findRuleById(id);
+      if (rule != null && rule.getProgram() != null) {
+        computeActivity(rule, 0, null, false, null, true);
+      }
+      return rule;
+    }).toList();
   }
 
   @Override
@@ -252,6 +284,7 @@ public class RuleServiceImpl implements RuleService {
     rule.setCreatedBy(username);
     rule.setLastModifiedBy(username);
     rule.setDeleted(false);
+    rule.setActivityId(0);
     RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent(), programId);
     if (similarRule != null && !similarRule.isDeleted()) {
       throw new ObjectAlreadyExistsException("Rule with same event and program already exist");
@@ -260,10 +293,11 @@ public class RuleServiceImpl implements RuleService {
   }
 
   @Override
-  public RuleDTO createRule(RuleDTO ruleDTO) {
-    ruleDTO.setLastModifiedBy(Utils.SYSTEM_USERNAME);
-    ruleDTO.setCreatedBy(Utils.SYSTEM_USERNAME);
-    return createRuleAndBroadcast(ruleDTO, null);
+  public RuleDTO createRule(RuleDTO rule) {
+    rule.setLastModifiedBy(Utils.SYSTEM_USERNAME);
+    rule.setCreatedBy(Utils.SYSTEM_USERNAME);
+    rule.setActivityId(0);
+    return createRuleAndBroadcast(rule, null);
   }
 
   @Override
@@ -297,6 +331,7 @@ public class RuleServiceImpl implements RuleService {
                                              // manager
     rule.setCreatedDate(storedRule.getCreatedDate());
     rule.setCreatedBy(storedRule.getCreatedBy());
+    rule.setActivityId(storedRule.getActivityId());
     return updateRuleAndBroadcast(rule, username);
   }
 
@@ -307,7 +342,7 @@ public class RuleServiceImpl implements RuleService {
 
   @Override
   public List<RuleDTO> getPrerequisiteRules(long ruleId) {
-    RuleDTO rule = findRuleById(ruleId);
+    RuleDTO rule = ruleStorage.findRuleById(ruleId);
     if (rule != null && CollectionUtils.isNotEmpty(rule.getPrerequisiteRuleIds())) {
       return rule.getPrerequisiteRuleIds().stream().map(id -> {
         RuleDTO r = findRuleById(id);
@@ -372,15 +407,33 @@ public class RuleServiceImpl implements RuleService {
     }
     rule.setLastModifiedBy(username);
     rule.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
+    if (rule instanceof RulePublication rulePublication) {
+      computeActivity(rule,
+                      rulePublication.getSpaceId(),
+                      username,
+                      rulePublication.isPublish(),
+                      rulePublication.getMessage(),
+                      false);
+    }
     rule = ruleStorage.saveRule(rule);
     Utils.broadcastEvent(listenerService, POST_UPDATE_RULE_EVENT, rule.getId(), username);
     return rule;
   }
 
-  private RuleDTO createRuleAndBroadcast(RuleDTO ruleDTO, String username) {
-    ruleDTO = ruleStorage.saveRule(ruleDTO);
-    Utils.broadcastEvent(listenerService, POST_CREATE_RULE_EVENT, ruleDTO.getId(), username);
-    return ruleDTO;
+  private RuleDTO createRuleAndBroadcast(RuleDTO rule, String username) {
+    RuleDTO savedRule = ruleStorage.saveRule(rule);
+    if (rule instanceof RulePublication rulePublication) {
+      savedRule = computeActivity(savedRule,
+                                  rulePublication.getSpaceId(),
+                                  username,
+                                  rulePublication.isPublish(),
+                                  rulePublication.getMessage(),
+                                  true);
+    }
+    if (savedRule != null) {
+      Utils.broadcastEvent(listenerService, POST_CREATE_RULE_EVENT, savedRule.getId(), username);
+    }
+    return savedRule;
   }
 
   private boolean isRuleManager(RuleDTO rule, String username) {
@@ -396,6 +449,122 @@ public class RuleServiceImpl implements RuleService {
     RuleDTO rule = ruleStorage.deleteRuleById(ruleId, username);
     Utils.broadcastEvent(listenerService, POST_DELETE_RULE_EVENT, rule, username);
     return rule;
+  }
+
+  private RuleDTO computeActivity(RuleDTO rule, // NOSONAR
+                                  long spaceId,
+                                  String username,
+                                  boolean publish,
+                                  String message,
+                                  boolean save) {
+    if (rule == null
+        || !rule.isEnabled()
+        || rule.isDeleted()
+        || rule.getProgram() == null
+        || !rule.getProgram().isEnabled()
+        || rule.getProgram().isDeleted()) {
+      return rule;
+    }
+    ExoSocialActivity activity = getExistingActivity(rule);
+    if (activity == null || (spaceId > 0 && getSpaceId(activity) != spaceId)) {
+      Space space = spaceId > 0 ? spaceService.getSpaceById(String.valueOf(spaceId)) : null;
+      Identity publisherIdentity = getActivityPublisherIdentity(rule, space, username);
+      if (publisherIdentity == null) {
+        LOG.warn("Unable to generate and activity with a null publisher for a rule and/or program creator and/or modifier. Rule id : {}",
+                 rule.getId());
+        return rule;
+      } else {
+        generateActivity(rule, space, publisherIdentity, message, publish);
+        if (save) {
+          rule = ruleStorage.saveRule(rule);
+        }
+      }
+    } else if (publish) {
+      activity.setTitle(StringUtils.isBlank(message) ? "" : message);
+      activity.isHidden(false);
+      activityManager.updateActivity(activity);
+    }
+    return rule;
+  }
+
+  private ExoSocialActivity generateActivity(RuleDTO rule,
+                                             Space space,
+                                             Identity publisherIdentity,
+                                             String message,
+                                             boolean publish) {
+    ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
+    activity.setUserId(publisherIdentity.getId());
+    activity.setTitle(!publish || StringUtils.isBlank(message) ? "" : message);
+    activity.setBody(!publish || StringUtils.isBlank(message) ? "" : message);
+    activity.setType(RULE_ACTIVITY_TYPE);
+    activity.setTemplateParams(new HashMap<>());
+    activity.setMetadataObjectType(RULE_ACTIVITY_OBJECT_TYPE);
+    activity.setMetadataObjectId(String.valueOf(rule.getId()));
+    activity.getTemplateParams().put(RULE_ACTIVITY_PARAM_RULE_ID, String.valueOf(rule.getId()));
+    activity.getTemplateParams().put(RULE_ACTIVITY_PARAM_RULE_TITLE, rule.getTitle());
+    activity.isHidden(!publish);
+
+    Identity streamOwner = space == null ? publisherIdentity : identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
+    activityManager.saveActivityNoReturn(streamOwner, activity);
+
+    rule.setActivityId(StringUtils.isBlank(activity.getId()) ? 0 : Long.parseLong(activity.getId()));
+
+    return activity;
+  }
+
+  private Identity getActivityPublisherIdentity(RuleDTO rule, Space space, String username) {
+    Identity publisherIdentity = null;
+    Iterator<String> potentialPublishers = Arrays.asList(username,
+                                                         rule.getCreatedBy(),
+                                                         rule.getLastModifiedBy(),
+                                                         rule.getProgram().getCreatedBy(),
+                                                         rule.getProgram().getLastModifiedBy())
+                                                 .iterator();
+    while (potentialPublishers.hasNext() && publisherIdentity == null) {
+      String publisher = potentialPublishers.next();
+      if (isValidUsername(publisher)) {
+        Identity identity = getUserIdentity(publisher);
+        if (identity != null
+            && identity.isEnable()
+            && !identity.isDeleted()
+            && (space == null || spaceService.isMember(space, identity.getRemoteId())
+                || spaceService.isSuperManager(identity.getRemoteId()))) {
+          publisherIdentity = identity;
+        }
+      }
+    }
+    return publisherIdentity;
+  }
+
+  private ExoSocialActivity getExistingActivity(RuleDTO rule) {
+    long activityId = rule.getActivityId();
+    if (activityId != 0) {
+      return activityManager.getActivity(String.valueOf(activityId));
+    } else {
+      return null;
+    }
+  }
+
+  private long getSpaceId(ExoSocialActivity activity) {
+    if (activity.getActivityStream().isSpace()) {
+      Space space = spaceService.getSpaceByPrettyName(activity.getActivityStream().getPrettyId());
+      if (space != null) {
+        return Long.parseLong(space.getId());
+      }
+    }
+    return 0;
+  }
+
+  private boolean isValidUsername(String username) {
+    return StringUtils.isNotBlank(username) && !StringUtils.equals(Utils.SYSTEM_USERNAME, username);
+  }
+
+  private Identity getUserIdentity(String identityId) {
+    if (NumberUtils.isDigits(identityId)) {
+      return identityManager.getIdentity(identityId); // NOSONAR
+    } else {
+      return identityManager.getOrCreateUserIdentity(identityId);
+    }
   }
 
 }

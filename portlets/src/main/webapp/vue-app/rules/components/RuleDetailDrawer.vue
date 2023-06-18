@@ -162,9 +162,7 @@ export default {
   props: {
     actionValueExtensions: {
       type: Object,
-      default: function() {
-        return null;
-      },
+      default: null,
     },
   },
   data: () => ({

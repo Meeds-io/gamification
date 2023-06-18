@@ -82,21 +82,7 @@
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
-    <engagement-center-rule-detail-drawer
-      ref="challengeDetailsDrawer"
-      :action-value-extensions="actionValueExtensions"
-      :is-overview-displayed="true" />
-    <engagement-center-rule-achievements-drawer
-      ref="achievementsDrawer"
-      :action-value-extensions="actionValueExtensions" />
-    <engagement-center-rule-form-drawer ref="ruleFormDrawer" />
-    <exo-confirm-dialog
-      ref="deleteRuleConfirmDialog"
-      :title="$t('programs.details.title.confirmDeleteRule')"
-      :message="$t('actions.deleteConfirmMessage')"
-      :ok-label="$t('programs.details.ok.button')"
-      :cancel-label="$t('programs.details.cancel.button')"
-      @ok="deleteRule" />
+    <engagement-center-rule-drawers />
   </v-app>
 </template>
 <script>
@@ -108,12 +94,8 @@ export default {
     filter: 'STARTED',
     period: 'WEEK',
     loading: true,
-    selectedRule: null,
     rules: [],
     orderByRealizations: true,
-    extensionApp: 'engagementCenterActions',
-    actionValueExtensionType: 'user-actions',
-    actionValueExtensions: {},
     actionsPageURL: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
   }),
   computed: {
@@ -128,9 +110,6 @@ export default {
     },
   },
   created() {
-    document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
-    this.refreshActionValueExtensions();
-
     document.addEventListener('widget-row-click-event', (event) => {
       if (event?.detail) {
         document.dispatchEvent(new CustomEvent('rule-detail-drawer', { detail: event.detail }));
@@ -140,7 +119,6 @@ export default {
     this.$root.$on('announcement-added', this.retrieveRules);
     this.$root.$on('rule-updated', this.retrieveRules);
     this.$root.$on('rule-deleted', this.retrieveRules);
-    this.$root.$on('rule-delete-confirm', this.confirmDelete);
   },
   methods: {
     retrieveRules() {
@@ -163,45 +141,6 @@ export default {
           this.rules = result?.rules || [];
           this.rules = this.rules.sort((challenge1, challenge2) => challenge2.score - challenge1.score);
         }).finally(() => this.loading = false);
-    },
-    refreshActionValueExtensions() {
-      const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
-      let changed = false;
-      extensions.forEach(extension => {
-        if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
-          this.actionValueExtensions[extension.type] = extension.options;
-          changed = true;
-        }
-      });
-      // force update of attribute to re-render switch new extension type
-      if (changed) {
-        this.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
-        this.$root.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
-      }
-    },
-    deleteRule() {
-      this.loading = true;
-      this.$ruleService.deleteRule(this.selectedRule.id)
-        .then(() => {
-          this.$root.$emit('alert-message', this.$t('programs.details.ruleDeleteSuccess'), 'success');
-          this.$root.$emit('rule-deleted', this.selectedRule);
-        })
-        .catch(e => {
-          let msg = '';
-          if (e.message === '401' || e.message === '403') {
-            msg = this.$t('actions.deletePermissionDenied');
-          } else if (e.message  === '404') {
-            msg = this.$t('actions.notFound');
-          } else  {
-            msg = this.$t('actions.deleteError');
-          }
-          this.$root.$emit('alert-message', msg, 'error');
-        })
-        .finally(() => this.loading = false);
-    },
-    confirmDelete(rule) {
-      this.selectedRule = rule;
-      this.$refs.deleteRuleConfirmDialog.open();
     },
   },
 };

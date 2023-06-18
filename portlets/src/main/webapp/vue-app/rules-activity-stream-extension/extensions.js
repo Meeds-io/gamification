@@ -15,15 +15,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-import ActivityAnnouncement from './components/ActivityAnnouncement.vue';
-import RuleActivity from './components/RuleActivity.vue';
-
-const components = {
-  'rule-activity': RuleActivity,
-  'activity-announcement': ActivityAnnouncement,
-};
-
-for (const key in components) {
-  Vue.component(key, components[key]);
-}
+extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
+  id: 'rule-activity',
+  isEnabled: params => params?.activity?.type === 'gamificationRuleActivity' && params?.activity?.templateParams?.ruleId,
+  vueComponent: Vue.options.components['rule-activity'],
+  rank: 3,
+});
