@@ -16,8 +16,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import './initComponents.js';
-import './extensions.js';
-import '../engagement-center/services.js';
-
-Vue.prototype.$utils.includeExtensions('engagementCenterActions');
+export function initExtensions() {
+  extensionRegistry.registerComponent('favorite-rule', 'favorite-drawer-item', {
+    id: 'rule',
+    vueComponent: Vue.options.components['rule-favorite-item'],
+  });
+}
