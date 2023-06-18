@@ -50,6 +50,8 @@ public class RuleRestEntity extends RuleDTO {
 
   private List<RuleDTO>               prerequisiteRules;
 
+  private boolean                     published;
+
   public RuleRestEntity(Long id, // NOSONAR
                         String title,
                         String description,
@@ -64,6 +66,9 @@ public class RuleRestEntity extends RuleDTO {
                         String lastModifiedDate,
                         String startDate,
                         String endDate,
+                        long activityId,
+                        long cacheTime,
+                        boolean published,
                         Set<Long> prerequisiteRuleIds,
                         EntityType type,
                         RecurrenceType recurrence,
@@ -87,9 +92,12 @@ public class RuleRestEntity extends RuleDTO {
           lastModifiedDate,
           startDate,
           endDate,
+          activityId,
+          cacheTime,
           prerequisiteRuleIds,
           type,
           recurrence);
+    this.published = published;
     this.audience = audience;
     this.managers = managers;
     this.realizations = realizations;
@@ -114,6 +122,9 @@ public class RuleRestEntity extends RuleDTO {
                               lastModifiedDate,
                               startDate,
                               endDate,
+                              activityId,
+                              cacheTime,
+                              published,
                               prerequisiteRuleIds,
                               type,
                               recurrence,
