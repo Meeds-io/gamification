@@ -144,6 +144,10 @@ public class Utils {
 
   public static final String            RULE_ACTIVITY_PARAM_RULE_TITLE          = "ruleTitle";
 
+  public static final String            RULE_ACTIVITY_PARAM_RULE_DESCRIPTION    = "ruleTitle";
+
+  public static final String            RULE_ACTIVITY_PARAM_RULE_SCORE          = "ruleScore";
+
   public static final String            RULE_ACTIVITY_OBJECT_TYPE               = "rule";
 
   public static final String            RULE_ACTIVITY_TYPE                      = "gamificationRuleActivity";

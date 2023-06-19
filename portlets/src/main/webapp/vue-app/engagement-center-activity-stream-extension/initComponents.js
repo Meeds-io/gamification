@@ -18,10 +18,12 @@
 
 import ActivityAnnouncement from './components/ActivityAnnouncement.vue';
 import RuleActivity from './components/RuleActivity.vue';
+import RuleActivityAnnounceAction from './components/RuleActivityAnnounceAction.vue';
 
 const components = {
-  'rule-activity': RuleActivity,
   'activity-announcement': ActivityAnnouncement,
+  'rule-activity': RuleActivity,
+  'rule-activity-announce-action': RuleActivityAnnounceAction,
 };
 
 for (const key in components) {

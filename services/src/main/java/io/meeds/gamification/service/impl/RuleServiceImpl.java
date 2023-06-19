@@ -20,7 +20,9 @@ import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_OBJECT_TYPE;
+import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_DESCRIPTION;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_ID;
+import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_SCORE;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_TITLE;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_TYPE;
 
@@ -456,7 +458,7 @@ public class RuleServiceImpl implements RuleService {
                                   String username,
                                   boolean publish,
                                   String message,
-                                  boolean save) {
+                                  boolean saveRule) {
     if (rule == null
         || !rule.isEnabled()
         || rule.isDeleted()
@@ -473,26 +475,39 @@ public class RuleServiceImpl implements RuleService {
         LOG.warn("Unable to generate and activity with a null publisher for a rule and/or program creator and/or modifier. Rule id : {}",
                  rule.getId());
         return rule;
-      } else {
-        generateActivity(rule, space, publisherIdentity, message, publish);
-        if (save) {
-          rule = ruleStorage.saveRule(rule);
-        }
+      }
+      activity = new ExoSocialActivityImpl();
+      setActivityParams(activity, rule, publisherIdentity, message, publish);
+      createActivity(activity, space, publisherIdentity);
+      rule.setActivityId(Long.parseLong(activity.getId()));
+      if (saveRule) {
+        rule = ruleStorage.saveRule(rule);
       }
     } else if (publish) {
-      activity.setTitle(StringUtils.isBlank(message) ? "" : message);
-      activity.isHidden(false);
+      Identity publisherIdentity = getActivityPublisherIdentity(rule, null, username);
+      if (publisherIdentity == null) {
+        LOG.warn("Unable to generate and activity with a null publisher for a rule and/or program creator and/or modifier. Rule id : {}",
+                 rule.getId());
+        return rule;
+      }
+      setActivityParams(activity, rule, publisherIdentity, message, publish);
       activityManager.updateActivity(activity);
     }
     return rule;
   }
 
-  private ExoSocialActivity generateActivity(RuleDTO rule,
-                                             Space space,
-                                             Identity publisherIdentity,
-                                             String message,
-                                             boolean publish) {
-    ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
+  private void createActivity(ExoSocialActivity activity,
+                               Space space,
+                               Identity publisherIdentity) {
+    Identity streamOwner = space == null ? publisherIdentity : identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
+    activityManager.saveActivityNoReturn(streamOwner, activity);
+  }
+
+  private void setActivityParams(ExoSocialActivity activity,
+                                 RuleDTO rule,
+                                 Identity publisherIdentity,
+                                 String message,
+                                 boolean publish) {
     activity.setUserId(publisherIdentity.getId());
     activity.setTitle(!publish || StringUtils.isBlank(message) ? "" : message);
     activity.setBody(!publish || StringUtils.isBlank(message) ? "" : message);
@@ -502,24 +517,19 @@ public class RuleServiceImpl implements RuleService {
     activity.setMetadataObjectId(String.valueOf(rule.getId()));
     activity.getTemplateParams().put(RULE_ACTIVITY_PARAM_RULE_ID, String.valueOf(rule.getId()));
     activity.getTemplateParams().put(RULE_ACTIVITY_PARAM_RULE_TITLE, rule.getTitle());
+    activity.getTemplateParams().put(RULE_ACTIVITY_PARAM_RULE_DESCRIPTION, rule.getDescription());
+    activity.getTemplateParams().put(RULE_ACTIVITY_PARAM_RULE_SCORE, String.valueOf(rule.getScore()));
     activity.isHidden(!publish);
-
-    Identity streamOwner = space == null ? publisherIdentity : identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
-    activityManager.saveActivityNoReturn(streamOwner, activity);
-
-    rule.setActivityId(StringUtils.isBlank(activity.getId()) ? 0 : Long.parseLong(activity.getId()));
-
-    return activity;
   }
 
   private Identity getActivityPublisherIdentity(RuleDTO rule, Space space, String username) {
-    Identity publisherIdentity = null;
     Iterator<String> potentialPublishers = Arrays.asList(username,
                                                          rule.getCreatedBy(),
                                                          rule.getLastModifiedBy(),
                                                          rule.getProgram().getCreatedBy(),
                                                          rule.getProgram().getLastModifiedBy())
                                                  .iterator();
+    Identity publisherIdentity = null;
     while (potentialPublishers.hasNext() && publisherIdentity == null) {
       String publisher = potentialPublishers.next();
       if (isValidUsername(publisher)) {
@@ -527,8 +537,9 @@ public class RuleServiceImpl implements RuleService {
         if (identity != null
             && identity.isEnable()
             && !identity.isDeleted()
-            && (space == null || spaceService.isMember(space, identity.getRemoteId())
-                || spaceService.isSuperManager(identity.getRemoteId()))) {
+            && (space == null
+                || spaceService.isMember(space, identity.getRemoteId())
+                || Utils.isRewardingManager(identity.getRemoteId()))) {
           publisherIdentity = identity;
         }
       }

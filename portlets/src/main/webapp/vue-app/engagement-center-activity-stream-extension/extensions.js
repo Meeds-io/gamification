@@ -17,37 +17,41 @@
  */
 
 const activityTypeExtensions = extensionRegistry.loadExtensions('activity', 'type');
-const defaultActivityExtension = Object.assign({}, activityTypeExtensions.find(extension => extension.type === 'default'));
-if (defaultActivityExtension) {
-  extensionRegistry.registerExtension('activity', 'type', {
-    type: 'gamificationRuleActivity',
-    options: Object.assign(defaultActivityExtension.options, {
-      hideOnDelete: true,
-      init: activity => {
-        const lang = window.eXo.env.portal.language;
-        const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
-        const ruleId = activity?.templateParams?.ruleId;
-        if (!ruleId) {
-          return Promise.resolve();
-        } else if (activity.ruleFetched) {
-          return Promise.resolve(activity.rule);
-        } else {
-          activity.ruleFetched = true;
-          activity.rule = {
-            id: ruleId,
-            title: activity?.templateParams?.ruleTitle,
-          };
-          return exoi18n.loadLanguageAsync(lang, url)
-            .then(() => ruleId && Vue.prototype.$ruleService.getRuleById(ruleId, {
-              lang: eXo.env.portal.language
-            }))
-            .then(rule => activity.rule = rule)
-            .catch(() => activity.ruleNotFound = true);
-        }
-      },
-    }),
-  });
-}
+const defaultActivityOptions = Object.assign({}, activityTypeExtensions.find(extension => extension.type === 'default').options);
+extensionRegistry.registerExtension('activity', 'type', {
+  type: 'gamificationRuleActivity',
+  options: Object.assign(defaultActivityOptions, {
+    canDelete: () => false,
+    canShare: () => false,
+    canComment: () => false,
+    canHide: () => true,
+    canUnhide: activity => activity?.rule?.activityId === Number(activity.id),
+    init: activity => {
+      const lang = window.eXo.env.portal.language;
+      const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
+      const ruleId = activity?.templateParams?.ruleId;
+      if (!ruleId) {
+        return Promise.resolve();
+      } else if (activity.ruleFetched) {
+        return Promise.resolve(activity.rule);
+      } else {
+        activity.ruleFetched = true;
+        activity.rule = {
+          id: ruleId,
+          title: activity?.templateParams?.ruleTitle,
+          description: activity?.templateParams?.ruleDescription,
+          score: activity?.templateParams?.ruleScore,
+        };
+        return exoi18n.loadLanguageAsync(lang, url)
+          .then(() => ruleId && Vue.prototype.$ruleService.getRuleById(ruleId, {
+            lang: eXo.env.portal.language
+          }))
+          .then(rule => activity.rule = rule)
+          .catch(() => activity.ruleNotFound = true);
+      }
+    },
+  }),
+});
 
 extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
   id: 'rule-activity',
@@ -95,6 +99,13 @@ extensionRegistry.registerExtension('activity', 'action', {
     return Vue.prototype.$announcementService.cancelAnnouncement(activity.templateParams.announcementId)
       .finally(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading')));
   },
+});
+
+extensionRegistry.registerComponent('ActivityFooter', 'activity-footer-action', {
+  id: 'announce',
+  isEnabled: (params) => params.activity && !params.activity.originalActivity && params.activity?.type === 'gamificationRuleActivity',
+  vueComponent: Vue.options.components['rule-activity-announce-action'],
+  rank: 100,
 });
 
 extensionRegistry.registerComponent('ActivityStream', 'activity-stream-drawers', {

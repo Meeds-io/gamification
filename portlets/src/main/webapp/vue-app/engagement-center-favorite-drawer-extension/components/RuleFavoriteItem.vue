@@ -2,7 +2,7 @@
   <v-list-item :href="ruleUrl">
     <v-list-item-icon
       size="28"
-      class="me-3 my-auto">
+      class="ms-n1 me-3 my-auto">
       <v-avatar
         size="28"
         class="rule-icon border-color grey lighten-2">

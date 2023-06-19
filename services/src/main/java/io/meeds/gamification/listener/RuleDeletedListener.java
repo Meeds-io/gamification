@@ -40,10 +40,10 @@ public class RuleDeletedListener extends Listener<RuleDTO, String> {
     RuleDTO rule = event.getSource();
     try {
       if (rule != null && rule.getActivityId() > 0) {
-        activityManager.deleteActivity(String.valueOf(rule.getActivityId()));
+        activityManager.hideActivity(String.valueOf(rule.getActivityId()));
       }
     } catch (Exception e) {
-      LOG.warn("Error deleting Rule activity: {}", rule, e);
+      LOG.warn("Error hiding Rule activity: {}", rule, e);
     }
   }
 

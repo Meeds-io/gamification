@@ -20,7 +20,7 @@
 <template>
   <div class="d-flex">
     <div class="d-flex flex-column flex-grow-0 flex-shrink-0 pe-10 mb-4">
-      <v-card flat @click="$root.$emit('rule-detail-drawer-by-id', ruleId)">
+      <v-card flat @click="openRule">
         <v-avatar
           :size="programCoverSize"
           :style="programStyle"
@@ -34,16 +34,16 @@
         :height="ruleIconSize"
         icon
         class="rule-icon border-color grey lighten-2 mt-n8 ms-auto me-n6 elevation-2"
-        @click="$root.$emit('rule-detail-drawer-by-id', ruleId)">
+        @click="openRule">
         <v-icon :size="ruleIconSize - 20" class="rule-icon primary--text">
-          {{ actionIcon }}
+          {{ ruleIcon }}
         </v-icon>
       </v-btn>
     </div>
     <div class="flex-grow-1 flex-shrink-1">
       <v-card
         flat
-        @click="$root.$emit('rule-detail-drawer-by-id', ruleId)">
+        @click="openRule">
         <div class="text-truncate font-weight-bold text-color text-wrap text-break mb-2">
           {{ ruleTitle }}
         </div>
@@ -51,10 +51,11 @@
           {{ ruleDescription }}
         </div>
         <v-chip
+          v-if="ruleScore"
           color="#F57C00"
           class="content-box-sizing white--text"
           small>
-          <span class="subtitle-2">+ {{ rule.score }}</span>
+          <span class="subtitle-2">+ {{ ruleScore }}</span>
         </v-chip>
       </v-card>
     </div>
@@ -106,8 +107,23 @@ export default {
         return this.$utils.htmlToText(this.rule.description);
       }
     },
+    ruleScore() {
+      return this.rule?.score;
+    },
+    ruleIcon() {
+      return this.rule?.type === 'AUTOMATIC' && this.extension?.icon || 'fas fa-trophy';
+    },
     actionValueExtensions() {
       return this.$root.actionValueExtensions;
+    },
+    program() {
+      return this.rule?.program;
+    },
+    programAvatarUrl() {
+      return this.program?.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs/default-avatar/avatar?lastModified=1687151006488`;
+    },
+    programStyle() {
+      return this.program?.color && `border: 1px solid ${this.rule.program.color} !important;` || '';
     },
     extension() {
       if (this.actionValueExtensions) {
@@ -117,23 +133,21 @@ export default {
       }
       return null;
     },
-    actionIcon() {
-      return this.rule?.type === 'AUTOMATIC' ? this.extension?.icon : 'fas fa-trophy';
-    },
-    programAvatarUrl() {
-      return this.rule?.program?.avatarUrl;
-    },
-    programStyle() {
-      return this.rule?.program?.color && `border: 1px solid ${this.rule.program.color} !important;` || '';
-    },
   },
   created() {
     this.$root.$on('rule-updated', this.updateRule);
+    this.$root.$on('rule-deleted', this.deleteRule);
   },
   beforeDestroy() {
     this.$root.$off('rule-updated', this.updateRule);
+    this.$root.$off('rule-deleted', this.deleteRule);
   },
   methods: {
+    openRule() {
+      if (this.rule?.userInfo) {
+        this.$root.$emit('rule-detail-drawer-by-id', this.ruleId);
+      }
+    },
     updateRule(rule) {
       if (this.ruleId === rule?.id) {
         this.$ruleService.getRuleById(this.ruleId, {
@@ -143,6 +157,13 @@ export default {
           .finally(() => document.dispatchEvent(new CustomEvent('activity-updated', {
             detail: this.activityId
           })));
+      }
+    },
+    deleteRule(rule) {
+      if (this.ruleId === rule?.id) {
+        document.dispatchEvent(new CustomEvent('activity-deleted', {
+          detail: this.activityId
+        }));
       }
     },
   },

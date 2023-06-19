@@ -93,10 +93,19 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertNotNull(foundRule);
     long activityId = foundRule.getActivityId();
     assertTrue(activityId > 0);
-    assertNotNull(activityManager.getActivity(String.valueOf(activityId)));
+    ExoSocialActivity activity = activityManager.getActivity(String.valueOf(activityId));
+    assertNotNull(activity);
+    assertTrue(activity.isHidden());
+    activity.isHidden(false);
+    activityManager.updateActivity(activity);
+    activity = activityManager.getActivity(String.valueOf(activityId));
+    assertNotNull(activity);
+    assertFalse(activity.isHidden());
 
     ruleService.deleteRuleById(ruleId, ADMIN_USER);
-    assertNull(activityManager.getActivity(String.valueOf(activityId)));
+    activity = activityManager.getActivity(String.valueOf(activityId));
+    assertNotNull(activity);
+    assertTrue(activity.isHidden());
     assertThrows(ObjectNotFoundException.class, () -> ruleService.findRuleById(ruleId, ADMIN_USER));
   }
 
