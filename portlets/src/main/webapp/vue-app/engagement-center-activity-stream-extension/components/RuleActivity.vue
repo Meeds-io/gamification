@@ -31,7 +31,7 @@
         height="100%"
         class="position-relative"
         flat>
-        <v-card flat @click="openRule">
+        <v-card class="width-fit-content" flat @click="openRule">
           <v-avatar
             :size="programCoverSize"
             :style="programStyle"
