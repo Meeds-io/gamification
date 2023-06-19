@@ -17,12 +17,15 @@
  */
 
 import ActivityAnnouncement from './components/ActivityAnnouncement.vue';
+import ActivityCommentAnnouncement from './components/ActivityCommentAnnouncement.vue';
+
 import RuleActivity from './components/RuleActivity.vue';
 import RuleActivityAnnounceAction from './components/RuleActivityAnnounceAction.vue';
 import AvatarsList from '../engagement-center/components/common/AvatarsList.vue';
 
 const components = {
   'activity-announcement': ActivityAnnouncement,
+  'activity-comment-announcement': ActivityCommentAnnouncement,
   'rule-activity': RuleActivity,
   'rule-activity-announce-action': RuleActivityAnnounceAction,
   'engagement-center-avatars-list': AvatarsList,

@@ -35,7 +35,7 @@
           class="flex-grow-1 mb-n2"
           required />
         <template v-if="displayEndDate">
-          <v-spacer class="my-2" />
+          <v-spacer v-if="displayStartDate" class="my-2" />
           <date-picker
             v-model="endDateValue"
             :default-value="false"
