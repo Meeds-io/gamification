@@ -469,6 +469,9 @@ public class RuleServiceImpl implements RuleService {
     }
     ExoSocialActivity activity = getExistingActivity(rule);
     if (activity == null || (spaceId > 0 && getSpaceId(activity) != spaceId)) {
+      if (spaceId == 0) {
+        spaceId = rule.getSpaceId();
+      }
       Space space = spaceId > 0 ? spaceService.getSpaceById(String.valueOf(spaceId)) : null;
       Identity publisherIdentity = getActivityPublisherIdentity(rule, space, username);
       if (publisherIdentity == null) {
@@ -509,6 +512,7 @@ public class RuleServiceImpl implements RuleService {
                                  String message,
                                  boolean publish) {
     activity.setUserId(publisherIdentity.getId());
+    activity.setPosterId(publisherIdentity.getId());
     activity.setTitle(!publish || StringUtils.isBlank(message) ? "" : message);
     activity.setBody(!publish || StringUtils.isBlank(message) ? "" : message);
     activity.setType(RULE_ACTIVITY_TYPE);

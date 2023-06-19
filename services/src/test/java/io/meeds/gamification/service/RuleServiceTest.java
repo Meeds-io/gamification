@@ -32,6 +32,7 @@ import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.ValueParam;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.space.model.Space;
 
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
@@ -237,6 +238,11 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertNotNull(activity);
     assertTrue(activity.isHidden());
     assertTrue(StringUtils.isBlank(activity.getTitle()));
+    assertNotNull(activity.getActivityStream());
+    assertTrue(activity.getActivityStream().isSpace());
+    Space space = spaceService.getSpaceByPrettyName(activity.getActivityStream().getPrettyId());
+    assertNotNull(space);
+    assertEquals(createdRule.getSpaceId(), Long.parseLong(space.getId()));
 
     String message = "Text Message";
     String description = "new_description";
@@ -278,7 +284,6 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setPublish(true);
     String message = "Test publication Message";
     rule.setMessage(message);
-    rule.setSpaceId(program.getSpaceId());
     RuleDTO createdRule = ruleService.createRule(rule, ADMIN_USER);
     assertEquals(ruleDAO.findAll().size(), 1);
     assertTrue(createdRule.getActivityId() > 0);
@@ -286,6 +291,11 @@ public class RuleServiceTest extends AbstractServiceTest {
     ExoSocialActivity activity = activityManager.getActivity(String.valueOf(createdRule.getActivityId()));
     assertNotNull(activity);
     assertFalse(activity.isHidden());
+    assertNotNull(activity.getActivityStream());
+    assertTrue(activity.getActivityStream().isSpace());
+    Space space = spaceService.getSpaceByPrettyName(activity.getActivityStream().getPrettyId());
+    assertNotNull(space);
+    assertEquals(createdRule.getSpaceId(), Long.parseLong(space.getId()));
     assertEquals(message, activity.getTitle());
     assertEquals(RULE_ACTIVITY_OBJECT_TYPE, activity.getMetadataObjectType());
     assertEquals(String.valueOf(createdRule.getId()), activity.getMetadataObjectId());
@@ -317,6 +327,10 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertNotNull(activity);
     assertTrue(activity.isHidden());
     assertTrue(StringUtils.isBlank(activity.getTitle()));
+    assertTrue(activity.getActivityStream().isSpace());
+    Space space = spaceService.getSpaceByPrettyName(activity.getActivityStream().getPrettyId());
+    assertNotNull(space);
+    assertEquals(createdRule.getSpaceId(), Long.parseLong(space.getId()));
   }
 
   @Test
@@ -423,9 +437,18 @@ public class RuleServiceTest extends AbstractServiceTest {
 
     ProgramEntity domainEntity1 = newOpenProgram("domain1");
     ProgramEntity domainEntity2 = newOpenProgram("domain2");
-    RuleDTO ruleDTO1 = newRuleDTO("rule1", domainEntity1.getId());
-    ruleDTO1.setEnabled(false);
-    ruleService.updateRule(ruleDTO1, ADMIN_USER);
+    RuleDTO rule1 = newRuleDTO("rule1", domainEntity1.getId());
+    rule1 = ruleService.findRuleById(rule1.getId(), "root1");
+    assertTrue(rule1.getActivityId() > 0);
+    ExoSocialActivity activity = activityManager.getActivity(String.valueOf(rule1.getActivityId()));
+    assertNotNull(activity);
+    assertTrue(activity.isHidden());
+    assertTrue(StringUtils.isBlank(activity.getTitle()));
+    assertTrue(activity.getActivityStream().isUser());
+    assertEquals("root1", activity.getActivityStream().getPrettyId());
+
+    rule1.setEnabled(false);
+    ruleService.updateRule(rule1, ADMIN_USER);
     RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
     ruleDTO2.setEnabled(false);
     ruleService.updateRule(ruleDTO2, ADMIN_USER);
