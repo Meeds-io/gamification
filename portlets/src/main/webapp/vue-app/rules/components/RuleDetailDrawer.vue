@@ -36,8 +36,7 @@
     </template>
     <template v-if="canEdit" #titleIcons>
       <engagement-center-rule-menu
-        :rule="rule"
-        :show-activity-link="isEngagementCenterApp" />
+        :rule="rule" />
     </template>
     <template v-if="!loading" #content>
       <v-row class="ma-0 py-0 px-2 text-color">
@@ -182,9 +181,6 @@ export default {
     drawerUrl: null,
   }),
   computed: {
-    isEngagementCenterApp() {
-      return window.location.href.includes(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions`);
-    },
     expandedView() {
       return !this.$root.isMobile && this.expanded;
     },
