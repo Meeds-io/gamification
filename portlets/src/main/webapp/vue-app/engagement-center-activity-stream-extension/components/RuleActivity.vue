@@ -61,10 +61,10 @@
       <v-card
         color="transparent"
         flat>
-        <div class="text-truncate font-weight-bold text-color text-wrap text-break mb-2">
+        <div class="text-truncate font-weight-bold text-color text-wrap text-break mb-1">
           {{ ruleTitle }}
         </div>
-        <div class="text-truncate-2 text-light-color caption text-wrap text-break mb-2 rich-editor-content reset-style-box">
+        <div class="text-truncate-2 text-light-color caption text-wrap text-break mb-4 rich-editor-content reset-style-box">
           {{ ruleDescription }}
         </div>
         <v-chip
