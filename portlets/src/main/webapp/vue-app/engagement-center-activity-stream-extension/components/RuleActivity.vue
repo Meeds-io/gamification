@@ -57,7 +57,7 @@
         </v-btn>
       </v-card>
     </v-card>
-    <div class="flex-grow-1 flex-shrink-1">
+    <div class="flex-grow-1 flex-shrink-1 overflow-hidden">
       <v-card
         color="transparent"
         flat>
@@ -154,15 +154,23 @@ export default {
   created() {
     this.$root.$on('rule-updated', this.updateRule);
     this.$root.$on('rule-deleted', this.deleteRule);
+    this.$root.$on('announcement-added', this.refreshComments);
   },
   beforeDestroy() {
     this.$root.$off('rule-updated', this.updateRule);
     this.$root.$off('rule-deleted', this.deleteRule);
+    this.$root.$off('announcement-added', this.refreshComments);
   },
   methods: {
     openRule() {
       if (this.rule?.userInfo) {
         this.$root.$emit('rule-detail-drawer-by-id', this.ruleId);
+      }
+    },
+    refreshComments(event) {
+      if (this.ruleId === event?.detail?.challengeId) {
+        this.$activityService.getActivityById(`comment${event.detail.announcement.activityId}`)
+          .then(comment => this.$root.$emit('activity-comment-created', comment));
       }
     },
     updateRule(rule) {
