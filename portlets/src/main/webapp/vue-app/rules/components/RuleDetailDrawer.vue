@@ -28,11 +28,16 @@
     @closed="onClose"
     @expand-updated="expanded = $event">
     <template #title>
-      {{ $t('rule.detail.letsSeeWhatToDo') }}
+      <span
+        :title="$t('rule.detail.letsSeeWhatToDo')"
+        class="text-truncate">
+        {{ $t('rule.detail.letsSeeWhatToDo') }}
+      </span>
     </template>
     <template v-if="canEdit" #titleIcons>
       <engagement-center-rule-menu
-        :rule="rule" />
+        :rule="rule"
+        :show-activity-link="isEngagementCenterApp" />
     </template>
     <template v-if="!loading" #content>
       <v-row class="ma-0 py-0 px-2 text-color">
@@ -177,6 +182,9 @@ export default {
     drawerUrl: null,
   }),
   computed: {
+    isEngagementCenterApp() {
+      return window.location.href.includes(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions`);
+    },
     expandedView() {
       return !this.$root.isMobile && this.expanded;
     },

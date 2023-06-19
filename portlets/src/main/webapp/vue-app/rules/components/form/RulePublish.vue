@@ -1,9 +1,12 @@
 <template>
-  <div id="engagementCenterRulePublication" class="d-flex flex-column text-subtitle-1">
+  <div
+    id="engagementCenterRulePublication"
+    class="d-flex flex-column text-subtitle-1">
+    <div v-if="rule.id && !rule.published">{{ $t('rule.form.actionHidden') }}</div>
     <div class="d-flex align-center">
       <v-card
+        :max-width="spaceId && '50%' || 'calc(100% - 50px)'"
         class="flex-grow-1 flex-shrink-0 text-wrap d-flex text-center me-2"
-        max-width="50%"
         flat>
         {{ $t('rule.form.publishLabel') }}
         <template v-if="!spaceId">
@@ -40,6 +43,10 @@
 <script>
 export default {
   props: {
+    rule: {
+      type: Object,
+      default: null,
+    },
     program: {
       type: Object,
       default: null,

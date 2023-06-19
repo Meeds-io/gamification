@@ -217,7 +217,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <div v-show="expanded || stepper > 1" class="px-6">
                 <engagement-center-rule-publish-editor
                   v-if="enablePublication"
-                  :enable="!rule.id"
+                  :enabled="!rule.id"
+                  :rule="rule"
                   :program="program"
                   :publish.sync="rule.publish"
                   :space-id.sync="rule.spaceId"
@@ -419,7 +420,8 @@ export default {
       return this.rule?.enabled
           && !this.rule?.deleted
           && this.program?.enabled
-          && !this.program?.deleted;
+          && !this.program?.deleted
+          && (!this.rule.id || !this.rule.published);
     },
     automaticType() {
       return this.ruleType === 'AUTOMATIC';
@@ -483,6 +485,7 @@ export default {
           this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
             score: 20,
             enabled: true,
+            publish: true,
             area: this.programTitle
           };
 
@@ -570,8 +573,18 @@ export default {
           .then(() => this.$ruleService.updateRule(this.ruleToSave))
           .then(rule => {
             this.$root.$emit('rule-updated', rule);
-            if (this.ruleToSave.publish) {
-              this.$root.$emit('alert-message', this.$t('programs.details.ruleUpdateAndPublishSuccess'), 'success');
+            if (this.ruleToSave.publish && rule.activityId) {
+              document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
+                alertType: 'success',
+                alertMessage: `
+                  <div class="d-flex flex-nowrap pt-1 justify-center">
+                    ${this.$t('programs.details.ruleUpdateAndPublishSuccess')}
+                  </div>
+                `,
+                alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${rule.activityId}`,
+                alertLinkText: this.$t('rule.alert.see'),
+                alertLinkTarget: '_self',
+              }}));
             } else {
               this.$root.$emit('alert-message', this.$t('programs.details.ruleUpdateSuccess'), 'success');
             }
@@ -594,10 +607,20 @@ export default {
           })
           .then(() => this.$translationService.saveTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
           .then(() => {
-            if (this.ruleToSave.publish) {
-              this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationSuccess'), 'success');
+            if (this.ruleToSave.publish && this.originalRule.activityId) {
+              document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
+                alertType: 'success',
+                alertMessage: `
+                  <div class="d-flex flex-nowrap pt-1 justify-center">
+                    ${this.$t('programs.details.ruleCreationAndPublishSuccess')}
+                  </div>
+                `,
+                alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${this.originalRule.activityId}`,
+                alertLinkText: this.$t('rule.alert.see'),
+                alertLinkTarget: '_self',
+              }}));
             } else {
-              this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationAndPublishSuccess'), 'success');
+              this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationSuccess'), 'success');
             }
             this.saving = false; // To Keep to be able to close drawer
             this.originalRule = null;

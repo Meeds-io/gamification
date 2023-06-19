@@ -18,28 +18,31 @@
 
 -->
 <template>
-  <div class="d-flex my-4">
+  <v-card
+    class="d-flex my-4"
+    flat
+    @click="openRule">
     <v-card
       class="d-flex flex-column flex-grow-0 me-4 flex-shrink-0 border-box-sizing"
       min-width="90"
       max-width="90"
       min-height="90"
       max-height="90"
+      color="transparent"
       flat>
       <v-card
         width="100%"
         height="100%"
         class="position-relative"
+        color="transparent"
         flat>
-        <v-card class="width-fit-content" flat @click="openRule">
-          <v-avatar
-            :size="programCoverSize"
-            :style="programStyle"
-            class="rule-program-cover border-color primary--text"
-            rounded>
-            <v-img :src="programAvatarUrl" />
-          </v-avatar>
-        </v-card>
+        <v-avatar
+          :size="programCoverSize"
+          :style="programStyle"
+          class="rule-program-cover border-color primary--text"
+          rounded>
+          <v-img :src="programAvatarUrl" />
+        </v-avatar>
         <v-btn
           :width="ruleIconSize"
           :max-width="ruleIconSize"
@@ -47,8 +50,7 @@
           :max-height="ruleIconSize"
           :class="$vuetify.rtl && 'l-0' || 'r-0'"
           class="rule-icon border-color grey lighten-2 elevation-2 ms-auto mt-auto position-absolute b-0"
-          icon
-          @click="openRule">
+          icon>
           <v-icon :size="ruleIconSize - 20" class="rule-icon primary--text">
             {{ ruleIcon }}
           </v-icon>
@@ -57,8 +59,8 @@
     </v-card>
     <div class="flex-grow-1 flex-shrink-1">
       <v-card
-        flat
-        @click="openRule">
+        color="transparent"
+        flat>
         <div class="text-truncate font-weight-bold text-color text-wrap text-break mb-2">
           {{ ruleTitle }}
         </div>
@@ -74,7 +76,7 @@
         </v-chip>
       </v-card>
     </div>
-  </div>
+  </v-card>
 </template>
 <script>
 export default {
@@ -111,7 +113,7 @@ export default {
       if (this.$te(key)) {
         return this.$t(key);
       } else {
-        return this.rule.title;
+        return this.$utils.htmlToText(this.rule.title);
       }
     },
     ruleDescription() {
