@@ -35,7 +35,6 @@
       :max-length="MAX_LENGTH"
       :placeholder="$t('rule.form.rulePublicationPlaceholder')"
       :tag-enabled="false"
-      :attachment-enabled="false"
       ck-editor-type="rulePublicationContent"
       class="flex my-3"
       autofocus

@@ -18,39 +18,53 @@
 
 const activityTypeExtensions = extensionRegistry.loadExtensions('activity', 'type');
 const defaultActivityOptions = Object.assign({}, activityTypeExtensions.find(extension => extension.type === 'default').options);
+const gamificationRuleActivityOptions = Object.assign(defaultActivityOptions, {
+  canDelete: () => false,
+  canHide: () => true,
+  canUnhide: activity => activity?.rule?.activityId === Number(activity.id),
+  init: activity => {
+    const lang = window.eXo.env.portal.language;
+    const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
+    const ruleId = activity?.templateParams?.ruleId;
+    if (!ruleId) {
+      return Promise.resolve();
+    } else if (activity.ruleFetched) {
+      return Promise.resolve(activity.rule);
+    } else {
+      activity.ruleFetched = true;
+      activity.rule = {
+        id: ruleId,
+        title: activity?.templateParams?.ruleTitle,
+        description: activity?.templateParams?.ruleDescription,
+        score: activity?.templateParams?.ruleScore,
+      };
+      return exoi18n.loadLanguageAsync(lang, url)
+        .then(() => ruleId && Vue.prototype.$ruleService.getRuleById(ruleId, {
+          lang: eXo.env.portal.language
+        }))
+        .then(rule => activity.rule = rule)
+        .catch(() => activity.ruleNotFound = true);
+    }
+  },
+});
+
+const gamificationAnnouncementCommentOptions = Object.assign(defaultActivityOptions, {
+  canDelete: () => false,
+  getTitle: () => '',
+  getCommentExtendedComponent: () => ({
+    component: Vue.options.components['activity-comment-announcement'],
+  }),
+  getBodyToEdit: comment => comment.title,
+});
+
 extensionRegistry.registerExtension('activity', 'type', {
   type: 'gamificationRuleActivity',
-  options: Object.assign(defaultActivityOptions, {
-    canDelete: () => false,
-    canShare: () => false,
-    canComment: () => false,
-    canHide: () => true,
-    canUnhide: activity => activity?.rule?.activityId === Number(activity.id),
-    init: activity => {
-      const lang = window.eXo.env.portal.language;
-      const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
-      const ruleId = activity?.templateParams?.ruleId;
-      if (!ruleId) {
-        return Promise.resolve();
-      } else if (activity.ruleFetched) {
-        return Promise.resolve(activity.rule);
-      } else {
-        activity.ruleFetched = true;
-        activity.rule = {
-          id: ruleId,
-          title: activity?.templateParams?.ruleTitle,
-          description: activity?.templateParams?.ruleDescription,
-          score: activity?.templateParams?.ruleScore,
-        };
-        return exoi18n.loadLanguageAsync(lang, url)
-          .then(() => ruleId && Vue.prototype.$ruleService.getRuleById(ruleId, {
-            lang: eXo.env.portal.language
-          }))
-          .then(rule => activity.rule = rule)
-          .catch(() => activity.ruleNotFound = true);
-      }
-    },
-  }),
+  options: gamificationRuleActivityOptions,
+});
+
+extensionRegistry.registerExtension('activity', 'type', {
+  type: 'gamificationActionAnnouncement',
+  options: gamificationAnnouncementCommentOptions,
 });
 
 extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
@@ -92,11 +106,32 @@ extensionRegistry.registerExtension('activity', 'action', {
     if (activityTypeExtension.canDelete && !activityTypeExtension.canDelete(activity)) {
       return false;
     }
-    return activity.type === 'challenges-announcement' && activity.canEdit === 'true' && (!activityTypeExtension.canEdit || activityTypeExtension.canEdit(activity));
+    return activity.type === 'challenges-announcement' && activity.canDelete === 'true' && (!activityTypeExtension.canDelete || activityTypeExtension.canDelete(activity));
   },
   click: (activity) => {
     document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
     return Vue.prototype.$announcementService.cancelAnnouncement(activity.templateParams.announcementId)
+      .finally(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading')));
+  },
+});
+
+extensionRegistry.registerExtension('activity', 'comment-action', {
+  id: 'cancelAnnouncement',
+  labelKey: 'challenges.label.CancelAnnouncement',
+  icon: 'fa-undo-alt',
+  confirmDialog: true,
+  confirmMessageKey: 'challenges.label.confirmCancelAnnouncement',
+  confirmTitleKey: 'engagementCenter.button.Confirmation',
+  confirmOkKey: 'engagementCenter.button.yes',
+  confirmCancelKey: 'engagementCenter.button.cancel',
+  rank: 50,
+  isEnabled: (activity, comment, commentTypeExtension) => {
+    return comment.type === 'gamificationActionAnnouncement' && comment.canDelete === 'true' && (!commentTypeExtension.canEdit || commentTypeExtension.canEdit(comment));
+  },
+  click: (activity, comment) => {
+    document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+    return Vue.prototype.$announcementService.cancelAnnouncement(comment.templateParams.announcementId)
+      .then(() => document.dispatchEvent(new CustomEvent('activity-comment-deleted', {detail: comment})))
       .finally(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading')));
   },
 });
@@ -112,4 +147,16 @@ extensionRegistry.registerComponent('ActivityStream', 'activity-stream-drawers',
   id: 'rule-drawers',
   vueComponent: Vue.options.components['engagement-center-rule-drawers'],
   rank: 20,
+});
+
+extensionRegistry.registerComponent('activity', 'type', {
+  id: 'announcement',
+  init: () => {
+    const lang = window.eXo.env.portal.language;
+    const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
+    return exoi18n.loadLanguageAsync(lang, url);
+  },
+  isEnabled: (params) => params?.activity?.type === 'challenges-announcement',
+  vueComponent: Vue.options.components['activity-announcement'],
+  rank: 5,
 });
