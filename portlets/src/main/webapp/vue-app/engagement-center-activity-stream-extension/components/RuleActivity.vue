@@ -18,28 +18,43 @@
 
 -->
 <template>
-  <div class="d-flex">
-    <div class="d-flex flex-column flex-grow-0 flex-shrink-0 pe-10 mb-4">
-      <v-card flat @click="openRule">
-        <v-avatar
-          :size="programCoverSize"
-          :style="programStyle"
-          class="rule-program-cover border-color primary--text"
-          rounded>
-          <v-img :src="programAvatarUrl" />
-        </v-avatar>
+  <div class="d-flex my-4">
+    <v-card
+      class="d-flex flex-column flex-grow-0 me-4 flex-shrink-0 border-box-sizing"
+      min-width="90"
+      max-width="90"
+      min-height="90"
+      max-height="90"
+      flat>
+      <v-card
+        width="100%"
+        height="100%"
+        class="position-relative"
+        flat>
+        <v-card flat @click="openRule">
+          <v-avatar
+            :size="programCoverSize"
+            :style="programStyle"
+            class="rule-program-cover border-color primary--text"
+            rounded>
+            <v-img :src="programAvatarUrl" />
+          </v-avatar>
+        </v-card>
+        <v-btn
+          :width="ruleIconSize"
+          :max-width="ruleIconSize"
+          :height="ruleIconSize"
+          :max-height="ruleIconSize"
+          :class="$vuetify.rtl && 'l-0' || 'r-0'"
+          class="rule-icon border-color grey lighten-2 elevation-2 ms-auto mt-auto position-absolute b-0"
+          icon
+          @click="openRule">
+          <v-icon :size="ruleIconSize - 20" class="rule-icon primary--text">
+            {{ ruleIcon }}
+          </v-icon>
+        </v-btn>
       </v-card>
-      <v-btn
-        :width="ruleIconSize"
-        :height="ruleIconSize"
-        icon
-        class="rule-icon border-color grey lighten-2 mt-n8 ms-auto me-n6 elevation-2"
-        @click="openRule">
-        <v-icon :size="ruleIconSize - 20" class="rule-icon primary--text">
-          {{ ruleIcon }}
-        </v-icon>
-      </v-btn>
-    </div>
+    </v-card>
     <div class="flex-grow-1 flex-shrink-1">
       <v-card
         flat
@@ -74,11 +89,11 @@ export default {
     },
     programCoverSize: {
       type: Number,
-      default: () => 85,
+      default: () => 70,
     },
     ruleIconSize: {
       type: Number,
-      default: () => 55,
+      default: () => 45,
     },
   },
   computed: {
