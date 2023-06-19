@@ -21,7 +21,7 @@
     </template>
     <v-list dense class="pa-0 white">
       <v-list-item
-        v-if="showActivityLink"
+        v-if="isEngagementCenterApp"
         v-show="rule.activityId"
         :href="activityLink"
         :title="$t('rule.form.goToActivityTooltip')"
@@ -103,6 +103,9 @@ export default {
     },
     ruleLink() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions/${this.rule.id}`;
+    },
+    isEngagementCenterApp() {
+      return window.location.href.includes(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions`);
     },
   },
   methods: {
