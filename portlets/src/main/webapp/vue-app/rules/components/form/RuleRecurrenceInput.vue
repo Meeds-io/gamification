@@ -19,7 +19,7 @@
 -->
 <template>
   <v-card max-width="450" flat>
-    <div class="d-flex flex-grow-1 text-left text-subtitle-1 px-0 pt-4 pb-0">
+    <div class="d-flex flex-grow-1 text-left px-0 pt-4 pb-2">
       {{ $t('gamification.achievementCanBeSubmitted') }}
     </div>
 
