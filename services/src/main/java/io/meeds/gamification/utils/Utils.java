@@ -154,6 +154,8 @@ public class Utils {
 
   public static final String            ANNOUNCEMENT_ACTIVITY_TYPE              = "challenges-announcement";
 
+  public static final String            ANNOUNCEMENT_COMMENT_TYPE               = "gamificationActionAnnouncement";
+
   public static final String            SYSTEM_USERNAME                         = "SYSTEM";
 
   public static final String            BASE_URL_PROGRAMS_REST_API              = "/gamification/programs";

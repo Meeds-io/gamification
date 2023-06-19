@@ -54,6 +54,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
+      <key>org.exoplatform.social.core.storage.api.IdentityStorage</key>
+      <type>io.meeds.gamification.mock.IdentityStorageMock</type>
+    </component>
+
+    <component>
         <key>org.exoplatform.social.core.space.spi.SpaceService</key>
         <type>io.meeds.gamification.mock.SpaceServiceMock</type>
     </component>
