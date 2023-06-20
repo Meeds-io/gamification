@@ -31,7 +31,7 @@
         size="45"
         class="rule-program-cover border-color primary--text no-border"
         rounded>
-        <v-img :src="announcementImageUrl" />
+        <v-img :src="announcementImageUrl" eager />
       </v-avatar>
     </v-card>
     <div class="flex-grow-1 flex-shrink-1">

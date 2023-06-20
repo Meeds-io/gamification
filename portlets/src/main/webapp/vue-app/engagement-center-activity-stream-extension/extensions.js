@@ -20,8 +20,6 @@ const activityTypeExtensions = extensionRegistry.loadExtensions('activity', 'typ
 const defaultActivityOptions = Object.assign({}, activityTypeExtensions.find(extension => extension.type === 'default').options);
 const gamificationRuleActivityOptions = Object.assign(defaultActivityOptions, {
   canDelete: () => false,
-  canShare: () => false,
-  canComment: () => false,
   canHide: () => true,
   canUnhide: activity => activity?.rule?.activityId === Number(activity.id),
   init: activity => {
