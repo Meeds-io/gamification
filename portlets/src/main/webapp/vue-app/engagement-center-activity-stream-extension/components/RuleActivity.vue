@@ -57,7 +57,7 @@
         </v-btn>
       </v-card>
     </v-card>
-    <div class="flex-grow-1 flex-shrink-1">
+    <div class="flex-grow-1 flex-shrink-1 overflow-hidden">
       <v-card
         color="transparent"
         flat>
