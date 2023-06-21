@@ -28,7 +28,7 @@
     class="EngagementCenterDrawer overflow-initial"
     eager
     @opened="stepper = 1"
-    @closed="clear"
+    @closed="closed"
     @expand-updated="expanded = $event">
     <template #title>
       {{ drawerTitle }}
@@ -128,15 +128,14 @@
                       {{ $t('programs.label.describeProgram') }}
                     </div>
                   </template>
-                  <engagement-center-description-editor
+                  <rich-editor
                     id="programDescription"
                     ref="programDescriptionEditor"
                     v-model="programDescription"
                     :placeholder="$t('programs.placeholder.describeProgram')"
-                    :visible="drawer"
                     :max-length="maxDescriptionLength"
+                    :tag-enabled="false"
                     ck-editor-type="program"
-                    @addDescription="programDescription = $event || programDescription"
                     @validity-updated="validDescription = $event" />
                 </translation-text-field>
               </div>
@@ -418,11 +417,6 @@ export default {
         this.$refs.programDrawer.endLoading();
       }
     },
-    showDrawerContent(newVal, oldVal) {
-      if (newVal && newVal !== oldVal) {
-        this.initDescriptionCKEditor();
-      }
-    },
     audience() {
       if (this.drawer && !this.audience?.spaceId) {
         this.program.space = null;
@@ -522,16 +516,6 @@ export default {
         this.$set(this.program, 'description', value);
       }
     },
-    initDescriptionCKEditor() {
-      if (!this.showDrawerContent) {
-        return;
-      }
-      if (this.$refs.programDescriptionEditor) {
-        this.$refs.programDescriptionEditor.initCKEditor();
-      } else {
-        window.setTimeout(() => this.initDescriptionCKEditor(), 50);
-      }
-    },
     addCover(value) {
       this.deleteCover = false;
       this.$set(this.program, 'coverUploadId', value);
@@ -547,6 +531,10 @@ export default {
     removeAvatar() {
       this.deleteAvatar = !this.defaultAvatar;
       this.$set(this.program, 'avatarUploadId', null);
+    },
+    handleClosed() {
+      this.clear();
+      this.$refs.programDescriptionEditor?.destroyCKEditor();
     },
     clear() {
       this.stepper = 0;

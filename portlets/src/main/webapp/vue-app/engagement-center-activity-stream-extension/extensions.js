@@ -54,6 +54,7 @@ const gamificationAnnouncementCommentOptions = Object.assign(defaultActivityOpti
   getCommentExtendedComponent: () => ({
     component: Vue.options.components['activity-comment-announcement'],
   }),
+  getBodyToEdit: comment => comment.title,
 });
 
 extensionRegistry.registerExtension('activity', 'type', {

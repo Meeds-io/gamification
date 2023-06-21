@@ -4,7 +4,6 @@ import RuleRecurrenceInput from './components/form/RuleRecurrenceInput.vue';
 import RuleLockInput from './components/form/RuleLockInput.vue';
 import ButtonGroupItem from './components/form/ButtonGroupItem.vue';
 import RuleSuggester from './components/form/RuleSuggester.vue';
-import DescriptionEditor from './components/form/DescriptionEditor.vue';
 import RulePublish from './components/form/RulePublish.vue';
 
 import RuleDetailDrawer from './components/RuleDetailDrawer.vue';
@@ -37,7 +36,6 @@ const components = {
   'engagement-center-rule-recurrence-input': RuleRecurrenceInput,
   'engagement-center-rule-lock-input': RuleLockInput,
   'engagement-center-rule-publish-editor': RulePublish,
-  'engagement-center-description-editor': DescriptionEditor,
   'rule-suggester': RuleSuggester,
 
   'engagement-center-rule-detail-drawer': RuleDetailDrawer,
