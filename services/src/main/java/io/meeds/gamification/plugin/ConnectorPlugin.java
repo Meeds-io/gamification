@@ -16,6 +16,7 @@
 package io.meeds.gamification.plugin;
 
 import io.meeds.gamification.service.ConnectorService;
+import org.exoplatform.commons.api.settings.data.Scope;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.component.BaseComponentPlugin;
@@ -48,15 +49,6 @@ public abstract class ConnectorPlugin extends BaseComponentPlugin {
   public abstract void disconnect(String username) throws ObjectNotFoundException;
 
   /**
-   * Checks whether the user connected or not
-   *
-   * @param username the user name
-   * @return true if user is connected to their connector account, else return
-   *         false
-   */
-  public abstract boolean isConnected(String username);
-
-  /**
    * Gets user connector account identifier
    *
    * @param username the user name
@@ -70,19 +62,4 @@ public abstract class ConnectorPlugin extends BaseComponentPlugin {
    * @return the connector name
    */
   public abstract String getConnectorName();
-
-  /**
-   * Gets connector Api key
-   **
-   * @return Client API Key used to allow users access connector
-   */
-  public abstract String getConnectorApiKey();
-
-  /**
-   * Gets connector redirect URL
-   **
-   * @return connector redirect URL
-   */
-  public abstract String getConnectorRedirectURL();
-
 }

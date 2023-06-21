@@ -15,29 +15,20 @@
  */
 package io.meeds.gamification.model;
 
-import java.io.Serializable;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
-public class Connector implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+public class RemoteConnectorSettings {
 
-  protected String name;
+  private String name;
 
-  protected String redirectURL;
+  private String apiKey;
 
-  protected String apiKey;
+  private String secretKey;
 
-  protected boolean isConnected;
+  private String redirectUrl;
 
-  protected String identifier;
-
-  @Override
-  public Connector clone() { // NOSONAR
-    return new Connector(name, redirectURL, apiKey, isConnected, identifier);
-  }
+  private boolean enabled;
 }

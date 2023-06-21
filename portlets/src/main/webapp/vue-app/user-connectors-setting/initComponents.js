@@ -14,16 +14,16 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import ConnectorsSettings from './components/ConnectorsSettings.vue';
-import GamificationConnector from './components/GamificationConnector.vue';
-import GamificationConnectorsStatus from './components/GamificationConnectorsStatus.vue';
-import GamificationConnectorStatus from './components/GamificationConnectorStatus.vue';
+import GamificationUserConnectorSettings from './components/GamificationUserConnectorSettings.vue';
+import GamificationUserConnectorList from './components/GamificationUserConnectorList.vue';
+import GamificationUserConnectorItem from './components/GamificationUserConnectorItem.vue';
+import GamificationUserConnector from './components/GamificationUserConnector.vue';
 
 const components = {
-  'connectors-settings': ConnectorsSettings,
-  'gamification-connector': GamificationConnector,
-  'gamification-connectors-status': GamificationConnectorsStatus,
-  'gamification-connector-status': GamificationConnectorStatus,
+  'gamification-user-connector-settings': GamificationUserConnectorSettings,
+  'gamification-user-connector-list': GamificationUserConnectorList,
+  'gamification-user-connector-item': GamificationUserConnectorItem,
+  'gamification-user-connector': GamificationUserConnector
 };
 
 for (const key in components) {

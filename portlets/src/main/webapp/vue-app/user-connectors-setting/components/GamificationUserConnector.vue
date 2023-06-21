@@ -28,74 +28,64 @@ export default {
     };
   },
   created() {
-    this.refreshConnectorsList();
-    document.addEventListener('gamification-connectors-refresh', this.refreshConnectorsList);
-    this.$root.$on('gamification-connector-connect', this.addAccount);
-    this.$root.$on('gamification-connector-disconnect', this.removeAccount);
+    document.addEventListener('gamification-connectors-refresh', this.refreshUserConnectorList);
+    this.$root.$on('gamification-connector-connect', this.connect);
+    this.$root.$on('gamification-connector-disconnect', this.disconnect);
   },
   mounted() {
-    this.refreshConnectorsList();
+    this.refreshUserConnectorList();
   },
   methods: {
-    refreshConnectorsList() {
+    refreshUserConnectorList() {
       // Get list of connectors from extensionRegistry
       const connectors = extensionRegistry.loadExtensions('gamification', 'connectors') || [];
       // Check connectors status from store
-      this.$connectorService.getConnectors().then(connectorsList => {
+      this.$userConnectorService.getUsersConnectorsSetting().then(connectorsList => {
         if (connectorsList?.length) {
           connectors.forEach(connector => {
             const connectorObj = connectorsList.find(connectorSettings => connectorSettings.name === connector.name);
-            connector.apiKey = connectorObj?.apiKey || '';
-            connector.redirectURL = connectorObj?.redirectURL || '';
-            connector.enabled = connectorObj != null;
-            connector.isSignedIn = connectorObj?.connected;
-            connector.identifier = connectorObj?.identifier || '';
-            connector.user = eXo.env.portal.userName;
+            this.$set(connector, 'apiKey', connectorObj?.apiKey || '');
+            this.$set(connector, 'redirectUrl', connectorObj?.redirectUrl || '');
+            this.$set(connector, 'enabled', connectorObj?.enabled && connectorObj?.apiKey !== '' && connectorObj?.redirectUrl !== '');
+            this.$set(connector, 'identifier', connectorObj?.identifier || '');
+            this.$set(connector, 'user', eXo.env.portal.userName);
           });
         } else {
           connectors.forEach(connector => (connector.enabled = false));
         }
       });
-
       this.$emit('connectors-loaded', connectors);
     },
-    addAccount(connector) {
+    connect(connector) {
       this.$set(connector, 'loading', true);
       const popup = connector.openOauthPopup(connector);
       // Listen for changes in the popup window's URL
       const popupInterval = setInterval(() => {
-        if (popup.location.href.startsWith(connector.redirectURL)) {
+        if (popup.location.href.startsWith(connector.redirectUrl)) {
           clearInterval(popupInterval);
+          popup.close();
           this.handleCallback(popup.location.href, connector).then(() => {
             connector.loading = false;
-          }).finally(() => popup.close());
+          });
         }
       }, 500);
     },
     handleCallback(callbackUrl, connector) {
       const url = new URL(callbackUrl);
       const searchParams = new URLSearchParams(url.search);
-      const code = searchParams.get('code');
-      const connectorLoginRequest = {
-        accessToken: code,
-        connectorName: connector.name
-      };
-      return this.$connectorService.saveUserConnector(connectorLoginRequest)
-        .then(githubIdentifier => {
-          connector.user = githubIdentifier || null;
+      const accessToken = searchParams.get('code');
+      return this.$userConnectorService.connect(connector.name, accessToken)
+        .then(() => {
           document.dispatchEvent(new CustomEvent('gamification-connectors-refresh'));
         });
     },
-    removeAccount(connector) {
-      if (connector.isSignedIn) {
-        return this.$connectorService.removeUserConnector(connector).then(() => {
-          this.$set(connector, 'isSignedIn', false);
-          this.$set(connector, 'user', null);
+    disconnect(connector) {
+      if (connector.identifier) {
+        return this.$userConnectorService.disconnect(connector.name).then(() => {
+          this.$set(connector, 'identifier', null);
           this.$root.$emit('gamification-connectors-refresh');
         })
-          .finally(() => {
-            this.$set(connector, 'loading', false);
-          });
+          .finally(() => this.$set(connector, 'loading', false));
       }
     },
   },
