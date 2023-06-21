@@ -109,16 +109,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         {{ $t('rule.form.label.description') }}
                       </div>
                     </template>
-                    <engagement-center-description-editor
+                    <rich-editor
                       id="ruleDescription"
                       ref="ruleDescriptionEditor"
                       v-model="ruleDescription"
                       :placeholder="$t('rule.form.label.description.placeholder')"
                       :max-length="maxDescriptionLength"
-                      :visible="drawer"
                       ck-editor-type="rule"
-                      @addDescription="ruleDescription = $event || ruleDescription"
-                      @validity-updated=" validDescription = $event" />
+                      @validity-updated="validDescription = $event"
+                      @ready="handleRichEditorReady" />
                   </translation-text-field>
                 </v-card-text>
                 <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
@@ -405,7 +404,7 @@ export default {
       return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.isValidForm;
     },
     disableSaveButton() {
-      return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.durationValid || !this.recurrenceValid || !this.prerequisiteRuleValid || !this.isValidForm || !this.validMessage;
+      return this.disableNextButton || !this.durationValid || !this.recurrenceValid || !this.prerequisiteRuleValid || (this.enablePublication && !this.validMessage);
     },
     drawerTitle() {
       return this.ruleId ? this.$t('rule.form.label.edit') : this.$t('rule.form.label.add');
@@ -430,7 +429,7 @@ export default {
       return this.ruleType === 'MANUAL';
     },
     ruleToSave() {
-      return this.computeRuleModel(this.rule, this.program);
+      return this.computeRuleModel(this.rule, this.program, this.ruleDescription);
     },
     ruleChanged() {
       return this.originalRule && JSON.stringify(this.ruleToSave) !== JSON.stringify(this.originalRule);
@@ -493,6 +492,7 @@ export default {
           this.ruleTitle = this.rule?.title || '';
           this.ruleTitleTranslations = {};
           this.ruleDescription = this.rule?.description || '';
+          this.validDescription = !!this.ruleDescription;
           this.ruleDescriptionTranslations = {};
           this.durationCondition = this.rule.startDate || this.rule.endDate;
           this.recurrenceCondition = !!this.rule.recurrence;
@@ -501,11 +501,6 @@ export default {
           if (this.$refs.ruleFormDrawer) {
             this.$refs.ruleFormDrawer.open();
           }
-          window.setTimeout(() => {
-            if (this.$refs.ruleDescriptionEditor) {
-              this.$refs.ruleDescriptionEditor.initCKEditor();
-            }
-          }, 50);
           this.$nextTick().then(() => {
             this.$root.$emit('rule-form-drawer-opened', this.rule);
             this.value = this.eventMapping.find(event => event.name === rule?.event) || '';
@@ -522,7 +517,6 @@ export default {
       }
     },
     close() {
-      this.$refs.ruleDescriptionEditor?.destroyCKEditor();
       this.$refs.ruleFormDrawer.close();
     },
     clear() {
@@ -560,10 +554,9 @@ export default {
         this.eventExist = this.programEvents.find(programEvent => eventObject.name === programEvent.event && programEvent.ruleId !== this.rule?.id);
       }
     },
-    addDescription(value) {
-      if (value) {
-        this.$set(this.rule,'description', value);
-      }
+    handleRichEditorReady() {
+      this.setFormInitialized();
+      this.ruleDescription = this.rule?.description || '';
     },
     saveRule() {
       this.saving = true;
@@ -634,11 +627,11 @@ export default {
           .finally(() => this.saving = false);
       }
     },
-    computeRuleModel(rule, program) {
+    computeRuleModel(rule, program, description) {
       const ruleModel = {
         id: rule?.id,
         title: this.ruleTitle,
-        description: this.ruleDescription,
+        description: description || this.ruleDescription,
         score: rule?.score,
         program: program && JSON.parse(JSON.stringify(program)),
         enabled: rule?.enabled,
