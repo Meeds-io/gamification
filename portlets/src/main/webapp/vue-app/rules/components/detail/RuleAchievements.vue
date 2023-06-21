@@ -30,8 +30,8 @@
       :avatars-count="realizationsCount"
       :size="avatarSize"
       @open-avatars-drawer="$root.$emit('open-achievements-drawer', rule, true)" />
-    <div v-else class="d-flex align-center">
-      <v-avatar :size="avatarSize" class="my-0 me-2">
+    <div v-else class="d-flex justify-center">
+      <v-avatar :size="avatarSize" class="my-auto me-2">
         <img
           :src="defaultAvatarUrl"
           class="object-fit-cover ma-auto"
