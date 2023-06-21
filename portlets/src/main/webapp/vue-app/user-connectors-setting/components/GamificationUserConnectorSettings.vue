@@ -15,24 +15,24 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app v-if="displayed">
-    <v-card class="my-3 border-radius" flat>
-      <v-list two-line>
+  <v-app >
+    <v-card v-if="displayUserSetting" class="my-3 border-radius" flat>
+      <v-list>
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="title text-color">
-              {{ $t('gamification.connectors.label.connectors') }}
+              {{ $t('gamification.connectors.label.thirdPartyApps') }}
             </v-list-item-title>
             <v-list-item-subtitle class="my-3 text-sub-title font-italic">
-              <gamification-connectors-status :connected-connectors="enabledConnectors" />
+              <gamification-user-connector-list :connected-connectors="enabledConnectors" />
             </v-list-item-subtitle>
           </v-list-item-content>
-          <gamification-connector
-            :connectors="connectors"
-            @connectors-loaded="connectors = $event" />
         </v-list-item>
       </v-list>
     </v-card>
+    <gamification-user-connector
+        :connectors="connectors"
+        @connectors-loaded="connectors = $event" />
   </v-app>
 </template>
 
@@ -41,18 +41,14 @@ export default {
   data: () => ({
     displayed: true,
     connectors: [],
-    enabledConnectors: [],
   }),
-  watch: {
-    connectors: {
-      immediate: true,
-      deep: true,
-      handler: function() {
-        if (this.connectors?.length) {
-          this.enabledConnectors = this.connectors?.filter(connector => connector.enabled) || [];
-        }
-      }
+  computed: {
+    enabledConnectors() {
+      return  this.connectors?.filter(connector => connector.enabled) || [];
     },
+    displayUserSetting() {
+      return this.displayed && this.enabledConnectors?.length > 0;
+    }
   },
   created() {
     document.addEventListener('hideSettingsApps', (event) => {

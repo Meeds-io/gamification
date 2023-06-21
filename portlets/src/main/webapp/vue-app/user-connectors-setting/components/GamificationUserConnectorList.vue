@@ -17,9 +17,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-list v-if="connectedConnectors && connectedConnectors.length !== 0" class="pa-0">
     <v-list-item class="pa-0">
-      <gamification-connector-status
-        v-for="(connector, i) in connectedConnectors"
-        :key="i"
+      <gamification-user-connector-item
+        v-for="connector in connectedConnectors"
+        :key="connector.name"
         :connector="connector" />
     </v-list-item>
   </v-list>

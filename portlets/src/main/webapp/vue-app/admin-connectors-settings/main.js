@@ -15,9 +15,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './initComponents.js';
-import * as connectorService from './connectorService';
+import './service.js';
 
-const appId = 'connectorsSettingsApp';
+const appId = 'adminConnectorsSettingsApp';
 
 //getting language of the PLF
 const lang = eXo.env.portal.language || 'en';
@@ -29,17 +29,12 @@ export function init() {
   exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
       Vue.createApp({
-        template: `<connectors-settings id="${appId}" />`,
+        template: `<gamification-admin-connector-settings id="${appId}" />`,
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
-      }, `#${appId}`, 'Connectors Settings App');
+      }, `#${appId}`, 'Admin Connectors Settings App');
     });
 }
 
-if (!Vue.prototype.$connectorService) {
-  window.Object.defineProperty(Vue.prototype, '$connectorService', {
-    value: connectorService,
-  });
-}
+Vue.prototype.$utils.includeExtensions('gamificationAdminConnectorsExtensions');
 
-Vue.prototype.$utils.includeExtensions('gamificationConnectorsExtensions');

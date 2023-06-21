@@ -15,8 +15,7 @@
  */
 package io.meeds.gamification.service;
 
-import io.meeds.gamification.model.Connector;
-import io.meeds.gamification.model.ConnectorLoginRequest;
+import io.meeds.gamification.model.RemoteConnector;
 import io.meeds.gamification.plugin.ConnectorPlugin;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -24,6 +23,7 @@ import org.exoplatform.services.security.Identity;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public interface ConnectorService {
@@ -43,19 +43,26 @@ public interface ConnectorService {
   void removePlugin(String name);
 
   /**
-   * @return {@link List} of enabled gamification connectors
+   * Retrieves the list of Connector Plugins
    */
-  List<Connector> getEnabledConnectors(String username);
+  Map<String, ConnectorPlugin> getConnectorPlugins();
+
+  /**
+   * @return {@link List} of user remote connectors
+   */
+  List<RemoteConnector> getUserRemoteConnectors(String username);
 
   /**
    * Connects a user to their connector account
    *
-   * @param connectorLoginRequest {@link ConnectorLoginRequest}
+   * @param connectorName connector name
+   * @param accessToken Access token
    * @param identity the user identity
    * @return the connector identifier {@link String}
    */
-  String connect(ConnectorLoginRequest connectorLoginRequest,
-                 Identity identity) throws IOException, ExecutionException, ObjectAlreadyExistsException;
+  String connect(String connectorName, String accessToken, Identity identity) throws IOException,
+                                                                              ExecutionException,
+                                                                              ObjectAlreadyExistsException;
 
   /**
    * Disconnect a user from their connector account

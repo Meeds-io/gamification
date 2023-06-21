@@ -15,8 +15,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-export function getConnectors() {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors`, {
+export function getUsersConnectorsSetting() {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/user/connectors`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -28,27 +28,23 @@ export function getConnectors() {
   });
 }
 
-export function saveUserConnector(connectorLoginRequest) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors/connect`, {
-    headers: {
-      'Content-Type': 'application/json'
-    },
+export function connect(connectorName, accessToken) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/user/connectors/${connectorName}/connect`, {
     credentials: 'include',
     method: 'POST',
-    body: JSON.stringify(connectorLoginRequest),
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `accessToken=${accessToken}`,
   }).then((resp) => {
     if (!resp?.ok) {
-      return resp.text().then(() => {
-        throw new Error('Error while validating access token');
-      });
-    } else {
-      return resp.text();
+      throw new Error('Error while validating access token');
     }
   });
 }
 
-export function removeUserConnector(connector) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors/${connector.name}/${connector.user}`, {
+export function disconnect(connectorName) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/user/connectors/${connectorName}`, {
     method: 'DELETE',
     credentials: 'include',
   }).then(resp => {
