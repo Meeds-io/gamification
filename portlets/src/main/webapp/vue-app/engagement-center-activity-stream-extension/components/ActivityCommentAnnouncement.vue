@@ -41,7 +41,7 @@
         <div class="text-truncate font-weight-bold text-color text-wrap text-break mb-1">
           {{ $t('announcement.detail.done') }}
         </div>
-        <div class="text-truncate-2 text-light-color caption text-wrap text-break rich-editor-content reset-style-box">
+        <div class="text-light-color caption text-wrap text-break rich-editor-content reset-style-box">
           <span v-sanitized-html="announcementComment"></span>
         </div>
       </v-card>
