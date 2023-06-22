@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -183,11 +184,18 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identityManager.getIdentity("1")).thenReturn(identity);
     assertThrows(IllegalAccessException.class,
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
+    doAnswer(invocation -> {
+      ExoSocialActivity comment = invocation.getArgument(1);
+      comment.setId("comment25");
+      return null;
+    }).when(activityManager).saveComment(eq(activity), any());
 
     validityContext.setValidAudience(true);
     Announcement newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root");
     assertNotNull(newAnnouncement);
     assertEquals(1l, newAnnouncement.getId());
+    assertNotNull(newAnnouncement.getActivityId());
+    assertEquals(25l, newAnnouncement.getActivityId().longValue());
   }
 
   @Test
