@@ -38,7 +38,7 @@
       <engagement-center-rule-menu
         :rule="rule" />
     </template>
-    <template v-if="!loading" #content>
+    <template v-if="!loading && drawer" #content>
       <v-row class="ma-0 py-0 px-2 text-color">
         <v-col :cols="expandedView && 6 || 12">
           <engagement-center-rule-header
@@ -114,8 +114,10 @@
               v-else-if="hasValidityMessage"
               cols="12"
               class="px-0 py-6">
+              <engagement-center-rule-disabled
+                v-if="isDisabled" />
               <engagement-center-rule-invalid-audience
-                v-if="!isValidAudience" />
+                v-else-if="!isValidAudience" />
               <engagement-center-rule-invalid-whitelist
                 v-else-if="!isValidWhitelist" />
               <engagement-center-rule-date-over
@@ -198,6 +200,7 @@ export default {
         || this.isPrerequisitesInvalid
         || !this.isValidAudience
         || !this.isValidWhitelist
+        || this.isDisabled
         || false;
     },
     canEdit() {
@@ -208,6 +211,12 @@ export default {
     },
     isValidAudience() {
       return this.rule?.userInfo?.context?.validAudience;
+    },
+    isDisabled() {
+      return !this.rule?.enabled
+          || this.rule?.deleted
+          || !this.rule?.program?.enabled
+          || this.rule?.program?.deleted;
     },
     isValidWhitelist() {
       return this.rule?.userInfo?.context?.validWhitelist;
