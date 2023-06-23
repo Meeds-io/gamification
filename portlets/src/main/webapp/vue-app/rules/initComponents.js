@@ -23,6 +23,7 @@ import RuleDateStart from './components/detail/RuleDateStart.vue';
 import RuleDateOver from './components/detail/RuleDateOver.vue';
 import RuleInvalidAudience from './components/detail/RuleInvalidAudience.vue';
 import RuleInvalidWhitelist from './components/detail/RuleInvalidWhitelist.vue';
+import RuleDisabled from './components/detail/RuleDisabled.vue';
 import RuleDateEnd from './components/detail/RuleDateEnd.vue';
 import RuleDateInfoChip from './components/detail/RuleDateInfoChip.vue';
 
@@ -53,6 +54,7 @@ const components = {
   'engagement-center-rule-date-over': RuleDateOver,
   'engagement-center-rule-invalid-whitelist': RuleInvalidWhitelist,
   'engagement-center-rule-invalid-audience': RuleInvalidAudience,
+  'engagement-center-rule-disabled': RuleDisabled,
   'engagement-center-rule-points': RulePoints,
   'engagement-center-rule-announcement-form': RuleAnnouncementForm,
   'engagement-center-rule-prerequisites': RulePrerequisites,
