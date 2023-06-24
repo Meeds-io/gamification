@@ -36,13 +36,33 @@ export default {
       default: null,
     },
   },
+  data: () => ({
+    time: Date.now(),
+    interval: null,
+  }),
   computed: {
+    now() {
+      return this.$root.now || this.time;
+    },
     endDateMillis() {
       return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
     },
     alreadyEnded() {
-      return this.endDateMillis && this.endDateMillis < this.$root.now;
+      return this.endDateMillis && this.endDateMillis < this.now;
     },
+  },
+  created() {
+    if (!this.$root.now) {
+      this.time = Date.now();
+      this.interval = window.setInterval(() => {
+        this.time = Date.now();
+      }, 1000);
+    }
+  },
+  beforeDestroy() {
+    if (this.interval) {
+      window.clearInterval(this.interval);
+    }
   },
 };
 </script>
