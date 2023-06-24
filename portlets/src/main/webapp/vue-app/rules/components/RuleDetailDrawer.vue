@@ -181,8 +181,13 @@ export default {
     sending: false,
     announcementFormOpened: false,
     drawerUrl: null,
+    time: Date.now(),
+    interval: null,
   }),
   computed: {
+    now() {
+      return this.$root.now || this.time;
+    },
     expandedView() {
       return !this.$root.isMobile && this.expanded;
     },
@@ -238,10 +243,10 @@ export default {
       return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
     },
     alreadyStarted() {
-      return !this.startDateMillis || this.startDateMillis < this.$root.now;
+      return !this.startDateMillis || this.startDateMillis < this.now;
     },
     alreadyEnded() {
-      return this.endDateMillis && this.endDateMillis < this.$root.now;
+      return this.endDateMillis && this.endDateMillis < this.now;
     },
     showEndDate() {
       return !this.alreadyEnded && this.alreadyStarted && this.endDateMillis || false;
@@ -297,6 +302,7 @@ export default {
         return;
       }
       this.clear();
+      this.checkTime();
       this.rule = {id};
       const hash = window.location.hash;
 
@@ -339,11 +345,22 @@ export default {
         })
         .finally(() => this.loading = false);
     },
+    checkTime() {
+      if (!this.$root.now) {
+        this.time = Date.now();
+        this.interval = window.setInterval(() => {
+          this.time = Date.now();
+        }, 1000);
+      }
+    },
     close() {
       this.$refs.ruleDetailDrawer.close();
     },
     onClose() {
       this.clear();
+      if (this.interval) {
+        window.clearInterval(this.interval);
+      }
     },
     clear() {
       this.rule = {};
