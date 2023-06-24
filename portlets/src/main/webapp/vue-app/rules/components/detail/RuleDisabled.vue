@@ -19,7 +19,7 @@
 
 -->
 <template>
-  <div class="rule-end-date-over d-flex align-center justify-center">
+  <div class="rule-disabled-over d-flex align-center justify-center">
     <v-icon size="27" class="primary--text me-2">
       fas fa-slash
     </v-icon>
