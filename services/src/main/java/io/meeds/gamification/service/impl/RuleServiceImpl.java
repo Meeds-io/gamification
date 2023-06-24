@@ -17,7 +17,7 @@
 package io.meeds.gamification.service.impl;
 
 import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
+import static io.meeds.gamification.utils.Utils.*;
 import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_OBJECT_TYPE;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_DESCRIPTION;
@@ -486,6 +486,7 @@ public class RuleServiceImpl implements RuleService {
       if (saveRule) {
         rule = ruleStorage.saveRule(rule);
       }
+      Utils.broadcastEvent(listenerService, POST_PUBLISH_RULE_EVENT, rule, username);
     } else if (publish) {
       Identity publisherIdentity = getActivityPublisherIdentity(rule, null, username);
       if (publisherIdentity == null) {
@@ -493,8 +494,12 @@ public class RuleServiceImpl implements RuleService {
                  rule.getId());
         return rule;
       }
+      boolean newlyPublished = activity.isHidden();
       setActivityParams(activity, rule, publisherIdentity, message, publish);
       activityManager.updateActivity(activity);
+      if (newlyPublished) {
+        Utils.broadcastEvent(listenerService, POST_PUBLISH_RULE_EVENT, rule, username);
+      }
     }
     return rule;
   }
