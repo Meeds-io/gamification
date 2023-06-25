@@ -191,7 +191,7 @@ public class Utils {
                                                                                    "GamificationActionPublishedNotification";
 
   public static final String                        RULE_ANNOUNCED_NOTIFICATION_ID          =
-                                                                                   "GamificationActionAnnouncedNotificationPlugin";
+                                                                                   "GamificationActionAnnouncedNotification";
 
   public static final String                        RULE_ID_NOTIFICATION_PARAM              = "RULE_ID";
 

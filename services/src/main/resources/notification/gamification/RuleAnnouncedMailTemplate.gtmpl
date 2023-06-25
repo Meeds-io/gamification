@@ -1,7 +1,7 @@
 <%
 /**
  * This file is part of the Meeds project (https://meeds.io/).
-   *
+ *
  * Copyright (C) 2023 Meeds Association contact@meeds.io
  *
  * This program is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@
 %>
 <table border="0" cellpadding="0" cellspacing="0" width="600" bgcolor="#ffffff" align="center" style="background-color: #ffffff; font-size: 13px; color: #333333; line-height: 18px; font-family: HelveticaNeue, Helvetica, Arial, sans-serif;">
   <%
-    _templateContext.put("header_title", _ctx.appRes("Notification.title.GamificationActionAnnouncedNotificationPlugin"));
+    _templateContext.put("header_title", _ctx.appRes("Notification.title.GamificationActionAnnouncedNotification"));
     _ctx.include("war:/notification/templates/mail/NotificationHeader.gtmpl", _templateContext);
   %>
   <tr>

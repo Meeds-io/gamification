@@ -124,36 +124,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <type>io.meeds.gamification.listener.AnnouncementActivityUpdater</type>
       <description>update announcement activity listener</description>
     </component-plugin>
-    <component-plugin>
-      <name>ActionActivityType</name>
-      <set-method>addActivityTypePlugin</set-method>
-      <type>org.exoplatform.social.core.ActivityTypePlugin</type>
-      <init-params>
-        <value-param>
-          <name>type</name>
-          <value>gamificationRuleActivity</value>
-        </value-param>
-        <value-param>
-          <name>enableNotification</name>
-          <value>false</value>
-        </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>AnnouncementActivityType</name>
-      <set-method>addActivityTypePlugin</set-method>
-      <type>org.exoplatform.social.core.ActivityTypePlugin</type>
-      <init-params>
-        <value-param>
-          <name>type</name>
-          <value>gamificationActionAnnouncement</value>
-        </value-param>
-        <value-param>
-          <name>enableNotification</name>
-          <value>false</value>
-        </value-param>
-      </init-params>
-    </component-plugin>
   </external-component-plugins>
 
   <external-component-plugins>

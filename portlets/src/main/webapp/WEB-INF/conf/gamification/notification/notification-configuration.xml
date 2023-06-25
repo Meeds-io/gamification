@@ -59,8 +59,8 @@
       <init-params>
         <values-param>
           <name>notification.plugin.ids</name>
-          <value>gamificationRuleActivity</value>
-          <value>gamificationActionAnnouncement</value>
+          <value>GamificationActionPublishedNotification</value>
+          <value>GamificationActionAnnouncedNotification</value>
         </values-param>
       </init-params>
     </component-plugin>
@@ -109,14 +109,14 @@
       <type>io.meeds.gamification.notification.plugin.ActionAnnouncedNotificationPlugin</type>
       <init-params>
         <object-param>
-          <name>template.GamificationActionAnnouncedNotificationPlugin</name>
+          <name>template.GamificationActionAnnouncedNotification</name>
           <description>The template of ActionAnnouncedNotificationPlugin</description>
           <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
             <field name="pluginId">
-              <string>GamificationActionAnnouncedNotificationPlugin</string>
+              <string>GamificationActionAnnouncedNotification</string>
             </field>
             <field name="resourceBundleKey">
-              <string>UINotification.label.GamificationActionAnnouncedNotificationPlugin</string>
+              <string>UINotification.label.GamificationActionAnnouncedNotification</string>
             </field>
             <field name="order">
               <string>4</string>
@@ -179,17 +179,6 @@
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>web.channel.gamification.template</name>
-      <set-method>registerTemplateProvider</set-method>
-      <type>io.meeds.gamification.notification.provider.WebTemplateProvider</type>
-      <init-params>
-        <value-param>
-          <name>channel-id</name>
-          <value>SPACE_WEB_CHANNEL</value>
-        </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
       <name>mail.channel.gamification.template</name>
       <set-method>registerTemplateProvider</set-method>
       <type>io.meeds.gamification.notification.provider.MailTemplateProvider</type>
@@ -208,6 +197,40 @@
         <value-param>
           <name>channel-id</name>
           <value>PUSH_CHANNEL</value>
+        </value-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.social.core.manager.ActivityManager</target-component>
+    <component-plugin>
+      <name>ActionActivityType</name>
+      <set-method>addActivityTypePlugin</set-method>
+      <type>org.exoplatform.social.core.ActivityTypePlugin</type>
+      <init-params>
+        <value-param>
+          <name>type</name>
+          <value>gamificationRuleActivity</value>
+        </value-param>
+        <value-param>
+          <name>enableNotification</name>
+          <value>false</value>
+        </value-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>AnnouncementActivityType</name>
+      <set-method>addActivityTypePlugin</set-method>
+      <type>org.exoplatform.social.core.ActivityTypePlugin</type>
+      <init-params>
+        <value-param>
+          <name>type</name>
+          <value>gamificationActionAnnouncement</value>
+        </value-param>
+        <value-param>
+          <name>enableNotification</name>
+          <value>false</value>
         </value-param>
       </init-params>
     </component-plugin>
