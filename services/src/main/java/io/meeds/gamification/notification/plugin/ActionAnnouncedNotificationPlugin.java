@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.meeds.gamification.notification;
+package io.meeds.gamification.notification.plugin;
 
-import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_DETAILS_PARAMETER;
+import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_NOTIFICATION_PARAMETER;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ID_NOTIFICATION_PARAM;
 import static io.meeds.gamification.utils.Utils.RULE_ANNOUNCED_NOTIFICATION_ID;
 import static io.meeds.gamification.utils.Utils.getUserRemoteId;
@@ -31,6 +31,7 @@ import org.exoplatform.commons.api.notification.plugin.BaseNotificationPlugin;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.notification.plugin.SocialNotificationUtils;
 
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.RuleDTO;
@@ -58,7 +59,7 @@ public class ActionAnnouncedNotificationPlugin extends BaseNotificationPlugin {
 
   @Override
   public boolean isValid(NotificationContext ctx) {
-    Announcement announcement = ctx.value(ANNOUNCEMENT_DETAILS_PARAMETER);
+    Announcement announcement = ctx.value(ANNOUNCEMENT_NOTIFICATION_PARAMETER);
     return announcement != null
         && announcement.getCreator() != null
         && announcement.getCreator() > 0
@@ -67,9 +68,18 @@ public class ActionAnnouncedNotificationPlugin extends BaseNotificationPlugin {
 
   @Override
   public NotificationInfo makeNotification(NotificationContext ctx) {
-    Announcement announcement = ctx.value(ANNOUNCEMENT_DETAILS_PARAMETER);
+    Announcement announcement = ctx.value(ANNOUNCEMENT_NOTIFICATION_PARAMETER);
+    if (announcement == null) {
+      return null;
+    }
     RuleDTO rule = ruleService.findRuleById(announcement.getChallengeId());
+    if (rule == null) {
+      return null;
+    }
     ExoSocialActivity activity = activityManager.getActivity(String.valueOf(rule.getActivityId()));
+    if (activity == null) {
+      return null;
+    }
 
     Set<String> receivers = new HashSet<>();
 
@@ -84,6 +94,7 @@ public class ActionAnnouncedNotificationPlugin extends BaseNotificationPlugin {
     return NotificationInfo.instance()
                            .to(receivers.stream().toList())
                            .with(ANNOUNCEMENT_ID_NOTIFICATION_PARAM, String.valueOf(announcement.getId()))
+                           .with(SocialNotificationUtils.ACTIVITY_ID.getKey(), String.valueOf(announcement.getActivityId()))
                            .key(getId())
                            .end();
   }

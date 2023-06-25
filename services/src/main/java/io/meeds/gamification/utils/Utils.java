@@ -29,7 +29,6 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.IdentityRegistry;
-import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
@@ -132,12 +131,6 @@ public class Utils {
 
   public static final String                        STATISTICS_GAMIFICATION_MODULE          = "gamification";
 
-  public static final String                        RULE_PUBLISHED_NOTIFICATION_ID          =
-                                                                                   "GamificationActionPublishedNotificationPlugin";
-
-  public static final String                        RULE_ANNOUNCED_NOTIFICATION_ID          =
-                                                                                   "GamificationActionAnnouncedNotificationPlugin";
-
   public static final String                        POST_CREATE_RULE_EVENT                  = "rule.created";
 
   public static final String                        POST_UPDATE_RULE_EVENT                  = "rule.updated";
@@ -162,6 +155,10 @@ public class Utils {
 
   public static final String                        RULE_ACTIVITY_TYPE                      = "gamificationRuleActivity";
 
+  /**
+   * @deprecated this was used when the announcement was of type 'Activity'
+   */
+  @Deprecated(forRemoval = true, since = "1.5.0")
   public static final String                        ANNOUNCEMENT_ACTIVITY_TYPE              = "challenges-announcement";
 
   public static final String                        ANNOUNCEMENT_COMMENT_TYPE               = "gamificationActionAnnouncement";
@@ -190,21 +187,28 @@ public class Utils {
 
   public static final String                        IDENTITIES_EXPAND                       = "all";
 
+  public static final String                        RULE_PUBLISHED_NOTIFICATION_ID          =
+                                                                                   "GamificationActionPublishedNotification";
+
+  public static final String                        RULE_ANNOUNCED_NOTIFICATION_ID          =
+                                                                                   "GamificationActionAnnouncedNotificationPlugin";
+
   public static final String                        RULE_ID_NOTIFICATION_PARAM              = "RULE_ID";
 
   public static final String                        RULE_PUBLISHER_NOTIFICATION_PARAM       = "PUBLISHER";
 
   public static final String                        ANNOUNCEMENT_ID_NOTIFICATION_PARAM      = "ANNOUNCEMENT_ID";
 
-  public static final ArgumentLiteral<RuleDTO>      RULE_DETAILS_PARAMETER                  =
-                                                                           new ArgumentLiteral<>(RuleDTO.class, "rule");
+  public static final ArgumentLiteral<RuleDTO>      RULE_NOTIFICATION_PARAMETER             =
+                                                                                new ArgumentLiteral<>(RuleDTO.class, "rule");
 
-  public static final ArgumentLiteral<String>       RULE_PUBLISHER_PARAMETER                =
-                                                                             new ArgumentLiteral<>(String.class, "publisher");
+  public static final ArgumentLiteral<String>       RULE_PUBLISHER_NOTIFICATION_PARAMETER   =
+                                                                                          new ArgumentLiteral<>(String.class,
+                                                                                                                "publisher");
 
-  public static final ArgumentLiteral<Announcement> ANNOUNCEMENT_DETAILS_PARAMETER          =
-                                                                                   new ArgumentLiteral<>(Announcement.class,
-                                                                                                         "announcement");
+  public static final ArgumentLiteral<Announcement> ANNOUNCEMENT_NOTIFICATION_PARAMETER     =
+                                                                                        new ArgumentLiteral<>(Announcement.class,
+                                                                                                              "announcement");
 
   private static final Log                          LOG                                     = ExoLogger.getLogger(Utils.class);
 
@@ -216,16 +220,24 @@ public class Utils {
     return identityManager.getOrCreateIdentity(type, name);
   }
 
-  public static String getUserRemoteId(String identityId) {
+  public static Identity getUserIdentity(String username) {
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    Identity identity = identityManager.getIdentity(identityId);
+    return identityManager.getOrCreateUserIdentity(username);
+  }
+
+  public static String getUserRemoteId(String identityId) {
+    Identity identity = getIdentityById(identityId);
     return identity != null ? identity.getRemoteId() : null;
   }
 
-  public static String getUserFullName(String id) {
-    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    Identity identity = identityManager.getIdentity(id);
+  public static String getUserFullName(String identityId) {
+    Identity identity = getIdentityById(identityId);
     return identity != null && identity.getProfile() != null ? identity.getProfile().getFullName() : null;
+  }
+
+  public static Identity getIdentityById(String identityId) {
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    return identityManager.getIdentity(identityId);
   }
 
   public static IdentityEntity getIdentityEntity(IdentityManager identityManager, long identityId) {

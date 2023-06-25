@@ -17,16 +17,32 @@
  */
 package io.meeds.gamification.listener;
 
+import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_NOTIFICATION_PARAMETER;
+import static io.meeds.gamification.utils.Utils.RULE_ANNOUNCED_NOTIFICATION_ID;
+
+import org.exoplatform.commons.api.notification.NotificationContext;
+import org.exoplatform.commons.api.notification.model.PluginKey;
+import org.exoplatform.commons.api.persistence.ExoTransactional;
+import org.exoplatform.commons.notification.impl.NotificationContextImpl;
+import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 
 import io.meeds.gamification.model.Announcement;
 
+@Asynchronous
 public class ActionAnnouncedNotificationListener extends Listener<Announcement, Long> {
 
   @Override
+  @ExoTransactional
   public void onEvent(Event<Announcement, Long> event) throws Exception {
-    
+    Announcement announcement = event.getSource();
+
+    NotificationContext ctx = NotificationContextImpl.cloneInstance();
+    ctx.append(ANNOUNCEMENT_NOTIFICATION_PARAMETER, announcement)
+       .getNotificationExecutor()
+       .with(ctx.makeCommand(PluginKey.key(RULE_ANNOUNCED_NOTIFICATION_ID)))
+       .execute(ctx);
   }
 
 }

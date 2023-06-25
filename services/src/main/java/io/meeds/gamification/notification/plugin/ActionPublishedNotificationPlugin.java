@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.meeds.gamification.notification;
+package io.meeds.gamification.notification.plugin;
 
-import static io.meeds.gamification.utils.Utils.RULE_DETAILS_PARAMETER;
+import static io.meeds.gamification.utils.Utils.RULE_NOTIFICATION_PARAMETER;
 import static io.meeds.gamification.utils.Utils.RULE_ID_NOTIFICATION_PARAM;
 import static io.meeds.gamification.utils.Utils.RULE_PUBLISHED_NOTIFICATION_ID;
 import static io.meeds.gamification.utils.Utils.RULE_PUBLISHER_NOTIFICATION_PARAM;
-import static io.meeds.gamification.utils.Utils.RULE_PUBLISHER_PARAMETER;
+import static io.meeds.gamification.utils.Utils.RULE_PUBLISHER_NOTIFICATION_PARAMETER;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +33,7 @@ import org.exoplatform.commons.api.notification.plugin.BaseNotificationPlugin;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.notification.plugin.SocialNotificationUtils;
 
 import io.meeds.gamification.model.RuleDTO;
 
@@ -52,14 +53,14 @@ public class ActionPublishedNotificationPlugin extends BaseNotificationPlugin {
 
   @Override
   public boolean isValid(NotificationContext ctx) {
-    RuleDTO rule = ctx.value(RULE_DETAILS_PARAMETER);
+    RuleDTO rule = ctx.value(RULE_NOTIFICATION_PARAMETER);
     return rule != null && rule.getActivityId() > 0 && rule.getSpaceId() > 0;
   }
 
   @Override
   public NotificationInfo makeNotification(NotificationContext ctx) {
-    RuleDTO rule = ctx.value(RULE_DETAILS_PARAMETER);
-    String username = ctx.value(RULE_PUBLISHER_PARAMETER);
+    RuleDTO rule = ctx.value(RULE_NOTIFICATION_PARAMETER);
+    String username = ctx.value(RULE_PUBLISHER_NOTIFICATION_PARAMETER);
     Space space = spaceService.getSpaceById(String.valueOf(rule.getSpaceId()));
     if (space == null) {
       return null;
@@ -74,6 +75,7 @@ public class ActionPublishedNotificationPlugin extends BaseNotificationPlugin {
                            .to(targetUsers)
                            .with(RULE_ID_NOTIFICATION_PARAM, String.valueOf(rule.getId()))
                            .with(RULE_PUBLISHER_NOTIFICATION_PARAM, username)
+                           .with(SocialNotificationUtils.ACTIVITY_ID.getKey(), String.valueOf(rule.getActivityId()))
                            .key(getId())
                            .end();
   }
