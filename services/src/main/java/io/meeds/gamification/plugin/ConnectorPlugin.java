@@ -16,7 +16,6 @@
 package io.meeds.gamification.plugin;
 
 import io.meeds.gamification.service.ConnectorService;
-import org.exoplatform.commons.api.settings.data.Scope;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.component.BaseComponentPlugin;

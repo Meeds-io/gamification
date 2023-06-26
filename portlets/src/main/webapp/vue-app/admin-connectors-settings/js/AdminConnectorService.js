@@ -43,7 +43,7 @@ export function saveConnectorSettings(connectorName, apiKey, secretKey, redirect
     },
     body: new URLSearchParams(formData).toString(),
   }).then(resp => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Response code indicates a server error', resp);
@@ -56,7 +56,7 @@ export function deleteConnectorSetting(connectorName) {
     method: 'DELETE',
     credentials: 'include',
   }).then(resp => {
-    if (!resp || !resp.ok) {
+    if (!resp?.ok) {
       throw new Error('Response code indicates a server error', resp);
     }
   });

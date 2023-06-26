@@ -26,6 +26,7 @@ import io.meeds.gamification.model.RemoteConnectorSettings;
 import io.meeds.gamification.plugin.ConnectorPlugin;
 import io.meeds.gamification.service.ConnectorService;
 import io.meeds.gamification.service.ConnectorSettingService;
+import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
@@ -65,6 +66,9 @@ public class ConnectorServiceImpl implements ConnectorService {
    * {@inheritDoc}
    */
   public List<RemoteConnector> getUserRemoteConnectors(String username) {
+    if (StringUtils.isBlank(username)) {
+      throw new IllegalArgumentException("username is mandatory");
+    }
     List<RemoteConnector> connectorList = new ArrayList<>();
 
     connectorPlugins.forEach((s, connectorPlugin) -> {

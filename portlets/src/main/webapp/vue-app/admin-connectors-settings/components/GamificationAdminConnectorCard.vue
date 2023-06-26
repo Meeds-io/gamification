@@ -66,7 +66,7 @@ export default {
       return this.connectorExtension?.componentOptions.title || '';
     },
     description() {
-      return this.connectorExtension?.componentOptions.description || '';
+      return this.$t(`${this.connectorExtension?.componentOptions.description}`);
     },
   },
   methods: {

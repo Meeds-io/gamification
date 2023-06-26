@@ -12,6 +12,7 @@ import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.security.Identity;
 import org.exoplatform.web.security.codec.CodecInitializer;
 import org.exoplatform.web.security.security.TokenServiceInitializationException;
 
@@ -38,7 +39,11 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
    * {@inheritDoc}
    */
   @Override
-  public void saveConnectorSettings(RemoteConnectorSettings remoteConnectorSettings) {
+  public void saveConnectorSettings(RemoteConnectorSettings remoteConnectorSettings,
+                                    Identity aclIdentity) throws IllegalAccessException {
+    if (!canManageConnectorSettings(aclIdentity)) {
+      throw new IllegalAccessException("The user is not authorized to save or update connector settings");
+    }
     Scope connectorSettingScope = Scope.APPLICATION.id(StringUtils.capitalize(remoteConnectorSettings.getName()));
     String encryptedApiKey;
     String encryptedSecretKey;
@@ -62,9 +67,20 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
    * {@inheritDoc}
    */
   @Override
-  public void deleteConnectorSettings(String connectorName) {
+  public void deleteConnectorSettings(String connectorName, Identity aclIdentity) throws IllegalAccessException {
+    if (!canManageConnectorSettings(aclIdentity)) {
+      throw new IllegalAccessException("The user is not authorized to delete connector settings");
+    }
     Scope connectorSettingScope = Scope.APPLICATION.id(StringUtils.capitalize(connectorName));
     this.settingService.remove(Context.GLOBAL, connectorSettingScope, CONNECTOR_SETTINGS_KEY_NAME);
+  }
+
+  @Override
+  public RemoteConnectorSettings getConnectorSettings(String connectorName, Identity aclIdentity) throws IllegalAccessException {
+    if (!canManageConnectorSettings(aclIdentity)) {
+      throw new IllegalAccessException("The user is not authorized to access connector settings");
+    }
+    return getConnectorSettings(connectorName);
   }
 
   @Override
@@ -96,11 +112,21 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
   }
 
   @Override
-  public List<RemoteConnectorSettings> getConnectorsSettings(ConnectorService connectorService) {
+  public List<RemoteConnectorSettings> getConnectorsSettings(ConnectorService connectorService,
+                                                             Identity aclIdentity) throws IllegalAccessException {
+    if (!canManageConnectorSettings(aclIdentity)) {
+      throw new IllegalAccessException("The user is not authorized to access connectors settings");
+    }
     Map<String, ConnectorPlugin> connectorsPlugins = connectorService.getConnectorPlugins();
     List<RemoteConnectorSettings> connectorSettingList = new ArrayList<>();
-    connectorsPlugins.forEach((s,
-                               connectorPlugin) -> connectorSettingList.add(getConnectorSettings(connectorPlugin.getConnectorName())));
+    connectorsPlugins.forEach((s, connectorPlugin) -> {
+      connectorSettingList.add(getConnectorSettings(connectorPlugin.getConnectorName()));
+    });
     return connectorSettingList;
+  }
+
+  @Override
+  public boolean canManageConnectorSettings(Identity aclIdentity) {
+    return aclIdentity != null && Utils.isRewardingManager(aclIdentity.getUserId());
   }
 }

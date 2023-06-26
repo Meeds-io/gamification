@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.services.security.ConversationState;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
@@ -34,16 +35,19 @@ public class ConnectorSettingsRest implements ResourceContainer {
 
   @GET
   @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-  @RolesAllowed("administrators")
+  @RolesAllowed("users")
   @Operation(summary = "Retrieves the list of enabled connectors", method = "GET")
   @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
   public Response getConnectorsSettings() {
+    org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
-      List<RemoteConnectorSettings> remoteConnectorSettings = connectorSettingService.getConnectorsSettings(connectorService);
+      List<RemoteConnectorSettings> remoteConnectorSettings = connectorSettingService.getConnectorsSettings(connectorService, identity);
       return Response.ok(remoteConnectorSettings).build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
     } catch (Exception e) {
       return Response.serverError().entity(e.getMessage()).build();
     }
@@ -51,7 +55,7 @@ public class ConnectorSettingsRest implements ResourceContainer {
 
   @POST
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-  @RolesAllowed("administrators")
+  @RolesAllowed("users")
   @Operation(summary = "Saves gamification connector settings", description = "Saves gamification connector settings", method = "POST")
   @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Bad request"),
@@ -65,6 +69,7 @@ public class ConnectorSettingsRest implements ResourceContainer {
     if (StringUtils.isBlank(connectorName)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("'connectorName' parameter is mandatory").build();
     }
+    org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
       RemoteConnectorSettings remoteConnectorSettings = new RemoteConnectorSettings();
       remoteConnectorSettings.setName(connectorName);
@@ -72,8 +77,10 @@ public class ConnectorSettingsRest implements ResourceContainer {
       remoteConnectorSettings.setSecretKey(secretKey);
       remoteConnectorSettings.setRedirectUrl(redirectUrl);
       remoteConnectorSettings.setEnabled(enabled);
-      connectorSettingService.saveConnectorSettings(remoteConnectorSettings);
+      connectorSettingService.saveConnectorSettings(remoteConnectorSettings, identity);
       return Response.noContent().build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
     } catch (Exception e) {
       LOG.warn("Error saving connector '{}' settings", connectorName, e);
       return Response.serverError().entity(e.getMessage()).build();
@@ -82,7 +89,7 @@ public class ConnectorSettingsRest implements ResourceContainer {
 
   @DELETE
   @Path("{connectorName}")
-  @RolesAllowed("administrators")
+  @RolesAllowed("users")
   @Operation(summary = "Deletes gamification connector settings", description = "Deletes gamification connector settings", method = "DELETE")
   @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Bad request"),
@@ -92,9 +99,12 @@ public class ConnectorSettingsRest implements ResourceContainer {
     if (StringUtils.isBlank(connectorName)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("'connectorName' parameter is mandatory").build();
     }
+    org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
-      connectorSettingService.deleteConnectorSettings(connectorName);
+      connectorSettingService.deleteConnectorSettings(connectorName, identity);
       return Response.noContent().build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
     } catch (Exception e) {
       LOG.warn("Error deleting '{}' connector settings", connectorName, e);
       return Response.serverError().entity(e.getMessage()).build();
