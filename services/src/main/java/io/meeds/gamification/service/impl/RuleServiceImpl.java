@@ -1,7 +1,8 @@
 /**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2022 Meeds Association
- * contact@meeds.io
+ * 
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -17,7 +18,7 @@
 package io.meeds.gamification.service.impl;
 
 import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
+import static io.meeds.gamification.utils.Utils.*;
 import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_OBJECT_TYPE;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_DESCRIPTION;
@@ -486,6 +487,7 @@ public class RuleServiceImpl implements RuleService {
       if (saveRule) {
         rule = ruleStorage.saveRule(rule);
       }
+      Utils.broadcastEvent(listenerService, POST_PUBLISH_RULE_EVENT, rule, username);
     } else if (publish) {
       Identity publisherIdentity = getActivityPublisherIdentity(rule, null, username);
       if (publisherIdentity == null) {
@@ -493,8 +495,12 @@ public class RuleServiceImpl implements RuleService {
                  rule.getId());
         return rule;
       }
+      boolean newlyPublished = activity.isHidden();
       setActivityParams(activity, rule, publisherIdentity, message, publish);
       activityManager.updateActivity(activity);
+      if (newlyPublished) {
+        Utils.broadcastEvent(listenerService, POST_PUBLISH_RULE_EVENT, rule, username);
+      }
     }
     return rule;
   }
@@ -575,11 +581,11 @@ public class RuleServiceImpl implements RuleService {
   }
 
   private Identity getUserIdentity(String identityId) {
-    if (NumberUtils.isDigits(identityId)) {
-      return identityManager.getIdentity(identityId); // NOSONAR
-    } else {
-      return identityManager.getOrCreateUserIdentity(identityId);
+    Identity identity = identityManager.getOrCreateUserIdentity(identityId);
+    if (identity == null && NumberUtils.isDigits(identityId)) {
+      identity = identityManager.getIdentity(identityId); // NOSONAR
     }
+    return identity;
   }
 
 }
