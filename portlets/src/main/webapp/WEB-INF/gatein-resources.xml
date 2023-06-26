@@ -443,7 +443,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <path>/js/engagementCenterNotificationExtension.bundle.js</path>
     </script>
     <depends>
-      <module>ruleComponents</module>
+      <module>engagementCenterExtensionActions</module>
     </depends>
     <depends>
       <module>extensionRegistry</module>
@@ -568,7 +568,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <module>
     <name>ruleComponents</name>
-    <load-group>engagement-center-user-actions</load-group>
     <script>
       <minify>false</minify>
       <path>/js/ruleComponents.bundle.js</path>
@@ -586,6 +585,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <module>commonVueComponents</module>
     </depends>
     <depends>
+      <module>engagementCenterExtensionActions</module>
+    </depends>
+    <depends>
       <module>animationComponents</module>
     </depends>
     <depends>
@@ -597,6 +599,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <depends>
       <module>jquery</module>
       <as>$</as>
+    </depends>
+  </module>
+
+  <module>
+    <name>engagementCenterExtensionActions</name>
+    <load-group>engagement-center-user-actions</load-group>
+    <script>
+      <minify>false</minify>
+      <path>/js/engagementCenterActions.bundle.js</path>
+    </script>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>vue</module>
     </depends>
   </module>
 

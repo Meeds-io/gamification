@@ -26,7 +26,6 @@ import RuleInvalidWhitelist from './components/detail/RuleInvalidWhitelist.vue';
 import RuleDisabled from './components/detail/RuleDisabled.vue';
 import RuleDateEnd from './components/detail/RuleDateEnd.vue';
 import RuleDateInfoChip from './components/detail/RuleDateInfoChip.vue';
-import RuleIcon from './components/detail/RuleIcon.vue';
 
 import RuleAchievementsDrawer from './components/RuleAchievementsDrawer.vue';
 import RuleDrawers from './components/RuleDrawers.vue';
@@ -39,7 +38,6 @@ const components = {
   'engagement-center-rule-lock-input': RuleLockInput,
   'engagement-center-rule-publish-editor': RulePublish,
   'rule-suggester': RuleSuggester,
-  'rule-icon': RuleIcon,
 
   'engagement-center-rule-detail-drawer': RuleDetailDrawer,
   'engagement-center-rule-header': RuleHeader,

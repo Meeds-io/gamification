@@ -1,7 +1,8 @@
 /**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2022 Meeds Association
- * contact@meeds.io
+ * 
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -580,11 +581,11 @@ public class RuleServiceImpl implements RuleService {
   }
 
   private Identity getUserIdentity(String identityId) {
-    if (NumberUtils.isDigits(identityId)) {
-      return identityManager.getIdentity(identityId); // NOSONAR
-    } else {
-      return identityManager.getOrCreateUserIdentity(identityId);
+    Identity identity = identityManager.getOrCreateUserIdentity(identityId);
+    if (identity == null && NumberUtils.isDigits(identityId)) {
+      identity = identityManager.getIdentity(identityId); // NOSONAR
     }
+    return identity;
   }
 
 }

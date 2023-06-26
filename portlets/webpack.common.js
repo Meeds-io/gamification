@@ -25,6 +25,7 @@ module.exports = {
     engagementCenterActivityStreamExtension: './src/main/webapp/vue-app/engagement-center-activity-stream-extension/main.js',
     engagementCenterFavoriteDrawerExtension: './src/main/webapp/vue-app/engagement-center-favorite-drawer-extension/main.js',
     engagementCenterNotificationExtension: './src/main/webapp/vue-app/engagement-center-notification-popover-extension/main.js',
+    engagementCenterActions: './src/main/webapp/vue-app/engagement-center-actions/main.js',
     realizationsComponents: './src/main/webapp/vue-app/realizations/main.js',
     ruleComponents: './src/main/webapp/vue-app/rules/main.js',
     gamificationCommon: './src/main/webapp/vue-app/commons/main.js',

@@ -65,7 +65,7 @@
         flat>
         <v-card-title class="rule-card-title d-flex flex-nowrap pb-4 text-break">
           <div :title="title" class="d-flex align-center flex-grow-1 text-truncate">
-            <rule-icon :rule-event="rule.event" />
+            <rule-icon :rule-event="rule.event" class="me-2" />
             <span class="text-truncate subtitle-1 pt-2px">
               {{ title }}
             </span>
