@@ -31,7 +31,7 @@
               <tr>
                 <td align="left" bgcolor="#ffffff" style="background-color: #ffffff; padding: 10px 0;">
                   <p style="margin: 10px 0;">
-                    <%=_ctx.appRes("Notification.label.SayHello")%><%=_ctx.escapeHTML(FIRSTNAME)%>,
+                    <%=_ctx.appRes("Notification.label.SayHello")%> <%=_ctx.escapeHTML(FIRSTNAME)%>,
                   </p>
                   <p style="margin: 10px 0 20px;">
                     <%=_ctx.appRes("Notification.gamification.mail.content.newActionAvailable1")%> <br />

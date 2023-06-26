@@ -88,7 +88,6 @@
           :realization="props.item"
           :date-format="dateFormat"
           :is-administrator="administrationMode"
-          :action-value-extensions="actionValueExtensions"
           @updated="realizationUpdated" />
       </template>
     </v-data-table>
@@ -111,8 +110,7 @@
         :headers="realizationsHeaders"
         :realization="item"
         :is-administrator="administrationMode" 
-        :date-format="mobileDateFormat"
-        :action-value-extensions="actionValueExtensions" />
+        :date-format="mobileDateFormat" />
     </template>
     <v-toolbar
       color="transparent"
@@ -146,12 +144,6 @@ export default {
     earnerId: {
       type: Number,
       default: () => 0,
-    },
-    actionValueExtensions: {
-      type: Object,
-      default: function() {
-        return null;
-      },
     },
   },
   data: () => ({

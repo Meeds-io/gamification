@@ -43,6 +43,7 @@ import org.exoplatform.social.notification.LinkProviderUtils;
 import org.exoplatform.social.notification.plugin.SocialNotificationUtils;
 import org.exoplatform.webui.utils.TimeConvertUtils;
 
+import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
@@ -127,6 +128,7 @@ public class ActionAnnouncedTemplateBuilder extends AbstractTemplateBuilder {
     // Rule
     templateContext.put("RULE_ID", String.valueOf(ruleId));
     templateContext.put("RULE_TITLE", ruleTitle);
+    templateContext.put("RULE_EVENT", rule.getType() == EntityType.AUTOMATIC ? rule.getEvent() : "");
 
     // Realization
     templateContext.put("ANNOUNCEMENT_MESSAGE", announcement.getComment());

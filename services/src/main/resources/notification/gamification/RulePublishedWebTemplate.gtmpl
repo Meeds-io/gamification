@@ -20,12 +20,12 @@
 <li class="$READ clearfix" data-id="$NOTIFICATION_ID">
   <div class="media">
     <div class="avatarXSmall pull-left">
-      <img src="$PROGRAM_AVATAR" alt="<%=_ctx.escapeHTML(RULE_TITLE)%>" />
+      <img src="$PROGRAM_AVATAR" alt="<%=_ctx.escapeHTML(RULE_TITLE)%>" class="rounded" />
     </div>
     <div class="media-body">
       <div class="contentSmall" data-link="$RULE_URL">
         <div class="status"><%=_ctx.appRes("Notification.gamification.webNotif.newActionAvailable")%></div>
-        <div class="content"><%=_ctx.escapeHTML(RULE_TITLE)%></div>
+        <div class="content"><rule-icon rule-event="<%=RULE_EVENT%>"></rule-icon><%=_ctx.escapeHTML(RULE_TITLE)%></div>
         <div class="lastUpdatedTime">$LAST_UPDATED_TIME</div>
       </div>
     </div>

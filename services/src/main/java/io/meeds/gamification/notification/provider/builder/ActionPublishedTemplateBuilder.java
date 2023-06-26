@@ -44,6 +44,7 @@ import org.exoplatform.social.notification.LinkProviderUtils;
 import org.exoplatform.social.notification.plugin.SocialNotificationUtils;
 import org.exoplatform.webui.utils.TimeConvertUtils;
 
+import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.service.RuleService;
@@ -118,6 +119,7 @@ public class ActionPublishedTemplateBuilder extends AbstractTemplateBuilder {
     // Rule
     templateContext.put("RULE_ID", String.valueOf(ruleId));
     templateContext.put("RULE_TITLE", ruleTitle);
+    templateContext.put("RULE_EVENT", rule.getType() == EntityType.AUTOMATIC ? rule.getEvent() : "");
     String ruleUrl = LinkProviderUtils.getRedirectUrl("view_full_activity", String.valueOf(rule.getActivityId()));
     templateContext.put("RULE_URL",
                         ruleUrl);
