@@ -28,7 +28,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <template v-if="drawer" #content>
       <engagement-center-rule-header
         :rule="rule"
-        :action-value-extensions="actionValueExtensions"
         class="pa-4"
         reduced />
       <v-list-item>
@@ -56,12 +55,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 export default {
-  props: {
-    actionValueExtensions: {
-      type: Object,
-      default: null,
-    },
-  },
   data() {
     return {
       drawer: false,
@@ -108,7 +101,11 @@ export default {
       this.realizationsCount = rule?.realizationsCount;
       this.realizations = [];
       this.retrieveRealizations();
-      this.$refs.drawer.open();
+      this.$nextTick().then(() => {
+        if (this.$refs.drawer) {
+          this.$refs.drawer.open();
+        }
+      });
     },
     loadMore() {
       this.limit += this.pageSize;

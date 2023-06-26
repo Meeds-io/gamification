@@ -65,9 +65,7 @@
         flat>
         <v-card-title class="rule-card-title d-flex flex-nowrap pb-4 text-break">
           <div :title="title" class="d-flex align-center flex-grow-1 text-truncate">
-            <v-icon size="16" class="rule-icon primary--text me-2">
-              {{ actionIcon }}
-            </v-icon>
+            <rule-icon :rule-event="rule.event" class="me-2" />
             <span class="text-truncate subtitle-1 pt-2px">
               {{ title }}
             </span>
@@ -110,10 +108,6 @@ export default {
     program: {
       type: Object,
       default: null
-    },
-    actionValueExtensions: {
-      type: Object,
-      default: null,
     },
     noValidation: {
       type: Boolean,
@@ -165,18 +159,6 @@ export default {
     },
     isValidWhitelist() {
       return this.rule?.userInfo?.context?.validWhitelist;
-    },
-    extension() {
-      const extensions = this.actionValueExtensions || this.$root.actionValueExtensions;
-      if (extensions) {
-        return Object.values(extensions)
-          .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
-          .find(extension => extension.match && extension.match(this.rule.event)) || null;
-      }
-      return null;
-    },
-    actionIcon() {
-      return this.rule?.type === 'AUTOMATIC' ? this.extension?.icon : 'fas fa-trophy';
     },
     programStyle() {
       return this.ruleProgram?.color && `border: 1px solid ${this.ruleProgram.color} !important;` || '';

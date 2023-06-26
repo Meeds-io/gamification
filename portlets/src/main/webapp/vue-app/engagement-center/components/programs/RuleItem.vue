@@ -23,9 +23,10 @@
       <td class="no-border-bottom ps-0">
         <div @click="openRule(false)" class="clickable d-flex flex-row ma-auto">
           <div class="d-flex flex-column col-2 col-sm-1 pa-0">
-            <v-icon size="22" class="primary--text my-auto">
-              {{ actionIcon }}
-            </v-icon>
+            <rule-icon
+              :rule-event="rule.event"
+              size="22"
+              class="my-auto" />
           </div>
           <div class="d-flex flex-column col-10 col-sm-11 pa-0 text-truncate">
             <engagement-center-rule-title :rule="rule" />
@@ -89,12 +90,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    actionValueExtensions: {
-      type: Object,
-      default: function() {
-        return null;
-      },
-    },
   },
   data() {
     return {
@@ -104,17 +99,6 @@ export default {
   computed: {
     automaticRule() {
       return this.rule?.type === 'AUTOMATIC';
-    },
-    actionValueExtension() {
-      if (this.actionValueExtensions) {
-        return Object.values(this.actionValueExtensions)
-          .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
-          .find(extension => extension.match && extension.match(this.rule.event)) || null;
-      }
-      return null;
-    },
-    actionIcon() {
-      return this.automaticRule ? this.actionValueExtension?.icon : 'fas fa-trophy';
     },
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;
