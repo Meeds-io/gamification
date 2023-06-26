@@ -32,12 +32,15 @@ import org.exoplatform.social.core.service.LinkProvider;
 
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.service.AnnouncementService;
+import io.meeds.gamification.utils.Utils;
 
+/**
+ * @deprecated this was used when the announcement was of type 'Activity'
+ */
+@Deprecated(forRemoval = true, since = "1.5.0")
 public class AnnouncementActivityProcessor extends BaseActivityProcessorPlugin {
 
   public static final String  ANNOUNCEMENT_COMMENT_PARAM = "announcementComment";
-
-  public static final String  ACTIVITY_TYPE              = "challenges-announcement";
 
   private static final Log    LOG                        = ExoLogger.getLogger(AnnouncementActivityProcessor.class);
 
@@ -57,7 +60,7 @@ public class AnnouncementActivityProcessor extends BaseActivityProcessorPlugin {
 
   @Override
   public void processActivity(ExoSocialActivity activity) {
-    if (!ACTIVITY_TYPE.equals(activity.getType())) {
+    if (!Utils.ANNOUNCEMENT_ACTIVITY_TYPE.equals(activity.getType())) {
       return;
     }
     if (activity.isComment() || activity.getType() == null) {

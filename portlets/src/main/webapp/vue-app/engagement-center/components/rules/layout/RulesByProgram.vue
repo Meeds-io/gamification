@@ -22,7 +22,6 @@
     <engagement-center-rules-category
       v-for="category in validCategories"
       :key="category.id"
-      :action-value-extensions="actionValueExtensions"
       :category="category"
       :program="category" />
   </div>
@@ -45,10 +44,6 @@ export default {
     isAdministrator: {
       type: Boolean,
       default: false,
-    },
-    actionValueExtensions: {
-      type: Object,
-      default: null,
     },
   },
   data: () => ({

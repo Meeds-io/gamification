@@ -97,6 +97,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     long creatorId = Long.parseLong(identity.getId());
     announcement.setCreator(creatorId);
+    announcement.setCreatedDate(null);
     announcement.setAssignee(creatorId);
     announcement = announcementStorage.createAnnouncement(announcement);
     createActivity(rule, announcement, templateParams);
