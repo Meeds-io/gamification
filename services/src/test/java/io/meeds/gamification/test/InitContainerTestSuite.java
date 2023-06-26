@@ -16,6 +16,7 @@
  */
 package io.meeds.gamification.test;
 
+import io.meeds.gamification.service.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -55,13 +56,6 @@ import io.meeds.gamification.rest.TestSpaceLeaderboardEndpoint;
 import io.meeds.gamification.rest.TestUserReputationEndpoint;
 import io.meeds.gamification.scheduled.ProgramAutoDisableJobTest;
 import io.meeds.gamification.search.RuleSearchConnectorTest;
-import io.meeds.gamification.service.AnnouncementServiceTest;
-import io.meeds.gamification.service.BadgeRegistryTest;
-import io.meeds.gamification.service.BadgeServiceTest;
-import io.meeds.gamification.service.ProgramServiceTest;
-import io.meeds.gamification.service.RealizationServiceTest;
-import io.meeds.gamification.service.RealizationServiceMockTest;
-import io.meeds.gamification.service.RuleServiceTest;
 import io.meeds.gamification.storage.AnnouncementStorageTest;
 import io.meeds.gamification.storage.ProgramStorageTest;
 import io.meeds.gamification.storage.RealizationsStorageTest;
@@ -87,6 +81,8 @@ import io.meeds.gamification.utils.UtilsTest;
     RuleTranslationPluginTest.class,
     ProgramTranslationPluginTest.class,
     RealizationServiceMockTest.class,
+    ConnectorSettingServiceTest.class,
+    ConnectorServiceTest.class,
     UtilsTest.class,
     TestGamificationInformationsEndpoint.class,
     TestProgramRest.class,

@@ -67,7 +67,7 @@ export default {
       return this.connectorSetting?.componentOptions?.title || '';
     },
     description() {
-      return this.connectorSetting?.componentOptions?.description || '';
+      return this.$t(`${this.connectorSetting?.componentOptions.description}`);
     },
   },
   methods: {

@@ -15,8 +15,11 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app >
-    <v-card v-if="displayUserSetting" class="my-3 border-radius" flat>
+  <v-app>
+    <v-card
+      v-if="displayUserSetting"
+      class="my-3 border-radius"
+      flat>
       <v-list>
         <v-list-item>
           <v-list-item-content>
@@ -31,8 +34,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-list>
     </v-card>
     <gamification-user-connector
-        :connectors="connectors"
-        @connectors-loaded="connectors = $event" />
+      :connectors="connectors"
+      @connectors-loaded="connectors = $event" />
   </v-app>
 </template>
 

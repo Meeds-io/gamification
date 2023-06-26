@@ -80,13 +80,13 @@ export default {
       return this.connector?.identifier || '';
     },
     identifierLink() {
-      return `${this.connector?.PROFILE_BASER_URL}/${this.identifier}` || '';
+      return `${this.connector?.PROFILE_BASER_URL}/${this.identifier}`;
     },
     logo() {
       return this.connector?.logo || '';
     },
     title() {
-      return this.connector?.title || '';
+      return this.$t(`${this.connector?.title}`);
     },
     description() {
       return this.$t(`${this.connector?.description}`);
