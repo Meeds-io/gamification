@@ -94,6 +94,9 @@ public class ActionActivityChildPlugin extends AbstractNotificationChildPlugin {
                                                               Long.parseLong(ruleId),
                                                               RULE_TITLE_FIELD_NAME,
                                                               userLocale);
+    if (StringUtils.isBlank(ruleTitle)) {
+      ruleTitle = rule.getTitle();
+    }
 
     // Program
     templateContext.put("PROGRAM_AVATAR", program.getAvatarUrl());

@@ -115,6 +115,10 @@ public class ActionAnnouncedTemplateBuilder extends AbstractTemplateBuilder {
                                                               ruleId,
                                                               RULE_TITLE_FIELD_NAME,
                                                               userLocale);
+    if (StringUtils.isBlank(ruleTitle)) {
+      ruleTitle = rule.getTitle();
+    }
+
     // User
     templateContext.put("USER", identity.getProfile().getFullName());
     templateContext.put("USER_AVATAR",

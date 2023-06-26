@@ -37,6 +37,9 @@ public class ActionAnnouncedNotificationListener extends Listener<Announcement, 
   @ExoTransactional
   public void onEvent(Event<Announcement, Long> event) throws Exception {
     Announcement announcement = event.getSource();
+    if (announcement == null) {
+      return;
+    }
 
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
     ctx.append(ANNOUNCEMENT_NOTIFICATION_PARAMETER, announcement)

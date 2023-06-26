@@ -19,6 +19,8 @@ package io.meeds.gamification.listener;
 
 import static io.meeds.gamification.utils.Utils.*;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.PluginKey;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
@@ -37,6 +39,9 @@ public class ActionPublishedNotificationListener extends Listener<RuleDTO, Strin
   public void onEvent(Event<RuleDTO, String> event) throws Exception {
     RuleDTO rule = event.getSource();
     String publisher = event.getData();
+    if (rule == null || StringUtils.isBlank(publisher)) {
+      return;
+    }
 
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
     ctx.append(RULE_NOTIFICATION_PARAMETER, rule)
