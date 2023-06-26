@@ -42,6 +42,8 @@ import io.meeds.gamification.listener.GamificationSpaceListenerTest;
 import io.meeds.gamification.listener.ProgramAutoDisableListenerTest;
 import io.meeds.gamification.listener.ProgramSpaceListenerTest;
 import io.meeds.gamification.listener.RuleIndexingListenerTest;
+import io.meeds.gamification.notification.plugin.ActionAnnouncedNotificationPluginTest;
+import io.meeds.gamification.notification.plugin.ActionPublishedNotificationPluginTest;
 import io.meeds.gamification.plugin.ProgramTranslationPluginTest;
 import io.meeds.gamification.plugin.RuleTranslationPluginTest;
 import io.meeds.gamification.rest.TestAnnouncementRest;
@@ -108,6 +110,8 @@ import io.meeds.gamification.utils.UtilsTest;
     ProgramSpaceListenerTest.class,
     ProgramAutoDisableListenerTest.class,
     ProgramAutoDisableJobTest.class,
+    ActionAnnouncedNotificationPluginTest.class,
+    ActionPublishedNotificationPluginTest.class,
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
