@@ -64,8 +64,8 @@ export default {
       return {
         apiKey: this.connectorExtension?.componentOptions?.apiKey,
         secretKey: this.connectorExtension?.componentOptions?.secretKey,
-        redirectUrl: this.connectorExtension?.componentOptions.redirectUrl || '',
-        enabled: this.connectorExtension?.componentOptions.enabled || '',
+        redirectUrl: this.connectorExtension?.componentOptions?.redirectUrl || '',
+        enabled: this.connectorExtension?.componentOptions?.enabled,
       };
     },
   },
@@ -90,7 +90,7 @@ export default {
             connector.componentOptions.apiKey = connectorObj?.apiKey || '';
             connector.componentOptions.secretKey = connectorObj?.secretKey || '';
             connector.componentOptions.redirectUrl = connectorObj?.redirectUrl || '';
-            connector.componentOptions.enabled = connectorObj != null;
+            connector.componentOptions.enabled = connectorObj?.enabled;
           });
         } else {
           this.adminConnectorsExtensionsSettings.forEach(connector => (connector.enabled = false));
