@@ -106,6 +106,16 @@
   </component>
 
   <component>
+    <key>io.meeds.gamification.service.ConnectorService</key>
+    <type>io.meeds.gamification.service.impl.ConnectorServiceImpl</type>
+  </component>
+
+  <component>
+    <key>io.meeds.gamification.service.ConnectorSettingService</key>
+    <type>io.meeds.gamification.service.impl.ConnectorSettingServiceImpl</type>
+  </component>
+
+  <component>
     <key>io.meeds.gamification.service.RuleRegistry</key>
     <type>io.meeds.gamification.service.impl.RuleRegistryImpl</type>
   </component>

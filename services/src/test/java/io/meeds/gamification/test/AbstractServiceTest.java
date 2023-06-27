@@ -26,7 +26,10 @@ import java.util.TimeZone;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
+import io.meeds.gamification.service.*;
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.commons.api.settings.SettingService;
+import org.exoplatform.web.security.codec.CodecInitializer;
 import org.junit.After;
 import org.junit.Before;
 
@@ -74,12 +77,6 @@ import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.rest.BadgeRest;
 import io.meeds.gamification.rest.ProgramRest;
 import io.meeds.gamification.search.RuleIndexingServiceConnector;
-import io.meeds.gamification.service.AnnouncementService;
-import io.meeds.gamification.service.BadgeService;
-import io.meeds.gamification.service.ProgramService;
-import io.meeds.gamification.service.RealizationService;
-import io.meeds.gamification.service.RuleRegistry;
-import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.ProgramStorage;
 import io.meeds.gamification.storage.RealizationStorage;
 import io.meeds.gamification.storage.RuleStorage;
@@ -180,8 +177,16 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected RealizationStorage           realizationsStorage;
 
   protected RuleIndexingServiceConnector ruleIndexingServiceConnector;
+  
+  protected ConnectorService             connectorService;
+  
+  protected ConnectorSettingService      connectorSettingService;
 
   protected SpaceService                 spaceService;
+  
+  protected SettingService               settingService;
+
+  protected CodecInitializer               codecInitializer;
 
   protected IdentityRegistry             identityRegistry;
 
@@ -222,7 +227,11 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     programDAO = ExoContainerContext.getService(ProgramDAO.class);
     realizationsStorage = ExoContainerContext.getService(RealizationStorage.class);
     ruleIndexingServiceConnector = ExoContainerContext.getService(RuleIndexingServiceConnector.class);
+    connectorSettingService = ExoContainerContext.getService(ConnectorSettingService.class);
+    connectorService = ExoContainerContext.getService(ConnectorService.class);
     spaceService = ExoContainerContext.getService(SpaceService.class);
+    settingService = ExoContainerContext.getService(SettingService.class);
+    codecInitializer = ExoContainerContext.getService(CodecInitializer.class);
     identityRegistry = ExoContainerContext.getService(IdentityRegistry.class);
     resourceBinder = ExoContainerContext.getService(ResourceBinder.class);
     RequestHandlerImpl requestHandler = ExoContainerContext.getService(RequestHandlerImpl.class);
