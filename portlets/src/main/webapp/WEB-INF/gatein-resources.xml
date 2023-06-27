@@ -393,6 +393,64 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </module>
   </portlet>
 
+  <portlet>
+    <name>ConnectorsSettings</name>
+    <module>
+      <load-group>gamification-user-connectors</load-group>
+      <script>
+        <minify>false</minify>
+        <path>/js/userConnectorsSettings.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>gamificationCommon</module>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>adminConnectorsSettings</name>
+    <module>
+      <load-group>gamification-admin-connectors</load-group>
+      <script>
+        <minify>false</minify>
+        <path>/js/adminConnectorsSettings.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>gamificationCommon</module>
+      </depends>
+    </module>
+  </portlet>
+
   <module>
     <name>EngagementCenterActivityStreamExtension</name>
     <load-group>ActivityStreamGRP</load-group>
