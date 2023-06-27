@@ -119,6 +119,16 @@
   </component>
 
   <component>
+    <key>io.meeds.gamification.service.ConnectorService</key>
+    <type>io.meeds.gamification.service.impl.ConnectorServiceImpl</type>
+  </component>
+
+  <component>
+    <key>io.meeds.gamification.service.ConnectorSettingService</key>
+    <type>io.meeds.gamification.service.impl.ConnectorSettingServiceImpl</type>
+  </component>
+
+  <component>
     <type>io.meeds.gamification.search.RuleSearchConnector</type>
     <init-params>
       <value-param>
