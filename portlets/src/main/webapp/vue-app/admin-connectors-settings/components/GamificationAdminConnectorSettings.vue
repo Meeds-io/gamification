@@ -18,19 +18,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-app>
     <v-card class="my-3 border-radius" flat>
       <extension-registry-component
-        v-if="displayConnectorSettings"
+        v-if="displayConnectorSettings && connector"
         :params="params"
         :component="connectorExtension" />
       <gamification-admin-connector-detail
-        v-else-if="displayConnectorDetails"
+        v-else-if="displayConnectorDetails && connector"
         class="px-4"
-        :connector-setting="connectorExtension" />
-
+        :connector="connector" />
       <v-list v-else class="pa-0">
         <v-list-item>
           <v-list-item-content class="pa-0">
             <v-list-item-subtitle class="my-3 text-sub-title font-italic">
-              <gamification-admin-connector-card-list :enabled-connectors-extensions="enabledConnectorsExtensions" />
+              <gamification-admin-connector-card-list v-if="connectors.length" :enabled-connectors="connectors" />
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -48,24 +47,17 @@ export default {
       adminConnectorsExtensionsSettings: [],
       displayConnectorDetails: false,
       displayConnectorSettings: false,
-      connectorExtension: null
+      connectorExtension: null,
+      connector: null
     };
   },
   computed: {
-    enabledConnectorsExtensions() {
-      if (!this.adminConnectorsExtensionsSettings) {
-        return [];
-      }
-      return this.adminConnectorsExtensionsSettings.slice().sort((extension1, extension2) => {
-        return extension1.componentOptions.rank - extension2.componentOptions.rank;
-      });
-    },
     params() {
       return {
-        apiKey: this.connectorExtension?.componentOptions?.apiKey,
-        secretKey: this.connectorExtension?.componentOptions?.secretKey,
-        redirectUrl: this.connectorExtension?.componentOptions?.redirectUrl || '',
-        enabled: this.connectorExtension?.componentOptions?.enabled,
+        apiKey: this.connector?.apiKey,
+        secretKey: this.connector?.secretKey,
+        redirectUrl: this.connector?.redirectUrl || '',
+        enabled: this.connector?.enabled,
       };
     },
   },
@@ -95,14 +87,18 @@ export default {
         } else {
           this.adminConnectorsExtensionsSettings.forEach(connector => (connector.enabled = false));
         }
+        this.connectors = this.adminConnectorsExtensionsSettings.map(connectorsSettingsExtension => connectorsSettingsExtension.componentOptions);
       });
     },
     openConnectorDetail(connector) {
-      this.connectorExtension = connector;
+      this.connector = connector;
+      this.connector = Object.assign({}, this.connector);
       this.displayConnectorDetails = true;
     },
     openConnectorSettings(connector) {
-      this.connectorExtension = connector;
+      this.connectorExtension = this.adminConnectorsExtensionsSettings.find(connectorExtension => connectorExtension?.componentOptions?.name === connector.name);
+      this.connector= connector;
+      this.connector = Object.assign({}, this.connector);
       this.displayConnectorSettings = true;
     },
     closeConnectorSettings() {
@@ -111,12 +107,22 @@ export default {
     saveConnectorSetting(event) {
       if (event?.detail) {
         const setting = event?.detail;
-        this.$adminConnectorService.saveConnectorSettings(setting?.name, setting?.apiKey, setting?.secretKey, setting?.redirectUrl, setting?.enabled);
+        this.$adminConnectorService.saveConnectorSettings(setting?.name, setting?.apiKey, setting?.secretKey, setting?.redirectUrl, setting?.enabled).then(() => {
+          this.connector = Object.assign(this.connector, setting);
+        });
       }
     },
     deleteConnectorSetting(event) {
       if (event?.detail) {
-        this.$adminConnectorService.deleteConnectorSetting(event?.detail);
+        return this.$adminConnectorService.deleteConnectorSetting(event?.detail).then(() => {
+          const setting = {
+            apiKey: '',
+            secretKey: '',
+            redirectUrl: '',
+            enabled: false
+          };
+          this.connector = Object.assign(this.connector, setting);
+        });
       }
     },
   }
