@@ -17,18 +17,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-card flat>
     <div class="text-header-title py-2 py-sm-5 d-flex align-center">{{ $t('gamification.connectors.label.connectors') }}</div>
-    <div class="text-font-size font-weight-bold pb-2 pb-sm-5 d-flex align-center">{{ $t('gamification.connectors.label.valueContributions') }}</div>
+    <v-card-text class="text-font-size font-weight-bold pb-2 pb-sm-5 px-0 d-flex align-center">{{ $t('gamification.connectors.label.valueContributions') }}</v-card-text>
     <v-card-text class="pa-0">
       <v-item-group>
         <v-container class="pa-0">
-          <div v-if="enabledConnectorsExtensions && enabledConnectorsExtensions.length" class="ma-0 d-flex flex-wrap">
+          <div v-if="enabledConnectors && enabledConnectors.length" class="ma-0 d-flex flex-wrap">
             <div
-              v-for="connectorExtension in enabledConnectorsExtensions"
-              :key="connectorExtension.id"
+              v-for="enabledConnector in enabledConnectors"
+              :key="enabledConnector.id"
               class="pa-0 me-2 my-2 d-flex flex-column col-4">
               <gamification-admin-connector-card
                 class="full-height"
-                :connector-extension="connectorExtension" />
+                :connector="enabledConnector" />
             </div>
           </div>
         </v-container>
@@ -40,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
   props: {
-    enabledConnectorsExtensions: {
+    enabledConnectors: {
       type: Array,
       default: () => [],
     },

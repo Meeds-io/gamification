@@ -94,7 +94,7 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
     if (settingsValueString == null) {
       remoteConnectorSettings = new RemoteConnectorSettings();
       remoteConnectorSettings.setName(connectorName);
-      remoteConnectorSettings.setEnabled(false);
+      remoteConnectorSettings.setEnabled(true);
     } else {
       remoteConnectorSettings = Utils.fromJsonString(settingsValueString, RemoteConnectorSettings.class);
       String decryptedApiKey;
