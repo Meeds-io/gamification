@@ -17,32 +17,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-app>
     <v-card
-      class="pa-3 full-height"
-      outlined>
-      <div class="d-flex flex-row">
+      id="gamificationConnectorCard"
+      class="card engagement-center-card d-flex flex-column overflow-hidden rounded"
+      height="230"
+      max-height="230"
+      outlined
+      hover
+      @click="openDetail">
+      <v-card-text class="d-flex flex-row">
         <div class="d-flex align-center">
           <v-img
             :src="logo"
             :alt="name"
-            height="30"
-            width="30" />
+            height="40"
+            width="40" />
           <v-list class="ms-3">
             <v-list-item-title class="font-weight-bold">
               {{ title }}
             </v-list-item-title>
           </v-list>
         </div>
-        <v-spacer />
-        <v-btn
-          small
-          icon
-          @click="openDetail">
-          <v-icon size="20" class="text-sub-title">
-            {{ $vuetify.rtl && 'fa-caret-left' || 'fas fa-arrow-right' }}
-          </v-icon>
-        </v-btn>
-      </div>
-      <div class="mt-4 text-truncate-4">{{ description }}</div>
+      </v-card-text>
+      <v-card-text class="py-0 text-truncate-3">{{ description }}</v-card-text>
     </v-card>
   </v-app>
 </template>
@@ -50,28 +46,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 export default {
   props: {
-    connectorExtension: {
+    connector: {
       type: Object,
       default: null
     },
   },
   computed: {
     logo() {
-      return this.connectorExtension?.componentOptions.logo || '';
+      return this.connector?.logo || '';
     },
     name() {
-      return this.connectorExtension?.componentOptions.name || '';
+      return this.connector?.name || '';
     },
     title() {
-      return this.connectorExtension?.componentOptions.title || '';
+      return this.connector?.title || '';
     },
     description() {
-      return this.$t(`${this.connectorExtension?.componentOptions.description}`);
+      return this.$t(`${this.connector?.description}`);
     },
   },
   methods: {
     openDetail() {
-      this.$root.$emit('open-connector-detail', this.connectorExtension);
+      this.$root.$emit('open-connector-detail', this.connector);
     },
   }
 };
