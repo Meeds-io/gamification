@@ -35,53 +35,56 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <span>{{ $t('gamification.connectors.details.BackToList') }}</span>
       </v-tooltip>
     </div>
-
-    <div class="d-flex flex-row">
+    <div class="d-flex flex-row align-center">
       <div class="d-flex align-center">
         <v-list-item-title class="font-weight-bold">
           {{ title }}
         </v-list-item-title>
       </div>
       <v-spacer />
+      <div :class="connectorActivated && 'primary--text'" class="text-sub-title me-3">{{ connectorStatusLabel }}</div>
       <v-btn
         small
         class="btn btn-primary ms-2"
         @click="openConnectorSettings">
-        {{ $t('gamification.connectors.label.connect') }}
+        {{ $t('gamification.connectors.label.configure') }}
       </v-btn>
     </div>
-    <div class="my-4">{{ description }}</div>
+    <v-card-text class="px-0 text-sub-title">{{ description }}</v-card-text>
   </v-app>
 </template>
 <script>
 
 export default {
   props: {
-    connectorSetting: {
+    connector: {
       type: Object,
       default: null
     },
   },
   computed: {
     title() {
-      return this.connectorSetting?.componentOptions?.title || '';
+      return this.connector?.title || '';
+    },
+    name() {
+      return this.connector?.name || '';
     },
     description() {
-      return this.$t(`${this.connectorSetting?.componentOptions.description}`);
+      return this.$t(`${this.connector.description}`);
     },
+    connectorActivated() {
+      return this.connector?.apiKey && this.connector?.secretKey && this.connector?.redirectUrl && this.connector?.enabled;
+    },
+    connectorStatusLabel() {
+      return this.connectorActivated ? this.$t('gamification.connectors.label.activated') : this.$t('gamification.connectors.label.deactivated');
+    }
   },
   methods: {
-    saveConnectorSetting(event) {
-      if (event?.detail) {
-        const setting = event?.detail;
-        this.$adminConnectorService.saveConnectorSettings(this.name, setting?.apiKey, setting?.secretKey, setting?.redirectUrl);
-      }
-    },
     backToProgramList() {
       this.$root.$emit('close-connector-detail');
     },
     openConnectorSettings() {
-      this.$root.$emit('open-connector-settings', this.connectorSetting);
+      this.$root.$emit('open-connector-settings', this.connector);
     },
   }
 };
