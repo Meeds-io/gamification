@@ -25,6 +25,7 @@ export default {
   data() {
     return {
       loading: false,
+      username: eXo.env.portal.userName,
     };
   },
   created() {
@@ -40,7 +41,7 @@ export default {
       // Get list of connectors from extensionRegistry
       const connectors = extensionRegistry.loadExtensions('gamification', 'connectors') || [];
       // Check connectors status from store
-      this.$userConnectorService.getUsersConnectorsSetting().then(connectorsList => {
+      this.$userConnectorService.getUsersConnectorsSetting(this.username).then(connectorsList => {
         if (connectorsList?.length) {
           connectors.forEach(connector => {
             const connectorObj = connectorsList.find(connectorSettings => connectorSettings.name === connector.name);
