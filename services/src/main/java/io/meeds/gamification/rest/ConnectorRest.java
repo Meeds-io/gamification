@@ -62,10 +62,9 @@ public class ConnectorRest implements ResourceContainer {
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response getUserRemoteConnectors() {
-    String currentUsername = RestUtils.getCurrentUserIdentity().getRemoteId();
+  public Response getUserRemoteConnectors(@Parameter(description = "Username", required = true) @QueryParam("username") String username) {
     try {
-      List<RemoteConnector> connectorList = connectorService.getUserRemoteConnectors(currentUsername);
+      List<RemoteConnector> connectorList = connectorService.getUserRemoteConnectors(username);
       return Response.ok(connectorList).build();
     } catch (Exception e) {
       return Response.serverError().entity(e.getMessage()).build();

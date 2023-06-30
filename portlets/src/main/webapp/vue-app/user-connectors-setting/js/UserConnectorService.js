@@ -15,8 +15,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-export function getUsersConnectorsSetting() {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/user/connectors`, {
+export function getUsersConnectorsSetting(username) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/user/connectors?username=${username}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
