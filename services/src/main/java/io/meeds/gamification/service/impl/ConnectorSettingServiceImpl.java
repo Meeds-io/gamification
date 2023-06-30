@@ -119,9 +119,7 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
     }
     Map<String, ConnectorPlugin> connectorsPlugins = connectorService.getConnectorPlugins();
     List<RemoteConnectorSettings> connectorSettingList = new ArrayList<>();
-    connectorsPlugins.forEach((s, connectorPlugin) -> {
-      connectorSettingList.add(getConnectorSettings(connectorPlugin.getConnectorName()));
-    });
+    connectorsPlugins.forEach((s, connectorPlugin) -> connectorSettingList.add(getConnectorSettings(connectorPlugin.getConnectorName())));
     return connectorSettingList;
   }
 
