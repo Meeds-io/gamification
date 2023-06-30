@@ -41,6 +41,7 @@ module.exports = {
     topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',
     challengesOverview: './src/main/webapp/vue-app/challengesOverview/main.js',
     programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
+    gamifiedProfiles: './src/main/webapp/vue-app/gamifiedProfiles/main.js',
     userConnectorsSettings: './src/main/webapp/vue-app/user-connectors-setting/main.js',
     adminConnectorsSettings: './src/main/webapp/vue-app/admin-connectors-settings/main.js',
   },
