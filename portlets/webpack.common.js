@@ -44,6 +44,7 @@ module.exports = {
     rulesOverview: './src/main/webapp/vue-app/rulesOverview/main.js',
     rulesOverviewWidget: './src/main/webapp/vue-app/rulesOverviewWidget/main.js',
     programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
+    gamifiedProfiles: './src/main/webapp/vue-app/gamifiedProfiles/main.js',
     userConnectorsSettings: './src/main/webapp/vue-app/user-connectors-setting/main.js',
     adminConnectorsSettings: './src/main/webapp/vue-app/admin-connectors-settings/main.js',
   },

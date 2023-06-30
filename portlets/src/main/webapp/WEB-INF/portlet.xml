@@ -323,6 +323,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <portlet>
+    <portlet-name>gamifiedProfiles</portlet-name>
+    <display-name>Gamified Profiles</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/html/gamifiedProfiles/index.html</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <cache-scope>PUBLIC</cache-scope>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Gamified Profiles</title>
+      <keywords>Gamified Profiles</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
     <portlet-name>ConnectorsSettings</portlet-name>
     <display-name xml:lang="EN">Gamification Connectors Settings</display-name>
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
