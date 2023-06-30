@@ -22,9 +22,8 @@ import io.meeds.gamification.test.AbstractServiceTest;
 import org.exoplatform.services.security.Identity;
 import org.junit.Test;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -105,9 +104,9 @@ public class ConnectorSettingServiceTest extends AbstractServiceTest {
     ConnectorPlugin connectorPlugin2 = mock(ConnectorPlugin.class);
     when(connectorPlugin2.getConnectorName()).thenReturn("connectorName2");
 
-    Map<String, ConnectorPlugin> connectorsPlugins = new HashMap<>();
-    connectorsPlugins.put("connectorName1", connectorPlugin1);
-    connectorsPlugins.put("connectorName2", connectorPlugin2);
+    List<ConnectorPlugin> connectorsPlugins = new ArrayList<>();
+    connectorsPlugins.add(connectorPlugin1);
+    connectorsPlugins.add(connectorPlugin2);
     ConnectorService connectorService = mock(ConnectorService.class);
     when(connectorService.getConnectorPlugins()).thenReturn(connectorsPlugins);
 

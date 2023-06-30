@@ -1,6 +1,8 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
+ *
  * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,14 +17,8 @@
  */
 package io.meeds.gamification.plugin;
 
-import io.meeds.gamification.service.ConnectorService;
-import org.exoplatform.commons.ObjectAlreadyExistsException;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.component.BaseComponentPlugin;
-import org.exoplatform.services.security.Identity;
-
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+import io.meeds.gamification.service.ConnectorService;
 
 /**
  * A plugin that will be used by {@link ConnectorService} to add and remove user
@@ -31,29 +27,27 @@ import java.util.concurrent.ExecutionException;
 public abstract class ConnectorPlugin extends BaseComponentPlugin {
 
   /**
-   * Connects a user to their connector account
+   * Validates a user Token with the Gamification Connector provider
    *
    * @param accessToken connector access token
-   * @param identity the user identity
-   * @return the connector identifier {@link String}
+   * @return the user identifier corresponding to Access Token generated on Remote
+   *         Connector
    */
-  public abstract String connect(String accessToken,
-                                 Identity identity) throws IOException, ExecutionException, ObjectAlreadyExistsException;
+  public String validateToken(String accessToken) {
+    return validateToken(null, accessToken);
+  }
 
   /**
-   * Disconnect a user from their connector account
+   * Validates a user Token with the Gamification Connector provider
    *
-   * @param username the user name
+   * @param accessToken connector access token
+   * @param connectorUserId User identifier in connector
+   * @return the user identifier corresponding to Access Token generated on Remote
+   *         Connector
    */
-  public abstract void disconnect(String username) throws ObjectNotFoundException;
-
-  /**
-   * Gets user connector account identifier
-   *
-   * @param username the user name
-   * @return the connector identifier {@link String}
-   */
-  public abstract String getIdentifier(String username);
+  public String validateToken(String connectorUserId, String accessToken) {
+    return validateToken(accessToken);
+  }
 
   /**
    * Gets connector name

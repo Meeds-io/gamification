@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
  *
  * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
@@ -25,14 +25,11 @@ import io.meeds.gamification.model.RemoteConnectorSettings;
 import io.meeds.gamification.plugin.ConnectorPlugin;
 import io.meeds.gamification.test.AbstractServiceTest;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.MembershipEntry;
 
-import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class ConnectorServiceTest extends AbstractServiceTest {
 
@@ -58,40 +55,35 @@ public class ConnectorServiceTest extends AbstractServiceTest {
 
     connectorSettingService.saveConnectorSettings(remoteConnectorSettings, adminAclIdentity);
 
-    assertThrows(IllegalArgumentException.class, () -> connectorService.getUserRemoteConnectors(null));
+    assertThrows(IllegalArgumentException.class, () -> connectorService.getConnectors(null));
 
     setConnectorPlugin("connectorName", "connectorIdentifier");
     setConnectorPlugin("connectorName1", "connectorIdentifier2");
-    List<RemoteConnector> remoteConnectorList = connectorService.getUserRemoteConnectors("root");
+    Collection<RemoteConnector> remoteConnectorList = connectorService.getConnectors("root1");
 
     assertEquals(2, remoteConnectorList.size());
 
     removeConnectorPlugin("connectorName1");
-    remoteConnectorList = connectorService.getUserRemoteConnectors("root");
+    remoteConnectorList = connectorService.getConnectors("root1");
 
     assertEquals(1, remoteConnectorList.size());
-
   }
 
-  public void testConnectorConnection() throws IOException,
-                                        ExecutionException,
-                                        ObjectAlreadyExistsException,
-                                        ObjectNotFoundException {
+  public void testConnectorConnection() throws ObjectAlreadyExistsException {
     ConnectorPlugin connectorPlugin = mock(ConnectorPlugin.class);
     when(connectorPlugin.getConnectorName()).thenReturn("connectorName");
     when(connectorPlugin.getName()).thenReturn("connectorName");
+    String connectorUserId = "root1RemoteId";
+    when(connectorPlugin.validateToken(connectorUserId, "testToken")).thenReturn(connectorUserId);
     connectorService.addPlugin(connectorPlugin);
     HashSet<MembershipEntry> memberships = new HashSet<MembershipEntry>();
     memberships.add(new MembershipEntry("/platform/users", "member"));
-    Identity john = new Identity("john", memberships);
-    identityRegistry.register(john);
+    Identity root1 = new Identity("root1", memberships);
+    identityRegistry.register(root1);
 
-    connectorService.connect("connectorName", "testToken", john);
-    verify(connectorPlugin, times(1)).connect("testToken", john);
-
-    connectorService.disconnect("connectorName", "john");
-    verify(connectorPlugin, times(1)).disconnect("john");
-
+    String result = connectorService.connect("connectorName", connectorUserId, "testToken", root1);
+    assertEquals(connectorUserId, result);
+    verify(connectorPlugin, times(1)).validateToken(connectorUserId, "testToken");
   }
 
   private void removeConnectorPlugin(String connectorName) {
@@ -102,18 +94,8 @@ public class ConnectorServiceTest extends AbstractServiceTest {
     removeConnectorPlugin(connectorName);
     ConnectorPlugin connectorPlugin = new ConnectorPlugin() {
       @Override
-      public String connect(String accessToken, Identity identity) {
+      public String validateToken(String accessToken) {
         return null;
-      }
-
-      @Override
-      public void disconnect(String username) {
-
-      }
-
-      @Override
-      public String getIdentifier(String username) {
-        return connectorIdentifier;
       }
 
       @Override

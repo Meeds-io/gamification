@@ -1,6 +1,8 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
+ *
  * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -32,12 +34,10 @@ public class RemoteConnector implements Serializable {
 
   protected String  redirectUrl;
 
-  protected String  identifier;
-
   protected boolean enabled;
 
   @Override
   public RemoteConnector clone() { // NOSONAR
-    return new RemoteConnector(name, apiKey, redirectUrl, identifier, enabled);
+    return new RemoteConnector(name, apiKey, redirectUrl, enabled);
   }
 }

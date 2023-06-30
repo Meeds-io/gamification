@@ -43,8 +43,9 @@ module.exports = {
     rulesOverview: './src/main/webapp/vue-app/rulesOverview/main.js',
     rulesOverviewWidget: './src/main/webapp/vue-app/rulesOverviewWidget/main.js',
     programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
-    userConnectorsSettings: './src/main/webapp/vue-app/user-connectors-setting/main.js',
-    adminConnectorsSettings: './src/main/webapp/vue-app/admin-connectors-settings/main.js',
+    connectorUserProfile: './src/main/webapp/vue-app/connector-user-profile/main.js',
+    connectorUserSettings: './src/main/webapp/vue-app/connector-user-settings/main.js',
+    connectorAdminSettings: './src/main/webapp/vue-app/connector-admin-settings/main.js',
   },
   plugins: [
     new ESLintPlugin({

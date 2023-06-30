@@ -26,6 +26,7 @@ import java.util.TimeZone;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
+import io.meeds.gamification.dao.*;
 import io.meeds.gamification.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.api.settings.SettingService;
@@ -63,10 +64,6 @@ import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.RecurrenceType;
-import io.meeds.gamification.dao.BadgeDAO;
-import io.meeds.gamification.dao.ProgramDAO;
-import io.meeds.gamification.dao.RealizationDAO;
-import io.meeds.gamification.dao.RuleDAO;
 import io.meeds.gamification.entity.BadgeEntity;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RealizationEntity;
@@ -176,6 +173,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected RuleDAO                      ruleDAO;
 
   protected RealizationDAO               realizationDAO;
+  
+  protected ConnectorAccountDAO          connectorAccountDAO;
 
   protected RealizationStorage           realizationsStorage;
 
@@ -209,6 +208,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
     ruleDAO = ExoContainerContext.getService(RuleDAO.class);
     realizationDAO = ExoContainerContext.getService(RealizationDAO.class);
+    connectorAccountDAO = ExoContainerContext.getService(ConnectorAccountDAO.class);
     identityManager = ExoContainerContext.getService(IdentityManager.class);
     domainStorage = ExoContainerContext.getService(ProgramStorage.class);
     fileService = ExoContainerContext.getService(FileService.class);
@@ -263,6 +263,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       badgeStorage.deleteAll();
       ruleDAO.deleteAll();
       programDAO.deleteAll();
+      connectorAccountDAO.deleteAll();
       domainStorage.clearCache();
       ruleStorage.clearCache();
       end();

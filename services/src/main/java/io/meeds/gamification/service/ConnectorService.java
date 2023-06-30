@@ -1,6 +1,8 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
+ *
  * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,16 +17,13 @@
  */
 package io.meeds.gamification.service;
 
-import io.meeds.gamification.model.RemoteConnector;
-import io.meeds.gamification.plugin.ConnectorPlugin;
+import java.util.Collection;
+
 import org.exoplatform.commons.ObjectAlreadyExistsException;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import io.meeds.gamification.model.RemoteConnector;
+import io.meeds.gamification.plugin.ConnectorPlugin;
 
 public interface ConnectorService {
 
@@ -43,31 +42,50 @@ public interface ConnectorService {
   void removePlugin(String name);
 
   /**
-   * Retrieves the list of Connector Plugins
+   * @return {@link Collection} of configured {@link ConnectorPlugin}
    */
-  Map<String, ConnectorPlugin> getConnectorPlugins();
+  Collection<ConnectorPlugin> getConnectorPlugins();
 
   /**
-   * @return {@link List} of user remote connectors
+   * @param  username the user name
+   * @return          {@link Collection} of user remote connectors
    */
-  List<RemoteConnector> getUserRemoteConnectors(String username);
+  Collection<RemoteConnector> getConnectors(String username);
 
   /**
    * Connects a user to their connector account
    *
-   * @param connectorName connector name
-   * @param accessToken Access token
-   * @param identity the user identity
-   * @return the connector identifier {@link String}
+   * @param  connectorName                connector name
+   * @param  accessToken                  Access token
+   * @param  connectorUserId              User identifier in connector
+   * @param  identity                     the user identity
+   * @return                              the connector identifier
+   *                                      {@link String}
+   * @throws ObjectAlreadyExistsException when the remote identifier is already
+   *                                        associated to current or a different
+   *                                        user
    */
-  String connect(String connectorName, String accessToken, Identity identity) throws IOException,
-                                                                              ExecutionException,
-                                                                              ObjectAlreadyExistsException;
+  String connect(String connectorName, String connectorUserId, String accessToken, Identity identity) throws ObjectAlreadyExistsException;
 
   /**
    * Disconnect a user from their connector account
    *
-   * @param username the user name
+   * @param connectorName connector name
+   * @param username      the user name
    */
-  void disconnect(String connectorName, String username) throws ObjectNotFoundException;
+  void disconnect(String connectorName, String username);
+
+  /**
+   * @param  connectorName connector name
+   * @param  username      associated user name
+   * @return               the connector remote id of a user
+   */
+  String getConnectorRemoteId(String connectorName, String username);
+
+  /**
+   * @param  connectorName     connector name
+   * @param  connectorRemoteId connector remote Id
+   * @return                   the associated user name to connector remote id
+   */
+  String getAssociatedUsername(String connectorName, String connectorRemoteId);
 }
