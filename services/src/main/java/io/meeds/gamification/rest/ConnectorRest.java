@@ -33,7 +33,6 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.social.rest.api.RestUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -62,10 +61,9 @@ public class ConnectorRest implements ResourceContainer {
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response getUserRemoteConnectors() {
-    String currentUsername = RestUtils.getCurrentUserIdentity().getRemoteId();
+  public Response getUserRemoteConnectors(@Parameter(description = "Username", required = true) @QueryParam("username") String username) {
     try {
-      List<RemoteConnector> connectorList = connectorService.getUserRemoteConnectors(currentUsername);
+      List<RemoteConnector> connectorList = connectorService.getUserRemoteConnectors(username);
       return Response.ok(connectorList).build();
     } catch (Exception e) {
       return Response.serverError().entity(e.getMessage()).build();
