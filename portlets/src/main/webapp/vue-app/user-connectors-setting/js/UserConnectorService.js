@@ -38,7 +38,11 @@ export function connect(connectorName, accessToken) {
     body: `accessToken=${accessToken}`,
   }).then((resp) => {
     if (!resp?.ok) {
-      throw new Error('Error while validating access token');
+      if (resp.status === 409) {
+        throw new Error('AccountAlreadyUsed');
+      } else {
+        throw new Error('Error while validating access token');
+      }
     }
   });
 }
