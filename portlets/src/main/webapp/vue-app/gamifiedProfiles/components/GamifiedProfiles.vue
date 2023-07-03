@@ -51,7 +51,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           v-for="connector in enabledConnectedConnectors"
           :key="connector.name"
           :connector="connector"
-          class="mb-2 ps-0" />
+          class="mb-2 ps-0 full-width" />
       </v-list-item>
     </v-list>
   </v-app>
