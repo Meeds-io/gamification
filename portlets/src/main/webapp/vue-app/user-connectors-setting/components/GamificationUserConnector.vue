@@ -75,7 +75,15 @@ export default {
       const url = new URL(callbackUrl);
       const searchParams = new URLSearchParams(url.search);
       const accessToken = searchParams.get('code');
-      return this.$userConnectorService.connect(connector.name, accessToken)
+      return this.$userConnectorService.connect(connector.name, accessToken).catch(e => {
+        if (e.message === 'AccountAlreadyUsed') {
+          document.dispatchEvent(new CustomEvent('notification-alert', {detail: {
+            message: this.$t('gamification.connectors.error.alreadyUsed',  {
+              0: connector.name,
+            }),
+            type: 'error',
+          }}));
+        }})
         .then(() => {
           document.dispatchEvent(new CustomEvent('gamification-connectors-refresh'));
         });
