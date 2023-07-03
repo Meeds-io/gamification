@@ -16,18 +16,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <div class="d-flex">
-    <v-list-item>
-      <v-list-item-avatar class="ms-0 my-0">
-        <v-img
-          :src="logo"
-          height="30"
-          width="30" />
-      </v-list-item-avatar>
-      <a
-        :href="identifierLink"
-        class="subtitle-1 text-color my-0"
-        target="_blank">{{ identifier }} </a>
-    </v-list-item>
+    <v-list class="full-width">
+      <v-list-item @click="navigateToProfile">
+        <v-list-item-avatar class="ms-0 my-0">
+          <v-img
+            :src="logo"
+            height="30"
+            width="30" />
+        </v-list-item-avatar>
+        <span
+          class="subtitle-1 text-color my-0">{{ identifier }} </span>
+      </v-list-item>
+    </v-list>
   </div>
 </template>
 
@@ -50,5 +50,10 @@ export default {
       return this.connector?.logo || '';
     },
   },
+  methods: {
+    navigateToProfile() {
+      window.open(this.identifierLink, '_blank');
+    }
+  }
 };
 </script>
