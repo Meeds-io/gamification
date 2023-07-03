@@ -33,6 +33,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <import>war:/conf/gamification/bundle/bundle-configuration.xml</import>
     <import>war:/conf/applicationRegistry/application-registry-configuration.xml</import>
 
+    <import>war:/conf/gamification/upgrade/upgrade-configuration.xml</import>
+
     <import>war:/conf/challenges/dynamic-container-configuration.xml</import>
     <import profiles="app-center">war:/conf/challenges/app-center-configuration.xml</import>
 
