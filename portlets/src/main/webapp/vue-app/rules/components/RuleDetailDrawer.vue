@@ -34,7 +34,7 @@
         {{ $t('rule.detail.letsSeeWhatToDo') }}
       </span>
     </template>
-    <template v-if="canEdit" #titleIcons>
+    <template #titleIcons>
       <engagement-center-rule-menu
         :rule="rule" />
     </template>
@@ -200,9 +200,6 @@ export default {
         || !this.isValidWhitelist
         || this.isDisabled
         || false;
-    },
-    canEdit() {
-      return this.rule?.userInfo?.canEdit;
     },
     hasRecurrence() {
       return this.rule?.recurrence && this.rule?.recurrence !== 'NONE' || false;
