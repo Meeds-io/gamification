@@ -49,7 +49,7 @@ const gamificationRuleActivityOptions = Object.assign(defaultActivityOptions, {
 });
 
 const gamificationAnnouncementCommentOptions = Object.assign(defaultActivityOptions, {
-  canDelete: () => false,
+  canDelete: (activity, comment) => comment?.canDelete === 'true' && comment?.identity?.remoteId !== eXo.env.portal.userName,
   getTitle: () => '',
   getCommentExtendedComponent: () => ({
     component: Vue.options.components['activity-comment-announcement'],
@@ -106,7 +106,9 @@ extensionRegistry.registerExtension('activity', 'action', {
     if (activityTypeExtension.canDelete && !activityTypeExtension.canDelete(activity)) {
       return false;
     }
-    return activity.type === 'challenges-announcement' && activity.canDelete === 'true' && (!activityTypeExtension.canDelete || activityTypeExtension.canDelete(activity));
+    return activity.type === 'challenges-announcement'
+      && activity.canDelete === 'true'
+      && activity?.identity?.remoteId === eXo.env.portal.userName;
   },
   click: (activity) => {
     document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
@@ -125,8 +127,10 @@ extensionRegistry.registerExtension('activity', 'comment-action', {
   confirmOkKey: 'engagementCenter.button.yes',
   confirmCancelKey: 'engagementCenter.button.cancel',
   rank: 50,
-  isEnabled: (activity, comment, commentTypeExtension) => {
-    return comment.type === 'gamificationActionAnnouncement' && comment.canDelete === 'true' && (!commentTypeExtension.canEdit || commentTypeExtension.canEdit(comment));
+  isEnabled: (activity, comment) => {
+    return comment.type === 'gamificationActionAnnouncement'
+      && comment.canDelete === 'true'
+      && comment?.identity?.remoteId === eXo.env.portal.userName;
   },
   click: (activity, comment) => {
     document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
