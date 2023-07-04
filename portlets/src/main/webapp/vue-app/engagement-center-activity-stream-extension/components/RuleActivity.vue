@@ -51,9 +51,7 @@
           :class="$vuetify.rtl && 'l-0' || 'r-0'"
           class="rule-icon border-color grey lighten-2 elevation-2 ms-auto mt-auto position-absolute b-0"
           icon>
-          <v-icon :size="ruleIconSize - 20" class="rule-icon primary--text">
-            {{ ruleIcon }}
-          </v-icon>
+          <rule-icon :rule-event="rule.event" :size="ruleIconSize - 20" />
         </v-btn>
       </v-card>
     </v-card>
@@ -127,12 +125,6 @@ export default {
     ruleScore() {
       return this.rule?.score;
     },
-    ruleIcon() {
-      return this.rule?.type === 'AUTOMATIC' && this.extension?.icon || 'fas fa-trophy';
-    },
-    actionValueExtensions() {
-      return this.$root.actionValueExtensions;
-    },
     program() {
       return this.rule?.program;
     },
@@ -141,14 +133,6 @@ export default {
     },
     programStyle() {
       return this.program?.color && `border: 1px solid ${this.rule.program.color} !important;` || '';
-    },
-    extension() {
-      if (this.actionValueExtensions) {
-        return Object.values(this.actionValueExtensions)
-          .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
-          .find(extension => extension.match && extension.match(this.rule.event)) || null;
-      }
-      return null;
     },
   },
   created() {

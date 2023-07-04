@@ -118,12 +118,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    actionValueExtensions: {
-      type: Object,
-      default: function() {
-        return null;
-      },
-    },
   },
   data: () => ({
     menu: false,
@@ -173,6 +167,9 @@ export default {
     },
     eventName() {
       return this.realization?.action?.event;
+    },
+    actionValueExtensions() {
+      return this.$root.actionValueExtensions;
     },
     actionValueExtension() {
       if (this.actionValueExtensions) {
