@@ -17,11 +17,12 @@
  */
 package io.meeds.gamification.plugin;
 
+import static io.meeds.gamification.utils.Utils.INTERNAL_USERS_GROUP;
+
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.ActivityTypePlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
-import org.exoplatform.social.core.space.SpaceUtils;
 
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.service.RuleService;
@@ -39,7 +40,7 @@ public class RuleActivityTypePlugin extends ActivityTypePlugin {
   public boolean isActivityViewable(ExoSocialActivity activity, Identity userAclIdentity) {
     long ruleId = Long.parseLong(activity.getMetadataObjectId());
     RuleDTO rule = ruleService.findRuleById(ruleId);
-    if (rule == null || !rule.isOpen() || !userAclIdentity.isMemberOf(SpaceUtils.PLATFORM_USERS_GROUP)) {
+    if (rule == null || !rule.isOpen() || !userAclIdentity.isMemberOf(INTERNAL_USERS_GROUP)) {
       throw new UnsupportedOperationException();
     } else {
       return true;

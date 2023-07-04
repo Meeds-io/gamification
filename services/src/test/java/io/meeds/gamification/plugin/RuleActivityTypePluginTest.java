@@ -17,6 +17,7 @@
  */
 package io.meeds.gamification.plugin;
 
+import static io.meeds.gamification.utils.Utils.INTERNAL_USERS_GROUP;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_TYPE;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -37,7 +38,6 @@ import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.ActivityManagerImpl;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
-import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.api.ActivityStorage;
 
@@ -120,7 +120,7 @@ public class RuleActivityTypePluginTest {
     assertTrue(manager.isActivityViewable(activity, owner));
     assertFalse(manager.isActivityViewable(activity, viewer));
 
-    when(viewer.isMemberOf(SpaceUtils.PLATFORM_USERS_GROUP)).thenReturn(true);
+    when(viewer.isMemberOf(INTERNAL_USERS_GROUP)).thenReturn(true);
     assertTrue(manager.isActivityViewable(activity, viewer));
   }
 
