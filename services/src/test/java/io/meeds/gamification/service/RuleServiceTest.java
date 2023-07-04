@@ -18,11 +18,13 @@
 package io.meeds.gamification.service;
 
 import static io.meeds.gamification.constant.GamificationConstant.ACTIVITY_OBJECT_TYPE;
+import static io.meeds.gamification.utils.Utils.POST_PUBLISH_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_OBJECT_TYPE;
 import static org.junit.Assert.assertThrows;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -30,6 +32,8 @@ import org.junit.Test;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.ValueParam;
+import org.exoplatform.services.listener.Event;
+import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.space.model.Space;
@@ -269,6 +273,13 @@ public class RuleServiceTest extends AbstractServiceTest {
 
   @Test
   public void testCreateRuleWithPublication() throws Exception {
+    AtomicInteger triggerCount = new AtomicInteger(0);
+    listenerService.addListener(POST_PUBLISH_RULE_EVENT, new Listener<RuleDTO, String>() {
+      @Override
+      public void onEvent(Event<RuleDTO, String> event) throws Exception {
+        triggerCount.incrementAndGet();
+      }
+    });
     ProgramDTO program = newProgram(GAMIFICATION_DOMAIN);
 
     RulePublication rule = new RulePublication();
@@ -299,12 +310,21 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertEquals(message, activity.getTitle());
     assertEquals(RULE_ACTIVITY_OBJECT_TYPE, activity.getMetadataObjectType());
     assertEquals(String.valueOf(createdRule.getId()), activity.getMetadataObjectId());
+    assertEquals(1, triggerCount.get());
   }
 
   @Test
   public void testCreateRuleWithoutPublication() throws Exception {
+    AtomicInteger triggerCount = new AtomicInteger(0);
+    listenerService.addListener(POST_PUBLISH_RULE_EVENT, new Listener<RuleDTO, String>() {
+      @Override
+      public void onEvent(Event<RuleDTO, String> event) throws Exception {
+        triggerCount.incrementAndGet();
+      }
+    });
+
     ProgramDTO program = newProgram(GAMIFICATION_DOMAIN);
-    
+
     RulePublication rule = new RulePublication();
     rule.setScore(Integer.parseInt(TEST__SCORE));
     rule.setTitle(RULE_NAME);
@@ -331,6 +351,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     Space space = spaceService.getSpaceByPrettyName(activity.getActivityStream().getPrettyId());
     assertNotNull(space);
     assertEquals(createdRule.getSpaceId(), Long.parseLong(space.getId()));
+    assertEquals(0, triggerCount.get());
   }
 
   @Test

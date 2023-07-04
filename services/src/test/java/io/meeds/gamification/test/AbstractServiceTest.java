@@ -37,6 +37,7 @@ import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.rest.impl.ApplicationContextImpl;
 import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
@@ -159,6 +160,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RuleService                  ruleService;
 
+  protected ListenerService              listenerService;
+
   protected RuleRegistry                 ruleRegistry;
 
   protected RealizationService           realizationService;
@@ -211,6 +214,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     badgeService = ExoContainerContext.getService(BadgeService.class);
     programService = ExoContainerContext.getService(ProgramService.class);
     ruleService = ExoContainerContext.getService(RuleService.class);
+    listenerService = ExoContainerContext.getService(ListenerService.class);
     ruleRegistry = ExoContainerContext.getService(RuleRegistry.class);
     realizationService = ExoContainerContext.getService(RealizationService.class);
     entityManagerService = ExoContainerContext.getService(EntityManagerService.class);
