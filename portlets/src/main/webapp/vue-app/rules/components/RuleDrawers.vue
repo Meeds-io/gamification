@@ -16,11 +16,9 @@
 <template>
   <div>
     <engagement-center-rule-detail-drawer
-      ref="challengeDetailsDrawer"
-      :action-value-extensions="actionValueExtensions" />
+      ref="challengeDetailsDrawer" />
     <engagement-center-rule-achievements-drawer
-      ref="achievementsDrawer"
-      :action-value-extensions="actionValueExtensions" />
+      ref="achievementsDrawer" />
     <engagement-center-rule-form-drawer
       ref="ruleFormDrawer" />
     <exo-confirm-dialog
