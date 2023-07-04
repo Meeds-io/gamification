@@ -205,9 +205,9 @@
   <external-component-plugins>
     <target-component>org.exoplatform.social.core.manager.ActivityManager</target-component>
     <component-plugin>
-      <name>ActionActivityType</name>
+      <name>RuleActivityTypePlugin</name>
       <set-method>addActivityTypePlugin</set-method>
-      <type>org.exoplatform.social.core.ActivityTypePlugin</type>
+      <type>io.meeds.gamification.plugin.RuleActivityTypePlugin</type>
       <init-params>
         <value-param>
           <name>type</name>
@@ -220,7 +220,7 @@
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>AnnouncementActivityType</name>
+      <name>AnnouncementActivityTypePlugin</name>
       <set-method>addActivityTypePlugin</set-method>
       <type>org.exoplatform.social.core.ActivityTypePlugin</type>
       <init-params>
