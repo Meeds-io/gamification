@@ -74,12 +74,10 @@
         :type="type"
         :status="status"
         :is-administrator="isAdministrator"
-        :action-value-extensions="actionValueExtensions"
         @loading="loading = $event"
         @initialized="setRulesSize" />
       <engagement-center-rules-by-trend
         v-else-if="tabName === 'TRENDS'"
-        :action-value-extensions="actionValueExtensions"
         @loading="loading = $event"
         @initialized="setRulesSize" />
     </v-card>
@@ -99,10 +97,6 @@ export default {
     isProgramManager: {
       type: Boolean,
       default: false,
-    },
-    actionValueExtensions: {
-      type: Object,
-      default: null,
     },
   },
   data: () => ({

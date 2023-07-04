@@ -35,7 +35,7 @@
     <rest.api.doc.version>1.0</rest.api.doc.version>
     <rest.api.doc.description>Gamification addon rest endpoints</rest.api.doc.description>
 
-    <exo.test.coverage.ratio>0.73</exo.test.coverage.ratio>
+    <exo.test.coverage.ratio>0.74</exo.test.coverage.ratio>
   </properties>
 
   <dependencies>
@@ -84,6 +84,11 @@
     <!-- Social -->
     <dependency>
       <groupId>org.exoplatform.social</groupId>
+      <artifactId>social-component-notification</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.social</groupId>
       <artifactId>social-component-service</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -96,6 +101,12 @@
     </dependency>
 
     <!-- Test Dependencies -->
+    <dependency>
+      <groupId>org.exoplatform.social</groupId>
+      <artifactId>social-component-notification</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.exoplatform.social</groupId>
       <artifactId>social-component-service</artifactId>
