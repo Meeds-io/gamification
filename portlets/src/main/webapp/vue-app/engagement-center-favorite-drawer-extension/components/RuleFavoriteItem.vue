@@ -6,9 +6,7 @@
       <v-avatar
         size="28"
         class="rule-icon border-color grey lighten-2">
-        <v-icon size="16" class="rule-icon primary--text">
-          {{ ruleIcon }}
-        </v-icon>
+        <rule-icon :rule-event="ruleEvent" />
       </v-avatar>
     </v-list-item-icon>
     <v-list-item-content>
@@ -38,9 +36,6 @@ export default {
   data: () => ({ 
     isFavorite: true,
     rule: {},
-    extensionApp: 'engagementCenterActions',
-    actionValueExtensionType: 'user-actions',
-    actionValueExtensions: {},
   }),
   computed: {
     ruleId() {
@@ -49,25 +44,14 @@ export default {
     ruleTitle() {
       return this.rule?.title || '';
     },
+    ruleEvent() {
+      return this.rule?.event;
+    },
     ruleUrl() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions/${this.ruleId}`;
     },
-    ruleIcon() {
-      return this.rule?.type === 'AUTOMATIC' ? this.extension?.icon : 'fas fa-trophy';
-    },
-    extension() {
-      if (this.actionValueExtensions) {
-        return Object.values(this.actionValueExtensions)
-          .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
-          .find(extension => extension.match && extension.match(this.rule.event)) || null;
-      }
-      return null;
-    },
   },
   created() {
-    document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
-    this.refreshActionValueExtensions();
-
     this.$ruleService.getRuleById(this.ruleId, {
       lang: eXo.env.portal.language,
     }).then(rule => this.rule = rule);
@@ -87,21 +71,6 @@ export default {
         message,
         type: type || 'success',
       }}));
-    },
-    refreshActionValueExtensions() {
-      const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
-      let changed = false;
-      extensions.forEach(extension => {
-        if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
-          this.actionValueExtensions[extension.type] = extension.options;
-          changed = true;
-        }
-      });
-      // force update of attribute to re-render switch new extension type
-      if (changed) {
-        this.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
-        this.$root.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
-      }
     },
   },
 };

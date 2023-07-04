@@ -43,8 +43,7 @@
         <v-col :cols="expandedView && 6 || 12">
           <engagement-center-rule-header
             :rule="rule"
-            :expanded="expandedView"
-            :action-value-extensions="actionValueExtensions" />
+            :expanded="expandedView" />
           <v-divider v-if="!expandedView" class="mt-3 mb-1" />
         </v-col>
         <v-col v-if="expandedView" cols="6">
@@ -165,12 +164,6 @@
 
 <script>
 export default {
-  props: {
-    actionValueExtensions: {
-      type: Object,
-      default: null,
-    },
-  },
   data: () => ({
     drawer: false,
     expanded: false,

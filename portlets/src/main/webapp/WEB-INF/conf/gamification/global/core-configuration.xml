@@ -125,6 +125,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <description>update announcement activity listener</description>
     </component-plugin>
   </external-component-plugins>
+
   <external-component-plugins>
     <target-component>org.exoplatform.commons.search.index.IndexingOperationProcessor</target-component>
     <component-plugin>
