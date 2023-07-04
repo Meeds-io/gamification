@@ -44,6 +44,7 @@ import io.meeds.gamification.listener.RuleIndexingListenerTest;
 import io.meeds.gamification.notification.plugin.ActionAnnouncedNotificationPluginTest;
 import io.meeds.gamification.notification.plugin.ActionPublishedNotificationPluginTest;
 import io.meeds.gamification.plugin.ProgramTranslationPluginTest;
+import io.meeds.gamification.plugin.RuleActivityTypePluginTest;
 import io.meeds.gamification.plugin.RuleTranslationPluginTest;
 import io.meeds.gamification.rest.TestAnnouncementRest;
 import io.meeds.gamification.rest.TestBadgeRest;
@@ -116,6 +117,7 @@ import io.meeds.gamification.utils.UtilsTest;
     ProgramAutoDisableJobTest.class,
     ActionAnnouncedNotificationPluginTest.class,
     ActionPublishedNotificationPluginTest.class,
+    RuleActivityTypePluginTest.class,
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
