@@ -37,28 +37,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-if="displayProgramDetail"
             :program="program"
             :newly-created="newlyCreated"
-            :is-administrator="isAdministrator"
-            :action-value-extensions="actionValueExtensions" />
+            :is-administrator="isAdministrator" />
         </v-tab-item>
         <v-tab-item>
           <engagement-center-rules
             ref="rules"
-            :is-administrator="isAdministrator"
-            :action-value-extensions="actionValueExtensions" />
+            :is-administrator="isAdministrator" />
         </v-tab-item>
         <v-tab-item>
           <realizations
             v-show="!displayProgramDetail"
             id="Realizations"
             :earner-id="earnerId"
-            :action-value-extensions="actionValueExtensions"
             :is-program-manager="isProgramManager" />
           <engagement-center-program-detail
             v-if="displayProgramDetail"
             :program="program"
             :newly-created="newlyCreated"
             :is-administrator="isAdministrator"
-            :action-value-extensions="actionValueExtensions"
             :tab="2" />
         </v-tab-item>
       </v-tabs-items>
@@ -92,7 +88,6 @@ export default {
     avoidAddToHistory: false,
     extensionApp: 'engagementCenterActions',
     actionValueExtensionType: 'user-actions',
-    actionValueExtensions: {},
     linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions`,
   }),
   computed: {
@@ -131,8 +126,6 @@ export default {
     this.$root.$on('close-program-detail', () => this.displayProgramDetail = false);
     this.initTabs();
     window.addEventListener('popstate', (event) => this.initTabs(event));
-    document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
-    this.refreshActionValueExtensions();
   },
   methods: {
     initTabs(event) {
@@ -194,21 +187,6 @@ export default {
         this.tab = 1;
       } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`) >= 0) {
         this.tab = 2;
-      }
-    },
-    refreshActionValueExtensions() {
-      const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
-      let changed = false;
-      extensions.forEach(extension => {
-        if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
-          this.actionValueExtensions[extension.type] = extension.options;
-          changed = true;
-        }
-      });
-      // force update of attribute to re-render switch new extension type
-      if (changed) {
-        this.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
-        this.$root.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
       }
     },
   }

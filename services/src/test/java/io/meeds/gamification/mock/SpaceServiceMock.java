@@ -48,6 +48,7 @@ public class SpaceServiceMock implements SpaceService {
   public static final String       SPACE_ID           = "1";
 
   public static final List<String> SPACE_MEMBERS      = Arrays.asList(new String[] {
+      "root",
       "root10",
       "root5",
       "root1"

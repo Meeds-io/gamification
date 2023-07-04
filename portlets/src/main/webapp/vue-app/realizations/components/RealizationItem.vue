@@ -209,12 +209,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    actionValueExtensions: {
-      type: Object,
-      default: function() {
-        return null;
-      },
-    },
   },
   data: () => ({
     menu: false,
@@ -300,6 +294,9 @@ export default {
           vueComponent: this.actionValueExtension.vueComponent,
         },
       } || null;
+    },
+    actionValueExtensions() {
+      return this.$root.actionValueExtensions;
     },
     actionValueExtension() {
       if (this.actionValueExtensions) {
