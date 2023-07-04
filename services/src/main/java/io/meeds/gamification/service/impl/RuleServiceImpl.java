@@ -487,7 +487,9 @@ public class RuleServiceImpl implements RuleService {
       if (saveRule) {
         rule = ruleStorage.saveRule(rule);
       }
-      Utils.broadcastEvent(listenerService, POST_PUBLISH_RULE_EVENT, rule, username);
+      if (!activity.isHidden()) {
+        Utils.broadcastEvent(listenerService, POST_PUBLISH_RULE_EVENT, rule, username);
+      }
     } else if (publish) {
       Identity publisherIdentity = getActivityPublisherIdentity(rule, null, username);
       if (publisherIdentity == null) {
