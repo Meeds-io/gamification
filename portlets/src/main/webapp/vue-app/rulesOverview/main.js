@@ -22,7 +22,7 @@ const urls = [
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`,
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`
 ];
-const appId = 'challengesOverview';
+const appId = 'rulesOverview';
 
 export function init() {
   exoi18n.loadLanguageAsync(lang, urls)
@@ -32,12 +32,12 @@ export function init() {
           now: Date.now(),
           actionValueExtensions: {},
         },
-        template: `<gamification-overview-challenges id="${appId}" />`,
+        template: `<gamification-rules-overview id="${appId}" />`,
         created() {
           window.setInterval(() => this.now = Date.now(), 1000);
         },
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
-      }, `#${appId}`, 'Challenges Overview');
+      }, `#${appId}`, 'Rules Overview');
     }).finally(() => Vue.prototype.$utils.includeExtensions('engagementCenterActions'));
 }
