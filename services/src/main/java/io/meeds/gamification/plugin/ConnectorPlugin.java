@@ -15,14 +15,9 @@
  */
 package io.meeds.gamification.plugin;
 
-import io.meeds.gamification.service.ConnectorService;
-import org.exoplatform.commons.ObjectAlreadyExistsException;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.component.BaseComponentPlugin;
-import org.exoplatform.services.security.Identity;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+import io.meeds.gamification.service.ConnectorService;
 
 /**
  * A plugin that will be used by {@link ConnectorService} to add and remove user
@@ -31,29 +26,12 @@ import java.util.concurrent.ExecutionException;
 public abstract class ConnectorPlugin extends BaseComponentPlugin {
 
   /**
-   * Connects a user to their connector account
+   * Validates a user Token with the Gamification Connector provider
    *
-   * @param accessToken connector access token
-   * @param identity the user identity
-   * @return the connector identifier {@link String}
+   * @param  accessToken connector access token
+   * @return             the connector identifier {@link String}
    */
-  public abstract String connect(String accessToken,
-                                 Identity identity) throws IOException, ExecutionException, ObjectAlreadyExistsException;
-
-  /**
-   * Disconnect a user from their connector account
-   *
-   * @param username the user name
-   */
-  public abstract void disconnect(String username) throws ObjectNotFoundException;
-
-  /**
-   * Gets user connector account identifier
-   *
-   * @param username the user name
-   * @return the connector identifier {@link String}
-   */
-  public abstract String getIdentifier(String username);
+  public abstract String validateToken(String accessToken);
 
   /**
    * Gets connector name

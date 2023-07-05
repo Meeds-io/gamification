@@ -17,54 +17,54 @@
  */
 package io.meeds.gamification.service.impl;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
+import org.exoplatform.commons.ObjectAlreadyExistsException;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.meeds.gamification.model.RemoteConnector;
 import io.meeds.gamification.model.RemoteConnectorSettings;
 import io.meeds.gamification.plugin.ConnectorPlugin;
 import io.meeds.gamification.service.ConnectorService;
 import io.meeds.gamification.service.ConnectorSettingService;
-import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.commons.ObjectAlreadyExistsException;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.services.security.Identity;
 
 public class ConnectorServiceImpl implements ConnectorService {
 
   private final Map<String, ConnectorPlugin> connectorPlugins = new HashMap<>();
 
+  private final IdentityManager              identityManager;
+
   private final ConnectorSettingService      connectorSettingService;
 
-  public ConnectorServiceImpl(ConnectorSettingService connectorSettingService) {
+  public ConnectorServiceImpl(IdentityManager identityManager,
+                              ConnectorSettingService connectorSettingService) {
     this.connectorSettingService = connectorSettingService;
+    this.identityManager = identityManager;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  @Override
   public void addPlugin(ConnectorPlugin connectorPlugin) {
     connectorPlugins.put(connectorPlugin.getName(), connectorPlugin);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  @Override
   public void removePlugin(String name) {
     connectorPlugins.remove(name);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  @Override
   public Map<String, ConnectorPlugin> getConnectorPlugins() {
     return connectorPlugins;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  @Override
   public List<RemoteConnector> getUserRemoteConnectors(String username) {
     if (StringUtils.isBlank(username)) {
       throw new IllegalArgumentException("username is mandatory");
@@ -73,11 +73,12 @@ public class ConnectorServiceImpl implements ConnectorService {
 
     connectorPlugins.forEach((s, connectorPlugin) -> {
       RemoteConnector remoteConnector = new RemoteConnector();
-      remoteConnector.setName(connectorPlugin.getConnectorName());
-      remoteConnector.setIdentifier(connectorPlugin.getIdentifier(username));
+      String connectorName = connectorPlugin.getConnectorName();
+      remoteConnector.setName(connectorName);
+      remoteConnector.setIdentifier(getConnectorRemoteId(connectorName, username));
 
       RemoteConnectorSettings remoteConnectorSettings =
-                                                      connectorSettingService.getConnectorSettings(connectorPlugin.getConnectorName());
+                                                      connectorSettingService.getConnectorSettings(connectorName);
       if (remoteConnectorSettings != null) {
         remoteConnector.setApiKey(remoteConnectorSettings.getApiKey());
         remoteConnector.setRedirectUrl(remoteConnectorSettings.getRedirectUrl());
@@ -88,21 +89,43 @@ public class ConnectorServiceImpl implements ConnectorService {
     return connectorList;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
-  public String connect(String connectorName, String accessToken, Identity identity) throws IOException,
-                                                                                     ExecutionException,
-                                                                                     ObjectAlreadyExistsException {
-    return connectorPlugins.get(connectorName).connect(accessToken, identity);
+  public String connect(String connectorName, String accessToken, Identity userAclIdentity) throws ObjectAlreadyExistsException {
+    ConnectorPlugin connectorPlugin = getConnectorPlugin(connectorName);
+    String remoteIdentifier = connectorPlugin.validateToken(accessToken);
+    saveConnectorRemoteId(connectorName, userAclIdentity.getUserId(), remoteIdentifier);
+    return remoteIdentifier;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public void disconnect(String connectorName, String username) throws ObjectNotFoundException {
-    connectorPlugins.get(connectorName).disconnect(username);
+    // TODO Use Common Storage Layer to move from Github Connector in order to
+    // remove RemoteId/UserName/ConnectorName association
+    // Note: Use Long Value of IdentityManager.getOrCreateUserIdentity(username).getId() in database
   }
+
+  @Override
+  public String getConnectorRemoteId(String connectorName, String username) {
+    // TODO Use Common Storage Layer to retrieve ConnectorRemoteId/UserName/ConnectorName association
+    // Note: Use Long Value of IdentityManager.getOrCreateUserIdentity(username).getId() in database
+    return null;
+  }
+
+  @Override
+  public String getAssociatedUsername(String connectorName, String connectorRemoteId) {
+    // TODO Use Common Storage Layer to retrieve ConnectorRemoteId/UserName/ConnectorName association
+    // Note: Use Long Value of IdentityManager.getOrCreateUserIdentity(username).getId() in database
+    return null;
+  }
+
+  private void saveConnectorRemoteId(String connectorName, String username, String remoteIdentifier) {
+    // TODO Use Common Storage Layer to move from Github Connector in order to
+    // store ConnectorRemoteId/UserName/ConnectorName association
+    // Note: Use Long Value of IdentityManager.getOrCreateUserIdentity(username).getId() in database
+  }
+
+  private ConnectorPlugin getConnectorPlugin(String connectorName) {
+    return connectorPlugins.get(connectorName);
+  }
+
 }
