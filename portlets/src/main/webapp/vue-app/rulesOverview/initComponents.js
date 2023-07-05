@@ -14,11 +14,11 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import ChallengesOverview from './components/ChallengesOverview.vue';
+import RulesOverview from './components/RulesOverview.vue';
 import AvatarsList from '../engagement-center/components/common/AvatarsList.vue';
 
 const components = {
-  'gamification-overview-challenges': ChallengesOverview,
+  'gamification-rules-overview': RulesOverview,
   'engagement-center-avatars-list': AvatarsList,
 };
 
