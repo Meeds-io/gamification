@@ -39,7 +39,7 @@ module.exports = {
     myReputation: './src/main/webapp/vue-app/myReputation/main.js',
     myRewards: './src/main/webapp/vue-app/myRewards/main.js',
     topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',
-    challengesOverview: './src/main/webapp/vue-app/challengesOverview/main.js',
+    rulesOverview: './src/main/webapp/vue-app/rulesOverview/main.js',
     programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
     gamifiedProfiles: './src/main/webapp/vue-app/gamifiedProfiles/main.js',
     userConnectorsSettings: './src/main/webapp/vue-app/user-connectors-setting/main.js',
