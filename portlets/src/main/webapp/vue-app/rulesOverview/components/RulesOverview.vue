@@ -35,7 +35,7 @@
     <gamification-overview-widget
       v-else
       :see-all-url="actionsPageURL"
-      :extra-class="'px-0 mt-1'">
+      extra-class="pa-0 justify-space-between">
       <template #title>
         {{ $t('gamification.overview.challengesOverviewTitle') }}
       </template>
@@ -47,37 +47,40 @@
           :click-event-param="item"
           :is-challenge-id-provided="true">
           <template #icon>
-            <v-icon
-              color="yellow darken-2"
-              size="30px"
-              class="ps-4">
-              fas fa-trophy
-            </v-icon>
+            <v-card
+              min-width="35"
+              class="d-flex align-center justify-center ms-4"
+              flat>
+              <rule-icon :rule-event="item.event" size="30" />
+            </v-card>
           </template>
           <template #content>
-            <span>
-              <v-list subheader two-line>
-                <v-list-item two-line>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      {{ item.title }}
-                    </v-list-item-title>
-                    <v-list-item-subtitle v-if="item.realizationsCount === 0">
-                      {{ $t('gamification.overview.label.firstAnnounecement') }}
-                    </v-list-item-subtitle>
-                    <v-list-item-subtitle v-else-if="item.realizationsCount === 1">
-                      1 {{ $t('gamification.overview.label.participant') }}
-                    </v-list-item-subtitle>
-                    <v-list-item-subtitle v-else>
-                      {{ item.realizationsCount }} {{ $t('gamification.overview.label.participants') }}
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-action>
-                    <v-list-item-action-text v-text="item.score + ' ' + $t('challenges.label.points') " class="mt-5" />
-                  </v-list-item-action>
-                </v-list-item>
-              </v-list>
-            </span>
+            <v-list-item>
+              <v-list-item-content class="py-0 my-auto">
+                <v-list-item-title>
+                  {{ item.title }}
+                </v-list-item-title>
+                <v-list-item-subtitle v-if="item.realizationsCount === 0">
+                  {{ $t('gamification.overview.label.firstAnnounecement') }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle v-else-if="item.realizationsCount === 1">
+                  1 {{ $t('gamification.overview.label.participant') }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle v-else>
+                  {{ item.realizationsCount }} {{ $t('gamification.overview.label.participants') }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-list-item-action-text>
+                  <v-chip
+                    color="#F57C00"
+                    class="content-box-sizing white--text"
+                    small>
+                    <span class="subtitle-2">+ {{ item.score }}</span>
+                  </v-chip>
+                </v-list-item-action-text>
+              </v-list-item-action>
+            </v-list-item>
           </template>
         </gamification-overview-widget-row>
       </template>
@@ -89,7 +92,7 @@
 export default {
   data: () => ({
     search: '',
-    pageSize: 3,
+    pageSize: 4,
     realizationsPerRule: 3,
     filter: 'STARTED',
     period: 'WEEK',
@@ -127,7 +130,6 @@ export default {
         term: this.search,
         status: 'ENABLED',
         programStatus: 'ENABLED',
-        type: 'MANUAL',
         dateFilter: this.filter,
         offset: 0,
         limit: this.pageSize,
