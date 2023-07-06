@@ -280,8 +280,8 @@ export default {
     this.$root.$on('rule-detail-drawer-by-id', this.openById);
     this.$root.$on('rule-form-drawer-opened', this.close);
     this.$root.$on('rule-deleted', this.close);
-    document.addEventListener('rule-detail-drawer', event => this.open(event?.detail));
-    document.addEventListener('rule-detail-drawer-by-id', event => this.openById(event?.detail));
+    document.addEventListener('rule-detail-drawer-event', event => this.open(event?.detail?.rule, event?.detail?.openAnnouncement));
+    document.addEventListener('rule-detail-drawer-by-id-event', event => this.openById(event?.detail?.ruleId, event?.detail?.openAnnouncement));
   },
   methods: {
     open(ruleToDisplay, displayAnnouncementForm) {
@@ -328,9 +328,9 @@ export default {
           this.$refs.ruleDetailDrawer.close();
           const message = `${e}`;
           if (message.includes('403') || message.includes('401')) {
-            this.$root.$emit('rule-access-denied', id);
+            document.dispatchEvent(new CustomEvent('rule-access-denied', {detail: id}));
           } else {
-            this.$root.$emit('rule-not-found', id);
+            document.dispatchEvent(new CustomEvent('rule-not-found', {detail: id}));
           }
         })
         .finally(() => this.loading = false);

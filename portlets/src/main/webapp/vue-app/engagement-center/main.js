@@ -48,7 +48,6 @@ export function init(isAdministrator, isProgramManager) {
     Vue.createApp({
       data: {
         now: Date.now(),
-        actionValueExtensions: {},
       },
       computed: {
         isMobile() {
@@ -63,5 +62,5 @@ export function init(isAdministrator, isProgramManager) {
       vuetify,
       i18n
     }, `#${appId}`, 'EngagementCenter');
-  }).finally(() => Vue.prototype.$utils.includeExtensions('engagementCenterActions'));
+  }).finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
 }

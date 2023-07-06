@@ -1,7 +1,8 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2022 Meeds Association
- * contact@meeds.io
+ *
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -14,12 +15,17 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 import RulesOverview from './components/RulesOverview.vue';
-import AvatarsList from '../engagement-center/components/common/AvatarsList.vue';
+import RulesOverviewGenericList from './components/RulesOverviewGenericList.vue';
+import RulesOverviewSpaceList from './components/RulesOverviewSpaceList.vue';
+import RulesOverviewItem from './components/RulesOverviewItem.vue';
 
 const components = {
   'gamification-rules-overview': RulesOverview,
-  'engagement-center-avatars-list': AvatarsList,
+  'gamification-rules-overview-generic-list': RulesOverviewGenericList,
+  'gamification-rules-overview-space-list': RulesOverviewSpaceList,
+  'gamification-rules-overview-item': RulesOverviewItem,
 };
 
 for (const key in components) {
