@@ -174,8 +174,8 @@ export default {
     },
   },
   created() {
-    this.$root.$on('rule-access-denied', this.displayRuleNotFoundMessage);
-    this.$root.$on('rule-not-found', this.displayRuleNotFoundMessage);
+    document.addEventListener('rule-access-denied', this.displayRuleNotFoundMessage);
+    document.addEventListener('rule-not-found', this.displayRuleNotFoundMessage);
     if (window.location.hash) {
       this.tabName = this.extractSelectedTabFromPath();
     }
@@ -187,8 +187,8 @@ export default {
     }
   },
   beforeDestroy() {
-    this.$root.$off('rule-access-denied', this.displayRuleNotFoundMessage);
-    this.$root.$off('rule-not-found', this.displayRuleNotFoundMessage);
+    document.removeEventListener('rule-access-denied', this.displayRuleNotFoundMessage);
+    document.removeEventListener('rule-not-found', this.displayRuleNotFoundMessage);
   },
   methods: {
     reset() {

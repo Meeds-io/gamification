@@ -45,6 +45,8 @@ public class RuleFilter implements Serializable {
 
   private List<Long>        spaceIds;
 
+  private boolean           excludeNoSpace;
+
   private List<Long>        ruleIds;
 
   private DateFilterType    dateFilterType;
@@ -75,6 +77,7 @@ public class RuleFilter implements Serializable {
                           eventName,
                           programId,
                           spaceIds == null ? null : new ArrayList<>(spaceIds),
+                          excludeNoSpace,
                           ruleIds == null ? null : new ArrayList<>(ruleIds),
                           dateFilterType,
                           type,
