@@ -57,7 +57,7 @@ export default {
   methods: {
     openWidgetRow(event) {
       if (event?.detail) {
-        document.dispatchEvent(new CustomEvent('rule-detail-drawer', { detail: event.detail }));
+        this.$root.$emit('rule-detail-drawer', event.detail);
       }
     },
     retrieveRules() {

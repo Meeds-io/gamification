@@ -76,8 +76,11 @@ export default {
     emitOpenRuleFormDrawerInternaly(event) {
       this.$root.$emit('rule-form-drawer-event', event?.detail?.rule, event?.detail?.program);
     },
-    emitOpenRuleDrawerGlobally(data) {
-      document.dispatchEvent(new CustomEvent('rule-detail-drawer-event', {detail: data}));
+    emitOpenRuleDrawerGlobally(rule, openAnnouncement) {
+      document.dispatchEvent(new CustomEvent('rule-detail-drawer-event', {detail: {
+        rule,
+        openAnnouncement,
+      }}));
     },
     emitOpenRuleFormDrawerGlobally(rule, program) {
       document.dispatchEvent(new CustomEvent('rule-form-drawer-event', {detail: {
@@ -85,8 +88,11 @@ export default {
         program,
       }}));
     },
-    emitOpenRuleDrawerByIdGlobally(data) {
-      document.dispatchEvent(new CustomEvent('rule-detail-drawer-by-id-event', {detail: data}));
+    emitOpenRuleDrawerByIdGlobally(ruleId, openAnnouncement) {
+      document.dispatchEvent(new CustomEvent('rule-detail-drawer-by-id-event', {detail: {
+        ruleId,
+        openAnnouncement,
+      }}));
     },
     emitRuleDeletedGlobally(data) {
       document.dispatchEvent(new CustomEvent('rule-deleted-event', {detail: data}));
