@@ -22,7 +22,7 @@
     min-width="auto"
     extra-class="pa-0 justify-space-between">
     <template #title>
-      {{ $t('gamification.overview.challengesOverviewTitle') }}
+      {{ $t('gamification.overview.spaceRulesOverviewTitle') }}
     </template>
     <template #content>
       <template v-if="lockedRulesCount">
@@ -37,7 +37,7 @@
           :rule="rule" />
       </template>
       <template v-if="validRulesCount">
-        <div class="d-flex align-center mx-4">
+        <div v-if="!hasAvailableRulesOnly" class="d-flex align-center mx-4">
           <span class="me-2">{{ $t('gamification.overview.availableActionsTitle') }}</span>
           <v-divider />
         </div>
@@ -139,22 +139,23 @@ export default {
       return this.rules?.length;
     },
     lockedRules() {
-      const lockedRules = [];
-      this.rules
-        .filter(r => this.isRuleValidButLocked(r))
-        .forEach(r => {
-          try {
-            const lockedRuleDependencies = [];
-            this.addLockedRule(lockedRuleDependencies, r);
-            lockedRules.unshift(...lockedRuleDependencies);
-          } catch (e) {
-            // Invalid Rule Tree, avoid adding it in the list of
-            // Locked Rules to unlock
-            // eslint-disable-next-line no-console
-            console.debug(e);
-          }
-        });
-      return lockedRules.slice(0, this.pageSize - 1);
+      const lockedRulesWithDependencies = [];
+      const lockedRules = this.rules.filter(r => this.isRuleValidButLocked(r));
+      lockedRules.sort((r1, r2) => r2.title.localeCompare(r1.title));
+      lockedRules.forEach(r => {
+        try {
+          const lockedRuleDependencies = [];
+          this.addLockedRule(lockedRulesWithDependencies, lockedRuleDependencies, r);
+          lockedRulesWithDependencies.unshift(...lockedRuleDependencies);
+        } catch (e) {
+          // Invalid Rule Tree, avoid adding it in the list of
+          // Locked Rules to unlock
+          // eslint-disable-next-line no-console
+          console.debug(e);
+        }
+      });
+      lockedRulesWithDependencies.sort((r1, r2) => (!r1.prerequisiteRules?.length && -1) || (!r2.prerequisiteRules?.length && 1) || 0);
+      return lockedRulesWithDependencies.slice(0, this.pageSize - 1);
     },
     lockedRulesCount() {
       return this.lockedRules.length;
@@ -186,6 +187,9 @@ export default {
     hasValidRules() {
       return this.lockedRulesCount || this.validRulesCount || this.upcomingRulesCount;
     },
+    hasAvailableRulesOnly() {
+      return this.validRulesCount && !this.lockedRulesCount && !this.upcomingRulesCount;
+    },
     isHiddenWhenEmpty() {
       return this.hideIfEmpty
         || (eXo.env.portal.spaceId
@@ -211,7 +215,7 @@ export default {
       this.$root.$emit('hide-empty-widget');
       this.hideIfEmpty = true;
     },
-    addLockedRule(rules, lockedRule) {
+    addLockedRule(lockedRules, rules, lockedRule) {
       if (rules.find(r => r.id === lockedRule.id)) {
         return;
       }
@@ -223,7 +227,9 @@ export default {
           .map(r => {
             const prerequisiteRule = this.rules.find(rule => r.id === rule.id);
             if (prerequisiteRule) {
-              return prerequisiteRule;
+              if (!lockedRules.find(rule => rule.id === prerequisiteRule.id)) {
+                return prerequisiteRule;
+              }
             } else {
               // The Prerequisite Rule doesn't exist or isn't valid, thus can't be done
               // So, delete the display of Prerequisite Rule
@@ -231,7 +237,7 @@ export default {
             }
           })
           .filter(r => r && lockedRule.userInfo.context.validPrerequisites[r.id] === false)
-          .forEach(r => this.addLockedRule(rules, r));
+          .forEach(r => this.addLockedRule(lockedRules,rules, r));
       }
     },
     isRuleValidButLocked(rule) {
