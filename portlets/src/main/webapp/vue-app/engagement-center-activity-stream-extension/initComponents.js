@@ -21,14 +21,12 @@ import ActivityCommentAnnouncement from './components/ActivityCommentAnnouncemen
 
 import RuleActivity from './components/RuleActivity.vue';
 import RuleActivityAnnounceAction from './components/RuleActivityAnnounceAction.vue';
-import AvatarsList from '../engagement-center/components/common/AvatarsList.vue';
 
 const components = {
   'activity-announcement': ActivityAnnouncement,
   'activity-comment-announcement': ActivityCommentAnnouncement,
   'rule-activity': RuleActivity,
   'rule-activity-announce-action': RuleActivityAnnounceAction,
-  'engagement-center-avatars-list': AvatarsList,
 };
 
 for (const key in components) {

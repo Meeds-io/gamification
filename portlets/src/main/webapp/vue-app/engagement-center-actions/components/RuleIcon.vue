@@ -39,9 +39,8 @@ export default {
   }),
   computed: {
     extension() {
-      const actionValueExtensions = this.$root.actionValueExtensions || this.actionValueExtensions;
-      if (actionValueExtensions) {
-        return Object.values(actionValueExtensions)
+      if (this.actionValueExtensions) {
+        return Object.values(this.actionValueExtensions)
           .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
           .find(extension => extension.match && extension.match(this.ruleEvent)) || null;
       }
@@ -52,26 +51,15 @@ export default {
     },
   },
   created() {
-    if (!this.$root.actionValueExtensions) {
-      document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
-      this.refreshActionValueExtensions();
-    }
+    this.actionValueExtensions = this.$root.actionValueExtensions || {};
+    this.$root.$on('rule-actions-updated', this.refreshExtensions);
+  },
+  beforeDestroy() {
+    this.$root.$off('rule-actions-updated', this.refreshExtensions);
   },
   methods: {
-    refreshActionValueExtensions() {
-      const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
-      let changed = false;
-      extensions.forEach(extension => {
-        if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
-          this.actionValueExtensions[extension.type] = extension.options;
-          changed = true;
-        }
-      });
-      // force update of attribute to re-render switch new extension type
-      if (changed) {
-        this.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
-        this.$root.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
-      }
+    refreshExtensions() {
+      this.actionValueExtensions = this.$root.actionValueExtensions || {};
     },
   },
 };

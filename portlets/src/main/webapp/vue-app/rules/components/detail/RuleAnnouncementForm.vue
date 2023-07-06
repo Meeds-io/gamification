@@ -195,7 +195,7 @@ export default {
             alertLinkText: this.$t('announcement.alert.see'),
             alertLinkTarget: '_self',
           }}));
-          this.$root.$emit('announcement-added', {detail: {
+          this.$root.$emit('announcement-added-event', {detail: {
             announcement: createdAnnouncement,
             challengeId: this.rule.id,
           }});

@@ -156,7 +156,7 @@ export default {
         event.preventDefault();
         event.stopPropagation();
       }
-      this.$root.$emit('rule-delete-confirm', this.rule);
+      document.dispatchEvent(new CustomEvent('rule-delete-confirm', {detail: this.rule}));
     },
   },
 };
