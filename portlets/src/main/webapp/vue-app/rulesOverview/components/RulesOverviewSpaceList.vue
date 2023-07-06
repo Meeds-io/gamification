@@ -56,7 +56,8 @@
           class="py-auto"
           v-for="rule in upcomingRules"
           :key="rule.id"
-          :rule="rule" />
+          :rule="rule"
+          upcoming />
       </template>
     </template>
   </gamification-overview-widget>
@@ -175,9 +176,9 @@ export default {
       if (!this.hasRules) {
         return [];
       }
-      return this.rules
-        .filter(r => this.isRuleValidButUpcoming(r))
-        .slice(0, this.pageSize - this.validRulesCount - this.lockedRulesCount);
+      const upcomingRules = this.rules.filter(this.isRuleValidButUpcoming);
+      upcomingRules.sort((r1, r2) => new Date(r1.startDate).getTime() - new Date(r2.startDate).getTime());
+      return upcomingRules.slice(0, this.pageSize - this.validRulesCount - this.lockedRulesCount);
     },
     upcomingRulesCount() {
       return this.upcomingRules.length;
@@ -244,6 +245,7 @@ export default {
     },
     isRuleValidButUpcoming(rule) {
       return !rule.userInfo.context.validDates // not valid dates yet
+          && rule.startDate
           // Check that all other rule conditions are valid
           && Object.keys(rule.userInfo.context)
             .every(prop => !prop.includes('valid')

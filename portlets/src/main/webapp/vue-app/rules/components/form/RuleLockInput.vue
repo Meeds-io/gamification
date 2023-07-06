@@ -27,7 +27,6 @@
       :program-id="programId"
       :excluded-ids="excludedIds"
       :labels="labels"
-      
       multiple
       exclude-prerequisites />
   </div>
