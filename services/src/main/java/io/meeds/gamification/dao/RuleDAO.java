@@ -306,8 +306,13 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       predicates.add("r.domainEntity.id = :domainId");
     }
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
-      suffixes.add("Audience");
-      predicates.add("(r.domainEntity.audienceId IS NULL OR r.domainEntity.audienceId in (:ids))");
+      if (filter.isExcludeNoSpace()) {
+        suffixes.add("StrictAudience");
+        predicates.add("r.domainEntity.audienceId in (:ids)");
+      } else {
+        suffixes.add("Audience");
+        predicates.add("(r.domainEntity.audienceId IS NULL OR r.domainEntity.audienceId in (:ids))");
+      }
     } else if (!filter.isAllSpaces()) {
       suffixes.add("OpenAudience");
       predicates.add("r.domainEntity.audienceId IS NULL");

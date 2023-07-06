@@ -28,43 +28,27 @@
       :ok-label="$t('programs.details.ok.button')"
       :cancel-label="$t('programs.details.cancel.button')"
       @ok="deleteRule" />
+    <engagement-center-rule-extensions />
   </div>
 </template>
 <script>
 export default {
   data: () => ({
     selectedRule: null,
-    extensionApp: 'engagementCenterActions',
-    actionValueExtensionType: 'user-actions',
-    actionValueExtensions: {},
   }),
   created() {
-    document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
-    this.refreshActionValueExtensions();
-    this.$root.$on('rule-delete-confirm', this.confirmDelete);
+    document.addEventListener('rule-delete-confirm', this.confirmDelete);
+  },
+  beforeDestroy() {
+    document.removeEventListener('rule-delete-confirm', this.confirmDelete);
   },
   methods: {
-    refreshActionValueExtensions() {
-      const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
-      let changed = false;
-      extensions.forEach(extension => {
-        if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
-          this.actionValueExtensions[extension.type] = extension.options;
-          changed = true;
-        }
-      });
-      // force update of attribute to re-render switch new extension type
-      if (changed) {
-        this.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
-        this.$root.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
-      }
-    },
     deleteRule() {
       this.loading = true;
       this.$ruleService.deleteRule(this.selectedRule.id)
         .then(() => {
           this.$root.$emit('alert-message', this.$t('programs.details.ruleDeleteSuccess'), 'success');
-          this.$root.$emit('rule-deleted', this.selectedRule);
+          this.$root.$emit('rule-deleted-event', this.selectedRule);
         })
         .catch(e => {
           let msg = '';
@@ -79,9 +63,12 @@ export default {
         })
         .finally(() => this.loading = false);
     },
-    confirmDelete(rule) {
-      this.selectedRule = rule;
-      this.$refs.deleteRuleConfirmDialog.open();
+    confirmDelete(event) {
+      const rule = event?.detail;
+      if (rule) {
+        this.selectedRule = rule;
+        this.$refs.deleteRuleConfirmDialog.open();
+      }
     },
   },
 };

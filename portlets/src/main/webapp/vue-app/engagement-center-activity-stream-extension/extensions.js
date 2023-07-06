@@ -149,7 +149,7 @@ extensionRegistry.registerComponent('ActivityFooter', 'activity-footer-action', 
 
 extensionRegistry.registerComponent('ActivityStream', 'activity-stream-drawers', {
   id: 'rule-drawers',
-  vueComponent: Vue.options.components['engagement-center-rule-drawers'],
+  vueComponent: Vue.options.components['engagement-center-rule-extensions'],
   rank: 20,
 });
 

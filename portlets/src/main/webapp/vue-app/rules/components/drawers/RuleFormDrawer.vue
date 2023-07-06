@@ -476,7 +476,7 @@ export default {
     },
   },
   created() {
-    this.$root.$on('rule-form-drawer', this.open);
+    this.$root.$on('rule-form-drawer-event', this.open);
   },
   methods: {
     open(rule, program) {
@@ -566,7 +566,7 @@ export default {
           .then(() => this.$translationService.saveTranslations('rule', this.rule.id, 'description', this.ruleDescriptionTranslations))
           .then(() => this.$ruleService.updateRule(this.ruleToSave))
           .then(rule => {
-            this.$root.$emit('rule-updated', rule);
+            this.$root.$emit('rule-updated-event', rule);
             if (this.ruleToSave.publish && rule.activityId) {
               document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
                 alertType: 'success',
@@ -596,7 +596,7 @@ export default {
         this.$ruleService.createRule(this.ruleToSave)
           .then(rule => {
             this.originalRule = rule;
-            this.$root.$emit('rule-created', rule);
+            this.$root.$emit('rule-created-event', rule);
             return this.$translationService.saveTranslations('rule', this.originalRule.id, 'title', this.ruleTitleTranslations);
           })
           .then(() => this.$translationService.saveTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
