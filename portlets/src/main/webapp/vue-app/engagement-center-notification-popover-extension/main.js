@@ -17,5 +17,5 @@
  */
 
 export function init() {
-  Vue.prototype.$utils.includeExtensions('engagementCenterActions');
+  Vue.prototype.$utils?.includeExtensions('engagementCenterActions');
 }
