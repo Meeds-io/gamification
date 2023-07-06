@@ -71,7 +71,6 @@ export default {
         offset: 0,
         limit: this.spaceId && 100 || this.pageSize,
         orderByRealizations: true,
-        period: 'WEEK',
         expand: 'countRealizations',
         lang: eXo.env.portal.language,
         returnSize: true,
