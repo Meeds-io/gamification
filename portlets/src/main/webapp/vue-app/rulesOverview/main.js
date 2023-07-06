@@ -17,7 +17,7 @@
 import './initComponents.js';
 import '../engagement-center/services.js';
 
-const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
+const lang = window?.eXo?.env?.portal?.language || 'en';
 const urls = [
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`,
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`
@@ -30,7 +30,6 @@ export function init() {
       Vue.createApp({
         data: {
           now: Date.now(),
-          actionValueExtensions: {},
         },
         template: `<gamification-rules-overview id="${appId}" />`,
         created() {
@@ -39,5 +38,5 @@ export function init() {
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'Rules Overview');
-    }).finally(() => Vue.prototype.$utils.includeExtensions('engagementCenterActions'));
+    });
 }

@@ -88,11 +88,19 @@ export default {
     },
   },
   created() {
-    this.$root.$on('open-achievements-drawer', this.open);
+    document.addEventListener('open-achievements-drawer', this.openDrawer);
+  },
+  beforeDestroy() {
+    document.removeEventListener('open-achievements-drawer', this.openDrawer);
   },
   methods: {
     getLinkActivity(id) {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${id}`;
+    },
+    openDrawer(event) {
+      if (event?.detail?.rule) {
+        this.open(event.detail.rule, event.detail.backIcon);
+      }
     },
     open(rule, backIcon) {
       this.backIcon = backIcon;

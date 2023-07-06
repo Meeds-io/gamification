@@ -290,7 +290,7 @@ export default {
         {text: this.$t('programs.details.rules.action'), align: 'start', width: '70%'},
         {text: '', align: 'center', width: '15%'},
         {text: this.$t('programs.details.rules.points'), align: 'center', width: '15%', enabled: !this.isMobile},
-        {text: this.$t('gamification.overview.label.participants'), align: 'center', width: '25%', enabled: !this.isMobile}].filter(filter => filter.enabled == null || filter.enabled === true);
+        {text: this.$t('gamification.overview.label.participations'), align: 'center', width: '25%', enabled: !this.isMobile}].filter(filter => filter.enabled == null || filter.enabled === true);
     },
     displayFooter() {
       return this.totalSize > this.options.itemsPerPage;

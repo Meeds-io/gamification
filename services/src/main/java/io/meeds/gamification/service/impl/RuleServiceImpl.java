@@ -367,7 +367,7 @@ public class RuleServiceImpl implements RuleService {
   private RuleFilter computeUserSpaces(RuleFilter ruleFilter, String username) {
     ruleFilter = ruleFilter.clone();
     if (Utils.isRewardingManager(username)) {
-      ruleFilter.setAllSpaces(true);
+      ruleFilter.setAllSpaces(CollectionUtils.isEmpty(ruleFilter.getSpaceIds()));
       return ruleFilter;
     }
     List<Long> memberSpacesIds = spaceService.getMemberSpacesIds(username, 0, -1)

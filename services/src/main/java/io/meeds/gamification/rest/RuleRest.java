@@ -42,6 +42,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.ObjectAlreadyExistsException;
@@ -129,6 +130,9 @@ public class RuleRest implements ResourceContainer {
                            @Parameter(description = "Used to filter rules by program", required = false)
                            @QueryParam("programId")
                            long programId,
+                           @Parameter(description = "Used to filter rules by space audience", required = false)
+                           @QueryParam("spaceId")
+                           List<Long> spaceIds,
                            @Parameter(description = "Rules type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = ALL.", required = false)
                            @QueryParam("type")
                            @DefaultValue("ALL")
@@ -173,7 +177,7 @@ public class RuleRest implements ResourceContainer {
                            @QueryParam("excludedRuleIds")
                            List<Long> excludedRuleIds,
                            @Parameter(description = "Rule period filtering. Possible values: WEEK, MONTH, YEAR, ALL")
-                           @Schema(defaultValue = "WEEK")
+                           @Schema(defaultValue = "ALL")
                            @DefaultValue("ALL")
                            @QueryParam("period")
                            PeriodType periodType,
@@ -206,26 +210,24 @@ public class RuleRest implements ResourceContainer {
     ruleFilter.setOrderByRealizations(orderByRealizations);
     ruleFilter.setExcludedRuleIds(excludedRuleIds);
     ruleFilter.setProgramId(programId);
+    ruleFilter.setSpaceIds(spaceIds);
+    ruleFilter.setExcludeNoSpace(CollectionUtils.isNotEmpty(spaceIds));
     ruleFilter.setSortBy(sortField);
     ruleFilter.setSortDescending(sortDescending);
     List<String> expandFields = getExpandOptions(expand);
 
-    if (periodType == null) {
-      periodType = PeriodType.WEEK;
-    }
-
     try {
       if (!groupByProgram || programId > 0) {
         RuleList ruleList = new RuleList();
-        List<RuleRestEntity> ruleEntities = getUserRulesByProgram(ruleFilter,
-                                                                  periodType,
-                                                                  getLocale(lang),
-                                                                  expandFields,
-                                                                  currentUser,
-                                                                  offset,
-                                                                  limit,
-                                                                  realizationsLimit,
-                                                                  programId > 0);
+        List<RuleRestEntity> ruleEntities = getRules(ruleFilter,
+                                                     periodType,
+                                                     getLocale(lang),
+                                                     expandFields,
+                                                     currentUser,
+                                                     offset,
+                                                     limit,
+                                                     realizationsLimit,
+                                                     programId > 0);
         ruleList.setRules(ruleEntities);
         ruleList.setOffset(offset);
         ruleList.setLimit(limit);
@@ -241,15 +243,15 @@ public class RuleRest implements ResourceContainer {
         for (ProgramDTO program : programs) {
           ProgramWithRulesRestEntity programWithRule = new ProgramWithRulesRestEntity(program);
           ruleFilter.setProgramId(program.getId());
-          List<RuleRestEntity> ruleEntities = getUserRulesByProgram(ruleFilter,
-                                                                    periodType,
-                                                                    getLocale(lang),
-                                                                    expandFields,
-                                                                    currentUser,
-                                                                    offset,
-                                                                    limit,
-                                                                    realizationsLimit,
-                                                                    true);
+          List<RuleRestEntity> ruleEntities = getRules(ruleFilter,
+                                                       periodType,
+                                                       getLocale(lang),
+                                                       expandFields,
+                                                       currentUser,
+                                                       offset,
+                                                       limit,
+                                                       realizationsLimit,
+                                                       true);
           programWithRule.setRules(ruleEntities);
           programWithRule.setOffset(offset);
           programWithRule.setLimit(limit);
@@ -425,15 +427,15 @@ public class RuleRest implements ResourceContainer {
     return expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
   }
 
-  private List<RuleRestEntity> getUserRulesByProgram(RuleFilter filter, // NOSONAR
-                                                     PeriodType periodType,
-                                                     Locale locale,
-                                                     List<String> expandFields,
-                                                     String username,
-                                                     int offset,
-                                                     int limit,
-                                                     int realizationsLimit,
-                                                     boolean noProgram) {
+  private List<RuleRestEntity> getRules(RuleFilter filter, // NOSONAR
+                                        PeriodType periodType,
+                                        Locale locale,
+                                        List<String> expandFields,
+                                        String username,
+                                        int offset,
+                                        int limit,
+                                        int realizationsLimit,
+                                        boolean noProgram) {
     List<RuleDTO> rules = ruleService.getRules(filter, username, offset, limit);
     return rules.stream()
                 .map(rule -> RuleBuilder.toRestEntity(programService,
