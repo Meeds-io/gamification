@@ -63,7 +63,6 @@ import RulesByTrend from './components/rules/layout/RulesByTrend.vue';
 
 import RulesFilterDrawer from './components/rules/filter/RulesFilterDrawer.vue';
 
-import AvatarsList from './components/common/AvatarsList.vue';
 import WelcomeMessage from './components/common/WelcomeMessage.vue';
 
 import RuleActionValue from './components/actionValues/RuleActionValue.vue';
@@ -107,7 +106,6 @@ const components = {
   'engagement-center-rule-card-recurrence': RuleCardRecurrence,
   'engagement-center-rule-card-points': RuleCardPoints,
   'engagement-center-rule-card-remaining-dates': RuleCardRemainingDates,
-  'engagement-center-avatars-list': AvatarsList,
   'engagement-center-welcome-message': WelcomeMessage,
   'rule-action-value': RuleActionValue,
   'challenge-action-value': ChallengeActionValue,
