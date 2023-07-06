@@ -24,41 +24,64 @@
   </div>
   <div v-else-if="notStartedYet || hasEndDate" class="d-flex align-center justify-center">
     <template v-if="!lessThanADay">
-      <v-card
-        min-height="25"
-        min-width="25"
-        class="medium-grey rounded white--text caption px-1px align-center justify-center d-flex"
-        flat>
+      <span v-if="text" class="ms-1">
         {{ $t('rules.card.daysShort', {0: remainingDays}) }}
+      </span>
+      <template v-else>
+        <v-card
+          :height="size"
+          :min-height="size"
+          :min-width="size"
+          class="medium-grey rounded white--text caption px-1px align-center justify-center d-flex"
+          flat>
+          {{ $t('rules.card.daysShort', {0: remainingDays}) }}
+        </v-card>
+        <span class="mx-1">-</span>
+      </template>
+    </template>
+    <span v-if="text" class="ms-1">
+      {{ $t('rules.card.hoursShort', {0: remainingHours}) }}
+    </span>
+    <template v-else>
+      <v-card
+        :class="backgroundColor"
+        :height="size"
+        :min-height="size"
+        :min-width="size"
+        class="rounded white--text caption px-1px align-center justify-center d-flex"
+        flat>
+        {{ $t('rules.card.hoursShort', {0: remainingHours}) }}
       </v-card>
       <span class="mx-1">-</span>
     </template>
+    <span v-if="text" class="ms-1">
+      {{ $t('rules.card.minutesShort', {0: remainingMinutes}) }}
+    </span>
     <v-card
+      v-else
       :class="backgroundColor"
-      min-width="25"
-      min-height="25"
+      :height="size"
+      :min-height="size"
+      :min-width="size"
       class="rounded white--text caption px-1px align-center justify-center d-flex"
-      flat>
-      {{ $t('rules.card.hoursShort', {0: remainingHours}) }}
-    </v-card>
-    <span class="mx-1">-</span>
-    <v-card
-      :class="backgroundColor"
-      class="rounded white--text caption px-1px align-center justify-center d-flex"
-      min-width="25"
-      min-height="25"
       flat>
       {{ $t('rules.card.minutesShort', {0: remainingMinutes}) }}
     </v-card>
     <template v-if="lessThanADay">
-      <span class="mx-1">-</span>
-      <v-card
-        min-width="25"
-        min-height="25"
-        class="error-color-background rounded white--text caption px-1px align-center justify-center d-flex"
-        flat>
-        {{ $t('rules.card.secondsShort', {0: remainingSeconds}) }}
-      </v-card>
+      <span v-if="text" class="ms-1">
+        {{ $t('rules.card.minutesShort', {0: remainingMinutes}) }}
+      </span>
+      <template v-else>
+        <span class="mx-1">-</span>
+        <v-card
+          :height="size"
+          :min-height="size"
+          :min-width="size"
+          class="error-color-background rounded white--text caption px-1px align-center justify-center d-flex"
+          flat>
+          {{ $t('rules.card.secondsShort', {0: remainingSeconds}) }}
+        </v-card>
+      </template>
     </template>
   </div>
 </template>
@@ -68,6 +91,14 @@ export default {
     rule: {
       type: Object,
       default: null,
+    },
+    size: {
+      type: Number,
+      default: () => 25,
+    },
+    text: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({

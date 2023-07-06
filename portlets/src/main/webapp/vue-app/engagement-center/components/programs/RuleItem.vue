@@ -67,7 +67,7 @@
             :max-avatars-to-show="maxAvatarsToShow"
             :avatars-count="realizationsCount"
             :size="27"
-            @open-avatars-drawer="$root.$emit('open-achievements-drawer', rule)" />
+            @open-avatars-drawer="openAchievementsDrawer" />
           <div v-else>
             <span>
               -
@@ -128,6 +128,12 @@ export default {
   methods: {
     openRule(announceRule) {
       this.$root.$emit('rule-detail-drawer', this.rule, announceRule);
+    },
+    openAchievementsDrawer() {
+      document.dispatchEvent(new CustomEvent('open-achievements-drawer', {detail: {
+        rule: this.rule,
+        backIcon: false,
+      }}));
     },
   }
 };
