@@ -183,7 +183,7 @@ export default {
   mounted() {
     this.selectedRuleId = this.extractRuleIdFromPath();
     if (this.selectedRuleId) {
-      this.$root.$emit('rule-detail-drawer-by-id', this.selectedRuleId);
+      window.setTimeout(() => this.$root.$emit('rule-detail-drawer-by-id', this.selectedRuleId), 100);
     }
   },
   beforeDestroy() {
