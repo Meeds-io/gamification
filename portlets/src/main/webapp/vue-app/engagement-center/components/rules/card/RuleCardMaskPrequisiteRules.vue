@@ -79,7 +79,7 @@ export default {
     },
     checkUpdatedEvent(rule) {
       if (rule && this.remainingPrerequisitesCount && this.remainingPrerequisites.find(r => r.id === rule.id)) {
-        this.$root.$emit('rule-updated', this.rule);
+        this.$root.$emit('rule-updated-event', this.rule);
       }
     },
   }

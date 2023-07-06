@@ -48,7 +48,6 @@ export function init(isAdministrator, isProgramManager) {
     Vue.createApp({
       data: {
         now: Date.now(),
-        actionValueExtensions: {},
       },
       computed: {
         isMobile() {
