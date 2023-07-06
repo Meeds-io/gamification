@@ -34,7 +34,12 @@
           <v-list-item-title>
             {{ rule.title }}
           </v-list-item-title>
-          <v-list-item-subtitle v-if="rule.realizationsCount === 0">
+          <v-list-item-subtitle v-if="upcoming" class="d-flex flex-nowrap align-center">
+            <engagement-center-rule-date-info-chip
+              :rule="rule"
+              size="18" />
+          </v-list-item-subtitle>
+          <v-list-item-subtitle v-else-if="rule.realizationsCount === 0">
             {{ $t('gamification.overview.label.firstAnnounecement') }}
           </v-list-item-subtitle>
           <v-list-item-subtitle v-else-if="rule.realizationsCount === 1">
@@ -64,6 +69,10 @@ export default {
     rule: {
       type: Object,
       default: null,
+    },
+    upcoming: {
+      type: Boolean,
+      default: false,
     },
   },
 };
