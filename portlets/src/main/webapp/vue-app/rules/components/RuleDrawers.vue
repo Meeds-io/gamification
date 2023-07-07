@@ -21,6 +21,8 @@
       ref="achievementsDrawer" />
     <engagement-center-rule-form-drawer
       ref="ruleFormDrawer" />
+    <engagement-center-program-owners-drawer
+      ref="ownersDetails" />
     <exo-confirm-dialog
       ref="deleteRuleConfirmDialog"
       :title="$t('programs.details.title.confirmDeleteRule')"

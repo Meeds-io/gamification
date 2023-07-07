@@ -17,12 +17,16 @@
 -->
 <template>
   <v-app v-if="!hidden">
-    <gamification-rules-overview-space-list
+    <gamification-rules-overview-widget
       v-if="spaceId"
       :rules="rules"
       :page-size="pageSize"
       :loading="loading"
-      @hide="hidden = true" />
+      @hide="hidden = true">
+      <template #title>
+        {{ $t('gamification.overview.spaceRulesOverviewTitle') }}
+      </template>
+    </gamification-rules-overview-widget>
     <gamification-rules-overview-generic-list
       v-else
       :rules="rules"
@@ -34,7 +38,6 @@
 <script>
 export default {
   data: () => ({
-    search: '',
     pageSize: 4,
     spaceId: eXo.env.portal.spaceId,
     loading: true,
@@ -42,42 +45,34 @@ export default {
     rules: [],
   }),
   created() {
-    document.addEventListener('widget-row-click-event', this.openWidgetRow);
     this.$root.$on('announcement-added', this.retrieveRules);
     this.$root.$on('rule-updated', this.retrieveRules);
     this.$root.$on('rule-deleted', this.retrieveRules);
     this.retrieveRules();
   },
   beforeDestroy() {
-    document.removeEventListener('widget-row-click-event', this.openWidgetRow);
     this.$root.$off('announcement-added', this.retrieveRules);
     this.$root.$off('rule-updated', this.retrieveRules);
     this.$root.$off('rule-deleted', this.retrieveRules);
   },
   methods: {
-    openWidgetRow(event) {
-      if (event?.detail) {
-        this.$root.$emit('rule-detail-drawer', event.detail);
-      }
-    },
     retrieveRules() {
       this.loading = true;
       return this.$ruleService.getRules({
-        term: this.search,
         status: 'ENABLED',
         programStatus: 'ENABLED',
         dateFilter: this.spaceId && 'ACTIVE' || 'STARTED',
         spaceId: this.spaceId?.length && [this.spaceId] || null,
         offset: 0,
         limit: this.spaceId && 100 || this.pageSize,
-        orderByRealizations: true,
+        orderByRealizations: !this.spaceId,
         expand: 'countRealizations',
         lang: eXo.env.portal.language,
         returnSize: true,
       })
         .then(result => {
           this.rules = result?.rules || [];
-          this.rules = this.rules.sort((challenge1, challenge2) => challenge2.score - challenge1.score);
+          this.rules = this.rules.sort((r1, r2) => r2.score - r1.score);
         }).finally(() => this.loading = false);
     },
   },

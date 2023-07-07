@@ -18,11 +18,12 @@
 <template>
   <gamification-overview-widget
     v-if="hasValidRules"
+    :see-all-url="seeAllUrl"
     height="auto"
     min-width="auto"
     extra-class="pa-0 justify-space-between">
     <template #title>
-      {{ $t('gamification.overview.spaceRulesOverviewTitle') }}
+      <slot name="title"></slot>
     </template>
     <template #content>
       <template v-if="lockedRulesCount">
@@ -120,6 +121,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideEmptyPlaceholder: {
+      type: Boolean,
+      default: false,
+    },
+    seeAllUrl: {
+      type: String,
+      default: () => '',
+    },
   },
   data: () => ({
     actionsPageURL: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
@@ -188,7 +197,7 @@ export default {
       return this.validRulesCount && !this.lockedRulesCount && !this.upcomingRulesCount;
     },
     isHiddenWhenEmpty() {
-      return this.hideIfEmpty
+      return (this.hideIfEmpty && !this.hideEmptyPlaceholder)
         || (eXo.env.portal.spaceId
             && eXo.env.portal.hiddenGamOverviewEmptyWidgetBySpace
             && eXo.env.portal.hiddenGamOverviewEmptyWidgetBySpace[eXo.env.portal.spaceId]);
