@@ -17,7 +17,6 @@
 -->
 <template>
   <gamification-overview-widget-row
-    class="py-auto"
     :click-event-param="rule"
     :is-challenge-id-provided="true">
     <template #icon>
@@ -29,7 +28,7 @@
       </v-card>
     </template>
     <template #content>
-      <v-list-item>
+      <v-list-item class="ps-0">
         <v-list-item-content class="py-0 my-auto">
           <v-list-item-title>
             {{ rule.title }}
@@ -55,7 +54,7 @@
               color="#F57C00"
               class="content-box-sizing white--text"
               small>
-              <span class="subtitle-2">+ {{ rule.score }}</span>
+              <span class="subtitle-2">+ {{ ruleScore }}</span>
             </v-chip>
           </v-list-item-action-text>
         </v-list-item-action>
@@ -73,6 +72,15 @@ export default {
     upcoming: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    ruleScore() {
+      return new Intl.NumberFormat(eXo.env.portal.language, {
+        style: 'decimal',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(this.rule.score);
     },
   },
 };
