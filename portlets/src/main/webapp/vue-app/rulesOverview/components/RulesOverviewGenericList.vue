@@ -25,10 +25,16 @@
     </template>
     <template #content>
       <gamification-rules-overview-item
-        class="py-auto"
         v-for="rule in rulesToDisplay"
         :key="rule.id"
-        :rule="rule" />
+        :rule="rule"
+        class="flex-grow-1" />
+      <template v-if="remainingCount">
+        <gamification-overview-widget-empty-row
+          v-for="index in remainingCount"
+          :key="index"
+          class="flex-grow-1" />
+      </template>
     </template>
   </gamification-overview-widget>
   <gamification-overview-widget
@@ -80,6 +86,9 @@ export default {
     },
     rulesToDisplay() {
       return this.hasRules && this.rules.slice(0, this.pageSize) || [];
+    },
+    remainingCount() {
+      return this.pageSize - this.rulesToDisplay.length;
     },
   },
 };
