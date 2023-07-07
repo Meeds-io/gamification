@@ -28,6 +28,7 @@ import RuleDateInfoChip from './components/detail/RuleDateInfoChip.vue';
 import RuleFormDrawer from './components/drawers/RuleFormDrawer.vue';
 import RuleDetailDrawer from './components/drawers/RuleDetailDrawer.vue';
 import RuleAchievementsDrawer from './components/drawers/RuleAchievementsDrawer.vue';
+import ProgramOwnersDrawer from './components/drawers/ProgramOwnersDrawer.vue';
 import RuleDrawers from './components/RuleDrawers.vue';
 import RuleExtensions from './components/RuleExtensions.vue';
 
@@ -67,6 +68,7 @@ const components = {
   'engagement-center-rule-form-drawer': RuleFormDrawer,
   'engagement-center-rule-detail-drawer': RuleDetailDrawer,
   'engagement-center-rule-achievements-drawer': RuleAchievementsDrawer,
+  'engagement-center-program-owners-drawer': ProgramOwnersDrawer,
   'engagement-center-rule-drawers': RuleDrawers,
 };
 

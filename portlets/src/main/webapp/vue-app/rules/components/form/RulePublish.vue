@@ -5,7 +5,7 @@
     <div class="d-flex align-center">
       <v-card
         :max-width="spaceId && '50%' || 'calc(100% - 50px)'"
-        class="flex-grow-1 flex-shrink-0 text-wrap d-flex text-center me-2"
+        class="flex-grow-1 flex-shrink-0 text-wrap d-flex text-start me-2"
         flat>
         {{ $t('rule.form.publishLabel') }}
         <template v-if="!spaceId">
