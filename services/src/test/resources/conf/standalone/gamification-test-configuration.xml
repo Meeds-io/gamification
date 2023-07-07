@@ -145,8 +145,7 @@
 
   <component>
     <key>org.exoplatform.commons.api.persistence.DataInitializer</key>
-    <type>org.exoplatform.commons.persistence.impl.LiquibaseDataInitializer
-        </type>
+    <type>org.exoplatform.commons.persistence.impl.LiquibaseDataInitializer</type>
     <init-params>
       <value-param>
         <name>liquibase.datasource</name>
@@ -547,6 +546,16 @@
       <name>rule.deleted</name>
       <set-method>addListener</set-method>
       <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.created</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramModifiedDateUpdaterListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramModifiedDateUpdaterListener</type>
     </component-plugin>
     <component-plugin>
       <name>rule.deleted</name>
