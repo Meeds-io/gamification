@@ -4,10 +4,9 @@
       <slot name="title"></slot>
     </div>
     <v-list-item
-      v-on="isChallengeIdProvided ? { click: clickEvent } : {}"
-      :href="redirectionUrl"
+      v-on="clickable ? { click: open } : {}"
       :dense="!normalHeight"
-      class="px-0 no-ripple">
+      class="px-0">
       <v-list-item-action-text v-if="$slots.icon" class="me-4">
         <slot name="icon"></slot>
       </v-list-item-action-text>
@@ -30,23 +29,19 @@ export default {
       type: Boolean,
       default: false,
     },
-    redirectionUrl: {
-      type: String,
-      default: () => '',
-    },
     normalHeight: {
       type: Boolean,
       default: false,
     },
-    clickEventParam: {
-      type: String,
-      default: () => '',
+    clickable: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
-    clickEvent() {
-      if (this.isChallengeIdProvided) {
-        document.dispatchEvent(new CustomEvent('widget-row-click-event', {detail: this.clickEventParam}));
+    open() {
+      if (!this.redirectionUrl) {
+        this.$emit('open');
       }
     }
   },
