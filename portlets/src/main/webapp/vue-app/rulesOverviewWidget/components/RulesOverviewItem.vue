@@ -17,8 +17,8 @@
 -->
 <template>
   <gamification-overview-widget-row
-    :click-event-param="rule"
-    :is-challenge-id-provided="true">
+    clickable
+    @open="$root.$emit('rule-detail-drawer', rule)">
     <template #icon>
       <v-card
         min-width="35"
