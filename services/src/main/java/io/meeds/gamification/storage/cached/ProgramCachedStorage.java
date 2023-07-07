@@ -73,6 +73,15 @@ public class ProgramCachedStorage extends ProgramStorage {
   }
 
   @Override
+  public void updateProgramDate(long programId) {
+    try {
+      super.updateProgramDate(programId);
+    } finally {
+      clearCache();
+    }
+  }
+
+  @Override
   public ProgramDTO getProgramById(Long id) {
     ProgramDTO program = this.programFutureCache.get(null, id);
     return program == null ? null : program.clone();
