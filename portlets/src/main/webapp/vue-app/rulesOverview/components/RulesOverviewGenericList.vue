@@ -44,7 +44,9 @@
       {{ $t('gamification.overview.emptyChallengesOverviewTitle') }}
     </template>
     <template #content>
-      <gamification-overview-widget-row v-show="!loading" class="my-auto">
+      <gamification-overview-widget-row
+        v-show="!loading"
+        class="my-auto">
         <template #icon>
           <v-icon color="secondary" size="55px">fas fa-rocket</v-icon>
         </template>

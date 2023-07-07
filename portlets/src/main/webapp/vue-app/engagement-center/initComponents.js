@@ -29,7 +29,6 @@ import Programs from './components/programs/Programs.vue';
 import ProgramCard from './components/programs/ProgramCard.vue';
 import ProgramMenu from './components/programs/ProgramMenu.vue';
 import ProgramDrawer from './components/programs/ProgramDrawer.vue';
-import ProgramOwnersDrawer from './components/programs/ProgramOwnersDrawer.vue';
 import ProgramDetail from './components/programs/ProgramDetail.vue';
 import ProgramOwnerAssignment from './components/programs/ProgramOwnerAssignment.vue';
 import RulesToolbar from './components/programs/RulesToolbar.vue';
@@ -78,7 +77,6 @@ const components = {
   'engagement-center-program-card': ProgramCard,
   'engagement-center-program-menu': ProgramMenu,
   'engagement-center-program-drawer': ProgramDrawer,
-  'engagement-center-program-owners-drawer': ProgramOwnersDrawer,
   'engagement-center-program-detail': ProgramDetail,
   'engagement-center-program-owner-assignment': ProgramOwnerAssignment,
   'engagement-center-program-image-selector': ProgramImageSelector,
