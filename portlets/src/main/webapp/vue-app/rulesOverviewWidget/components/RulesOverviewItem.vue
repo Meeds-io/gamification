@@ -16,9 +16,7 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <gamification-overview-widget-row
-    :click-event-param="rule"
-    :is-challenge-id-provided="true">
+  <gamification-overview-widget-row @open="$root.$emit('rule-detail-drawer', rule)">
     <template #icon>
       <v-card
         min-width="35"

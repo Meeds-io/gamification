@@ -29,7 +29,9 @@ export default {
     document.addEventListener('rule-updated-event', this.emitRuleUpdatedInternaly);
     document.addEventListener('rule-deleted-event', this.emitRuleDeletedInternaly);
     document.addEventListener('rule-form-drawer-event', this.emitOpenRuleFormDrawerInternaly);
+    document.addEventListener('open-owners-drawer-event', this.emitProgramOwnersDrawerInternaly);
     this.$root.$on('announcement-added-event', this.emitRuleAnnouncedGlobally);
+    this.$root.$on('open-owners-drawer', this.emitProgramOwnersDrawerGlobally);
     this.$root.$on('rule-created-event', this.emitRuleCreatedGlobally);
     this.$root.$on('rule-updated-event', this.emitRuleUpdatedGlobally);
     this.$root.$on('rule-deleted-event', this.emitRuleDeletedGlobally);
@@ -47,6 +49,7 @@ export default {
     document.removeEventListener('rule-deleted-event', this.emitRuleDeletedInternaly);
     document.removeEventListener('rule-form-drawer-event', this.emitOpenRuleFormDrawerInternaly);
     this.$root.$off('announcement-added-event', this.emitRuleAnnouncedGlobally);
+    this.$root.$off('open-owners-drawer', this.emitProgramOwnersDrawerGlobally);
     this.$root.$off('rule-created-event', this.emitRuleCreatedGlobally);
     this.$root.$off('rule-updated-event', this.emitRuleUpdatedGlobally);
     this.$root.$off('rule-deleted-event', this.emitRuleDeletedGlobally);
@@ -75,6 +78,9 @@ export default {
     },
     emitOpenRuleFormDrawerInternaly(event) {
       this.$root.$emit('rule-form-drawer-event', event?.detail?.rule, event?.detail?.program);
+    },
+    emitProgramOwnersDrawerInternaly(event) {
+      this.$root.$emit('open-owners-drawer-event', event?.detail);
     },
     emitOpenRuleDrawerGlobally(rule, openAnnouncement) {
       document.dispatchEvent(new CustomEvent('rule-detail-drawer-event', {detail: {
@@ -105,6 +111,9 @@ export default {
     },
     emitRuleAnnouncedGlobally(data) {
       document.dispatchEvent(new CustomEvent('announcement-added-event', {detail: data}));
+    },
+    emitProgramOwnersDrawerGlobally(data) {
+      document.dispatchEvent(new CustomEvent('open-owners-drawer-event', {detail: data}));
     },
     hideEmptyWidgetInSpace() {
       if (eXo.env.portal.spaceId) {

@@ -36,8 +36,7 @@
         </template>
       </template>
       <template v-else-if="!loading" #content>
-        <gamification-overview-widget-row
-          class="my-auto mx-4">
+        <gamification-overview-widget-row class="my-auto mx-4">
           <template #icon>
             <v-icon color="secondary" size="55px">fas fa-bullhorn</v-icon>
           </template>
@@ -47,6 +46,8 @@
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
+    <gamification-program-detail-drawer />
+    <engagement-center-rule-extensions />
   </v-app>
 </template>
 <script>

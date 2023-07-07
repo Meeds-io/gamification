@@ -14,7 +14,7 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <gamification-overview-widget-row :redirection-url="`${programURL}/${program.id}`">
+  <gamification-overview-widget-row @open="$root.$emit('program-detail-drawer', program)">
     <template #icon>
       <v-list-item-avatar
         :style="programStyle"
