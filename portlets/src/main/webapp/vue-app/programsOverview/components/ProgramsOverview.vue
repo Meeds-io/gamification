@@ -36,8 +36,7 @@
         </template>
       </template>
       <template v-else-if="!loading" #content>
-        <gamification-overview-widget-row
-          class="my-auto mx-4">
+        <gamification-overview-widget-row class="my-auto mx-4">
           <template #icon>
             <v-icon color="secondary" size="55px">fas fa-bullhorn</v-icon>
           </template>
@@ -47,6 +46,8 @@
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
+    <gamification-program-detail-drawer />
+    <engagement-center-rule-extensions />
   </v-app>
 </template>
 <script>
@@ -89,7 +90,7 @@ export default {
         lang: eXo.env.portal.language,
       })
         .then((data) => {
-          this.programs = (data?.programs || []).sort((p1, p2) => p2.rulesTotalScore - p1.rulesTotalScore);
+          this.programs = data?.programs || [];
           this.programsDisplayed = data.size > 0;
           this.loading = false;
         });
