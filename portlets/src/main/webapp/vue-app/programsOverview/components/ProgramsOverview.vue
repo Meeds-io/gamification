@@ -18,27 +18,31 @@
     <gamification-overview-widget
       :see-all-url="programLink"
       :loading="loading"
-      extra-class="px-0">
+      extra-class="pa-0 justify-space-between height-auto">
       <template #title>
         <span class="text-truncate">{{ $t('gamification.overview.programsOverviewTitle') }}</span>
       </template>
-      <template #content>
-        <gamification-overview-widget-row v-show="!programsDisplayed && !loading" class="my-auto mx-4">
+      <template v-if="programsDisplayed" #content>
+        <gamification-overview-program-item
+          v-for="program in programs" 
+          :key="program.id"
+          :program="program"
+          class="flex-grow-1" />
+        <template v-if="remainingCount">
+          <gamification-overview-widget-empty-row
+            v-for="index in remainingCount"
+            :key="index"
+            class="flex-grow-1" />
+        </template>
+      </template>
+      <template v-else-if="!loading" #content>
+        <gamification-overview-widget-row
+          class="my-auto mx-4">
           <template #icon>
             <v-icon color="secondary" size="55px">fas fa-bullhorn</v-icon>
           </template>
           <template #content>
             <span v-sanitized-html="emptySummaryText"></span>
-          </template>
-        </gamification-overview-widget-row>
-        <gamification-overview-widget-row
-          v-show="programsDisplayed"
-          class="py-auto"                   
-          v-for="(program, index) in programs" 
-          :key="index"
-          :redirection-url="`${programURL}/${program.id}`">
-          <template #content>
-            <gamification-overview-program-item :program="program" />
           </template>
         </gamification-overview-widget-row>
       </template>
@@ -49,8 +53,7 @@
 export default {
   data: () => ({
     programs: [],
-    status: 'ENABLED',
-    type: 'ALL',
+    limitToLoad: 4,
     loading: true,
     programsDisplayed: false
   }),
@@ -67,6 +70,9 @@ export default {
     programLink() {
       return this.programsDisplayed && this.programURL || null;
     },
+    remainingCount() {
+      return this.limitToLoad - (this.programs?.length || 0);
+    },
   },
   created() {
     this.retrievePrograms();
@@ -74,10 +80,12 @@ export default {
   methods: {
     retrievePrograms() {
       return this.$programService.getPrograms({
-        limit: 3,
-        type: this.type,
-        status: this.status,
-        sortByBudget: true,
+        limit: this.limitToLoad,
+        type: 'ALL',
+        status: 'ENABLED',
+        expand: 'countActiveRules',
+        sortBy: 'modifiedDate',
+        sortDescending: true,
         lang: eXo.env.portal.language,
       })
         .then((data) => {

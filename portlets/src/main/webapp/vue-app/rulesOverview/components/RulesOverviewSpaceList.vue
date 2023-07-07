@@ -31,7 +31,6 @@
           <v-divider />
         </div>
         <gamification-rules-overview-item
-          class="py-auto"
           v-for="rule in lockedRules"
           :key="rule.id"
           :rule="rule" />
@@ -42,7 +41,6 @@
           <v-divider />
         </div>
         <gamification-rules-overview-item
-          class="py-auto"
           v-for="rule in validRules"
           :key="rule.id"
           :rule="rule" />
@@ -53,7 +51,6 @@
           <v-divider />
         </div>
         <gamification-rules-overview-item
-          class="py-auto"
           v-for="rule in upcomingRules"
           :key="rule.id"
           :rule="rule"

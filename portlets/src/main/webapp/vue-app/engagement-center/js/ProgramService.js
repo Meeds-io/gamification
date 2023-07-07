@@ -35,6 +35,9 @@ export function getPrograms(filter) {
   }
   if (filter?.sortByBudget) {
     formData.append('sortByBudget', 'true');
+  } else if (filter?.sortBy) {
+    formData.append('sortBy', filter.sortBy);
+    formData.append('sortDescending', !!filter.sortDescending);
   }
   if (filter?.owned) {
     formData.append('owned', 'true');
