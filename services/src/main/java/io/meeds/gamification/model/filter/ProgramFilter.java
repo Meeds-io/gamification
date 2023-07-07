@@ -56,6 +56,10 @@ public class ProgramFilter implements Serializable {
 
   private boolean           allSpaces;
 
+  private String            sortBy;
+
+  private boolean           sortDescending   = true;
+
   public ProgramFilter(boolean allSpaces) {
     this.allSpaces = allSpaces;
   }
@@ -68,7 +72,9 @@ public class ProgramFilter implements Serializable {
                              sortByBudget,
                              spacesIds == null ? null : new ArrayList<>(spacesIds),
                              ownerId,
-                             allSpaces);
+                             allSpaces,
+                             sortBy,
+                             sortDescending);
   }
 
 }
