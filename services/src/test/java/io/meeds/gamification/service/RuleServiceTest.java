@@ -20,7 +20,7 @@ package io.meeds.gamification.service;
 import static io.meeds.gamification.constant.GamificationConstant.ACTIVITY_OBJECT_TYPE;
 import static io.meeds.gamification.utils.Utils.POST_PUBLISH_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_OBJECT_TYPE;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 
 import java.util.Date;
 import java.util.List;
@@ -238,6 +238,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     RuleDTO createdRule = ruleService.findRuleById(newRuleDTO().getId(), ADMIN_USER);
     long activityId = createdRule.getActivityId();
     assertTrue(activityId > 0);
+
     ExoSocialActivity activity = activityManager.getActivity(String.valueOf(activityId));
     assertNotNull(activity);
     assertTrue(activity.isHidden());
@@ -266,6 +267,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertFalse(activity.isHidden());
     assertEquals(String.valueOf(activityId), activity.getId());
     assertEquals(message, activity.getTitle());
+    assertNotEquals(createdRule.getProgram().getLastModifiedDate(), updatedRule.getProgram().getLastModifiedDate());
 
     ruleService.deleteRuleById(rule.getId(), ADMIN_USER);
     assertThrows(ObjectNotFoundException.class, () -> ruleService.updateRule(updatedRule, "root"));
