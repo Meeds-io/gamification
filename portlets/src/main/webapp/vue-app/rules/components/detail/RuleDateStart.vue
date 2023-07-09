@@ -23,7 +23,7 @@
     <v-icon size="26" class="primary--text me-2">
       far fa-calendar-plus
     </v-icon>
-    <span>{{ $t('rules.availableIn') }}</span>
+    <span class="text-start">{{ $t('rules.availableIn') }}</span>
     <engagement-center-rule-date-info-chip
       :rule="rule"
       class="ms-1" />
