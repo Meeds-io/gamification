@@ -17,64 +17,19 @@
 -->
 <template>
   <v-app v-if="!hidden">
-    <gamification-rules-overview-widget
+    <gamification-rules-overview-space-list
       v-if="spaceId"
-      :rules="rules"
-      :page-size="pageSize"
-      :loading="loading"
-      @hide="hidden = true">
-      <template #title>
-        {{ $t('gamification.overview.spaceRulesOverviewTitle') }}
-      </template>
-    </gamification-rules-overview-widget>
+      @hide="hidden = true" />
     <gamification-rules-overview-generic-list
-      v-else
-      :rules="rules"
-      :page-size="pageSize"
-      :loading="loading" />
+      v-else />
     <engagement-center-rule-extensions />
   </v-app>
 </template>
 <script>
 export default {
   data: () => ({
-    pageSize: 4,
     spaceId: eXo.env.portal.spaceId,
-    loading: true,
     hidden: false,
-    rules: [],
   }),
-  created() {
-    this.$root.$on('announcement-added', this.retrieveRules);
-    this.$root.$on('rule-updated', this.retrieveRules);
-    this.$root.$on('rule-deleted', this.retrieveRules);
-    this.retrieveRules();
-  },
-  beforeDestroy() {
-    this.$root.$off('announcement-added', this.retrieveRules);
-    this.$root.$off('rule-updated', this.retrieveRules);
-    this.$root.$off('rule-deleted', this.retrieveRules);
-  },
-  methods: {
-    retrieveRules() {
-      this.loading = true;
-      return this.$ruleService.getRules({
-        status: 'ENABLED',
-        programStatus: 'ENABLED',
-        dateFilter: this.spaceId && 'ACTIVE' || 'STARTED',
-        spaceId: this.spaceId?.length && [this.spaceId] || null,
-        offset: 0,
-        limit: this.spaceId && 100 || this.pageSize,
-        orderByRealizations: !this.spaceId,
-        expand: 'countRealizations',
-        lang: eXo.env.portal.language,
-        returnSize: true,
-      })
-        .then(result => {
-          this.rules = result?.rules || [];
-          this.rules = this.rules.sort((r1, r2) => r2.score - r1.score);
-        }).finally(() => this.loading = false);
-    },
-  },
 };
 </script>

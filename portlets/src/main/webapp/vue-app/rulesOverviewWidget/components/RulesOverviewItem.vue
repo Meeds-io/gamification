@@ -17,6 +17,8 @@
 -->
 <template>
   <gamification-overview-widget-row
+    :dense="dense"
+    class="flex"
     clickable
     @open="$root.$emit('rule-detail-drawer', rule)">
     <template #icon>
@@ -33,7 +35,7 @@
           <v-list-item-title>
             {{ rule.title }}
           </v-list-item-title>
-          <v-list-item-subtitle v-if="upcoming" class="d-flex flex-nowrap align-center">
+          <v-list-item-subtitle v-if="upcoming || ending" class="d-flex flex-nowrap align-center">
             <engagement-center-rule-date-info-chip
               :rule="rule"
               size="18" />
@@ -70,6 +72,14 @@ export default {
       default: null,
     },
     upcoming: {
+      type: Boolean,
+      default: false,
+    },
+    ending: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
       type: Boolean,
       default: false,
     },
