@@ -10,7 +10,7 @@
       <v-list-item-action-text v-if="$slots.icon" class="me-4">
         <slot name="icon"></slot>
       </v-list-item-action-text>
-      <v-list-item-content>
+      <v-list-item-content :class="dense && 'pa-0'">
         <v-list-item-title class="text-wrap">
           <slot name="content"></slot>
         </v-list-item-title>
@@ -34,6 +34,10 @@ export default {
       default: false,
     },
     clickable: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
       type: Boolean,
       default: false,
     },

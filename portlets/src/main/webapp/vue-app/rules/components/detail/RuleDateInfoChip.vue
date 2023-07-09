@@ -32,7 +32,7 @@
           :height="size"
           :min-height="size"
           :min-width="size"
-          class="medium-grey rounded white--text caption px-1px align-center justify-center d-flex"
+          class="medium-grey rounded white--text caption px-1px align-center justify-center d-flex text-no-wrap"
           flat>
           {{ $t('rules.card.daysShort', {0: remainingDays}) }}
         </v-card>
@@ -48,7 +48,7 @@
         :height="size"
         :min-height="size"
         :min-width="size"
-        class="rounded white--text caption px-1px align-center justify-center d-flex"
+        class="rounded white--text caption px-1px align-center justify-center d-flex text-no-wrap"
         flat>
         {{ $t('rules.card.hoursShort', {0: remainingHours}) }}
       </v-card>
@@ -63,7 +63,7 @@
       :height="size"
       :min-height="size"
       :min-width="size"
-      class="rounded white--text caption px-1px align-center justify-center d-flex"
+      class="rounded white--text caption px-1px align-center justify-center d-flex text-no-wrap"
       flat>
       {{ $t('rules.card.minutesShort', {0: remainingMinutes}) }}
     </v-card>
@@ -77,7 +77,7 @@
           :height="size"
           :min-height="size"
           :min-width="size"
-          class="error-color-background rounded white--text caption px-1px align-center justify-center d-flex"
+          class="error-color-background rounded white--text caption px-1px align-center justify-center d-flex text-no-wrap"
           flat>
           {{ $t('rules.card.secondsShort', {0: remainingSeconds}) }}
         </v-card>
