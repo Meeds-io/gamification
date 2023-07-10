@@ -94,6 +94,15 @@ public interface GamificationConstant {
     /***************************************************************************************************************************************************/
     /** CREATE NEW SPACE */
     String GAMIFICATION_SOCIAL_SPACE_ADD                                               = "addSpace";
+
+    String GAMIFICATION_SOCIAL_SPACE_UPDATE_AVATAR                                     = "updateSpaceAvatar";
+
+    String GAMIFICATION_SOCIAL_SPACE_UPDATE_BANNER                                     = "updateSpaceBanner";
+
+    String GAMIFICATION_SOCIAL_SPACE_UPDATE_DESCRIPTION                                = "updateSpaceDescription";
+
+    String GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS                               = "updateSpaceApplications";
+
     /** JOIN SPACE  */
     String GAMIFICATION_SOCIAL_SPACE_JOIN                                              = "joinSpace";
     /** GRANT USER AS LEAD WITHIN SPACE */

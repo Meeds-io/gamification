@@ -18,7 +18,7 @@ package io.meeds.gamification.listener;
 
 import static io.meeds.gamification.constant.GamificationConstant.BROADCAST_GAMIFICATION_EVENT_ERROR;
 import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_ADD;
+import static io.meeds.gamification.constant.GamificationConstant.*;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_JOIN;
 import static io.meeds.gamification.constant.GamificationConstant.IDENTITY_OBJECT_TYPE;
@@ -28,13 +28,17 @@ import static io.meeds.gamification.constant.GamificationConstant.RECEIVER_ID;
 import static io.meeds.gamification.constant.GamificationConstant.SENDER_ID;
 import static io.meeds.gamification.listener.GamificationGenericListener.CANCEL_EVENT_NAME;
 import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
+import static io.meeds.gamification.utils.Utils.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.SpaceListenerPlugin;
 import org.exoplatform.social.core.space.model.Space;
@@ -74,28 +78,37 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
   }
 
   @Override
-  public void spaceRemoved(SpaceLifeCycleEvent event) {
-    // Nothing to do
+  public void spaceDescriptionEdited(SpaceLifeCycleEvent event) {
+    String username = event.getSource();
+    Space space = event.getSpace();
+
+    createGamificationHistoryEntry(username, space, GAMIFICATION_SOCIAL_SPACE_UPDATE_DESCRIPTION);
+  }
+
+  @Override
+  public void spaceAvatarEdited(SpaceLifeCycleEvent event) {
+    String username = event.getSource();
+    Space space = event.getSpace();
+
+    createGamificationHistoryEntry(username, space, GAMIFICATION_SOCIAL_SPACE_UPDATE_AVATAR);
+  }
+
+  @Override
+  public void spaceBannerEdited(SpaceLifeCycleEvent event) {
+    String username = event.getSource();
+    Space space = event.getSpace();
+
+    createGamificationHistoryEntry(username, space, GAMIFICATION_SOCIAL_SPACE_UPDATE_BANNER);
   }
 
   @Override
   public void applicationAdded(SpaceLifeCycleEvent event) {
-    // Nothing to do
+    triggerSpaceApplicationCustomizationEvent(event);
   }
 
   @Override
   public void applicationRemoved(SpaceLifeCycleEvent event) {
-    // Nothing to do
-  }
-
-  @Override
-  public void applicationActivated(SpaceLifeCycleEvent event) {
-    // Nothing to do
-  }
-
-  @Override
-  public void applicationDeactivated(SpaceLifeCycleEvent event) {
-    // Nothing to do
+    triggerSpaceApplicationCustomizationEvent(event);
   }
 
   @Override
@@ -123,22 +136,27 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
   }
 
   @Override
+  public void spaceRemoved(SpaceLifeCycleEvent event) {
+    // Nothing to do
+  }
+
+  @Override
+  public void applicationActivated(SpaceLifeCycleEvent event) {
+    // Nothing to do
+  }
+
+  @Override
+  public void applicationDeactivated(SpaceLifeCycleEvent event) {
+    // Nothing to do
+  }
+
+  @Override
   public void revokedLead(SpaceLifeCycleEvent event) {
     // Nothing to do
   }
 
   @Override
   public void spaceRenamed(SpaceLifeCycleEvent event) {
-    // Nothing to do
-  }
-
-  @Override
-  public void spaceDescriptionEdited(SpaceLifeCycleEvent event) {
-    // Nothing to do
-  }
-
-  @Override
-  public void spaceAvatarEdited(SpaceLifeCycleEvent event) {
     // Nothing to do
   }
 
@@ -162,15 +180,34 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     // Nothing to do
   }
 
-  @Override
-  public void spaceBannerEdited(SpaceLifeCycleEvent event) {
-    // Nothing to do
+  private void triggerSpaceApplicationCustomizationEvent(SpaceLifeCycleEvent event) {
+    String username = event.getSource();
+    Space space = event.getSpace();
+
+    createGamificationHistoryEntry(username, space, GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS);
   }
 
   private void createGamificationHistoryEntry(String username, Space space, String gamificationEventName) {
     // Compute user id
-    String earnerIdentityId = identityManager.getOrCreateUserIdentity(username).getId();
-    String receiverId = identityManager.getOrCreateSpaceIdentity(space.getPrettyName()).getId();
+    if (space == null) {
+      LOG.warn("Can't gamify on null space with modification of type {}", gamificationEventName);
+      return;
+    }
+    String earnerIdentityId = getModifierIdentityId(username);
+    if (StringUtils.isBlank(earnerIdentityId)) {
+      LOG.info("Can't determine user to gamify space {} modification of type {}",
+               space.getDisplayName(),
+               gamificationEventName);
+      return;
+    }
+    Identity spaceIdentity = identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
+    if (spaceIdentity == null) {
+      LOG.warn("Can't gamify on space {} having null identity for modification of type {}",
+               space.getDisplayName(),
+               gamificationEventName);
+      return;
+    }
+    String receiverId = spaceIdentity.getId();
     Map<String, String> gam = new HashMap<>();
     try {
       gam.put(EVENT_NAME, gamificationEventName);
@@ -197,14 +234,31 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
 
   private void cancelGamificationHistoryEntry(String username, Space space, String gamificationEventName) {
     // Compute user id
-    String senderId = identityManager.getOrCreateUserIdentity(username).getId();
-    String receiverId = identityManager.getOrCreateSpaceIdentity(space.getPrettyName()).getId();
+    if (space == null) {
+      LOG.warn("Can't gamify on null space with modification of type {}", gamificationEventName);
+      return;
+    }
+    String earnerIdentityId = getModifierIdentityId(username);
+    if (StringUtils.isBlank(earnerIdentityId)) {
+      LOG.info("Can't determine user to gamify space {} modification of type {}",
+               space.getDisplayName(),
+               gamificationEventName);
+      return;
+    }
+    Identity spaceIdentity = identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
+    if (spaceIdentity == null) {
+      LOG.warn("Can't gamify on space {} having null identity for modification of type {}",
+               space.getDisplayName(),
+               gamificationEventName);
+      return;
+    }
+    String receiverId = spaceIdentity.getId();
     Map<String, String> gam = new HashMap<>();
     try {
       gam.put(EVENT_NAME, gamificationEventName);
       gam.put(OBJECT_ID_PARAM, receiverId);
       gam.put(OBJECT_TYPE_PARAM, IDENTITY_OBJECT_TYPE);
-      gam.put(SENDER_ID, senderId);
+      gam.put(SENDER_ID, earnerIdentityId);
       gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(CANCEL_EVENT_NAME, gam, null);
     } catch (Exception e) {
@@ -216,11 +270,25 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
       gam.put(OBJECT_ID_PARAM, receiverId);
       gam.put(OBJECT_TYPE_PARAM, IDENTITY_OBJECT_TYPE);
       gam.put(SENDER_ID, receiverId);
-      gam.put(RECEIVER_ID, senderId);
+      gam.put(RECEIVER_ID, earnerIdentityId);
       listenerService.broadcast(CANCEL_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
+  }
+
+  private String getModifierIdentityId(String username) {
+    if (StringUtils.isNotBlank(username)) {
+      Identity identity = identityManager.getOrCreateUserIdentity(username);
+      if (identity != null) {
+        return identity.getId();
+      }
+    }
+    long currentUserIdentityId = getCurrentUserIdentityId();
+    if (currentUserIdentityId > 0) {
+      return String.valueOf(currentUserIdentityId);
+    }
+    return null;
   }
 
 }
