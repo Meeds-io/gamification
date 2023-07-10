@@ -703,6 +703,50 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </init-params>
         </component-plugin>
         <component-plugin>
+          <name>rule.updateSpaceAvatar</name>
+          <set-method>addPlugin</set-method>
+          <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+          <init-params>
+            <value-param>
+              <name>rule-event</name>
+              <value>updateSpaceAvatar</value>
+            </value-param>
+          </init-params>
+        </component-plugin>
+        <component-plugin>
+          <name>rule.updateSpaceBanner</name>
+          <set-method>addPlugin</set-method>
+          <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+          <init-params>
+            <value-param>
+              <name>rule-event</name>
+              <value>updateSpaceBanner</value>
+            </value-param>
+          </init-params>
+        </component-plugin>
+        <component-plugin>
+          <name>rule.updateSpaceDescription</name>
+          <set-method>addPlugin</set-method>
+          <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+          <init-params>
+            <value-param>
+              <name>rule-event</name>
+              <value>updateSpaceDescription</value>
+            </value-param>
+          </init-params>
+        </component-plugin>
+        <component-plugin>
+          <name>rule.updateSpaceApplications</name>
+          <set-method>addPlugin</set-method>
+          <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+          <init-params>
+            <value-param>
+              <name>rule-event</name>
+              <value>updateSpaceApplications</value>
+            </value-param>
+          </init-params>
+        </component-plugin>
+        <component-plugin>
             <name>rule.JoinSpace</name>
             <set-method>addPlugin</set-method>
             <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
