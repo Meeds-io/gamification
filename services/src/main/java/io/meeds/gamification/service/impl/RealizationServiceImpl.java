@@ -306,13 +306,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       return Collections.emptyList();
     }
     return rules.stream()
-                .map(rule -> realizationStorage.findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(rule.getTitle(),
-                                                                                                              rule.getProgram()
-                                                                                                                  .getId(),
-                                                                                                              earnerIdentityId,
-                                                                                                              receiverIdentityId,
-                                                                                                              objectId,
-                                                                                                              objectType))
+                .map(rule -> realizationStorage.findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(rule.getId(),
+                                                                                                           earnerIdentityId,
+                                                                                                           receiverIdentityId,
+                                                                                                           objectId,
+                                                                                                           objectType))
                 .filter(Objects::nonNull)
                 .filter(realization -> !RealizationStatus.CANCELED.name().equals(realization.getStatus()))
                 .map(realization -> {

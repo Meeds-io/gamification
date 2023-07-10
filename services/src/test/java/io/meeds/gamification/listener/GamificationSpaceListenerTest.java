@@ -18,7 +18,7 @@ package io.meeds.gamification.listener;
 
 import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_ADD;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD;
+import static io.meeds.gamification.constant.GamificationConstant.*;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_JOIN;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_AVATAR;
@@ -50,7 +50,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.service.RuleService;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class GamificationSpaceListenerTest {
 
   @Mock
@@ -108,6 +108,16 @@ public class GamificationSpaceListenerTest {
   @Test
   public void testBecomeSpaceManager() throws Exception {
     testEventTrigger(GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD, (listener, event) -> listener.grantedLead(event));
+  }
+
+  @Test
+  public void testAddInvitedUser() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_INVITE_USER, (listener, event) -> listener.addInvitedUser(event));
+  }
+
+  @Test
+  public void testRemoveInvitedUser() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_INVITE_USER, (listener, event) -> listener.removeInvitedUser(event), true);
   }
 
   private void testEventTrigger(String expectedGamifiedEvent,
