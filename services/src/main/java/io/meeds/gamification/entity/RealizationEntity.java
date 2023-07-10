@@ -128,14 +128,16 @@ import lombok.EqualsAndHashCode;
     " AND a.createdDate >= :fromDate AND a.createdDate < :toDate" +
     " group by r.id order by count(*) DESC")
 
-@NamedQuery(name = "RealizationEntity.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId", query = "SELECT g FROM RealizationEntity g"
-    +
-    " WHERE g.actionTitle = :actionTitle" +
-    " AND g.domainEntity.id = :domainId" +
+@NamedQuery(
+  name = "RealizationEntity.findReadlizationsByRuleIdAndEarnerIdAndReceiverAndObjectId",
+  query = "SELECT g FROM RealizationEntity g" +
+    " WHERE g.ruleEntity.id = :ruleId" +
     " AND g.earnerId = :earnerId" +
     " AND g.receiver = :receiverId" +
     " AND g.objectId = :objectId" +
-    " AND g.objectType = :objectType")
+    " AND g.objectType = :objectType" +
+    " ORDER BY g.id DESC"
+)
 
 @NamedQuery(name = "RealizationEntity.getRealizationsByObjectIdAndObjectType", query = "SELECT g FROM RealizationEntity g"
     +
