@@ -258,7 +258,11 @@ public class Utils {
 
   public static final long getCurrentUserIdentityId() {
     String username = getCurrentUser();
-    return getUserIdentityId(username);
+    if (StringUtils.isBlank(username)) {
+      return 0;
+    } else {
+      return getUserIdentityId(username);
+    }
   }
 
   public static long getUserIdentityId(String username) {

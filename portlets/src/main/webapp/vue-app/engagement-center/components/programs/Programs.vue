@@ -189,6 +189,8 @@ export default {
         type: this.type,
         status: this.status,
         owned: !this.isAdministrator && this.isStatusDisabled,
+        sortBy: 'title',
+        sortDescending: false,
         expand: 'countActiveRulesWhenDisabled',
         lang: eXo.env.portal.language,
       })
