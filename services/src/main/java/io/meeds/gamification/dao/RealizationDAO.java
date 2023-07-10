@@ -66,8 +66,6 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
 
   private static final String        RULE_ID_PARAM_NAME      = "ruleId";
 
-  private static final String        ACTION_TITLE_PARAM_NAME = "actionTitle";
-
   private static final String        RECEIVER_ID_PARAM_NAME  = "receiverId";
 
   private static final String        OBJECT_ID_PARAM_NAME    = "objectId";
@@ -429,21 +427,21 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public RealizationEntity findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
-                                                                                           long domainId,
-                                                                                           String earnerId,
-                                                                                           String receiverId,
-                                                                                           String objectId,
-                                                                                           String objectType) {
+  public RealizationEntity findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(long ruleId,
+                                                                                         String earnerId,
+                                                                                         String receiverId,
+                                                                                         String objectId,
+                                                                                         String objectType) {
     TypedQuery<RealizationEntity> query =
-                                        getEntityManager().createNamedQuery("RealizationEntity.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId",
+                                        getEntityManager().createNamedQuery("RealizationEntity.findReadlizationsByRuleIdAndEarnerIdAndReceiverAndObjectId",
                                                                             RealizationEntity.class);
-    query.setParameter(ACTION_TITLE_PARAM_NAME, actionTitle);
-    query.setParameter(PROGRAM_ID_PARAM_NAME, domainId);
+    query.setParameter(RULE_ID_PARAM_NAME, ruleId);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     query.setParameter(RECEIVER_ID_PARAM_NAME, receiverId);
     query.setParameter(OBJECT_ID_PARAM_NAME, objectId);
     query.setParameter(OBJECT_TYPE_PARAM_NAME, objectType);
+    query.setMaxResults(1);
+
     List<RealizationEntity> resultList = query.getResultList();
     return CollectionUtils.isEmpty(resultList) ? null : resultList.get(0);
   }
