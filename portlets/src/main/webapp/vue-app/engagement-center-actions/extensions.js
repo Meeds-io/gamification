@@ -81,6 +81,10 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     icon: 'fas fa-layer-group',
     match: (actionLabel) => [
       'addSpace',
+      'updateSpaceAvatar',
+      'updateSpaceBanner',
+      'updateSpaceDescription',
+      'updateSpaceApplications',
       'becomeSpaceManager',
       'joinSpace'
     ].includes(actionLabel),

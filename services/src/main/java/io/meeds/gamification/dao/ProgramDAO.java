@@ -178,6 +178,15 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
       suffixes.add("OpenAudience");
       predicates.add("d.audienceId IS NULL");
     }
+    if (StringUtils.isNotBlank(filter.getSortBy())) {
+      suffixes.add("SortBy");
+      suffixes.add(filter.getSortBy());
+      if (filter.isSortDescending()) {
+        suffixes.add("Descending");
+      } else {
+        suffixes.add("Ascending");
+      }
+    }
   }
 
   private String getQueryFilterName(List<String> suffixes, boolean count) {
