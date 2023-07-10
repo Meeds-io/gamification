@@ -70,4 +70,18 @@ public interface ConnectorService {
    * @param username the user name
    */
   void disconnect(String connectorName, String username) throws ObjectNotFoundException;
+
+  /**
+   * @param connectorName connector name
+   * @param username associated username
+   * @return the connector remote Id {@link String}
+   */
+  String getConnectorRemoteId(String connectorName, String username);
+
+  /**
+   * @param connectorName connector name
+   * @param connectorRemoteId connector remote Id
+   * @return the connector associated username {@link String}
+   */
+  String getAssociatedUsername(String connectorName, String connectorRemoteId);
 }

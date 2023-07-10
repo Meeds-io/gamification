@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
  *
  * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.meeds.gamification.model.ConnectorAccount;
+import io.meeds.gamification.storage.ConnectorAccountStorage;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.ObjectAlreadyExistsException;
@@ -37,14 +39,24 @@ import io.meeds.gamification.service.ConnectorSettingService;
 
 public class ConnectorServiceImpl implements ConnectorService {
 
-  private final Map<String, ConnectorPlugin> connectorPlugins = new HashMap<>();
+  public static final String                 CONNECTOR_NAME_IS_MANDATORY      = "Connector name is mandatory";
+
+  public static final String                 USERNAME_IS_MANDATORY            = "Username is mandatory";
+
+  public static final String                 CONNECTOR_REMOTE_ID_IS_MANDATORY = "connector RemoteId is mandatory";
+
+  private final Map<String, ConnectorPlugin> connectorPlugins                 = new HashMap<>();
+
+  protected final ConnectorAccountStorage    connectorAccountStorage;
 
   private final IdentityManager              identityManager;
 
   private final ConnectorSettingService      connectorSettingService;
 
-  public ConnectorServiceImpl(IdentityManager identityManager,
+  public ConnectorServiceImpl(ConnectorAccountStorage connectorAccountStorage,
+                              IdentityManager identityManager,
                               ConnectorSettingService connectorSettingService) {
+    this.connectorAccountStorage = connectorAccountStorage;
     this.connectorSettingService = connectorSettingService;
     this.identityManager = identityManager;
   }
@@ -77,8 +89,7 @@ public class ConnectorServiceImpl implements ConnectorService {
       remoteConnector.setName(connectorName);
       remoteConnector.setIdentifier(getConnectorRemoteId(connectorName, username));
 
-      RemoteConnectorSettings remoteConnectorSettings =
-                                                      connectorSettingService.getConnectorSettings(connectorName);
+      RemoteConnectorSettings remoteConnectorSettings = connectorSettingService.getConnectorSettings(connectorName);
       if (remoteConnectorSettings != null) {
         remoteConnector.setApiKey(remoteConnectorSettings.getApiKey());
         remoteConnector.setRedirectUrl(remoteConnectorSettings.getRedirectUrl());
@@ -99,29 +110,63 @@ public class ConnectorServiceImpl implements ConnectorService {
 
   @Override
   public void disconnect(String connectorName, String username) throws ObjectNotFoundException {
-    // TODO Use Common Storage Layer to move from Github Connector in order to
-    // remove RemoteId/UserName/ConnectorName association
-    // Note: Use Long Value of IdentityManager.getOrCreateUserIdentity(username).getId() in database
+    if (connectorName == null) {
+      throw new IllegalArgumentException(CONNECTOR_NAME_IS_MANDATORY);
+    }
+    if (username == null) {
+      throw new IllegalArgumentException(USERNAME_IS_MANDATORY);
+    }
+    String userId = identityManager.getOrCreateUserIdentity(username).getId();
+    ConnectorAccount connector =
+                               connectorAccountStorage.getConnectorAccountByNameAndUserId(connectorName, Long.parseLong(userId));
+    if (connector == null) {
+      throw new ObjectNotFoundException(connectorName + "connector with " + username + " username wasn't found");
+    }
+    connectorAccountStorage.deleteConnectorAccountById(connector.getId());
   }
 
   @Override
   public String getConnectorRemoteId(String connectorName, String username) {
-    // TODO Use Common Storage Layer to retrieve ConnectorRemoteId/UserName/ConnectorName association
-    // Note: Use Long Value of IdentityManager.getOrCreateUserIdentity(username).getId() in database
-    return null;
+    if (connectorName == null) {
+      throw new IllegalArgumentException(CONNECTOR_NAME_IS_MANDATORY);
+    }
+    if (username == null) {
+      throw new IllegalArgumentException(USERNAME_IS_MANDATORY);
+    }
+    String userId = identityManager.getOrCreateUserIdentity(username).getId();
+    return connectorAccountStorage.getConnectorRemoteId(connectorName, Long.parseLong(userId));
   }
 
   @Override
   public String getAssociatedUsername(String connectorName, String connectorRemoteId) {
-    // TODO Use Common Storage Layer to retrieve ConnectorRemoteId/UserName/ConnectorName association
-    // Note: Use Long Value of IdentityManager.getOrCreateUserIdentity(username).getId() in database
-    return null;
+    if (connectorName == null) {
+      throw new IllegalArgumentException(CONNECTOR_NAME_IS_MANDATORY);
+    }
+    if (connectorRemoteId == null) {
+      throw new IllegalArgumentException(CONNECTOR_REMOTE_ID_IS_MANDATORY);
+    }
+    long userId = connectorAccountStorage.getAssociatedUserId(connectorName, connectorRemoteId);
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getIdentity(String.valueOf(userId));
+
+    if (userIdentity != null) {
+      return userIdentity.getRemoteId();
+    } else {
+      return null;
+    }
   }
 
-  private void saveConnectorRemoteId(String connectorName, String username, String remoteIdentifier) {
-    // TODO Use Common Storage Layer to move from Github Connector in order to
-    // store ConnectorRemoteId/UserName/ConnectorName association
-    // Note: Use Long Value of IdentityManager.getOrCreateUserIdentity(username).getId() in database
+  private void saveConnectorRemoteId(String connectorName, String username, String connectorRemoteId) {
+    if (connectorName == null) {
+      throw new IllegalArgumentException(CONNECTOR_NAME_IS_MANDATORY);
+    }
+    if (connectorRemoteId == null) {
+      throw new IllegalArgumentException(CONNECTOR_REMOTE_ID_IS_MANDATORY);
+    }
+    if (username == null) {
+      throw new IllegalArgumentException(USERNAME_IS_MANDATORY);
+    }
+    String userId = identityManager.getOrCreateUserIdentity(username).getId();
+    connectorAccountStorage.saveConnectorAccount(connectorName, Long.parseLong(userId), connectorRemoteId);
   }
 
   private ConnectorPlugin getConnectorPlugin(String connectorName) {

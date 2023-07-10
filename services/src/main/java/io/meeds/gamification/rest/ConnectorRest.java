@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 - 2023 Meeds Association
  * contact@meeds.io
@@ -95,12 +95,12 @@ public class ConnectorRest implements ResourceContainer {
   @DELETE
   @Path("{connectorName}")
   @RolesAllowed("users")
-  @Operation(summary = "Deletes an existing GitHub account", description = "Deletes an existing GitHub account", method = "DELETE")
+  @Operation(summary = "Deletes an existing connector account", description = "Deletes an existing connector account", method = "DELETE")
   @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
       @ApiResponse(responseCode = "401", description = "Object not found"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response disconnect(@Parameter(description = "Github account username", required = true) @PathParam("connectorName") String connectorName) {
+  public Response disconnect(@Parameter(description = "Connector name", required = true) @PathParam("connectorName") String connectorName) {
     if (StringUtils.isBlank(connectorName)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("connector name is mandatory").build();
     }

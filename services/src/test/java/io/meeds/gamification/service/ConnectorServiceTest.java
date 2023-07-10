@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
  *
  * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
@@ -62,12 +62,12 @@ public class ConnectorServiceTest extends AbstractServiceTest {
 
     setConnectorPlugin("connectorName", "connectorIdentifier");
     setConnectorPlugin("connectorName1", "connectorIdentifier2");
-    List<RemoteConnector> remoteConnectorList = connectorService.getUserRemoteConnectors("root");
+    List<RemoteConnector> remoteConnectorList = connectorService.getUserRemoteConnectors("root1");
 
     assertEquals(2, remoteConnectorList.size());
 
     removeConnectorPlugin("connectorName1");
-    remoteConnectorList = connectorService.getUserRemoteConnectors("root");
+    remoteConnectorList = connectorService.getUserRemoteConnectors("root1");
 
     assertEquals(1, remoteConnectorList.size());
 
@@ -80,18 +80,15 @@ public class ConnectorServiceTest extends AbstractServiceTest {
     ConnectorPlugin connectorPlugin = mock(ConnectorPlugin.class);
     when(connectorPlugin.getConnectorName()).thenReturn("connectorName");
     when(connectorPlugin.getName()).thenReturn("connectorName");
+    when(connectorPlugin.validateToken("testToken")).thenReturn("root1RemoteId");
     connectorService.addPlugin(connectorPlugin);
     HashSet<MembershipEntry> memberships = new HashSet<MembershipEntry>();
     memberships.add(new MembershipEntry("/platform/users", "member"));
-    Identity john = new Identity("john", memberships);
-    identityRegistry.register(john);
+    Identity root1 = new Identity("root1", memberships);
+    identityRegistry.register(root1);
 
-    connectorService.connect("connectorName", "testToken", john);
-    verify(connectorPlugin, times(1)).connect("testToken", john);
-
-    connectorService.disconnect("connectorName", "john");
-    verify(connectorPlugin, times(1)).disconnect("john");
-
+    connectorService.connect("connectorName", "testToken", root1);
+    verify(connectorPlugin, times(1)).validateToken("testToken");
   }
 
   private void removeConnectorPlugin(String connectorName) {
@@ -102,20 +99,9 @@ public class ConnectorServiceTest extends AbstractServiceTest {
     removeConnectorPlugin(connectorName);
     ConnectorPlugin connectorPlugin = new ConnectorPlugin() {
       @Override
-      public String connect(String accessToken, Identity identity) {
+      public String validateToken(String accessToken) {
         return null;
       }
-
-      @Override
-      public void disconnect(String username) {
-
-      }
-
-      @Override
-      public String getIdentifier(String username) {
-        return connectorIdentifier;
-      }
-
       @Override
       public String getConnectorName() {
         return connectorName;

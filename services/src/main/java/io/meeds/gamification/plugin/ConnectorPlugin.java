@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
@@ -16,7 +16,6 @@
 package io.meeds.gamification.plugin;
 
 import org.exoplatform.container.component.BaseComponentPlugin;
-
 import io.meeds.gamification.service.ConnectorService;
 
 /**
@@ -28,8 +27,8 @@ public abstract class ConnectorPlugin extends BaseComponentPlugin {
   /**
    * Validates a user Token with the Gamification Connector provider
    *
-   * @param  accessToken connector access token
-   * @return             the connector identifier {@link String}
+   * @param accessToken connector access token
+   * @return the connector identifier {@link String}
    */
   public abstract String validateToken(String accessToken);
 
