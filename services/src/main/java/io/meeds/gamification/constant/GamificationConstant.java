@@ -107,6 +107,8 @@ public interface GamificationConstant {
     String GAMIFICATION_SOCIAL_SPACE_JOIN                                              = "joinSpace";
     /** GRANT USER AS LEAD WITHIN SPACE */
     String GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD                                     = "becomeSpaceManager";
+    /** GRANT USER AS LEAD WITHIN SPACE */
+    String GAMIFICATION_SOCIAL_SPACE_INVITE_USER                                       = "inviteUserToSpace";
 
     /***************************************************************************************************************************************************/
     /*********************************************** CONSTANTS TO MANAGE RELATIONSHIP GAMIFICATION PROCESS *********************************************/
@@ -134,6 +136,8 @@ public interface GamificationConstant {
     //Achievement object types
     
     String IDENTITY_OBJECT_TYPE                                       = "identity";
+
+    String SPACE_MEMBERSHIP_OBJECT_TYPE                               = "spaceMembership";
 
     String ACTIVITY_OBJECT_TYPE                                       = "activity";
 
