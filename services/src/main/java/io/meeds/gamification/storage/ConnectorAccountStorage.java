@@ -34,7 +34,7 @@ public class ConnectorAccountStorage {
     ConnectorAccount connectorAccount = getConnectorAccountByNameAndUserId(connectorName, userId);
     if (connectorAccount != null) {
       ConnectorAccountEntity connectorAccountEntity = ConnectorMapper.toEntity(connectorAccount);
-      connectorAccount.setRemoteId(connectorRemoteId);
+      connectorAccountEntity.setRemoteId(connectorRemoteId);
       connectorAccountDAO.update(connectorAccountEntity);
     } else {
       ConnectorAccountEntity connectorAccountEntity = new ConnectorAccountEntity();

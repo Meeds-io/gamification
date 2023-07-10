@@ -26,10 +26,9 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @Entity(name = "GamificationConnectorAccount")
 @ExoEntity
 @Table(name = "GAMIFICATION_CONNECTOR_ACCOUNTS")
-@NamedQueries({
-    @NamedQuery(name = "GamificationConnectorAccount.getConnectorByUsername", query = "SELECT account FROM GamificationConnectorAccount account WHERE account.connectorName = :connectorName AND account.userId = :userId"),
-    @NamedQuery(name = "GamificationConnectorAccount.getConnectorRemoteId", query = "SELECT account.remoteId FROM GamificationConnectorAccount account WHERE account.connectorName = :connectorName AND account.userId = :userId"),
-    @NamedQuery(name = "GamificationConnectorAccount.getAssociatedUsername", query = "SELECT account.userId FROM GamificationConnectorAccount account WHERE account.connectorName = :connectorName AND account.remoteId = :remoteId"), })
+@NamedQuery(name = "GamificationConnectorAccount.getConnectorByUsername", query = "SELECT account FROM GamificationConnectorAccount account WHERE account.connectorName = :connectorName AND account.userId = :userId")
+@NamedQuery(name = "GamificationConnectorAccount.getConnectorRemoteId", query = "SELECT account.remoteId FROM GamificationConnectorAccount account WHERE account.connectorName = :connectorName AND account.userId = :userId")
+@NamedQuery(name = "GamificationConnectorAccount.getAssociatedUsername", query = "SELECT account.userId FROM GamificationConnectorAccount account WHERE account.connectorName = :connectorName AND account.remoteId = :remoteId")
 @Data
 public class ConnectorAccountEntity implements Serializable {
 

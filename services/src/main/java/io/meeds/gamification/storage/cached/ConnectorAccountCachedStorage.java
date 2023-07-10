@@ -61,13 +61,17 @@ public class ConnectorAccountCachedStorage extends ConnectorAccountStorage {
                                                            Serializable key) -> ConnectorAccountCachedStorage.super.getConnectorAccountById(context.getId()),
                                                           connectorAccountCache);
 
-    this.connectorRemoteIdFutureCache = new FutureExoCache<>((ConnectorAccountCachedKey context, Serializable key) -> {
-      return ConnectorAccountCachedStorage.super.getConnectorRemoteId(context.getConnectorName(), context.getUserId());
-    }, connectorRemoteIdCache);
+    this.connectorRemoteIdFutureCache =
+                                      new FutureExoCache<>((ConnectorAccountCachedKey context,
+                                                            Serializable key) -> ConnectorAccountCachedStorage.super.getConnectorRemoteId(context.getConnectorName(),
+                                                                                                                                          context.getUserId()),
+                                                           connectorRemoteIdCache);
 
-    this.connectorUserIdFutureCache = new FutureExoCache<>((ConnectorAccountCachedKey context, Serializable key) -> {
-      return ConnectorAccountCachedStorage.super.getAssociatedUserId(context.getConnectorName(), context.getRemoteId());
-    }, connectorUserIdCache);
+    this.connectorUserIdFutureCache =
+                                    new FutureExoCache<>((ConnectorAccountCachedKey context,
+                                                          Serializable key) -> ConnectorAccountCachedStorage.super.getAssociatedUserId(context.getConnectorName(),
+                                                                                                                                       context.getRemoteId()),
+                                                         connectorUserIdCache);
   }
 
   @Override

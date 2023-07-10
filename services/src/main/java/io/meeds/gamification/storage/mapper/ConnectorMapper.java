@@ -21,6 +21,10 @@ import io.meeds.gamification.model.ConnectorAccount;
 
 public class ConnectorMapper {
 
+  private ConnectorMapper() {
+    // Class with static methods
+  }
+
   public static ConnectorAccountEntity toEntity(ConnectorAccount connectorAccount) {
     if (connectorAccount == null) {
       return null;
