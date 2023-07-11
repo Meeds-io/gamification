@@ -70,17 +70,107 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <portlet-skin>
     <application-name>gamification-portlets</application-name>
-    <portlet-name>EngagementCenter</portlet-name>
+    <portlet-name>EngagementCenterPrograms</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <css-path>/skin/css/engagementCenter.css</css-path>
+  </portlet-skin>
+
+  <portlet-skin>
+    <application-name>gamification-portlets</application-name>
+    <portlet-name>EngagementCenterActions</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <css-path>/skin/css/engagementCenter.css</css-path>
+  </portlet-skin>
+
+  <portlet-skin>
+    <application-name>gamification-portlets</application-name>
+    <portlet-name>EngagementCenterAchievements</portlet-name>
     <skin-name>Enterprise</skin-name>
     <css-path>/skin/css/engagementCenter.css</css-path>
   </portlet-skin>
 
   <portlet>
-    <name>EngagementCenter</name>
+    <name>EngagementCenterPrograms</name>
     <module>
       <script>
         <minify>false</minify>
-        <path>/js/engagementCenter.bundle.js</path>
+        <path>/js/engagementCenterPrograms.bundle.js</path>
+      </script>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>ruleComponents</module>
+      </depends>
+      <depends>
+        <module>translationField</module>
+      </depends>
+      <depends>
+        <module>imageCropper</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>EngagementCenterActions</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/engagementCenterActions.bundle.js</path>
+      </script>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>ruleComponents</module>
+      </depends>
+      <depends>
+        <module>translationField</module>
+      </depends>
+      <depends>
+        <module>imageCropper</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>EngagementCenterAchievements</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/engagementCenterAchievements.bundle.js</path>
       </script>
       <depends>
         <module>commonVueComponents</module>
@@ -398,7 +488,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <load-group>ActivityStreamGRP</load-group>
     <script>
       <minify>false</minify>
-      <path>/js/engagementCenterActivityStreamExtension.bundle.js</path>
+      <path>/js/activityStreamExtension.bundle.js</path>
     </script>
     <depends>
       <module>extensionRegistry</module>
@@ -425,7 +515,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <name>EngagementCenterFavoriteDrawerExtension</name>
     <load-group>FavoriteDrawerGRP</load-group>
     <script>
-      <path>/js/engagementCenterFavoriteDrawerExtension.bundle.js</path>
+      <path>/js/favoriteDrawerExtension.bundle.js</path>
     </script>
     <depends>
       <module>ruleComponents</module>
@@ -448,11 +538,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <name>EngagementCenterNotificationPopoverExtension</name>
     <load-group>TopBarNotificationGRP</load-group>
     <script>
-      <path>/js/engagementCenterNotificationExtension.bundle.js</path>
+      <path>/js/notificationExtension.bundle.js</path>
     </script>
-    <depends>
-      <module>engagementCenterExtensionActions</module>
-    </depends>
     <depends>
       <module>extensionRegistry</module>
     </depends>
@@ -464,6 +551,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>ruleExtensions</module>
     </depends>
   </module>
 
@@ -548,33 +638,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <module>
-    <name>realizationComponents</name>
-    <script>
-      <minify>false</minify>
-      <path>/js/realizationsComponents.bundle.js</path>
-    </script>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>vuetify</module>
-    </depends>
-    <depends>
-      <module>commonVueComponents</module>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-    <depends>
-      <module>extensionRegistry</module>
-    </depends>
-  </module>
-
-  <module>
     <name>ruleComponents</name>
     <script>
       <minify>false</minify>
@@ -593,7 +656,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <module>commonVueComponents</module>
     </depends>
     <depends>
-      <module>engagementCenterExtensionActions</module>
+      <module>ruleExtensions</module>
     </depends>
     <depends>
       <module>animationComponents</module>
@@ -611,11 +674,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </module>
 
   <module>
-    <name>engagementCenterExtensionActions</name>
+    <name>ruleExtensions</name>
     <load-group>engagement-center-user-actions</load-group>
     <script>
       <minify>false</minify>
-      <path>/js/engagementCenterActions.bundle.js</path>
+      <path>/js/ruleExtensions.bundle.js</path>
     </script>
     <depends>
       <module>extensionRegistry</module>
