@@ -48,8 +48,8 @@ export default {
       },
       getSourceLink: () => '#',
       getTitle: activity => {
-        const announcementAssigneeUsername = activity && activity.templateParams && activity.templateParams.announcementAssigneeUsername  || '';
-        const announcementAssigneeFullName = activity && activity.templateParams && activity.templateParams.announcementAssigneeFullName  || '';
+        const announcementAssigneeUsername = activity?.templateParams?.announcementAssigneeUsername  || '';
+        const announcementAssigneeFullName = activity?.templateParams?.announcementAssigneeFullName  || '';
         const title = `<a class="primary--text" href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${ announcementAssigneeUsername}">${ announcementAssigneeFullName}</a>`;
 
         return {
@@ -58,7 +58,7 @@ export default {
         };
       },
       getThumbnail: () => '/gamification-portlets/skin/images/challengesAppIcon.png',
-      getSummary: activity => activity && activity.templateParams && activity.templateParams.announcementChallenge  || activity && activity.templateParams && activity.templateParams.announcementDescription  || '',
+      getSummary: activity => activity?.templateParams?.announcementChallenge  || activity?.templateParams?.announcementDescription  || '',
     }
   }),
 };

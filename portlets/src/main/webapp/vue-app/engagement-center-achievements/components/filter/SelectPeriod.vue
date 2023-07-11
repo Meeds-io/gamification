@@ -165,10 +165,10 @@ export default {
       return today;
     },
     fromDateTitle() {
-      return this.fromDate && this.fromDate.toLocaleString(this.lang, this.dateFormat);
+      return this.fromDate?.toLocaleString(this.lang, this.dateFormat);
     },
     toDateTitle() {
-      return this.toDate && this.toDate.toLocaleString(this.lang, this.dateFormat);
+      return this.toDate?.toLocaleString(this.lang, this.dateFormat);
     },
     rangeDateTimeTitle() {
       return this.$t('realization.label.period', {

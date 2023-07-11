@@ -177,7 +177,7 @@ export default {
       this.$refs.selectAutoComplete.focus();
     },
     searchPrograms() {
-      if (this.searchTerm && this.searchTerm.length) {
+      if (this.searchTerm?.length) {
         this.focus();
         if (!this.previousSearchTerm || this.previousSearchTerm !== this.searchTerm) {
           this.loadingSuggestions = 0;

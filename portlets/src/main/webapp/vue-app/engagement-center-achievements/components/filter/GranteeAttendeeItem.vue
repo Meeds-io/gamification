@@ -31,7 +31,7 @@ export default {
       return this.isExternal ? `${fullName} (${this.$t('profile.External')})` : fullName;
     },
     isExternal() {
-      const profile = this.attendee.identity && this.attendee.identity.profile ;
+      const profile = this.attendee?.identity?.profile;
       return profile && (profile.dataEntity && profile.dataEntity.external === 'true' || profile.external);
     },
   },

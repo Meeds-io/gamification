@@ -417,7 +417,7 @@ export default {
       this.retrieveProgramRules();
     },
     retrieveProgramRules() {
-      const page = this.options && this.options.page;
+      const page = this.options?.page || 0;
       const itemsPerPage = this.options?.itemsPerPage || 10;
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;

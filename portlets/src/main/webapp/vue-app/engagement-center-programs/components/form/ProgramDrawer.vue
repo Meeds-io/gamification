@@ -356,7 +356,7 @@ export default {
       return !this.isValidForm || !this.validDescription;
     },
     buttonName() {
-      return this.program && this.program.id && this.$t('engagementCenter.button.save') || this.$t('engagementCenter.button.create');
+      return this.program?.id && this.$t('engagementCenter.button.save') || this.$t('engagementCenter.button.create');
     },
     spaceId() {
       return Number(this.audience?.spaceId) || 0;

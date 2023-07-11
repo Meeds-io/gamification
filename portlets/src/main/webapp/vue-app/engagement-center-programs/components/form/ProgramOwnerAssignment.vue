@@ -145,8 +145,8 @@ export default {
       this.$emit('input', this.assigneeObj);
     },
     invitedChallengeAssignee() {
-      const found = this.assigneeObj.find(attendee => attendee.remoteId === (this.invitedChallengeAssignee && this.invitedChallengeAssignee.remoteId));
-      if (!found && this.invitedChallengeAssignee && this.invitedChallengeAssignee.remoteId) {
+      const found = this.assigneeObj.find(attendee => attendee.remoteId === (this.invitedChallengeAssignee?.remoteId));
+      if (!found && this.invitedChallengeAssignee?.remoteId) {
         let newUser = {};
         this.$identityService.getIdentityByProviderIdAndRemoteId('organization',this.invitedChallengeAssignee.remoteId).then(user => {
           newUser= {
