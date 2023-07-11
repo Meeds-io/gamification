@@ -758,6 +758,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </init-params>
         </component-plugin>
         <component-plugin>
+          <name>rule.pinActivityOnSpace</name>
+          <set-method>addPlugin</set-method>
+          <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+          <init-params>
+            <value-param>
+              <name>rule-event</name>
+              <value>pinActivityOnSpace</value>
+            </value-param>
+          </init-params>
+        </component-plugin>
+        <component-plugin>
             <name>rule.JoinSpace</name>
             <set-method>addPlugin</set-method>
             <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
