@@ -34,6 +34,7 @@ import io.meeds.gamification.dao.ProgramDAOTest;
 import io.meeds.gamification.dao.RealizationDAOTest;
 import io.meeds.gamification.dao.RuleDAOTest;
 import io.meeds.gamification.listener.AnnouncementActivityUpdaterTest;
+import io.meeds.gamification.listener.GamificationActivityListenerTest;
 import io.meeds.gamification.listener.GamificationNotificationListenerTest;
 import io.meeds.gamification.listener.GamificationProfileListenerTest;
 import io.meeds.gamification.listener.GamificationRelationshipListenerTest;
@@ -112,6 +113,7 @@ import io.meeds.gamification.utils.UtilsTest;
     AnalyticsProgramListenerTest.class,
     AnalyticsRuleListenerTest.class,
     GamificationSpaceListenerTest.class,
+    GamificationActivityListenerTest.class,
     ProgramSpaceListenerTest.class,
     ProgramAutoDisableListenerTest.class,
     ProgramAutoDisableJobTest.class,
