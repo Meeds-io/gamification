@@ -61,7 +61,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-col>
         <v-col class="col-sm-8 col-8">
           <div v-if="isAutomaticType">
-            <rule-action-value
+            <engagement-center-realizations-automatic-action-value
               v-if="actionValueExtension"
               :action-label="actionLabel"
               :action-u-r-l="actionURL"
@@ -76,7 +76,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </span>
             </a>
           </div>
-          <challenge-action-value
+          <engagement-center-realizations-manual-action-value
             v-else
             :action-label="actionLabel"
             :action-u-r-l="actionURL" />

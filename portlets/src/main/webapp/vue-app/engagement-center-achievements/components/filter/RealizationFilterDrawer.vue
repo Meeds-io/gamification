@@ -39,7 +39,7 @@
               :labels="granteeSuggesterLabels"
               include-users />
             <div v-if="grantees" class="identitySuggester no-border mt-0">
-              <grantee-attendee-item
+              <engagement-center-realizations-grantee-attendee-item
                 v-for="grantee in grantees"
                 :key="grantee.identity.id"
                 :attendee="grantee"
@@ -49,7 +49,7 @@
         </v-card-text>
         <v-card-text>
           <span class="subtitle-1">{{ $t('realization.label.filter.program') }}</span>
-          <program-suggester
+          <engagement-center-realizations-program-suggester
             ref="programAttendeeAutoComplete"
             v-model="programAttendee"
             :labels="programSuggesterLabels"
@@ -57,7 +57,7 @@
             :include-disabled="IncludeDisabledPrograms"
             :only-owned="administrationMode" />
           <div v-if="programs" class="identitySuggester no-border mt-0">
-            <program-attendee-item
+            <engagement-center-realizations-program-attendee-item
               v-for="program in programs"
               :key="program.id"
               :program="program"

@@ -1,7 +1,9 @@
-/*
+/**
+ *
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2022 Meeds Association
- * contact@meeds.io
+ *
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -13,14 +15,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
  */
+
 import './initComponents.js';
-import '../engagement-center/services.js';
+import './extensions.js';
 
 // get overridden components if exists
 if (extensionRegistry) {
-  const components = extensionRegistry.loadComponents('Realizations');
-  if (components && components.length > 0) {
+  const components = extensionRegistry.loadComponents('EngagementCenterActions');
+  if (components?.length) {
     components.forEach(cmp => {
       Vue.component(cmp.componentName, cmp.componentOptions);
     });

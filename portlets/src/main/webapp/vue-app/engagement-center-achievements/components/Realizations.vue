@@ -18,121 +18,128 @@
 
 -->
 <template>
-  <div class="Realizations border-box-sizing">
-    <application-toolbar
-      :center-button-toggle="isProgramManager && !isMobile && {
-        selected: tabName,
-        hide: false,
-        buttons: [{
-          value: 'YOURS',
-          text: $t('gamification.achievement.yours'),
-          icon: 'fa-user',
-        }, {
-          value: 'OWNED',
-          text: $t('gamification.achievement.owned'),
-          icon: 'fa-users-cog',
-        }]
-      }"
-      :right-filter-button="{
-        text: $t('profile.label.search.openSearch'),
-      }"
-      :filters-count="filtersCount"
-      hide-cone-button
-      @toggle-select="tabName = $event"
-      @filter-button-click="$root.$emit('realization-open-filter-drawer')">
-      <template v-if="!$vuetify.breakpoint.mobile" #left>
-        <realizations-export-button :link="exportFileLink" />
-      </template>
-      <template #right>
-        <select-period
-          v-model="selectedPeriod"
-          :left="!$vuetify.breakpoint.mobile"
-          class="mx-2" />
-      </template>
-    </application-toolbar>
-
-    <v-progress-linear
-      v-if="!initialized"
-      indeterminate
-      height="2"
-      color="primary" />
-    <div v-else-if="!displaySearchResult">
-      <engagement-center-result-not-found
-        v-if="filterActivated"
-        :display-back-arrow="false"
-        :message-info-one="$t('challenge.realization.noFilterResult.messageOne')"
-        :message-info-two="$t('challenge.realization.noFilterResult.messageTwo')"
-        :button-text="$t('challenge.button.resetFilter')"
-        @button-event="reset" />
-      <engagement-center-result-not-found
-        v-else
-        :display-back-arrow="false"
-        :message-title="$t('appCenter.welcomeMessage')"
-        :message-info-one="$t('challenge.realization.noPeriodResult.messageOne')"
-        :message-info-two="$t('challenge.realization.noPeriodResult.messageTwo')"
-        :button-text="$t('programs.details.programDeleted.explore')"
-        :button-url="programsUrl" />
-    </div>
-    <v-data-table
-      v-else-if="initialized && displaySearchResult && !isMobile"
-      :headers="realizationsHeaders"
-      :items="realizationsToDisplay"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDescending"
-      disable-pagination
-      hide-default-footer
-      must-sort
-      class="mx-3 mt-2 realizationsTable">
-      <template slot="item" slot-scope="props">
-        <realization-item
-          :realization="props.item"
-          :date-format="dateFormat"
-          :is-administrator="administrationMode"
-          @updated="realizationUpdated" />
-      </template>
-    </v-data-table>
-    <v-card
-      v-if="displaySearchResult && isMobile"
-      flat
-      width="auto"
-      class="px-4 mb-4">
-      <v-select
-        ref="select"
-        class="pt-0"
-        v-model="selected"
-        :items="availableSortBy"
-        :label="$t('realization.label.sortBy')" />
-    </v-card>
-    <template v-for="item in realizationsToDisplay">
-      <realization-item-mobile
-        :key="item.id"
-        v-if="displaySearchResult && isMobile"
+  <v-app>
+    <main
+      id="rulesList"
+      :class="classWelcomeMessage"
+      class="Realizations border-box-sizing"
+      role="main">
+      <application-toolbar
+        :center-button-toggle="isProgramManager && !isMobile && {
+          selected: tabName,
+          hide: false,
+          buttons: [{
+            value: 'YOURS',
+            text: $t('gamification.achievement.yours'),
+            icon: 'fa-user',
+          }, {
+            value: 'OWNED',
+            text: $t('gamification.achievement.owned'),
+            icon: 'fa-users-cog',
+          }]
+        }"
+        :right-filter-button="{
+          text: $t('profile.label.search.openSearch'),
+        }"
+        :filters-count="filtersCount"
+        hide-cone-button
+        @toggle-select="tabName = $event"
+        @filter-button-click="$root.$emit('realization-open-filter-drawer')">
+        <template v-if="!$vuetify.breakpoint.mobile" #left>
+          <engagement-center-realizations-export-button :link="exportFileLink" />
+        </template>
+        <template #right>
+          <engagement-center-realization-select-period
+            v-model="selectedPeriod"
+            :left="!$vuetify.breakpoint.mobile"
+            class="mx-2" />
+        </template>
+      </application-toolbar>
+  
+      <v-progress-linear
+        v-if="!initialized"
+        indeterminate
+        height="2"
+        color="primary" />
+      <div v-else-if="!displaySearchResult">
+        <engagement-center-result-not-found
+          v-if="filterActivated"
+          :display-back-arrow="false"
+          :message-info-one="$t('challenge.realization.noFilterResult.messageOne')"
+          :message-info-two="$t('challenge.realization.noFilterResult.messageTwo')"
+          :button-text="$t('challenge.button.resetFilter')"
+          @button-event="reset" />
+        <engagement-center-result-not-found
+          v-else
+          :display-back-arrow="false"
+          :message-title="$t('appCenter.welcomeMessage')"
+          :message-info-one="$t('challenge.realization.noPeriodResult.messageOne')"
+          :message-info-two="$t('challenge.realization.noPeriodResult.messageTwo')"
+          :button-text="$t('programs.details.programDeleted.explore')"
+          :button-url="programsUrl" />
+      </div>
+      <v-data-table
+        v-else-if="initialized && displaySearchResult && !isMobile"
         :headers="realizationsHeaders"
-        :realization="item"
-        :is-administrator="administrationMode" 
-        :date-format="mobileDateFormat" />
-    </template>
-    <v-toolbar
-      color="transparent"
-      flat>
-      <v-btn
-        v-if="hasMore && displaySearchResult"
-        class="btn"
-        :loading="loading"
-        :disabled="loading"
-        @click="loadMore"
-        block>
-        <span class="ms-2 d-inline">
-          {{ $t("realization.label.loadMore") }}
-        </span>
-      </v-btn>
-    </v-toolbar>
-    <filter-realizations-drawer
-      ref="filterRealizationDrawer"
-      :is-administrator="administrationMode"
-      :administration-mode="administrationMode"
-      @selectionConfirmed="filterByPrograms" />
-  </div>
+        :items="realizationsToDisplay"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDescending"
+        disable-pagination
+        hide-default-footer
+        must-sort
+        class="mx-3 mt-2 realizationsTable">
+        <template slot="item" slot-scope="props">
+          <engagement-center-realization-item
+            :realization="props.item"
+            :date-format="dateFormat"
+            :is-administrator="administrationMode"
+            @updated="realizationUpdated" />
+        </template>
+      </v-data-table>
+      <v-card
+        v-if="displaySearchResult && isMobile"
+        flat
+        width="auto"
+        class="px-4 mb-4">
+        <v-select
+          ref="select"
+          class="pt-0"
+          v-model="selected"
+          :items="availableSortBy"
+          :label="$t('realization.label.sortBy')" />
+      </v-card>
+      <template v-for="item in realizationsToDisplay">
+        <engagement-center-realization-item-mobile
+          :key="item.id"
+          v-if="displaySearchResult && isMobile"
+          :headers="realizationsHeaders"
+          :realization="item"
+          :is-administrator="administrationMode" 
+          :date-format="mobileDateFormat" />
+      </template>
+      <v-toolbar
+        color="transparent"
+        flat>
+        <v-btn
+          v-if="hasMore && displaySearchResult"
+          class="btn"
+          :loading="loading"
+          :disabled="loading"
+          @click="loadMore"
+          block>
+          <span class="ms-2 d-inline">
+            {{ $t("realization.label.loadMore") }}
+          </span>
+        </v-btn>
+      </v-toolbar>
+      <engagement-center-realizations-filter-drawer
+        ref="filterRealizationDrawer"
+        :is-administrator="administrationMode"
+        :administration-mode="administrationMode"
+        @selectionConfirmed="filterByPrograms" />
+    </main>
+    <engagement-center-rule-extensions />
+  </v-app>
 </template>
 <script>
 export default {
@@ -143,7 +150,7 @@ export default {
     },
     earnerId: {
       type: Number,
-      default: () => 0,
+      default: () => eXo.env.portal.userIdentityId,
     },
   },
   data: () => ({
@@ -337,6 +344,7 @@ export default {
         this.availableSortBy.push(header);
       }
     });
+    this.loadRealizations();
     // Workaround to fix closing menu when clicking outside
     $(document).mousedown(() => {
       if (this.$refs.select) {

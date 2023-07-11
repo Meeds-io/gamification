@@ -163,7 +163,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </div>
             </div>
             <template v-else>
-              <engagement-center-rules-toolbar
+              <engagement-center-program-rules-toolbar
                 :can-manage-rule="canManageRule"
                 :keyword="keyword"
                 :program="program"
@@ -180,13 +180,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   hide-default-footer
                   disable-sort>
                   <template slot="item" slot-scope="props">
-                    <engagement-center-rule-item
+                    <engagement-center-program-rule-item
                       :rule="props.item"
                       :can-manage-rule="canManageRule" />
                   </template>
                   <template slot="no-data">
-                    <engagement-center-no-rule-found v-if="keyword" @keyword-changed="keyword = $event" />
-                    <span v-else> {{ $t('programs.details.rules.noRules') }}</span>
+                    <engagement-center-program-no-rule-found
+                      v-if="keyword"
+                      @keyword-changed="keyword = $event" />
+                    <span v-else>
+                      {{ $t('programs.details.rules.noRules') }}
+                    </span>
                   </template>
                   <template v-if="displayFooter" #footer="{props}">
                     <v-divider />

@@ -15,11 +15,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './initComponents.js';
-import './services.js';
+import '../engagement-center/initComponents.js';
+import '../engagement-center/services.js';
 
 // get overridden components if exists
 if (extensionRegistry) {
-  const components = extensionRegistry.loadComponents('EngagementCenter');
+  const components = extensionRegistry.loadComponents('EngagementCenterAchievements');
   if (components && components.length > 0) {
     components.forEach(cmp => {
       Vue.component(cmp.componentName, cmp.componentOptions);
@@ -29,7 +30,7 @@ if (extensionRegistry) {
 
 const vuetify = Vue.prototype.vuetifyOptions;
 
-const appId = 'EngagementCenterApplication';
+const appId = 'EngagementCenterAchievements';
 
 //getting language of the PLF
 const lang = eXo && eXo.env.portal.language || 'en';
@@ -55,12 +56,12 @@ export function init(isAdministrator, isProgramManager) {
         },
       },
       created() {
-        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
         window.setInterval(() => this.now = Date.now(), 1000);
       },
-      template: `<engagement-center id="${appId}" :is-administrator="${isAdministrator}" :is-program-manager="${isProgramManager}" />`,
+      template: `<engagement-center-realizations id="${appId}" :is-administrator="${isAdministrator}" :is-program-manager="${isProgramManager}" />`,
       vuetify,
       i18n
-    }, `#${appId}`, 'EngagementCenter');
+    }, `#${appId}`, 'EngagementCenterAchievements');
   }).finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
 }

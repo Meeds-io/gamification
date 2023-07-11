@@ -29,7 +29,7 @@
               class="my-auto" />
           </div>
           <div class="d-flex flex-column col-10 col-sm-11 pa-0 text-truncate">
-            <engagement-center-rule-title :rule="rule" />
+            <engagement-center-program-rule-title :rule="rule" />
             <span class="d-sm-none text-caption text-sub-title">{{ rule.score }} {{ $t('challenges.label.points') }}</span>
           </div>
         </div>

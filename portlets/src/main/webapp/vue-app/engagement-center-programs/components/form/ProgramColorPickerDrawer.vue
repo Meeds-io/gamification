@@ -39,6 +39,7 @@
             max-width="280"
             flat>
             <engagement-center-rule-card
+              v-if="initialized"
               :rule="rule"
               no-validation />
           </v-card>
@@ -154,14 +155,18 @@ export default {
       this.initialized = false;
       this.color = this.value;
       this.validColor = false;
-      this.$nextTick(() => {
-        this.initialized = true;
-        if (!this.value) {
-          this.color = '#707070';
-        }
+      const self = this;
+      window.require(['PORTLET/gamification-portlets/EngagementCenterActions'], function() {
+        self.$nextTick(() => {
+          self.initialized = true;
+          if (!self.value) {
+            self.color = '#707070';
+          }
+        });
       });
     },
     open() {
+      window.require(['PORTLET/gamification-portlets/EngagementCenterActions']);
       this.$refs.drawer.open();
     },
     close() {

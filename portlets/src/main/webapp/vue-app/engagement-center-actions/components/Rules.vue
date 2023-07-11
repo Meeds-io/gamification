@@ -18,74 +18,77 @@
 
 -->
 <template>
-  <div
-    id="rulesList"
-    :class="classWelcomeMessage"
-    class="rules-list border-box-sizing"
-    role="main">
-    <application-toolbar
-      :left-text="tabName !== 'TRENDS' && incentivesCountLabel"
-      :center-button-toggle="{
-        selected: tabName,
-        hide: false,
-        buttons: [{
-          value: 'TRENDS',
-          text: $t('gamification.actions.groupBy.trends'),
-          icon: 'fa-fire',
-        }, {
-          value: 'ALL',
-          text: $t('gamification.actions.groupBy.all'),
-          icon: 'fa-layer-group',
-        }]
-      }"
-      :right-text-filter="tabName !== 'TRENDS' && {
-        minCharacters: 3,
-        placeholder: $t('challenges.filter.search'),
-        tooltip: $t('challenges.filter.searchTooltip'),
-      }"
-      :right-filter-button="tabName !== 'TRENDS' && {
-        text: $t('profile.label.search.openSearch'),
-      }"
-      :filters-count="filtersCount"
-      @toggle-select="tabName = $event"
-      @filter-text-input-end-typing="term = $event"
-      @filter-button-click="$refs.rulesFilterDrawer.open()" />
-    <v-card flat>
-      <engagement-center-result-not-found
-        v-if="ruleNotFound"
-        :display-back-arrow="false"
-        :message-title="$t('actions.ruleNotFoundMessage')"
-        :button-text="$t('actions.exploreActions')"
-        @button-event="ruleNotFound = false" />
-      <engagement-center-result-not-found
-        v-else-if="displayWelcomeMessage"
-        :display-back-arrow="false"
-        :message-title="$t('appCenter.welcomeMessage')"
-        :message-info-one="$t('actions.welcomeMessageForRegularUser')" />
-      <engagement-center-result-not-found
-        v-else-if="displayNoSearchResult"
-        :display-back-arrow="false"
-        :message-title="welcomeMessage"
-        :message-info-one="notFoundInfoMessage" />
-
-      <engagement-center-rules-by-program
-        v-if="tabName === 'ALL'"
-        :term="term"
-        :type="type"
-        :status="status"
+  <v-app>
+    <main
+      id="rulesList"
+      :class="classWelcomeMessage"
+      class="rules-list border-box-sizing"
+      role="main">
+      <application-toolbar
+        :left-text="tabName !== 'TRENDS' && incentivesCountLabel"
+        :center-button-toggle="{
+          selected: tabName,
+          hide: false,
+          buttons: [{
+            value: 'TRENDS',
+            text: $t('gamification.actions.groupBy.trends'),
+            icon: 'fa-fire',
+          }, {
+            value: 'ALL',
+            text: $t('gamification.actions.groupBy.all'),
+            icon: 'fa-layer-group',
+          }]
+        }"
+        :right-text-filter="tabName !== 'TRENDS' && {
+          minCharacters: 3,
+          placeholder: $t('challenges.filter.search'),
+          tooltip: $t('challenges.filter.searchTooltip'),
+        }"
+        :right-filter-button="tabName !== 'TRENDS' && {
+          text: $t('profile.label.search.openSearch'),
+        }"
+        :filters-count="filtersCount"
+        @toggle-select="tabName = $event"
+        @filter-text-input-end-typing="term = $event"
+        @filter-button-click="$refs.rulesFilterDrawer.open()" />
+      <v-card flat>
+        <engagement-center-result-not-found
+          v-if="ruleNotFound"
+          :display-back-arrow="false"
+          :message-title="$t('actions.ruleNotFoundMessage')"
+          :button-text="$t('actions.exploreActions')"
+          @button-event="ruleNotFound = false" />
+        <engagement-center-result-not-found
+          v-else-if="displayWelcomeMessage"
+          :display-back-arrow="false"
+          :message-title="$t('appCenter.welcomeMessage')"
+          :message-info-one="$t('actions.welcomeMessageForRegularUser')" />
+        <engagement-center-result-not-found
+          v-else-if="displayNoSearchResult"
+          :display-back-arrow="false"
+          :message-title="welcomeMessage"
+          :message-info-one="notFoundInfoMessage" />
+  
+        <engagement-center-rules-by-program
+          v-if="tabName === 'ALL'"
+          :term="term"
+          :type="type"
+          :status="status"
+          :is-administrator="isAdministrator"
+          @loading="loading = $event"
+          @initialized="setRulesSize" />
+        <engagement-center-rules-by-trend
+          v-else-if="tabName === 'TRENDS'"
+          @loading="loading = $event"
+          @initialized="setRulesSize" />
+      </v-card>
+      <engagement-center-rules-filter-drawer
+        ref="rulesFilterDrawer"
         :is-administrator="isAdministrator"
-        @loading="loading = $event"
-        @initialized="setRulesSize" />
-      <engagement-center-rules-by-trend
-        v-else-if="tabName === 'TRENDS'"
-        @loading="loading = $event"
-        @initialized="setRulesSize" />
-    </v-card>
-    <engagement-center-rules-filter-drawer
-      ref="rulesFilterDrawer"
-      :is-administrator="isAdministrator"
-      @apply="applyFilter" />
-  </div>
+        @apply="applyFilter" />
+    </main>
+    <engagement-center-rule-extensions />
+  </v-app>
 </template>
 <script>
 export default {
