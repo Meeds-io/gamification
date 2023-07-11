@@ -69,7 +69,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </div>
             </a>
           </template>
-          <span v-html="programTitle"></span>
+          <span>{{ programTitle }}</span>
         </v-tooltip>
         <v-tooltip
           v-if="programLabelChanged"
