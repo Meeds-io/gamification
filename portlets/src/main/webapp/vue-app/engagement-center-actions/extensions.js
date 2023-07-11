@@ -87,6 +87,7 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
       'updateSpaceApplications',
       'becomeSpaceManager',
       'inviteUserToSpace',
+      'pinActivityOnSpace',
       'joinSpace'
     ].includes(actionLabel),
   },

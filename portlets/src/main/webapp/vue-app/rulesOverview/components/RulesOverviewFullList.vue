@@ -21,6 +21,7 @@
     :rules-count="overallActiveRulesCount"
     :page-size="pageSize"
     :loading="loading"
+    :see-all-url="actionsPath"
     @load-more="loadMoreActiveRules"
     @hide="$emit('hide')">
     <template #title>
@@ -39,6 +40,7 @@ export default {
     endingRules: [],
     loading: true,
     hidden: false,
+    actionsPath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions#all`,
   }),
   computed: {
     rules() {
