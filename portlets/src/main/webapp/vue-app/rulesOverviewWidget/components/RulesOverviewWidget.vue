@@ -28,21 +28,31 @@
     <template #content>
       <template v-if="lockedRulesCount">
         <div class="d-flex align-center mx-4">
-          <span class="me-2">{{ $t('gamification.overview.lockedActionsTitle') }}</span>
+          <span class="me-2">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
           <v-divider />
         </div>
         <gamification-rules-overview-item
-          v-for="rule in lockedRules"
+          v-for="rule in lockedRulesToDisplay"
+          :key="rule.id"
+          :rule="rule" />
+      </template>
+      <template v-if="endingRulesCount">
+        <div class="d-flex align-center mx-4">
+          <span class="me-2">{{ $t('gamification.overview.endingActionsTitle') }}</span>
+          <v-divider />
+        </div>
+        <gamification-rules-overview-item
+          v-for="rule in endingRulesToDisplay"
           :key="rule.id"
           :rule="rule" />
       </template>
       <template v-if="validRulesCount">
-        <div v-if="!hasAvailableRulesOnly" class="d-flex align-center mx-4">
+        <div v-if="sectionsCount > 1" class="d-flex align-center mx-4">
           <span class="me-2">{{ $t('gamification.overview.availableActionsTitle') }}</span>
           <v-divider />
         </div>
         <gamification-rules-overview-item
-          v-for="rule in validRules"
+          v-for="rule in validRulesToDisplay"
           :key="rule.id"
           :rule="rule" />
       </template>
@@ -52,10 +62,9 @@
           <v-divider />
         </div>
         <gamification-rules-overview-item
-          v-for="rule in upcomingRules"
+          v-for="rule in upcomingRulesToDisplay"
           :key="rule.id"
-          :rule="rule"
-          upcoming />
+          :rule="rule" />
       </template>
     </template>
   </gamification-overview-widget>
@@ -133,6 +142,7 @@ export default {
   data: () => ({
     actionsPageURL: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
     hideIfEmpty: false,
+    weekInMs: 604800000,
   }),
   computed: {
     completedRulesImageIndex() {
@@ -148,53 +158,86 @@ export default {
       const lockedRulesWithDependencies = [];
       const lockedRules = this.rules.filter(r => this.isRuleValidButLocked(r));
       lockedRules.sort((r1, r2) => r2.title.localeCompare(r1.title));
-      lockedRules.forEach(r => {
-        try {
-          const lockedRuleDependencies = [];
-          this.addLockedRule(lockedRulesWithDependencies, lockedRuleDependencies, r);
-          lockedRulesWithDependencies.unshift(...lockedRuleDependencies);
-        } catch (e) {
-          // Invalid Rule Tree, avoid adding it in the list of
-          // Locked Rules to unlock
-          // eslint-disable-next-line no-console
-          console.debug(e);
-        }
-      });
+      lockedRules
+        .forEach(r => {
+          try {
+            const lockedRuleDependencies = [];
+            this.addLockedRule(lockedRulesWithDependencies, lockedRuleDependencies, r);
+            lockedRulesWithDependencies.unshift(...lockedRuleDependencies);
+          } catch (e) {
+            // Invalid Rule Tree, avoid adding it in the list of
+            // Locked Rules to unlock
+            // eslint-disable-next-line no-console
+            console.debug(e);
+          }
+        });
       lockedRulesWithDependencies.sort((r1, r2) => (!r1.prerequisiteRules?.length && -1) || (!r2.prerequisiteRules?.length && 1) || 0);
-      return lockedRulesWithDependencies.slice(0, this.pageSize - 1);
+      return lockedRulesWithDependencies;
     },
-    lockedRulesCount() {
-      return this.lockedRules.length;
+    endingRules() {
+      if (!this.hasRules) {
+        return [];
+      }
+      const lockedRulesToDisplay = this.lockedRules.slice(0, 2);
+      return this.rules
+        .filter(r => r?.userInfo?.context?.valid
+            && !lockedRulesToDisplay.find(lr => lr.id === r.id)
+            && r.endDate
+            && (new Date(r.endDate).getTime() - Date.now()) < this.weekInMs);
     },
     validRules() {
       if (!this.hasRules) {
         return [];
       }
+      const lockedRulesToDisplay = this.lockedRules.slice(0, 2);
+      const endingRulesToDisplay = this.endingRules.slice(0, 2);
       return this.rules
         .filter(r => r?.userInfo?.context?.valid
-            && !r?.prerequisiteRules?.length
-            && (!this.lockedRulesCount || !this.lockedRules.find(lr => lr.id === r.id)))
-        .slice(0, this.pageSize - this.lockedRulesCount);
-    },
-    validRulesCount() {
-      return this.validRules.length;
+            && !lockedRulesToDisplay.find(lr => lr.id === r.id)
+            && !endingRulesToDisplay.find(er => er.id === r.id));
     },
     upcomingRules() {
       if (!this.hasRules) {
         return [];
       }
-      const upcomingRules = this.rules.filter(this.isRuleValidButUpcoming);
+      const upcomingRules = this.rules
+        .filter(this.isRuleValidButUpcoming)
+        .filter(r => r.startDate && (new Date(r.startDate).getTime() - Date.now()) < this.weekInMs);
       upcomingRules.sort((r1, r2) => new Date(r1.startDate).getTime() - new Date(r2.startDate).getTime());
-      return upcomingRules.slice(0, this.pageSize - this.validRulesCount - this.lockedRulesCount);
+      return upcomingRules;
+    },
+    endingRulesCount() {
+      return this.endingRules.length;
+    },
+    lockedRulesCount() {
+      return this.lockedRules.length;
+    },
+    validRulesCount() {
+      return this.validRules.length;
     },
     upcomingRulesCount() {
       return this.upcomingRules.length;
     },
-    hasValidRules() {
-      return this.lockedRulesCount || this.validRulesCount || this.upcomingRulesCount;
+    sectionsCount() {
+      return (this.validRulesCount && 1 || 0)
+        + (this.endingRulesCount && 1 || 0)
+        + (this.lockedRulesCount && 1 || 0)
+        + (this.upcomingRulesCount && 1 || 0);
     },
-    hasAvailableRulesOnly() {
-      return this.validRulesCount && !this.lockedRulesCount && !this.upcomingRulesCount;
+    lockedRulesToDisplay() {
+      return this.lockedRules.slice(0, (this.sectionsCount === 1) && 4 || 2);
+    },
+    endingRulesToDisplay() {
+      return this.endingRules.slice(0, (this.sectionsCount === 1) && 4 || 2);
+    },
+    validRulesToDisplay() {
+      return this.validRules.slice(0, (this.sectionsCount < 4) && 4 || 2);
+    },
+    upcomingRulesToDisplay() {
+      return this.upcomingRules.slice(0, (this.sectionsCount === 1) && 4 || 2);
+    },
+    hasValidRules() {
+      return this.sectionsCount > 0;
     },
     isHiddenWhenEmpty() {
       return (this.hideIfEmpty && !this.hideEmptyPlaceholder)
@@ -224,12 +267,11 @@ export default {
     addLockedRule(lockedRules, rules, lockedRule) {
       if (rules.find(r => r.id === lockedRule.id)) {
         return;
-      }
-      // 1. Add locked Rule at the beginning of the array
-      rules.unshift(lockedRule);
-      // 2. Add dependent rules inside the list of lockedRules
-      if (lockedRule.prerequisiteRules?.length) {
+      } else if (lockedRule?.userInfo?.context?.valid) {
+        rules.unshift(lockedRule);
+      } else if (this.isRuleValidButLocked(lockedRule)) {
         lockedRule.prerequisiteRules
+          .filter(r => r && lockedRule.userInfo.context.validPrerequisites[r.id] === false)
           .map(r => {
             const prerequisiteRule = this.rules.find(rule => r.id === rule.id);
             if (prerequisiteRule) {
@@ -242,13 +284,13 @@ export default {
               throw new Error(`Prerequisite rule ${r.id} seems invalid, avoid adding parent rule to the list`);
             }
           })
-          .filter(r => r && lockedRule.userInfo.context.validPrerequisites[r.id] === false)
           .forEach(r => this.addLockedRule(lockedRules,rules, r));
       }
     },
     isRuleValidButLocked(rule) {
       return rule?.prerequisiteRules?.length // has locked rules
           // Check that all other rule conditions are valid
+          && !rule?.userInfo?.context?.valid
           && Object.keys(rule.userInfo.context)
             .every(prop => !prop.includes('valid')
                 || prop === 'valid'
