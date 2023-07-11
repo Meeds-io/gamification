@@ -335,7 +335,7 @@ export default {
     programAvatarSize: 40,
     isValidForm: true,
     maxTitleLength: 50,
-    maxDescriptionLength: 500,
+    maxDescriptionLength: 1300,
     drawer: false,
     expanded: false,
     scoreRules: [
