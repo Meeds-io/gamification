@@ -226,6 +226,15 @@
   </external-component-plugins>
 
   <external-component-plugins>
+    <target-component>org.exoplatform.social.attachment.AttachmentService</target-component>
+    <component-plugin>
+      <name>RuleAttachmentPlugin</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.RuleAttachmentPlugin</type>
+    </component-plugin>
+  </external-component-plugins>
+
+  <external-component-plugins>
     <target-component>org.exoplatform.services.listener.ListenerService</target-component>
     <component-plugin>
       <name>rule.published</name>
