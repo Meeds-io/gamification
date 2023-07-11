@@ -184,11 +184,13 @@ export default {
         return [];
       }
       const lockedRulesToDisplay = this.lockedRules.slice(0, 2);
-      return this.rules
+      const endingRules = this.rules
         .filter(r => r?.userInfo?.context?.valid
             && !lockedRulesToDisplay.find(lr => lr.id === r.id)
             && r.endDate
             && (new Date(r.endDate).getTime() - Date.now()) < this.weekInMs);
+      endingRules.sort((r1, r2) => new Date(r1.endDate).getTime() - new Date(r2.endDate).getTime());
+      return endingRules;
     },
     validRules() {
       if (!this.hasRules) {
@@ -196,10 +198,12 @@ export default {
       }
       const lockedRulesToDisplay = this.lockedRules.slice(0, 2);
       const endingRulesToDisplay = this.endingRules.slice(0, 2);
-      return this.rules
+      const validRules = this.rules
         .filter(r => r?.userInfo?.context?.valid
             && !lockedRulesToDisplay.find(lr => lr.id === r.id)
             && !endingRulesToDisplay.find(er => er.id === r.id));
+      validRules.sort((r1, r2) => r2.score - r1.score);
+      return validRules;
     },
     upcomingRules() {
       if (!this.hasRules) {
