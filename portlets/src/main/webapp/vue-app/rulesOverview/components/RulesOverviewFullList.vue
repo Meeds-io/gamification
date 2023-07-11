@@ -44,7 +44,13 @@ export default {
   }),
   computed: {
     rules() {
-      return [...this.upcomingRules, ...this.activeRules, ...this.endingRules];
+      const rules = [...this.upcomingRules, ...this.endingRules];
+      this.activeRules.forEach(rule => {
+        if (!rules.find(r => r.id === rule.id)) {
+          rules.push(rule);
+        }
+      });
+      return rules;
     },
   },
   created() {

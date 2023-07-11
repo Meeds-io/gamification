@@ -111,7 +111,7 @@ export default {
     type: 'ALL',
     status: 'STARTED',
     ruleNotFound: false,
-    linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
+    linkBasePath: '/contributions/actions',
   }),
   computed: {
     filtersCount() {
@@ -170,9 +170,9 @@ export default {
     tabName() {
       this.loading = true;
       if (this.tabName === 'ALL') {
-        window.history.replaceState('challenges', this.$t('program.actions'), `${this.linkBasePath}#all`);
-      } else {
-        window.history.replaceState('challenges', this.$t('program.actions'), this.linkBasePath);
+        window.location.hash = '#all';
+      } else if (this.tabName === 'TRENDS') {
+        window.location.hash = '#trends';
       }
     },
   },

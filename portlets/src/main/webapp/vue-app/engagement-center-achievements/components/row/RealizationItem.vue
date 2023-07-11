@@ -63,7 +63,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <template #activator="{ on }">
             <a
               v-on="on"
-              @click="openProgramDetail"
+              :href="programUrl"
               class="width-fit-content">
               <div class="text-truncate">{{ programTitle }}
               </div>
@@ -248,6 +248,9 @@ export default {
     programTitle() {
       return this.program?.title || '-';
     },
+    programUrl() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program?.id}`;
+    },
     score() {
       return this.realization?.score || '-';
     },
@@ -345,9 +348,6 @@ export default {
           });
           this.$emit('updated', updatedRealization);
         });
-    },
-    openProgramDetail() {
-      this.$root.$emit('open-program-detail-by-id', this.program.id);
     },
     retrieveRealizationLink() {
       if (this.status === 'DELETED' || this.status === 'CANCELED') {

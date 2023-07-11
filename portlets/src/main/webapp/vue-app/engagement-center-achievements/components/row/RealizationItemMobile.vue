@@ -46,7 +46,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-col class="col-sm-8 col-8">
           <v-tooltip bottom>
             <template #activator="{ on }">
-              <a v-on="on" @click="openProgramDetail">
+              <a
+                v-on="on"
+                :href="programUrl">
                 <div class="text-truncate">{{ programTitle }}
                 </div>
               </a>
@@ -147,6 +149,9 @@ export default {
     programTitle() {
       return this.program?.title || '-';
     },
+    programUrl() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program?.id}`;
+    },
     score() {
       return this.realization?.score || '-';
     },
@@ -181,11 +186,6 @@ export default {
     },
     actionIcon() {
       return this.actionValueExtension?.icon;
-    },
-  },
-  methods: {
-    openProgramDetail() {
-      this.$root.$emit('open-program-detail', this.program);
     },
   },
 };
