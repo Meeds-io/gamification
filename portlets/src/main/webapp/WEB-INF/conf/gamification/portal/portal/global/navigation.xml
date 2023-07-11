@@ -25,13 +25,25 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <name>contributions</name>
       <label>#{portal.global.contributions}</label>
       <visibility>SYSTEM</visibility>
-      <page-reference>portal::global::contributions</page-reference>
-    </node>
-    <node>
-      <name>challenges</name>
-      <label>#{portal.global.challenges}</label>
-      <visibility>SYSTEM</visibility>
-      <page-reference>portal::global::contributions</page-reference>
+      <page-reference>portal::global::programs</page-reference>
+      <node>
+        <name>programs</name>
+        <label>#{portal.global.programs}</label>
+        <visibility>SYSTEM</visibility>
+        <page-reference>portal::global::programs</page-reference>
+      </node>
+      <node>
+        <name>actions</name>
+        <label>#{portal.global.actions}</label>
+        <visibility>SYSTEM</visibility>
+        <page-reference>portal::global::actions</page-reference>
+      </node>
+      <node>
+        <name>achievements</name>
+        <label>#{portal.global.achievements}</label>
+        <visibility>SYSTEM</visibility>
+        <page-reference>portal::global::achievements</page-reference>
+      </node>
     </node>
   </page-nodes>
 </node-navigation>

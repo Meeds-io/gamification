@@ -20,7 +20,7 @@ import '../engagement-center/services.js';
 
 // get overridden components if exists
 if (extensionRegistry) {
-  const components = extensionRegistry.loadComponents('EngagementCenterActions');
+  const components = extensionRegistry.loadComponents('EngagementCenterAchievements');
   if (components && components.length > 0) {
     components.forEach(cmp => {
       Vue.component(cmp.componentName, cmp.componentOptions);
@@ -30,7 +30,7 @@ if (extensionRegistry) {
 
 const vuetify = Vue.prototype.vuetifyOptions;
 
-const appId = 'EngagementCenterActions';
+const appId = 'EngagementCenterAchievements';
 
 //getting language of the PLF
 const lang = eXo && eXo.env.portal.language || 'en';
@@ -41,9 +41,9 @@ const urls = [
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`
 ];
 
-export function init(isAdministrator, isProgramManager) {
-  document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
 
+export function init(isAdministrator, isProgramManager) {
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
@@ -59,9 +59,9 @@ export function init(isAdministrator, isProgramManager) {
         document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
         window.setInterval(() => this.now = Date.now(), 1000);
       },
-      template: `<engagement-center-rules id="${appId}" :is-administrator="${isAdministrator}" :is-program-manager="${isProgramManager}" />`,
+      template: `<engagement-center-realizations id="${appId}" :is-administrator="${isAdministrator}" :is-program-manager="${isProgramManager}" />`,
       vuetify,
       i18n
-    }, `#${appId}`, 'EngagementCenterActions');
+    }, `#${appId}`, 'EngagementCenterAchievements');
   }).finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
 }
