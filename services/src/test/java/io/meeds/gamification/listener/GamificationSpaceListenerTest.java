@@ -18,7 +18,8 @@ package io.meeds.gamification.listener;
 
 import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_ADD;
-import static io.meeds.gamification.constant.GamificationConstant.*;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_INVITE_USER;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_JOIN;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_AVATAR;
