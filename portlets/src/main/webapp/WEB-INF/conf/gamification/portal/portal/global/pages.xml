@@ -20,24 +20,98 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           xmlns="http://www.exoplatform.org/xml/ns/gatein_objects_1_8">
 
   <page>
-    <name>contributions</name>
-    <title>contributions</title>
+    <name>programs</name>
+    <title>Contribution Center - Programs</title>
     <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
     <edit-permission>*:/platform/administrators</edit-permission>
-    <container id="challengesParentContainer" template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
+    <container
+      id="programsParentContainer"
+      template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
       <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
-      <container id="top-challenges-container" template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
-        <name>top-challenges-container</name>
+      <container
+        id="top-programs-container"
+        template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
+        <name>top-programs-container</name>
         <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
         <factory-id>addonContainer</factory-id>
       </container>
-      <container id="challenges-container" template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
-        <name>challenges-container</name>
+      <container
+        id="programs-container"
+        template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
+        <name>programs-container</name>
         <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
         <factory-id>addonContainer</factory-id>
       </container>
-      <container id="bottom-challenges-container" template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
-        <name>bottom-challenges-container</name>
+      <container
+        id="bottom-programs-container"
+        template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
+        <name>bottom-programs-container</name>
+        <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
+        <factory-id>addonContainer</factory-id>
+      </container>
+    </container>
+  </page>
+
+  <page>
+    <name>actions</name>
+    <title>Contribution Center - Actions</title>
+    <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
+    <edit-permission>*:/platform/administrators</edit-permission>
+    <container
+      id="actionsParentContainer"
+      template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
+      <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
+      <container
+        id="top-actions-container"
+        template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
+        <name>top-actions-container</name>
+        <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
+        <factory-id>addonContainer</factory-id>
+      </container>
+      <container
+        id="actions-container"
+        template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
+        <name>actions-container</name>
+        <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
+        <factory-id>addonContainer</factory-id>
+      </container>
+      <container
+        id="bottom-actions-container"
+        template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
+        <name>bottom-actions-container</name>
+        <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
+        <factory-id>addonContainer</factory-id>
+      </container>
+    </container>
+  </page>
+
+  <page>
+    <name>achievements</name>
+    <title>Contribution Center - Achievements</title>
+    <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
+    <edit-permission>*:/platform/administrators</edit-permission>
+    <container
+      id="achievementsParentContainer"
+      template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
+      <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
+      <container
+        id="top-achievements-container"
+        template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
+        <name>top-achievements-container</name>
+        <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
+        <factory-id>addonContainer</factory-id>
+      </container>
+      <container
+        id="achievements-container"
+        template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
+        <name>achievements-container</name>
+        <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
+        <factory-id>addonContainer</factory-id>
+      </container>
+      <container
+        id="bottom-achievements-container"
+        template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
+        <name>bottom-achievements-container</name>
         <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
         <factory-id>addonContainer</factory-id>
       </container>
@@ -49,16 +123,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <title>overview</title>
     <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
     <edit-permission>*:/platform/rewarding</edit-permission>
-    <container id="meedsOverviewPage" template="system:/groovy/portal/webui/container/UIContainer.gtmpl"
-               cssClass="VuetifyApp">
+    <container
+      id="meedsOverviewPage"
+      template="system:/groovy/portal/webui/container/UIContainer.gtmpl"
+      cssClass="VuetifyApp">
       <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
-      <container template="system:/groovy/portal/webui/container/UIContainer.gtmpl"
-                 cssClass="v-application v-application--is-ltr v-application--wrap singlePageApplication">
+      <container
+        template="system:/groovy/portal/webui/container/UIContainer.gtmpl"
+        cssClass="v-application v-application--is-ltr v-application--wrap singlePageApplication">
         <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
-        <container id="overviewPage" template="system:/groovy/portal/webui/container/UIVRowContainer.gtmpl">
+        <container
+          id="overviewPage"
+          template="system:/groovy/portal/webui/container/UIVRowContainer.gtmpl">
           <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
-          <container id="overviewBannerContainer" template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
-                     cssClass="col-12">
+          <container
+            id="overviewBannerContainer"
+            template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
+            cssClass="col-12">
             <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
             <portlet-application>
               <portlet>
@@ -88,8 +169,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <show-application-state>false</show-application-state>
             </portlet-application>
           </container>
-          <container id="contributionsContainer" template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
-                     cssClass="col col-sm-12 col-md-6 col-lg-4">
+          <container
+            id="contributionsContainer"
+            template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
+            cssClass="col col-sm-12 col-md-6 col-lg-4">
             <portlet-application>
               <portlet>
                 <application-ref>gamification-portlets</application-ref>
@@ -100,8 +183,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <show-info-bar>false</show-info-bar>
             </portlet-application>
           </container>
-          <container id="ReputationContainer" template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
-                     cssClass="col col-sm-12 col-md-6 col-lg-4">
+          <container
+            id="ReputationContainer"
+            template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
+            cssClass="col col-sm-12 col-md-6 col-lg-4">
             <portlet-application>
               <portlet>
                 <application-ref>gamification-portlets</application-ref>
@@ -112,8 +197,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <show-info-bar>false</show-info-bar>
             </portlet-application>
           </container>
-          <container id="RewardsContainer" template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
-                     cssClass="col col-sm-12 col-md-6 col-lg-4">
+          <container
+            id="RewardsContainer"
+            template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
+            cssClass="col col-sm-12 col-md-6 col-lg-4">
             <portlet-application>
               <portlet>
                 <application-ref>gamification-portlets</application-ref>
@@ -124,8 +211,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <show-info-bar>false</show-info-bar>
             </portlet-application>
           </container>
-          <container id="TopChallengersContainer" template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
-                     cssClass="col col-sm-12 col-md-6 col-lg-4">
+          <container
+            id="TopChallengersContainer"
+            template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
+            cssClass="col col-sm-12 col-md-6 col-lg-4">
             <portlet-application>
               <portlet>
                 <application-ref>gamification-portlets</application-ref>
@@ -136,9 +225,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <show-info-bar>false</show-info-bar>
             </portlet-application>
           </container>
-          <container id="ChanllengesOverviewContainer"
-                     template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
-                     cssClass="col col-sm-12 col-md-6 col-lg-4">
+          <container
+            id="ChanllengesOverviewContainer"
+            template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
+            cssClass="col col-sm-12 col-md-6 col-lg-4">
             <portlet-application>
               <portlet>
                 <application-ref>gamification-portlets</application-ref>
@@ -149,9 +239,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <show-info-bar>false</show-info-bar>
             </portlet-application>
           </container>
-          <container id="ProgramsOverviewContainer"
-                     template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
-                     cssClass="col col-sm-12 col-md-6 col-lg-4">
+          <container
+            id="ProgramsOverviewContainer"
+            template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
+            cssClass="col col-sm-12 col-md-6 col-lg-4">
             <portlet-application>
               <portlet>
                 <application-ref>gamification-portlets</application-ref>
