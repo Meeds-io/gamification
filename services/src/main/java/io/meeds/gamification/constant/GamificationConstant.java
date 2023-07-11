@@ -51,6 +51,9 @@ public interface GamificationConstant {
     String GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_STREAM                             = "addActivityOnSpaceStream";
     /** ADD ACTIVITY ON MY STREAM */
     String GAMIFICATION_SOCIAL_ADD_ACTIVITY_MY_STREAM                                = "addActivityOnMyStream";
+
+    String GAMIFICATION_SOCIAL_PIN_ACTIVITY_SPACE                                    = "pinActivityOnSpace";
+
     /** ADD ACTIVITY ON MY STREAM */
     String GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_TARGET                             = "addActivityOnSpaceStreamTarget";
     /** ADD ACTIVITY ON MY STREAM */

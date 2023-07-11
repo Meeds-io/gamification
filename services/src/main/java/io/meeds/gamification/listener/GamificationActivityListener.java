@@ -21,7 +21,7 @@ import static io.meeds.gamification.constant.GamificationConstant.BROADCAST_GAMI
 import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_ACTIVITY_MY_STREAM;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_ACTIVITY_NETWORK_STREAM;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_STREAM;
+import static io.meeds.gamification.constant.GamificationConstant.*;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_TARGET;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_ACTIVITY_TARGET_USER_STREAM;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_COMMENT_NETWORK_STREAM;
@@ -51,7 +51,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -69,24 +68,28 @@ import io.meeds.gamification.service.RuleService;
 
 public class GamificationActivityListener extends ActivityListenerPlugin {
 
-  private static final Log    LOG         = ExoLogger.getLogger(GamificationActivityListener.class);
+  private static final Log        LOG = ExoLogger.getLogger(GamificationActivityListener.class);
 
-  protected RuleService       ruleService;
+  protected final RuleService     ruleService;
 
-  protected IdentityManager   identityManager;
+  protected final IdentityManager identityManager;
 
-  protected SpaceService      spaceService;
+  protected final SpaceService    spaceService;
 
-  protected ActivityManager   activityManager;
+  protected final ActivityManager activityManager;
 
-  protected ListenerService   listenerService;
+  protected final ListenerService listenerService;
 
-  public GamificationActivityListener() {
-    this.ruleService = CommonsUtils.getService(RuleService.class);
-    this.identityManager = CommonsUtils.getService(IdentityManager.class);
-    this.spaceService = CommonsUtils.getService(SpaceService.class);
-    this.activityManager = CommonsUtils.getService(ActivityManager.class);
-    this.listenerService = CommonsUtils.getService(ListenerService.class);
+  public GamificationActivityListener(RuleService ruleService,
+                                      IdentityManager identityManager,
+                                      ActivityManager activityManager,
+                                      SpaceService spaceService,
+                                      ListenerService listenerService) {
+    this.ruleService = ruleService;
+    this.identityManager = identityManager;
+    this.spaceService = spaceService;
+    this.activityManager = activityManager;
+    this.listenerService = listenerService;
   }
 
   @Override
@@ -143,10 +146,14 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   }
 
   @Override
-  public void updateActivity(ActivityLifeCycleEvent event) {
-    // Update activity abstract method was modified untill the spec will be
-    // provided
+  public void pinActivity(ActivityLifeCycleEvent event) {
+    ExoSocialActivity activity = event.getSource();
+    String userIdentityId = event.getUserId();
 
+    createActivityGamificationHistoryEntry(userIdentityId,
+                                           userIdentityId,
+                                           GAMIFICATION_SOCIAL_PIN_ACTIVITY_SPACE,
+                                           activity.getId());
   }
 
   @Override
@@ -196,11 +203,6 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
                                           GAMIFICATION_SOCIAL_ADD_COMMENT_SPACE_STREAM,
                                           activity.getId());
     }
-  }
-
-  @Override
-  public void updateComment(ActivityLifeCycleEvent activityLifeCycleEvent) {
-    // Waiting for spec to be implemented
   }
 
   @Override
@@ -380,7 +382,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     return activity.getActivityStream() != null && ActivityStream.Type.SPACE.equals(activity.getActivityStream().getType());
   }
 
-  private void createActivityGamificationHistoryEntry(String earnerIdentityId, String receiverId, String gamificationEventName, String activityId) {
+  private void createActivityGamificationHistoryEntry(String earnerIdentityId, String receiverId, String gamificationEventName,
+                                                      String activityId) {
     Map<String, String> gam = new HashMap<>();
     try {
       gam.put(EVENT_NAME, gamificationEventName);
