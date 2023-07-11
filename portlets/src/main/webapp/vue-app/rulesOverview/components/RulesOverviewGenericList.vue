@@ -33,8 +33,7 @@
           v-for="rule in endingRulesToDisplay"
           :key="rule.id"
           :rule="rule"
-          dense
-          ending />
+          dense />
       </template>
       <template v-if="activeRulesCount">
         <div v-if="!hasAvailableRulesOnly" class="d-flex align-center mx-4">
@@ -56,8 +55,7 @@
           v-for="rule in upcomingRulesToDisplay"
           :key="rule.id"
           :rule="rule"
-          dense
-          upcoming />
+          dense />
       </template>
       <template v-if="remainingCount">
         <gamification-overview-widget-empty-row

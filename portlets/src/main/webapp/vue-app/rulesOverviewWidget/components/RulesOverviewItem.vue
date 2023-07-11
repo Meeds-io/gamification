@@ -71,19 +71,14 @@ export default {
       type: Object,
       default: null,
     },
-    upcoming: {
-      type: Boolean,
-      default: false,
-    },
-    ending: {
-      type: Boolean,
-      default: false,
-    },
     dense: {
       type: Boolean,
       default: false,
     },
   },
+  data: () => ({
+    weekInMs: 604800000,
+  }),
   computed: {
     ruleScore() {
       return new Intl.NumberFormat(eXo.env.portal.language, {
@@ -91,6 +86,18 @@ export default {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       }).format(this.rule.score);
+    },
+    upcoming() {
+      const startDate = this.rule?.startDate && new Date(this.rule?.startDate).getTime();
+      return startDate && startDate > Date.now() && (startDate - Date.now()) < this.weekInMs;
+    },
+    ending() {
+      const startDate = this.rule?.startDate && new Date(this.rule?.startDate).getTime();
+      const endDate = this.rule?.endDate && new Date(this.rule?.endDate).getTime();
+      return endDate
+        && endDate > Date.now()
+        && (!startDate || startDate > Date.now())
+        && (endDate - Date.now()) < this.weekInMs;
     },
   },
 };
