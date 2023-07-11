@@ -20,7 +20,9 @@
     <gamification-rules-overview-space-list
       v-if="spaceId"
       @hide="hidden = true" />
-    <gamification-rules-overview-generic-list
+    <gamification-rules-overview-full-list
+      v-else-if="$root.showLocked" />
+    <gamification-rules-overview-reduced-list
       v-else />
     <engagement-center-rule-extensions />
   </v-app>
