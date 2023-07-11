@@ -86,11 +86,26 @@ public class RuleBuilder {
     if (countRealizations) {
       realizationsCount = countRealizations(realizationService, rule.getId(), periodType);
     }
+    boolean expandPrerequisites = expandFields != null && expandFields.contains("expandPrerequisites");
     List<RuleDTO> prerequisiteRules = ruleService.getPrerequisiteRules(rule.getId())
                                                  .stream()
                                                  .map(r -> {
-                                                   r.setProgram(null);
-                                                   return r;
+                                                   if (expandPrerequisites) {
+                                                     return toRestEntity(programService,
+                                                                         ruleService,
+                                                                         realizationService,
+                                                                         translationService,
+                                                                         r,
+                                                                         locale,
+                                                                         expandFields,
+                                                                         realizationsLimit,
+                                                                         noProgram,
+                                                                         periodType);
+
+                                                   } else {
+                                                     r.setProgram(null);
+                                                     return r;
+                                                   }
                                                  })
                                                  .toList();
     ProgramDTO program = noProgram ? null : rule.getProgram();
