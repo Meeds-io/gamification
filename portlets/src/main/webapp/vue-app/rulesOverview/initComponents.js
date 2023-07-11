@@ -17,12 +17,14 @@
  */
 
 import RulesOverview from './components/RulesOverview.vue';
-import RulesOverviewGenericList from './components/RulesOverviewGenericList.vue';
+import RulesOverviewReducedList from './components/RulesOverviewReducedList.vue';
+import RulesOverviewFullList from './components/RulesOverviewFullList.vue';
 import RulesOverviewSpaceList from './components/RulesOverviewSpaceList.vue';
 
 const components = {
   'gamification-rules-overview': RulesOverview,
-  'gamification-rules-overview-generic-list': RulesOverviewGenericList,
+  'gamification-rules-overview-reduced-list': RulesOverviewReducedList,
+  'gamification-rules-overview-full-list': RulesOverviewFullList,
   'gamification-rules-overview-space-list': RulesOverviewSpaceList,
 };
 
