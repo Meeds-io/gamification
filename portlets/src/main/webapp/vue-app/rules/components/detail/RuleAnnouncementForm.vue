@@ -66,6 +66,8 @@
         :template-params="templateParams"
         :placeholder="$t('rule.detail.announceEditor.placeholder')"
         :tag-enabled="false"
+        :object-id="metadataObjectId"
+        :object-type="metadataObjectType"
         ck-editor-type="announcementContent"
         class="flex my-3"
         autofocus
@@ -109,6 +111,8 @@ export default {
     userId: eXo.env.portal.userIdentityId,
     username: eXo.env.portal.userName,
     validLength: true,
+    attachments: null,
+    announcement: null
   }),
   computed: {
     spaceId() {
@@ -122,6 +126,15 @@ export default {
     },
     canAnnounce() {
       return this.rule?.type === 'MANUAL' && this.rule?.userInfo?.allowedToRealize;
+    },
+    ckEditorInstance() {
+      return this.$refs.announcementEditor || null;
+    },
+    metadataObjectId() {
+      return this.templateParams?.metadataObjectId || this.rule.id;
+    },
+    metadataObjectType() {
+      return this.templateParams?.metadataObjectType || 'rule';
     },
   },
   watch: {
@@ -144,6 +157,10 @@ export default {
     this.destroyEditor();
   },
   methods: {
+    attachmentsEdit(attachments) {
+      this.attachments = attachments;
+      this.activityCommentAttachmentsEdited = true;
+    },
     clear() {
       this.editor = false;
       this.sending = false;
@@ -173,7 +190,11 @@ export default {
       };
       this.sending = true;
       this.$announcementService.createAnnouncement(announcement)
-        .then(createdAnnouncement => {
+        .then((createdAnnouncement) => {
+          this.announcement = createdAnnouncement;
+        })
+        .then(() => this.ckEditorInstance && this.ckEditorInstance.saveAttachments())
+        .then(() => {
           document.dispatchEvent(new CustomEvent('alert-message-html-confeti', {detail: {
             alertType: 'success',
             alertMessage: `
@@ -181,12 +202,12 @@ export default {
                 ${this.$t('challenges.announcementCreateSuccess')}
               </div>
             `,
-            alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${createdAnnouncement.activityId}`,
+            alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${this.announcement.activityId}`,
             alertLinkText: this.$t('announcement.alert.see'),
             alertLinkTarget: '_self',
           }}));
           this.$root.$emit('announcement-added-event', {detail: {
-            announcement: createdAnnouncement,
+            announcement: this.announcement,
             challengeId: this.rule.id,
           }});
           this.comment = null;
