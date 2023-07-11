@@ -27,7 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               {{ $t('gamification.connectors.label.thirdPartyApps') }}
             </v-list-item-title>
             <v-list-item-subtitle class="my-3 text-sub-title font-italic">
-              <gamification-user-connector-list :connected-connectors="enabledConnectors" />
+              <gamification-user-connector-list :connected-connectors="enabledConnectors" :connector-extensions="connectorExtensions" />
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -35,7 +35,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-card>
     <gamification-user-connector
       :connectors="connectors"
-      @connectors-loaded="connectors = $event" />
+      :connector-extensions="connectors"
+      @connectors-loaded="connectorsLoaded" />
   </v-app>
 </template>
 
@@ -44,6 +45,7 @@ export default {
   data: () => ({
     displayed: true,
     connectors: [],
+    connectorExtensions: [],
   }),
   computed: {
     enabledConnectors() {
@@ -61,5 +63,11 @@ export default {
     });
     document.addEventListener('showSettingsApps', () => this.displayed = true);
   },
+  methods: {
+    connectorsLoaded(connectors, connectorExtensions) {
+      this.connectors = connectors;
+      this.connectorExtensions = connectorExtensions;
+    }
+  }
 };
 </script>

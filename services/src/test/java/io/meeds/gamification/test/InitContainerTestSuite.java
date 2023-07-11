@@ -85,7 +85,6 @@ import io.meeds.gamification.utils.UtilsTest;
     TestRealizationRest.class,
     TestRuleRest.class,
     TestAnnouncementRest.class,
-    TestConnectorSettingsRest.class,
     TestConnectorRest.class,
     GamificationProfileListenerTest.class,
     GamificationNotificationListenerTest.class,

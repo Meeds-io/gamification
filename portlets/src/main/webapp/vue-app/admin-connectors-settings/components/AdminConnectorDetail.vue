@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app>
+  <div>
     <div class="py-2 py-sm-5 d-flex align-center">
       <v-tooltip :disabled="$root.isMobile" bottom>
         <template #activator="{ on }">
@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             class="d-flex align-center"
             flat
             v-on="on"
-            @click="backToProgramList">
+            @click="backToConnectorList">
             <v-btn
               class="width-auto ms-n3"
               icon>
@@ -51,7 +51,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-btn>
     </div>
     <v-card-text class="px-0 text-sub-title">{{ description }}</v-card-text>
-  </v-app>
+  </div>
 </template>
 <script>
 
@@ -61,16 +61,20 @@ export default {
       type: Object,
       default: null
     },
+    connectorExtension: {
+      type: Object,
+      default: null
+    },
   },
   computed: {
     title() {
-      return this.connector?.title || '';
+      return this.connectorExtension?.componentOptions?.title || '';
     },
     name() {
-      return this.connector?.name || '';
+      return this.connectorExtension?.componentOptions?.name || '';
     },
     description() {
-      return this.$t(`${this.connector.description}`);
+      return this.$t(`${this.connectorExtension?.componentOptions?.description}`);
     },
     connectorActivated() {
       return this.connector?.apiKey && this.connector?.secretKey && this.connector?.redirectUrl && this.connector?.enabled;
@@ -80,11 +84,11 @@ export default {
     }
   },
   methods: {
-    backToProgramList() {
+    backToConnectorList() {
       this.$root.$emit('close-connector-detail');
     },
     openConnectorSettings() {
-      this.$root.$emit('open-connector-settings', this.connector);
+      this.$root.$emit('open-connector-settings', this.connector, this.connectorExtension);
     },
   }
 };

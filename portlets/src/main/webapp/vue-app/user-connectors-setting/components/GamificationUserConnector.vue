@@ -18,8 +18,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   props: {
     connectors: {
-      type: Object,
-      default: () => null,
+      type: Array,
+      default: () => [],
+    },
+    connectorExtensions: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {
@@ -32,34 +36,36 @@ export default {
     document.addEventListener('gamification-connectors-refresh', this.refreshUserConnectorList);
     this.$root.$on('gamification-connector-connect', this.connect);
     this.$root.$on('gamification-connector-disconnect', this.disconnect);
-  },
-  mounted() {
-    this.refreshUserConnectorList();
+    document.addEventListener('extension-gamification-connectors-updated', this.refreshUserConnectorList);
+    this.init();
   },
   methods: {
-    refreshUserConnectorList() {
-      // Get list of connectors from extensionRegistry
-      const connectors = extensionRegistry.loadExtensions('gamification', 'connectors') || [];
-      // Check connectors status from store
-      this.$userConnectorService.getUsersConnectorsSetting(this.username).then(connectorsList => {
-        if (connectorsList?.length) {
-          connectors.forEach(connector => {
-            const connectorObj = connectorsList.find(connectorSettings => connectorSettings.name === connector.name);
-            this.$set(connector, 'apiKey', connectorObj?.apiKey || '');
-            this.$set(connector, 'redirectUrl', connectorObj?.redirectUrl || '');
-            this.$set(connector, 'enabled', connectorObj?.enabled && connectorObj?.apiKey !== '' && connectorObj?.redirectUrl !== '');
-            this.$set(connector, 'identifier', connectorObj?.identifier || '');
-            this.$set(connector, 'user', eXo.env.portal.userName);
-          });
-        } else {
-          connectors.forEach(connector => (connector.enabled = false));
+    init() {
+      this.refreshUserConnectorList();
+      this.connectorExtensions.forEach(extension => {
+        if (extension.init) {
+          const initPromise = extension.init();
+          if (initPromise?.then) {
+            return initPromise
+              .then(() => this.$nextTick());
+          }
         }
       });
-      this.$emit('connectors-loaded', connectors);
+      // Check connectors status from store
+      this.loading = true;
+      this.$gamificationConnectorService.getConnectors(this.username, 'userIdentifier')
+        .then(connectors => {
+          this.connectors = connectors;
+          this.$emit('connectors-loaded', this.connectors, this.connectorExtensions);
+        }).finally(() => this.loading = false);
     },
-    connect(connector) {
+    refreshUserConnectorList() {
+      // Get list of connectors from extensionRegistry
+      this.connectorExtensions = extensionRegistry.loadExtensions('gamification', 'connectors') || [];
+    },
+    connect(connector, connectorExtension) {
       this.$set(connector, 'loading', true);
-      const popup = connector.openOauthPopup(connector);
+      const popup = connectorExtension.openOauthPopup(connector);
       // Listen for changes in the popup window's URL
       const popupInterval = setInterval(() => {
         if (popup.location.href.startsWith(connector.redirectUrl)) {
@@ -75,7 +81,11 @@ export default {
       const url = new URL(callbackUrl);
       const searchParams = new URLSearchParams(url.search);
       const accessToken = searchParams.get('code');
-      return this.$userConnectorService.connect(connector.name, accessToken).catch(e => {
+      return this.$gamificationConnectorService.connect(connector.name, accessToken).then((identifier) => {
+        console.warn('identifier' ,identifier);
+        this.$set(connector, 'identifier', identifier);
+        this.$root.$emit('gamification-connectors-refresh');
+      }).catch(e => {
         if (e.message === 'AccountAlreadyUsed') {
           document.dispatchEvent(new CustomEvent('notification-alert', {detail: {
             message: this.$t('gamification.connectors.error.alreadyUsed',  {
@@ -84,13 +94,11 @@ export default {
             type: 'error',
           }}));
         }})
-        .then(() => {
-          document.dispatchEvent(new CustomEvent('gamification-connectors-refresh'));
-        });
+        .finally(() => this.$set(connector, 'loading', false));
     },
     disconnect(connector) {
       if (connector.identifier) {
-        return this.$userConnectorService.disconnect(connector.name).then(() => {
+        return this.$gamificationConnectorService.disconnect(connector.name).then(() => {
           this.$set(connector, 'identifier', null);
           this.$root.$emit('gamification-connectors-refresh');
         })

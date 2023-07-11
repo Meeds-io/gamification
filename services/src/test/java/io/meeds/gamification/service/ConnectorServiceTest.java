@@ -58,16 +58,16 @@ public class ConnectorServiceTest extends AbstractServiceTest {
 
     connectorSettingService.saveConnectorSettings(remoteConnectorSettings, adminAclIdentity);
 
-    assertThrows(IllegalArgumentException.class, () -> connectorService.getUserRemoteConnectors(null));
+    assertThrows(IllegalArgumentException.class, () -> connectorService.getConnectors(null));
 
     setConnectorPlugin("connectorName", "connectorIdentifier");
     setConnectorPlugin("connectorName1", "connectorIdentifier2");
-    List<RemoteConnector> remoteConnectorList = connectorService.getUserRemoteConnectors("root1");
+    List<RemoteConnector> remoteConnectorList = connectorService.getConnectors("root1");
 
     assertEquals(2, remoteConnectorList.size());
 
     removeConnectorPlugin("connectorName1");
-    remoteConnectorList = connectorService.getUserRemoteConnectors("root1");
+    remoteConnectorList = connectorService.getConnectors("root1");
 
     assertEquals(1, remoteConnectorList.size());
 

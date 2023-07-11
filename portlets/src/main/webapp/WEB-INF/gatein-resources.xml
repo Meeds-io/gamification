@@ -307,7 +307,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <portlet>
-    <name>gamifiedProfiles</name>
+    <name>GamifiedProfiles</name>
     <module>
       <load-group>gamification-user-connectors</load-group>
       <script>
@@ -541,7 +541,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <portlet>
-    <name>adminConnectorsSettings</name>
+    <name>AdminConnectorsSettings</name>
     <module>
       <load-group>gamification-admin-connectors</load-group>
       <script>

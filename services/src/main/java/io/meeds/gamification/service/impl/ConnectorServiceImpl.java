@@ -77,7 +77,7 @@ public class ConnectorServiceImpl implements ConnectorService {
   }
 
   @Override
-  public List<RemoteConnector> getUserRemoteConnectors(String username) {
+  public List<RemoteConnector> getConnectors(String username) {
     if (StringUtils.isBlank(username)) {
       throw new IllegalArgumentException("username is mandatory");
     }
@@ -87,8 +87,6 @@ public class ConnectorServiceImpl implements ConnectorService {
       RemoteConnector remoteConnector = new RemoteConnector();
       String connectorName = connectorPlugin.getConnectorName();
       remoteConnector.setName(connectorName);
-      remoteConnector.setIdentifier(getConnectorRemoteId(connectorName, username));
-
       RemoteConnectorSettings remoteConnectorSettings = connectorSettingService.getConnectorSettings(connectorName);
       if (remoteConnectorSettings != null) {
         remoteConnector.setApiKey(remoteConnectorSettings.getApiKey());

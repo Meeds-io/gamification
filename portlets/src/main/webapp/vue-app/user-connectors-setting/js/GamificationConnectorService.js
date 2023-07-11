@@ -14,15 +14,48 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-export function getConnectorsSettings() {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors/settings`, {
+
+export function getConnectors(username, expand) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors?username=${username}&expand=${expand}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
     if (resp?.ok) {
       return resp.json();
     } else {
-      throw new Error('Error when getting connectors settings');
+      throw new Error('Error when getting user connectors');
+    }
+  });
+}
+
+export function connect(connectorName, accessToken) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors/connect/${connectorName}`, {
+    credentials: 'include',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `accessToken=${accessToken}`,
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.text();
+    } else {
+      if (resp.status === 409) {
+        throw new Error('AccountAlreadyUsed');
+      } else {
+        throw new Error('Error while validating access token');
+      }
+    }
+  });
+}
+
+export function disconnect(connectorName) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors/disconnect/${connectorName}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  }).then(resp => {
+    if (!resp?.ok) {
+      throw new Error('Response code indicates a server error', resp);
     }
   });
 }

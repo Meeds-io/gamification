@@ -15,30 +15,35 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.gamification.plugin;
+package io.meeds.gamification.rest.model;
 
-import org.exoplatform.container.component.BaseComponentPlugin;
-import io.meeds.gamification.service.ConnectorService;
+import io.meeds.gamification.model.RemoteConnector;
 
-/**
- * A plugin that will be used by {@link ConnectorService} to add and remove user
- * gamification connectors
- */
-public abstract class ConnectorPlugin extends BaseComponentPlugin {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-  /**
-   * Validates a user Token with the Gamification Connector provider
-   *
-   * @param accessToken connector access token
-   * @return the user identifier corresponding to Access Token generated on Remote
-   *         Connector
-   */
-  public abstract String validateToken(String accessToken);
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class ConnectorRestEntity extends RemoteConnector {
 
-  /**
-   * Gets connector name
-   **
-   * @return the connector name
-   */
-  public abstract String getConnectorName();
+  private String identifier;
+
+  private String secretKey;
+
+  public ConnectorRestEntity(String name,
+                             String apiKey,
+                             String redirectUrl,
+                             String identifier,
+                             String secretKey,
+                             boolean enabled) {
+    super(name, apiKey, redirectUrl, enabled);
+    this.identifier = identifier;
+    this.secretKey = secretKey;
+  }
 }

@@ -50,24 +50,31 @@ export default {
       type: Object,
       default: null
     },
+    connectorExtensions: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
+    connectorExtension() {
+      return this.connectorExtensions.find(c => c?.componentOptions?.name === this.connector?.name);
+    },
     logo() {
-      return this.connector?.logo || '';
+      return this.connectorExtension?.componentOptions?.logo || '';
     },
     name() {
-      return this.connector?.name || '';
+      return this.connectorExtension?.componentOptions?.name || '';
     },
     title() {
-      return this.connector?.title || '';
+      return this.connectorExtension?.componentOptions?.title || '';
     },
     description() {
-      return this.$t(`${this.connector?.description}`);
+      return this.$t(`${this.connectorExtension?.componentOptions?.description}`);
     },
   },
   methods: {
     openDetail() {
-      this.$root.$emit('open-connector-detail', this.connector);
+      this.$root.$emit('open-connector-detail', this.connector, this.connectorExtension);
     },
   }
 };

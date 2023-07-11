@@ -74,27 +74,34 @@ export default {
       type: Object,
       default: null
     },
+    connectorExtensions: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
+    connectorExtension() {
+      return this.connectorExtensions.find(c => c.name === this.connector?.name);
+    },
     identifier() {
       return this.connector?.identifier || '';
     },
     identifierLink() {
-      return `${this.connector?.PROFILE_BASER_URL}/${this.identifier}`;
+      return `${this.connectorExtension?.PROFILE_BASER_URL}/${this.identifier}`;
     },
     logo() {
-      return this.connector?.logo || '';
+      return this.connectorExtension?.logo || '';
     },
     title() {
-      return this.$t(`${this.connector?.title}`);
+      return this.$t(`${this.connectorExtension?.title}`);
     },
     description() {
-      return this.$t(`${this.connector?.description}`);
+      return this.$t(`${this.connectorExtension?.description}`);
     },
   },
   methods: {
     connect() {
-      this.$root.$emit('gamification-connector-connect', this.connector);
+      this.$root.$emit('gamification-connector-connect', this.connector, this.connectorExtension);
     },
     disconnect() {
       this.$root.$emit('gamification-connector-disconnect', this.connector);

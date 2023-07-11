@@ -14,10 +14,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import GamificationAdminConnectorSettings from './components/GamificationAdminConnectorSettings.vue';
-import GamificationAdminConnectorCardList from './components/GamificationAdminConnectorCardList.vue';
-import GamificationAdminConnectorCard from './components/GamificationAdminConnectorCard.vue';
-import GamificationAdminConnectorDetail from './components/GamificationAdminConnectorDetail.vue';
+import GamificationAdminConnectorSettings from './components/AdminConnectorSettings.vue';
+import GamificationAdminConnectorCardList from './components/AdminConnectorCardList.vue';
+import GamificationAdminConnectorCard from './components/AdminConnectorCard.vue';
+import GamificationAdminConnectorDetail from './components/AdminConnectorDetail.vue';
 const components = {
   'gamification-admin-connector-settings': GamificationAdminConnectorSettings,
   'gamification-admin-connector-card-list': GamificationAdminConnectorCardList,

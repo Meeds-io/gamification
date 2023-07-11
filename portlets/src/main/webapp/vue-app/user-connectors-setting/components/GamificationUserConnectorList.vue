@@ -20,7 +20,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <gamification-user-connector-item
         v-for="connector in connectedConnectors"
         :key="connector.name"
-        :connector="connector" />
+        :connector="connector"
+        :connector-extensions="connectorExtensions" />
     </v-list-item>
   </v-list>
 </template>
@@ -29,6 +30,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   props: {
     connectedConnectors: {
+      type: Array,
+      default: () => [],
+    },
+    connectorExtensions: {
       type: Array,
       default: () => [],
     },

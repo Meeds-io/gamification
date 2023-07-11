@@ -17,10 +17,10 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-import * as userConnectorService from '../user-connectors-setting/js/UserConnectorService';
+import * as gamificationConnectorService from '../user-connectors-setting/js/GamificationConnectorService';
 
-if (!Vue.prototype.$userConnectorService) {
-  window.Object.defineProperty(Vue.prototype, '$userConnectorService', {
-    value: userConnectorService,
+if (!Vue.prototype.$gamificationConnectorService) {
+  window.Object.defineProperty(Vue.prototype, '$gamificationConnectorService', {
+    value: gamificationConnectorService,
   });
 }

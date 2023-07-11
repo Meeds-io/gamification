@@ -15,20 +15,21 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card flat>
+  <v-card v-if="enabledConnectors && enabledConnectors.length" flat>
     <div class="text-header-title py-2 py-sm-5 d-flex align-center">{{ $t('gamification.connectors.label.connectors') }}</div>
     <v-card-text class="text-font-size pb-2 pt-0 pb-sm-5 px-0 d-flex align-center">{{ $t('gamification.connectors.label.valueContributions') }}</v-card-text>
     <v-card-text class="pa-0">
       <v-item-group>
         <v-container class="pa-0">
-          <div v-if="enabledConnectors && enabledConnectors.length" class="ma-0 d-flex flex-wrap">
+          <div class="ma-0 d-flex flex-wrap">
             <div
               v-for="enabledConnector in enabledConnectors"
               :key="enabledConnector.id"
               class="pa-0 me-2 my-2 d-flex flex-column col-4">
               <gamification-admin-connector-card
                 class="full-height"
-                :connector="enabledConnector" />
+                :connector="enabledConnector"
+                :connector-extensions="connectorExtensions" />
             </div>
           </div>
         </v-container>
@@ -41,6 +42,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   props: {
     enabledConnectors: {
+      type: Array,
+      default: () => [],
+    },
+    connectorExtensions: {
       type: Array,
       default: () => [],
     },

@@ -373,7 +373,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </collection>
             </field>
             <field name="title">
-              <string>>Rules Overview</string>
+              <string>Rules Overview</string>
             </field>
             <field name="showInfoBar">
               <boolean>false</boolean>

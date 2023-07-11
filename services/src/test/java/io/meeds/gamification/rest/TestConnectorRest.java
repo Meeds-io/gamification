@@ -44,11 +44,21 @@ public class TestConnectorRest extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
-  public void testGetUserRemoteConnectors() throws Exception {
+  public void testGetConnectors() throws Exception {
     startSessionAs("root1");
-    ContainerResponse response = getResponse("GET", getURLResource("user/connectors?username=root1"), null);
+    ContainerResponse response = getResponse("GET", getURLResource("connectors?username=root1"), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
+
+    startSessionAs("user");
+    response = getResponse("GET", getURLResource("connectors?username=root1&expand=userIdentifier"), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    startSessionAs("user");
+    response = getResponse("GET", getURLResource("connectors?username=root1&expand=secretKey"), null);
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
   }
 
   @Test
@@ -60,13 +70,13 @@ public class TestConnectorRest extends AbstractServiceTest { // NOSONAR
     MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
     headers.putSingle("Content-Type", "application/x-www-form-urlencoded");
     ContainerResponse response = launcher.service("POST",
-                                                  getURLResource("user/connectors/connectorName/connect"),
+                                                  getURLResource("connectors/connect/connectorName"),
                                                   "",
                                                   headers,
                                                   formData,
                                                   null);
     assertNotNull(response);
-    assertEquals(204, response.getStatus());
+    assertEquals(200, response.getStatus());
   }
 
   @Test
@@ -79,17 +89,55 @@ public class TestConnectorRest extends AbstractServiceTest { // NOSONAR
     MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
     headers.putSingle("Content-Type", "application/x-www-form-urlencoded");
     ContainerResponse response = launcher.service("POST",
-                                                  getURLResource("user/connectors/connectorName/connect"),
+                                                  getURLResource("connectors/connect/connectorName"),
                                                   "",
                                                   headers,
                                                   formData,
                                                   null);
     assertNotNull(response);
-    assertEquals(204, response.getStatus());
+    assertEquals(200, response.getStatus());
 
-    response = getResponse("DELETE", getURLResource("user/connectors/connectorName"), null);
+    response = getResponse("DELETE", getURLResource("connectors/disconnect/connectorName"), null);
     assertNotNull(response);
     assertEquals(204, response.getStatus());
+  }
+
+  @Test
+  public void testSaveConnectorSettings() throws Exception {
+    startSessionAs("user");
+    ContainerResponse response = getPostResponse("connectorName1", "apikey123", "secretKey123", "http://localhost:8080", true);
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
+
+    startSessionAsAdministrator("root1");
+    response = getPostResponse("connectorName", "apikey12", "secretKey12", "http://localhost:8080", true);
+    assertNotNull(response);
+    assertEquals(204, response.getStatus());
+  }
+
+  @Test
+  public void testDeleteConnectorSettings() throws Exception {
+    startSessionAs("user");
+    ContainerResponse response = getResponse("DELETE", getURLResource("connectors/settings/connectorName1"), null);
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
+
+    startSessionAsAdministrator("root1");
+    response = getResponse("DELETE", getURLResource("connectors/settings/connectorName1"), null);
+    assertNotNull(response);
+    assertEquals(204, response.getStatus());
+  }
+
+  private ContainerResponse getPostResponse(String connectorName,
+                                            String apiKey,
+                                            String secretKey,
+                                            String redirectUrl,
+                                            boolean enabled) throws Exception {
+    byte[] formData = ("connectorName=" + connectorName + "&apiKey=" + apiKey + "&secretKey=" + secretKey + "&redirectUrl="
+        + redirectUrl + "&enabled=" + enabled).getBytes();
+    MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
+    headers.putSingle("Content-Type", "application/x-www-form-urlencoded");
+    return launcher.service("POST", getURLResource("connectors/settings"), "", headers, formData, null);
   }
 
   private void removeConnectorPlugin() {

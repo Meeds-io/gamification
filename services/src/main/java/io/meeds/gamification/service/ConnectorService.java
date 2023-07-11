@@ -1,6 +1,8 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
+ *
  * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -50,7 +52,7 @@ public interface ConnectorService {
   /**
    * @return {@link List} of user remote connectors
    */
-  List<RemoteConnector> getUserRemoteConnectors(String username);
+  List<RemoteConnector> getConnectors(String username);
 
   /**
    * Connects a user to their connector account
