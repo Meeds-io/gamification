@@ -18,20 +18,20 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 %>
-<%@page import="org.apache.commons.lang3.StringUtils"%>
-<%@page import="org.exoplatform.social.webui.Utils"%>
-<%@page import="org.exoplatform.social.core.identity.model.Identity" %>
-<%@page import="org.exoplatform.social.core.identity.model.Profile" %>
-<%
-  Identity ownerIdentity = Utils.getOwnerIdentity(true);
-  Profile profile = ownerIdentity.getProfile();
-  boolean isExternal = profile.getProperty(Profile.EXTERNAL) != null && ((String) profile.getProperty(Profile.EXTERNAL)).equals("true");
+<%@ page import="io.meeds.gamification.service.ProgramService"%>
+<%@ page import="org.exoplatform.container.ExoContainerContext"%>
+<%@ page import="io.meeds.gamification.utils.Utils" %>
+<%@ page import="org.exoplatform.services.security.ConversationState" %>
 
-  if (!isExternal) { %>
-  <div class="VuetifyApp">
-    <div id="profile-stats-portlet"></div>
+<%
+boolean isAdministrator = Utils.isRewardingManager(ConversationState.getCurrent().getIdentity().getUserId());
+boolean isProgramManager = isAdministrator || ExoContainerContext.getService(ProgramService.class).countOwnedPrograms(ConversationState.getCurrent().getIdentity().getUserId()) > 0;
+%>
+
+<div class="VuetifyApp singlePageApplication">
+  <div id="EngagementCenterPrograms">
     <script type="text/javascript">
-      require(['SHARED/profileStatsBundle'], app => app.init());
+      require(['PORTLET/gamification-portlets/EngagementCenterPrograms'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>));
     </script>
   </div>
-<% } %>
+</div>
