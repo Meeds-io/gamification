@@ -122,6 +122,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    rulesCount: {
+      type: Number,
+      default: () => 0,
+    },
     pageSize: {
       type: Number,
       default: null,
@@ -155,15 +159,16 @@ export default {
       return this.rules?.length;
     },
     lockedRules() {
-      const lockedRulesWithDependencies = [];
+      if (!this.hasRules) {
+        return [];
+      }
+      const result = [];
       const lockedRules = this.rules.filter(r => this.isRuleValidButLocked(r));
       lockedRules.sort((r1, r2) => r2.title.localeCompare(r1.title));
       lockedRules
         .forEach(r => {
           try {
-            const lockedRuleDependencies = [];
-            this.addLockedRule(lockedRulesWithDependencies, lockedRuleDependencies, r);
-            lockedRulesWithDependencies.unshift(...lockedRuleDependencies);
+            this.addLockedRule(result, r);
           } catch (e) {
             // Invalid Rule Tree, avoid adding it in the list of
             // Locked Rules to unlock
@@ -171,8 +176,8 @@ export default {
             console.debug(e);
           }
         });
-      lockedRulesWithDependencies.sort((r1, r2) => (!r1.prerequisiteRules?.length && -1) || (!r2.prerequisiteRules?.length && 1) || 0);
-      return lockedRulesWithDependencies;
+      result.sort((r1, r2) => (!r1.prerequisiteRules?.length && -1) || (!r2.prerequisiteRules?.length && 1) || 0);
+      return result;
     },
     endingRules() {
       if (!this.hasRules) {
@@ -248,6 +253,12 @@ export default {
     isHiddenWidget() {
       return !this.loading && !this.hasValidRules && (!this.hasRules || this.isHiddenWhenEmpty);
     },
+    shouldLoadLockedRules() {
+      return !this.loading
+        && this.hasRules
+        && this.rules?.length < this.rulesCount
+        && this.lockedRulesCount < 2;
+    },
   },
   watch: {
     isHiddenWidget: {
@@ -258,33 +269,44 @@ export default {
         }
       },
     },
+    shouldLoadLockedRules() {
+      if (this.shouldLoadLockedRules) {
+        this.$emit('load-more');
+      }
+    },
   },
   methods: {
     hideEmptyWidget() {
       this.$root.$emit('hide-empty-widget');
       this.hideIfEmpty = true;
     },
-    addLockedRule(lockedRules, rules, lockedRule) {
-      if (rules.find(r => r.id === lockedRule.id)) {
+    addLockedRule(ruleLocks, lockedRule) {
+      if (!lockedRule || ruleLocks.find(r => r.id === lockedRule.id)) {
         return;
       } else if (lockedRule?.userInfo?.context?.valid) {
-        rules.unshift(lockedRule);
+        ruleLocks.unshift(lockedRule);
       } else if (this.isRuleValidButLocked(lockedRule)) {
         lockedRule.prerequisiteRules
           .filter(r => r && lockedRule.userInfo.context.validPrerequisites[r.id] === false)
-          .map(r => {
-            const prerequisiteRule = this.rules.find(rule => r.id === rule.id);
-            if (prerequisiteRule) {
-              if (!lockedRules.find(rule => rule.id === prerequisiteRule.id)) {
-                return prerequisiteRule;
+          .map(prerequisiteRule => {
+            if (!prerequisiteRule?.userInfo?.context) {
+              const rule = this.rules.find(rule => prerequisiteRule.id === rule.id);
+              if (rule) {
+                prerequisiteRule = rule;
               }
-            } else {
+            }
+            if (!prerequisiteRule || this.isRuleValidButLocked(prerequisiteRule)) {
+              return prerequisiteRule;
+            } else if (!prerequisiteRule?.userInfo?.context?.valid) {
               // The Prerequisite Rule doesn't exist or isn't valid, thus can't be done
               // So, delete the display of Prerequisite Rule
-              throw new Error(`Prerequisite rule ${r.id} seems invalid, avoid adding parent rule to the list`);
+              throw new Error(`Prerequisite rule ${prerequisiteRule.id} seems invalid, avoid adding parent rule to the list`);
+            } else {
+              return prerequisiteRule;
             }
           })
-          .forEach(r => this.addLockedRule(lockedRules,rules, r));
+          .filter(r => r)
+          .forEach(r => this.addLockedRule(ruleLocks, r));
       }
     },
     isRuleValidButLocked(rule) {
