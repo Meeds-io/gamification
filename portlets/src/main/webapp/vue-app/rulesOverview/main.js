@@ -24,12 +24,13 @@ const urls = [
 ];
 const appId = 'rulesOverview';
 
-export function init() {
+export function init(showLocked) {
   exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       Vue.createApp({
         data: {
           now: Date.now(),
+          showLocked,
         },
         template: `<gamification-rules-overview id="${appId}" />`,
         created() {
