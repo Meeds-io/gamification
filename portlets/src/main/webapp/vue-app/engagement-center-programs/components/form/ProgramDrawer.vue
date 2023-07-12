@@ -303,7 +303,7 @@ export default {
     originalProgram: null,
     programOwners: [],
     maxTitleLength: 50,
-    maxDescriptionLength: 500,
+    maxDescriptionLength: 1300,
     programTitle: null,
     programDescription: null,
     programTitleTranslations: {},
