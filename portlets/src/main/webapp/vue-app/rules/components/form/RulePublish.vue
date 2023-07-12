@@ -58,7 +58,7 @@ export default {
     },
   },
   data: () => ({
-    MAX_LENGTH: 500,
+    MAX_LENGTH: 1300,
     publish: false,
     message: null,
     userId: eXo.env.portal.userIdentityId,
