@@ -28,14 +28,20 @@ export function getConnectors(username, expand) {
   });
 }
 
-export function connect(connectorName, accessToken) {
+export function connect(connectorName, accessToken, remoteId) {
+  const formData = new FormData();
+  formData.append('accessToken', accessToken);
+  if (remoteId) {
+    formData.append('remoteId', remoteId);
+  }
+
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors/connect/${connectorName}`, {
     credentials: 'include',
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: `accessToken=${accessToken}`,
+    body: new URLSearchParams(formData).toString(),
   }).then((resp) => {
     if (resp?.ok) {
       return resp.text();
@@ -49,10 +55,17 @@ export function connect(connectorName, accessToken) {
   });
 }
 
-export function disconnect(connectorName) {
+export function disconnect(connectorName, remoteId) {
+  const formData = new FormData();
+  formData.append('remoteId', remoteId);
+
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors/disconnect/${connectorName}`, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
     method: 'DELETE',
     credentials: 'include',
+    body: new URLSearchParams(formData).toString(),
   }).then(resp => {
     if (!resp?.ok) {
       throw new Error('Response code indicates a server error', resp);

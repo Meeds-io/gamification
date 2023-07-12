@@ -26,11 +26,34 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @Entity(name = "GamificationConnectorAccount")
 @ExoEntity
 @Table(name = "GAMIFICATION_CONNECTOR_ACCOUNTS")
-@NamedQuery(name = "GamificationConnectorAccount.getConnectorByUsername", query = "SELECT account FROM GamificationConnectorAccount account WHERE account.connectorName = :connectorName AND account.userId = :userId")
-@NamedQuery(name = "GamificationConnectorAccount.getConnectorRemoteId", query = "SELECT account.remoteId FROM GamificationConnectorAccount account WHERE account.connectorName = :connectorName AND account.userId = :userId")
-@NamedQuery(name = "GamificationConnectorAccount.getAssociatedUsername", query = "SELECT account.userId FROM GamificationConnectorAccount account WHERE account.connectorName = :connectorName AND account.remoteId = :remoteId")
+@NamedQuery(
+  name = "GamificationConnectorAccount.getConnectorAccountByNameAndUserId",
+  query = "SELECT account FROM GamificationConnectorAccount account"
+      + " WHERE account.connectorName = :connectorName"
+      + " AND account.userId = :userId"
+)
+@NamedQuery(
+  name = "GamificationConnectorAccount.getConnectorAccountByNameAndRemoteId",
+  query = "SELECT account FROM GamificationConnectorAccount account"
+      + " WHERE account.connectorName = :connectorName"
+      + " AND account.remoteId = :remoteId"
+)
+@NamedQuery(
+  name = "GamificationConnectorAccount.getConnectorRemoteId",
+  query = "SELECT account.remoteId FROM GamificationConnectorAccount account"
+      + " WHERE account.connectorName = :connectorName"
+      + " AND account.userId = :userId"
+)
+@NamedQuery(
+  name = "GamificationConnectorAccount.getAssociatedUserIdentityId",
+  query = "SELECT account.userId FROM GamificationConnectorAccount account"
+      + " WHERE account.connectorName = :connectorName"
+      + " AND account.remoteId = :remoteId"
+)
 @Data
 public class ConnectorAccountEntity implements Serializable {
+
+  private static final long serialVersionUID = -8256376309023098995L;
 
   @Id
   @SequenceGenerator(name = "SEQ_GAMIFICATION_CONNECTOR_ACCOUNTS_ID", sequenceName = "SEQ_GAMIFICATION_CONNECTOR_ACCOUNTS_ID", allocationSize = 1)
@@ -46,4 +69,5 @@ public class ConnectorAccountEntity implements Serializable {
 
   @Column(name = "USER_ID")
   private long   userId;
+
 }

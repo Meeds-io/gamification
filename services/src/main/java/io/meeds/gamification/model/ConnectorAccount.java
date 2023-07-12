@@ -16,14 +16,14 @@
  */
 package io.meeds.gamification.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ConnectorAccount implements Cloneable {
-
-  private long   id;
 
   private String connectorName;
 
@@ -32,6 +32,7 @@ public class ConnectorAccount implements Cloneable {
   private long   userId;
 
   public ConnectorAccount clone() { // NOSONAR
-    return new ConnectorAccount(id, connectorName, remoteId, userId);
+    return new ConnectorAccount(connectorName, remoteId, userId);
   }
+
 }

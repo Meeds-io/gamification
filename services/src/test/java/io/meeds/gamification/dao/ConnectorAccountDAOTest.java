@@ -49,7 +49,7 @@ public class ConnectorAccountDAOTest extends AbstractServiceTest {
     assertNotNull(connectorRemoteId);
     assertEquals(remoteId, connectorRemoteId);
 
-    long connectorUserId = connectorAccountDAO.getAssociatedUserId(connectorName, remoteId);
+    long connectorUserId = connectorAccountDAO.getAssociatedUserIdentityId(connectorName, remoteId);
     assertEquals(userId, connectorUserId);
 
   }
@@ -74,7 +74,7 @@ public class ConnectorAccountDAOTest extends AbstractServiceTest {
     connectorAccountEntity = connectorAccountDAO.find(connectorAccountEntity.getId());
     assertNull(connectorAccountEntity);
 
-    long connectorUserId = connectorAccountDAO.getAssociatedUserId(connectorName, remoteId);
+    long connectorUserId = connectorAccountDAO.getAssociatedUserIdentityId(connectorName, remoteId);
     assertEquals(0, connectorUserId);
   }
 }

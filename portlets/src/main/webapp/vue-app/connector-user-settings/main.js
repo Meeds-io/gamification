@@ -14,18 +14,26 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import GamificationUserConnectorSettings from './components/GamificationUserConnectorSettings.vue';
-import GamificationUserConnectorList from './components/GamificationUserConnectorList.vue';
-import GamificationUserConnectorItem from './components/GamificationUserConnectorItem.vue';
-import GamificationUserConnector from './components/GamificationUserConnector.vue';
+import './initComponents.js';
+import './services.js';
 
-const components = {
-  'gamification-user-connector-settings': GamificationUserConnectorSettings,
-  'gamification-user-connector-list': GamificationUserConnectorList,
-  'gamification-user-connector-item': GamificationUserConnectorItem,
-  'gamification-user-connector': GamificationUserConnector
-};
+const appId = 'connectorUserSettings';
 
-for (const key in components) {
-  Vue.component(key, components[key]);
+//getting language of the PLF
+const lang = eXo.env.portal.language || 'en';
+
+//should expose the locale ressources as REST API 
+const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
+
+export function init() {
+  exoi18n.loadLanguageAsync(lang, url)
+    .then(i18n => {
+      Vue.createApp({
+        template: `<gamification-user-connector-settings id="${appId}" />`,
+        i18n,
+        vuetify: Vue.prototype.vuetifyOptions,
+      }, `#${appId}`, 'Connectors Settings App');
+    });
 }
+
+Vue.prototype.$utils.includeExtensions('gamificationUserConnectorsExtensions');

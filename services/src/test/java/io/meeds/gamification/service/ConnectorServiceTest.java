@@ -70,7 +70,6 @@ public class ConnectorServiceTest extends AbstractServiceTest {
     remoteConnectorList = connectorService.getConnectors("root1");
 
     assertEquals(1, remoteConnectorList.size());
-
   }
 
   public void testConnectorConnection() throws IOException,
@@ -80,15 +79,17 @@ public class ConnectorServiceTest extends AbstractServiceTest {
     ConnectorPlugin connectorPlugin = mock(ConnectorPlugin.class);
     when(connectorPlugin.getConnectorName()).thenReturn("connectorName");
     when(connectorPlugin.getName()).thenReturn("connectorName");
-    when(connectorPlugin.validateToken("testToken")).thenReturn("root1RemoteId");
+    String connectorUserId = "root1RemoteId";
+    when(connectorPlugin.validateToken(connectorUserId, "testToken")).thenReturn(connectorUserId);
     connectorService.addPlugin(connectorPlugin);
     HashSet<MembershipEntry> memberships = new HashSet<MembershipEntry>();
     memberships.add(new MembershipEntry("/platform/users", "member"));
     Identity root1 = new Identity("root1", memberships);
     identityRegistry.register(root1);
 
-    connectorService.connect("connectorName", "testToken", root1);
-    verify(connectorPlugin, times(1)).validateToken("testToken");
+    String result = connectorService.connect("connectorName", connectorUserId, "testToken", root1);
+    assertEquals(connectorUserId, result);
+    verify(connectorPlugin, times(1)).validateToken(connectorUserId, "testToken");
   }
 
   private void removeConnectorPlugin(String connectorName) {

@@ -15,26 +15,35 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './initComponents.js';
-import './service.js';
+import './services.js';
 
-const appId = 'adminConnectorsSettingsApp';
+//get overrided components if exists
+if (extensionRegistry) {
+  const components = extensionRegistry.loadComponents('GamifiedProfiles');
+  if (components && components.length > 0) {
+    components.forEach(cmp => {
+      Vue.component(cmp.componentName, cmp.componentOptions);
+    });
+  }
+}
 
 //getting language of the PLF
 const lang = eXo.env.portal.language || 'en';
 
-//should expose the locale ressources as REST API 
+//should expose the locale ressources as REST API
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
+
+const appId = 'connectorUserProfile';
 
 export function init() {
   exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
       Vue.createApp({
-        template: `<gamification-admin-connector-settings id="${appId}" />`,
+        template: `<gamification-user-connectors id="${appId}" />`,
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
-      }, `#${appId}`, 'Admin Connectors Settings App');
+      }, `#${appId}`, 'Gamified Profiles App');
     });
 }
 
-Vue.prototype.$utils.includeExtensions('gamificationAdminConnectorsExtensions');
-
+Vue.prototype.$utils.includeExtensions('gamificationUserConnectorsExtensions');

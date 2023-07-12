@@ -14,7 +14,6 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 package io.meeds.gamification.dao;
 
 import io.meeds.gamification.entity.ConnectorAccountEntity;
@@ -26,18 +25,19 @@ import javax.persistence.TypedQuery;
 
 public class ConnectorAccountDAO extends GenericDAOJPAImpl<ConnectorAccountEntity, Long> {
 
-  public static final String CONNECTOR_NAME = "connectorName";
+  public static final String CONNECTOR_NAME   = "connectorName";
 
-  public static final String USER_ID        = "userId";
+  public static final String USER_IDENTITY_ID = "userId";
 
-  public static final String REMOTE_ID      = "remoteId";
+  public static final String REMOTE_ID        = "remoteId";
 
-  public ConnectorAccountEntity getConnectorAccountByNameAndUserId(String connectorName, long userId) {
+  public ConnectorAccountEntity getConnectorAccountByNameAndUserId(String connectorName, long userIdentityId) {
     TypedQuery<ConnectorAccountEntity> query =
-                                             getEntityManager().createNamedQuery("GamificationConnectorAccount.getConnectorByUsername",
+                                             getEntityManager().createNamedQuery("GamificationConnectorAccount.getConnectorAccountByNameAndUserId",
                                                                                  ConnectorAccountEntity.class);
     query.setParameter(CONNECTOR_NAME, connectorName);
-    query.setParameter(USER_ID, userId);
+    query.setParameter(USER_IDENTITY_ID, userIdentityId);
+    query.setMaxResults(1);
     try {
       return query.getSingleResult();
     } catch (NoResultException e) {
@@ -45,11 +45,26 @@ public class ConnectorAccountDAO extends GenericDAOJPAImpl<ConnectorAccountEntit
     }
   }
 
-  public String getConnectorRemoteId(String connectorName, long userId) {
+  public ConnectorAccountEntity getConnectorAccountByNameAndRemoteId(String connectorName, String connectorRemoteId) {
+    TypedQuery<ConnectorAccountEntity> query =
+                                             getEntityManager().createNamedQuery("GamificationConnectorAccount.getConnectorAccountByNameAndRemoteId",
+                                                                                 ConnectorAccountEntity.class);
+    query.setParameter(CONNECTOR_NAME, connectorName);
+    query.setParameter(REMOTE_ID, connectorRemoteId);
+    query.setMaxResults(1);
+    try {
+      return query.getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+
+  public String getConnectorRemoteId(String connectorName, long userIdentityId) {
     TypedQuery<String> query = getEntityManager().createNamedQuery("GamificationConnectorAccount.getConnectorRemoteId",
                                                                    String.class);
     query.setParameter(CONNECTOR_NAME, connectorName);
-    query.setParameter(USER_ID, userId);
+    query.setParameter(USER_IDENTITY_ID, userIdentityId);
+    query.setMaxResults(1);
     try {
       return query.getSingleResult();
     } catch (NoResultException e) {
@@ -57,11 +72,12 @@ public class ConnectorAccountDAO extends GenericDAOJPAImpl<ConnectorAccountEntit
     }
   }
 
-  public long getAssociatedUserId(String connectorName, String connectorRemoteId) {
-    TypedQuery<Long> query =
-                           getEntityManager().createNamedQuery("GamificationConnectorAccount.getAssociatedUsername", Long.class);
+  public long getAssociatedUserIdentityId(String connectorName, String connectorRemoteId) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationConnectorAccount.getAssociatedUsername",
+                                                                 Long.class);
     query.setParameter(CONNECTOR_NAME, connectorName);
     query.setParameter(REMOTE_ID, connectorRemoteId);
+    query.setMaxResults(1);
     try {
       Long result = query.getSingleResult();
       return result == null ? 0 : result;

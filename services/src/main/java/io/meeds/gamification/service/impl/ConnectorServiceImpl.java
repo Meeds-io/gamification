@@ -18,24 +18,24 @@
 package io.meeds.gamification.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.meeds.gamification.model.ConnectorAccount;
-import io.meeds.gamification.storage.ConnectorAccountStorage;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.ObjectAlreadyExistsException;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 
+import io.meeds.gamification.model.ConnectorAccount;
 import io.meeds.gamification.model.RemoteConnector;
 import io.meeds.gamification.model.RemoteConnectorSettings;
 import io.meeds.gamification.plugin.ConnectorPlugin;
 import io.meeds.gamification.service.ConnectorService;
 import io.meeds.gamification.service.ConnectorSettingService;
+import io.meeds.gamification.storage.ConnectorAccountStorage;
 
 public class ConnectorServiceImpl implements ConnectorService {
 
@@ -72,12 +72,12 @@ public class ConnectorServiceImpl implements ConnectorService {
   }
 
   @Override
-  public Map<String, ConnectorPlugin> getConnectorPlugins() {
-    return connectorPlugins;
+  public Collection<ConnectorPlugin> getConnectorPlugins() {
+    return connectorPlugins.values();
   }
 
   @Override
-  public List<RemoteConnector> getConnectors(String username) {
+  public Collection<RemoteConnector> getConnectors(String username) {
     if (StringUtils.isBlank(username)) {
       throw new IllegalArgumentException("username is mandatory");
     }
@@ -99,28 +99,34 @@ public class ConnectorServiceImpl implements ConnectorService {
   }
 
   @Override
-  public String connect(String connectorName, String accessToken, Identity userAclIdentity) throws ObjectAlreadyExistsException {
-    ConnectorPlugin connectorPlugin = getConnectorPlugin(connectorName);
-    String remoteIdentifier = connectorPlugin.validateToken(accessToken);
-    saveConnectorRemoteId(connectorName, userAclIdentity.getUserId(), remoteIdentifier);
-    return remoteIdentifier;
-  }
-
-  @Override
-  public void disconnect(String connectorName, String username) throws ObjectNotFoundException {
+  public String connect(String connectorName,
+                        String connectorUserId,
+                        String accessToken,
+                        Identity userAclIdentity) throws ObjectAlreadyExistsException {
     if (connectorName == null) {
       throw new IllegalArgumentException(CONNECTOR_NAME_IS_MANDATORY);
     }
-    if (username == null) {
-      throw new IllegalArgumentException(USERNAME_IS_MANDATORY);
+    if (connectorUserId == null) {
+      throw new IllegalArgumentException(CONNECTOR_REMOTE_ID_IS_MANDATORY);
     }
-    String userId = identityManager.getOrCreateUserIdentity(username).getId();
-    ConnectorAccount connector =
-                               connectorAccountStorage.getConnectorAccountByNameAndUserId(connectorName, Long.parseLong(userId));
-    if (connector == null) {
-      throw new ObjectNotFoundException(connectorName + "connector with " + username + " username wasn't found");
+    String username = userAclIdentity.getUserId();
+    String userIdentityId = identityManager.getOrCreateUserIdentity(username).getId();
+    connectorUserId = getConnectorPlugin(connectorName).validateToken(accessToken, connectorUserId);
+    connectorAccountStorage.saveConnectorAccount(new ConnectorAccount(connectorName,
+                                                                      connectorUserId,
+                                                                      Long.parseLong(userIdentityId)));
+    return connectorUserId;
+  }
+
+  @Override
+  public void disconnect(String connectorName, String remoteId) {
+    if (connectorName == null) {
+      throw new IllegalArgumentException(CONNECTOR_NAME_IS_MANDATORY);
     }
-    connectorAccountStorage.deleteConnectorAccountById(connector.getId());
+    if (remoteId == null) {
+      throw new IllegalArgumentException(CONNECTOR_REMOTE_ID_IS_MANDATORY);
+    }
+    connectorAccountStorage.deleteConnectorAccount(connectorName, remoteId);
   }
 
   @Override
@@ -143,7 +149,7 @@ public class ConnectorServiceImpl implements ConnectorService {
     if (connectorRemoteId == null) {
       throw new IllegalArgumentException(CONNECTOR_REMOTE_ID_IS_MANDATORY);
     }
-    long userId = connectorAccountStorage.getAssociatedUserId(connectorName, connectorRemoteId);
+    long userId = connectorAccountStorage.getUserIdentityId(connectorName, connectorRemoteId);
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getIdentity(String.valueOf(userId));
 
     if (userIdentity != null) {
@@ -151,20 +157,6 @@ public class ConnectorServiceImpl implements ConnectorService {
     } else {
       return null;
     }
-  }
-
-  private void saveConnectorRemoteId(String connectorName, String username, String connectorRemoteId) {
-    if (connectorName == null) {
-      throw new IllegalArgumentException(CONNECTOR_NAME_IS_MANDATORY);
-    }
-    if (connectorRemoteId == null) {
-      throw new IllegalArgumentException(CONNECTOR_REMOTE_ID_IS_MANDATORY);
-    }
-    if (username == null) {
-      throw new IllegalArgumentException(USERNAME_IS_MANDATORY);
-    }
-    String userId = identityManager.getOrCreateUserIdentity(username).getId();
-    connectorAccountStorage.saveConnectorAccount(connectorName, Long.parseLong(userId), connectorRemoteId);
   }
 
   private ConnectorPlugin getConnectorPlugin(String connectorName) {

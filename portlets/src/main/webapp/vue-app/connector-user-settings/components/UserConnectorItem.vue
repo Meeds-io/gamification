@@ -42,7 +42,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :href="identifierLink"
               target="_blank">{{ identifier }}</a>
             <v-btn
-              :loading="connector.loading"
+              :loading="loading"
               class="btn"
               small
               @click="disconnect">
@@ -53,7 +53,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </template>
           <v-btn
             v-else
-            :loading="connector.loading"
+            :loading="loading"
             class="btn"
             small
             @click="connect">
@@ -79,6 +79,9 @@ export default {
       default: () => [],
     },
   },
+  data: () => ({
+    loading: false,
+  }),
   computed: {
     connectorExtension() {
       return this.connectorExtensions.find(c => c.name === this.connector?.name);
@@ -100,11 +103,52 @@ export default {
     },
   },
   methods: {
-    connect() {
-      this.$root.$emit('gamification-connector-connect', this.connector, this.connectorExtension);
-    },
     disconnect() {
-      this.$root.$emit('gamification-connector-disconnect', this.connector);
+      this.loading = true;
+      return this.$gamificationConnectorService.disconnect(this.connector.name, this.connector.identifier)
+        .then(() => this.$root.$emit('gamification-connectors-refresh'))
+        .finally(() => this.loading = false);
+    },
+    connect() {
+      /*
+       * TODO, replace with:
+       * this.loading = true;
+       * this.connectorExtension.connect(this.connector)
+       *  .then((accessToken, remoteId) => this.$gamificationConnectorService.connect(this.connector.name, accessToken, remoteId))
+       *  .then(() => this.$root.$emit('gamification-connectors-refresh'))
+       *  .finally(() => this.loading = false);
+       */
+      this.loading = true;
+      const popup = this.connectorExtension.openOauthPopup(this.connector);
+      // Listen for changes in the popup window's URL
+      const popupInterval = setInterval(() => {
+        if (popup.location.href.startsWith(this.connector.redirectUrl)) {
+          clearInterval(popupInterval);
+          popup.close();
+          this.handleConnectCallback(popup.location.href, this.connector)
+            .finally(() => this.loading = false);
+        }
+      }, 500);
+    },
+    handleConnectCallback(callbackUrl) {
+      const url = new URL(callbackUrl);
+      const searchParams = new URLSearchParams(url.search);
+      const accessToken = searchParams.get('code');
+      return this.$gamificationConnectorService.connect(this.connector.name, accessToken)
+        .then((identifier) => {
+          this.$set(this.connector, 'identifier', identifier);
+          this.$root.$emit('gamification-connectors-refresh');
+        })
+        .catch(e => {
+          if (e.message === 'AccountAlreadyUsed') {
+            document.dispatchEvent(new CustomEvent('notification-alert', {detail: {
+              message: this.$t('gamification.connectors.error.alreadyUsed',  {
+                0: this.connector.name,
+              }),
+              type: 'error',
+            }}));
+          }
+        });
     },
   }
 };

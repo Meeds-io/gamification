@@ -24,7 +24,7 @@
     v-show="!loading"
     class="white">
     <v-toolbar
-      id="gamifiedProfilesHeader"
+      id="ConnectorUserProfileHeader"
       color="white"
       height="64"
       flat
@@ -51,7 +51,7 @@
             </v-btn>
           </div>
         </div>
-        <gamified-profiles-item
+        <gamification-user-connector-item
           v-else
           v-for="connector in enabledConnectedConnectors"
           :key="connector.name"

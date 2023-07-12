@@ -307,12 +307,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <portlet>
-    <name>GamifiedProfiles</name>
+    <name>ConnectorUserProfile</name>
     <module>
       <load-group>gamification-user-connectors</load-group>
       <script>
         <minify>false</minify>
-        <path>/js/gamifiedProfiles.bundle.js</path>
+        <path>/js/connectorUserProfile.bundle.js</path>
       </script>
       <depends>
         <module>vue</module>
@@ -512,12 +512,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <portlet>
-    <name>ConnectorsSettings</name>
+    <name>ConnectorUserSettings</name>
     <module>
       <load-group>gamification-user-connectors</load-group>
       <script>
         <minify>false</minify>
-        <path>/js/userConnectorsSettings.bundle.js</path>
+        <path>/js/connectorUserSettings.bundle.js</path>
       </script>
       <depends>
         <module>vue</module>
@@ -533,20 +533,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>extensionRegistry</module>
-      </depends>
-      <depends>
-        <module>gamificationCommon</module>
       </depends>
     </module>
   </portlet>
 
   <portlet>
-    <name>AdminConnectorsSettings</name>
+    <name>ConnectorAdminSettings</name>
     <module>
       <load-group>gamification-admin-connectors</load-group>
       <script>
         <minify>false</minify>
-        <path>/js/adminConnectorsSettings.bundle.js</path>
+        <path>/js/connectorAdminSettings.bundle.js</path>
       </script>
       <depends>
         <module>vue</module>
@@ -562,9 +559,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>extensionRegistry</module>
-      </depends>
-      <depends>
-        <module>gamificationCommon</module>
       </depends>
     </module>
   </portlet>

@@ -216,8 +216,6 @@ public class Utils {
 
   public static final JsonGenerator                 JSON_GENERATOR                          = new JsonGeneratorImpl();
 
-  public static final JsonParser                    JSON_PARSER                             = new JsonParserImpl();
-
   private static final Log                          LOG                                     = ExoLogger.getLogger(Utils.class);
 
   private Utils() { // NOSONAR
@@ -528,7 +526,7 @@ public class Utils {
         return null;
       }
       JsonDefaultHandler jsonDefaultHandler = new JsonDefaultHandler();
-      JSON_PARSER.parse(new ByteArrayInputStream(value.getBytes()), jsonDefaultHandler);
+      new JsonParserImpl().parse(new ByteArrayInputStream(value.getBytes()), jsonDefaultHandler);
       return ObjectBuilder.createObject(resultClass, jsonDefaultHandler.getJsonObject());
     } catch (JsonException e) {
       throw new IllegalStateException("Error creating object from string : " + value, e);

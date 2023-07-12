@@ -28,25 +28,25 @@ import java.io.Serializable;
 @Data
 public class ConnectorAccountCachedKey implements Serializable {
 
-  private Long   id;
+  private static final long serialVersionUID = 2428564740732785395L;
 
-  private String connectorName;
+  private String            connectorName;
 
-  private String remoteId;
+  private String            remoteId;
 
-  private long   userId;
+  private long              userId;
 
-  public ConnectorAccountCachedKey(Long id) {
-    this.id = id;
-  }
+  private boolean           object;
 
   public ConnectorAccountCachedKey(String connectorName, String remoteId) {
     this.connectorName = connectorName;
     this.remoteId = remoteId;
   }
 
-  public ConnectorAccountCachedKey(String connectorName, long userId) {
+  public ConnectorAccountCachedKey(String connectorName, long userId, boolean object) {
     this.connectorName = connectorName;
     this.userId = userId;
+    this.object = object;
   }
+
 }

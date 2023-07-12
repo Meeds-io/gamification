@@ -16,39 +16,42 @@
  */
 package io.meeds.gamification.storage;
 
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import org.exoplatform.services.cache.CacheService;
+import org.exoplatform.services.cache.concurrent.ConcurrentFIFOExoCache;
 
 import io.meeds.gamification.dao.ConnectorAccountDAO;
 import io.meeds.gamification.entity.ConnectorAccountEntity;
 import io.meeds.gamification.model.ConnectorAccount;
 import io.meeds.gamification.storage.cached.ConnectorAccountCachedStorage;
 import io.meeds.gamification.test.AbstractServiceTest;
-import org.exoplatform.services.cache.CacheService;
-import org.exoplatform.services.cache.concurrent.ConcurrentFIFOExoCache;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ConnectorAccountStorageTest extends AbstractServiceTest {
 
-  private ConnectorAccountDAO           connectorAccountDAO;
+  @Mock
+  CacheService                  cacheService;
 
-  private ConnectorAccountCachedStorage connectorAccountStorage;
+  @Mock
+  ConnectorAccountDAO           connectorAccountDAO;
+
+  ConnectorAccountCachedStorage connectorAccountStorage;
 
   @Before
   public void setUp() throws Exception { // NOSONAR
-    CacheService cacheService = mock(CacheService.class);
-    connectorAccountDAO = mock(ConnectorAccountDAO.class);
-
-    when(cacheService.getCacheInstance(ConnectorAccountCachedStorage.CONNECTOR_ACCOUNT_CACHE_NAME)).thenReturn(new ConcurrentFIFOExoCache<>(ConnectorAccountCachedStorage.CONNECTOR_ACCOUNT_CACHE_NAME,
-                                                                                                                                            500));
-    when(cacheService.getCacheInstance(ConnectorAccountCachedStorage.CONNECTOR_REMOTE_ID_CACHE_NAME)).thenReturn(new ConcurrentFIFOExoCache<>(ConnectorAccountCachedStorage.CONNECTOR_REMOTE_ID_CACHE_NAME,
-                                                                                                                                              500));
-    when(cacheService.getCacheInstance(ConnectorAccountCachedStorage.CONNECTOR_USER_ID_CACHE_NAME)).thenReturn(new ConcurrentFIFOExoCache<>(ConnectorAccountCachedStorage.CONNECTOR_USER_ID_CACHE_NAME,
-                                                                                                                                            500));
+    when(cacheService.getCacheInstance(any())).thenAnswer(invocation -> new ConcurrentFIFOExoCache<>(invocation.getArgument(0),
+                                                                                                     500));
     connectorAccountStorage = new ConnectorAccountCachedStorage(connectorAccountDAO, cacheService);
   }
 
@@ -62,7 +65,7 @@ public class ConnectorAccountStorageTest extends AbstractServiceTest {
 
     when(connectorAccountDAO.find(1L)).thenReturn(connectorAccountEntity);
     when(connectorAccountDAO.getConnectorRemoteId("connectorName", 2L)).thenReturn("connectorRemoteId");
-    when(connectorAccountDAO.getAssociatedUserId("connectorName", "connectorRemoteId")).thenReturn(2L);
+    when(connectorAccountDAO.getAssociatedUserIdentityId("connectorName", "connectorRemoteId")).thenReturn(2L);
 
     ConnectorAccount notExistingConnectorAccount = connectorAccountStorage.getConnectorAccountById(2L);
     assertNull(notExistingConnectorAccount);
@@ -89,7 +92,7 @@ public class ConnectorAccountStorageTest extends AbstractServiceTest {
 
     when(connectorAccountDAO.find(connectorAccountId)).thenReturn(connectorAccountEntity);
     when(connectorAccountDAO.getConnectorRemoteId("connectorName", 2L)).thenReturn("connectorRemoteId");
-    when(connectorAccountDAO.getAssociatedUserId("connectorName", "connectorRemoteId")).thenReturn(2L);
+    when(connectorAccountDAO.getAssociatedUserIdentityId("connectorName", "connectorRemoteId")).thenReturn(2L);
 
     ConnectorAccount connectorAccount = connectorAccountStorage.getConnectorAccountById(connectorAccountId);
     assertNotNull(connectorAccount);
@@ -99,9 +102,9 @@ public class ConnectorAccountStorageTest extends AbstractServiceTest {
     assertEquals("connectorRemoteId", remoteId);
     verify(connectorAccountDAO, times(1)).getConnectorRemoteId("connectorName", 2L);
 
-    long userId = connectorAccountStorage.getAssociatedUserId("connectorName", "connectorRemoteId");
+    long userId = connectorAccountStorage.getUserIdentityId("connectorName", "connectorRemoteId");
     assertEquals(2L, userId);
-    verify(connectorAccountDAO, times(1)).getAssociatedUserId("connectorName", "connectorRemoteId");
+    verify(connectorAccountDAO, times(1)).getAssociatedUserIdentityId("connectorName", "connectorRemoteId");
 
     // Verify cache
     connectorAccountStorage.getConnectorAccountById(connectorAccountId);
@@ -110,15 +113,15 @@ public class ConnectorAccountStorageTest extends AbstractServiceTest {
     connectorAccountStorage.getConnectorRemoteId("connectorName", 2L);
     verify(connectorAccountDAO, times(1)).getConnectorRemoteId("connectorName", 2L);
 
-    connectorAccountStorage.getAssociatedUserId("connectorName", "connectorRemoteId");
-    verify(connectorAccountDAO, times(1)).getAssociatedUserId("connectorName", "connectorRemoteId");
+    connectorAccountStorage.getUserIdentityId("connectorName", "connectorRemoteId");
+    verify(connectorAccountDAO, times(1)).getAssociatedUserIdentityId("connectorName", "connectorRemoteId");
 
     // Delete connector account
     connectorAccountStorage.deleteConnectorAccountById(connectorAccountId);
     verify(connectorAccountDAO, times(1)).create(any());
     when(connectorAccountDAO.find(connectorAccountId)).thenReturn(null);
     when(connectorAccountDAO.getConnectorRemoteId("connectorName", 2L)).thenReturn(null);
-    when(connectorAccountDAO.getAssociatedUserId("connectorName", "connectorRemoteId")).thenReturn(0L);
+    when(connectorAccountDAO.getAssociatedUserIdentityId("connectorName", "connectorRemoteId")).thenReturn(0L);
 
     // Verify that cache is cleared
     connectorAccountStorage.getConnectorAccountById(connectorAccountId);
@@ -127,7 +130,7 @@ public class ConnectorAccountStorageTest extends AbstractServiceTest {
     connectorAccountStorage.getConnectorRemoteId("connectorName", 2L);
     verify(connectorAccountDAO, times(2)).getConnectorRemoteId("connectorName", 2L);
 
-    connectorAccountStorage.getAssociatedUserId("connectorName", "connectorRemoteId");
-    verify(connectorAccountDAO, times(2)).getAssociatedUserId("connectorName", "connectorRemoteId");
+    connectorAccountStorage.getUserIdentityId("connectorName", "connectorRemoteId");
+    verify(connectorAccountDAO, times(2)).getAssociatedUserIdentityId("connectorName", "connectorRemoteId");
   }
 }

@@ -17,10 +17,13 @@
  */
 package io.meeds.gamification.storage;
 
+import static io.meeds.gamification.storage.mapper.ConnectorMapper.*;
+
+import org.exoplatform.commons.ObjectAlreadyExistsException;
+
 import io.meeds.gamification.dao.ConnectorAccountDAO;
 import io.meeds.gamification.entity.ConnectorAccountEntity;
 import io.meeds.gamification.model.ConnectorAccount;
-import io.meeds.gamification.storage.mapper.ConnectorMapper;
 
 public class ConnectorAccountStorage {
 
@@ -30,57 +33,38 @@ public class ConnectorAccountStorage {
     this.connectorAccountDAO = connectorAccountDAO;
   }
 
-  public void saveConnectorAccount(String connectorName, long userId, String connectorRemoteId) {
-    ConnectorAccount connectorAccount = getConnectorAccountByNameAndUserId(connectorName, userId);
-    if (connectorAccount != null) {
-      ConnectorAccountEntity connectorAccountEntity = ConnectorMapper.toEntity(connectorAccount);
-      connectorAccountEntity.setRemoteId(connectorRemoteId);
-      connectorAccountDAO.update(connectorAccountEntity);
-    } else {
-      ConnectorAccountEntity connectorAccountEntity = new ConnectorAccountEntity();
-      connectorAccountEntity.setConnectorName(connectorName);
-      connectorAccountEntity.setUserId(userId);
-      connectorAccountEntity.setRemoteId(connectorRemoteId);
-      connectorAccountDAO.create(connectorAccountEntity);
-    }
-  }
-
   public String getConnectorRemoteId(String connectorName, long userId) {
     return connectorAccountDAO.getConnectorRemoteId(connectorName, userId);
   }
 
-  public long getAssociatedUserId(String connectorName, String connectorRemoteId) {
-    return connectorAccountDAO.getAssociatedUserId(connectorName, connectorRemoteId);
+  public long getUserIdentityId(String connectorName, String connectorRemoteId) {
+    return connectorAccountDAO.getAssociatedUserIdentityId(connectorName, connectorRemoteId);
   }
 
-  public ConnectorAccount getConnectorAccountById(long connectorAccountId) {
-    ConnectorAccountEntity connectorAccountEntity = connectorAccountDAO.find(connectorAccountId);
-    if (connectorAccountEntity == null) {
-      return null;
-    }
-    return new ConnectorAccount(connectorAccountEntity.getId(),
-                                connectorAccountEntity.getConnectorName(),
-                                connectorAccountEntity.getRemoteId(),
-                                connectorAccountEntity.getId());
+  public ConnectorAccount getConnectorAccount(String connectorName, long userId) {
+    ConnectorAccountEntity connectorAccountEntity = connectorAccountDAO.getConnectorAccountByNameAndUserId(connectorName,
+                                                                                                           userId);
+    return fromEntity(connectorAccountEntity);
   }
 
-  public ConnectorAccount getConnectorAccountByNameAndUserId(String connectorName, long userId) {
-    ConnectorAccountEntity connectorAccountEntity = connectorAccountDAO.getConnectorAccountByNameAndUserId(connectorName, userId);
-    if (connectorAccountEntity == null) {
-      return null;
+  public void saveConnectorAccount(ConnectorAccount connectorAccount) throws ObjectAlreadyExistsException {
+    long userIdentityId = getUserIdentityId(connectorAccount.getConnectorName(), connectorAccount.getRemoteId());
+    if (userIdentityId == 0) {
+      ConnectorAccountEntity connectorAccountEntity = toEntity(connectorAccount);
+      connectorAccountEntity.setId(null);
+      connectorAccountDAO.create(connectorAccountEntity);
+    } else {
+      throw new ObjectAlreadyExistsException(connectorAccount);
     }
-    return new ConnectorAccount(connectorAccountEntity.getId(),
-                                connectorAccountEntity.getConnectorName(),
-                                connectorAccountEntity.getRemoteId(),
-                                connectorAccountEntity.getId());
   }
 
-  public void deleteConnectorAccountById(long connectorAccountId) {
-    ConnectorAccount connectorAccount = getConnectorAccountById(connectorAccountId);
-    if (connectorAccount == null) {
-      return;
+  public ConnectorAccount deleteConnectorAccount(String connectorName, String connectorRemoteId) {
+    ConnectorAccountEntity connectorAccountEntity = connectorAccountDAO.getConnectorAccountByNameAndRemoteId(connectorName,
+                                                                                                             connectorRemoteId);
+    if (connectorAccountEntity != null) {
+      connectorAccountDAO.delete(connectorAccountEntity);
     }
-    connectorAccount.setRemoteId(null);
-    saveConnectorAccount(connectorAccount.getConnectorName(), connectorAccount.getUserId(), connectorAccount.getRemoteId());
+    return fromEntity(connectorAccountEntity);
   }
+
 }

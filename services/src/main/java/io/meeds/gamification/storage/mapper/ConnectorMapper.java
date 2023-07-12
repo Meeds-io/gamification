@@ -30,9 +30,6 @@ public class ConnectorMapper {
       return null;
     }
     ConnectorAccountEntity connectorAccountEntity = new ConnectorAccountEntity();
-    if (connectorAccount.getId() != 0) {
-      connectorAccountEntity.setId(connectorAccount.getId());
-    }
     if (connectorAccount.getUserId() != 0) {
       connectorAccountEntity.setUserId(connectorAccount.getUserId());
     }
@@ -44,4 +41,14 @@ public class ConnectorMapper {
     }
     return connectorAccountEntity;
   }
+
+  public static ConnectorAccount fromEntity(ConnectorAccountEntity connectorAccountEntity) {
+    if (connectorAccountEntity == null) {
+      return null;
+    }
+    return new ConnectorAccount(connectorAccountEntity.getConnectorName(),
+                                connectorAccountEntity.getRemoteId(),
+                                connectorAccountEntity.getId());
+  }
+
 }

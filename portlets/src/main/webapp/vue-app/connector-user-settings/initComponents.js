@@ -14,12 +14,16 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import GamifiedProfiles from './components/GamifiedProfiles.vue';
-import GamifiedProfilesItem from './components/GamifiedProfilesItem.vue';
+import UserConnectorSettings from './components/UserConnectorSettings.vue';
+import UserConnectorList from './components/UserConnectorList.vue';
+import UserConnectorItem from './components/UserConnectorItem.vue';
+import UserConnector from './components/UserConnector.vue';
 
 const components = {
-  'gamified-profiles': GamifiedProfiles,
-  'gamified-profiles-item': GamifiedProfilesItem,
+  'gamification-user-connector-settings': UserConnectorSettings,
+  'gamification-user-connector-setting-list': UserConnectorList,
+  'gamification-user-connector-setting-item': UserConnectorItem,
+  'gamification-user-connector-setting': UserConnector,
 };
 
 for (const key in components) {

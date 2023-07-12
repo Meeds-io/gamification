@@ -17,15 +17,16 @@
  */
 package io.meeds.gamification.rest.builder;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import io.meeds.gamification.model.RemoteConnector;
 import io.meeds.gamification.rest.model.ConnectorRestEntity;
 import io.meeds.gamification.service.ConnectorService;
 import io.meeds.gamification.service.ConnectorSettingService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class ConnectorBuilder {
 
@@ -61,7 +62,7 @@ public class ConnectorBuilder {
 
   public static List<ConnectorRestEntity> toRestEntities(ConnectorService connectorService,
                                                          ConnectorSettingService connectorSettingService,
-                                                         List<RemoteConnector> remoteConnectors,
+                                                         Collection<RemoteConnector> remoteConnectors,
                                                          List<String> expandFields,
                                                          String username) {
     return remoteConnectors.stream()

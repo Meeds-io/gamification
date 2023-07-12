@@ -17,12 +17,10 @@
  */
 package io.meeds.gamification.service.impl;
 
-import io.meeds.gamification.model.RemoteConnectorSettings;
-import io.meeds.gamification.plugin.ConnectorPlugin;
-import io.meeds.gamification.service.ConnectorService;
-import io.meeds.gamification.service.ConnectorSettingService;
-import io.meeds.gamification.utils.Utils;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
@@ -33,9 +31,11 @@ import org.exoplatform.services.security.Identity;
 import org.exoplatform.web.security.codec.CodecInitializer;
 import org.exoplatform.web.security.security.TokenServiceInitializationException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import io.meeds.gamification.model.RemoteConnectorSettings;
+import io.meeds.gamification.plugin.ConnectorPlugin;
+import io.meeds.gamification.service.ConnectorService;
+import io.meeds.gamification.service.ConnectorSettingService;
+import io.meeds.gamification.utils.Utils;
 
 public class ConnectorSettingServiceImpl implements ConnectorSettingService {
 
@@ -155,11 +155,11 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
     if (!canManageConnectorSettings(aclIdentity)) {
       throw new IllegalAccessException("The user is not authorized to access connectors settings");
     }
-    Map<String, ConnectorPlugin> connectorsPlugins = connectorService.getConnectorPlugins();
-    List<RemoteConnectorSettings> connectorSettingList = new ArrayList<>();
-    connectorsPlugins.forEach((s,
-                               connectorPlugin) -> connectorSettingList.add(getConnectorSettings(connectorPlugin.getConnectorName())));
-    return connectorSettingList;
+    return connectorService.getConnectorPlugins()
+                           .stream()
+                           .map(ConnectorPlugin::getConnectorName)
+                           .map(this::getConnectorSettings)
+                           .toList();
   }
 
   @Override

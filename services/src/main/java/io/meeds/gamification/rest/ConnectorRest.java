@@ -17,37 +17,43 @@
  */
 package io.meeds.gamification.rest;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.*;
+import static io.meeds.gamification.utils.Utils.getExpandOptions;
 
+import java.util.Collection;
+import java.util.List;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.StringUtils;
+
+import org.exoplatform.commons.ObjectAlreadyExistsException;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.services.security.ConversationState;
 
 import io.meeds.gamification.model.RemoteConnector;
 import io.meeds.gamification.model.RemoteConnectorSettings;
 import io.meeds.gamification.rest.builder.ConnectorBuilder;
 import io.meeds.gamification.rest.model.ConnectorRestEntity;
 import io.meeds.gamification.service.ConnectorService;
-
 import io.meeds.gamification.service.ConnectorSettingService;
-import io.swagger.v3.oas.annotations.Parameter;
-import org.apache.commons.lang.StringUtils;
-import org.exoplatform.commons.ObjectAlreadyExistsException;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
-import org.exoplatform.services.rest.resource.ResourceContainer;
-import org.exoplatform.services.security.ConversationState;
-
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import static io.meeds.gamification.utils.Utils.getExpandOptions;
 
 @Path("/gamification/connectors")
 public class ConnectorRest implements ResourceContainer {
@@ -64,27 +70,28 @@ public class ConnectorRest implements ResourceContainer {
   }
 
   @GET
-  @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
+  @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   @Operation(summary = "Retrieves the list of remote connectors", method = "GET")
-  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
-      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response getConnectors(@Parameter(description = "Username", required = true) @QueryParam("username") String username,
-                                @Parameter(description = "Used to retrieve extra information about connectors") @QueryParam("expand") String expand) {
+  })
+  public Response getConnectors(
+                                @Parameter(description = "Username", required = true)
+                                @QueryParam("username")
+                                String username,
+                                @Parameter(description = "Used to retrieve extra information about connectors")
+                                @QueryParam("expand")
+                                String expand) {
 
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     List<String> expandFields = getExpandOptions(expand);
     if (expandFields.contains("secretKey") && !connectorSettingService.canManageConnectorSettings(identity)) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
-    try {
-      List<ConnectorRestEntity> connectorRestEntities = getConnectorsRestEntities(expandFields, username);
-      return Response.ok(connectorRestEntities).build();
-    } catch (Exception e) {
-      return Response.serverError().entity(e.getMessage()).build();
-    }
+    List<ConnectorRestEntity> connectorRestEntities = getConnectorsRestEntities(expandFields, username);
+    return Response.ok(connectorRestEntities).build();
   }
 
   @POST
@@ -93,43 +100,54 @@ public class ConnectorRest implements ResourceContainer {
   @RolesAllowed("users")
   @Path("connect/{connectorName}")
   @Operation(summary = "Validate Remote user identifier on a selected connector and associate it in his current profile.", description = "Validate Remote user identifier on a selected connector and associate it in his current profile.", method = "POST")
-  @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error") })
-  public Response connect(@Parameter(description = "Access Token", required = true) @PathParam("connectorName") String connectorName,
-                          @Parameter(description = "Access Token", required = true) @FormParam("accessToken") String accessToken) {
+      @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  public Response connect(
+                          @Parameter(description = "Access Token", required = true)
+                          @PathParam("connectorName")
+                          String connectorName,
+                          @Parameter(description = "User Remote identifier", required = false)
+                          @FormParam("remoteId")
+                          String remoteId,
+                          @Parameter(description = "Access Token", required = true)
+                          @FormParam("accessToken")
+                          String accessToken) {
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
-      String identifier = connectorService.connect(connectorName, accessToken, identity);
+      String identifier = connectorService.connect(connectorName, remoteId, accessToken, identity);
       return Response.ok(identifier).build();
     } catch (ObjectAlreadyExistsException e) {
       return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
-    } catch (IOException | ExecutionException e) {
-      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     }
   }
 
   @DELETE
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @Path("disconnect/{connectorName}")
   @RolesAllowed("users")
   @Operation(summary = "Deletes an existing connector account", description = "Deletes an existing connector account", method = "DELETE")
-  @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Request fulfilled"),
       @ApiResponse(responseCode = "401", description = "Object not found"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response disconnect(@Parameter(description = "Connector name", required = true) @PathParam("connectorName") String connectorName) {
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+  })
+  public Response disconnect(
+                             @Parameter(description = "Connector name", required = true)
+                             @PathParam("connectorName")
+                             String connectorName,
+                             @Parameter(description = "User Remote identifier", required = true)
+                             @FormParam("remoteId")
+                             String remoteId) {
     if (StringUtils.isBlank(connectorName)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("connector name is mandatory").build();
     }
-    String currentUser = ConversationState.getCurrent().getIdentity().getUserId();
-    try {
-      connectorService.disconnect(connectorName, currentUser);
-      return Response.noContent().build();
-    } catch (ObjectNotFoundException e) {
-      LOG.debug("User '{}' attempts to delete a not existing connector account", currentUser);
-      return Response.status(Response.Status.NOT_FOUND).entity("Connector account not found").build();
-    }
+    connectorService.disconnect(connectorName, remoteId);
+    return Response.noContent().build();
   }
 
   @POST
@@ -137,15 +155,29 @@ public class ConnectorRest implements ResourceContainer {
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @RolesAllowed("users")
   @Operation(summary = "Saves gamification connector settings", description = "Saves gamification connector settings", method = "POST")
-  @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Bad request"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response saveConnectorSettings(@Parameter(description = "Remote connector name", required = true) @FormParam("connectorName") String connectorName,
-                                        @Parameter(description = "Remote connector Api key", required = true) @FormParam("apiKey") String apiKey,
-                                        @Parameter(description = "Remote connector secret key", required = true) @FormParam("secretKey") String secretKey,
-                                        @Parameter(description = "Remote connector redirect Url", required = true) @FormParam("redirectUrl") String redirectUrl,
-                                        @Parameter(description = "Remote connector status", required = true) @FormParam("enabled") @DefaultValue("true") boolean enabled) {
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+  })
+  public Response saveConnectorSettings(
+                                        @Parameter(description = "Remote connector name", required = true)
+                                        @FormParam("connectorName")
+                                        String connectorName,
+                                        @Parameter(description = "Remote connector Api key", required = true)
+                                        @FormParam("apiKey")
+                                        String apiKey,
+                                        @Parameter(description = "Remote connector secret key", required = true)
+                                        @FormParam("secretKey")
+                                        String secretKey,
+                                        @Parameter(description = "Remote connector redirect Url", required = true)
+                                        @FormParam("redirectUrl")
+                                        String redirectUrl,
+                                        @Parameter(description = "Remote connector status", required = true)
+                                        @FormParam("enabled")
+                                        @DefaultValue("true")
+                                        boolean enabled) {
     if (org.apache.commons.lang3.StringUtils.isBlank(connectorName)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("'connectorName' parameter is mandatory").build();
     }
@@ -171,11 +203,16 @@ public class ConnectorRest implements ResourceContainer {
   @Path("settings/{connectorName}")
   @RolesAllowed("users")
   @Operation(summary = "Deletes gamification connector settings", description = "Deletes gamification connector settings", method = "DELETE")
-  @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Bad request"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response deleteConnectorSettings(@Parameter(description = "Remote connector name", required = true) @PathParam("connectorName") String connectorName) {
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+  })
+  public Response deleteConnectorSettings(
+                                          @Parameter(description = "Remote connector name", required = true)
+                                          @PathParam("connectorName")
+                                          String connectorName) {
     if (org.apache.commons.lang3.StringUtils.isBlank(connectorName)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("'connectorName' parameter is mandatory").build();
     }
@@ -192,7 +229,8 @@ public class ConnectorRest implements ResourceContainer {
   }
 
   private List<ConnectorRestEntity> getConnectorsRestEntities(List<String> expandFields, String username) {
-    List<RemoteConnector> connectorList = connectorService.getConnectors(username);
+    Collection<RemoteConnector> connectorList = connectorService.getConnectors(username);
     return ConnectorBuilder.toRestEntities(connectorService, connectorSettingService, connectorList, expandFields, username);
   }
+
 }

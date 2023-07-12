@@ -28,14 +28,11 @@ export default {
   },
   data() {
     return {
-      loading: false,
       username: eXo.env.portal.userName,
     };
   },
   created() {
     document.addEventListener('gamification-connectors-refresh', this.refreshUserConnectorList);
-    this.$root.$on('gamification-connector-connect', this.connect);
-    this.$root.$on('gamification-connector-disconnect', this.disconnect);
     document.addEventListener('extension-gamification-connectors-updated', this.refreshUserConnectorList);
     this.init();
   },
@@ -52,58 +49,15 @@ export default {
         }
       });
       // Check connectors status from store
-      this.loading = true;
       this.$gamificationConnectorService.getConnectors(this.username, 'userIdentifier')
         .then(connectors => {
           this.connectors = connectors;
           this.$emit('connectors-loaded', this.connectors, this.connectorExtensions);
-        }).finally(() => this.loading = false);
+        });
     },
     refreshUserConnectorList() {
       // Get list of connectors from extensionRegistry
       this.connectorExtensions = extensionRegistry.loadExtensions('gamification', 'connectors') || [];
-    },
-    connect(connector, connectorExtension) {
-      this.$set(connector, 'loading', true);
-      const popup = connectorExtension.openOauthPopup(connector);
-      // Listen for changes in the popup window's URL
-      const popupInterval = setInterval(() => {
-        if (popup.location.href.startsWith(connector.redirectUrl)) {
-          clearInterval(popupInterval);
-          popup.close();
-          this.handleCallback(popup.location.href, connector).then(() => {
-            connector.loading = false;
-          });
-        }
-      }, 500);
-    },
-    handleCallback(callbackUrl, connector) {
-      const url = new URL(callbackUrl);
-      const searchParams = new URLSearchParams(url.search);
-      const accessToken = searchParams.get('code');
-      return this.$gamificationConnectorService.connect(connector.name, accessToken).then((identifier) => {
-        console.warn('identifier' ,identifier);
-        this.$set(connector, 'identifier', identifier);
-        this.$root.$emit('gamification-connectors-refresh');
-      }).catch(e => {
-        if (e.message === 'AccountAlreadyUsed') {
-          document.dispatchEvent(new CustomEvent('notification-alert', {detail: {
-            message: this.$t('gamification.connectors.error.alreadyUsed',  {
-              0: connector.name,
-            }),
-            type: 'error',
-          }}));
-        }})
-        .finally(() => this.$set(connector, 'loading', false));
-    },
-    disconnect(connector) {
-      if (connector.identifier) {
-        return this.$gamificationConnectorService.disconnect(connector.name).then(() => {
-          this.$set(connector, 'identifier', null);
-          this.$root.$emit('gamification-connectors-refresh');
-        })
-          .finally(() => this.$set(connector, 'loading', false));
-      }
     },
   },
 };

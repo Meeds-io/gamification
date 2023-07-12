@@ -33,7 +33,21 @@ public abstract class ConnectorPlugin extends BaseComponentPlugin {
    * @return the user identifier corresponding to Access Token generated on Remote
    *         Connector
    */
-  public abstract String validateToken(String accessToken);
+  public String validateToken(String accessToken) {
+    return validateToken(null, accessToken);
+  }
+
+  /**
+   * Validates a user Token with the Gamification Connector provider
+   *
+   * @param accessToken connector access token
+   * @param connectorUserId User identifier in connector
+   * @return the user identifier corresponding to Access Token generated on Remote
+   *         Connector
+   */
+  public String validateToken(String connectorUserId, String accessToken) {
+    return validateToken(accessToken);
+  }
 
   /**
    * Gets connector name
