@@ -37,6 +37,8 @@ public class RuleFilter implements Serializable {
 
   private String            term;
 
+  private boolean           favorites;
+
   private Locale            locale;
 
   private String            eventName;
@@ -67,12 +69,17 @@ public class RuleFilter implements Serializable {
 
   private boolean           allSpaces;
 
+  private List<String>      tagNames;
+
+  private long              identityId;
+
   public RuleFilter(boolean allSpaces) {
     this.allSpaces = allSpaces;
   }
 
   public RuleFilter clone() { // NOSONAR
     return new RuleFilter(term,
+                          favorites,
                           locale,
                           eventName,
                           programId,
@@ -87,7 +94,9 @@ public class RuleFilter implements Serializable {
                           excludedRuleIds == null ? null : new ArrayList<>(excludedRuleIds),
                           sortBy,
                           sortDescending,
-                          allSpaces);
+                          allSpaces,
+                          tagNames,
+                          identityId);
   }
 
 }

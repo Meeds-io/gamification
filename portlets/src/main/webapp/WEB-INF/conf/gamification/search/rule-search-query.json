@@ -4,16 +4,9 @@
   "query": {
     "bool": {
       "must": [
-        {
-          "query_string": {
-            "query": "title:(*@term@*) OR title_@lang@:(*@term@*) OR description:(@term_query@) OR description_@lang@:(@term_query@)",
-            "default_operator": "AND",
-            "fuzziness": 1,
-            "phrase_slop": 1
-          }
-        }
-        @domain_filtering@
-        @audience_filtering@
+        @keyword_filtering@
+        @terms_filtering@
+        @term_filtering@
       ]
     }
   }

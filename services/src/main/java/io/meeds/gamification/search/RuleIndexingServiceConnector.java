@@ -37,6 +37,10 @@ import org.exoplatform.services.resources.LocaleConfig;
 import org.exoplatform.services.resources.LocaleConfigService;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.search.DocumentWithMetadata;
+import org.exoplatform.social.metadata.MetadataService;
+import org.exoplatform.social.metadata.model.MetadataItem;
+import org.exoplatform.social.metadata.model.MetadataObject;
 
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
@@ -48,6 +52,8 @@ import io.meeds.social.translation.service.TranslationService;
 
 public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnector {
 
+  public static final String RULE_OBJECT_TYPE            = "rule";
+
   public static final String  INDEX = "rules";
 
   private static final Log    LOG   = ExoLogger.getLogger(RuleIndexingServiceConnector.class);
@@ -55,6 +61,8 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
   private TranslationService  translationService;
 
   private RuleStorage         ruleStorage;
+
+  private MetadataService     metadataService;
 
   private LocaleConfigService localeConfigService;
 
@@ -64,12 +72,14 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
                                       TranslationService translationService,
                                       IdentityManager identityManager,
                                       LocaleConfigService localeConfigService,
+                                      MetadataService metadataService,
                                       InitParams initParams) {
     super(initParams);
     this.ruleStorage = ruleStorage;
     this.translationService = translationService;
     this.identityManager = identityManager;
     this.localeConfigService = localeConfigService;
+    this.metadataService = metadataService;
   }
 
   @Override
@@ -118,7 +128,12 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     fields.put("lastModifiedBy", getUserIdentityId(rule.getLastModifiedBy()));
     fields.put("lastModifiedDate", toMilliSecondsString(rule.getLastModifiedDate()));
     fields.put("type", rule.getType().name());
-    Document document = new Document(id, null, new Date(System.currentTimeMillis()), Collections.emptySet(), fields);
+
+    DocumentWithMetadata document = new DocumentWithMetadata();
+    document.setId(id);
+    document.setLastUpdatedDate(new Date());
+    document.setFields(fields);
+    document.setPermissions(Collections.emptySet());
 
     ProgramDTO program = rule.getProgram();
     if (program == null) {
@@ -134,7 +149,13 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
         document.addListField("managers", Collections.emptyList());
       }
     }
+    addDocumentMetadata(document, new MetadataObject(RULE_OBJECT_TYPE, id, null, rule.getSpaceId()));
     return document;
+  }
+
+  private void addDocumentMetadata(DocumentWithMetadata document, MetadataObject metadataObject) {
+    List<MetadataItem> metadataItems = metadataService.getMetadataItemsByObject(metadataObject);
+    document.setMetadataItems(metadataItems);
   }
 
   private void addTranslationLabels(Long ruleId, String fieldName, Map<String, String> fields, String defaultLabel) {
