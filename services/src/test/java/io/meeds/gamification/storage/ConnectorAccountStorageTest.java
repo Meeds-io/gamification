@@ -17,7 +17,6 @@
 package io.meeds.gamification.storage;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,7 +32,6 @@ import org.exoplatform.services.cache.concurrent.ConcurrentFIFOExoCache;
 
 import io.meeds.gamification.dao.ConnectorAccountDAO;
 import io.meeds.gamification.entity.ConnectorAccountEntity;
-import io.meeds.gamification.model.ConnectorAccount;
 import io.meeds.gamification.storage.cached.ConnectorAccountCachedStorage;
 import io.meeds.gamification.test.AbstractServiceTest;
 
@@ -56,32 +54,7 @@ public class ConnectorAccountStorageTest extends AbstractServiceTest {
   }
 
   @Test
-  public void getConnectorAccountById() {
-    ConnectorAccountEntity connectorAccountEntity = new ConnectorAccountEntity();
-    connectorAccountEntity.setId(1L);
-    connectorAccountEntity.setConnectorName("connectorName");
-    connectorAccountEntity.setUserId(1L);
-    connectorAccountEntity.setRemoteId("connectorRemoteId");
-
-    when(connectorAccountDAO.find(1L)).thenReturn(connectorAccountEntity);
-    when(connectorAccountDAO.getConnectorRemoteId("connectorName", 2L)).thenReturn("connectorRemoteId");
-    when(connectorAccountDAO.getAssociatedUserIdentityId("connectorName", "connectorRemoteId")).thenReturn(2L);
-
-    ConnectorAccount notExistingConnectorAccount = connectorAccountStorage.getConnectorAccountById(2L);
-    assertNull(notExistingConnectorAccount);
-    verify(connectorAccountDAO, times(1)).find(anyLong());
-
-    ConnectorAccount connectorAccount = connectorAccountStorage.getConnectorAccountById(1L);
-    assertNotNull(connectorAccount);
-    verify(connectorAccountDAO, times(2)).find(anyLong());
-    connectorAccountStorage.getConnectorAccountById(1L);
-
-    // Verify cache
-    verify(connectorAccountDAO, times(2)).find(anyLong());
-  }
-
-  @Test
-  public void deleteConnectorAccountById() throws Exception { // NOSONAR
+  public void TestDeleteConnectorAccount() { // NOSONAR
     long connectorAccountId = 2L;
 
     ConnectorAccountEntity connectorAccountEntity = new ConnectorAccountEntity();
@@ -90,13 +63,10 @@ public class ConnectorAccountStorageTest extends AbstractServiceTest {
     connectorAccountEntity.setUserId(2L);
     connectorAccountEntity.setRemoteId("connectorRemoteId");
 
-    when(connectorAccountDAO.find(connectorAccountId)).thenReturn(connectorAccountEntity);
+    when(connectorAccountDAO.getConnectorAccountByNameAndRemoteId("connectorName",
+                                                                  "connectorRemoteId")).thenReturn(connectorAccountEntity);
     when(connectorAccountDAO.getConnectorRemoteId("connectorName", 2L)).thenReturn("connectorRemoteId");
     when(connectorAccountDAO.getAssociatedUserIdentityId("connectorName", "connectorRemoteId")).thenReturn(2L);
-
-    ConnectorAccount connectorAccount = connectorAccountStorage.getConnectorAccountById(connectorAccountId);
-    assertNotNull(connectorAccount);
-    verify(connectorAccountDAO, times(1)).find(anyLong());
 
     String remoteId = connectorAccountStorage.getConnectorRemoteId("connectorName", 2L);
     assertEquals("connectorRemoteId", remoteId);
@@ -104,33 +74,22 @@ public class ConnectorAccountStorageTest extends AbstractServiceTest {
 
     long userId = connectorAccountStorage.getUserIdentityId("connectorName", "connectorRemoteId");
     assertEquals(2L, userId);
-    verify(connectorAccountDAO, times(1)).getAssociatedUserIdentityId("connectorName", "connectorRemoteId");
 
     // Verify cache
-    connectorAccountStorage.getConnectorAccountById(connectorAccountId);
-    verify(connectorAccountDAO, times(1)).find(anyLong());
-
     connectorAccountStorage.getConnectorRemoteId("connectorName", 2L);
     verify(connectorAccountDAO, times(1)).getConnectorRemoteId("connectorName", 2L);
 
-    connectorAccountStorage.getUserIdentityId("connectorName", "connectorRemoteId");
-    verify(connectorAccountDAO, times(1)).getAssociatedUserIdentityId("connectorName", "connectorRemoteId");
-
     // Delete connector account
-    connectorAccountStorage.deleteConnectorAccountById(connectorAccountId);
-    verify(connectorAccountDAO, times(1)).create(any());
-    when(connectorAccountDAO.find(connectorAccountId)).thenReturn(null);
+    connectorAccountStorage.deleteConnectorAccount("connectorName", "connectorRemoteId");
+    verify(connectorAccountDAO, times(1)).delete(any());
     when(connectorAccountDAO.getConnectorRemoteId("connectorName", 2L)).thenReturn(null);
     when(connectorAccountDAO.getAssociatedUserIdentityId("connectorName", "connectorRemoteId")).thenReturn(0L);
 
     // Verify that cache is cleared
-    connectorAccountStorage.getConnectorAccountById(connectorAccountId);
-    verify(connectorAccountDAO, times(2)).find(anyLong());
-
     connectorAccountStorage.getConnectorRemoteId("connectorName", 2L);
     verify(connectorAccountDAO, times(2)).getConnectorRemoteId("connectorName", 2L);
 
     connectorAccountStorage.getUserIdentityId("connectorName", "connectorRemoteId");
-    verify(connectorAccountDAO, times(2)).getAssociatedUserIdentityId("connectorName", "connectorRemoteId");
+    verify(connectorAccountDAO, times(1)).getAssociatedUserIdentityId("connectorName", "connectorRemoteId");
   }
 }

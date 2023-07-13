@@ -32,13 +32,17 @@ export default {
     };
   },
   created() {
-    document.addEventListener('gamification-connectors-refresh', this.refreshUserConnectorList);
-    document.addEventListener('extension-gamification-connectors-updated', this.refreshUserConnectorList);
+    document.addEventListener('extension-gamification-connectors-updated', this.refreshConnectorExtensions);
+    this.$root.$on('gamification-connectors-refresh', this.refreshConnectors);
     this.init();
+  },
+  beforeDestroy() {
+    document.removeEventListener('extension-gamification-connectors-updated', this.refreshConnectorExtensions);
+    this.$root.$off('gamification-connectors-refresh', this.refreshConnectors);
   },
   methods: {
     init() {
-      this.refreshUserConnectorList();
+      this.refreshConnectorExtensions();
       this.connectorExtensions.forEach(extension => {
         if (extension.init) {
           const initPromise = extension.init();
@@ -49,15 +53,19 @@ export default {
         }
       });
       // Check connectors status from store
+      this.refreshConnectors();
+    },
+    refreshConnectorExtensions() {
+      // Get list of connectors from extensionRegistry
+      this.connectorExtensions = extensionRegistry.loadExtensions('gamification', 'connectors') || [];
+    },
+    refreshConnectors() {
+      this.refreshConnectorExtensions();
       this.$gamificationConnectorService.getConnectors(this.username, 'userIdentifier')
         .then(connectors => {
           this.connectors = connectors;
           this.$emit('connectors-loaded', this.connectors, this.connectorExtensions);
         });
-    },
-    refreshUserConnectorList() {
-      // Get list of connectors from extensionRegistry
-      this.connectorExtensions = extensionRegistry.loadExtensions('gamification', 'connectors') || [];
     },
   },
 };

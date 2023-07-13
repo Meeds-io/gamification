@@ -18,11 +18,10 @@ package io.meeds.gamification.dao;
 
 import io.meeds.gamification.entity.ConnectorAccountEntity;
 import io.meeds.gamification.test.AbstractServiceTest;
-import org.exoplatform.container.component.RequestLifeCycle;
 
 public class ConnectorAccountDAOTest extends AbstractServiceTest {
 
-  public void testCreateCalendar() {
+  public void testCreateConnectorAccount() {
     ConnectorAccountEntity connectorAccountEntity = new ConnectorAccountEntity();
 
     String connectorName = "connectorName";
@@ -54,7 +53,7 @@ public class ConnectorAccountDAOTest extends AbstractServiceTest {
 
   }
 
-  public void testDeleteCalendar() {
+  public void testDeleteConnectorAccount() {
     ConnectorAccountEntity connectorAccountEntity = new ConnectorAccountEntity();
 
     String connectorName = "connectorName";

@@ -22,7 +22,7 @@
   <div class="d-flex">
     <v-list class="full-width">
       <v-list-item
-        :href="identifierLink"
+        :href="connectorRemoteIdentifierLink"
         target="_blank"
         rel="nofollow noreferrer noopener">
         <v-list-item-avatar class="ms-0 my-0">
@@ -32,7 +32,7 @@
             width="30" />
         </v-list-item-avatar>
         <span
-          class="subtitle-1 text-color my-0">{{ identifier }} </span>
+          class="subtitle-1 text-color my-0">{{ connectorRemoteIdentifier }} </span>
       </v-list-item>
     </v-list>
   </div>
@@ -51,14 +51,14 @@ export default {
     },
   },
   computed: {
-    identifier() {
+    connectorRemoteIdentifier() {
       return this.connector?.identifier;
     },
     connectorExtension() {
       return this.connectorExtensions.find(c => c.name === this.connector?.name);
     },
-    identifierLink() {
-      return `${this.connectorExtension?.PROFILE_BASER_URL}/${this.identifier}`;
+    connectorRemoteIdentifierLink() {
+      return `${this.connectorExtension?.PROFILE_BASER_URL}/${this.connectorRemoteIdentifier}`;
     },
     logo() {
       return this.connectorExtension?.logo || '';

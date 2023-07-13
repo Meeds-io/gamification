@@ -36,11 +36,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </div>
         <v-spacer />
         <div class="d-flex align-center">
-          <template v-if="identifier">
+          <template v-if="connectorRemoteIdentifier">
             <a
               class="pe-4 text-decoration-underline"
-              :href="identifierLink"
-              target="_blank">{{ identifier }}</a>
+              :href="connectorRemoteIdentifierLink"
+              target="_blank">{{ connectorRemoteIdentifier }}</a>
             <v-btn
               :loading="loading"
               class="btn"
@@ -86,11 +86,11 @@ export default {
     connectorExtension() {
       return this.connectorExtensions.find(c => c.name === this.connector?.name);
     },
-    identifier() {
+    connectorRemoteIdentifier() {
       return this.connector?.identifier || '';
     },
-    identifierLink() {
-      return `${this.connectorExtension?.PROFILE_BASER_URL}/${this.identifier}`;
+    connectorRemoteIdentifierLink() {
+      return `${this.connectorExtension?.PROFILE_BASER_URL}/${this.connectorRemoteIdentifier}`;
     },
     logo() {
       return this.connectorExtension?.logo || '';
@@ -105,7 +105,7 @@ export default {
   methods: {
     disconnect() {
       this.loading = true;
-      return this.$gamificationConnectorService.disconnect(this.connector.name, this.connector.identifier)
+      return this.$gamificationConnectorService.disconnect(this.connector.name, this.connectorRemoteIdentifier)
         .then(() => this.$root.$emit('gamification-connectors-refresh'))
         .finally(() => this.loading = false);
     },
@@ -134,11 +134,8 @@ export default {
       const url = new URL(callbackUrl);
       const searchParams = new URLSearchParams(url.search);
       const accessToken = searchParams.get('code');
-      return this.$gamificationConnectorService.connect(this.connector.name, accessToken)
-        .then((identifier) => {
-          this.$set(this.connector, 'identifier', identifier);
-          this.$root.$emit('gamification-connectors-refresh');
-        })
+      return this.$gamificationConnectorService.connect(this.connector.name, accessToken, this.connector.identifier)
+        .then(() => this.$root.$emit('gamification-connectors-refresh'))
         .catch(e => {
           if (e.message === 'AccountAlreadyUsed') {
             document.dispatchEvent(new CustomEvent('notification-alert', {detail: {

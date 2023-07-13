@@ -45,6 +45,8 @@ public class ConnectorServiceImpl implements ConnectorService {
 
   public static final String                 CONNECTOR_REMOTE_ID_IS_MANDATORY = "connector RemoteId is mandatory";
 
+  public static final String                 ACCESS_TOKEN_IS_MANDATORY        = "Access Token is mandatory";
+
   private final Map<String, ConnectorPlugin> connectorPlugins                 = new HashMap<>();
 
   protected final ConnectorAccountStorage    connectorAccountStorage;
@@ -106,12 +108,12 @@ public class ConnectorServiceImpl implements ConnectorService {
     if (connectorName == null) {
       throw new IllegalArgumentException(CONNECTOR_NAME_IS_MANDATORY);
     }
-    if (connectorUserId == null) {
-      throw new IllegalArgumentException(CONNECTOR_REMOTE_ID_IS_MANDATORY);
+    if (accessToken == null) {
+      throw new IllegalArgumentException(ACCESS_TOKEN_IS_MANDATORY);
     }
     String username = userAclIdentity.getUserId();
     String userIdentityId = identityManager.getOrCreateUserIdentity(username).getId();
-    connectorUserId = getConnectorPlugin(connectorName).validateToken(accessToken, connectorUserId);
+    connectorUserId = getConnectorPlugin(connectorName).validateToken(connectorUserId, accessToken);
     connectorAccountStorage.saveConnectorAccount(new ConnectorAccount(connectorName,
                                                                       connectorUserId,
                                                                       Long.parseLong(userIdentityId)));

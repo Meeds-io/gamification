@@ -25,14 +25,11 @@ import io.meeds.gamification.model.RemoteConnectorSettings;
 import io.meeds.gamification.plugin.ConnectorPlugin;
 import io.meeds.gamification.test.AbstractServiceTest;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.MembershipEntry;
 
-import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class ConnectorServiceTest extends AbstractServiceTest {
 
@@ -62,7 +59,7 @@ public class ConnectorServiceTest extends AbstractServiceTest {
 
     setConnectorPlugin("connectorName", "connectorIdentifier");
     setConnectorPlugin("connectorName1", "connectorIdentifier2");
-    List<RemoteConnector> remoteConnectorList = connectorService.getConnectors("root1");
+    Collection<RemoteConnector> remoteConnectorList = connectorService.getConnectors("root1");
 
     assertEquals(2, remoteConnectorList.size());
 
@@ -72,10 +69,7 @@ public class ConnectorServiceTest extends AbstractServiceTest {
     assertEquals(1, remoteConnectorList.size());
   }
 
-  public void testConnectorConnection() throws IOException,
-                                        ExecutionException,
-                                        ObjectAlreadyExistsException,
-                                        ObjectNotFoundException {
+  public void testConnectorConnection() throws ObjectAlreadyExistsException {
     ConnectorPlugin connectorPlugin = mock(ConnectorPlugin.class);
     when(connectorPlugin.getConnectorName()).thenReturn("connectorName");
     when(connectorPlugin.getName()).thenReturn("connectorName");
@@ -103,6 +97,7 @@ public class ConnectorServiceTest extends AbstractServiceTest {
       public String validateToken(String accessToken) {
         return null;
       }
+
       @Override
       public String getConnectorName() {
         return connectorName;

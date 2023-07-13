@@ -107,7 +107,7 @@ public class ConnectorRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   public Response connect(
-                          @Parameter(description = "Access Token", required = true)
+                          @Parameter(description = "Connector name", required = true)
                           @PathParam("connectorName")
                           String connectorName,
                           @Parameter(description = "User Remote identifier", required = false)

@@ -66,7 +66,7 @@ public class TestConnectorRest extends AbstractServiceTest { // NOSONAR
     startSessionAs("root1");
     setConnectorPlugin();
 
-    byte[] formData = ("connectorName=connectorName&accessToken=accessToken").getBytes();
+    byte[] formData = ("remoteId=connectorRemoteId&accessToken=accessToken").getBytes();
     MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
     headers.putSingle("Content-Type", "application/x-www-form-urlencoded");
     ContainerResponse response = launcher.service("POST",
@@ -85,7 +85,7 @@ public class TestConnectorRest extends AbstractServiceTest { // NOSONAR
 
     setConnectorPlugin();
 
-    byte[] formData = ("connectorName=connectorName&accessToken=accessToken").getBytes();
+    byte[] formData = ("remoteId=connectorRemoteId&accessToken=accessToken").getBytes();
     MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
     headers.putSingle("Content-Type", "application/x-www-form-urlencoded");
     ContainerResponse response = launcher.service("POST",
@@ -97,7 +97,11 @@ public class TestConnectorRest extends AbstractServiceTest { // NOSONAR
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
-    response = getResponse("DELETE", getURLResource("connectors/disconnect/connectorName"), null);
+    formData = ("remoteId=connectorRemoteId").getBytes();
+    headers = new MultivaluedMapImpl();
+    headers.putSingle("Content-Type", "application/x-www-form-urlencoded");
+    response = launcher.service("DELETE", getURLResource("connectors/disconnect/connectorName"), "", headers, formData, null);
+
     assertNotNull(response);
     assertEquals(204, response.getStatus());
   }

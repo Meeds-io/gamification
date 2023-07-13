@@ -74,7 +74,11 @@ public class ConnectorAccountCachedStorage extends ConnectorAccountStorage {
   public String getConnectorRemoteId(String connectorName, long userId) {
     ConnectorAccountCachedKey cacheKey = new ConnectorAccountCachedKey(connectorName, userId, false);
     try {
-      return (String) this.futureCache.get(CONNECTOR_REMOTE_CONTEXT, cacheKey);
+      String connectorRemoteId =  (String) this.futureCache.get(CONNECTOR_REMOTE_CONTEXT, cacheKey);
+      if (this.futureCache.get(new ConnectorAccountCachedKey(connectorName, connectorRemoteId)) == null) {
+        this.futureCache.put(new ConnectorAccountCachedKey(connectorName, connectorRemoteId), userId);
+      }
+      return connectorRemoteId;
     } catch (Exception e) {
       LOG.warn("Error when getting connector remote Id cache", e);
     }
@@ -180,5 +184,4 @@ public class ConnectorAccountCachedStorage extends ConnectorAccountStorage {
       this.cacheInstance.clearCache();
     }
   }
-
 }

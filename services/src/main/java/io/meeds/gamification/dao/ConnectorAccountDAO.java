@@ -73,7 +73,7 @@ public class ConnectorAccountDAO extends GenericDAOJPAImpl<ConnectorAccountEntit
   }
 
   public long getAssociatedUserIdentityId(String connectorName, String connectorRemoteId) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationConnectorAccount.getAssociatedUsername",
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationConnectorAccount.getAssociatedUserIdentityId",
                                                                  Long.class);
     query.setParameter(CONNECTOR_NAME, connectorName);
     query.setParameter(REMOTE_ID, connectorRemoteId);
