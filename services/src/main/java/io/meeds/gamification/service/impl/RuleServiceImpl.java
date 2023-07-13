@@ -170,7 +170,7 @@ public class RuleServiceImpl implements RuleService {
                                 int offset,
                                 int limit) {
     List<Long> ruleIds;
-    if (StringUtils.isNotBlank(ruleFilter.getTerm()) && ruleFilter.getLocale() != null) {
+    if (isSearchFilter(ruleFilter)) {
       int searchLimit = offset + limit * 2;
       ruleIds = ruleSearchConnector.search(ruleFilter, 0, searchLimit);
       if (CollectionUtils.isEmpty(ruleIds)) {
@@ -200,7 +200,7 @@ public class RuleServiceImpl implements RuleService {
 
   @Override
   public int countRules(RuleFilter ruleFilter) {
-    if (StringUtils.isNotBlank(ruleFilter.getTerm()) && ruleFilter.getLocale() != null) {
+    if (isSearchFilter(ruleFilter)) {
       List<Long> ruleIds = ruleSearchConnector.search(ruleFilter, 0, MAX_RULES_TO_SEARCH);
       if (CollectionUtils.isEmpty(ruleIds)) {
         return 0;
@@ -363,6 +363,13 @@ public class RuleServiceImpl implements RuleService {
     }
   }
 
+  private boolean isSearchFilter(RuleFilter ruleFilter) {
+    return ruleFilter.isFavorites()
+        || CollectionUtils.isNotEmpty(ruleFilter.getTagNames())
+        || (StringUtils.isNotBlank(ruleFilter.getTerm())
+            && ruleFilter.getLocale() != null);
+  }
+
   @SuppressWarnings("unchecked")
   private RuleFilter computeUserSpaces(RuleFilter ruleFilter, String username) {
     ruleFilter = ruleFilter.clone();
@@ -508,8 +515,8 @@ public class RuleServiceImpl implements RuleService {
   }
 
   private void createActivity(ExoSocialActivity activity,
-                               Space space,
-                               Identity publisherIdentity) {
+                              Space space,
+                              Identity publisherIdentity) {
     Identity streamOwner = space == null ? publisherIdentity : identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
     activityManager.saveActivityNoReturn(streamOwner, activity);
   }
