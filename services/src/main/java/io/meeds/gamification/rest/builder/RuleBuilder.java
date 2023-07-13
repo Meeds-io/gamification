@@ -30,6 +30,8 @@ import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.metadata.favorite.FavoriteService;
+import org.exoplatform.social.metadata.favorite.model.Favorite;
 
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.PeriodType;
@@ -58,6 +60,7 @@ public class RuleBuilder {
                                             RuleService ruleService,
                                             RealizationService realizationService,
                                             TranslationService translationService,
+                                            FavoriteService favoriteService,
                                             RuleDTO rule,
                                             Locale locale,
                                             List<String> expandFields,
@@ -86,6 +89,12 @@ public class RuleBuilder {
     if (countRealizations) {
       realizationsCount = countRealizations(realizationService, rule.getId(), periodType);
     }
+    boolean isFavorite = expandFields != null && expandFields.contains("favorites")
+        && favoriteService.isFavorite(new Favorite(RULE_OBJECT_TYPE,
+                                                   String.valueOf(rule.getId()),
+                                                   null,
+                                                   Utils.getCurrentUserIdentityId(),
+                                                   rule.getSpaceId()));
     boolean expandPrerequisites = expandFields != null && expandFields.contains("expandPrerequisites");
     List<RuleDTO> prerequisiteRules = ruleService.getPrerequisiteRules(rule.getId())
                                                  .stream()
@@ -95,6 +104,7 @@ public class RuleBuilder {
                                                                          ruleService,
                                                                          realizationService,
                                                                          translationService,
+                                                                         favoriteService,
                                                                          r,
                                                                          locale,
                                                                          expandFields,
@@ -133,6 +143,7 @@ public class RuleBuilder {
                               rule.getActivityId(),
                               rule.getCacheTime(),
                               published,
+                              isFavorite,
                               rule.getPrerequisiteRuleIds(),
                               rule.getType(),
                               rule.getRecurrence(),
