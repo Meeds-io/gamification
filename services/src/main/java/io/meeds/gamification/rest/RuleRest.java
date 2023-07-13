@@ -16,7 +16,7 @@
  */
 package io.meeds.gamification.rest;
 
-import static io.meeds.gamification.utils.Utils.getCurrentUser;
+import static io.meeds.gamification.utils.Utils.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +49,7 @@ import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.metadata.favorite.FavoriteService;
 
 import io.meeds.gamification.constant.DateFilterType;
 import io.meeds.gamification.constant.EntityFilterType;
@@ -89,12 +90,15 @@ public class RuleRest implements ResourceContainer {
 
   protected TranslationService translationService;
 
+  protected FavoriteService    favoriteService;
+
   protected IdentityManager    identityManager;
 
   public RuleRest(ProgramService programService,
                   RuleService ruleService,
                   RealizationService realizationService,
                   TranslationService translationService,
+                  FavoriteService favoriteService,
                   IdentityManager identityManager) {
     cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
@@ -103,6 +107,7 @@ public class RuleRest implements ResourceContainer {
     this.ruleService = ruleService;
     this.realizationService = realizationService;
     this.translationService = translationService;
+    this.favoriteService = favoriteService;
     this.identityManager = identityManager;
   }
 
@@ -153,6 +158,9 @@ public class RuleRest implements ResourceContainer {
                            @Parameter(description = "term to search rules with")
                            @QueryParam("term")
                            String term,
+                           @Parameter(description = "Whether to search in favorites only or not", required = true)
+                           @QueryParam("favorites")
+                           boolean favorites,
                            @Parameter(description = "Sort field. Possible values: createdDate, startDate, endDate or score.")
                            @QueryParam("sortBy")
                            @DefaultValue("score")
@@ -199,10 +207,13 @@ public class RuleRest implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
 
+    Locale locale = getLocale(lang);
+
     String currentUser = getCurrentUser();
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setTerm(term);
-    ruleFilter.setLocale(getLocale(lang));
+    ruleFilter.setFavorites(favorites);
+    ruleFilter.setLocale(locale);
     ruleFilter.setDateFilterType(dateFilter == null ? DateFilterType.ALL : dateFilter);
     ruleFilter.setType(ruleType == null ? EntityFilterType.ALL : ruleType);
     ruleFilter.setStatus(ruleStatus == null ? EntityStatusType.ALL : ruleStatus);
@@ -211,6 +222,7 @@ public class RuleRest implements ResourceContainer {
     ruleFilter.setExcludedRuleIds(excludedRuleIds);
     ruleFilter.setProgramId(programId);
     ruleFilter.setSpaceIds(spaceIds);
+    ruleFilter.setIdentityId(getCurrentUserIdentityId());
     ruleFilter.setExcludeNoSpace(CollectionUtils.isNotEmpty(spaceIds));
     ruleFilter.setSortBy(sortField);
     ruleFilter.setSortDescending(sortDescending);
@@ -221,7 +233,7 @@ public class RuleRest implements ResourceContainer {
         RuleList ruleList = new RuleList();
         List<RuleRestEntity> ruleEntities = getRules(ruleFilter,
                                                      periodType,
-                                                     getLocale(lang),
+                                                     locale,
                                                      expandFields,
                                                      currentUser,
                                                      offset,
@@ -245,7 +257,7 @@ public class RuleRest implements ResourceContainer {
           ruleFilter.setProgramId(program.getId());
           List<RuleRestEntity> ruleEntities = getRules(ruleFilter,
                                                        periodType,
-                                                       getLocale(lang),
+                                                       locale,
                                                        expandFields,
                                                        currentUser,
                                                        offset,
@@ -302,6 +314,7 @@ public class RuleRest implements ResourceContainer {
                                                            ruleService,
                                                            realizationService,
                                                            translationService,
+                                                           favoriteService,
                                                            rule,
                                                            getLocale(lang),
                                                            expandFields,
@@ -405,8 +418,8 @@ public class RuleRest implements ResourceContainer {
     }
     String username = getCurrentUser();
     try {
-      RuleDTO ruleDTO = ruleService.deleteRuleById(ruleId, username);
-      return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO, getLocale(request))).build();
+      RuleDTO rule = ruleService.deleteRuleById(ruleId, username);
+      return Response.ok().cacheControl(cacheControl).entity(toRestEntity(rule, getLocale(request))).build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
     } catch (IllegalAccessException e) {
@@ -442,6 +455,7 @@ public class RuleRest implements ResourceContainer {
                                                       ruleService,
                                                       realizationService,
                                                       translationService,
+                                                      favoriteService,
                                                       rule,
                                                       locale,
                                                       expandFields,
@@ -456,6 +470,7 @@ public class RuleRest implements ResourceContainer {
                                     ruleService,
                                     realizationService,
                                     translationService,
+                                    favoriteService,
                                     rule,
                                     locale,
                                     null,

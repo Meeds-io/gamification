@@ -29,6 +29,7 @@ module.exports = {
     notificationExtension: './src/main/webapp/vue-app/notification-popover-extension/main.js',
     ruleComponents: './src/main/webapp/vue-app/rules/main.js',
     ruleExtensions: './src/main/webapp/vue-app/rules-extensions/main.js',
+    ruleSearch: './src/main/webapp/vue-app/rules-search/main.js',
     gamificationCommon: './src/main/webapp/vue-app/commons/main.js',
     gamificationAnalytics: './src/main/webapp/vue-app/analytics/main.js',
     badge: './src/main/webapp/vue-app/badge/badge.js',
