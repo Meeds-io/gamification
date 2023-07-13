@@ -52,6 +52,8 @@ public class RuleRestEntity extends RuleDTO {
 
   private boolean                     published;
 
+  private boolean                     favorite;
+
   public RuleRestEntity(Long id, // NOSONAR
                         String title,
                         String description,
@@ -69,6 +71,7 @@ public class RuleRestEntity extends RuleDTO {
                         long activityId,
                         long cacheTime,
                         boolean published,
+                        boolean favorite,
                         Set<Long> prerequisiteRuleIds,
                         EntityType type,
                         RecurrenceType recurrence,
@@ -98,6 +101,7 @@ public class RuleRestEntity extends RuleDTO {
           type,
           recurrence);
     this.published = published;
+    this.favorite = favorite;
     this.audience = audience;
     this.managers = managers;
     this.realizations = realizations;
@@ -125,6 +129,7 @@ public class RuleRestEntity extends RuleDTO {
                               activityId,
                               cacheTime,
                               published,
+                              favorite,
                               prerequisiteRuleIds,
                               type,
                               recurrence,
