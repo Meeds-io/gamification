@@ -18,8 +18,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <gatein-resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/gatein_resources_1_4 http://www.exoplatform.org/xml/ns/gatein_resources_1_4" xmlns="http://www.exoplatform.org/xml/ns/gatein_resources_1_4">
 
-    <!-- CSS for Gamification support in Platform -->
-
   <portlet-skin>
     <application-name>gamification-portlets</application-name>
     <portlet-name>ProfileStats</portlet-name>
@@ -849,6 +847,32 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>gamificationCommon</module>
+    </depends>
+  </module>
+
+  <module>
+    <name>ruleSearch</name>
+    <script>
+      <minify>false</minify>
+      <path>/js/ruleSearch.bundle.js</path>
+    </script>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>vuetify</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>ruleExtensions</module>
     </depends>
   </module>
 
