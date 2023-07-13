@@ -54,25 +54,48 @@ public class RuleSearchConnector {
 
   private static final String          LANG                         = "@lang@";
 
-  private static final String          DOMAIN_FILTERING_QUERY       = """
-            ,{
-              "term": {
-                "domainId": {
-                  "value": "@domainId@"
-                }
-              }
-            }
-      """;
+  private static final String          KEYWORD_FILTERING_QUERY      =
+                                                               """
+                                                                         {
+                                                                           "query_string": {
+                                                                             "query": "title:(*@term@*) OR title_@lang@:(*@term@*) OR description:(@term_query@) OR description_@lang@:(@term_query@)",
+                                                                             "default_operator": "AND",
+                                                                             "fuzziness": 1,
+                                                                             "phrase_slop": 1
+                                                                           }
+                                                                         }
+                                                                   """;
 
-  private static final String          AUDIENCE_FILTERING_QUERY     = """
-            ,{
-              "terms": {
-                "audience": [
-                  @spaceList@
-                ]
-              }
-            }
-      """;
+  private static final String          TERMS_FILTERING_QUERY        =
+                                                             """
+                                                                       {
+                                                                         "terms": {
+                                                                           @favorite_query@
+                                                                           @audience_filtering@
+                                                                         }
+                                                                       }
+                                                                 """;
+
+  private static final String          DOMAIN_FILTERING_QUERY       =
+                                                              """
+                                                                        {
+                                                                          "term": {
+                                                                            "domainId": {
+                                                                              "value": "@domainId@"
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                  """;
+
+  private static final String          AUDIENCE_FILTERING_QUERY     =
+                                                                """
+                                                                        "audience": [@spaceList@]
+                                                                    """;
+
+  private static final String          FAVORITE_FILTERING_QUERY     =
+                                                                """
+                                                                        "metadatas.favorites.metadataName.keyword": ["@identity_id@"]
+                                                                    """;
 
   private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"*~&|#%@";
 
@@ -111,9 +134,6 @@ public class RuleSearchConnector {
     if (limit < 0) {
       throw new IllegalArgumentException("Limit must be positive");
     }
-    if (StringUtils.isBlank(filter.getTerm())) {
-      throw new IllegalArgumentException("Filter term is mandatory");
-    }
     if (filter.getLocale() == null) {
       throw new IllegalArgumentException("Filter locale is mandatory");
     }
@@ -126,41 +146,56 @@ public class RuleSearchConnector {
   }
 
   private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
+    String query = retrieveSearchQuery();
+
     String term = StringUtils.lowerCase(removeSpecialCharacters(filter.getTerm()));
     term = escapeIllegalCharacterInQuery(term);
-    if (StringUtils.isBlank(term)) {
-      return null;
+    String termQuery = "";
+    int filtersCount = 0;
+    int termsFilterCount = 0;
+    if (StringUtils.isNotBlank(term)) {
+      term = term.trim();
+      List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
+        word = word.trim();
+        if (word.length() > 4) {
+          word = word + "~1";
+        }
+        return word;
+      }).toList();
+      termQuery = StringUtils.join(termsQuery, " AND ");
+      query = query.replace("@keyword_filtering@", KEYWORD_FILTERING_QUERY)
+                   .replace("@term@", term)
+                   .replace("@term_query@", termQuery);
+      filtersCount++;
     }
-    term = term.trim();
-    List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
-      word = word.trim();
-      if (word.length() > 4) {
-        word = word + "~1";
-      }
-      return word;
-    }).toList();
-    String termQuery = StringUtils.join(termsQuery, " AND ");
-    String query = retrieveSearchQuery();
-    if (filter.getProgramId() > 0) {
-      query = query.replace("@domain_filtering@", DOMAIN_FILTERING_QUERY);
-    } else {
-      query = query.replace("@domain_filtering@", "");
+
+    if (isFavoriteQuery(filter)) {
+      query = query.replace("@terms_filtering@", (filtersCount > 0 ? "," : "") + TERMS_FILTERING_QUERY);
+      query = query.replace("@favorite_query@", FAVORITE_FILTERING_QUERY)
+                   .replace("@identity_id@", String.valueOf(filter.getIdentityId()));
+      filtersCount++;
+      termsFilterCount++;
     }
+
     if (!CollectionUtils.isEmpty(filter.getSpaceIds())) {
-      query = query.replace("@audience_filtering@", AUDIENCE_FILTERING_QUERY);
-    } else {
-      query = query.replace("@audience_filtering@", "");
+      Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds())
+                                    .map(HashSet::new)
+                                    .orElse(new HashSet<>());
+      query = query.replace("@terms_filtering@", (filtersCount > 0 ? "," : "") + TERMS_FILTERING_QUERY);
+      query = query.replace("@audience_filtering@", (termsFilterCount > 0 ? "," : "") + AUDIENCE_FILTERING_QUERY)
+                   .replace("@spaceList@", StringUtils.join(spaceList, ","));
     }
 
-    Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds())
-                                  .map(HashSet::new)
-                                  .orElse(new HashSet<>());
+    if (filter.getProgramId() > 0) {
+      query = query.replace("@term_filtering@", DOMAIN_FILTERING_QUERY)
+                   .replace("@domainId@", String.valueOf(filter.getProgramId()));
+    }
 
-    return query.replace("@domainId@", String.valueOf(filter.getProgramId()))
-                .replace("@term@", term)
-                .replace(LANG, filter.getLocale().toLanguageTag())
-                .replace("@term_query@", termQuery)
-                .replace("@spaceList@", StringUtils.join(spaceList, ","))
+    return query.replace(LANG, filter.getLocale().toLanguageTag())
+                .replace("@audience_filtering@", "")
+                .replace("@keyword_filtering@", "")
+                .replace("@terms_filtering@", "")
+                .replace("@term_filtering@", "")
                 .replace("@offset@", String.valueOf(offset))
                 .replace("@limit@", String.valueOf(limit));
   }
@@ -194,6 +229,10 @@ public class RuleSearchConnector {
       }
     }
     return results;
+  }
+
+  private boolean isFavoriteQuery(RuleFilter filter) {
+    return filter.isFavorites() && filter.getIdentityId() > 0;
   }
 
   private long parseLong(JSONObject hitSource, String key) {
