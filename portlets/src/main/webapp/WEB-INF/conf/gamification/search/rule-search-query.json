@@ -4,9 +4,7 @@
   "query": {
     "bool": {
       "must": [
-        @keyword_filtering@
-        @terms_filtering@
-        @term_filtering@
+        @search_filtering@
       ]
     }
   }

@@ -47,6 +47,9 @@
             <field name="favoritesEnabled">
               <boolean>true</boolean>
             </field>
+            <field name="tagsEnabled">
+              <boolean>true</boolean>
+            </field>
             <field name="jsModule">
               <string>SHARED/ruleSearch</string>
             </field>
