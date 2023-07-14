@@ -23,6 +23,7 @@
         @removed="removed"
         @remove-error="removeError" />
     </v-list-item-action>
+    <engagement-center-rule-extensions />
   </v-list-item>
 </template>
 <script>
