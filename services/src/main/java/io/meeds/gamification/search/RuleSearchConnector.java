@@ -70,32 +70,19 @@ public class RuleSearchConnector {
                                                              """
                                                                        {
                                                                          "terms": {
-                                                                           @favorite_query@
-                                                                           @audience_filtering@
+                                                                           "@field_name@" : ["@field_values@"]
                                                                          }
                                                                        }
                                                                  """;
 
-  private static final String          DOMAIN_FILTERING_QUERY       =
-                                                              """
-                                                                        {
-                                                                          "term": {
-                                                                            "domainId": {
-                                                                              "value": "@domainId@"
-                                                                            }
+  private static final String          MATCH_FILTERING_QUERY        =
+                                                             """
+                                                                       {
+                                                                          "match":{
+                                                                             "@field_name@": "@field_value@"
                                                                           }
-                                                                        }
-                                                                  """;
-
-  private static final String          AUDIENCE_FILTERING_QUERY     =
-                                                                """
-                                                                        "audience": [@spaceList@]
-                                                                    """;
-
-  private static final String          FAVORITE_FILTERING_QUERY     =
-                                                                """
-                                                                        "metadatas.favorites.metadataName.keyword": ["@identity_id@"]
-                                                                    """;
+                                                                       }
+                                                                 """;
 
   private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"*~&|#%@";
 
@@ -146,13 +133,31 @@ public class RuleSearchConnector {
   }
 
   private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
-    String query = retrieveSearchQuery();
+    String queryTemplate = retrieveSearchQuery();
+    String filterQuery = computeFilterQuery(filter);
+    return queryTemplate.replace(LANG, filter.getLocale().toLanguageTag())
+                        .replace("@search_filtering@", filterQuery)
+                        .replace("@offset@", String.valueOf(offset))
+                        .replace("@limit@", String.valueOf(limit));
+  }
 
+  private String computeFilterQuery(RuleFilter filter) {
+    StringBuilder searchFiltering = new StringBuilder();
+    appendKeywordQuery(filter, searchFiltering);
+    appendFavoriteQuery(filter, searchFiltering);
+    appendTagsQuery(filter, searchFiltering);
+    appendAudienceQuery(filter, searchFiltering);
+    appendProgramQuery(filter, searchFiltering);
+    return searchFiltering.toString();
+  }
+
+  private void appendKeywordQuery(RuleFilter filter, StringBuilder searchFiltering) {
+    if (StringUtils.isBlank(filter.getTerm())) {
+      return;
+    }
     String term = StringUtils.lowerCase(removeSpecialCharacters(filter.getTerm()));
     term = escapeIllegalCharacterInQuery(term);
     String termQuery = "";
-    int filtersCount = 0;
-    int termsFilterCount = 0;
     if (StringUtils.isNotBlank(term)) {
       term = term.trim();
       List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
@@ -163,41 +168,49 @@ public class RuleSearchConnector {
         return word;
       }).toList();
       termQuery = StringUtils.join(termsQuery, " AND ");
-      query = query.replace("@keyword_filtering@", KEYWORD_FILTERING_QUERY)
-                   .replace("@term@", term)
-                   .replace("@term_query@", termQuery);
-      filtersCount++;
+      searchFiltering.append(KEYWORD_FILTERING_QUERY.replace("@term@", term)
+                                                    .replace("@term_query@", termQuery)
+                                                    .replace(LANG, filter.getLocale().toLanguageTag()));
     }
+  }
 
-    if (isFavoriteQuery(filter)) {
-      query = query.replace("@terms_filtering@", (filtersCount > 0 ? "," : "") + TERMS_FILTERING_QUERY);
-      query = query.replace("@favorite_query@", FAVORITE_FILTERING_QUERY)
-                   .replace("@identity_id@", String.valueOf(filter.getIdentityId()));
-      filtersCount++;
-      termsFilterCount++;
+  private void appendAudienceQuery(RuleFilter filter, StringBuilder query) {
+    if (CollectionUtils.isEmpty(filter.getSpaceIds())) {
+      return;
     }
+    Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds())
+                                  .map(HashSet::new)
+                                  .orElse(new HashSet<>());
+    query.append((query.isEmpty() ? "" : ","))
+         .append(TERMS_FILTERING_QUERY.replace("@field_name@", "audience")
+                                      .replace("@field_values@", StringUtils.join(spaceList, "\",\"")));
+  }
 
-    if (!CollectionUtils.isEmpty(filter.getSpaceIds())) {
-      Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds())
-                                    .map(HashSet::new)
-                                    .orElse(new HashSet<>());
-      query = query.replace("@terms_filtering@", (filtersCount > 0 ? "," : "") + TERMS_FILTERING_QUERY);
-      query = query.replace("@audience_filtering@", (termsFilterCount > 0 ? "," : "") + AUDIENCE_FILTERING_QUERY)
-                   .replace("@spaceList@", StringUtils.join(spaceList, ","));
+  private void appendTagsQuery(RuleFilter filter, StringBuilder query) {
+    if (CollectionUtils.isEmpty(filter.getTagNames())) {
+      return;
     }
+    query.append((query.isEmpty() ? "" : ","))
+         .append(TERMS_FILTERING_QUERY.replace("@field_name@", "metadatas.tags.metadataName.keyword")
+                                      .replace("@field_values@", StringUtils.join(filter.getTagNames(), "\",\"")));
+  }
 
-    if (filter.getProgramId() > 0) {
-      query = query.replace("@term_filtering@", (filtersCount > 0 ? "," : "") + DOMAIN_FILTERING_QUERY)
-                   .replace("@domainId@", String.valueOf(filter.getProgramId()));
+  private void appendFavoriteQuery(RuleFilter filter, StringBuilder query) {
+    if (!isFavoriteQuery(filter)) {
+      return;
     }
+    query.append((query.isEmpty() ? "" : ","))
+         .append(TERMS_FILTERING_QUERY.replace("@field_name@", "metadatas.favorites.metadataName.keyword")
+                                      .replace("@field_values@", String.valueOf(filter.getIdentityId())));
+  }
 
-    return query.replace(LANG, filter.getLocale().toLanguageTag())
-                .replace("@audience_filtering@", "")
-                .replace("@keyword_filtering@", "")
-                .replace("@terms_filtering@", "")
-                .replace("@term_filtering@", "")
-                .replace("@offset@", String.valueOf(offset))
-                .replace("@limit@", String.valueOf(limit));
+  private void appendProgramQuery(RuleFilter filter, StringBuilder query) {
+    if (filter.getProgramId() <= 0) {
+      return;
+    }
+    query.append((query.isEmpty() ? "" : ","))
+         .append(MATCH_FILTERING_QUERY.replace("@field_name@", "domainId")
+                                      .replace("@field_value@", String.valueOf(filter.getProgramId())));
   }
 
   @SuppressWarnings("rawtypes")

@@ -34,10 +34,10 @@
       v-model="message"
       :max-length="MAX_LENGTH"
       :placeholder="$t('rule.form.rulePublicationPlaceholder')"
-      :tag-enabled="false"
       ck-editor-type="rulePublicationContent"
       class="flex my-3"
       autofocus
+      tag-enabled
       @validity-updated="validMessage = $event" />
   </div>
 </template>
