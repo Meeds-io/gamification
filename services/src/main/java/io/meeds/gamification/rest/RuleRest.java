@@ -158,9 +158,13 @@ public class RuleRest implements ResourceContainer {
                            @Parameter(description = "term to search rules with")
                            @QueryParam("term")
                            String term,
-                           @Parameter(description = "Whether to search in favorites only or not", required = true)
+                           @Parameter(description = "Whether to search in favorites only or not", required = false)
+                           @DefaultValue("false")
                            @QueryParam("favorites")
                            boolean favorites,
+                           @Parameter(description = "Whether to search in favorites only or not", required = false)
+                           @QueryParam("tags")
+                           List<String> tagNames,
                            @Parameter(description = "Sort field. Possible values: createdDate, startDate, endDate or score.")
                            @QueryParam("sortBy")
                            @DefaultValue("score")
@@ -213,6 +217,7 @@ public class RuleRest implements ResourceContainer {
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setTerm(term);
     ruleFilter.setFavorites(favorites);
+    ruleFilter.setTagNames(tagNames);
     ruleFilter.setLocale(locale);
     ruleFilter.setDateFilterType(dateFilter == null ? DateFilterType.ALL : dateFilter);
     ruleFilter.setType(ruleType == null ? EntityFilterType.ALL : ruleType);
