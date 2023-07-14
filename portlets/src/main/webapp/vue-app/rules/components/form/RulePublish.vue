@@ -38,6 +38,7 @@
       ck-editor-type="rulePublicationContent"
       class="flex my-3"
       autofocus
+      tag-enabled
       @validity-updated="validMessage = $event" />
   </div>
 </template>

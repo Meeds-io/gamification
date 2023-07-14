@@ -71,6 +71,7 @@ public class RuleSearchConnector {
                                                                        {
                                                                          "terms": {
                                                                            @favorite_query@
+                                                                           @tags_query@
                                                                            @audience_filtering@
                                                                          }
                                                                        }
@@ -96,6 +97,11 @@ public class RuleSearchConnector {
                                                                 """
                                                                         "metadatas.favorites.metadataName.keyword": ["@identity_id@"]
                                                                     """;
+
+  private static final String          TAG_FILTERING_QUERY          =
+                                                           """
+                                                                   "metadatas.tags.metadataName.keyword": ["@tag_names@"]
+                                                               """;
 
   private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"*~&|#%@";
 
@@ -170,34 +176,57 @@ public class RuleSearchConnector {
     }
 
     if (isFavoriteQuery(filter)) {
-      query = query.replace("@terms_filtering@", (filtersCount > 0 ? "," : "") + TERMS_FILTERING_QUERY);
-      query = query.replace("@favorite_query@", FAVORITE_FILTERING_QUERY)
-                   .replace("@identity_id@", String.valueOf(filter.getIdentityId()));
+      query = addFavoriteQuery(query, filter, filtersCount, termsFilterCount);
+      filtersCount++;
+      termsFilterCount++;
+    }
+
+    if (CollectionUtils.isNotEmpty(filter.getTagNames())) {
+      query = addTagsQuery(query, filter, filtersCount, termsFilterCount);
       filtersCount++;
       termsFilterCount++;
     }
 
     if (!CollectionUtils.isEmpty(filter.getSpaceIds())) {
-      Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds())
-                                    .map(HashSet::new)
-                                    .orElse(new HashSet<>());
-      query = query.replace("@terms_filtering@", (filtersCount > 0 ? "," : "") + TERMS_FILTERING_QUERY);
-      query = query.replace("@audience_filtering@", (termsFilterCount > 0 ? "," : "") + AUDIENCE_FILTERING_QUERY)
-                   .replace("@spaceList@", StringUtils.join(spaceList, ","));
+      query = addAudienceQuery(query, filter, filtersCount, termsFilterCount);
+      filtersCount++;
+      termsFilterCount++; // NOSONAR
     }
 
     if (filter.getProgramId() > 0) {
       query = query.replace("@term_filtering@", (filtersCount > 0 ? "," : "") + DOMAIN_FILTERING_QUERY)
                    .replace("@domainId@", String.valueOf(filter.getProgramId()));
     }
-
     return query.replace(LANG, filter.getLocale().toLanguageTag())
+                .replace("@favorite_query@", "")
+                .replace("@tags_query@", "")
                 .replace("@audience_filtering@", "")
                 .replace("@keyword_filtering@", "")
                 .replace("@terms_filtering@", "")
                 .replace("@term_filtering@", "")
                 .replace("@offset@", String.valueOf(offset))
                 .replace("@limit@", String.valueOf(limit));
+  }
+
+  private String addAudienceQuery(String query, RuleFilter filter, int filtersCount, int termsFilterCount) {
+    Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds())
+                                  .map(HashSet::new)
+                                  .orElse(new HashSet<>());
+    query = query.replace("@terms_filtering@", (filtersCount > 0 ? "," : "") + TERMS_FILTERING_QUERY);
+    return query.replace("@audience_filtering@", (termsFilterCount > 0 ? "," : "") + AUDIENCE_FILTERING_QUERY)
+                .replace("@spaceList@", StringUtils.join(spaceList, ","));
+  }
+
+  private String addTagsQuery(String query, RuleFilter filter, int filtersCount, int termsFilterCount) {
+    query = query.replace("@terms_filtering@", (filtersCount > 0 ? "," : "") + TERMS_FILTERING_QUERY);
+    return query.replace("@tags_query@", (termsFilterCount > 0 ? "," : "") + TAG_FILTERING_QUERY)
+                .replace("@tag_names@", StringUtils.join(filter.getTagNames(), "\", \""));
+  }
+
+  private String addFavoriteQuery(String query, RuleFilter filter, int filtersCount, int termsFilterCount) {
+    query = query.replace("@terms_filtering@", (filtersCount > 0 ? "," : "") + TERMS_FILTERING_QUERY);
+    return query.replace("@favorite_query@", (termsFilterCount > 0 ? "," : "") + FAVORITE_FILTERING_QUERY)
+                .replace("@identity_id@", String.valueOf(filter.getIdentityId()));
   }
 
   @SuppressWarnings("rawtypes")
