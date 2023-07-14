@@ -16,6 +16,8 @@
  */
 package io.meeds.gamification.search;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -30,7 +32,9 @@ import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.utils.IOUtil;
@@ -40,14 +44,25 @@ import org.exoplatform.container.xml.PropertiesParam;
 import org.exoplatform.container.xml.ValueParam;
 
 import io.meeds.gamification.model.filter.RuleFilter;
-import io.meeds.gamification.test.AbstractServiceTest;
-import io.meeds.gamification.utils.Utils;
 
-public class RuleSearchConnectorTest extends AbstractServiceTest {
+@RunWith(MockitoJUnitRunner.class)
+public class RuleSearchConnectorTest {
 
   private static final String    ES_INDEX      = "rule_alias";
 
-  public static final String     FAKE_ES_QUERY = "{offset: @offset@, limit: @limit@, term1: @term_query@, term2: @term_query@}";
+  public static final String     FAKE_ES_QUERY = """
+          {
+            "from": "@offset@",
+            "size": "@limit@",
+            "query": {
+              "bool": {
+                "must": [
+                  @search_filtering@
+                ]
+              }
+            }
+          }
+      """;
 
   private ConfigurationManager   configurationManager;
 
@@ -57,10 +72,8 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
 
   private RuleSearchConnector    ruleSearchConnector;
 
-  @Override
   @Before
   public void setUp() throws Exception {
-    super.setUp();
     configurationManager = mock(ConfigurationManager.class);
     client = mock(ElasticSearchingClient.class);
     try {
@@ -92,7 +105,6 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
   @Test
   public void testSearch() {
     String term = "rule";
-    newProgram();
     RuleFilter filter = new RuleFilter();
     List<Long> listIdSpace = Collections.singletonList(1l);
     assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.search(filter, -1, 10));
@@ -101,14 +113,9 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     filter.setTerm("test");
     filter.setLocale(Locale.ENGLISH);
     filter.setSpaceIds(listIdSpace);
-    String expectedESQuery =
-                           FAKE_ES_QUERY.replaceAll("@term_query@", term).replaceAll("@offset@", "0").replaceAll("@limit@", "10");
-    String unexpectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", "test")
-                                            .replaceAll("@offset@", "0")
-                                            .replaceAll("@limit@", "10");
 
-    when(client.sendRequest(expectedESQuery, ES_INDEX)).thenReturn(searchResult);
-    when(client.sendRequest(unexpectedESQuery, ES_INDEX)).thenReturn("{}");
+    when(client.sendRequest(argThat(esQuery -> StringUtils.contains(esQuery, term)), eq(ES_INDEX))).thenReturn(searchResult);
+    when(client.sendRequest(argThat(esQuery -> !StringUtils.contains(esQuery, term)), eq(ES_INDEX))).thenReturn("{}");
 
     List<Long> ruleIds = ruleSearchConnector.search(filter, 0, 10);
     assertNotNull(ruleIds);
@@ -121,27 +128,30 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testSearchWithDateFilter() {
+  public void testSearchWithProgramIdAnAudience() {
     String term = "ALL";
-    newProgram();
+    long programId = 256668l;
     RuleFilter filter = new RuleFilter();
-    List<Long> listIdSpace = Collections.singletonList(1l);
+    long spaceId = 155568l;
     filter.setLocale(Locale.ENGLISH);
-    filter.setSpaceIds(listIdSpace);
-    String expectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", StringUtils.lowerCase(Utils.removeSpecialCharacters(term)))
-                                          .replaceAll("@offset@", "0")
-                                          .replaceAll("@limit@", "10");
 
-    when(client.sendRequest(expectedESQuery, ES_INDEX)).thenReturn(searchResult);
-    when(client.sendRequest(argThat(query -> !StringUtils.equals(query, expectedESQuery)),
-                            eq(ES_INDEX))).thenReturn("{}");
+    when(client.sendRequest(argThat(esQuery -> {
+      return StringUtils.containsIgnoreCase(esQuery, term)
+          && StringUtils.contains(esQuery, String.valueOf(programId))
+          && StringUtils.contains(esQuery, String.valueOf(spaceId));
+    }), eq(ES_INDEX))).thenReturn(searchResult);
+    when(client.sendRequest(argThat(esQuery -> {
+      return !StringUtils.containsIgnoreCase(esQuery, term)
+          || !StringUtils.contains(esQuery, String.valueOf(programId))
+          || !StringUtils.contains(esQuery, String.valueOf(spaceId));
+    }), eq(ES_INDEX))).thenReturn("{}");
 
-    filter.setTerm("NOT_STARTED");
+    filter.setProgramId(programId);
     List<Long> ruleIds = ruleSearchConnector.search(filter, 0, 10);
     assertNotNull(ruleIds);
     assertEquals(0, ruleIds.size());
 
-    filter.setTerm("ENDED");
+    filter.setSpaceIds(Collections.singletonList(spaceId));
     ruleIds = ruleSearchConnector.search(filter, 0, 10);
     assertNotNull(ruleIds);
     assertEquals(0, ruleIds.size());

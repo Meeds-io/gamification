@@ -88,6 +88,7 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
+    <engagement-center-rule-extensions />
   </v-card>
 </template>
 

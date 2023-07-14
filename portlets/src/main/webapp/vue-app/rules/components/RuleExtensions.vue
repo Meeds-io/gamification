@@ -23,6 +23,10 @@ export default {
     actionValueExtensions: {},
   }),
   created() {
+    if (this.$root.ruleExtensionsInstalled) {
+      return;
+    }
+    this.$root.ruleExtensionsInstalled = true;
     document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
     document.addEventListener('announcement-added-event', this.emitRuleAnnouncedInternaly);
     document.addEventListener('rule-created-event', this.emitRuleCreatedInternaly);
