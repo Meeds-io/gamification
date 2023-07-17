@@ -24,6 +24,7 @@ import RuleInvalidWhitelist from './components/detail/RuleInvalidWhitelist.vue';
 import RuleDisabled from './components/detail/RuleDisabled.vue';
 import RuleDateEnd from './components/detail/RuleDateEnd.vue';
 import RuleDateInfoChip from './components/detail/RuleDateInfoChip.vue';
+import RuleFavoriteAction from './components/detail/RuleFavoriteAction.vue';
 
 import RuleFormDrawer from './components/drawers/RuleFormDrawer.vue';
 import RuleDetailDrawer from './components/drawers/RuleDetailDrawer.vue';
@@ -70,6 +71,8 @@ const components = {
   'engagement-center-rule-achievements-drawer': RuleAchievementsDrawer,
   'engagement-center-program-owners-drawer': ProgramOwnersDrawer,
   'engagement-center-rule-drawers': RuleDrawers,
+
+  'rule-favorite-button': RuleFavoriteAction,
 };
 
 for (const key in components) {
