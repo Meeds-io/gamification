@@ -34,11 +34,18 @@
         {{ $t('rule.detail.letsSeeWhatToDo') }}
       </span>
     </template>
-    <template #titleIcons>
+    <template v-if="rule && !loading && drawer" #titleIcons>
+      <rule-favorite-button
+        :rule-id="rule.id"
+        :space-id="rule.spaceId"
+        :favorite.sync="rule.favorite"
+        type="rule"
+        type-label="rules"
+        class="my-auto" />
       <engagement-center-rule-menu
         :rule="rule" />
     </template>
-    <template v-if="!loading && drawer" #content>
+    <template v-if="rule && !loading && drawer" #content>
       <v-row class="ma-0 py-0 px-2 text-color">
         <v-col :cols="expandedView && 6 || 12">
           <engagement-center-rule-header
@@ -173,6 +180,7 @@ export default {
     validAnnouncement: false,
     sending: false,
     announcementFormOpened: false,
+    appUrl: null,
     drawerUrl: null,
     time: Date.now(),
     interval: null,
@@ -299,7 +307,7 @@ export default {
       this.loading = true;
       this.$ruleService.getRuleById(id, {
         lang: eXo.env.portal.language,
-        expand: 'countRealizations',
+        expand: 'countRealizations,favorites',
         realizationsLimit: 3,
       })
         .then(rule => {
@@ -367,10 +375,11 @@ export default {
       }
     },
     updatePagePath() {
-      if (window.location.pathname.indexOf(this.linkBasePath) >= 0) {
-        if (!this.drawer) {
-          this.drawerUrl = this.linkBasePath;
-        } else if (this.rule.id) {
+      if (window.location.pathname.includes('/actions')) {
+        if (!this.drawer && this.appUrl) {
+          this.drawerUrl = this.appUrl;
+        } else if (this.drawer && this.rule.id) {
+          this.appUrl = `${window.location.pathname.split('/actions')[0]}/actions${window.location.hash === '#all' || window.location.hash === '#trends' ? window.location.hash : ''}`;
           this.drawerUrl = `${this.linkBasePath}/${this.rule.id}${this.expanded && '#expanded' || ''}`;
         }
       }

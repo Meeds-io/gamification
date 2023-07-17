@@ -161,7 +161,7 @@ export default {
         limit: this.limit,
         sortBy: 'endDate',
         sortDescending: false,
-        expand: 'countRealizations',
+        expand: 'countRealizations,favorites',
         returnSize: false,
         lang: eXo.env.portal.language,
       })
@@ -178,7 +178,7 @@ export default {
         limit: this.limit * 3,
         sortBy: 'createdDate',
         sortDescending: true,
-        expand: 'countRealizations',
+        expand: 'countRealizations,favorites',
         returnSize: false,
         lang: eXo.env.portal.language,
       })
@@ -195,7 +195,7 @@ export default {
         limit: this.limit,
         sortBy: 'startDate',
         sortDescending: true,
-        expand: 'countRealizations',
+        expand: 'countRealizations,favorites',
         returnSize: false,
         lang: eXo.env.portal.language,
       })
