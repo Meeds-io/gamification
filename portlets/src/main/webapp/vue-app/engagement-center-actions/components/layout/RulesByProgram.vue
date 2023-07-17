@@ -138,7 +138,7 @@ export default {
         groupByProgram: true,
         sortBy: 'title',
         limit,
-        expand: 'countRealizations',
+        expand: 'countRealizations,favorites',
         lang: eXo.env.portal.language,
       })
         .then(data => {
