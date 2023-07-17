@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 This file is part of the Meeds project (https://meeds.io/).
-Copyright (C) 2020 Meeds Association
+Copyright (C) 2020 - 2023 Meeds Association
 contact@meeds.io
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd"
                xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
-    <import>war:/conf/gamification/storage/common/common-storage-configuration.xml</import>
-    <import>war:/conf/gamification/storage/rule/rules-storage-configuration.xml</import>
-    <import>war:/conf/gamification/storage/badge/badges-storage-configuration.xml</import>
-    <import>war:/conf/gamification/storage/program/programs-storage-configuration.xml</import>
-    <import>war:/conf/gamification/storage/connector/connectors-storage-configuration.xml</import>
+  <component>
+    <type>io.meeds.gamification.dao.ConnectorAccountDAO</type>
+  </component>
+  <component>
+    <key>io.meeds.gamification.service.ConnectorService</key>
+    <type>io.meeds.gamification.service.impl.ConnectorServiceImpl</type>
+  </component>
+  <component>
+    <key>io.meeds.gamification.storage.ConnectorAccountStorage</key>
+    <type>io.meeds.gamification.storage.cached.ConnectorAccountCachedStorage</type>
+  </component>
+  <component>
+    <key>io.meeds.gamification.service.ConnectorSettingService</key>
+    <type>io.meeds.gamification.service.impl.ConnectorSettingServiceImpl</type>
+  </component>
 </configuration>
