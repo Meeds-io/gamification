@@ -2,6 +2,7 @@ package io.meeds.gamification.utils;
 
 import static org.exoplatform.analytics.utils.AnalyticsUtils.addSpaceStatistics;
 
+import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.Normalizer;
@@ -41,6 +42,8 @@ import org.exoplatform.web.security.security.TokenServiceInitializationException
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
+import org.exoplatform.ws.frameworks.json.JsonGenerator;
+import org.exoplatform.ws.frameworks.json.impl.*;
 
 @SuppressWarnings("deprecation")
 public class Utils {
@@ -204,6 +207,8 @@ public class Utils {
   public static final ArgumentLiteral<Announcement> ANNOUNCEMENT_NOTIFICATION_PARAMETER     =
                                                                                         new ArgumentLiteral<>(Announcement.class,
                                                                                                               "announcement");
+
+  public static final JsonGenerator                 JSON_GENERATOR                          = new JsonGeneratorImpl();
 
   private static final Log                          LOG                                     = ExoLogger.getLogger(Utils.class);
 
@@ -497,6 +502,27 @@ public class Utils {
   public static List<String> getExpandOptions(String expand) {
     String[] expandFieldsArray = StringUtils.split(expand, ",");
     return expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
+  }
+
+  public static String toJsonString(Object object) {
+    try {
+      return JSON_GENERATOR.createJsonObject(object).toString();
+    } catch (JsonException e) {
+      throw new IllegalStateException("Error parsing object to string " + object, e);
+    }
+  }
+
+  public static <T> T fromJsonString(String value, Class<T> resultClass) {
+    try {
+      if (StringUtils.isBlank(value)) {
+        return null;
+      }
+      JsonDefaultHandler jsonDefaultHandler = new JsonDefaultHandler();
+      new JsonParserImpl().parse(new ByteArrayInputStream(value.getBytes()), jsonDefaultHandler);
+      return ObjectBuilder.createObject(resultClass, jsonDefaultHandler.getJsonObject());
+    } catch (JsonException e) {
+      throw new IllegalStateException("Error creating object from string : " + value, e);
+    }
   }
 
 }
