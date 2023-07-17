@@ -21,23 +21,15 @@ package io.meeds.gamification.listener;
 import static io.meeds.gamification.constant.GamificationConstant.ACTIVITY_OBJECT_TYPE;
 import static io.meeds.gamification.constant.GamificationConstant.BROADCAST_GAMIFICATION_EVENT_ERROR;
 import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_ACTIVITY_MY_STREAM;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_ACTIVITY_NETWORK_STREAM;
-import static io.meeds.gamification.constant.GamificationConstant.*;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_TARGET;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_ACTIVITY_TARGET_USER_STREAM;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_COMMENT_NETWORK_STREAM;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_ADD_COMMENT_SPACE_STREAM;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_LIKE_ACTIVITY_NETWORK_STREAM;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_STREAM;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_TARGET;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_LIKE_ACTIVITY_TARGET_USER_STREAM;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM_TARGET;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RECEIVE_COMMENT_NETWORK_STREAM;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RECEIVE_COMMENT_SPACE_STREAM;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_LIKE_ACTIVITY;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_PIN_ACTIVITY_SPACE;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_POST_ACTIVITY;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY_COMMENT;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY_COMMENT;
 import static io.meeds.gamification.constant.GamificationConstant.OBJECT_ID_PARAM;
 import static io.meeds.gamification.constant.GamificationConstant.OBJECT_TYPE_PARAM;
 import static io.meeds.gamification.constant.GamificationConstant.RECEIVER_ID;
@@ -60,6 +52,7 @@ import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
 import org.exoplatform.social.core.activity.ActivityListenerPlugin;
 import org.exoplatform.social.core.activity.model.ActivityStream;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -96,53 +89,41 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   @Override
   public void saveActivity(ActivityLifeCycleEvent event) { // NOSONAR
-    // Target Activity
     ExoSocialActivity activity = event.getSource();
-    // This listener track all kind of activities
+    if (activity == null || StringUtils.equals(activity.getType(), "SPACE_ACTIVITY")) {
+      return;
+    }
+
+    createActivityGamificationHistoryEntry(activity.getPosterId(),
+                                           activity.getStreamId(),
+                                           GAMIFICATION_SOCIAL_POST_ACTIVITY,
+                                           activity.getId());
 
     // Add activity on Space Stream : Compute actor reward
     Space space = getSpaceOfActivity(activity);
-    if (space != null) {
-      if (activity.getType() == null || !activity.getType().equals("SPACE_ACTIVITY")) {
-        createActivityGamificationHistoryEntry(activity.getPosterId(),
+    if (space == null) {
+      if (!StringUtils.equals(activity.getStreamId(), activity.getPosterId())) {
+        createActivityGamificationHistoryEntry(activity.getStreamId(),
                                                activity.getPosterId(),
-                                               GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_STREAM,
+                                               GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY,
                                                activity.getId());
-
-        if (space.getManagers() != null && space.getManagers().length > 0) {
-          String[] spaceManagers = space.getManagers();
-          for (String spaceManager : spaceManagers) {
-            createActivityGamificationHistoryEntry(spaceManager,
-                                                   spaceManager,
-                                                   GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_TARGET,
-                                                   activity.getId());
-          }
-        }
-
-        createSpaceGamificationHistoryEntry(space.getPrettyName(),
-                                            activity.getPosterId(),
-                                            GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_STREAM,
-                                            activity.getId());
       }
-    } else { // Comment in the context of User Stream
-
-      // User comment on his own Stream : no XP should be assigned
-      if (StringUtils.equalsIgnoreCase(activity.getPosterId(), activity.getStreamId())) {
-        createActivityGamificationHistoryEntry(activity.getPosterId(),
-                                               activity.getStreamId(),
-                                               GAMIFICATION_SOCIAL_ADD_ACTIVITY_MY_STREAM,
-                                               activity.getId());
-      } else { // User add an activity on his network's Stream
-        createActivityGamificationHistoryEntry(activity.getPosterId(),
-                                               activity.getStreamId(),
-                                               GAMIFICATION_SOCIAL_ADD_ACTIVITY_TARGET_USER_STREAM,
-                                               activity.getId());
-
-        // Each user who get a new activity on his stream will be rewarded
-        createActivityGamificationHistoryEntry(activity.getPosterId(),
-                                               activity.getPosterId(),
-                                               GAMIFICATION_SOCIAL_ADD_ACTIVITY_NETWORK_STREAM,
-                                               activity.getId());
+    } else {
+      if (space.getManagers() != null && space.getManagers().length > 0) {
+        String[] spaceManagers = space.getManagers();
+        for (String spaceManager : spaceManagers) {
+          Identity spaceManagerIdentity = identityManager.getOrCreateUserIdentity(spaceManager);
+          if (spaceManagerIdentity == null
+              || spaceManagerIdentity.isDeleted()
+              || !spaceManagerIdentity.isEnable()
+              || StringUtils.equals(spaceManagerIdentity.getId(), activity.getPosterId())) {
+            continue;
+          }
+          createActivityGamificationHistoryEntry(spaceManagerIdentity.getId(),
+                                                 activity.getPosterId(),
+                                                 GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY,
+                                                 activity.getId());
+        }
       }
     }
   }
@@ -167,42 +148,27 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   @Override
   public void saveComment(ActivityLifeCycleEvent event) {
-
-    // Target Activity
     ExoSocialActivity activity = event.getSource();
-
-    /**
-     * Three usescase Case 1 : Assign XP to user who made a comment on the
-     * Stream of a space Case 2 : Assign XP to user who made a comment on the
-     * Stream of one of his network Case 3 : Assign XP to user who made a
-     * comment on his own stream : NO
-     */
-
-    // Get ActivityStream
     ExoSocialActivity parent = activityManager.getParentActivity(activity);
-    if (parent == null || StringUtils.equalsIgnoreCase(activity.getPosterId(), activity.getStreamId())) {
+
+    if (parent == null
+        || StringUtils.equalsIgnoreCase(activity.getPosterId(), parent.getPosterId())) {
       return;
     }
 
-    Space space = getSpaceOfActivity(parent);
-    boolean isSpaceActivity = space != null;
-
     createActivityGamificationHistoryEntry(activity.getPosterId(),
                                            parent.getPosterId(),
-                                           isSpaceActivity ? GAMIFICATION_SOCIAL_ADD_COMMENT_SPACE_STREAM
-                                                           : GAMIFICATION_SOCIAL_ADD_COMMENT_NETWORK_STREAM,
+                                           GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT,
                                            activity.getId());
-
     createActivityGamificationHistoryEntry(parent.getPosterId(),
                                            activity.getPosterId(),
-                                           isSpaceActivity ? GAMIFICATION_SOCIAL_RECEIVE_COMMENT_SPACE_STREAM
-                                                           : GAMIFICATION_SOCIAL_RECEIVE_COMMENT_NETWORK_STREAM,
+                                           GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY_COMMENT,
                                            activity.getId());
-
+    Space space = getSpaceOfActivity(parent);
     if (space != null) {
       createSpaceGamificationHistoryEntry(space.getPrettyName(),
                                           activity.getPosterId(),
-                                          GAMIFICATION_SOCIAL_ADD_COMMENT_SPACE_STREAM,
+                                          GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT,
                                           activity.getId());
     }
   }
@@ -215,45 +181,31 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   @Override
   public void likeActivity(ActivityLifeCycleEvent event) {
-    // Target Activity
     ExoSocialActivity activity = event.getSource();
     if (StringUtils.equalsIgnoreCase(activity.getPosterId(), activity.getStreamId())) {
       return;
     }
 
-    // This listener track all kind of activities
-    /**
-     * Case 1 : Assign XP to user who like an activity on a space stream Case 2
-     * : Assign XP to user who like an activity on a network stream Case 3 :
-     * Assign XP to user who has an activity liked on his own stream Case 4 :
-     * Assign XP to user who has an activity liked on a space stream
-     */
-
-    // a user like an activity on space stream
     String[] likersId = activity.getLikeIdentityIds();
-    String liker = identityManager.getIdentity(likersId[likersId.length - 1]).getId();
+    String likerIdentityId = identityManager.getIdentity(likersId[likersId.length - 1]).getId();
+    if (StringUtils.equalsIgnoreCase(activity.getPosterId(), likerIdentityId)) {
+      return;
+    }
+
+    createActivityGamificationHistoryEntry(likerIdentityId,
+                                           activity.getPosterId(),
+                                           GAMIFICATION_SOCIAL_LIKE_ACTIVITY,
+                                           activity.getId());
+    createActivityGamificationHistoryEntry(activity.getPosterId(),
+                                           likerIdentityId,
+                                           GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY,
+                                           activity.getId());
 
     Space space = getSpaceOfActivity(activity);
-    boolean isSpaceActivity = space != null;
-
-    createActivityGamificationHistoryEntry(liker,
-                                           activity.getPosterId(),
-                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_STREAM
-                                                           : GAMIFICATION_SOCIAL_LIKE_ACTIVITY_NETWORK_STREAM,
-                                           activity.getId());
-
-    // Reward user when his activity within a stream is liked by someone
-    // else Get associated rule : a user like an activity on space stream
-    createActivityGamificationHistoryEntry(activity.getPosterId(),
-                                           liker,
-                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_TARGET
-                                                           : GAMIFICATION_SOCIAL_LIKE_ACTIVITY_TARGET_USER_STREAM,
-                                           activity.getId());
-
     if (space != null) {
       createSpaceGamificationHistoryEntry(space.getPrettyName(),
-                                          liker,
-                                          GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_STREAM,
+                                          likerIdentityId,
+                                          GAMIFICATION_SOCIAL_LIKE_ACTIVITY,
                                           activity.getId());
     }
   }
@@ -266,27 +218,23 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       return;
     }
 
-    Space space = getSpaceOfActivity(activity);
-    boolean isSpaceActivity = space != null;
-
     cancelActivityGamificationHistoryEntry(userId,
                                            activity.getPosterId(),
-                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_STREAM
-                                                           : GAMIFICATION_SOCIAL_LIKE_ACTIVITY_NETWORK_STREAM,
+                                           GAMIFICATION_SOCIAL_LIKE_ACTIVITY,
                                            activity.getId(),
                                            ACTIVITY_OBJECT_TYPE);
 
     cancelActivityGamificationHistoryEntry(activity.getPosterId(),
                                            userId,
-                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_TARGET
-                                                           : GAMIFICATION_SOCIAL_LIKE_ACTIVITY_TARGET_USER_STREAM,
+                                           GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY,
                                            activity.getId(),
                                            ACTIVITY_OBJECT_TYPE);
 
+    Space space = getSpaceOfActivity(activity);
     if (space != null) {
       cancelSpaceGamificationHistoryEntry(space.getPrettyName(),
                                           userId,
-                                          GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_STREAM,
+                                          GAMIFICATION_SOCIAL_LIKE_ACTIVITY,
                                           activity.getId(),
                                           ACTIVITY_OBJECT_TYPE);
     }
@@ -294,48 +242,32 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   @Override
   public void likeComment(ActivityLifeCycleEvent event) {
-
-    // Target Activity
     ExoSocialActivity activity = event.getSource();
     if (StringUtils.equalsIgnoreCase(activity.getPosterId(), activity.getStreamId())) {
       return;
     }
 
     String[] likersId = activity.getLikeIdentityIds();
-    String liker = identityManager.getIdentity(likersId[likersId.length - 1]).getId();
-    /**
-     * Three usescase Case 1 : Assign XP to user who has a comment liked on his
-     * own stream Case 2 : Assign XP to user who has a comment liked on his own
-     * stream Case 3 : Assign XP to each user who like a comment
-     */
+    String likerIdentityId = identityManager.getIdentity(likersId[likersId.length - 1]).getId();
+    if (StringUtils.equalsIgnoreCase(activity.getPosterId(), likerIdentityId)) {
+      return;
+    }
 
-    // This listener track all kind of activities
-    /**
-     * Case 1 : Assign XP to user who like an activity on a space stream Case 2
-     * : Assign XP to user who like an activity on a network stream Case 3 :
-     * Assign XP to user who has an activity liked on his own stream Case 4 :
-     * Assign XP to user who has an activity liked on a space stream
-     */
-    Space space = getSpaceOfActivity(activity);
-    boolean isSpaceActivity = space != null;
+    createActivityGamificationHistoryEntry(likerIdentityId,
+                                           activity.getPosterId(),
+                                           GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT,
+                                           activity.getId());
 
     createActivityGamificationHistoryEntry(activity.getPosterId(),
-                                           liker,
-                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET
-                                                           : GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM_TARGET,
+                                           likerIdentityId,
+                                           GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY_COMMENT,
                                            activity.getId());
 
-    // a user like a comment made by another user on the stream of other user
-    createActivityGamificationHistoryEntry(liker,
-                                           activity.getPosterId(),
-                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM
-                                                           : GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM,
-                                           activity.getId());
-
+    Space space = getSpaceOfActivity(activity);
     if (space != null) {
       createSpaceGamificationHistoryEntry(space.getPrettyName(),
-                                          liker,
-                                          GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET,
+                                          likerIdentityId,
+                                          GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT,
                                           activity.getId());
     }
   }
@@ -347,27 +279,23 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     if (StringUtils.equalsIgnoreCase(activity.getPosterId(), activity.getStreamId())) {
       return;
     }
-    Space space = getSpaceOfActivity(activity);
-    boolean isSpaceActivity = space != null;
+    cancelActivityGamificationHistoryEntry(userId,
+                                           activity.getPosterId(),
+                                           GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT,
+                                           activity.getId(),
+                                           ACTIVITY_OBJECT_TYPE);
 
     cancelActivityGamificationHistoryEntry(activity.getPosterId(),
                                            userId,
-                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET
-                                                           : GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM_TARGET,
+                                           GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY_COMMENT,
                                            activity.getId(),
                                            ACTIVITY_OBJECT_TYPE);
 
-    cancelActivityGamificationHistoryEntry(userId,
-                                           activity.getPosterId(),
-                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM
-                                                           : GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM,
-                                           activity.getId(),
-                                           ACTIVITY_OBJECT_TYPE);
-
+    Space space = getSpaceOfActivity(activity);
     if (space != null) {
       cancelSpaceGamificationHistoryEntry(space.getPrettyName(),
                                           userId,
-                                          GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET,
+                                          GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT,
                                           activity.getId(),
                                           ACTIVITY_OBJECT_TYPE);
     }
@@ -384,7 +312,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     return activity.getActivityStream() != null && ActivityStream.Type.SPACE.equals(activity.getActivityStream().getType());
   }
 
-  private void createActivityGamificationHistoryEntry(String earnerIdentityId, String receiverId, String gamificationEventName,
+  private void createActivityGamificationHistoryEntry(String earnerIdentityId,
+                                                      String receiverId,
+                                                      String gamificationEventName,
                                                       String activityId) {
     Map<String, String> gam = new HashMap<>();
     try {
@@ -399,7 +329,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     }
   }
 
-  private void cancelActivityGamificationHistoryEntry(String senderId,
+  private void cancelActivityGamificationHistoryEntry(String earnerIdentityId,
                                                       String receiverId,
                                                       String gamificationEventName,
                                                       String objectId,
@@ -409,7 +339,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put(EVENT_NAME, gamificationEventName);
       gam.put(OBJECT_ID_PARAM, objectId);
       gam.put(OBJECT_TYPE_PARAM, objectType);
-      gam.put(SENDER_ID, senderId);
+      gam.put(SENDER_ID, earnerIdentityId);
       gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(CANCEL_EVENT_NAME, gam, null);
     } catch (Exception e) {
@@ -417,7 +347,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     }
   }
 
-  private void cancelSpaceGamificationHistoryEntry(String senderId,
+  private void cancelSpaceGamificationHistoryEntry(String earnerIdentityId,
                                                    String receiverId,
                                                    String gamificationEventName,
                                                    String objectId,
@@ -427,7 +357,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put(EVENT_NAME, gamificationEventName);
       gam.put(OBJECT_ID_PARAM, objectId);
       gam.put(OBJECT_TYPE_PARAM, objectType);
-      gam.put(SENDER_ID, senderId);
+      gam.put(SENDER_ID, earnerIdentityId);
       gam.put(SENDER_TYPE, SpaceIdentityProvider.NAME);
       gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(CANCEL_EVENT_NAME, gam, null);
