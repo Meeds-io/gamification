@@ -61,7 +61,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/html/myContributions/index.html</value>
+      <value>/html/myContributions.html</value>
     </init-param>
     <init-param>
       <name>preload.resource.bundles</name>
@@ -218,7 +218,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/html/myReputation/index.html</value>
+      <value>/html/myReputation.html</value>
     </init-param>
     <expiration-cache>-1</expiration-cache>
     <cache-scope>PUBLIC</cache-scope>
@@ -238,7 +238,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/html/myRewards/index.html</value>
+      <value>/html/myRewards.html</value>
     </init-param>
     <expiration-cache>-1</expiration-cache>
     <cache-scope>PUBLIC</cache-scope>
@@ -258,7 +258,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/html/topChallengers/index.html</value>
+      <value>/html/topChallengers.html</value>
     </init-param>
     <init-param>
       <name>prefetch.resource.rest</name>
@@ -306,7 +306,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/html/programsOverview/index.html</value>
+      <value>/html/programsOverview.html</value>
     </init-param>
     <init-param>
       <name>preload.resource.bundles</name>
@@ -325,6 +325,66 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-info>
       <title>Programs Overview</title>
       <keywords>Programs Overview</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
+    <portlet-name>ConnectorUserProfile</portlet-name>
+    <display-name>Gamified Profiles</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/html/connectorUserProfile.html</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <cache-scope>PUBLIC</cache-scope>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Gamified Profiles</title>
+      <keywords>Gamified Profiles</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
+    <portlet-name>ConnectorUserSettings</portlet-name>
+    <display-name xml:lang="EN">Gamification Connectors Settings</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/html/connectorUserSettings.html</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <cache-scope>PUBLIC</cache-scope>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Gamification Connectors Settings</title>
+      <keywords>Gamification Connectors Settings</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
+    <portlet-name>ConnectorAdminSettings</portlet-name>
+    <display-name xml:lang="EN">Gamification Connectors Administration</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/html/connectorAdminSettings.html</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <cache-scope>PUBLIC</cache-scope>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Gamification Connectors Administration</title>
+      <keywords>Gamification Connectors Administration</keywords>
     </portlet-info>
   </portlet>
 

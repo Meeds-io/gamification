@@ -304,6 +304,36 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <portlet>
+    <name>ConnectorUserProfile</name>
+    <module>
+      <load-group>gamification-user-connectors</load-group>
+      <script>
+        <minify>false</minify>
+        <path>/js/connectorUserProfile.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
     <name>ProfileStats</name>
     <module>
       <depends>
@@ -474,6 +504,58 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>rulesOverviewWidget</module>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>ConnectorUserSettings</name>
+    <module>
+      <load-group>gamification-user-connectors</load-group>
+      <script>
+        <minify>false</minify>
+        <path>/js/connectorUserSettings.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>ConnectorAdminSettings</name>
+    <module>
+      <load-group>gamification-admin-connectors</load-group>
+      <script>
+        <minify>false</minify>
+        <path>/js/connectorAdminSettings.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
       </depends>
     </module>
   </portlet>
