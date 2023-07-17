@@ -63,12 +63,13 @@ public class ConnectorSettingServiceTest extends AbstractServiceTest {
 
     RemoteConnectorSettings storedRemoteConnectorSettings = connectorSettingService.getConnectorSettings("connectorName",
                                                                                                          adminAclIdentity);
-    String decryptedApiKey = codecInitializer.getCodec().decode(remoteConnectorSettings.getApiKey());
+    String storedSecretKet = connectorSettingService.getConnectorSecretKey(remoteConnectorSettings.getName());
+
     String decryptedSecretKey = codecInitializer.getCodec().decode(remoteConnectorSettings.getSecretKey());
 
     assertEquals(remoteConnectorSettings.getName(), storedRemoteConnectorSettings.getName());
-    assertEquals(decryptedApiKey, storedRemoteConnectorSettings.getApiKey());
-    assertEquals(decryptedSecretKey, storedRemoteConnectorSettings.getSecretKey());
+    assertEquals(remoteConnectorSettings.getApiKey(), storedRemoteConnectorSettings.getApiKey());
+    assertEquals(decryptedSecretKey, storedSecretKet);
     assertEquals(remoteConnectorSettings.getRedirectUrl(), storedRemoteConnectorSettings.getRedirectUrl());
     assertEquals(remoteConnectorSettings.isEnabled(), storedRemoteConnectorSettings.isEnabled());
   }
@@ -115,6 +116,7 @@ public class ConnectorSettingServiceTest extends AbstractServiceTest {
 
     List<RemoteConnectorSettings> remoteConnectorSettingsList = connectorSettingService.getConnectorsSettings(connectorService,
                                                                                                               adminAclIdentity);
+    String storedSecretKet = connectorSettingService.getConnectorSecretKey(remoteConnectorSettings2.getName());
 
     assertEquals(2, remoteConnectorSettingsList.size());
 
@@ -125,15 +127,16 @@ public class ConnectorSettingServiceTest extends AbstractServiceTest {
                                                                                       .findFirst()
                                                                                       .orElse(null);
 
-    String decryptedApiKey = codecInitializer.getCodec().decode(remoteConnectorSettings2.getApiKey());
     String decryptedSecretKey = codecInitializer.getCodec().decode(remoteConnectorSettings2.getSecretKey());
-    assertEquals(decryptedApiKey, storedRemoteConnectorSettings2.getApiKey());
-    assertEquals(decryptedSecretKey, storedRemoteConnectorSettings2.getSecretKey());
+    assertEquals(remoteConnectorSettings2.getApiKey(), storedRemoteConnectorSettings2.getApiKey());
+    assertEquals(decryptedSecretKey, storedSecretKet);
 
     // Delete connector settings
     connectorSettingService.deleteConnectorSettings("connectorName2", adminAclIdentity);
 
     remoteConnectorSettingsList = connectorSettingService.getConnectorsSettings(connectorService, adminAclIdentity);
+
+    storedSecretKet = connectorSettingService.getConnectorSecretKey(remoteConnectorSettings2.getName());
 
     assertEquals(2, remoteConnectorSettingsList.size());
 
@@ -143,6 +146,6 @@ public class ConnectorSettingServiceTest extends AbstractServiceTest {
                                                                 .orElse(null);
 
     assertNull(storedRemoteConnectorSettings2.getApiKey());
-    assertNull(storedRemoteConnectorSettings2.getSecretKey());
+    assertNull(storedSecretKet);
   }
 }

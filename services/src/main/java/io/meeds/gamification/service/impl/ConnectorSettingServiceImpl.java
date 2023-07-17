@@ -25,8 +25,6 @@ import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.web.security.codec.CodecInitializer;
 import org.exoplatform.web.security.security.TokenServiceInitializationException;
@@ -38,8 +36,6 @@ import io.meeds.gamification.service.ConnectorSettingService;
 import io.meeds.gamification.utils.Utils;
 
 public class ConnectorSettingServiceImpl implements ConnectorSettingService {
-
-  private static final Log   LOG                         = ExoLogger.getLogger(ConnectorSettingServiceImpl.class);
 
   public static final String CONNECTOR_SETTINGS_KEY_NAME = "CONNECTOR_SETTINGS";
 
@@ -62,16 +58,12 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
       throw new IllegalAccessException("The user is not authorized to save or update connector settings");
     }
     Scope connectorSettingScope = Scope.APPLICATION.id(StringUtils.capitalize(remoteConnectorSettings.getName()));
-    String encryptedApiKey;
-    String encryptedSecretKey;
     try {
-      encryptedApiKey = codecInitializer.getCodec().encode(remoteConnectorSettings.getApiKey());
-      encryptedSecretKey = codecInitializer.getCodec().encode(remoteConnectorSettings.getSecretKey());
-      remoteConnectorSettings.setApiKey(encryptedApiKey);
-      remoteConnectorSettings.setSecretKey(encryptedSecretKey);
+      remoteConnectorSettings.setSecretKey(codecInitializer.getCodec().encode(remoteConnectorSettings.getSecretKey()));
     } catch (TokenServiceInitializationException e) {
-      LOG.warn("Error generating connector settings", e);
+      throw new IllegalStateException("Error encrypting Secret Key", e);
     }
+    remoteConnectorSettings.setApiKey(remoteConnectorSettings.getApiKey());
     String settingsString = Utils.toJsonString(remoteConnectorSettings);
 
     this.settingService.set(Context.GLOBAL,
@@ -114,15 +106,8 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
       remoteConnectorSettings.setEnabled(false);
     } else {
       remoteConnectorSettings = Utils.fromJsonString(settingsValueString, RemoteConnectorSettings.class);
-      String decryptedApiKey;
-      String decryptedSecretKey;
-      try {
-        decryptedApiKey = codecInitializer.getCodec().decode(remoteConnectorSettings.getApiKey());
-        decryptedSecretKey = codecInitializer.getCodec().decode(remoteConnectorSettings.getSecretKey());
-        remoteConnectorSettings.setApiKey(decryptedApiKey);
-        remoteConnectorSettings.setSecretKey(decryptedSecretKey);
-      } catch (TokenServiceInitializationException e) {
-        LOG.warn("Error decrypting {} connector settings", remoteConnectorSettings.getName(), e);
+      if (remoteConnectorSettings != null) {
+        remoteConnectorSettings.setSecretKey(null);
       }
     }
     return remoteConnectorSettings;
@@ -143,7 +128,7 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
         decryptedSecretKey = codecInitializer.getCodec().decode(remoteConnectorSettings.getSecretKey());
         return decryptedSecretKey;
       } catch (TokenServiceInitializationException e) {
-        LOG.warn("Error decrypting {} connector settings", remoteConnectorSettings.getName(), e);
+        throw new IllegalStateException("Error decrypting connector settings", e);
       }
     }
     return null;

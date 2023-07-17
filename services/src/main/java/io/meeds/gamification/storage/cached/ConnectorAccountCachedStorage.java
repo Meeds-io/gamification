@@ -74,8 +74,8 @@ public class ConnectorAccountCachedStorage extends ConnectorAccountStorage {
   public String getConnectorRemoteId(String connectorName, long userId) {
     ConnectorAccountCachedKey cacheKey = new ConnectorAccountCachedKey(connectorName, userId, false);
     try {
-      String connectorRemoteId =  (String) this.futureCache.get(CONNECTOR_REMOTE_CONTEXT, cacheKey);
-      if (this.futureCache.get(new ConnectorAccountCachedKey(connectorName, connectorRemoteId)) == null) {
+      String connectorRemoteId = (String) this.futureCache.get(CONNECTOR_REMOTE_CONTEXT, cacheKey);
+      if (this.futureCache.get(new ConnectorAccountCachedKey(connectorName, connectorRemoteId)) == null && connectorRemoteId != null) {
         this.futureCache.put(new ConnectorAccountCachedKey(connectorName, connectorRemoteId), userId);
       }
       return connectorRemoteId;
@@ -161,8 +161,7 @@ public class ConnectorAccountCachedStorage extends ConnectorAccountStorage {
       this.cacheInstance.select(new CachedObjectSelector<ConnectorAccountCachedKey, Object>() {
         @Override
         public boolean select(ConnectorAccountCachedKey key, ObjectCacheInfo<? extends Object> ocinfo) {
-          return StringUtils.equals(key.getConnectorName(), connectorName)
-              && key.getUserId() == userIdentityId;
+          return StringUtils.equals(key.getConnectorName(), connectorName) && key.getUserId() == userIdentityId;
         }
 
         @Override
