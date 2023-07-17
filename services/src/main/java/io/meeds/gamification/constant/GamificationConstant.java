@@ -16,60 +16,32 @@
  */
 package io.meeds.gamification.constant;
 
-public interface GamificationConstant {
-
-    /***************************************************************************************************************************************************/
-    /*************************************************** CONSTANTS TO MANAGE LIKE GAMIFICATION PROCESS *************************************************/
-    /***************************************************************************************************************************************************/
-    /** LIKE COMMENT ON USER CONTEXT */
-    String GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM_TARGET                    = "likeCommentOnNetworkStreamTarget";
-    /** LIKE COMMENT ON USER CONTEXT */
-    String GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET                      = "likeCommentOnSpaceStreamTarget";
-    /** LIKE COMMENT ON SPACE CONTEXT */
-    String GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM                             = "likeCommentOnSpaceStream";
-    /** LIKE COMMENT BY A USER */
-    String GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM                           = "likeCommentOnNetworkStream";
+public interface GamificationConstant { // NOSONAR
 
     /***************************************************************************************************************************************************/
     /*************************************************** CONSTANTS TO MANAGE COMMENT GAMIFICATION PROCESS **********************************************/
     /***************************************************************************************************************************************************/
-    /**  COMMENT ON USER CONTEXT */
-    String GAMIFICATION_SOCIAL_RECEIVE_COMMENT_NETWORK_STREAM                        = "receiveCommentOnNetworkStream";
-    /**  COMMENT ON SPACE CONTEXT */
-    String GAMIFICATION_SOCIAL_RECEIVE_COMMENT_SPACE_STREAM                          = "receiveCommentOnSpaceStream";
-    /**  COMMENT BY A USER ON NETWORK STREAM*/
-    String GAMIFICATION_SOCIAL_ADD_COMMENT_NETWORK_STREAM                            = "addCommentOnNetworkStream";
-    /**  COMMENT BY A USER ON SPACE STREAM*/
-    String GAMIFICATION_SOCIAL_ADD_COMMENT_SPACE_STREAM                              = "addCommentOnSpaceStream";
+    String GAMIFICATION_SOCIAL_POST_ACTIVITY                    = "postActivity";
 
-    /***************************************************************************************************************************************************/
-    /*************************************************** CONSTANTS TO MANAGE COMMENT GAMIFICATION PROCESS **********************************************/
-    /***************************************************************************************************************************************************/
-    /** ADD ACTIVITY ON USER'S NETWORK CONTEXT */
-    String GAMIFICATION_SOCIAL_ADD_ACTIVITY_NETWORK_STREAM                           = "addActivityOnNetworkStream";
-    /** ADD ACTIVITY ON SPACE CONTEXT */
-    String GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_STREAM                             = "addActivityOnSpaceStream";
-    /** ADD ACTIVITY ON MY STREAM */
-    String GAMIFICATION_SOCIAL_ADD_ACTIVITY_MY_STREAM                                = "addActivityOnMyStream";
+    String GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT            = "postActivityComment";
 
-    String GAMIFICATION_SOCIAL_PIN_ACTIVITY_SPACE                                    = "pinActivityOnSpace";
+    String GAMIFICATION_SOCIAL_LIKE_ACTIVITY                    = "likeActivity";
 
-    /** ADD ACTIVITY ON MY STREAM */
-    String GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_TARGET                             = "addActivityOnSpaceStreamTarget";
-    /** ADD ACTIVITY ON MY STREAM */
-    String GAMIFICATION_SOCIAL_ADD_ACTIVITY_TARGET_USER_STREAM                       = "addActivityTargetUserStream";
+    String GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT            = "likeActivityComment";
+
+    String GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY                 = "receiveActivity";
+
+    String GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY_COMMENT         = "receiveCommentOnActivity";
+
+    String GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY            = "receiveLikeOnActivity";
+
+    String GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY_COMMENT    = "receiveLikeOnActivityComment";
+
+    String GAMIFICATION_SOCIAL_PIN_ACTIVITY_SPACE               = "pinActivityOnSpace";
 
     /***************************************************************************************************************************************************/
     /************************************************ CONSTANTS TO MANAGE LIKE ACTIVITY GAMIFICATION PROCESS *******************************************/
     /***************************************************************************************************************************************************/
-    /** LIKE ACTIVITY ON USER'S NETWORK CONTEXT */
-    String GAMIFICATION_SOCIAL_LIKE_ACTIVITY_NETWORK_STREAM                           = "likeActivityOnNetworkStream";
-    /** LIKE ACTIVITY ON SPACE STREAM */
-    String GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_STREAM                             = "likeActivityOnSpaceStream";
-    /** LIKE ACTIVITY ON MY STREAM */
-    String GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_TARGET                             = "likeActivityOnSpaceStreamTarget";
-    /** LIKE ACTIVITY ON MY STREAM */
-    String GAMIFICATION_SOCIAL_LIKE_ACTIVITY_TARGET_USER_STREAM                       = "likeActivityTargetUserStream";
 
     /***************************************************************************************************************************************************/
     /************************************************ CONSTANTS TO MANAGE USER PROFILE GAMIFICATION PROCESS *******************************************/
