@@ -188,7 +188,7 @@ export default {
     filterActivated: false,
     selected: 'Date',
     programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`,
-    tabName: 'YOURS',
+    tabName: window.location.hash === '#hosted' ? 'OWNED' : 'YOURS',
   }),
   computed: {
     administrationMode() {
@@ -337,6 +337,13 @@ export default {
         document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
       }
     },
+    tabName() {
+      if (this.tabName === 'YOURS') {
+        window.location.hash = '#yours';
+      } else if (this.tabName === 'OWNED') {
+        window.location.hash = '#hosted';
+      }
+    },
   },
   created() {
     this.realizationsHeaders.map((header) => {
@@ -344,7 +351,11 @@ export default {
         this.availableSortBy.push(header);
       }
     });
-    this.loadRealizations();
+    if (this.administrationMode && !this.isProgramManager) {
+      this.tabName = 'YOURS';
+    } else if (this.selectedPeriod) {
+      this.loadRealizations();
+    }
     // Workaround to fix closing menu when clicking outside
     $(document).mousedown(() => {
       if (this.$refs.select) {
