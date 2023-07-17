@@ -14,8 +14,9 @@
     </v-list-item-content>
     <v-list-item-action>
       <favorite-button
-        :id="id"
+        :id="ruleId"
         :favorite="isFavorite"
+        :space-id="spaceId"
         :top="top"
         :right="right"
         type="rule"
@@ -41,6 +42,9 @@ export default {
   computed: {
     ruleId() {
       return this.rule?.id || this.id;
+    },
+    spaceId() {
+      return this.rule?.spaceId;
     },
     ruleTitle() {
       return this.rule?.title || '';
