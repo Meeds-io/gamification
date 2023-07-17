@@ -28,9 +28,21 @@
       hover
       @click="$root.$emit('rule-detail-drawer', ruleWithProgram)">
       <div v-if="!isValid">
-        <div v-if="canEdit && hover" class="d-flex position-absolute full-width z-index-drawer">
+        <div v-show="hover" class="d-flex position-absolute full-width z-index-drawer">
           <div class="ms-auto mb-auto mt-4 me-4">
+            <div
+              v-show="hover"
+              :class="hover && 'd-inline-flex'"
+              class="my-auto">
+              <rule-favorite-button
+                :rule-id="rule.id"
+                :space-id="rule.spaceId"
+                :favorite.sync="rule.favorite"
+                type="rule"
+                type-label="rules" />
+            </div>
             <engagement-center-rule-menu
+              v-if="canEdit && hover"
               :rule="ruleWithProgram"
               dark
               small />
@@ -70,8 +82,20 @@
               {{ title }}
             </span>
           </div>
-          <div v-if="canEdit && hover && isValid" class="flex-grow-0 d-flex align-center">
+          <div v-if="isValid" class="flex-grow-0 d-flex align-center">
+            <div
+              v-show="hover"
+              :class="hover && 'd-inline-flex'"
+              class="my-auto">
+              <rule-favorite-button
+                :rule-id="rule.id"
+                :space-id="rule.spaceId"
+                :favorite.sync="rule.favorite"
+                type="rule"
+                type-label="rules" />
+            </div>
             <engagement-center-rule-menu
+              v-if="canEdit && hover"
               :rule="ruleWithProgram"
               small />
           </div>
