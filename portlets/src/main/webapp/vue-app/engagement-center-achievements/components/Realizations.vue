@@ -49,7 +49,7 @@
           <engagement-center-realizations-export-button :link="exportFileLink" />
         </template>
         <template #right>
-          <engagement-center-realization-select-period
+          <engagement-center-realizations-select-period
             v-model="selectedPeriod"
             :left="!$vuetify.breakpoint.mobile"
             class="mx-2" />

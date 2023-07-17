@@ -4,7 +4,7 @@
       {{ $t('rule.form.label.duration.title') }}
     </v-card-text>
 
-    <v-card-text class="pa-0 flex d-flex challengeDates">
+    <v-card-text class="pa-0 flex d-flex ruleDates">
       <select
         v-model="durationFilter"
         class="d-flex flex-grow-0 flex-shrink-0 width-auto ignore-vuetify-classes my-0"
