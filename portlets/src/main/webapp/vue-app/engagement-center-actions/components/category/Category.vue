@@ -121,7 +121,7 @@ export default {
       if (this.rules.find(r => r.id === rule.id)) {
         return this.$ruleService.getRuleById(rule.id, {
           lang: eXo.env.portal.language,
-          expand: 'countRealizations',
+          expand: 'countRealizations,favorites',
           realizationsLimit: 3,
         })
           .then(r => this.$set(this.updatedRules, r.id, r));

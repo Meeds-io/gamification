@@ -111,7 +111,7 @@ export default {
       return `${document.location.href.split(eXo.env.portal.context)[0]}${this.ruleLink}`;
     },
     isEngagementCenterApp() {
-      return window.location.href.includes(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions`);
+      return window.location.href.includes('/actions');
     },
   },
   created() {
