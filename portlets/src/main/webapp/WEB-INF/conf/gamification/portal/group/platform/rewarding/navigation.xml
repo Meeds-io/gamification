@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 This file is part of the Meeds project (https://meeds.io/).
-Copyright (C) 2020 Meeds Association
+Copyright (C) 2020 - 2023 Meeds Association
 contact@meeds.io
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -16,13 +16,16 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 -->
-
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd"
-               xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
-    <import>war:/conf/gamification/storage/common/common-storage-configuration.xml</import>
-    <import>war:/conf/gamification/storage/rule/rules-storage-configuration.xml</import>
-    <import>war:/conf/gamification/storage/badge/badges-storage-configuration.xml</import>
-    <import>war:/conf/gamification/storage/program/programs-storage-configuration.xml</import>
-    <import>war:/conf/gamification/storage/connector/connectors-storage-configuration.xml</import>
-</configuration>
+<node-navigation
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.gatein.org/xml/ns/gatein_objects_1_6 http://www.gatein.org/xml/ns/gatein_objects_1_6"
+  xmlns="http://www.gatein.org/xml/ns/gatein_objects_1_6">
+  <priority>3</priority>
+  <page-nodes>
+    <node>
+      <name>gamificationConnectorsAdministration</name>
+      <label>#{administration.gamificationConnectors}</label>
+      <page-reference>group::/platform/rewarding::gamificationConnectorsAdministration</page-reference>
+    </node>
+  </page-nodes>
+</node-navigation>
