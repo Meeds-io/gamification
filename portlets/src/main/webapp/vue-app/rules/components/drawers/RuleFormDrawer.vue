@@ -219,14 +219,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <div v-show="expanded || stepper > 1" class="px-6">
                 <engagement-center-rule-publish-editor
                   v-if="enablePublication"
+                  ref="rulePublishInput"
                   :enabled="!rule.id"
                   :rule="rule"
+                  :metadata-object-id="metadataObjectId"
                   :program="program"
                   :publish.sync="rule.publish"
                   :space-id.sync="rule.spaceId"
                   :message.sync="rule.message"
                   :template-params="rule.templateParams"
-                  :valid-message.sync="validMessage" />
+                  :valid-message.sync="validMessage"
+                  @attachments-edited="attachmentsEdited = true" />
                 <div class="pt-4 text-subtitle-1">{{ $t('rule.form.ruleConditionsLabel') }}</div>
                 <div class="ps-7">
                   <v-chip
@@ -351,6 +354,8 @@ export default {
     validMessage: false,
     events: [],
     programEvents: [],
+    metadataObjectId: null,
+    attachmentsEdited: false,
     defaultTemplateParams: {
       'previewHeight': '-',
       'previewWidth': '-',
@@ -442,7 +447,7 @@ export default {
       return this.computeRuleModel(this.rule, this.program, this.ruleDescription);
     },
     ruleChanged() {
-      return this.originalRule && JSON.stringify(this.ruleToSave) !== JSON.stringify(this.originalRule);
+      return this.attachmentsEdited || (this.originalRule && JSON.stringify(this.ruleToSave) !== JSON.stringify(this.originalRule));
     },
     confirmCloseLabels() {
       return {
@@ -511,6 +516,8 @@ export default {
           this.recurrenceCondition = !!this.rule.recurrence;
           this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
           this.eventExist = false;
+          this.metadataObjectId = rule?.id;
+          this.attachmentsEdited = false;
           if (this.$refs.ruleFormDrawer) {
             this.$refs.ruleFormDrawer.open();
           }
@@ -576,6 +583,7 @@ export default {
       if (this.rule.id) {
         this.$translationService.saveTranslations('rule', this.rule.id, 'title', this.ruleTitleTranslations)
           .then(() => this.$translationService.saveTranslations('rule', this.rule.id, 'description', this.ruleDescriptionTranslations))
+          .then(() => this.$refs?.rulePublishInput?.saveAttachments())
           .then(() => this.$ruleService.updateRule(this.ruleToSave))
           .then(rule => {
             this.$root.$emit('rule-updated-event', rule);
@@ -596,6 +604,7 @@ export default {
             }
             this.saving = false; // To Keep to be able to close drawer
             this.originalRule = null;
+            this.attachmentsEdited = false;
             return this.$nextTick();
           })
           .then(() => this.close())
@@ -612,6 +621,11 @@ export default {
             return this.$translationService.saveTranslations('rule', this.originalRule.id, 'title', this.ruleTitleTranslations);
           })
           .then(() => this.$translationService.saveTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
+          .then(() => {
+            this.metadataObjectId = String(this.originalRule.id);
+            return this.$nextTick();
+          })
+          .then(() => this.$refs?.rulePublishInput?.saveAttachments())
           .then(() => {
             if (this.ruleToSave.publish && this.originalRule.activityId) {
               document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
@@ -630,6 +644,7 @@ export default {
             }
             this.saving = false; // To Keep to be able to close drawer
             this.originalRule = null;
+            this.attachmentsEdited = false;
             return this.$nextTick();
           })
           .then(() => this.close())
