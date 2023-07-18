@@ -149,7 +149,7 @@
         </v-col>
       </v-row>
     </template>
-    <template v-if="announcementFormOpened" #footer>
+    <template v-if="announcementFormOpened && rule && !loading && drawer" #footer>
       <div class="d-flex mr-2">
         <v-spacer />
         <v-btn
@@ -303,6 +303,7 @@ export default {
       this.checkTime();
       this.rule = {id};
       const hash = window.location.hash;
+      this.$refs.ruleDetailDrawer.open();
 
       this.loading = true;
       this.$ruleService.getRuleById(id, {
@@ -312,7 +313,6 @@ export default {
       })
         .then(rule => {
           this.rule = rule;
-          this.$refs.ruleDetailDrawer.open();
           return this.$nextTick();
         })
         .then(() => {
