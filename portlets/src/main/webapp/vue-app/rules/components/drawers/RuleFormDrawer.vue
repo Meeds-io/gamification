@@ -33,7 +33,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-form
         ref="RuleForm"
         v-model="isValidForm"
-        autocomplete="off"
         class="form-horizontal pt-0 pb-4"
         flat
         @submit="saveRule">
@@ -121,10 +120,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       ck-editor-type="rule"
                       oembed
                       @validity-updated="validDescription = $event"
-                      @ready="setFormInitialized" />
+                      @ready="handleRichEditorReady" />
                   </translation-text-field>
                 </v-card-text>
-                <v-card-text class="d-flex flex-grow-1 text-wrap text-left text-subtitle-1 px-0 pb-2">
+                <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
                   {{ $t('rule.form.label.rewards') }}
                 </v-card-text>
                 <v-card
@@ -142,7 +141,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     required />
                   <label class="my-auto">{{ $t('rule.form.label.points') }}</label>
                 </v-card>
-                <v-card-text class="d-flex flex-grow-1 text-wrap text-left text-subtitle-1 px-0 pb-2">
+                <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
                   {{ $t('rule.form.label.type') }}
                 </v-card-text>
                 <div class="d-flex flex-row pb-4">
@@ -160,7 +159,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   </v-btn>
                 </div>
                 <div v-if="automaticType">
-                  <v-card-text class="d-flex flex-grow-1 text-wrap text-left text-subtitle-1 px-0 pb-2">
+                  <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
                     {{ $t('rule.form.label.selectEvent') }}
                   </v-card-text>
                   <v-card-text v-if="eventNames.length" class="pa-0">
@@ -194,7 +193,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   </v-card-text>
                 </div>
                 <div v-if="ruleId">
-                  <v-card-text class="d-flex flex-grow-1 text-wrap text-left text-subtitle-1 px-0 pb-2">
+                  <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
                     {{ $t('rule.form.label.status') }}
                   </v-card-text>
                   <div class="d-flex flex-row">
@@ -220,14 +219,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <div v-show="expanded || stepper > 1" class="px-6">
                 <engagement-center-rule-publish-editor
                   v-if="enablePublication"
+                  ref="rulePublishInput"
                   :enabled="!rule.id"
                   :rule="rule"
+                  :metadata-object-id="metadataObjectId"
                   :program="program"
                   :publish.sync="rule.publish"
                   :space-id.sync="rule.spaceId"
                   :message.sync="rule.message"
                   :template-params="rule.templateParams"
-                  :valid-message.sync="validMessage" />
+                  :valid-message.sync="validMessage"
+                  @attachments-edited="attachmentsEdited = true" />
                 <div class="pt-4 text-subtitle-1">{{ $t('rule.form.ruleConditionsLabel') }}</div>
                 <div class="ps-7">
                   <v-chip
@@ -326,8 +328,6 @@ export default {
     ruleTitle: null,
     ruleDescription: null,
     originalRule: null,
-    originalRuleTitleTranslations: {},
-    originalRuleDescriptionTranslations: {},
     ruleToUpdate: {},
     ruleTitleTranslations: {},
     ruleDescriptionTranslations: {},
@@ -354,6 +354,8 @@ export default {
     validMessage: false,
     events: [],
     programEvents: [],
+    metadataObjectId: null,
+    attachmentsEdited: false,
     defaultTemplateParams: {
       'previewHeight': '-',
       'previewWidth': '-',
@@ -445,7 +447,7 @@ export default {
       return this.computeRuleModel(this.rule, this.program, this.ruleDescription);
     },
     ruleChanged() {
-      if (!this.originalRule || ! this.originalRuleTitleTranslations || !this.originalRuleDescriptionTranslations) {
+      if (!this.attachmentsEdited || !this.originalRule || ! this.originalRuleTitleTranslations || !this.originalRuleDescriptionTranslations) {
         return false;
       }
       return JSON.stringify({
@@ -545,6 +547,8 @@ export default {
           this.recurrenceCondition = !!this.rule.recurrence;
           this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
           this.eventExist = false;
+          this.metadataObjectId = rule?.id;
+          this.attachmentsEdited = false;
           if (this.$refs.ruleFormDrawer) {
             this.$refs.ruleFormDrawer.open();
           }
@@ -605,6 +609,7 @@ export default {
       if (this.rule.id) {
         this.$translationService.saveTranslations('rule', this.rule.id, 'title', this.ruleTitleTranslations)
           .then(() => this.$translationService.saveTranslations('rule', this.rule.id, 'description', this.ruleDescriptionTranslations))
+          .then(() => this.$refs?.rulePublishInput?.saveAttachments())
           .then(() => this.$ruleService.updateRule(this.ruleToSave))
           .then(rule => {
             this.$root.$emit('rule-updated-event', rule);
@@ -625,6 +630,7 @@ export default {
             }
             this.saving = false; // To Keep to be able to close drawer
             this.originalRule = null;
+            this.attachmentsEdited = false;
             this.originalRuleTitleTranslations = null;
             this.originalRuleDescriptionTranslations = null;
             return this.$nextTick();
@@ -644,6 +650,11 @@ export default {
           })
           .then(() => this.$translationService.saveTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
           .then(() => {
+            this.metadataObjectId = String(this.originalRule.id);
+            return this.$nextTick();
+          })
+          .then(() => this.$refs?.rulePublishInput?.saveAttachments())
+          .then(() => {
             if (this.ruleToSave.publish && this.originalRule.activityId) {
               document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
                 alertType: 'success',
@@ -661,6 +672,7 @@ export default {
             }
             this.saving = false; // To Keep to be able to close drawer
             this.originalRule = null;
+            this.attachmentsEdited = false;
             this.originalRuleTitleTranslations = null;
             this.originalRuleDescriptionTranslations = null;
             return this.$nextTick();
