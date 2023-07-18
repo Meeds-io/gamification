@@ -127,7 +127,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       }
     }
   }
-  
+
+  @Override
   public void pinActivity(ActivityLifeCycleEvent event) {
     ExoSocialActivity activity = event.getSource();
     String userIdentityId = event.getUserId();
