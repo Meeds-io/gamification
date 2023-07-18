@@ -450,7 +450,7 @@ export default {
       if (!this.attachmentsEdited || !this.originalRule || ! this.originalRuleTitleTranslations || !this.originalRuleDescriptionTranslations) {
         return false;
       }
-      return JSON.stringify({
+      return this.attachmentsEdited || JSON.stringify({
         title: JSON.parse(JSON.stringify(this.originalRuleTitleTranslations)),
         description: JSON.parse(JSON.stringify(this.originalRuleDescriptionTranslations)),
         type: this.originalRule.type,
@@ -633,6 +633,7 @@ export default {
             this.attachmentsEdited = false;
             this.originalRuleTitleTranslations = null;
             this.originalRuleDescriptionTranslations = null;
+            this.attachmentsEdited = false;
             return this.$nextTick();
           })
           .then(() => this.close())
@@ -675,6 +676,7 @@ export default {
             this.attachmentsEdited = false;
             this.originalRuleTitleTranslations = null;
             this.originalRuleDescriptionTranslations = null;
+            this.attachmentsEdited = false;
             return this.$nextTick();
           })
           .then(() => this.close())
