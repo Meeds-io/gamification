@@ -24,9 +24,11 @@ export default {
   }),
   created() {
     if (this.$root.ruleExtensionsInstalled) {
+      this.$root.ruleExtensionsInstalled++;
       return;
+    } else {
+      this.$root.ruleExtensionsInstalled = 1;
     }
-    this.$root.ruleExtensionsInstalled = true;
     document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
     document.addEventListener('announcement-added-event', this.emitRuleAnnouncedInternaly);
     document.addEventListener('rule-created-event', this.emitRuleCreatedInternaly);
@@ -46,6 +48,10 @@ export default {
     this.init();
   },
   beforeDestroy() {
+    this.$root.ruleExtensionsInstalled--;
+    if (this.$root.ruleExtensionsInstalled > 0) {
+      return;
+    }
     document.removeEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
     document.removeEventListener('announcement-added-event', this.emitRuleAnnouncedInternaly);
     document.removeEventListener('rule-created-event', this.emitRuleCreatedInternaly);
