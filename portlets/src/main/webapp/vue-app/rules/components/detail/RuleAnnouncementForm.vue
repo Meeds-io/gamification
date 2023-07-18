@@ -67,8 +67,8 @@
         :placeholder="$t('rule.detail.announceEditor.placeholder')"
         :tag-enabled="false"
         :object-id="metadataObjectId"
-        :object-type="metadataObjectType"
-        ck-editor-type="announcementContent"
+        object-type="activity"
+        ck-editor-type="activityComment"
         class="flex my-3"
         autofocus
         @validity-updated="validLength = $event" />
@@ -112,7 +112,8 @@ export default {
     username: eXo.env.portal.userName,
     validLength: true,
     attachments: null,
-    announcement: null
+    announcement: null,
+    metadataObjectId: null,
   }),
   computed: {
     spaceId() {
@@ -129,9 +130,6 @@ export default {
     },
     ckEditorInstance() {
       return this.$refs.announcementEditor || null;
-    },
-    metadataObjectId() {
-      return this.templateParams?.metadataObjectId || this.rule.id;
     },
     metadataObjectType() {
       return this.templateParams?.metadataObjectType || 'rule';
@@ -190,6 +188,8 @@ export default {
       this.$announcementService.createAnnouncement(announcement)
         .then((createdAnnouncement) => {
           this.announcement = createdAnnouncement;
+          this.metadataObjectId = `comment${createdAnnouncement.activityId}`;
+          return this.$nextTick();
         })
         .then(() => this.ckEditorInstance && this.ckEditorInstance.saveAttachments())
         .then(() => {
