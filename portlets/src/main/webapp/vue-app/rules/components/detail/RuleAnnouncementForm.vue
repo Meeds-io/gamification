@@ -67,8 +67,8 @@
         :placeholder="$t('rule.detail.announceEditor.placeholder')"
         :tag-enabled="false"
         :object-id="metadataObjectId"
-        :object-type="metadataObjectType"
-        ck-editor-type="announcementContent"
+        object-type="activity"
+        ck-editor-type="activityComment"
         class="flex my-3"
         autofocus
         @validity-updated="validLength = $event" />
@@ -111,8 +111,7 @@ export default {
     userId: eXo.env.portal.userIdentityId,
     username: eXo.env.portal.userName,
     validLength: true,
-    attachments: null,
-    announcement: null
+    metadataObjectId: null,
   }),
   computed: {
     spaceId() {
@@ -126,15 +125,6 @@ export default {
     },
     canAnnounce() {
       return this.rule?.type === 'MANUAL' && this.rule?.userInfo?.allowedToRealize;
-    },
-    ckEditorInstance() {
-      return this.$refs.announcementEditor || null;
-    },
-    metadataObjectId() {
-      return this.templateParams?.metadataObjectId || this.rule.id;
-    },
-    metadataObjectType() {
-      return this.templateParams?.metadataObjectType || 'rule';
     },
   },
   watch: {
@@ -157,10 +147,6 @@ export default {
     this.destroyEditor();
   },
   methods: {
-    attachmentsEdit(attachments) {
-      this.attachments = attachments;
-      this.activityCommentAttachmentsEdited = true;
-    },
     clear() {
       this.editor = false;
       this.sending = false;
@@ -192,8 +178,10 @@ export default {
       this.$announcementService.createAnnouncement(announcement)
         .then((createdAnnouncement) => {
           this.announcement = createdAnnouncement;
+          this.metadataObjectId = `comment${createdAnnouncement.activityId}`;
+          return this.$nextTick();
         })
-        .then(() => this.ckEditorInstance && this.ckEditorInstance.saveAttachments())
+        .then(() => this.$refs?.announcementEditor?.saveAttachments())
         .then(() => {
           document.dispatchEvent(new CustomEvent('alert-message-html-confeti', {detail: {
             alertType: 'success',
