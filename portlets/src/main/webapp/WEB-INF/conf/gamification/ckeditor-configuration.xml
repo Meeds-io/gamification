@@ -34,7 +34,7 @@
           <name>BaseCKEditorConfiguration</name>
           <object type="io.meeds.social.core.richeditor.RichEditorConfiguration">
             <field name="instanceType">
-              <string>announcementContent</string>
+              <string>activityContent_rule</string>
             </field>
             <field name="filePath">
               <string>war:/conf/social-extension/ckeditor/attach-image-plugin.js</string>
