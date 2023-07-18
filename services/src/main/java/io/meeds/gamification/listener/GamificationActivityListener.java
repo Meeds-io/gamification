@@ -150,9 +150,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   public void saveComment(ActivityLifeCycleEvent event) {
     ExoSocialActivity activity = event.getSource();
     ExoSocialActivity parent = activityManager.getParentActivity(activity);
-
-    if (parent == null
-        || StringUtils.equalsIgnoreCase(activity.getPosterId(), parent.getPosterId())) {
+    if (parent == null) {
       return;
     }
 
@@ -182,12 +180,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   @Override
   public void likeActivity(ActivityLifeCycleEvent event) {
     ExoSocialActivity activity = event.getSource();
-    if (StringUtils.equalsIgnoreCase(activity.getPosterId(), activity.getStreamId())) {
-      return;
-    }
-
-    String[] likersId = activity.getLikeIdentityIds();
-    String likerIdentityId = identityManager.getIdentity(likersId[likersId.length - 1]).getId();
+    String likerIdentityId = event.getUserId();
     if (StringUtils.equalsIgnoreCase(activity.getPosterId(), likerIdentityId)) {
       return;
     }
@@ -213,19 +206,16 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   @Override
   public void deleteLikeActivity(ActivityLifeCycleEvent event) {
     ExoSocialActivity activity = event.getSource();
-    String userId = event.getUserId();
-    if (StringUtils.equalsIgnoreCase(activity.getPosterId(), activity.getStreamId())) {
-      return;
-    }
+    String likerIdentityId = event.getUserId();
 
-    cancelActivityGamificationHistoryEntry(userId,
+    cancelActivityGamificationHistoryEntry(likerIdentityId,
                                            activity.getPosterId(),
                                            GAMIFICATION_SOCIAL_LIKE_ACTIVITY,
                                            activity.getId(),
                                            ACTIVITY_OBJECT_TYPE);
 
     cancelActivityGamificationHistoryEntry(activity.getPosterId(),
-                                           userId,
+                                           likerIdentityId,
                                            GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY,
                                            activity.getId(),
                                            ACTIVITY_OBJECT_TYPE);
@@ -233,7 +223,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     Space space = getSpaceOfActivity(activity);
     if (space != null) {
       cancelSpaceGamificationHistoryEntry(space.getPrettyName(),
-                                          userId,
+                                          likerIdentityId,
                                           GAMIFICATION_SOCIAL_LIKE_ACTIVITY,
                                           activity.getId(),
                                           ACTIVITY_OBJECT_TYPE);
@@ -243,12 +233,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   @Override
   public void likeComment(ActivityLifeCycleEvent event) {
     ExoSocialActivity activity = event.getSource();
-    if (StringUtils.equalsIgnoreCase(activity.getPosterId(), activity.getStreamId())) {
-      return;
-    }
-
-    String[] likersId = activity.getLikeIdentityIds();
-    String likerIdentityId = identityManager.getIdentity(likersId[likersId.length - 1]).getId();
+    String likerIdentityId = event.getUserId();
     if (StringUtils.equalsIgnoreCase(activity.getPosterId(), likerIdentityId)) {
       return;
     }
@@ -275,18 +260,16 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   @Override
   public void deleteLikeComment(ActivityLifeCycleEvent event) {
     ExoSocialActivity activity = event.getSource();
-    String userId = event.getUserId();
-    if (StringUtils.equalsIgnoreCase(activity.getPosterId(), activity.getStreamId())) {
-      return;
-    }
-    cancelActivityGamificationHistoryEntry(userId,
+    String likerIdentityId = event.getUserId();
+
+    cancelActivityGamificationHistoryEntry(likerIdentityId,
                                            activity.getPosterId(),
                                            GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT,
                                            activity.getId(),
                                            ACTIVITY_OBJECT_TYPE);
 
     cancelActivityGamificationHistoryEntry(activity.getPosterId(),
-                                           userId,
+                                           likerIdentityId,
                                            GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY_COMMENT,
                                            activity.getId(),
                                            ACTIVITY_OBJECT_TYPE);
@@ -294,7 +277,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     Space space = getSpaceOfActivity(activity);
     if (space != null) {
       cancelSpaceGamificationHistoryEntry(space.getPrettyName(),
-                                          userId,
+                                          likerIdentityId,
                                           GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT,
                                           activity.getId(),
                                           ACTIVITY_OBJECT_TYPE);
