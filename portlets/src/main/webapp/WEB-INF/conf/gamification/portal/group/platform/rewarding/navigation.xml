@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <page-nodes>
     <node>
       <name>gamificationConnectorsAdministration</name>
-      <label>#{administration.gamificationConnectors}</label>
+      <label>#{gamification.navigation.connectors}</label>
       <page-reference>group::/platform/rewarding::gamificationConnectorsAdministration</page-reference>
     </node>
   </page-nodes>
