@@ -573,10 +573,6 @@ export default {
           .then(() => this.$translationService.saveTranslations('rule', this.rule.id, 'description', this.ruleDescriptionTranslations))
           .then(() => this.$ruleService.updateRule(this.ruleToSave))
           .then(() => {
-            this.metadataObjectId = String(this.rule.id);
-            this.$nextTick();
-          })
-          .then(() => {
             this.$refs.ruleDescriptionEditor.saveAttachments();
           })
           .then(rule => {

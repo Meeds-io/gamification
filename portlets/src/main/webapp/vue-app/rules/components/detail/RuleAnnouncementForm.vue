@@ -111,8 +111,6 @@ export default {
     userId: eXo.env.portal.userIdentityId,
     username: eXo.env.portal.userName,
     validLength: true,
-    attachments: null,
-    announcement: null,
     metadataObjectId: null,
   }),
   computed: {
@@ -127,12 +125,6 @@ export default {
     },
     canAnnounce() {
       return this.rule?.type === 'MANUAL' && this.rule?.userInfo?.allowedToRealize;
-    },
-    ckEditorInstance() {
-      return this.$refs.announcementEditor || null;
-    },
-    metadataObjectType() {
-      return this.templateParams?.metadataObjectType || 'rule';
     },
   },
   watch: {
@@ -155,10 +147,6 @@ export default {
     this.destroyEditor();
   },
   methods: {
-    attachmentsEdit(attachments) {
-      this.attachments = attachments;
-      this.activityCommentAttachmentsEdited = true;
-    },
     clear() {
       this.editor = false;
       this.sending = false;
@@ -191,7 +179,7 @@ export default {
           this.metadataObjectId = `comment${createdAnnouncement.activityId}`;
           return this.$nextTick();
         })
-        .then(() => this.ckEditorInstance && this.ckEditorInstance.saveAttachments())
+        .then(() => this.$refs.announcementEditor.saveAttachments())
         .then(() => {
           document.dispatchEvent(new CustomEvent('alert-message-html-confeti', {detail: {
             alertType: 'success',
