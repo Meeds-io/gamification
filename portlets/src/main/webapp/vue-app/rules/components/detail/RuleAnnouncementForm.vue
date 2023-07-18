@@ -69,8 +69,7 @@
         ck-editor-type="announcementContent"
         class="flex my-3"
         autofocus
-        @validity-updated="validLength = $event"
-        @ready="focusOnEditor" />
+        @validity-updated="validLength = $event" />
     </div>
     <v-btn
       v-else
@@ -157,17 +156,6 @@ export default {
     destroyEditor() {
       if (this.$refs.announcementEditor) {
         this.$refs.announcementEditor.destroyCKEditor();
-      }
-    },
-    focusOnEditor() {
-      const drawerContentElement = document.querySelector('#ruleDetailDrawer .drawerContent');
-      const announcementEditor = document.querySelector('#announcementEditor');
-      if (announcementEditor) {
-        drawerContentElement.scrollTo({
-          top: announcementEditor.scrollHeight + drawerContentElement.offsetHeight / 3,
-          behavior: 'smooth',
-          block: 'start',
-        });
       }
     },
     createAnnouncement() {
