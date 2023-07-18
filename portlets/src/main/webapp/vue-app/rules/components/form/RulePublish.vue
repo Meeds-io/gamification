@@ -35,10 +35,14 @@
       :max-length="MAX_LENGTH"
       :template-params="templateParams"
       :placeholder="$t('rule.form.rulePublicationPlaceholder')"
+      :object-id="metadataObjectId"
+      object-type="rule"
+      ck-editor-type="activityContent_rule"
       class="flex my-3"
       autofocus
       tag-enabled
-      @validity-updated="validMessage = $event" />
+      @validity-updated="validMessage = $event"
+      @attachments-edited="$emit('attachments-edited')" />
   </div>
 </template>
 <script>
@@ -54,6 +58,10 @@ export default {
     },
     templateParams: {
       type: Object,
+      default: null,
+    },
+    metadataObjectId: {
+      type: String,
       default: null,
     },
     enabled: {
@@ -100,6 +108,11 @@ export default {
   },
   mounted() {
     this.publish = this.enabled;
+  },
+  methods: {
+    saveAttachments() {
+      this.$refs?.rulePublicationEditor?.saveAttachments();
+    },
   },
 };
 </script>
