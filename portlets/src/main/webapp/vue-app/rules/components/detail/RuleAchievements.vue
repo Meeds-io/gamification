@@ -29,9 +29,9 @@
       :max-avatars-to-show="4"
       :avatars-count="realizationsCount"
       :size="avatarSize"
-      @open-avatars-drawer="$root.$emit('open-achievements-drawer', rule, true)" />
-    <div v-else class="d-flex align-center">
-      <v-avatar :size="avatarSize" class="my-0 me-2">
+      @open-avatars-drawer="openAchievementsDrawer" />
+    <div v-else class="d-flex justify-center">
+      <v-avatar :size="avatarSize" class="my-auto me-2">
         <img
           :src="defaultAvatarUrl"
           class="object-fit-cover ma-auto"
@@ -64,6 +64,14 @@ export default {
         .map(realization => ({
           userName: realization?.earner?.remoteId,
         })) || [];
+    },
+  },
+  methods: {
+    openAchievementsDrawer() {
+      document.dispatchEvent(new CustomEvent('open-achievements-drawer', {detail: {
+        rule: this.rule,
+        backIcon: true,
+      }}));
     },
   },
 };

@@ -150,12 +150,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <portlet>
-    <portlet-name>EngagementCenter</portlet-name>
-    <display-name>Engagement Center Application</display-name>
+    <portlet-name>EngagementCenterPrograms</portlet-name>
+    <display-name>Engagement Center Programs</display-name>
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/WEB-INF/jsp/engagementCenter.jsp</value>
+      <value>/WEB-INF/jsp/engagementCenterPrograms.jsp</value>
     </init-param>
     <supports>
       <mime-type>text/html</mime-type>
@@ -163,8 +163,46 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <supported-locale>en</supported-locale>
     <resource-bundle>locale.portlet.Challenges</resource-bundle>
     <portlet-info>
-      <title>Engagement Center Application</title>
-      <keywords>Engagement Center Application</keywords>
+      <title>Engagement Center Programs</title>
+      <keywords>Engagement Center Programs</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
+    <portlet-name>EngagementCenterActions</portlet-name>
+    <display-name>Engagement Center Actions</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/WEB-INF/jsp/engagementCenterActions.jsp</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>locale.portlet.Challenges</resource-bundle>
+    <portlet-info>
+      <title>Engagement Center Actions</title>
+      <keywords>Engagement Center Actions</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
+    <portlet-name>EngagementCenterAchievements</portlet-name>
+    <display-name>Engagement Center Achievements</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/WEB-INF/jsp/engagementCenterAchievements.jsp</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>locale.portlet.Challenges</resource-bundle>
+    <portlet-info>
+      <title>Engagement Center Achievements</title>
+      <keywords>Engagement Center Achievements</keywords>
     </portlet-info>
   </portlet>
 
@@ -238,10 +276,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/html/challengesOverview/index.html</value>
+      <value>/WEB-INF/jsp/rulesOverview/index.jsp</value>
     </init-param>
-    <expiration-cache>-1</expiration-cache>
-    <cache-scope>PUBLIC</cache-scope>
     <supports>
       <mime-type>text/html</mime-type>
     </supports>
@@ -250,6 +286,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <title>Challenges Overview</title>
       <keywords>Challenges Overview</keywords>
     </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>showLocked</name>
+        <read-only>false</read-only>
+      </preference>
+    </portlet-preferences>
   </portlet>
 
   <portlet>

@@ -34,13 +34,18 @@ import io.meeds.gamification.dao.ProgramDAOTest;
 import io.meeds.gamification.dao.RealizationDAOTest;
 import io.meeds.gamification.dao.RuleDAOTest;
 import io.meeds.gamification.listener.AnnouncementActivityUpdaterTest;
+import io.meeds.gamification.listener.GamificationActivityListenerTest;
+import io.meeds.gamification.listener.GamificationNotificationListenerTest;
 import io.meeds.gamification.listener.GamificationProfileListenerTest;
 import io.meeds.gamification.listener.GamificationRelationshipListenerTest;
 import io.meeds.gamification.listener.GamificationSpaceListenerTest;
 import io.meeds.gamification.listener.ProgramAutoDisableListenerTest;
 import io.meeds.gamification.listener.ProgramSpaceListenerTest;
-import io.meeds.gamification.listener.RulesESListenerTest;
+import io.meeds.gamification.listener.RuleIndexingListenerTest;
+import io.meeds.gamification.notification.plugin.ActionAnnouncedNotificationPluginTest;
+import io.meeds.gamification.notification.plugin.ActionPublishedNotificationPluginTest;
 import io.meeds.gamification.plugin.ProgramTranslationPluginTest;
+import io.meeds.gamification.plugin.RuleActivityTypePluginTest;
 import io.meeds.gamification.plugin.RuleTranslationPluginTest;
 import io.meeds.gamification.rest.TestAnnouncementRest;
 import io.meeds.gamification.rest.TestBadgeRest;
@@ -98,18 +103,23 @@ import io.meeds.gamification.utils.UtilsTest;
     TestRuleRest.class,
     TestAnnouncementRest.class,
     GamificationProfileListenerTest.class,
+    GamificationNotificationListenerTest.class,
     AnnouncementActivityUpdaterTest.class,
     RuleSearchConnectorTest.class,
     RuleIndexingServiceConnectorTest.class,
-    RulesESListenerTest.class,
+    RuleIndexingListenerTest.class,
     GamificationRelationshipListenerTest.class,
     AnalyticsAnnouncementListenerTest.class,
     AnalyticsProgramListenerTest.class,
     AnalyticsRuleListenerTest.class,
     GamificationSpaceListenerTest.class,
+    GamificationActivityListenerTest.class,
     ProgramSpaceListenerTest.class,
     ProgramAutoDisableListenerTest.class,
     ProgramAutoDisableJobTest.class,
+    ActionAnnouncedNotificationPluginTest.class,
+    ActionPublishedNotificationPluginTest.class,
+    RuleActivityTypePluginTest.class,
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {

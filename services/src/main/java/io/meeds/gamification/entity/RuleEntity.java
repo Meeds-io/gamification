@@ -137,6 +137,9 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
   @Column(name = "SCORE")
   protected int             score;
 
+  @Column(name = "ACTIVITY_ID")
+  protected long            activityId;
+
   @Column(name = "EVENT")
   protected String          event;
 

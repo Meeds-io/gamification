@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  This file is part of the Meeds project (https://meeds.io/).
+
+  Copyright (C) 2023 Meeds Association contact@meeds.io
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 3 of the License, or (at your option) any later version.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+-->
+<configuration
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+   xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.social.core.search.SearchService</target-component>
+    <component-plugin>
+      <name>RuleSearchConnector</name>
+      <set-method>addConnector</set-method>
+      <type>org.exoplatform.social.core.search.SearchConnectorPlugin</type>
+      <description>Rule Search connector</description>
+      <init-params>
+        <object-param>
+          <name>RuleSearchConnector</name>
+          <description>Search connector for rules</description>
+          <object type="org.exoplatform.social.core.search.SearchConnector">
+            <field name="name">
+              <string>rules</string>
+            </field>
+            <field name="uri">
+              <string><![CDATA[/portal/rest/gamification/rules?status=ENABLED&programStatus=ENABLED&type=ALL&dateFilter=STARTED&sortBy=title&sortDescending=false&expand=countRealizations,favorites&limit={limit}&term={keyword}]]></string>
+            </field>
+            <field name="enabled">
+              <boolean>${search.rule.enabled:true}</boolean>
+            </field>
+            <field name="favoritesEnabled">
+              <boolean>true</boolean>
+            </field>
+            <field name="tagsEnabled">
+              <boolean>true</boolean>
+            </field>
+            <field name="jsModule">
+              <string>SHARED/ruleSearch</string>
+            </field>
+            <field name="i18nBundle">
+              <string>locale.portlet.Challenges</string>
+            </field>
+            <field name="cssModule">
+              <string>gamification-portlets/EngagementCenterActions</string>
+            </field>
+            <field name="uiComponent">
+              <string>engagement-center-rule-search-card</string>
+            </field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
+
+</configuration>

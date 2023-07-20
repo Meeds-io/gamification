@@ -55,7 +55,6 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import io.meeds.gamification.constant.DateFilterType;
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
-import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.constant.RealizationStatus;
@@ -307,13 +306,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       return Collections.emptyList();
     }
     return rules.stream()
-                .map(rule -> realizationStorage.findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(rule.getTitle(),
-                                                                                                              rule.getProgram()
-                                                                                                                  .getId(),
-                                                                                                              earnerIdentityId,
-                                                                                                              receiverIdentityId,
-                                                                                                              objectId,
-                                                                                                              objectType))
+                .map(rule -> realizationStorage.findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(rule.getId(),
+                                                                                                           earnerIdentityId,
+                                                                                                           receiverIdentityId,
+                                                                                                           objectId,
+                                                                                                           objectType))
                 .filter(Objects::nonNull)
                 .filter(realization -> !RealizationStatus.CANCELED.name().equals(realization.getStatus()))
                 .map(realization -> {

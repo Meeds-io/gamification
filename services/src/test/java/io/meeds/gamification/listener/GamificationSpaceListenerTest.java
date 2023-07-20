@@ -17,16 +17,25 @@
 package io.meeds.gamification.listener;
 
 import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_ADD;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_INVITE_USER;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_JOIN;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_AVATAR;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_BANNER;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_DESCRIPTION;
 import static io.meeds.gamification.listener.GamificationGenericListener.CANCEL_EVENT_NAME;
+import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
-import java.util.Objects;
+import java.util.function.BiConsumer;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,10 +50,9 @@ import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.service.RuleService;
-import io.meeds.gamification.test.AbstractServiceTest;
 
-@RunWith(MockitoJUnitRunner.class)
-public class GamificationSpaceListenerTest extends AbstractServiceTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class GamificationSpaceListenerTest {
 
   @Mock
   private RuleService     ruleService;
@@ -59,11 +67,73 @@ public class GamificationSpaceListenerTest extends AbstractServiceTest {
   private ListenerService listenerService;
 
   @Test
-  public void testDeleteLikeActivity() throws Exception {
+  public void testSpaceJoin() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_JOIN, (listener, event) -> listener.joined(event));
+  }
+
+  @Test
+  public void testSpaceLeave() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_JOIN, (listener, event) -> listener.left(event), true);
+  }
+
+  @Test
+  public void testAddAppLicationSpace() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS, (listener, event) -> listener.applicationAdded(event));
+  }
+
+  @Test
+  public void testRemoveAppLicationSpace() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS, (listener, event) -> listener.applicationRemoved(event));
+  }
+
+  @Test
+  public void testSpaceBannerEdited() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_UPDATE_BANNER, (listener, event) -> listener.spaceBannerEdited(event));
+  }
+
+  @Test
+  public void testSpaceAvatarEdited() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_UPDATE_AVATAR, (listener, event) -> listener.spaceAvatarEdited(event));
+  }
+
+  @Test
+  public void testCreateSpace() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_ADD, (listener, event) -> listener.spaceCreated(event));
+  }
+
+  @Test
+  public void testUpdateSpaceDescription() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_UPDATE_DESCRIPTION, (listener, event) -> listener.spaceDescriptionEdited(event));
+  }
+
+  @Test
+  public void testBecomeSpaceManager() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD, (listener, event) -> listener.grantedLead(event));
+  }
+
+  @Test
+  public void testAddInvitedUser() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_INVITE_USER, (listener, event) -> listener.addInvitedUser(event));
+  }
+
+  @Test
+  public void testRemoveInvitedUser() throws Exception {
+    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_INVITE_USER, (listener, event) -> listener.removeInvitedUser(event), true);
+  }
+
+  private void testEventTrigger(String expectedGamifiedEvent,
+                                BiConsumer<GamificationSpaceListener, SpaceLifeCycleEvent> consumer) throws Exception {
+    testEventTrigger(expectedGamifiedEvent, consumer, false);
+  }
+
+  private void testEventTrigger(String expectedGamifiedEvent,
+                                BiConsumer<GamificationSpaceListener, SpaceLifeCycleEvent> consumer,
+                                boolean canceled) throws Exception {
     GamificationSpaceListener gamificationSpaceListener = new GamificationSpaceListener(ruleService,
                                                                                         identityManager,
                                                                                         spaceService,
                                                                                         listenerService);
+
     Identity userIdentity = mock(Identity.class);
     when(userIdentity.getId()).thenReturn("1");
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(userIdentity);
@@ -76,15 +146,13 @@ public class GamificationSpaceListenerTest extends AbstractServiceTest {
     when(spaceIdentity.getId()).thenReturn("2");
     when(identityManager.getOrCreateSpaceIdentity("space1")).thenReturn(spaceIdentity);
 
-    SpaceLifeCycleEvent spaceLifeCycleEvent = new SpaceLifeCycleEvent(space, "root", SpaceLifeCycleEvent.Type.LEFT);
-    gamificationSpaceListener.left(spaceLifeCycleEvent);
+    SpaceLifeCycleEvent spaceLifeCycleEvent = new SpaceLifeCycleEvent(space, "root", null);
+    consumer.accept(gamificationSpaceListener, spaceLifeCycleEvent);
 
     verify(listenerService,
-           times(2)).broadcast(argThat((String name) -> name.equals(CANCEL_EVENT_NAME)),
-                               argThat((Map<String, String> source) -> source.get(EVENT_NAME)
-                                                                             .equals(GAMIFICATION_SOCIAL_SPACE_JOIN)),
-                               argThat(Objects::isNull));
-
+           times(2)).broadcast(eq(canceled ? CANCEL_EVENT_NAME : GENERIC_EVENT_NAME),
+                               argThat((Map<String, String> source) -> source.get(EVENT_NAME).equals(expectedGamifiedEvent)),
+                               eq(null));
   }
 
 }

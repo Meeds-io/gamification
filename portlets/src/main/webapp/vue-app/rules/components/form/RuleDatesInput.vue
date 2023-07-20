@@ -1,13 +1,13 @@
 <template>
   <div>
-    <v-card-text class="d-flex flex-grow-1 text-left text-subtitle-1 px-0 py-2">
+    <v-card-text class="d-flex flex-grow-1 text-left px-0 pt-4 pb-2">
       {{ $t('rule.form.label.duration.title') }}
     </v-card-text>
 
-    <v-card-text class="pa-0 flex d-flex challengeDates">
+    <v-card-text class="pa-0 flex d-flex ruleDates">
       <select
         v-model="durationFilter"
-        class="d-flex flex-grow-1 width-auto ignore-vuetify-classes"
+        class="d-flex flex-grow-0 flex-shrink-0 width-auto ignore-vuetify-classes my-0"
         @change="resetDates">
         <option value="BEFORE">
           {{ $t('rule.form.label.before') }}
@@ -19,10 +19,10 @@
           {{ $t('rule.form.label.between') }}
         </option>
       </select>
-      <div>
+      <div class="flex-grow-0 flex-shrink-0">
         <v-icon color="primary" class="mt-2 px-4">fas fa-calendar-check</v-icon>
       </div>
-      <div>
+      <div class="flex-grow-1 flex-shrink-1 overflow-hidden">
         <date-picker
           v-if="displayStartDate"
           v-model="startDateValue"
@@ -32,18 +32,20 @@
           :max-value="maximumStartDate"
           :attach="false"
           :allow-overflow="false"
-          class="flex-grow-1 my-auto"
+          class="flex-grow-1 mb-n2"
           required />
-        <date-picker
-          v-if="displayEndDate"
-          v-model="endDateValue"
-          :default-value="false"
-          :placeholder="$t('challenges.label.endDate')"
-          :min-value="minimumEndDate"
-          :attach="false"
-          :allow-overflow="false"
-          class="flex-grow-1 my-auto"
-          required />
+        <template v-if="displayEndDate">
+          <v-spacer v-if="displayStartDate" class="my-2" />
+          <date-picker
+            v-model="endDateValue"
+            :default-value="false"
+            :placeholder="$t('challenges.label.endDate')"
+            :min-value="minimumEndDate"
+            :attach="false"
+            :allow-overflow="false"
+            class="flex-grow-1 mb-n2"
+            required />
+        </template>
       </div>
     </v-card-text>
   </div>

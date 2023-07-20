@@ -10,7 +10,7 @@
         class="connectionProfileLink"
         :href="person.profileLink"
         rel="nofollow">
-        <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="person.fullname" />
+        <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-sanitized-html="person.fullname" />
       </a>
     </v-list-item-content>
   </v-list-item>

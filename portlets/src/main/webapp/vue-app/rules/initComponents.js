@@ -1,12 +1,10 @@
-import RuleFormDrawer from './components/RuleFormDrawer.vue';
 import RuleDatesInput from './components/form/RuleDatesInput.vue';
 import RuleRecurrenceInput from './components/form/RuleRecurrenceInput.vue';
 import RuleLockInput from './components/form/RuleLockInput.vue';
 import ButtonGroupItem from './components/form/ButtonGroupItem.vue';
 import RuleSuggester from './components/form/RuleSuggester.vue';
-import DescriptionEditor from './components/form/DescriptionEditor.vue';
+import RulePublish from './components/form/RulePublish.vue';
 
-import RuleDetailDrawer from './components/RuleDetailDrawer.vue';
 import RuleAchievements from './components/detail/RuleAchievements.vue';
 import RuleAchievementItem from './components/detail/RuleAchievementItem.vue';
 import RuleProgram from './components/detail/RuleProgram.vue';
@@ -23,21 +21,29 @@ import RuleDateStart from './components/detail/RuleDateStart.vue';
 import RuleDateOver from './components/detail/RuleDateOver.vue';
 import RuleInvalidAudience from './components/detail/RuleInvalidAudience.vue';
 import RuleInvalidWhitelist from './components/detail/RuleInvalidWhitelist.vue';
+import RuleDisabled from './components/detail/RuleDisabled.vue';
 import RuleDateEnd from './components/detail/RuleDateEnd.vue';
 import RuleDateInfoChip from './components/detail/RuleDateInfoChip.vue';
+import RuleFavoriteAction from './components/detail/RuleFavoriteAction.vue';
 
-import RuleAchievementsDrawer from './components/RuleAchievementsDrawer.vue';
+import RuleFormDrawer from './components/drawers/RuleFormDrawer.vue';
+import RuleDetailDrawer from './components/drawers/RuleDetailDrawer.vue';
+import RuleAchievementsDrawer from './components/drawers/RuleAchievementsDrawer.vue';
+import ProgramOwnersDrawer from './components/drawers/ProgramOwnersDrawer.vue';
+import RuleDrawers from './components/RuleDrawers.vue';
+import RuleExtensions from './components/RuleExtensions.vue';
+
+import AvatarsList from './components/detail/AvatarsList.vue';
 
 const components = {
-  'engagement-center-rule-form-drawer': RuleFormDrawer,
   'engagement-center-button-group-item': ButtonGroupItem,
+  'engagement-center-avatars-list': AvatarsList,
   'engagement-center-rule-dates-input': RuleDatesInput,
   'engagement-center-rule-recurrence-input': RuleRecurrenceInput,
   'engagement-center-rule-lock-input': RuleLockInput,
-  'engagement-center-description-editor': DescriptionEditor,
+  'engagement-center-rule-publish-editor': RulePublish,
   'rule-suggester': RuleSuggester,
 
-  'engagement-center-rule-detail-drawer': RuleDetailDrawer,
   'engagement-center-rule-header': RuleHeader,
   'engagement-center-rule-menu': RuleMenu,
   'engagement-center-rule-description': RuleDescription,
@@ -52,11 +58,21 @@ const components = {
   'engagement-center-rule-date-over': RuleDateOver,
   'engagement-center-rule-invalid-whitelist': RuleInvalidWhitelist,
   'engagement-center-rule-invalid-audience': RuleInvalidAudience,
+  'engagement-center-rule-disabled': RuleDisabled,
   'engagement-center-rule-points': RulePoints,
   'engagement-center-rule-announcement-form': RuleAnnouncementForm,
   'engagement-center-rule-prerequisites': RulePrerequisites,
   'engagement-center-rule-prerequisite-item': RulePrerequisiteItem,
+
+  'engagement-center-rule-extensions': RuleExtensions,
+
+  'engagement-center-rule-form-drawer': RuleFormDrawer,
+  'engagement-center-rule-detail-drawer': RuleDetailDrawer,
   'engagement-center-rule-achievements-drawer': RuleAchievementsDrawer,
+  'engagement-center-program-owners-drawer': ProgramOwnersDrawer,
+  'engagement-center-rule-drawers': RuleDrawers,
+
+  'rule-favorite-button': RuleFavoriteAction,
 };
 
 for (const key in components) {

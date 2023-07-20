@@ -16,10 +16,12 @@
  */
 import Widget from './components/Widget.vue';
 import WidgetRow from './components/WidgetRow.vue';
+import WidgetEmptyRow from './components/WidgetEmptyRow.vue';
 
 const components = {
   'gamification-overview-widget': Widget,
   'gamification-overview-widget-row': WidgetRow,
+  'gamification-overview-widget-empty-row': WidgetEmptyRow,
 };
 
 for (const key in components) {

@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.analytics.model.StatisticData;
+import org.exoplatform.commons.api.notification.model.ArgumentLiteral;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
@@ -44,127 +45,172 @@ import io.meeds.gamification.model.RuleDTO;
 @SuppressWarnings("deprecation")
 public class Utils {
 
-  public static final String            ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM = "announcementDescription";
+  public static final String                        ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM = "announcementDescription";
 
-  public static final String            ANNOUNCEMENT_ID_TEMPLATE_PARAM          = "announcementId";
+  public static final String                        ANNOUNCEMENT_ID_TEMPLATE_PARAM          = "announcementId";
 
-  public static final String            ANNOUNCEMENT_ACTIVITY_EVENT             = "challenge.announcement.activity";
+  public static final String                        ANNOUNCEMENT_ACTIVITY_EVENT             = "challenge.announcement.activity";
 
-  public static final long              DEFAULT_LAST_MODIFIED                   = System.currentTimeMillis();
+  public static final long                          DEFAULT_LAST_MODIFIED                   = System.currentTimeMillis();
 
-  public static final DateTimeFormatter RFC_3339_FORMATTER                      =
-                                                           DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
-                                                                            .withResolverStyle(ResolverStyle.LENIENT);
+  public static final DateTimeFormatter             RFC_3339_FORMATTER                      =
+                                                                       DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
+                                                                                        .withResolverStyle(ResolverStyle.LENIENT);
 
-  public static final DateTimeFormatter SIMPLE_DATE_FORMATTER                   =
-                                                              DateTimeFormatter.ofPattern("yyyy-MM-dd['T00:00:00']")
-                                                                               .withResolverStyle(ResolverStyle.LENIENT);
+  public static final DateTimeFormatter             SIMPLE_DATE_FORMATTER                   =
+                                                                          DateTimeFormatter.ofPattern("yyyy-MM-dd['T00:00:00']")
+                                                                                           .withResolverStyle(ResolverStyle.LENIENT);
 
-  private static final char[]           ILLEGAL_MESSAGE_CHARACTERS              = {
+  private static final char[]                       ILLEGAL_MESSAGE_CHARACTERS              = {
       ',', ';', '\n'
   };
 
-  public static final String            STATISTICS_CREATE_PROGRAM_OPERATION     = "createProgram";
+  public static final String                        STATISTICS_CREATE_PROGRAM_OPERATION     = "createProgram";
 
-  public static final String            STATISTICS_UPDATE_PROGRAM_OPERATION     = "updateProgram";
+  public static final String                        STATISTICS_UPDATE_PROGRAM_OPERATION     = "updateProgram";
 
-  public static final String            STATISTICS_DELETE_PROGRAM_OPERATION     = "deleteProgram";
+  public static final String                        STATISTICS_DELETE_PROGRAM_OPERATION     = "deleteProgram";
 
-  public static final String            STATISTICS_CREATE_RULE_OPERATION        = "createRule";
+  public static final String                        STATISTICS_CREATE_RULE_OPERATION        = "createRule";
 
-  public static final String            STATISTICS_UPDATE_RULE_OPERATION        = "updateRule";
+  public static final String                        STATISTICS_UPDATE_RULE_OPERATION        = "updateRule";
 
-  public static final String            STATISTICS_DELETE_RULE_OPERATION        = "deleteRule";
+  public static final String                        STATISTICS_DELETE_RULE_OPERATION        = "deleteRule";
 
-  public static final String            STATISTICS_ENABLE_PROGRAM_OPERATION     = "enableProgram";
+  public static final String                        STATISTICS_ENABLE_PROGRAM_OPERATION     = "enableProgram";
 
-  public static final String            STATISTICS_DISABLE_PROGRAM_OPERATION    = "disableProgram";
+  public static final String                        STATISTICS_DISABLE_PROGRAM_OPERATION    = "disableProgram";
 
-  public static final String            STATISTICS_CREATE_ANNOUNCE_OPERATION    = "createAnnouncement";
+  public static final String                        STATISTICS_CREATE_ANNOUNCE_OPERATION    = "createAnnouncement";
 
-  public static final String            STATISTICS_UPDATE_ANNOUNCE_OPERATION    = "updateAnnouncement";
+  public static final String                        STATISTICS_UPDATE_ANNOUNCE_OPERATION    = "updateAnnouncement";
 
-  public static final String            STATISTICS_PROGRAM_ID_PARAM             = "programId";
+  public static final String                        STATISTICS_PROGRAM_ID_PARAM             = "programId";
 
-  public static final String            STATISTICS_PROGRAM_TITLE_PARAM          = "programTitle";
+  public static final String                        STATISTICS_PROGRAM_TITLE_PARAM          = "programTitle";
 
-  public static final String            STATISTICS_PROGRAM_BUDGET_PARAM         = "programBudget";
+  public static final String                        STATISTICS_PROGRAM_BUDGET_PARAM         = "programBudget";
 
-  public static final String            STATISTICS_PROGRAM_TYPE_PARAM           = "programType";
+  public static final String                        STATISTICS_PROGRAM_TYPE_PARAM           = "programType";
 
-  public static final String            STATISTICS_PROGRAM_COVER_FILEID_PARAM   = "programCoverFileId";
+  public static final String                        STATISTICS_PROGRAM_COVER_FILEID_PARAM   = "programCoverFileId";
 
-  public static final String            STATISTICS_PROGRAM_AVATAR_FILEID_PARAM  = "programAvatarFileId";
+  public static final String                        STATISTICS_PROGRAM_AVATAR_FILEID_PARAM  = "programAvatarFileId";
 
-  public static final String            STATISTICS_PROGRAM_OWNERS_PARAM         = "programOwners";
+  public static final String                        STATISTICS_PROGRAM_OWNERS_PARAM         = "programOwners";
 
-  public static final String            STATISTICS_RULE_ID_PARAM                = "ruleId";
+  public static final String                        STATISTICS_RULE_ID_PARAM                = "ruleId";
 
-  public static final String            STATISTICS_RULE_TITLE_PARAM             = "ruleTitle";
+  public static final String                        STATISTICS_RULE_ECTIVITY_ID_PARAM       = "ruleActivityId";
 
-  public static final String            STATISTICS_RULE_DESCRIPTION_PARAM       = "ruleDescription";
+  public static final String                        STATISTICS_RULE_TITLE_PARAM             = "ruleTitle";
 
-  public static final String            STATISTICS_RULE_SCORE_PARAM             = "ruleBudget";
+  public static final String                        STATISTICS_RULE_DESCRIPTION_PARAM       = "ruleDescription";
 
-  public static final String            STATISTICS_RULE_TYPE_PARAM              = "ruleType";
+  public static final String                        STATISTICS_RULE_SCORE_PARAM             = "ruleBudget";
 
-  public static final String            STATISTICS_RULE_COVERFILEID_PARAM       = "ruleCoverFileId";
+  public static final String                        STATISTICS_RULE_TYPE_PARAM              = "ruleType";
 
-  public static final String            STATISTICS_RULE_EVENT_PARAM             = "ruleEvent";
+  public static final String                        STATISTICS_RULE_COVERFILEID_PARAM       = "ruleCoverFileId";
 
-  public static final String            STATISTICS_RULE_SUBMODULE               = "rule";
+  public static final String                        STATISTICS_RULE_EVENT_PARAM             = "ruleEvent";
 
-  public static final String            STATISTICS_ANNOUNCEMENT_SUBMODULE       = "announcement";
+  public static final String                        STATISTICS_RULE_SUBMODULE               = "rule";
 
-  public static final String            STATISTICS_ANNOUNCE_ID_PARAM            = "announcementId";
+  public static final String                        STATISTICS_ANNOUNCEMENT_SUBMODULE       = "announcement";
 
-  public static final String            STATISTICS_ANNOUNCE_ACTIVITY_PARAM      = "announcementActivityId";
+  public static final String                        STATISTICS_ANNOUNCE_ID_PARAM            = "announcementId";
 
-  public static final String            STATISTICS_ANNOUNCE_ASSIGNEE_PARAM      = "announcementAssignee";
+  public static final String                        STATISTICS_ANNOUNCE_ACTIVITY_PARAM      = "announcementActivityId";
 
-  public static final String            STATISTICS_ANNOUNCE_COMMENT_PARAM       = "announcementComment";
+  public static final String                        STATISTICS_ANNOUNCE_ASSIGNEE_PARAM      = "announcementAssignee";
 
-  public static final String            STATISTICS_PROGRAM_SUBMODULE            = "program";
+  public static final String                        STATISTICS_ANNOUNCE_COMMENT_PARAM       = "announcementComment";
 
-  public static final String            STATISTICS_GAMIFICATION_MODULE          = "gamification";
+  public static final String                        STATISTICS_PROGRAM_SUBMODULE            = "program";
 
-  public static final String            POST_CREATE_RULE_EVENT                  = "rule.created";
+  public static final String                        STATISTICS_GAMIFICATION_MODULE          = "gamification";
 
-  public static final String            POST_UPDATE_RULE_EVENT                  = "rule.updated";
+  public static final String                        POST_CREATE_RULE_EVENT                  = "rule.created";
 
-  public static final String            POST_DELETE_RULE_EVENT                  = "rule.deleted";
+  public static final String                        POST_UPDATE_RULE_EVENT                  = "rule.updated";
 
-  public static final String            POST_CREATE_ANNOUNCEMENT_EVENT          = "announcement.created";
+  public static final String                        POST_DELETE_RULE_EVENT                  = "rule.deleted";
 
-  public static final String            POST_UPDATE_ANNOUNCEMENT_EVENT          = "announcement.updated";
+  public static final String                        POST_PUBLISH_RULE_EVENT                 = "rule.published";
 
-  public static final String            ANNOUNCEMENT_ACTIVITY_TYPE              = "challenges-announcement";
+  public static final String                        POST_CREATE_ANNOUNCEMENT_EVENT          = "announcement.created";
 
-  public static final String            SYSTEM_USERNAME                         = "SYSTEM";
+  public static final String                        POST_UPDATE_ANNOUNCEMENT_EVENT          = "announcement.updated";
 
-  public static final String            BASE_URL_PROGRAMS_REST_API              = "/gamification/programs";
+  public static final String                        RULE_ACTIVITY_PARAM_RULE_ID             = "ruleId";
 
-  public static final String            DEFAULT_COVER_REMOTE_ID                 = "default-cover";
+  public static final String                        RULE_ACTIVITY_PARAM_RULE_TITLE          = "ruleTitle";
 
-  public static final String            DEFAULT_AVATAR_REMOTE_ID                = "default-avatar";
+  public static final String                        RULE_ACTIVITY_PARAM_RULE_DESCRIPTION    = "ruleTitle";
 
-  public static final String            ATTACHMENT_COVER_TYPE                   = "cover";
+  public static final String                        RULE_ACTIVITY_PARAM_RULE_SCORE          = "ruleScore";
 
-  public static final String            ATTACHMENT_AVATAR_TYPE                  = "avatar";
+  public static final String                        RULE_ACTIVITY_OBJECT_TYPE               = "rule";
 
-  public static final String            REWARDING_GROUP                         = "/platform/rewarding";
+  public static final String                        RULE_ACTIVITY_TYPE                      = "gamificationRuleActivity";
 
-  public static final String            INTERNAL_USERS_GROUP                    = "/platform/users";
+  /**
+   * @deprecated this was used when the announcement was of type 'Activity'
+   */
+  @Deprecated(forRemoval = true, since = "1.5.0")
+  public static final String                        ANNOUNCEMENT_ACTIVITY_TYPE              = "challenges-announcement";
 
-  public static final String            ADMINS_GROUP                            = "/platform/administrators";
+  public static final String                        ANNOUNCEMENT_COMMENT_TYPE               = "gamificationActionAnnouncement";
 
-  public static final String            BLACK_LIST_GROUP                        = "/leaderboard-blacklist-users";
+  public static final String                        SYSTEM_USERNAME                         = "SYSTEM";
 
-  private static final String           IDENTITIES_REST_PATH                    = "/v1/social/identities";                // NOSONAR
+  public static final String                        BASE_URL_PROGRAMS_REST_API              = "/gamification/programs";
 
-  private static final String           IDENTITIES_EXPAND                       = "all";
+  public static final String                        DEFAULT_COVER_REMOTE_ID                 = "default-cover";
 
-  private static final Log              LOG                                     = ExoLogger.getLogger(Utils.class);
+  public static final String                        DEFAULT_AVATAR_REMOTE_ID                = "default-avatar";
+
+  public static final String                        ATTACHMENT_COVER_TYPE                   = "cover";
+
+  public static final String                        ATTACHMENT_AVATAR_TYPE                  = "avatar";
+
+  public static final String                        REWARDING_GROUP                         = "/platform/rewarding";
+
+  public static final String                        INTERNAL_USERS_GROUP                    = "/platform/users";
+
+  public static final String                        ADMINS_GROUP                            = "/platform/administrators";
+
+  public static final String                        BLACK_LIST_GROUP                        = "/leaderboard-blacklist-users";
+
+  public static final String                        IDENTITIES_REST_PATH                    = "/v1/social/identities";                // NOSONAR
+
+  public static final String                        IDENTITIES_EXPAND                       = "all";
+
+  public static final String                        RULE_PUBLISHED_NOTIFICATION_ID          =
+                                                                                   "GamificationActionPublishedNotification";
+
+  public static final String                        RULE_ANNOUNCED_NOTIFICATION_ID          =
+                                                                                   "GamificationActionAnnouncedNotification";
+
+  public static final String                        RULE_ID_NOTIFICATION_PARAM              = "RULE_ID";
+
+  public static final String                        RULE_PUBLISHER_NOTIFICATION_PARAM       = "PUBLISHER";
+
+  public static final String                        ANNOUNCEMENT_ID_NOTIFICATION_PARAM      = "ANNOUNCEMENT_ID";
+
+  public static final ArgumentLiteral<RuleDTO>      RULE_NOTIFICATION_PARAMETER             =
+                                                                                new ArgumentLiteral<>(RuleDTO.class, "rule");
+
+  public static final ArgumentLiteral<String>       RULE_PUBLISHER_NOTIFICATION_PARAMETER   =
+                                                                                          new ArgumentLiteral<>(String.class,
+                                                                                                                "publisher");
+
+  public static final ArgumentLiteral<Announcement> ANNOUNCEMENT_NOTIFICATION_PARAMETER     =
+                                                                                        new ArgumentLiteral<>(Announcement.class,
+                                                                                                              "announcement");
+
+  private static final Log                          LOG                                     = ExoLogger.getLogger(Utils.class);
 
   private Utils() { // NOSONAR
   }
@@ -174,16 +220,24 @@ public class Utils {
     return identityManager.getOrCreateIdentity(type, name);
   }
 
-  public static String getUserRemoteId(String identityId) {
+  public static Identity getUserIdentity(String username) {
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    Identity identity = identityManager.getIdentity(identityId);
+    return identityManager.getOrCreateUserIdentity(username);
+  }
+
+  public static String getUserRemoteId(String identityId) {
+    Identity identity = getIdentityById(identityId);
     return identity != null ? identity.getRemoteId() : null;
   }
 
-  public static String getUserFullName(String id) {
-    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    Identity identity = identityManager.getIdentity(id);
+  public static String getUserFullName(String identityId) {
+    Identity identity = getIdentityById(identityId);
     return identity != null && identity.getProfile() != null ? identity.getProfile().getFullName() : null;
+  }
+
+  public static Identity getIdentityById(String identityId) {
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    return identityManager.getIdentity(identityId);
   }
 
   public static IdentityEntity getIdentityEntity(IdentityManager identityManager, long identityId) {
@@ -196,7 +250,11 @@ public class Utils {
 
   public static final long getCurrentUserIdentityId() {
     String username = getCurrentUser();
-    return getUserIdentityId(username);
+    if (StringUtils.isBlank(username)) {
+      return 0;
+    } else {
+      return getUserIdentityId(username);
+    }
   }
 
   public static long getUserIdentityId(String username) {
@@ -250,12 +308,7 @@ public class Utils {
       return null;
     }
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    Space space = spaceService.getSpaceById(spaceId);
-    if (space == null) {
-      LOG.warn("space with id {} do not exist", spaceId);
-      return null;
-    }
-    return space;
+    return spaceService.getSpaceById(spaceId);
   }
 
   public static String getSpaceFromObjectID(String objectId) {
@@ -415,6 +468,7 @@ public class Utils {
       return;
     }
     statisticData.addParameter(STATISTICS_RULE_ID_PARAM, rule.getId());
+    statisticData.addParameter(STATISTICS_RULE_ECTIVITY_ID_PARAM, rule.getActivityId());
     statisticData.addParameter(STATISTICS_RULE_TITLE_PARAM, rule.getTitle());
     statisticData.addParameter(STATISTICS_RULE_DESCRIPTION_PARAM, rule.getDescription());
     statisticData.addParameter(STATISTICS_RULE_EVENT_PARAM, rule.getEvent());

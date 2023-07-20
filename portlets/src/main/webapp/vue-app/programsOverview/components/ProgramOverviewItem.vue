@@ -14,32 +14,42 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <span>
-    <v-list
-      class="pb-0 my-n1"
-      subheader
-      two-line>
-      <v-list-item
-        two-line>
-        <v-list-item-avatar
-          :style="programStyle"
-          height="48"
-          width="48"
-          class="border-color rounded mx-2"
-          tile>
-          <v-img :src="program.avatarUrl" />
-        </v-list-item-avatar>
-        <v-list-item-content>
+  <gamification-overview-widget-row
+    clickable
+    @open="$root.$emit('program-detail-drawer', program)">
+    <template #icon>
+      <v-list-item-avatar
+        :style="programStyle"
+        height="48"
+        width="48"
+        class="border-color rounded my-auto me-auto ms-4"
+        tile>
+        <v-img :src="program.avatarUrl" />
+      </v-list-item-avatar>
+    </template>
+    <template #content>
+      <v-list-item class="ps-0">
+        <v-list-item-content class="py-0 my-auto">
           <v-list-item-title>
             {{ program.title }}
           </v-list-item-title>
-          <v-list-item-subtitle> 
-            <span class="text-light-color" v-sanitized-html="$t('programs.budget', {0: `<span>${program.rulesTotalScore} ${$t('programs.details.label.points')}</span>`})"></span>
+          <v-list-item-subtitle class="d-flex flex-nowrap align-center">
+            {{ program.activeRulesCount }} {{ $t('gamification.overview.label.actionsAvailable') }}
           </v-list-item-subtitle>
         </v-list-item-content>
+        <v-list-item-action>
+          <v-list-item-action-text>
+            <v-chip
+              color="#F57C00"
+              class="content-box-sizing white--text"
+              small>
+              <span class="subtitle-2">+ {{ programTotalScore }}</span>
+            </v-chip>
+          </v-list-item-action-text>
+        </v-list-item-action>
       </v-list-item>
-    </v-list>
-  </span>
+    </template>
+  </gamification-overview-widget-row>
 </template>
 <script>
 export default {
@@ -52,6 +62,16 @@ export default {
   computed: {
     programStyle() {
       return this.program?.color && `border: 1px solid ${this.program.color} !important;` || '';
+    },
+    programURL() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`;
+    },
+    programTotalScore() {
+      return new Intl.NumberFormat(eXo.env.portal.language, {
+        style: 'decimal',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(this.program.rulesTotalScore);
     },
   },
 };

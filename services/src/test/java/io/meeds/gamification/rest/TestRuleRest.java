@@ -1,7 +1,8 @@
 /**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2022 Meeds Association
- * contact@meeds.io
+ * 
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -14,11 +15,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 package io.meeds.gamification.rest;
 
 import java.io.StringWriter;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -29,8 +28,6 @@ import org.junit.Test;
 
 import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.services.security.Identity;
-import org.exoplatform.services.security.MembershipEntry;
 
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.entity.ProgramEntity;
@@ -43,32 +40,34 @@ import io.meeds.gamification.rest.model.RuleRestEntity;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 
-public class TestRuleRest extends AbstractServiceTest {
+@SuppressWarnings("unchecked")
+public class TestRuleRest extends AbstractServiceTest { // NOSONAR
+
+  private static final String GAMIFICATION_RULES_REST_PATH = "/gamification/rules/";// NOSONAR
+
   protected Class<?> getComponentClass() {
     return RuleRest.class;
   }
 
   private static final long   MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                                                            // NOSONAR
 
-  private static final String startDate       = Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 3 * MILLIS_IN_A_DAY));
+  private static final String START_DATE      = Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 3 * MILLIS_IN_A_DAY));
 
-  private static final String endDate         = Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 2 * MILLIS_IN_A_DAY));
+  private static final String END_DATE        = Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 2 * MILLIS_IN_A_DAY));
 
   @Override
   @Before
   public void setUp() throws Exception {
     super.setUp();
-    Identity userAclIdentity = new Identity("user", Collections.singleton(new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
-    Identity adminAclIdentity = new Identity("root1", Collections.singleton(new MembershipEntry(Utils.REWARDING_GROUP)));
-    identityRegistry.register(userAclIdentity);
-    identityRegistry.register(adminAclIdentity);
+    registerAdministratorUser("root1");
+    registerInternalUser("user");
+
     registry(getComponentClass());
     ConversationState.setCurrent(null);
   }
 
   @Test
-  public void testCreateChallenge() throws Exception {
-    // add challenge with root1
+  public void testCreateRule() throws Exception {
     startSessionAs("root10");
 
     ProgramDTO domain = newProgram();
@@ -76,13 +75,13 @@ public class TestRuleRest extends AbstractServiceTest {
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
               .key("title")
-              .value("challenge")
+              .value("Rule")
               .key("description")
-              .value("challenge description")
+              .value("Rule description")
               .key("startDate")
-              .value(startDate)
+              .value(START_DATE)
               .key("endDate")
-              .value(endDate)
+              .value(END_DATE)
               .key("points")
               .value("10")
               .key("program")
@@ -105,23 +104,26 @@ public class TestRuleRest extends AbstractServiceTest {
   }
 
   @Test
-  public void testUpdateChallenge() throws Exception {
-    // add challenge with root1
+  public void testUpdateRule() throws Exception {
     startSessionAs("root1");
     ProgramDTO domain = newProgram();
     StringWriter writer = new StringWriter();
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
               .key("title")
-              .value("challenge")
+              .value("Rule")
               .key("description")
-              .value("challenge description")
+              .value("Rule description")
               .key("startDate")
-              .value(startDate)
+              .value(START_DATE)
               .key("endDate")
-              .value(endDate)
+              .value(END_DATE)
               .key("points")
               .value("10")
+              .key("enabled")
+              .value(true)
+              .key("publish")
+              .value(false)
               .key("program")
               .object()
               .key("id")
@@ -135,6 +137,7 @@ public class TestRuleRest extends AbstractServiceTest {
     assertEquals(200, response.getStatus());
     RuleRestEntity rule = (RuleRestEntity) response.getEntity();
     assertNotNull(rule);
+    assertFalse(rule.isPublished());
     startSessionAs("root2");
     writer = new StringWriter();
     jsonWriter = new JSONWriter(writer);
@@ -142,13 +145,13 @@ public class TestRuleRest extends AbstractServiceTest {
               .key("id")
               .value("0")
               .key("title")
-              .value("challenge updated")
+              .value("Rule updated")
               .key("description")
-              .value("challenge description updated")
+              .value("Rule description updated")
               .key("startDate")
-              .value(startDate)
+              .value(START_DATE)
               .key("endDate")
-              .value(endDate)
+              .value(END_DATE)
               .key("points")
               .value("100")
               .key("program")
@@ -163,7 +166,6 @@ public class TestRuleRest extends AbstractServiceTest {
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    // challenge id 0
     response = getResponse("PUT", getURLResource("rules"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(404, response.getStatus());
@@ -174,13 +176,13 @@ public class TestRuleRest extends AbstractServiceTest {
               .key("id")
               .value(rule.getId())
               .key("title")
-              .value("challenge updated")
+              .value("Rule updated")
               .key("description")
-              .value("challenge description updated")
+              .value("Rule description updated")
               .key("startDate")
-              .value(startDate)
+              .value(START_DATE)
               .key("endDate")
-              .value(endDate)
+              .value(END_DATE)
               .key("points")
               .value("100")
               .key("program")
@@ -201,15 +203,19 @@ public class TestRuleRest extends AbstractServiceTest {
               .key("id")
               .value(rule.getId())
               .key("title")
-              .value("challenge updated")
+              .value("Rule updated")
               .key("description")
-              .value("challenge description updated")
+              .value("Rule description updated")
               .key("startDate")
-              .value(startDate)
+              .value(START_DATE)
               .key("endDate")
-              .value(endDate)
+              .value(END_DATE)
               .key("points")
               .value("100")
+              .key("enabled")
+              .value(true)
+              .key("publish")
+              .value(true)
               .key("program")
               .object()
               .key("id")
@@ -227,6 +233,9 @@ public class TestRuleRest extends AbstractServiceTest {
     response = getResponse("PUT", getURLResource("rules"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(200, response.getStatus());
+    rule = (RuleRestEntity) response.getEntity();
+    assertNotNull(rule);
+    assertTrue(rule.isPublished());
 
     writer = new StringWriter();
     jsonWriter = new JSONWriter(writer);
@@ -234,13 +243,13 @@ public class TestRuleRest extends AbstractServiceTest {
               .key("id")
               .value("10")
               .key("title")
-              .value("challenge updated")
+              .value("Rule updated")
               .key("description")
-              .value("challenge description updated")
+              .value("Rule description updated")
               .key("startDate")
-              .value(startDate)
+              .value(START_DATE)
               .key("endDate")
-              .value(endDate)
+              .value(END_DATE)
               .key("points")
               .value("100")
               .key("program")
@@ -250,28 +259,26 @@ public class TestRuleRest extends AbstractServiceTest {
               .endObject()
               .endObject();
 
-    // challenge not exists
     response = getResponse("PUT", getURLResource("rules"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(404, response.getStatus());
   }
 
   @Test
-  public void testGetChallengeById() throws Exception {
-    // add challenge with root1
+  public void testGetRuleById() throws Exception {
     startSessionAs("root1");
     ProgramDTO domain = newProgram();
     StringWriter writer = new StringWriter();
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
               .key("title")
-              .value("challenge")
+              .value("Rule")
               .key("description")
-              .value("challenge description")
+              .value("Rule description")
               .key("startDate")
-              .value(startDate)
+              .value(START_DATE)
               .key("endDate")
-              .value(endDate)
+              .value(END_DATE)
               .key("points")
               .value("10")
               .key("program")
@@ -288,12 +295,10 @@ public class TestRuleRest extends AbstractServiceTest {
     assertNotNull(ruleRestEntity);
     startSessionAs("root2");
 
-    // challenge id 0
     response = getResponse("GET", getURLResource("rules/0"), null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    // challenge id 5 not exist
     response = getResponse("GET", getURLResource("rules/555"), null);
     assertNotNull(response);
     assertEquals(404, response.getStatus());
@@ -306,26 +311,70 @@ public class TestRuleRest extends AbstractServiceTest {
     RuleRestEntity savedRuleRestEntity = (RuleRestEntity) response.getEntity();
     assertNotNull(savedRuleRestEntity);
     assertEquals(ruleRestEntity.getId(), savedRuleRestEntity.getId());
+    assertFalse(savedRuleRestEntity.isPublished());
   }
 
-  @SuppressWarnings("unchecked")
+  @Test
+  public void testGetRules() throws Exception {
+    ProgramEntity domainEntity = newDomain();
+
+    newRule("rule", domainEntity.getId());
+    newRule("rule1", domainEntity.getId());
+
+    startSessionAs("root0");
+    ContainerResponse response = getResponse("GET", getURLResource("rules?returnSize=true"), null);
+    assertEquals(200, response.getStatus());
+
+    response = getResponse("GET", getURLResource("rules?returnSize=true&limit=-1"), null);
+    assertEquals(400, response.getStatus());
+
+    response = getResponse("GET", getURLResource("rules?returnSize=true&offset=-1"), null);
+    assertEquals(400, response.getStatus());
+
+    response = getResponse("GET", getURLResource("rules?returnSize=true&programId=" + domainEntity.getId()), null);
+    assertEquals(200, response.getStatus());
+    RuleList rules = (RuleList) response.getEntity();
+    assertNotNull(rules);
+    assertEquals(0, rules.getSize());
+
+    startSessionAsAdministrator("root1");
+    response = getResponse("GET", getURLResource("rules?returnSize=true&programId=" + domainEntity.getId()), null);
+    assertEquals(200, response.getStatus());
+    rules = (RuleList) response.getEntity();
+    assertNotNull(rules);
+    assertEquals(2, rules.getSize());
+
+    response = getResponse("GET", getURLResource("rules?returnSize=true&spaceId=5555"), null);
+    assertEquals(200, response.getStatus());
+    rules = (RuleList) response.getEntity();
+    assertNotNull(rules);
+    assertEquals(0, rules.getSize());
+
+    response = getResponse("GET",
+                           getURLResource("rules?returnSize=true&spaceId=" + domainEntity.getAudienceId() + "&spaceId=5555"),
+                           null);
+    assertEquals(200, response.getStatus());
+    rules = (RuleList) response.getEntity();
+    assertNotNull(rules);
+    assertEquals(2, rules.getSize());
+  }
+
   @Test
   public void testGetRulesByUser() throws Exception {
-    // add challenge with root1
     startSessionAs("root1");
     ProgramDTO domain = newProgram();
-    String restPath = "/gamification/rules/";
+    String restPath = GAMIFICATION_RULES_REST_PATH;
     StringWriter writer = new StringWriter();
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
               .key("title")
-              .value("challenge")
+              .value("Rule")
               .key("description")
-              .value("challenge description")
+              .value("Rule description")
               .key("startDate")
-              .value(startDate)
+              .value(START_DATE)
               .key("endDate")
-              .value(endDate)
+              .value(END_DATE)
               .key("points")
               .value("10")
               .key("enabled")
@@ -350,23 +399,23 @@ public class TestRuleRest extends AbstractServiceTest {
     assertNotNull(rule);
     startSessionAs("root2");
 
-    restPath = "/gamification/rules?offset=0&limit=10";
+    restPath = GAMIFICATION_RULES_REST_PATH + "?offset=0&limit=10";
     response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    RuleList savedChallenges = (RuleList) response.getEntity();
-    assertEquals(0, savedChallenges.getSize());
+    RuleList savedRules = (RuleList) response.getEntity();
+    assertEquals(0, savedRules.getSize());
 
     startSessionAs("root1");
 
-    restPath = "/gamification/rules?offset=0&limit=10&programId=" + domain.getId() + "&announcements=4";
+    restPath = GAMIFICATION_RULES_REST_PATH + "?offset=0&limit=10&programId=" + domain.getId() + "&announcements=4";
     response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    savedChallenges = (RuleList) response.getEntity();
-    assertEquals(2, savedChallenges.getRules().size());
+    savedRules = (RuleList) response.getEntity();
+    assertEquals(2, savedRules.getRules().size());
 
-    restPath = "/gamification/rules?offset=0&limit=10&programId=0&announcements=4&groupByProgram=true";
+    restPath = GAMIFICATION_RULES_REST_PATH + "?offset=0&limit=10&programId=0&announcements=4&groupByProgram=true";
     response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
@@ -374,32 +423,31 @@ public class TestRuleRest extends AbstractServiceTest {
     assertEquals(1, domainWithRules.size());
     assertEquals(2, domainWithRules.get(0).getRules().size());
 
-    restPath = "/gamification/rules?offset=0&limit=1&returnSize=true";
+    restPath = GAMIFICATION_RULES_REST_PATH + "?offset=0&limit=1&returnSize=true";
     response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    savedChallenges = (RuleList) response.getEntity();
-    assertEquals(2, savedChallenges.getSize());
-    assertEquals(1, savedChallenges.getRules().size());
+    savedRules = (RuleList) response.getEntity();
+    assertEquals(2, savedRules.getSize());
+    assertEquals(1, savedRules.getRules().size());
   }
 
   @Test
-  public void testDeleteChallenge() throws Exception {
-    // add challenge with root1
+  public void testCreateAndDeleteRule() throws Exception {
     startSessionAs("root1");
     ProgramDTO domain = newProgram();
-    String restPath = "/gamification/rules/";
+    String restPath = GAMIFICATION_RULES_REST_PATH;
     StringWriter writer = new StringWriter();
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
               .key("title")
-              .value("challenge")
+              .value("Rule")
               .key("description")
-              .value("challenge description")
+              .value("Rule description")
               .key("startDate")
-              .value(startDate)
+              .value(START_DATE)
               .key("endDate")
-              .value(endDate)
+              .value(END_DATE)
               .key("points")
               .value("10")
               .key("program")
@@ -417,20 +465,20 @@ public class TestRuleRest extends AbstractServiceTest {
     assertNotNull(rule);
     startSessionAs("root2");
 
-    // challenge id 0
-    restPath = "/gamification/rules/0";
+    // Rule id 0
+    restPath = GAMIFICATION_RULES_REST_PATH + "0";
     response = getResponse("DELETE", restPath, null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    // challenge id not exist
-    restPath = "/gamification/rules/1100";
+    // Rule id not exist
+    restPath = GAMIFICATION_RULES_REST_PATH + "1100";
     response = getResponse("DELETE", restPath, null);
     assertNotNull(response);
     assertEquals(404, response.getStatus());
 
     // unauthorized user
-    restPath = "/gamification/rules/" + rule.getId();
+    restPath = GAMIFICATION_RULES_REST_PATH + rule.getId();
     response = getResponse("DELETE", restPath, null);
     assertNotNull(response);
     assertEquals(401, response.getStatus());
@@ -442,29 +490,7 @@ public class TestRuleRest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetAllRules() throws Exception {
-
-    ProgramEntity domainEntity = newDomain();
-
-    newRule("rule", domainEntity.getTitle(), true, EntityType.AUTOMATIC);
-    newRule("rule1", domainEntity.getTitle(), true, EntityType.AUTOMATIC);
-
-    startSessionAs("root0");
-    ContainerResponse response = getResponse("GET", getURLResource("rules?returnSize=true"), null);
-    assertEquals(200, response.getStatus());
-
-    response = getResponse("GET", getURLResource("rules?returnSize=true&limit=-1"), null);
-    assertEquals(400, response.getStatus());
-
-    response = getResponse("GET", getURLResource("rules?returnSize=true&offset=-1"), null);
-    assertEquals(400, response.getStatus());
-
-    response = getResponse("GET", getURLResource("rules?returnSize=true&programId=" + domainEntity.getId()), null);
-    assertEquals(200, response.getStatus());
-  }
-
-  @Test
-  public void testGetRule() throws Exception {
+  public void testGetAutomaticRuleById() throws Exception {
     ProgramEntity domainEntity = newDomain();
 
     RuleEntity ruleEntity = newRule("rule", domainEntity.getTitle(), true, EntityType.AUTOMATIC);
@@ -538,7 +564,7 @@ public class TestRuleRest extends AbstractServiceTest {
   }
 
   @Test
-  public void testUpdateRule() throws Exception {
+  public void testUpdateAutomaticRule() throws Exception {
     RuleDTO ruleDTO = newRuleDTO();
 
     ProgramDTO program = newProgram();

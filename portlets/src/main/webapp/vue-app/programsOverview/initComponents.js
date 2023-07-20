@@ -16,10 +16,12 @@
  */
 import ProgramsOverview from './components/ProgramsOverview.vue';
 import ProgramOverviewItem from './components/ProgramOverviewItem.vue';
+import ProgramDetailDrawer from './components/ProgramDetailDrawer.vue';
 
 const components = {
   'gamification-overview-programs': ProgramsOverview,
   'gamification-overview-program-item': ProgramOverviewItem,
+  'gamification-program-detail-drawer': ProgramDetailDrawer,
 };
 
 for (const key in components) {
