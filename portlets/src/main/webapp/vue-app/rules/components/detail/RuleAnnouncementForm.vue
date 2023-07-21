@@ -151,6 +151,7 @@ export default {
       this.templateParams = {};
     },
     displayForm() {
+      this.clear();
       this.editor = this.canAnnounce;
     },
     destroyEditor() {
@@ -162,12 +163,13 @@ export default {
       if (!this.validComment) {
         return;
       }
+      console.warn('this.templateParams', this.templateParams);
       const announcement = {
         assignee: this.userId,
         comment: this.comment,
         challengeId: this.rule.id,
         challengeTitle: this.rule.title,
-        templateParams: this.templateParams,
+        templateParams: Object.assign({}, this.templateParams),
       };
       this.sending = true;
       this.$announcementService.createAnnouncement(announcement)

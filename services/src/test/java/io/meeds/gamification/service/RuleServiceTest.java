@@ -22,6 +22,7 @@ import static io.meeds.gamification.utils.Utils.POST_PUBLISH_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_OBJECT_TYPE;
 import static org.junit.Assert.*;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -252,9 +253,12 @@ public class RuleServiceTest extends AbstractServiceTest {
     String message = "Text Message";
     String description = "new_description";
 
+    String paramName = "testParam";
+    String paramValue = "testValue";
     RuleDTO rule = new RulePublication(createdRule,
                                        0,
                                        message,
+                                       Collections.singletonMap(paramName, paramValue),
                                        true);
     rule.setDescription(description);
     ruleService.updateRule(rule, ADMIN_USER);
@@ -267,6 +271,8 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertFalse(activity.isHidden());
     assertEquals(String.valueOf(activityId), activity.getId());
     assertEquals(message, activity.getTitle());
+    assertNotNull(activity.getTemplateParams());
+    assertEquals(paramValue, activity.getTemplateParams().get(paramName));
     assertNotEquals(createdRule.getProgram().getLastModifiedDate(), updatedRule.getProgram().getLastModifiedDate());
 
     ruleService.deleteRuleById(rule.getId(), ADMIN_USER);

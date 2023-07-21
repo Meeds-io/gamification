@@ -18,7 +18,8 @@
 package io.meeds.gamification.service.impl;
 
 import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
-import static io.meeds.gamification.utils.Utils.*;
+import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
+import static io.meeds.gamification.utils.Utils.POST_PUBLISH_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_OBJECT_TYPE;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_DESCRIPTION;
@@ -34,6 +35,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -139,7 +142,7 @@ public class RuleServiceImpl implements RuleService {
       throw new IllegalAccessException("Rule isn't accessible");
     }
     if (rule.getProgram() != null) {
-      computeActivity(rule, 0, null, false, null, true);
+      computeActivity(rule, 0, null, false, null, null, true);
     }
     return rule;
   }
@@ -186,7 +189,7 @@ public class RuleServiceImpl implements RuleService {
     return ruleIds.stream().map(id -> {
       RuleDTO rule = findRuleById(id);
       if (rule != null && rule.getProgram() != null) {
-        computeActivity(rule, 0, null, false, null, true);
+        computeActivity(rule, 0, null, false, null, null, true);
       }
       return rule;
     }).toList();
@@ -423,6 +426,7 @@ public class RuleServiceImpl implements RuleService {
                       username,
                       rulePublication.isPublish(),
                       rulePublication.getMessage(),
+                      rulePublication.getTemplateParams(),
                       false);
     }
     rule = ruleStorage.saveRule(rule);
@@ -438,6 +442,7 @@ public class RuleServiceImpl implements RuleService {
                                   username,
                                   rulePublication.isPublish(),
                                   rulePublication.getMessage(),
+                                  rulePublication.getTemplateParams(),
                                   true);
     }
     if (savedRule != null) {
@@ -466,6 +471,7 @@ public class RuleServiceImpl implements RuleService {
                                   String username,
                                   boolean publish,
                                   String message,
+                                  Map<String, String> templateParams,
                                   boolean saveRule) {
     if (rule == null
         || !rule.isEnabled()
@@ -488,7 +494,7 @@ public class RuleServiceImpl implements RuleService {
         return rule;
       }
       activity = new ExoSocialActivityImpl();
-      setActivityParams(activity, rule, publisherIdentity, message, publish);
+      setActivityParams(activity, rule, publisherIdentity, message, templateParams, publish);
       createActivity(activity, space, publisherIdentity);
       rule.setActivityId(Long.parseLong(activity.getId()));
       if (saveRule) {
@@ -505,7 +511,7 @@ public class RuleServiceImpl implements RuleService {
         return rule;
       }
       boolean newlyPublished = activity.isHidden();
-      setActivityParams(activity, rule, publisherIdentity, message, publish);
+      setActivityParams(activity, rule, publisherIdentity, message, templateParams, publish);
       activityManager.updateActivity(activity);
       if (newlyPublished) {
         Utils.broadcastEvent(listenerService, POST_PUBLISH_RULE_EVENT, rule, username);
@@ -525,13 +531,14 @@ public class RuleServiceImpl implements RuleService {
                                  RuleDTO rule,
                                  Identity publisherIdentity,
                                  String message,
+                                 Map<String, String> templateParams,
                                  boolean publish) {
     activity.setUserId(publisherIdentity.getId());
     activity.setPosterId(publisherIdentity.getId());
     activity.setTitle(!publish || StringUtils.isBlank(message) ? "" : message);
     activity.setBody(!publish || StringUtils.isBlank(message) ? "" : message);
     activity.setType(RULE_ACTIVITY_TYPE);
-    activity.setTemplateParams(new HashMap<>());
+    buildActivityParams(activity, templateParams);
     activity.setMetadataObjectType(RULE_ACTIVITY_OBJECT_TYPE);
     activity.setMetadataObjectId(String.valueOf(rule.getId()));
     activity.getTemplateParams().put(RULE_ACTIVITY_PARAM_RULE_ID, String.valueOf(rule.getId()));
@@ -595,6 +602,22 @@ public class RuleServiceImpl implements RuleService {
       identity = identityManager.getIdentity(identityId); // NOSONAR
     }
     return identity;
+  }
+
+  private void buildActivityParams(ExoSocialActivity activity, Map<String, String> templateParams) {
+    Map<String, String> currentTemplateParams = activity.getTemplateParams() == null ? new HashMap<>()
+            : new HashMap<>(activity.getTemplateParams());
+    if (templateParams != null) {
+      currentTemplateParams.putAll(templateParams);
+    }
+    Iterator<Entry<String, String>> entries = currentTemplateParams.entrySet().iterator();
+    while (entries.hasNext()) {
+      Map.Entry<String, String> entry = entries.next();
+      if (entry != null && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-"))) {
+        entry.setValue("");
+      }
+    }
+    activity.setTemplateParams(currentTemplateParams);
   }
 
 }
