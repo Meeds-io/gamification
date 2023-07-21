@@ -23,44 +23,12 @@ const gamificationRuleActivityOptions = Object.assign(defaultActivityOptions, {
   canHide: () => true,
   canUnhide: activity => activity?.rule?.activityId === Number(activity.id),
   init: initRuleActivity,
-  getBodyToEdit: activity => {
-    let templateParams = activity.templateParams;
-    if (templateParams.default_title && templateParams.default_title.includes('<oembed>') && templateParams.link){
-      const url = window.encodeURIComponent(templateParams.link);
-      templateParams.default_title = templateParams.default_title.replace(`<oembed>${url}</oembed>`, `<oembed>${templateParams.link}</oembed>`);
-      activity.title = activity.title.replace(`<oembed>${url}</oembed>`, `<oembed>${templateParams.link}</oembed>`);
-    }
-    templateParams = encodeURIComponent(activity.templateParams);
-    return Vue.prototype.$utils.trim(window.decodeURIComponent(templateParams
-      && templateParams.default_title
-      && templateParams.default_title
-      || (activity?.title?.replaceAll('%', '%25'))
-      || (!activity?.originalActivity && activity?.body?.replaceAll('%', '%25'))
-      || ''));
-  },
 });
 
 const gamificationAnnouncementCommentOptions = Object.assign(defaultActivityOptions, {
   canDelete: (activity, comment) => comment?.canDelete === 'true' && comment?.identity?.remoteId !== eXo.env.portal.userName,
   getTitle: () => '',
-  getCommentExtendedComponent: () => ({
-    component: Vue.options.components['activity-comment-announcement'],
-  }),
-  getBodyToEdit: activity => {
-    let templateParams = activity.templateParams;
-    if (templateParams.default_title && templateParams.default_title.includes('<oembed>') && templateParams.link){
-      const url = window.encodeURIComponent(templateParams.link);
-      templateParams.default_title = templateParams.default_title.replace(`<oembed>${url}</oembed>`, `<oembed>${templateParams.link}</oembed>`);
-      activity.title = activity.title.replace(`<oembed>${url}</oembed>`, `<oembed>${templateParams.link}</oembed>`);
-    }
-    templateParams = encodeURIComponent(activity.templateParams);
-    return Vue.prototype.$utils.trim(window.decodeURIComponent(templateParams
-      && templateParams.default_title
-      && templateParams.default_title
-      || (activity?.title?.replaceAll('%', '%25'))
-      || (!activity?.originalActivity && activity?.body?.replaceAll('%', '%25'))
-      || ''));
-  },
+  getBody: () => '',
 });
 
 extensionRegistry.registerExtension('activity', 'type', {
@@ -77,6 +45,13 @@ extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensi
   id: 'rule-activity',
   isEnabled: params => params?.activity?.type === 'gamificationRuleActivity' && params?.activity?.templateParams?.ruleId,
   vueComponent: Vue.options.components['rule-activity'],
+  rank: 3,
+});
+
+extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
+  id: 'rule-announcement',
+  isEnabled: params => params?.activity?.type === 'gamificationActionAnnouncement',
+  vueComponent: Vue.options.components['activity-comment-announcement'],
   rank: 3,
 });
 

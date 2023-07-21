@@ -502,9 +502,11 @@ export default {
             score: 20,
             enabled: true,
             publish: true,
-            templateParams: Object.assign({}, this.defaultTemplateParams),
             area: this.programTitle
           };
+          if (!this.rule.templateParams) {
+            this.rule.templateParams = Object.assign({}, this.defaultTemplateParams);
+          }
 
           this.program = this.rule?.program || program;
           this.ruleTitle = this.rule?.title || '';
