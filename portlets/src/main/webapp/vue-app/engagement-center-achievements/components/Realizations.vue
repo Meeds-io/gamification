@@ -87,7 +87,7 @@
         disable-pagination
         hide-default-footer
         must-sort
-        class="mx-3 mt-2 realizationsTable">
+        class="realizationsTable px-3 pt-2">
         <template slot="item" slot-scope="props">
           <engagement-center-realization-item
             :realization="props.item"
