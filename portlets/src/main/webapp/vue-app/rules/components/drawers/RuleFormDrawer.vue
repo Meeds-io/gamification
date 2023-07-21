@@ -225,6 +225,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   :publish.sync="rule.publish"
                   :space-id.sync="rule.spaceId"
                   :message.sync="rule.message"
+                  :template-params="rule.templateParams"
                   :valid-message.sync="validMessage"
                   @attachments-edited="attachmentsEdited = true" />
                 <div class="pt-4 text-subtitle-1">{{ $t('rule.form.ruleConditionsLabel') }}</div>
@@ -353,6 +354,16 @@ export default {
     programEvents: [],
     metadataObjectId: null,
     attachmentsEdited: false,
+    defaultTemplateParams: {
+      'previewHeight': '-',
+      'previewWidth': '-',
+      'link': '-',
+      'description': '-',
+      'title': '-',
+      'comment': '-',
+      'default_title': '-',
+      'html': '-',
+    },
   }),
   computed: {
     eventNames() {
@@ -491,6 +502,7 @@ export default {
             score: 20,
             enabled: true,
             publish: true,
+            templateParams: Object.assign({}, this.defaultTemplateParams),
             area: this.programTitle
           };
 
@@ -657,6 +669,7 @@ export default {
         publish: rule?.publish,
         message: rule?.message,
         spaceId: rule?.spaceId,
+        templateParams: rule?.templateParams || Object.assign({}, this.defaultTemplateParams),
       };
       if (rule.recurrence) {
         ruleModel.recurrence = rule.recurrence;
