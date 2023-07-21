@@ -40,7 +40,12 @@
           rounded>
           <v-img :src="program.avatarUrl" />
         </v-avatar>
-        {{ title }}
+        <div class="d-flex text-truncate">
+          <div class="text-truncate me-2">
+            {{ title }}
+          </div>
+          {{ counter }}
+        </div>
         <v-divider v-if="!disabledCollapsing" class="ms-4" />
       </v-list-item-title>
     </template>
@@ -77,7 +82,10 @@ export default {
   }),
   computed: {
     title() {
-      return !this.disabledCollapsing && this.size && `${this.category.title} ( ${this.sizeToDisplay} )` || this.category.title;
+      return this.category.title;
+    },
+    counter() {
+      return !this.disabledCollapsing && this.size && `( ${this.sizeToDisplay} )` || '';
     },
     prependIcon() {
       if (this.disabledCollapsing) {
