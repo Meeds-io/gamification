@@ -80,7 +80,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   private static final Log    LOG                           = ExoLogger.getLogger(RealizationServiceImpl.class);
 
   // Delimiters that must be in the CSV file
-  private static final String DELIMITER                     = ",";
+  private static final String DELIMITER                     = "@@@@@@@";
 
   private static final String SEPARATOR                     = "\n";
 
@@ -556,7 +556,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         CreationHelper helper = workbook.getCreationHelper();
         for (int i = 0; i < dataToWrite.length; i++) {
           Row row = sheet.createRow((short) i);
-          String[] str = dataToWrite[i].split(",");
+          String[] str = dataToWrite[i].split(DELIMITER);
           for (int j = 0; j < str.length; j++) {
             row.createCell(j).setCellValue(helper.createRichTextString(str[j]));
           }
