@@ -9,21 +9,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Announcement implements Cloneable {
 
-  private long   id;
+  protected long   id;
 
-  private Long   challengeId;
+  protected Long   challengeId;
 
-  private String challengeTitle;
+  protected String challengeTitle;
 
-  private Long   assignee;
+  protected Long   assignee;
 
-  private String comment;
+  protected String comment;
 
-  private Long   creator;
+  protected Long   creator;
 
-  private String createdDate;
+  protected String createdDate;
 
-  private Long   activityId;
+  protected Long   activityId;
 
   @Override
   public Announcement clone() { // NOSONAR

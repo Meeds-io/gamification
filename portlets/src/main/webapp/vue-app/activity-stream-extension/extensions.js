@@ -28,10 +28,7 @@ const gamificationRuleActivityOptions = Object.assign(defaultActivityOptions, {
 const gamificationAnnouncementCommentOptions = Object.assign(defaultActivityOptions, {
   canDelete: (activity, comment) => comment?.canDelete === 'true' && comment?.identity?.remoteId !== eXo.env.portal.userName,
   getTitle: () => '',
-  getCommentExtendedComponent: () => ({
-    component: Vue.options.components['activity-comment-announcement'],
-  }),
-  getBodyToEdit: comment => comment.title,
+  getBody: () => '',
 });
 
 extensionRegistry.registerExtension('activity', 'type', {
@@ -48,6 +45,13 @@ extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensi
   id: 'rule-activity',
   isEnabled: params => params?.activity?.type === 'gamificationRuleActivity' && params?.activity?.templateParams?.ruleId,
   vueComponent: Vue.options.components['rule-activity'],
+  rank: 3,
+});
+
+extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
+  id: 'rule-announcement',
+  isEnabled: params => params?.activity?.type === 'gamificationActionAnnouncement',
+  vueComponent: Vue.options.components['activity-comment-announcement'],
   rank: 3,
 });
 
