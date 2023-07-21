@@ -65,7 +65,10 @@ export default {
       return this.activity?.templateParams?.announcementId || 0;
     },
     announcementComment() {
-      return this.activity?.title;
+      return (this.activity?.templateParams?.comment)
+      || this.activity?.title
+          || (!this.activity?.originalActivity && this.activity?.body)
+          || '';
     },
     announcementImageIndex() {
       return Number(this.announcementId) % 8 + 1;

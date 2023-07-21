@@ -8,8 +8,10 @@ import static io.meeds.gamification.utils.Utils.POST_UPDATE_ANNOUNCEMENT_EVENT;
 import static io.meeds.gamification.utils.Utils.broadcastEvent;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -207,16 +209,19 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
   }
 
-  private void buildActivityParams(ExoSocialActivity activity, Map<String, ?> templateParams) {
-    Map<String, String> currentTemplateParams =
-                                              activity.getTemplateParams() == null ? new HashMap<>()
-                                                                                   : new HashMap<>(activity.getTemplateParams());
+  private void buildActivityParams(ExoSocialActivity activity, Map<String, String> templateParams) {
+    Map<String, String> currentTemplateParams = activity.getTemplateParams() == null ? new HashMap<>()
+            : new HashMap<>(activity.getTemplateParams());
     if (templateParams != null) {
-      templateParams.forEach((name, value) -> currentTemplateParams.put(name, (String) value));
+      currentTemplateParams.putAll(templateParams);
     }
-    currentTemplateParams.entrySet()
-                         .removeIf(entry -> entry != null
-                             && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-")));
+    Iterator<Entry<String, String>> entries = currentTemplateParams.entrySet().iterator();
+    while (entries.hasNext()) {
+      Map.Entry<String, String> entry = entries.next();
+      if (entry != null && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-"))) {
+        entry.setValue("");
+      }
+    }
     activity.setTemplateParams(currentTemplateParams);
   }
 
