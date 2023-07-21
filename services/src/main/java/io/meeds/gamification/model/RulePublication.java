@@ -16,6 +16,7 @@
  */
 package io.meeds.gamification.model;
 
+import java.util.Map;
 import java.util.Set;
 
 import io.meeds.gamification.constant.EntityType;
@@ -31,17 +32,20 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class RulePublication extends RuleDTO {
 
-  private static final long serialVersionUID = -7606132880459885724L;
+  private static final long     serialVersionUID = -7606132880459885724L;
 
-  protected long            spaceId;
+  protected long                spaceId;
 
-  protected String          message;
+  protected String              message;
 
-  protected boolean         publish;
+  protected Map<String, String> templateParams;                          // NOSONAR
+
+  protected boolean             publish;
 
   public RulePublication(RuleDTO rule,
                          long spaceId,
                          String message,
+                         Map<String, String> templateParams,
                          boolean publish) {
     super(rule.getId(),
           rule.getTitle(),
@@ -64,6 +68,7 @@ public class RulePublication extends RuleDTO {
           rule.getRecurrence());
     this.spaceId = spaceId;
     this.message = message;
+    this.templateParams = templateParams;
     this.publish = publish;
   }
 
@@ -88,6 +93,7 @@ public class RulePublication extends RuleDTO {
                          RecurrenceType recurrence,
                          long spaceId,
                          String message,
+                         Map<String, String> templateParams,
                          boolean publish) {
     super(id,
           title,
@@ -110,6 +116,7 @@ public class RulePublication extends RuleDTO {
           recurrence);
     this.spaceId = spaceId;
     this.message = message;
+    this.templateParams = templateParams;
     this.publish = publish;
   }
 
@@ -136,6 +143,7 @@ public class RulePublication extends RuleDTO {
                                recurrence,
                                spaceId,
                                message,
+                               templateParams,
                                publish);
   }
 }

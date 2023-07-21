@@ -33,8 +33,8 @@
       id="engagementCenterRulePublishMessage"
       v-model="message"
       :max-length="MAX_LENGTH"
+      :template-params="templateParams"
       :placeholder="$t('rule.form.rulePublicationPlaceholder')"
-      ck-editor-type="rulePublicationContent"
       class="flex my-3"
       autofocus
       tag-enabled
@@ -49,6 +49,10 @@ export default {
       default: null,
     },
     program: {
+      type: Object,
+      default: null,
+    },
+    templateParams: {
       type: Object,
       default: null,
     },
