@@ -33,6 +33,7 @@
       id="engagementCenterRulePublishMessage"
       v-model="message"
       :max-length="MAX_LENGTH"
+      :template-params="templateParams"
       :placeholder="$t('rule.form.rulePublicationPlaceholder')"
       :object-id="metadataObjectId"
       object-type="rule"
@@ -52,6 +53,10 @@ export default {
       default: null,
     },
     program: {
+      type: Object,
+      default: null,
+    },
+    templateParams: {
       type: Object,
       default: null,
     },

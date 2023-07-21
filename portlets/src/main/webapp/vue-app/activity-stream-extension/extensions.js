@@ -23,6 +23,21 @@ const gamificationRuleActivityOptions = Object.assign(defaultActivityOptions, {
   canHide: () => true,
   canUnhide: activity => activity?.rule?.activityId === Number(activity.id),
   init: initRuleActivity,
+  getBodyToEdit: activity => {
+    let templateParams = activity.templateParams;
+    if (templateParams.default_title && templateParams.default_title.includes('<oembed>') && templateParams.link){
+      const url = window.encodeURIComponent(templateParams.link);
+      templateParams.default_title = templateParams.default_title.replace(`<oembed>${url}</oembed>`, `<oembed>${templateParams.link}</oembed>`);
+      activity.title = activity.title.replace(`<oembed>${url}</oembed>`, `<oembed>${templateParams.link}</oembed>`);
+    }
+    templateParams = encodeURIComponent(activity.templateParams);
+    return Vue.prototype.$utils.trim(window.decodeURIComponent(templateParams
+      && templateParams.default_title
+      && templateParams.default_title
+      || (activity?.title?.replaceAll('%', '%25'))
+      || (!activity?.originalActivity && activity?.body?.replaceAll('%', '%25'))
+      || ''));
+  },
 });
 
 const gamificationAnnouncementCommentOptions = Object.assign(defaultActivityOptions, {
@@ -31,7 +46,21 @@ const gamificationAnnouncementCommentOptions = Object.assign(defaultActivityOpti
   getCommentExtendedComponent: () => ({
     component: Vue.options.components['activity-comment-announcement'],
   }),
-  getBodyToEdit: comment => comment.title,
+  getBodyToEdit: activity => {
+    let templateParams = activity.templateParams;
+    if (templateParams.default_title && templateParams.default_title.includes('<oembed>') && templateParams.link){
+      const url = window.encodeURIComponent(templateParams.link);
+      templateParams.default_title = templateParams.default_title.replace(`<oembed>${url}</oembed>`, `<oembed>${templateParams.link}</oembed>`);
+      activity.title = activity.title.replace(`<oembed>${url}</oembed>`, `<oembed>${templateParams.link}</oembed>`);
+    }
+    templateParams = encodeURIComponent(activity.templateParams);
+    return Vue.prototype.$utils.trim(window.decodeURIComponent(templateParams
+      && templateParams.default_title
+      && templateParams.default_title
+      || (activity?.title?.replaceAll('%', '%25'))
+      || (!activity?.originalActivity && activity?.body?.replaceAll('%', '%25'))
+      || ''));
+  },
 });
 
 extensionRegistry.registerExtension('activity', 'type', {
