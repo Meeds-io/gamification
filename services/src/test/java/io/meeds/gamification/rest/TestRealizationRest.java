@@ -344,6 +344,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     assertNotNull(workbook);
     Sheet sheet = workbook.getSheetAt(0);
     assertNotNull(sheet);
+    assertEquals(2, sheet.getLastRowNum());
     Row row1 = sheet.getRow(1);
     assertNotNull(row1);
     Row row2 = sheet.getRow(2);
