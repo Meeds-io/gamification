@@ -19,6 +19,7 @@ package io.meeds.gamification.service;
 import static io.meeds.gamification.constant.GamificationConstant.ACTIVITY_OBJECT_TYPE;
 import static org.junit.Assert.assertThrows;
 
+import java.io.InputStream;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -27,7 +28,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.Test;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -646,6 +653,73 @@ public class RealizationServiceTest extends AbstractServiceTest {
     assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
     assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
     assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
+  }
+
+  public void testExportRealizations() throws IllegalAccessException, Exception { // NOSONAR
+    List<RealizationEntity> realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 0);
+    RuleDTO rule = newRuleDTO();
+    rule.setTitle("Rule Title, with comma");
+    ruleService.updateRule(rule);
+
+    RealizationDTO realization1 = realizationService.createRealizations(rule.getEvent(),
+                                                                        adminIdentityId,
+                                                                        adminIdentityId,
+                                                                        ACTIVITY_ID,
+                                                                        ACTIVITY_OBJECT_TYPE)
+                                                    .get(0);
+    realization1 = realizationService.getRealizationById(realization1.getId(), adminAclIdentity);
+
+    RealizationDTO realization2 = realizationService.createRealizations(rule.getEvent(),
+                                                                        TEST_SPACE_ID,
+                                                                        adminIdentityId,
+                                                                        ACTIVITY_ID,
+                                                                        ACTIVITY_OBJECT_TYPE)
+                                                    .get(0);
+    realization2 = realizationService.getRealizationById(realization2.getId(), adminAclIdentity);
+
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 2);
+
+    RealizationFilter filter = new RealizationFilter();
+    filter.setOwned(true);
+    InputStream exportInputStream = realizationService.exportXlsx(filter, adminAclIdentity, "fileName", Locale.ENGLISH);
+    assertNotNull(exportInputStream);
+
+    Workbook workbook = WorkbookFactory.create(exportInputStream);
+    assertNotNull(workbook);
+    Sheet sheet = workbook.getSheetAt(0);
+    assertNotNull(sheet);
+    assertEquals(2, sheet.getLastRowNum());
+    Row header = sheet.getRow(0);
+    assertNotNull(header);
+    assertEquals(7, header.getLastCellNum());
+    assertTrue(StringUtils.isNotBlank(header.getCell(header.getFirstCellNum()).getStringCellValue()));
+    assertTrue(StringUtils.isNotBlank(header.getCell(header.getLastCellNum() - 1).getStringCellValue()));
+
+    Row row1 = sheet.getRow(1);
+    assertNotNull(row1);
+    assertEquals(7, row1.getLastCellNum());
+    int cellIndex = 0;
+    assertEquals(realization1.getCreatedDate(), row1.getCell(cellIndex++).getStringCellValue());
+    assertEquals(Utils.getUserFullName(realization1.getEarnerId()), row1.getCell(cellIndex++).getStringCellValue());
+    assertEquals(rule.getType().name(), row1.getCell(cellIndex++).getStringCellValue());
+    assertEquals(realization1.getProgramLabel(), row1.getCell(cellIndex++).getStringCellValue());
+    assertEquals(realization1.getActionTitle(), row1.getCell(cellIndex++).getStringCellValue());
+    assertEquals(realization1.getActionScore(), row1.getCell(cellIndex++).getNumericCellValue(), 0d);
+    assertEquals(realization1.getStatus(), row1.getCell(cellIndex).getStringCellValue());
+
+    Row row2 = sheet.getRow(2);
+    assertNotNull(row2);
+    assertEquals(7, row2.getLastCellNum());
+    cellIndex = 0;
+    assertEquals(realization2.getCreatedDate(), row2.getCell(cellIndex++).getStringCellValue());
+    assertEquals(Utils.getUserFullName(realization2.getEarnerId()), row2.getCell(cellIndex++).getStringCellValue());
+    assertEquals(rule.getType().name(), row2.getCell(cellIndex++).getStringCellValue());
+    assertEquals(realization2.getProgramLabel(), row2.getCell(cellIndex++).getStringCellValue());
+    assertEquals(realization2.getActionTitle(), row2.getCell(cellIndex++).getStringCellValue());
+    assertEquals(realization2.getActionScore(), row2.getCell(cellIndex++).getNumericCellValue(), 0d);
+    assertEquals(realization2.getStatus(), row2.getCell(cellIndex).getStringCellValue());
   }
 
   public void testGetRealizationsOnOpenProgram() throws IllegalAccessException, ObjectNotFoundException { // NOSONAR
