@@ -17,15 +17,15 @@
  */
 
 const activityTypeExtensions = extensionRegistry.loadExtensions('activity', 'type');
-const defaultActivityOptions = Object.assign({}, activityTypeExtensions.find(extension => extension.type === 'default').options);
-const gamificationRuleActivityOptions = Object.assign(defaultActivityOptions, {
+const defaultActivityOptions = activityTypeExtensions.find(extension => extension.type === 'default').options;
+const gamificationRuleActivityOptions = Object.assign(Object.assign({}, defaultActivityOptions), {
   canDelete: () => false,
   canHide: () => true,
   canUnhide: activity => activity?.rule?.activityId === Number(activity.id),
   init: initRuleActivity,
 });
 
-const gamificationAnnouncementCommentOptions = Object.assign(defaultActivityOptions, {
+const gamificationAnnouncementCommentOptions = Object.assign(Object.assign({}, defaultActivityOptions), {
   canDelete: (activity, comment) => comment?.canDelete === 'true' && comment?.identity?.remoteId !== eXo.env.portal.userName,
   getTitle: () => '',
   getBody: () => '',
