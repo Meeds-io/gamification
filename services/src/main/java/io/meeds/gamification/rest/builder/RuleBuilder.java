@@ -27,6 +27,7 @@ import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.social.common.xmlprocessor.XMLProcessor;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -126,9 +127,10 @@ public class RuleBuilder {
     translatedLabels(translationService, rule, locale);
     boolean published = isPublished(rule);
 
+    String description = rule.getDescription();
     return new RuleRestEntity(rule.getId(),
                               rule.getTitle(),
-                              rule.getDescription(),
+                              processRichEditorContent(description),
                               rule.getScore(),
                               program,
                               rule.isEnabled(),
@@ -163,15 +165,15 @@ public class RuleBuilder {
                                                                     rule.getId(),
                                                                     RULE_TITLE_FIELD_NAME,
                                                                     locale);
-    if (StringUtils.isNotBlank(translatedTitle)) {
-      rule.setTitle(translatedTitle);
+    if (StringUtils.isNotBlank(processRichEditorContent(translatedTitle))) {
+      rule.setTitle(processRichEditorContent(translatedTitle));
     }
     String translatedDescription = translationService.getTranslationLabel(RULE_OBJECT_TYPE,
                                                                           rule.getId(),
                                                                           RULE_DESCRIPTION_FIELD_NAME,
                                                                           locale);
-    if (StringUtils.isNotBlank(translatedDescription)) {
-      rule.setDescription(translatedDescription);
+    if (StringUtils.isNotBlank(processRichEditorContent(translatedDescription))) {
+      rule.setDescription(processRichEditorContent(translatedDescription));
     }
     ProgramBuilder.translatedLabels(translationService, rule.getProgram(), locale);
   }
@@ -180,12 +182,17 @@ public class RuleBuilder {
                                               RealizationService realizationService,
                                               RuleDTO rule,
                                               String username) {
-    UserInfoContext userContext = ProgramBuilder.toUserContext(programService, rule.getProgram(), username);
+    UserInfoContext userContext = ProgramBuilder.toUserContext(programService, rule.getProgram(), processRichEditorContent(username));
     RealizationValidityContext realizationRestriction = realizationService.getRealizationValidityContext(rule,
-                                                                                                         String.valueOf(Utils.getUserIdentityId(username)));
+                                                                                                         String.valueOf(Utils.getUserIdentityId(processRichEditorContent(username))));
     userContext.setContext(realizationRestriction);
     userContext.setAllowedToRealize(realizationRestriction.isValid());
     return userContext;
+  }
+
+  public static String processRichEditorContent(String content) {
+    XMLProcessor xmlProcessor = ExoContainerContext.getService(XMLProcessor.class);
+    return (String) xmlProcessor.process(content);
   }
 
   private static List<RealizationDTO> getRealizations(RealizationService realizationService,
