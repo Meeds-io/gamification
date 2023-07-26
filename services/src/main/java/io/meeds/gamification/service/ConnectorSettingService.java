@@ -59,7 +59,6 @@ public interface ConnectorSettingService {
 
   /**
    * @param connectorName connector name
-   *
    * @return {@link String} connector secret key
    */
   String getConnectorSecretKey(String connectorName);
@@ -73,6 +72,23 @@ public interface ConnectorSettingService {
    */
   List<RemoteConnectorSettings> getConnectorsSettings(ConnectorService connectorService,
                                                       Identity aclIdentity) throws IllegalAccessException;
+
+  /**
+   * Save connector Access token
+   *
+   * @param connectorName connector name
+   * @param accessToken connector access token To Store
+   * @param aclIdentity Security identity of user attempting to save connector
+   */
+  void saveConnectorAccessToken(String connectorName, String accessToken, Identity aclIdentity) throws IllegalAccessException;
+
+  /**
+   * Gets connector Access token
+   *
+   * @param connectorName connector name
+   * @return connector access token
+   */
+  String getConnectorAccessToken(String connectorName);
 
   /**
    * Check whether user can can edit connectors Settings or not

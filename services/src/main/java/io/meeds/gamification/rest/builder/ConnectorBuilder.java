@@ -20,6 +20,8 @@ package io.meeds.gamification.rest.builder;
 import java.util.Collection;
 import java.util.List;
 
+import io.meeds.gamification.model.ConnectorHook;
+import io.meeds.gamification.rest.model.ConnectorHookRestEntity;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,6 +29,9 @@ import io.meeds.gamification.model.RemoteConnector;
 import io.meeds.gamification.rest.model.ConnectorRestEntity;
 import io.meeds.gamification.service.ConnectorService;
 import io.meeds.gamification.service.ConnectorSettingService;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.IdentityManager;
 
 public class ConnectorBuilder {
 
@@ -44,6 +49,7 @@ public class ConnectorBuilder {
     }
     String identifier = null;
     String secretKey = null;
+    String accessToken = null;
     if (CollectionUtils.isNotEmpty(expandFields)) {
       if (expandFields.contains("userIdentifier")) {
         identifier = connectorService.getConnectorRemoteId(remoteConnector.getName(), username);
@@ -51,13 +57,41 @@ public class ConnectorBuilder {
       if (expandFields.contains("secretKey")) {
         secretKey = connectorSettingService.getConnectorSecretKey(remoteConnector.getName());
       }
+      if (expandFields.contains("accessToken")) {
+        accessToken = connectorSettingService.getConnectorAccessToken(remoteConnector.getName());
+      }
     }
     return new ConnectorRestEntity(remoteConnector.getName(),
                                    remoteConnector.getApiKey(),
                                    remoteConnector.getRedirectUrl(),
                                    StringUtils.isNotBlank(identifier) ? identifier : null,
                                    StringUtils.isNotBlank(secretKey) ? secretKey : null,
+                                   StringUtils.isNotBlank(accessToken) ? accessToken : null,
                                    remoteConnector.isEnabled());
+  }
+
+  public static ConnectorHookRestEntity toRestEntity(IdentityManager identityManager, ConnectorHook connectorHook) {
+    if (connectorHook == null) {
+      return null;
+    }
+    String imageUrl = null;
+    Identity userIdentity = null;
+    if (connectorHook.getImageFileId() > 0) {
+      imageUrl = "/" + PortalContainer.getCurrentPortalContainerName() + "/" + PortalContainer.getCurrentRestContextName()
+          + "/gamification/connectors/hook/" + "/" + connectorHook.getConnectorName() + "/" + connectorHook.getName() + "/avatar";
+    }
+    if (connectorHook.getWatchedBy() > 0) {
+      userIdentity = identityManager.getIdentity(String.valueOf(connectorHook.getWatchedBy()));
+    }
+
+    return new ConnectorHookRestEntity(connectorHook.getConnectorName(),
+                                       connectorHook.getName(),
+                                       connectorHook.getTitle(),
+                                       connectorHook.getDescription(),
+                                       imageUrl,
+                                       connectorHook.getWatchDate(),
+                                       userIdentity != null ? userIdentity.getRemoteId() : null,
+                                       connectorHook.getUpdatedDate());
   }
 
   public static List<ConnectorRestEntity> toRestEntities(ConnectorService connectorService,
@@ -72,5 +106,10 @@ public class ConnectorBuilder {
                                                                 expandFields,
                                                                 username))
                            .toList();
+  }
+
+  public static List<ConnectorHookRestEntity> toRestEntities(IdentityManager identityManager,
+                                                             Collection<ConnectorHook> connectorHooks) {
+    return connectorHooks.stream().map(connectorHook -> toRestEntity(identityManager, connectorHook)).toList();
   }
 }

@@ -35,4 +35,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <key>io.meeds.gamification.service.ConnectorSettingService</key>
     <type>io.meeds.gamification.service.impl.ConnectorSettingServiceImpl</type>
   </component>
+  <component>
+    <type>io.meeds.gamification.dao.ConnectorHookDAO</type>
+  </component>
+  <component>
+    <key>io.meeds.gamification.service.ConnectorHookService</key>
+    <type>io.meeds.gamification.service.impl.ConnectorHookServiceImpl</type>
+  </component>
+  <component>
+    <type>io.meeds.gamification.storage.ConnectorHookStorage</type>
+  </component>
 </configuration>

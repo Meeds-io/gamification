@@ -18,10 +18,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-app>
     <v-card class="my-3 border-radius" flat>
       <template v-if="selectedConnector">
-        <extension-registry-component
-          v-if="editSettings"
-          :params="selectedConnector"
-          :component="connectorExtension" />
+        <template v-if="editSettings">
+          <extension-registry-component
+            :params="selectedConnector"
+            :component="connectorExtension" />
+          <gamification-admin-connector-hook-list
+            :hooks="selectedConnectorHooks"
+            :access-token="accessToken"
+            :connector-extension="connectorExtension" />
+        </template>
         <gamification-admin-connector-detail
           v-else
           class="px-4"
@@ -52,17 +57,34 @@ export default {
       adminConnectorsExtensions: [],
       editSettings: false,
       connectorExtension: null,
-      selectedConnector: null
+      selectedConnector: null,
+      selectedConnectorHooks: []
     };
   },
   created() {
     this.$root.$on('open-connector-detail', this.openConnectorDetail);
     this.$root.$on('close-connector-detail', () => this.selectedConnector = null);
     this.$root.$on('open-connector-settings', this.openConnectorSettings);
+    this.$root.$on('gamification-connector-hooks-updated', this.retrieveConnectorHooks);
     document.addEventListener('close-connector-settings', this.closeConnectorSettings);
     document.addEventListener('save-connector-settings', this.saveConnectorSetting);
     document.addEventListener('delete-connector-settings', this.deleteConnectorSetting);
+    document.addEventListener('gamification-save-connector-accessToken', this.saveConnectorAccessToken);
+    document.addEventListener('gamification-save-connector-hook', this.saveConnectorHook);
+
     this.init();
+  },
+  computed: {
+    accessToken() {
+      return this.selectedConnector?.accessToken || null;
+    }
+  },
+  watch: {
+    selectedConnector() {
+      if (this.selectedConnector) {
+        this.retrieveConnectorHooks();
+      }
+    },
   },
   methods: {
     init() {
@@ -78,13 +100,22 @@ export default {
       });
       // Check connectors status from store
       this.loading = true;
-      this.$gamificationConnectorService.getConnectors(eXo.env.portal.userName, 'secretKey')
-        .then(connectors => this.connectors = connectors)
+      this.$gamificationConnectorService.getConnectors(eXo.env.portal.userName, 'secretKey,accessToken,hook')
+        .then(connectors => {
+          this.connectors = connectors;
+        })
         .finally(() => this.loading = false);
     },
     refreshUserConnectorList() {
       // Get list of connectors from extensionRegistry
       this.adminConnectorsExtensions = extensionRegistry.loadComponents('gamification-admin-connector') || [];
+    },
+    retrieveConnectorHooks() {
+      this.$gamificationConnectorService.getConnectorHooks(this.selectedConnector?.name)
+        .then(connectorHooks => {
+          this.selectedConnectorHooks = connectorHooks;
+        })
+        .finally(() => this.loading = false);
     },
     openConnectorDetail(connector, connectorExtension) {
       this.connectorExtension = connectorExtension;
@@ -105,6 +136,22 @@ export default {
         const setting = event?.detail;
         this.$gamificationConnectorService.saveConnectorSettings(setting?.name, setting?.apiKey, setting?.secretKey, setting?.redirectUrl, setting?.enabled).then(() => {
           this.selectedConnector = Object.assign(this.selectedConnector, setting);
+        });
+      }
+    },
+    saveConnectorAccessToken(event) {
+      if (event?.detail) {
+        const setting = event?.detail;
+        return this.$gamificationConnectorService.saveConnectorAccessToken(setting?.name, setting?.accessToken).then(() => {
+          this.selectedConnector = Object.assign(this.selectedConnector, setting);
+        });
+      }
+    },
+    saveConnectorHook(event) {
+      if (event?.detail) {
+        const setting = event?.detail;
+        return this.$gamificationConnectorService.saveConnectorHook(setting?.name, setting?.hookName, setting?.hookSecret).then(() => {
+          this.retrieveConnectorHooks();
         });
       }
     },

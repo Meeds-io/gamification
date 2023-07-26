@@ -37,11 +37,13 @@ import io.meeds.gamification.utils.Utils;
 
 public class ConnectorSettingServiceImpl implements ConnectorSettingService {
 
-  public static final String CONNECTOR_SETTINGS_KEY_NAME = "CONNECTOR_SETTINGS";
+  public static final String CONNECTOR_SETTINGS_KEY_NAME     = "CONNECTOR_SETTINGS";
 
-  private SettingService     settingService;
+  public static final String CONNECTOR_ACCESS_TOKEN_KEY_NAME = "CONNECTOR_ACCESS_TOKEN";
 
-  private CodecInitializer   codecInitializer;
+  private final SettingService     settingService;
+
+  private final CodecInitializer   codecInitializer;
 
   public ConnectorSettingServiceImpl(SettingService settingService, CodecInitializer codecInitializer) {
     this.settingService = settingService;
@@ -84,6 +86,9 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
     this.settingService.remove(Context.GLOBAL, connectorSettingScope, CONNECTOR_SETTINGS_KEY_NAME);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public RemoteConnectorSettings getConnectorSettings(String connectorName, Identity aclIdentity) throws IllegalAccessException {
     if (!canManageConnectorSettings(aclIdentity)) {
@@ -92,6 +97,9 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
     return getConnectorSettings(connectorName);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public RemoteConnectorSettings getConnectorSettings(String connectorName) {
     Scope connectorSettingScope = Scope.APPLICATION.id(StringUtils.capitalize(connectorName));
@@ -113,6 +121,9 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
     return remoteConnectorSettings;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String getConnectorSecretKey(String connectorName) {
     Scope connectorSettingScope = Scope.APPLICATION.id(StringUtils.capitalize(connectorName));
@@ -134,6 +145,9 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
     return null;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<RemoteConnectorSettings> getConnectorsSettings(ConnectorService connectorService,
                                                              Identity aclIdentity) throws IllegalAccessException {
@@ -147,6 +161,51 @@ public class ConnectorSettingServiceImpl implements ConnectorSettingService {
                            .toList();
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void saveConnectorAccessToken(String connectorName,
+                                       String accessToken,
+                                       Identity aclIdentity) throws IllegalAccessException {
+    if (!canManageConnectorSettings(aclIdentity)) {
+      throw new IllegalAccessException("The user is not authorized to save or update connector access token");
+    }
+    try {
+      accessToken = codecInitializer.getCodec().encode(accessToken);
+    } catch (TokenServiceInitializationException e) {
+      throw new IllegalStateException("Error encrypting connector access Token", e);
+    }
+    Scope connectorSettingScope = Scope.APPLICATION.id(StringUtils.capitalize(connectorName));
+    this.settingService.set(Context.GLOBAL,
+                            connectorSettingScope,
+                            CONNECTOR_ACCESS_TOKEN_KEY_NAME,
+                            SettingValue.create(accessToken));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String getConnectorAccessToken(String connectorName) {
+    Scope connectorSettingScope = Scope.APPLICATION.id(StringUtils.capitalize(connectorName));
+    SettingValue<?> settingsValue = settingService.get(Context.GLOBAL, connectorSettingScope, CONNECTOR_ACCESS_TOKEN_KEY_NAME);
+
+    String accessToken = settingsValue == null || settingsValue.getValue() == null ? null : settingsValue.getValue().toString();
+    if (accessToken != null) {
+      try {
+        accessToken = codecInitializer.getCodec().decode(accessToken);
+        return accessToken;
+      } catch (TokenServiceInitializationException e) {
+        throw new IllegalStateException("Error decrypting connector access Token", e);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public boolean canManageConnectorSettings(Identity aclIdentity) {
     return aclIdentity != null && Utils.isRewardingManager(aclIdentity.getUserId());

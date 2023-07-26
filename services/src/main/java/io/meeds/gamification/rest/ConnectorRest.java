@@ -17,8 +17,7 @@
  */
 package io.meeds.gamification.rest;
 
-import static io.meeds.gamification.utils.Utils.getExpandOptions;
-
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,12 +32,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 
+import io.meeds.gamification.model.ConnectorHook;
+import io.meeds.gamification.rest.model.ConnectorHookRestEntity;
+import io.meeds.gamification.service.ConnectorHookService;
 import org.apache.commons.lang.StringUtils;
 
 import org.exoplatform.commons.ObjectAlreadyExistsException;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -50,23 +52,37 @@ import io.meeds.gamification.rest.builder.ConnectorBuilder;
 import io.meeds.gamification.rest.model.ConnectorRestEntity;
 import io.meeds.gamification.service.ConnectorService;
 import io.meeds.gamification.service.ConnectorSettingService;
+import org.exoplatform.social.core.manager.IdentityManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+import static io.meeds.gamification.utils.Utils.*;
+
 @Path("/gamification/connectors")
 public class ConnectorRest implements ResourceContainer {
 
-  private static final Log              LOG = ExoLogger.getLogger(ConnectorRest.class);
+  private static final Log              LOG                                   = ExoLogger.getLogger(ConnectorRest.class);
+
+  public static final String            CONNECTOR_NAME_PARAMETER_IS_MANDATORY = "'connectorName' parameter is mandatory";
 
   private final ConnectorService        connectorService;
 
+  private final ConnectorHookService    connectorHookService;
+
   private final ConnectorSettingService connectorSettingService;
 
-  public ConnectorRest(ConnectorService connectorService, ConnectorSettingService connectorSettingService) {
+  private final IdentityManager         identityManager;
+
+  public ConnectorRest(ConnectorService connectorService,
+                       ConnectorSettingService connectorSettingService,
+                       ConnectorHookService connectorHookService,
+                       IdentityManager identityManager) {
     this.connectorService = connectorService;
+    this.connectorHookService = connectorHookService;
     this.connectorSettingService = connectorSettingService;
+    this.identityManager = identityManager;
   }
 
   @GET
@@ -87,7 +103,7 @@ public class ConnectorRest implements ResourceContainer {
 
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     List<String> expandFields = getExpandOptions(expand);
-    if (expandFields.contains("secretKey") && !connectorSettingService.canManageConnectorSettings(identity)) {
+    if ((expandFields.contains("secretKey") || expandFields.contains("accessToken")) && !connectorSettingService.canManageConnectorSettings(identity)) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     List<ConnectorRestEntity> connectorRestEntities = getConnectorsRestEntities(expandFields, username);
@@ -110,7 +126,7 @@ public class ConnectorRest implements ResourceContainer {
                           @Parameter(description = "Connector name", required = true)
                           @PathParam("connectorName")
                           String connectorName,
-                          @Parameter(description = "User Remote identifier", required = false)
+                          @Parameter(description = "User Remote identifier")
                           @FormParam("remoteId")
                           String remoteId,
                           @Parameter(description = "Access Token", required = true)
@@ -179,7 +195,7 @@ public class ConnectorRest implements ResourceContainer {
                                         @DefaultValue("true")
                                         boolean enabled) {
     if (org.apache.commons.lang3.StringUtils.isBlank(connectorName)) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("'connectorName' parameter is mandatory").build();
+      return Response.status(Response.Status.BAD_REQUEST).entity(CONNECTOR_NAME_PARAMETER_IS_MANDATORY).build();
     }
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
@@ -214,7 +230,7 @@ public class ConnectorRest implements ResourceContainer {
                                           @PathParam("connectorName")
                                           String connectorName) {
     if (org.apache.commons.lang3.StringUtils.isBlank(connectorName)) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("'connectorName' parameter is mandatory").build();
+      return Response.status(Response.Status.BAD_REQUEST).entity(CONNECTOR_NAME_PARAMETER_IS_MANDATORY).build();
     }
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
@@ -228,9 +244,93 @@ public class ConnectorRest implements ResourceContainer {
     }
   }
 
+  @POST
+  @Path("accessToken")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @RolesAllowed("users")
+  @Operation(summary = "Saves gamification connector access token used for manage hooks", description = "Saves gamification connector access token used for manage hooks", method = "POST")
+  @ApiResponses(value = { 
+      @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "400", description = "Bad request"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response saveConnectorAccessToken(@Parameter(description = "Remote connector name", required = true) @FormParam("connectorName") String connectorName,
+                                           @Parameter(description = "Remote connector access token", required = true) @FormParam("accessToken") String accessToken) {
+    if (org.apache.commons.lang3.StringUtils.isBlank(connectorName)) {
+      return Response.status(Response.Status.BAD_REQUEST).entity(CONNECTOR_NAME_PARAMETER_IS_MANDATORY).build();
+    }
+    org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
+    try {
+      connectorSettingService.saveConnectorAccessToken(connectorName, accessToken, identity);
+      return Response.noContent().build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+    } catch (Exception e) {
+      LOG.warn("Error saving connector '{}' settings", connectorName, e);
+      return Response.serverError().entity(e.getMessage()).build();
+    }
+  }
+
+  @GET
+  @Path("hooks/{connectorName}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @RolesAllowed("users")
+  @Operation(summary = "Retrieves the list of remote connectors hooks", method = "GET")
+  @ApiResponses(value = { 
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"), })
+  public Response getConnectorHooks(@Parameter(description = "Connector name", required = true) @PathParam("connectorName") String connectorName) {
+    try {
+      List<ConnectorHookRestEntity> connectorHookRestEntities = getConnectorHooksRestEntities(connectorName, getCurrentUser());
+      return Response.ok(connectorHookRestEntities).build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+  }
+
+  @GET
+  @Path("hooks/{connectorName}/{hookName}/avatar")
+  @Produces("image/png")
+  @Operation(summary = "Gets a connector hook avatar", method = "GET")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "403", description = "Forbidden request"),
+      @ApiResponse(responseCode = "404", description = "Resource not found") })
+  public Response getConnectorHookAvatar(@Context Request request,
+                                         @Parameter(description = "Remote connector name", required = true) @PathParam("connectorName") String connectorName,
+                                         @Parameter(description = "Remote connector hook name", required = true) @PathParam("hookName") String hookName) {
+    ConnectorHook connectorHook;
+    String lastUpdated;
+    connectorHook = connectorHookService.getConnectorHook(connectorName, hookName);
+    if (connectorHook == null) {
+      return Response.status(Response.Status.NOT_FOUND).entity("The connector hook doesn't exit").build();
+    }
+    lastUpdated = connectorHook.getUpdatedDate();
+    try {
+      EntityTag eTag = new EntityTag(lastUpdated);
+      Response.ResponseBuilder builder = request.evaluatePreconditions(eTag);
+      if (builder == null) {
+        InputStream stream = connectorHookService.getHookImageStream(connectorName, hookName, getCurrentUser());
+        builder = Response.ok(stream, "image/png");
+        builder.tag(eTag);
+      }
+      return builder.build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity("The connector hook doesn't exit").build();
+    }
+  }
+
   private List<ConnectorRestEntity> getConnectorsRestEntities(List<String> expandFields, String username) {
     Collection<RemoteConnector> connectorList = connectorService.getConnectors(username);
     return ConnectorBuilder.toRestEntities(connectorService, connectorSettingService, connectorList, expandFields, username);
   }
 
+  private List<ConnectorHookRestEntity> getConnectorHooksRestEntities(String connectorName,
+                                                                      String currentUser) throws IllegalAccessException {
+    Collection<ConnectorHook> connectorHookList = connectorHookService.getConnectorHooks(connectorName, currentUser, 0, 20);
+    return ConnectorBuilder.toRestEntities(identityManager, connectorHookList);
+  }
 }

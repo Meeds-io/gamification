@@ -105,3 +105,65 @@ export function deleteConnectorSetting(connectorName) {
     }
   });
 }
+
+export function saveConnectorAccessToken(connectorName, accessToken) {
+  const formData = new FormData();
+  formData.append('connectorName', connectorName);
+  formData.append('accessToken', accessToken);
+
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors/accessToken`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(formData).toString(),
+  }).then(resp => {
+    if (!resp?.ok) {
+      throw new Error('Response code indicates a server error', resp);
+    }
+  });
+}
+
+export function getConnectorHooks(connectorName) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors/hooks/${connectorName}`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.json();
+    } else {
+      throw new Error('Error when getting connector hooks');
+    }
+  });
+}
+
+export function saveConnectorHook(connectorName, hookName, hookSecret) {
+  const formData = new FormData();
+  formData.append('hookName', hookName);
+  formData.append('hookSecret', hookSecret);
+
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors/${connectorName}/hooks`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(formData).toString(),
+  }).then(resp => {
+    if (!resp?.ok) {
+      throw new Error('Response code indicates a server error', resp);
+    }
+  });
+}
+
+export function deleteConnectorHook(connectorName, hookName) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/connectors/${connectorName}/hooks/${hookName}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  }).then(resp => {
+    if (!resp?.ok) {
+      throw new Error('Response code indicates a server error', resp);
+    }
+  });
+}

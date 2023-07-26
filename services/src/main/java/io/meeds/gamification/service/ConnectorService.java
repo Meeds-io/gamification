@@ -47,45 +47,46 @@ public interface ConnectorService {
   Collection<ConnectorPlugin> getConnectorPlugins();
 
   /**
-   * @param  username the user name
-   * @return          {@link Collection} of user remote connectors
+   * @param username the user name
+   * @return {@link Collection} of user remote connectors
    */
   Collection<RemoteConnector> getConnectors(String username);
 
   /**
    * Connects a user to their connector account
    *
-   * @param  connectorName                connector name
-   * @param  accessToken                  Access token
-   * @param  connectorUserId              User identifier in connector
-   * @param  identity                     the user identity
-   * @return                              the connector identifier
-   *                                      {@link String}
+   * @param connectorName connector name
+   * @param accessToken Access token
+   * @param connectorUserId User identifier in connector
+   * @param identity the user identity
+   * @return the connector identifier {@link String}
    * @throws ObjectAlreadyExistsException when the remote identifier is already
-   *                                        associated to current or a different
-   *                                        user
+   *           associated to current or a different user
    */
-  String connect(String connectorName, String connectorUserId, String accessToken, Identity identity) throws ObjectAlreadyExistsException;
+  String connect(String connectorName,
+                 String connectorUserId,
+                 String accessToken,
+                 Identity identity) throws ObjectAlreadyExistsException;
 
   /**
    * Disconnect a user from their connector account
    *
    * @param connectorName connector name
-   * @param username      the user name
+   * @param username the user name
    */
   void disconnect(String connectorName, String username);
 
   /**
-   * @param  connectorName connector name
-   * @param  username      associated user name
-   * @return               the connector remote id of a user
+   * @param connectorName connector name
+   * @param username associated user name
+   * @return the connector remote id of a user
    */
   String getConnectorRemoteId(String connectorName, String username);
 
   /**
-   * @param  connectorName     connector name
-   * @param  connectorRemoteId connector remote Id
-   * @return                   the associated user name to connector remote id
+   * @param connectorName connector name
+   * @param connectorRemoteId connector remote Id
+   * @return the associated user name to connector remote id
    */
   String getAssociatedUsername(String connectorName, String connectorRemoteId);
 }

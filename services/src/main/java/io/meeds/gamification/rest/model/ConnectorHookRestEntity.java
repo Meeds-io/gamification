@@ -17,37 +17,30 @@
  */
 package io.meeds.gamification.rest.model;
 
-import io.meeds.gamification.model.RemoteConnector;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString(callSuper = true)
-public class ConnectorRestEntity extends RemoteConnector {
+public class ConnectorHookRestEntity {
 
-  private String identifier;
+  private String connectorName;
 
-  private String secretKey;
+  private String name;
 
-  private String accessToken;
+  private String title;
 
-  public ConnectorRestEntity(String name,
-                             String apiKey,
-                             String redirectUrl,
-                             String identifier,
-                             String secretKey,
-                             String accessToken,
-                             boolean enabled) {
-    super(name, apiKey, redirectUrl, enabled);
-    this.identifier = identifier;
-    this.secretKey = secretKey;
-    this.accessToken = accessToken;
-  }
+  private String description;
+
+  private String imageUrl;
+
+  private String watchDate;
+
+  private String watchedBy;
+
+  private String updatedDate;
 }

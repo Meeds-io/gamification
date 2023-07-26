@@ -92,6 +92,10 @@
   </component>
 
   <component>
+    <type>io.meeds.gamification.dao.ConnectorHookDAO</type>
+  </component>
+
+  <component>
     <key>io.meeds.gamification.service.RealizationService</key>
     <type>io.meeds.gamification.service.impl.RealizationServiceImpl</type>
   </component>
@@ -128,8 +132,17 @@
   </component>
 
   <component>
+    <key>io.meeds.gamification.service.ConnectorHookService</key>
+    <type>io.meeds.gamification.service.impl.ConnectorHookServiceImpl</type>
+  </component>
+
+  <component>
     <key>io.meeds.gamification.storage.ConnectorAccountStorage</key>
     <type>io.meeds.gamification.storage.cached.ConnectorAccountCachedStorage</type>
+  </component>
+
+  <component>
+    <type>io.meeds.gamification.storage.ConnectorHookStorage</type>
   </component>
 
   <component>
