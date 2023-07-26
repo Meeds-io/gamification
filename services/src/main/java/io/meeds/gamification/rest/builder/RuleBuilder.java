@@ -165,15 +165,15 @@ public class RuleBuilder {
                                                                     rule.getId(),
                                                                     RULE_TITLE_FIELD_NAME,
                                                                     locale);
-    if (StringUtils.isNotBlank(processRichEditorContent(translatedTitle))) {
-      rule.setTitle(processRichEditorContent(translatedTitle));
+    if (StringUtils.isNotBlank(translatedTitle)) {
+      rule.setTitle(translatedTitle);
     }
     String translatedDescription = translationService.getTranslationLabel(RULE_OBJECT_TYPE,
                                                                           rule.getId(),
                                                                           RULE_DESCRIPTION_FIELD_NAME,
                                                                           locale);
-    if (StringUtils.isNotBlank(processRichEditorContent(translatedDescription))) {
-      rule.setDescription(processRichEditorContent(translatedDescription));
+    if (StringUtils.isNotBlank(translatedDescription)) {
+      rule.setDescription(translatedDescription);
     }
     ProgramBuilder.translatedLabels(translationService, rule.getProgram(), locale);
   }
@@ -182,9 +182,9 @@ public class RuleBuilder {
                                               RealizationService realizationService,
                                               RuleDTO rule,
                                               String username) {
-    UserInfoContext userContext = ProgramBuilder.toUserContext(programService, rule.getProgram(), processRichEditorContent(username));
+    UserInfoContext userContext = ProgramBuilder.toUserContext(programService, rule.getProgram(), username);
     RealizationValidityContext realizationRestriction = realizationService.getRealizationValidityContext(rule,
-                                                                                                         String.valueOf(Utils.getUserIdentityId(processRichEditorContent(username))));
+                                                                                                         String.valueOf(Utils.getUserIdentityId(username)));
     userContext.setContext(realizationRestriction);
     userContext.setAllowedToRealize(realizationRestriction.isValid());
     return userContext;
