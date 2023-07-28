@@ -1,6 +1,5 @@
 package io.meeds.gamification.service;
 
-import java.util.List;
 import java.util.Map;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -68,13 +67,5 @@ public interface AnnouncementService {
    */
 
   Announcement getAnnouncementById(long announcementId);
-
-  /**
-   * Retrieves all announcements by earnerId.
-   *
-   * @param  earnerIdentityId : the userId used in projection
-   * @return                  A {@link List &lt;Announcement&gt;} object
-   */
-  List<Announcement> findAnnouncements(String earnerIdentityId);
 
 }

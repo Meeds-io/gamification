@@ -27,7 +27,6 @@ import static io.meeds.gamification.constant.GamificationConstant.OBJECT_TYPE_PA
 import static io.meeds.gamification.constant.GamificationConstant.RECEIVER_ID;
 import static io.meeds.gamification.constant.GamificationConstant.SENDER_ID;
 import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -35,13 +34,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -49,32 +46,24 @@ import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.model.Profile;
 import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
-import org.exoplatform.social.core.storage.cache.CachedActivityStorage;
 
 import io.meeds.gamification.model.Announcement;
-import io.meeds.gamification.service.AnnouncementService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GamificationProfileListenerTest {
 
-  private static final String   USERNAME       = "test";
+  private static final String USERNAME       = "test";
 
-  private static final String   OTHER_USERNAME = "test2";
-
-  @Mock
-  private AnnouncementService   announcementService;
+  private static final String OTHER_USERNAME = "test2";
 
   @Mock
-  private CachedActivityStorage activityStorage;
+  private ListenerService     listenerService;
 
   @Mock
-  private ListenerService       listenerService;
+  private Identity            identity;
 
   @Mock
-  private Identity              identity;
-
-  @Mock
-  private Profile               profile;
+  private Profile             profile;
 
   @Before
   public void setup() {
@@ -85,22 +74,15 @@ public class GamificationProfileListenerTest {
 
   @Test
   public void testUpdateContactSectionUpdated() throws Exception {
-    GamificationProfileListener gamificationProfileListener = new GamificationProfileListener(listenerService,
-                                                                                              announcementService,
-                                                                                              activityStorage);
+    GamificationProfileListener gamificationProfileListener = new GamificationProfileListener(listenerService);
     Announcement announcement = new Announcement();
     announcement.setActivityId(1L);
-    when(announcementService.findAnnouncements(identity.getId())).thenReturn(Collections.singletonList(announcement));
 
-    ProfileLifeCycleEvent event = new ProfileLifeCycleEvent(ProfileLifeCycleEvent.Type.CONTACT_UPDATED, USERNAME, profile, OTHER_USERNAME);
+    ProfileLifeCycleEvent event = new ProfileLifeCycleEvent(ProfileLifeCycleEvent.Type.CONTACT_UPDATED,
+                                                            USERNAME,
+                                                            profile,
+                                                            OTHER_USERNAME);
     gamificationProfileListener.contactSectionUpdated(event);
-    verify(activityStorage, times(1)).clearActivityCached(argThat(new ArgumentMatcher<String>() {
-      @Override
-      public boolean matches(String activityId) {
-        assertEquals("1", activityId);
-        return true;
-      }
-    }));
 
     verifyNoInteractions(listenerService);
     event = new ProfileLifeCycleEvent(ProfileLifeCycleEvent.Type.CONTACT_UPDATED, USERNAME, profile, USERNAME);
@@ -123,10 +105,11 @@ public class GamificationProfileListenerTest {
 
   @Test
   public void testUpdateUserAvatar() throws Exception {
-    GamificationProfileListener gamificationProfileListener = new GamificationProfileListener(listenerService,
-                                                                                              announcementService,
-                                                                                              activityStorage);
-    ProfileLifeCycleEvent event = new ProfileLifeCycleEvent(ProfileLifeCycleEvent.Type.CONTACT_UPDATED, USERNAME, profile, OTHER_USERNAME);
+    GamificationProfileListener gamificationProfileListener = new GamificationProfileListener(listenerService);
+    ProfileLifeCycleEvent event = new ProfileLifeCycleEvent(ProfileLifeCycleEvent.Type.CONTACT_UPDATED,
+                                                            USERNAME,
+                                                            profile,
+                                                            OTHER_USERNAME);
     gamificationProfileListener.avatarUpdated(event);
 
     verifyNoInteractions(listenerService);
@@ -150,11 +133,12 @@ public class GamificationProfileListenerTest {
 
   @Test
   public void testUpdateUserBanner() throws Exception {
-    GamificationProfileListener gamificationProfileListener = new GamificationProfileListener(listenerService,
-                                                                                              announcementService,
-                                                                                              activityStorage);
+    GamificationProfileListener gamificationProfileListener = new GamificationProfileListener(listenerService);
 
-    ProfileLifeCycleEvent event = new ProfileLifeCycleEvent(ProfileLifeCycleEvent.Type.CONTACT_UPDATED, USERNAME, profile, OTHER_USERNAME);
+    ProfileLifeCycleEvent event = new ProfileLifeCycleEvent(ProfileLifeCycleEvent.Type.CONTACT_UPDATED,
+                                                            USERNAME,
+                                                            profile,
+                                                            OTHER_USERNAME);
     gamificationProfileListener.bannerUpdated(event);
 
     verifyNoInteractions(listenerService);
@@ -178,11 +162,12 @@ public class GamificationProfileListenerTest {
 
   @Test
   public void testUpdateWorkExperience() throws Exception {
-    GamificationProfileListener gamificationProfileListener = new GamificationProfileListener(listenerService,
-                                                                                              announcementService,
-                                                                                              activityStorage);
+    GamificationProfileListener gamificationProfileListener = new GamificationProfileListener(listenerService);
 
-    ProfileLifeCycleEvent event = new ProfileLifeCycleEvent(ProfileLifeCycleEvent.Type.CONTACT_UPDATED, USERNAME, profile, OTHER_USERNAME);
+    ProfileLifeCycleEvent event = new ProfileLifeCycleEvent(ProfileLifeCycleEvent.Type.CONTACT_UPDATED,
+                                                            USERNAME,
+                                                            profile,
+                                                            OTHER_USERNAME);
     gamificationProfileListener.experienceSectionUpdated(event);
 
     verifyNoInteractions(listenerService);

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.dao.RealizationDAO;
 import io.meeds.gamification.entity.RealizationEntity;
@@ -84,10 +83,6 @@ public class RealizationStorage {
 
   public List<StandardLeaderboard> findRealizationsByProgramId(IdentityType identityType, long programId) {
     return gamificationHistoryDAO.findRealizationsByProgramId(identityType, programId);
-  }
-
-  public List<RealizationDTO> findRealizationsByIdentityIdAndByType(String earnerId, EntityType entityType) {
-    return fromEntities(programStorage, gamificationHistoryDAO.findRealizationsByIdentityIdAndByType(earnerId, entityType));
   }
 
   public List<RealizationDTO> findRealizationsByIdentityIdSortedByDate(String earnerIdentityId, int limit) {
