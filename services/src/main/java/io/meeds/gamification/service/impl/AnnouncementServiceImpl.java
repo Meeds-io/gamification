@@ -9,7 +9,6 @@ import static io.meeds.gamification.utils.Utils.broadcastEvent;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -137,11 +136,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       throw new IllegalArgumentException("announcementId is mandatory");
     }
     return announcementStorage.getAnnouncementById(announcementId);
-  }
-
-  @Override
-  public List<Announcement> findAnnouncements(String earnerIdentityId) {
-    return announcementStorage.findAnnouncements(earnerIdentityId);
   }
 
   @Override

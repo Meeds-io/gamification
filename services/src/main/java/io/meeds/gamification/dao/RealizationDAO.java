@@ -33,7 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
-import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.entity.RealizationEntity;
@@ -110,22 +109,6 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
          .setParameter(PROGRAM_ID_PARAM_NAME, domainId)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
-    return query.getResultList();
-  }
-
-  /**
-   * Find all gamification entries by earnerId and by type
-   *
-   * @param  earnerId : the userId used in projection
-   * @param  type     : The Type of action
-   * @return          list of objects of type {@link RealizationEntity}
-   */
-  public List<RealizationEntity> findRealizationsByIdentityIdAndByType(String earnerId, EntityType type) {
-    TypedQuery<RealizationEntity> query =
-                                        getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByEarnerIdAndByType",
-                                                                            RealizationEntity.class);
-    query.setParameter(EARNER_TYPE_PARAM_NAME, type);
-    query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     return query.getResultList();
   }
 

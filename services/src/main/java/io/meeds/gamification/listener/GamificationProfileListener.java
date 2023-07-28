@@ -31,11 +31,8 @@ import static io.meeds.gamification.constant.GamificationConstant.SENDER_ID;
 import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.services.listener.ListenerService;
@@ -44,28 +41,15 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Profile;
 import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
 import org.exoplatform.social.core.profile.ProfileListenerPlugin;
-import org.exoplatform.social.core.storage.api.ActivityStorage;
-import org.exoplatform.social.core.storage.cache.CachedActivityStorage;
-
-import io.meeds.gamification.model.Announcement;
-import io.meeds.gamification.service.AnnouncementService;
 
 public class GamificationProfileListener extends ProfileListenerPlugin {
 
-  private static final Log    LOG = ExoLogger.getLogger(GamificationProfileListener.class);
+  private static final Log LOG = ExoLogger.getLogger(GamificationProfileListener.class);
 
-  private ListenerService     listenerService;
+  private ListenerService  listenerService;
 
-  private AnnouncementService announcementService;
-
-  private ActivityStorage     activityStorage;
-
-  public GamificationProfileListener(ListenerService listenerService,
-                                     AnnouncementService announcementService,
-                                     ActivityStorage activityStorage) {
+  public GamificationProfileListener(ListenerService listenerService) {
     this.listenerService = listenerService;
-    this.announcementService = announcementService;
-    this.activityStorage = activityStorage;
   }
 
   @Override
@@ -85,28 +69,12 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
 
   @Override
   public void contactSectionUpdated(ProfileLifeCycleEvent event) {
-    String identityId = event.getProfile().getIdentity().getId();
     createRealizations(GAMIFICATION_SOCIAL_PROFILE_ADD_CONTACT_INFORMATION, event.getProfile(), event.getModifierUsername());
-    clearUserActivitiesCache(identityId);
   }
 
   @Override
   public void experienceSectionUpdated(ProfileLifeCycleEvent event) {
     createRealizations(GAMIFICATION_SOCIAL_PROFILE_ADD_WORK_EXPERIENCE, event.getProfile(), event.getModifierUsername());
-  }
-
-  private void clearUserActivitiesCache(String userIdentityId) {
-    if (!(activityStorage instanceof CachedActivityStorage cachedActivityStorage)) {
-      return;
-    }
-    List<Announcement> announcements = announcementService.findAnnouncements(userIdentityId);
-    if (CollectionUtils.isNotEmpty(announcements)) {
-      announcements.stream()
-                   .map(Announcement::getActivityId)
-                   .filter(Objects::nonNull)
-                   .map(String::valueOf)
-                   .forEach(cachedActivityStorage::clearActivityCached);
-    }
   }
 
   private void createRealizations(String gamificationEventName, Profile profile, String modifierUsername) {

@@ -11,7 +11,6 @@ import org.apache.commons.collections.CollectionUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
-import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.model.Announcement;
@@ -78,12 +77,6 @@ public class AnnouncementStorage {
   public Announcement getAnnouncementById(long announcementId) {
     RealizationDTO announcementRealization = realizationStorage.getRealizationById(announcementId);
     return fromRealization(announcementRealization);
-  }
-
-  public List<Announcement> findAnnouncements(String earnerIdentityId) {
-    List<RealizationDTO> announcementEntities = realizationStorage.findRealizationsByIdentityIdAndByType(earnerIdentityId,
-                                                                                                         EntityType.MANUAL);
-    return fromAnnouncementEntities(announcementEntities);
   }
 
   private RealizationDTO toRealization(Announcement announcement, RuleDTO rule) {
