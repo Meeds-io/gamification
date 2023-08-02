@@ -23,6 +23,7 @@
     id="ruleDetailDrawer"
     ref="ruleDetailDrawer"
     v-model="drawer"
+    v-draggable="'activity'"
     :right="!$vuetify.rtl"
     allow-expand
     @closed="onClose"
