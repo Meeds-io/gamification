@@ -23,6 +23,7 @@
     id="ruleDetailDrawer"
     ref="ruleDetailDrawer"
     v-model="drawer"
+    v-draggable="enabled"
     :right="!$vuetify.rtl"
     allow-expand
     @closed="onClose"
@@ -184,6 +185,7 @@ export default {
     drawerUrl: null,
     time: Date.now(),
     interval: null,
+    objectType: 'activity'
   }),
   computed: {
     now() {
@@ -252,6 +254,9 @@ export default {
     canAnnounce() {
       return this.rule?.userInfo?.context?.valid && this.rule?.type === 'MANUAL';
     },
+    enabled() {
+      return eXo.env.portal.editorAttachImageEnabled && eXo.env.portal.attachmentObjectTypes?.indexOf(this.objectType) >= 0;
+    }
   },
   watch: {
     sending() {
