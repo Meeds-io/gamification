@@ -453,7 +453,17 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   @Override
   public Map<Long, Long> getScoresByIdentityIdsAndBetweenDates(List<String> earnersId, Date fromDate, Date toDate) {
-    return realizationStorage.getScoresByIdentityIdsAndBetweenDates(earnersId, fromDate, toDate);
+    return realizationStorage.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
+  }
+
+  @Override
+  public long countParticipantsBetweenDates(Date fromDate, Date toDate) {
+    return realizationStorage.countParticipantsBetweenDates(fromDate, toDate);
+  }
+
+  @Override
+  public List<StandardLeaderboard> getLeaderboardBetweenDate(IdentityType earnedType, Date fromDate, Date toDate) {
+    return realizationStorage.findAllLeaderboardBetweenDate(earnedType, fromDate, toDate);
   }
 
   @Override
