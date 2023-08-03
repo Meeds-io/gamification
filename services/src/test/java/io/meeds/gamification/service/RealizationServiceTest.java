@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -175,6 +176,40 @@ public class RealizationServiceTest extends AbstractServiceTest {
     assertEquals(spaceHostIdentityId, realizationEntity.getReceiver());
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.SPACE, realizationEntity.getEarnerType());
+  }
+
+  public void testCountParticipantsBetweenDates() {
+    List<RealizationEntity> realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 0);
+    RuleDTO ruleDTO = newRuleDTO();
+
+    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                                       spaceHostIdentityId,
+                                                                       spaceMemberIdentityId,
+                                                                       ACTIVITY_ID,
+                                                                       ACTIVITY_OBJECT_TYPE)
+                                                   .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 1);
+    Date fromDate = Date.from(ZonedDateTime.now().minusMinutes(1).toInstant());
+    Date toDate = Date.from(ZonedDateTime.now().plusMinutes(1).toInstant());
+
+    assertEquals(1, realizationService.countParticipantsBetweenDates(fromDate, toDate));
+
+    realization = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                        TEST_SPACE_ID,
+                                                        spaceHostIdentityId,
+                                                        ACTIVITY_ID,
+                                                        ACTIVITY_OBJECT_TYPE)
+                                    .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 2);
+    assertEquals(1, realizationService.countParticipantsBetweenDates(fromDate, toDate));
   }
 
   public void testCreateRealizationsBySpaceMember() {
