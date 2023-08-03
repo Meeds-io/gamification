@@ -43,11 +43,10 @@ public interface RealizationService {
   /**
    * Retrieves all Realizations by Filter.
    *
-   * @param  filter                 used to filter realizations using
-   *                                  {@link RealizationFilter}
-   * @param  offset                 Offset
-   * @param  limit                  Limit
-   * @return                        A {@link List &lt;RealizationDTO&gt;} object
+   * @param  filter used to filter realizations using {@link RealizationFilter}
+   * @param  offset Offset
+   * @param  limit  Limit
+   * @return        A {@link List &lt;RealizationDTO&gt;} object
    */
   List<RealizationDTO> getRealizationsByFilter(RealizationFilter filter,
                                                int offset,
@@ -68,9 +67,8 @@ public interface RealizationService {
   /**
    * Count realizations by filter
    *
-   * @param  filter                 used to filter realizations using
-   *                                  {@link RealizationFilter}
-   * @return                        realizations count
+   * @param  filter used to filter realizations using {@link RealizationFilter}
+   * @return        realizations count
    */
   int countRealizationsByFilter(RealizationFilter filter);
 
@@ -321,6 +319,13 @@ public interface RealizationService {
    *                           id as key and score as value
    */
   Map<Long, Long> getScoresByIdentityIdsAndBetweenDates(List<String> earnerIdentityIds, Date fromDate, Date toDate);
+
+  /**
+   * @param  fromDate start of period
+   * @param  toDate   end of period
+   * @return          Count participant users in a period of time
+   */
+  long countParticipantsBetweenDates(Date fromDate, Date toDate);
 
   /**
    * Provided as an API from points n list to find gamification history from the

@@ -127,6 +127,15 @@ import lombok.EqualsAndHashCode;
     " ORDER BY g.id DESC"
 )
 
+@NamedQuery(
+  name = "RealizationEntity.countParticipantsBetweenDates",
+  query = "SELECT COUNT(DISTINCT g.earnerId) FROM RealizationEntity g" +
+      " WHERE g.createdDate >= :fromDate" +
+      " AND g.createdDate < :toDate" +
+      " AND g.earnerType = :earnerType" +
+      " AND g.status = :status"
+)
+
 @NamedQuery(name = "RealizationEntity.getRealizationsByObjectIdAndObjectType", query = "SELECT g FROM RealizationEntity g"
     +
     " WHERE g.objectId = :objectId" +

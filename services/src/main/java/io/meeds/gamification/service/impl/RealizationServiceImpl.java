@@ -483,6 +483,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
+  public long countParticipantsBetweenDates(Date fromDate, Date toDate) {
+    return realizationStorage.countParticipantsBetweenDates(fromDate, toDate);
+  }
+
+  @Override
   public List<StandardLeaderboard> getLeaderboardBetweenDate(IdentityType earnedType, Date fromDate, Date toDate) {
     return realizationStorage.findAllLeaderboardBetweenDate(earnedType, fromDate, toDate);
   }

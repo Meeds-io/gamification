@@ -394,6 +394,21 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
+  public long countParticipantsBetweenDates(Date fromDate, Date toDate) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("RealizationEntity.countParticipantsBetweenDates",
+                                                                 Long.class);
+    query.setParameter(FROM_DATE_PARAM_NAME, fromDate);
+    query.setParameter(TO_DATE_PARAM_NAME, toDate);
+    query.setParameter(EARNER_TYPE_PARAM_NAME, IdentityType.USER);
+    query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
+    try {
+      Long count = query.getSingleResult();
+      return count == null ? 0 : count.intValue();
+    } catch (NoResultException e) {
+      return 0;
+    }
+  }
+
   public int countRealizationsByRuleIdAndEarnerIdSinceDate(String earnerIdentityId, long ruleId, Date sinceDate) {
     TypedQuery<Long> query =
                            getEntityManager().createNamedQuery("RealizationEntity.countRealizationsByRuleIdAndEarnerIdSinceDate",
