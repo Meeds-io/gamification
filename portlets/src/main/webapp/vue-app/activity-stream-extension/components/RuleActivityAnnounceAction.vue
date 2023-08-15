@@ -35,10 +35,10 @@
           <div class="d-flex flex-lg-row flex-column">
             <v-icon
               class="baseline-vertical-align mx-auto disabled--text"
-              size="14">
+              :size="isMobile && '20' || '14'">
               fas fa-bullhorn
             </v-icon>
-            <span class="mx-auto mt-1 mt-lg-0 ms-lg-2">
+            <span v-if="!isMobile" class="mx-auto mt-1 mt-lg-0 ms-lg-2">
               {{ $t('rule.detail.Announce') }}
             </span>
           </div>
