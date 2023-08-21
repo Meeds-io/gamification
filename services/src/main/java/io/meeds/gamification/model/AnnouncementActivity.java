@@ -22,28 +22,27 @@ import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class AnnouncementActivity implements Cloneable {
+public class AnnouncementActivity extends Announcement {
 
-  private long                id;
-
-  private Long                challengeId;
-
-  private String              challengeTitle;
-
-  private Long                assignee;
-
-  private String              comment;
-
-  private Long                creator;
-
-  private String              createdDate;
-
-  private Long                activityId;
+  public AnnouncementActivity(long id, // NOSONAR
+                              Long challengeId,
+                              String challengeTitle,
+                              Long assignee,
+                              String comment,
+                              Long creator,
+                              String createdDate,
+                              Long activityId,
+                              Map<String, String> templateParams) {
+    super(id, challengeId, challengeTitle, assignee, comment, creator, createdDate, activityId);
+    this.templateParams = templateParams;
+  }
 
   private Map<String, String> templateParams;
 

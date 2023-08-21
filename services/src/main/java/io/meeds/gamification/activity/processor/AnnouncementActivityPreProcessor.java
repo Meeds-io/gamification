@@ -16,13 +16,18 @@
  */
 package io.meeds.gamification.activity.processor;
 
-import static io.meeds.gamification.activity.processor.AnnouncementActivityProcessor.ACTIVITY_TYPE;
 import static io.meeds.gamification.activity.processor.AnnouncementActivityProcessor.ANNOUNCEMENT_COMMENT_PARAM;
 
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.social.core.BaseActivityProcessorPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 
+import io.meeds.gamification.utils.Utils;
+
+/**
+ * @deprecated this was used when the announcement was of type 'Activity'
+ */
+@Deprecated(forRemoval = true, since = "1.5.0")
 public class AnnouncementActivityPreProcessor extends BaseActivityProcessorPlugin {
 
   public AnnouncementActivityPreProcessor(InitParams params) {
@@ -36,7 +41,7 @@ public class AnnouncementActivityPreProcessor extends BaseActivityProcessorPlugi
 
   @Override
   public void processActivity(ExoSocialActivity activity) {
-    if (!ACTIVITY_TYPE.equals(activity.getType())) {
+    if (!Utils.ANNOUNCEMENT_ACTIVITY_TYPE.equals(activity.getType())) {
       return;
     }
     if (activity.isComment() || activity.getType() == null) {

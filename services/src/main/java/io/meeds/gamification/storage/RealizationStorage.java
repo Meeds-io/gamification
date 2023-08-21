@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.dao.RealizationDAO;
 import io.meeds.gamification.entity.RealizationEntity;
@@ -86,10 +85,6 @@ public class RealizationStorage {
     return gamificationHistoryDAO.findRealizationsByProgramId(identityType, programId);
   }
 
-  public List<RealizationDTO> findRealizationsByIdentityIdAndByType(String earnerId, EntityType entityType) {
-    return fromEntities(programStorage, gamificationHistoryDAO.findRealizationsByIdentityIdAndByType(earnerId, entityType));
-  }
-
   public List<RealizationDTO> findRealizationsByIdentityIdSortedByDate(String earnerIdentityId, int limit) {
     return fromEntities(programStorage, gamificationHistoryDAO.findRealizationsByIdentityIdSortedByDate(earnerIdentityId, limit));
   }
@@ -137,19 +132,17 @@ public class RealizationStorage {
     return gamificationHistoryDAO.findAllLeaderboardBetweenDate(earnedType, fromDate, toDate);
   }
 
-  public RealizationDTO findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
-                                                                                      long programId,
+  public RealizationDTO findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(long ruleId,
                                                                                       String earnerId,
                                                                                       String receiverId,
                                                                                       String objectId,
                                                                                       String objectType) {
     return fromEntity(programStorage,
-                      gamificationHistoryDAO.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId(actionTitle,
-                                                                                                             programId,
-                                                                                                             earnerId,
-                                                                                                             receiverId,
-                                                                                                             objectId,
-                                                                                                             objectType));
+                      gamificationHistoryDAO.findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(ruleId,
+                                                                                                           earnerId,
+                                                                                                           receiverId,
+                                                                                                           objectId,
+                                                                                                           objectType));
   }
 
   public int countRealizationsByRuleIdAndEarnerId(String earnerIdentityId, long ruleId) {

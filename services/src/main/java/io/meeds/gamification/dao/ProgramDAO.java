@@ -105,7 +105,7 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     if (filterNamedQueries.containsKey(queryName)) {
       query = getEntityManager().createNamedQuery(queryName, clazz);
     } else {
-      String queryContent = getQueryFilterContent(predicates, count);
+      String queryContent = getQueryFilterContent(filter.getSortBy(), filter.isSortDescending(), predicates, count);
       query = getEntityManager().createQuery(queryContent, clazz);
       getEntityManager().getEntityManagerFactory().addNamedQuery(queryName, query);
       filterNamedQueries.put(queryName, true);
@@ -178,6 +178,15 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
       suffixes.add("OpenAudience");
       predicates.add("d.audienceId IS NULL");
     }
+    if (StringUtils.isNotBlank(filter.getSortBy())) {
+      suffixes.add("SortBy");
+      suffixes.add(filter.getSortBy());
+      if (filter.isSortDescending()) {
+        suffixes.add("Descending");
+      } else {
+        suffixes.add("Ascending");
+      }
+    }
   }
 
   private String getQueryFilterName(List<String> suffixes, boolean count) {
@@ -190,7 +199,10 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     return queryName;
   }
 
-  private String getQueryFilterContent(List<String> predicates, boolean count) {
+  private String getQueryFilterContent(String sortField,
+                                       boolean sortDescending,
+                                       List<String> predicates,
+                                       boolean count) {
     String querySelect = count ? "SELECT COUNT(d) FROM GamificationDomain d "
                                : "SELECT d.id FROM GamificationDomain d ";
 
@@ -201,9 +213,40 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
       queryContent = querySelect + " WHERE " + StringUtils.join(predicates, " AND ");
     }
     if (!count) {
-      queryContent += " ORDER BY d.title ASC, d.id DESC";
+      queryContent += " ORDER BY " + getSortFieldName(sortField) + (sortDescending ? " DESC " : " ASC ");
     }
     return queryContent;
+  }
+
+  private String getSortFieldName(String sortField) {
+    if (StringUtils.isBlank(sortField)) {
+      sortField = "title";
+    }
+    return switch (sortField) {
+    case "title": {
+      yield "d.title";
+    }
+    case "id", "createdDate": {
+      yield "d.id";
+    }
+    case "modifiedDate": {
+      yield "d.lastModifiedDate";
+    }
+    case "type": {
+      yield "d.type";
+    }
+    case "recurrence": {
+      yield "d.recurrence";
+    }
+    case "priority": {
+      yield "d.priority";
+    }
+    case "audience": {
+      yield "d.audienceId";
+    }
+    default:
+      yield "d.title";
+    };
   }
 
 }

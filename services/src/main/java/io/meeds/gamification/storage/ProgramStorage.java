@@ -93,6 +93,14 @@ public class ProgramStorage {
     return ProgramMapper.fromEntity(ruleDAO, programEntity);
   }
 
+  public void updateProgramDate(long programId) {
+    ProgramEntity programEntity = programDAO.find(programId);
+    if (programEntity != null) {
+      programEntity.setLastModifiedDate(new Date());
+      programDAO.update(programEntity);
+    }
+  }
+
   public ProgramDTO getProgramByTitle(String programTitle) {
     return ProgramMapper.fromEntity(ruleDAO, programDAO.getProgramByTitle(programTitle));
   }

@@ -15,7 +15,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './initComponents.js';
-import './extensions.js';
 
 // get overridden components if exists
 if (extensionRegistry) {
@@ -27,4 +26,25 @@ if (extensionRegistry) {
   }
 }
 
-Vue.prototype.$utils.includeExtensions('engagementCenterActions');
+const appId = 'EngagementCenterDrawers';
+
+if (!document.getElementById(appId)) {
+  const lang = eXo && eXo.env.portal.language || 'en';
+  const urls = [
+    `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`,
+    `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`
+  ];
+
+  const gamificationDrawersElement = document.createElement('div');
+  gamificationDrawersElement.setAttribute('id', appId);
+  document.querySelector('#vuetify-apps').append(gamificationDrawersElement);
+
+  exoi18n.loadLanguageAsync(lang, urls)
+    .then(i18n => {
+      Vue.createApp({
+        template: `<engagement-center-rule-drawers id="${appId}" />`,
+        i18n,
+        vuetify: Vue.prototype.vuetifyOptions,
+      }, `#${appId}`, 'Engagement Center Drawers');
+    });
+}

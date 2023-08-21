@@ -55,7 +55,11 @@ public class RuleCachedStorage extends RuleStorage {
       @Override
       public Object retrieve(CacheKey context, Serializable key) throws Exception {
         if (context.getContext() == RULE_ID_CONTEXT) {
-          return RuleCachedStorage.super.findRuleById(context.getId());
+          RuleDTO rule = RuleCachedStorage.super.findRuleById(context.getId());
+          if (rule != null) {
+            rule.setCacheTime(System.currentTimeMillis());
+          }
+          return rule;
         } else if (context.getContext() == RULE_TITLE_CONTEXT) {
           return RuleCachedStorage.super.findRuleByTitle(context.getTitle());
         } else if (context.getContext() == RULES_BY_FILTER_CONTEXT) {

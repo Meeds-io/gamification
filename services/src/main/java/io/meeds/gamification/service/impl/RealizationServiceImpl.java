@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,6 +47,7 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -55,7 +57,6 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import io.meeds.gamification.constant.DateFilterType;
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
-import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.constant.RealizationStatus;
@@ -78,42 +79,49 @@ import io.meeds.gamification.utils.Utils;
 
 public class RealizationServiceImpl implements RealizationService, Startable {
 
-  private static final Log    LOG                           = ExoLogger.getLogger(RealizationServiceImpl.class);
-
-  // Delimiters that must be in the CSV file
-  private static final String DELIMITER                     = ",";
-
-  private static final String SEPARATOR                     = "\n";
+  private static final Log      LOG                           = ExoLogger.getLogger(RealizationServiceImpl.class);
 
   // File header
-  private static final String HEADER                        = "Date,Grantee,Action type,Program label,Action label,Points,Status";
+  private static final String[] COLUMNS                       = new String[] {
+      "date",
+      "grantee",
+      "actionType",
+      "programLabel",
+      "actionLabel",
+      "points",
+      "status"
+  };
 
-  private static final String SHEETNAME                     = "Achivements Report";
+  private static final String   SHEETNAME                     = "Achivements Report";
 
-  private ExecutorService     executorService;
+  private ExecutorService       executorService;
 
-  private ProgramService      programService;
+  private ProgramService        programService;
 
-  private RuleService         ruleService;
+  private RuleService           ruleService;
 
-  private IdentityManager     identityManager;
+  private IdentityManager       identityManager;
 
-  private SpaceService        spaceService;
+  private SpaceService          spaceService;
 
-  private RealizationStorage  realizationStorage;
+  private ResourceBundleService resourceBundleService;
 
-  private String              blacklistMembershipExpression = Utils.BLACK_LIST_GROUP;
+  private RealizationStorage    realizationStorage;
 
-  private MembershipEntry     blacklistMembership;
+  private String                blacklistMembershipExpression = Utils.BLACK_LIST_GROUP;
+
+  private MembershipEntry       blacklistMembership;
 
   public RealizationServiceImpl(ProgramService programService,
                                 RuleService ruleService,
+                                ResourceBundleService resourceBundleService,
                                 IdentityManager identityManager,
                                 SpaceService spaceService,
                                 RealizationStorage realizationStorage,
                                 InitParams initParams) {
     this.programService = programService;
     this.ruleService = ruleService;
+    this.resourceBundleService = resourceBundleService;
     this.spaceService = spaceService;
     this.realizationStorage = realizationStorage;
     this.identityManager = identityManager;
@@ -307,9 +315,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       return Collections.emptyList();
     }
     return rules.stream()
-                .map(rule -> realizationStorage.findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(rule.getTitle(),
-                                                                                                              rule.getProgram()
-                                                                                                                  .getId(),
+                .map(rule -> realizationStorage.findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(rule.getId(),
                                                                                                               earnerIdentityId,
                                                                                                               receiverIdentityId,
                                                                                                               objectId,
@@ -535,40 +541,28 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                 Identity identity,
                                 String fileName,
                                 Locale locale) throws IllegalAccessException {
-    try {
-      List<RealizationDTO> realizations = getRealizationsByFilter(filter, identity, 0, -1);
-      String data = stringifyAchievements(realizations, locale);
-      String[] dataToWrite = data.split("\\r?\\n");
-      SimpleDateFormat formatter = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
-      fileName += formatter.format(new Date());
-      File temp;
-      if (SystemUtils.IS_OS_UNIX) {
-        FileAttribute<Set<PosixFilePermission>> tempFileAttributes =
-                                                                   PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
-        temp = Files.createTempFile(fileName, ".xlsx", tempFileAttributes).toFile();
-      } else {
-        temp = Files.createTempFile(fileName, ".xlsx").toFile();
-        if (!temp.setReadable(true, true) || !temp.setWritable(true, true)) {
-          throw new IllegalStateException("Can't write a temp file to export XLS achievements file");
-        }
-      }
+    File temp = null;
+    try { // NOSONAR
+      temp = createTempFile(fileName);
 
-      temp.deleteOnExit();
+      List<RealizationDTO> realizations = getRealizationsByFilter(filter, identity, 0, -1);
       try (XSSFWorkbook workbook = new XSSFWorkbook(); FileOutputStream outputStream = new FileOutputStream(temp)) {
-        Sheet sheet = workbook.createSheet(SHEETNAME);
+        int rowIndex = 0;
         CreationHelper helper = workbook.getCreationHelper();
-        for (int i = 0; i < dataToWrite.length; i++) {
-          Row row = sheet.createRow((short) i);
-          String[] str = dataToWrite[i].split(",");
-          for (int j = 0; j < str.length; j++) {
-            row.createCell(j).setCellValue(helper.createRichTextString(str[j]));
-          }
+        Sheet sheet = workbook.createSheet(SHEETNAME);
+        appendRealizationHeaderRow(sheet, rowIndex++, helper, locale);
+        for (RealizationDTO realization : realizations) {
+          appendRealizationRow(sheet, rowIndex++, helper, realization);
         }
         workbook.write(outputStream);
       }
       return new FileInputStream(temp);
     } catch (IOException e) {
       throw new IllegalStateException("Error exporting XLSX file for achievements with filter " + filter, e);
+    } finally {
+      if (temp != null && temp.exists()) {
+        temp.deleteOnExit();
+      }
     }
   }
 
@@ -579,44 +573,6 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                               String objectId,
                                               String objectType) {
     createRealizations(event, earnerIdentityId, receiverIdentityId, objectId, objectType);
-  }
-
-  private String stringifyAchievements(List<RealizationDTO> realizations, Locale locale) { // NOSONAR
-    StringBuilder sbResult = new StringBuilder();
-    // Add header
-    sbResult.append(HEADER);
-    // Add a new line after the header
-    sbResult.append(SEPARATOR);
-
-    realizations.forEach(realization -> {
-      try {
-        RuleDTO rule = realization.getRuleId() != null
-            && realization.getRuleId() != 0 ? ruleService.findRuleById(realization.getRuleId())
-                                            : ruleService.findRuleByTitle(realization.getActionTitle());
-
-        String ruleTitle = rule == null ? null : rule.getEvent();
-        String actionLabel = realization.getActionTitle() != null ? realization.getActionTitle() : ruleTitle;
-        String programTitle = escapeIllegalCharacterInMessage(realization.getProgramLabel());
-        sbResult.append(realization.getCreatedDate());
-        sbResult.append(DELIMITER);
-        sbResult.append(Utils.getUserFullName(realization.getEarnerId()));
-        sbResult.append(DELIMITER);
-        sbResult.append(rule != null ? rule.getType().name() : "-");
-        sbResult.append(DELIMITER);
-        sbResult.append(programTitle);
-        sbResult.append(DELIMITER);
-        sbResult.append(actionLabel);
-        sbResult.append(DELIMITER);
-        sbResult.append(realization.getActionScore());
-        sbResult.append(DELIMITER);
-        sbResult.append(realization.getStatus());
-        sbResult.append(DELIMITER);
-        sbResult.append(SEPARATOR);
-      } catch (Exception e) {
-        LOG.error("Error when computing to XLSX ", e);
-      }
-    });
-    return sbResult.toString();
   }
 
   private RealizationFilter computeProgramFilter(RealizationFilter realizationFilter, // NOSONAR
@@ -805,6 +761,53 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   private void updateRealizationStatus(RealizationDTO realization, RealizationStatus status) {
     realization.setStatus(status.name());
     realizationStorage.updateRealization(realization);
+  }
+
+  private void appendRealizationHeaderRow(Sheet sheet, int rowIndex, CreationHelper helper, Locale locale) {
+    Row row = sheet.createRow(rowIndex);
+    ResourceBundle resourceBundle = resourceBundleService.getResourceBundle("locale.addon.Gamification", locale);
+    for (int i = 0; i < COLUMNS.length; i++) {
+      row.createCell(i).setCellValue(helper.createRichTextString(resourceBundle.getString("realization.label." + COLUMNS[i])));
+    }
+  }
+
+  private void appendRealizationRow(Sheet sheet, int rowIndex, CreationHelper helper, RealizationDTO realization) {
+    Row row = sheet.createRow(rowIndex);
+    try {
+      RuleDTO rule = realization.getRuleId() != null
+          && realization.getRuleId() != 0 ? ruleService.findRuleById(realization.getRuleId())
+                                          : ruleService.findRuleByTitle(realization.getActionTitle());
+
+      String ruleTitle = rule == null ? null : rule.getEvent();
+      String actionLabel = realization.getActionTitle() != null ? realization.getActionTitle() : ruleTitle;
+      String programTitle = escapeIllegalCharacterInMessage(realization.getProgramLabel());
+      int cellIndex = 0;
+      row.createCell(cellIndex++).setCellValue(helper.createRichTextString(realization.getCreatedDate()));
+      row.createCell(cellIndex++).setCellValue(Utils.getUserFullName(realization.getEarnerId()));
+      row.createCell(cellIndex++).setCellValue(rule != null ? rule.getType().name() : "-");
+      row.createCell(cellIndex++).setCellValue(programTitle);
+      row.createCell(cellIndex++).setCellValue(actionLabel);
+      row.createCell(cellIndex++).setCellValue(realization.getActionScore());
+      row.createCell(cellIndex).setCellValue(realization.getStatus());
+    } catch (Exception e) {
+      LOG.error("Error when computing to XLSX ", e);
+    }
+  }
+
+  private File createTempFile(String fileName) throws IOException {
+    SimpleDateFormat formatter = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
+    fileName += formatter.format(new Date());
+    if (SystemUtils.IS_OS_UNIX) {
+      FileAttribute<Set<PosixFilePermission>> tempFileAttributes =
+                                                                 PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
+      return Files.createTempFile(fileName, ".xlsx", tempFileAttributes).toFile();
+    } else {
+      File temp = Files.createTempFile(fileName, ".xlsx").toFile();
+      if (!temp.setReadable(true, true) || !temp.setWritable(true, true)) {
+        throw new IllegalStateException("Can't write a temp file to export XLS achievements file");
+      }
+      return temp;
+    }
   }
 
 }

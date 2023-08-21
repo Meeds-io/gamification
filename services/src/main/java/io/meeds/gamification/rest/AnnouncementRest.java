@@ -16,7 +16,6 @@ import org.exoplatform.services.rest.resource.ResourceContainer;
 
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.AnnouncementActivity;
-import io.meeds.gamification.rest.builder.AnnouncementBuilder;
 import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,11 +59,10 @@ public class AnnouncementRest implements ResourceContainer {
     }
     String currentUser = Utils.getCurrentUser();
     try {
-      Announcement announcement = AnnouncementBuilder.fromAnnouncementActivity(announcementActivity);
-      Announcement newAnnouncement = announcementService.createAnnouncement(announcement,
+      Announcement newAnnouncement = announcementService.createAnnouncement(announcementActivity,
                                                                             announcementActivity.getTemplateParams(),
                                                                             currentUser);
-      return Response.ok(AnnouncementBuilder.toAnnouncementActivity(newAnnouncement)).build();
+      return Response.ok(newAnnouncement).build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (IllegalArgumentException | IllegalStateException e) {

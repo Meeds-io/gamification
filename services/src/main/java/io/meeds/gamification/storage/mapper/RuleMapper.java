@@ -40,6 +40,7 @@ public class RuleMapper {
     ruleEntity.setId(rule.getId());
     ruleEntity.setScore(rule.getScore());
     ruleEntity.setTitle(rule.getTitle());
+    ruleEntity.setActivityId(rule.getActivityId());
     ruleEntity.setDescription(rule.getDescription());
     ruleEntity.setEnabled(rule.isEnabled());
     ruleEntity.setDeleted(rule.isDeleted());
@@ -79,6 +80,7 @@ public class RuleMapper {
       rule.setScore(ruleEntity.getScore());
       rule.setTitle(ruleEntity.getTitle());
       rule.setDescription(ruleEntity.getDescription());
+      rule.setActivityId(ruleEntity.getActivityId());
       rule.setEnabled(ruleEntity.isEnabled());
       rule.setDeleted(ruleEntity.isDeleted());
       rule.setEvent(ruleEntity.getEvent());

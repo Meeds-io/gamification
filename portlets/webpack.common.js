@@ -21,10 +21,15 @@ const { VueLoaderPlugin } = require('vue-loader')
 module.exports = {
   context: path.resolve(__dirname, '.'),
   entry: {
-    engagementCenter: './src/main/webapp/vue-app/engagement-center/main.js',
-    engagementCenterActivityStreamExtension: './src/main/webapp/vue-app/engagement-center-activity-stream-extension/main.js',
-    realizationsComponents: './src/main/webapp/vue-app/realizations/main.js',
+    engagementCenterPrograms: './src/main/webapp/vue-app/engagement-center-programs/main.js',
+    engagementCenterActions: './src/main/webapp/vue-app/engagement-center-actions/main.js',
+    engagementCenterAchievements: './src/main/webapp/vue-app/engagement-center-achievements/main.js',
+    activityStreamExtension: './src/main/webapp/vue-app/activity-stream-extension/main.js',
+    favoriteDrawerExtension: './src/main/webapp/vue-app/favorite-drawer-extension/main.js',
+    notificationExtension: './src/main/webapp/vue-app/notification-popover-extension/main.js',
     ruleComponents: './src/main/webapp/vue-app/rules/main.js',
+    ruleExtensions: './src/main/webapp/vue-app/rules-extensions/main.js',
+    ruleSearch: './src/main/webapp/vue-app/rules-search/main.js',
     gamificationCommon: './src/main/webapp/vue-app/commons/main.js',
     gamificationAnalytics: './src/main/webapp/vue-app/analytics/main.js',
     badge: './src/main/webapp/vue-app/badge/badge.js',
@@ -36,7 +41,8 @@ module.exports = {
     myReputation: './src/main/webapp/vue-app/myReputation/main.js',
     myRewards: './src/main/webapp/vue-app/myRewards/main.js',
     topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',
-    challengesOverview: './src/main/webapp/vue-app/challengesOverview/main.js',
+    rulesOverview: './src/main/webapp/vue-app/rulesOverview/main.js',
+    rulesOverviewWidget: './src/main/webapp/vue-app/rulesOverviewWidget/main.js',
     programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
   },
   plugins: [

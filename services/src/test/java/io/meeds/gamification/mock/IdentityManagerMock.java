@@ -39,7 +39,8 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.storage.api.IdentityStorage;
 
 public class IdentityManagerMock implements IdentityManager {
-  List<Identity> identities = new ArrayList<>();
+
+  protected static List<Identity> identities = new ArrayList<>();
 
   public IdentityManagerMock() {
     for (int i = 0; i < 100; i++) {

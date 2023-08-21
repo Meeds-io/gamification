@@ -16,7 +16,7 @@
  */
 package io.meeds.gamification.listener;
 
-import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
+import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_COMMENT_TYPE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -77,7 +77,7 @@ public class AnnouncementActivityUpdaterTest {
     verify(announcementService, times(0)).getAnnouncementById(anyLong());
 
     ExoSocialActivityImpl announcementActivity = new ExoSocialActivityImpl();
-    announcementActivity.setType(ANNOUNCEMENT_ACTIVITY_TYPE);
+    announcementActivity.setType(ANNOUNCEMENT_COMMENT_TYPE);
     announcementActivity.setTitle(announcement.getComment());
     Map<String, String> params = new HashMap<>();
     params.put("announcementId", String.valueOf(announcement.getId()));

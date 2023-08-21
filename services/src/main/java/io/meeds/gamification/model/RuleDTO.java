@@ -62,6 +62,10 @@ public class RuleDTO implements Serializable {
 
   protected String          endDate;
 
+  protected long            activityId;
+
+  protected long            cacheTime;
+
   protected Set<Long>       prerequisiteRuleIds;                    // NOSONAR
 
   protected EntityType      type;
@@ -111,6 +115,8 @@ public class RuleDTO implements Serializable {
                        lastModifiedDate,
                        startDate,
                        endDate,
+                       activityId,
+                       cacheTime,
                        prerequisiteRuleIds == null ? null : new HashSet<>(prerequisiteRuleIds),
                        type,
                        recurrence);

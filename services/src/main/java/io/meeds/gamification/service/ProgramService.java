@@ -157,6 +157,8 @@ public interface ProgramService {
    */
   ProgramDTO updateProgram(ProgramDTO program) throws ObjectNotFoundException;
 
+  void updateProgramDate(long programId);
+
   /**
    * Deletes an existing Program by id
    *

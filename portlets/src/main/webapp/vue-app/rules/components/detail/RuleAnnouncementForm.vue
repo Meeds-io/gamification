@@ -66,12 +66,10 @@
         :template-params="templateParams"
         :placeholder="$t('rule.detail.announceEditor.placeholder')"
         :tag-enabled="false"
-        :attachment-enabled="false"
         ck-editor-type="announcementContent"
         class="flex my-3"
         autofocus
-        @validity-updated="validLength = $event"
-        @ready="focusOnEditor" />
+        @validity-updated="validLength = $event" />
     </div>
     <v-btn
       v-else
@@ -153,6 +151,7 @@ export default {
       this.templateParams = {};
     },
     displayForm() {
+      this.clear();
       this.editor = this.canAnnounce;
     },
     destroyEditor() {
@@ -160,27 +159,17 @@ export default {
         this.$refs.announcementEditor.destroyCKEditor();
       }
     },
-    focusOnEditor() {
-      const drawerContentElement = document.querySelector('#ruleDetailDrawer .drawerContent');
-      const announcementEditor = document.querySelector('#announcementEditor');
-      if (announcementEditor) {
-        drawerContentElement.scrollTo({
-          top: announcementEditor.scrollHeight + drawerContentElement.offsetHeight / 3,
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }
-    },
     createAnnouncement() {
       if (!this.validComment) {
         return;
       }
+      console.warn('this.templateParams', this.templateParams);
       const announcement = {
         assignee: this.userId,
         comment: this.comment,
         challengeId: this.rule.id,
         challengeTitle: this.rule.title,
-        templateParams: this.templateParams,
+        templateParams: Object.assign({}, this.templateParams),
       };
       this.sending = true;
       this.$announcementService.createAnnouncement(announcement)
@@ -196,7 +185,7 @@ export default {
             alertLinkText: this.$t('announcement.alert.see'),
             alertLinkTarget: '_self',
           }}));
-          this.$root.$emit('announcement-added', {detail: {
+          this.$root.$emit('announcement-added-event', {detail: {
             announcement: createdAnnouncement,
             challengeId: this.rule.id,
           }});

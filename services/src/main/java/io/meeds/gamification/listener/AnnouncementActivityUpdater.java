@@ -17,6 +17,7 @@
 package io.meeds.gamification.listener;
 
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
+import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_COMMENT_TYPE;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -45,18 +46,39 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
 
   private AnnouncementService announcementService;
 
-  private RealizationService realizationService;
+  private RealizationService  realizationService;
 
-  public AnnouncementActivityUpdater(ActivityManager activityManager, AnnouncementService announcementService, RealizationService realizationService) {
+  public AnnouncementActivityUpdater(ActivityManager activityManager,
+                                     AnnouncementService announcementService,
+                                     RealizationService realizationService) {
     this.activityManager = activityManager;
     this.announcementService = announcementService;
     this.realizationService = realizationService;
   }
 
   @Override
-  public void updateActivity(ActivityLifeCycleEvent activityLifeCycleEvent) {
+  public void updateActivity(ActivityLifeCycleEvent event) {
+    processAnnouncementActivityUpdated(event);
+  }
+
+  @Override
+  public void updateComment(ActivityLifeCycleEvent event) {
+    processAnnouncementActivityUpdated(event);
+  }
+
+  @Override
+  public void deleteActivity(ActivityLifeCycleEvent event) {
+    processAnnouncementActivityDeleted(event);
+  }
+
+  @Override
+  public void deleteComment(ActivityLifeCycleEvent event) {
+    processAnnouncementActivityDeleted(event);
+  }
+
+  private void processAnnouncementActivityUpdated(ActivityLifeCycleEvent activityLifeCycleEvent) {
     ExoSocialActivity activity = activityLifeCycleEvent.getSource();
-    if (!StringUtils.equals(activity.getType(), ANNOUNCEMENT_ACTIVITY_TYPE)) {
+    if (!isActivityAnnouncementType(activity)) {
       return;
     }
     long announcementId = Long.parseLong(activity.getTemplateParams().get(ANNOUNCEMENT_ID_PARAM));
@@ -71,10 +93,9 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
     }
   }
 
-  @Override
-  public void deleteActivity(ActivityLifeCycleEvent activityLifeCycleEvent) {
-    ExoSocialActivity activity = activityLifeCycleEvent.getSource();
-    if (!StringUtils.equals(activity.getType(), ANNOUNCEMENT_ACTIVITY_TYPE)) {
+  private void processAnnouncementActivityDeleted(ActivityLifeCycleEvent event) {
+    ExoSocialActivity activity = event.getSource();
+    if (!isActivityAnnouncementType(activity)) {
       return;
     }
     long realizationId = Long.parseLong(activity.getTemplateParams().get(ANNOUNCEMENT_ID_PARAM));
@@ -87,4 +108,10 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
       LOG.warn("Realization with id {} does not exist", realizationId, e);
     }
   }
+
+  private boolean isActivityAnnouncementType(ExoSocialActivity activity) {
+    return StringUtils.equals(activity.getType(), ANNOUNCEMENT_ACTIVITY_TYPE)
+        || StringUtils.equals(activity.getType(), ANNOUNCEMENT_COMMENT_TYPE);
+  }
+
 }

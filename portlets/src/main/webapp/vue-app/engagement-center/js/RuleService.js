@@ -48,6 +48,9 @@ export function getRules(filter) {
   if (filter?.excludedRuleIds?.length) {
     filter.excludedRuleIds.forEach(id => formData.append('excludedRuleIds', id));
   }
+  if (filter?.spaceId?.length) {
+    filter.spaceId.forEach(id => formData.append('spaceId', id));
+  }
   if (filter?.returnSize) {
     formData.append('returnSize', filter.returnSize);
   }

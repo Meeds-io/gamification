@@ -45,6 +45,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.IdentityRegistry;
@@ -70,7 +71,7 @@ import io.meeds.gamification.utils.Utils;
 @RunWith(MockitoJUnitRunner.class)
 public class RealizationServiceMockTest extends AbstractServiceTest {
 
-  private static final Random RANDOM = new Random();
+  private static final Random                      RANDOM          = new Random();
 
   protected static final long                      MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
 
@@ -102,6 +103,9 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
   @Mock
   IdentityRegistry                                 identityRegistry;
 
+  @Mock
+  ResourceBundleService                            resourceBundleService;
+
   RealizationService                               realizationService;
 
   @BeforeClass
@@ -118,6 +122,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
   public void setUp() throws Exception { // NOSONAR
     realizationService = new RealizationServiceImpl(programService,
                                                     ruleService,
+                                                    resourceBundleService,
                                                     identityManager,
                                                     spaceService,
                                                     realizationsStorage,
@@ -131,7 +136,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     RealizationFilter filter = new RealizationFilter();
     Identity userAclIdentity = new Identity("root1");
     org.exoplatform.social.core.identity.model.Identity adminIdentity =
-                                                                     mock(org.exoplatform.social.core.identity.model.Identity.class);
+                                                                      mock(org.exoplatform.social.core.identity.model.Identity.class);
     when(adminIdentity.getId()).thenReturn("2");
     when(adminIdentity.getRemoteId()).thenReturn(userAclIdentity.getUserId());
 
@@ -186,7 +191,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     assertEquals(3, createdRealizations.size());
 
     userAclIdentity.setMemberships(Arrays.asList(new MembershipEntry(Utils.ADMINS_GROUP),
-                                                  new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
+                                                 new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
 
     filter.setFromDate(toDate);
     filter.setToDate(fromDate);

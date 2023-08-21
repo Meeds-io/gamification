@@ -1,6 +1,6 @@
 package io.meeds.gamification.service.impl;
 
-import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
+import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_COMMENT_TYPE;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ID_TEMPLATE_PARAM;
 import static io.meeds.gamification.utils.Utils.POST_CREATE_ANNOUNCEMENT_EVENT;
@@ -8,8 +8,9 @@ import static io.meeds.gamification.utils.Utils.POST_UPDATE_ANNOUNCEMENT_EVENT;
 import static io.meeds.gamification.utils.Utils.broadcastEvent;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,8 +23,6 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
-import org.exoplatform.social.core.space.model.Space;
-import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.Announcement;
@@ -43,8 +42,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
   private IdentityManager     identityManager;
 
-  private SpaceService        spaceService;
-
   private RuleService         ruleService;
 
   private RealizationService  realizationService;
@@ -56,14 +53,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   public AnnouncementServiceImpl(AnnouncementStorage announcementStorage,
                                  RuleService ruleService,
                                  RealizationService realizationService,
-                                 SpaceService spaceService,
                                  IdentityManager identityManager,
                                  ActivityManager activityManager,
                                  ListenerService listenerService) {
     this.ruleService = ruleService;
     this.realizationService = realizationService;
     this.announcementStorage = announcementStorage;
-    this.spaceService = spaceService;
     this.activityManager = activityManager;
     this.identityManager = identityManager;
     this.listenerService = listenerService;
@@ -103,6 +98,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     long creatorId = Long.parseLong(identity.getId());
     announcement.setCreator(creatorId);
+    announcement.setCreatedDate(null);
     announcement.setAssignee(creatorId);
     announcement = announcementStorage.createAnnouncement(announcement);
     createActivity(rule, announcement, templateParams);
@@ -143,11 +139,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public List<Announcement> findAnnouncements(String earnerIdentityId) {
-    return announcementStorage.findAnnouncements(earnerIdentityId);
-  }
-
-  @Override
   public Announcement updateAnnouncementComment(long announcementId, String comment) throws ObjectNotFoundException {
     if (announcementId == 0) {
       throw new IllegalArgumentException("announcement id is mandatory");
@@ -180,33 +171,30 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       if (templateParams == null) {
         templateParams = new HashMap<>();
       }
-      ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
-      activity.setType(ANNOUNCEMENT_ACTIVITY_TYPE);
-      activity.setTitle(announcement.getComment());
-      activity.setUserId(String.valueOf(announcement.getCreator()));
+      String userIdentityId = String.valueOf(announcement.getCreator());
+
+      if (rule.getActivityId() == 0) {
+        throw new IllegalStateException("Rule " + rule.getId() + " doesn't have a dedicated activity yet");
+      }
+      ExoSocialActivity activity = activityManager.getActivity(String.valueOf(rule.getActivityId()));
+      if (activity == null) {
+        throw new IllegalStateException("Rule " + rule.getId() + " activity has been deleted");
+      }
+
+      ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
+      comment.setType(ANNOUNCEMENT_COMMENT_TYPE);
+      comment.setTitle(announcement.getComment());
+      comment.setParentCommentId(activity.getId());
+      comment.setPosterId(userIdentityId);
+      comment.setUserId(userIdentityId);
       templateParams.put(ANNOUNCEMENT_ID_TEMPLATE_PARAM, String.valueOf(announcement.getId()));
       templateParams.put(ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM, rule.getTitle());
-      buildActivityParams(activity, templateParams);
+      buildActivityParams(comment, templateParams);
 
-      long activityId;
-      if (rule.isOpen()) {
-        Identity userIdentity = identityManager.getIdentity(activity.getUserId());
-        activityManager.saveActivityNoReturn(userIdentity, activity);
-        activityId = Long.parseLong(activity.getId());
-      } else {
-        Space space = spaceService.getSpaceById(String.valueOf(rule.getSpaceId()));
-        if (space == null) {
-          throw new ObjectNotFoundException("space doesn't exists");
-        }
-        Identity spaceIdentity = identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
-        if (spaceIdentity == null) {
-          throw new ObjectNotFoundException("space doesn't exists");
-        }
-        activityManager.saveActivityNoReturn(spaceIdentity, activity);
-        activityId = Long.parseLong(activity.getId());
-      }
-      announcementStorage.updateAnnouncementActivityId(announcement.getId(), activityId);
-      announcement.setActivityId(activityId);
+      activityManager.saveComment(activity, comment);
+      long commentId = Long.parseLong(comment.getId().replace("comment", ""));
+      announcementStorage.updateAnnouncementActivityId(announcement.getId(), commentId);
+      announcement.setActivityId(commentId);
     } catch (Exception e) {
       LOG.warn("Error while creating activity for announcement with challenge with id {} made by user {}",
                rule.getId(),
@@ -215,16 +203,19 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
   }
 
-  private void buildActivityParams(ExoSocialActivity activity, Map<String, ?> templateParams) {
-    Map<String, String> currentTemplateParams =
-                                              activity.getTemplateParams() == null ? new HashMap<>()
-                                                                                   : new HashMap<>(activity.getTemplateParams());
+  private void buildActivityParams(ExoSocialActivity activity, Map<String, String> templateParams) {
+    Map<String, String> currentTemplateParams = activity.getTemplateParams() == null ? new HashMap<>()
+            : new HashMap<>(activity.getTemplateParams());
     if (templateParams != null) {
-      templateParams.forEach((name, value) -> currentTemplateParams.put(name, (String) value));
+      currentTemplateParams.putAll(templateParams);
     }
-    currentTemplateParams.entrySet()
-                         .removeIf(entry -> entry != null
-                             && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-")));
+    Iterator<Entry<String, String>> entries = currentTemplateParams.entrySet().iterator();
+    while (entries.hasNext()) {
+      Map.Entry<String, String> entry = entries.next();
+      if (entry != null && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-"))) {
+        entry.setValue("");
+      }
+    }
     activity.setTemplateParams(currentTemplateParams);
   }
 

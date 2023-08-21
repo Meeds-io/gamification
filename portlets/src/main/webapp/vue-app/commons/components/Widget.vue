@@ -16,8 +16,8 @@
 <template>
   <v-card
     :loading="loading"
-    height="338px"
-    min-width="290px"
+    :height="height"
+    :min-width="minWidth"
     class="white d-flex flex-column"
     flat>
     <v-card-title class="subtitle-1 text-sub-title justify-space-between flex-nowrap">
@@ -46,6 +46,14 @@ export default {
     extraClass: {
       type: String,
       default: () => '',
+    },
+    height: {
+      type: String,
+      default: () => '338px',
+    },
+    minWidth: {
+      type: String,
+      default: () => '290px',
     },
   },
 };

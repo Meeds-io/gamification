@@ -48,6 +48,7 @@ public class SpaceServiceMock implements SpaceService {
   public static final String       SPACE_ID           = "1";
 
   public static final List<String> SPACE_MEMBERS      = Arrays.asList(new String[] {
+      "root",
       "root10",
       "root5",
       "root1"
@@ -60,11 +61,19 @@ public class SpaceServiceMock implements SpaceService {
   });
 
   public Space getSpaceByDisplayName(String spaceDisplayName) {
-    throw new UnsupportedOperationException();
+    if (SPACE_DISPLAY_NAME.equals(spaceDisplayName)) {
+      return getSpace();
+    } else {
+      throw new UnsupportedOperationException();
+    }
   }
 
   public Space getSpaceByPrettyName(String spacePrettyName) {
-    throw new UnsupportedOperationException();
+    if (SPACE_PRETTY_NAME.equals(spacePrettyName)) {
+      return getSpace();
+    } else {
+      throw new UnsupportedOperationException();
+    }
   }
 
   public Space getSpaceByGroupId(String groupId) {

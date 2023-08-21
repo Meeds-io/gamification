@@ -33,7 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
-import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.entity.RealizationEntity;
@@ -65,8 +64,6 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   public static final String         STATUS_PARAM_NAME       = "status";
 
   private static final String        RULE_ID_PARAM_NAME      = "ruleId";
-
-  private static final String        ACTION_TITLE_PARAM_NAME = "actionTitle";
 
   private static final String        RECEIVER_ID_PARAM_NAME  = "receiverId";
 
@@ -112,22 +109,6 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
          .setParameter(PROGRAM_ID_PARAM_NAME, domainId)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
-    return query.getResultList();
-  }
-
-  /**
-   * Find all gamification entries by earnerId and by type
-   *
-   * @param  earnerId : the userId used in projection
-   * @param  type     : The Type of action
-   * @return          list of objects of type {@link RealizationEntity}
-   */
-  public List<RealizationEntity> findRealizationsByIdentityIdAndByType(String earnerId, EntityType type) {
-    TypedQuery<RealizationEntity> query =
-                                        getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByEarnerIdAndByType",
-                                                                            RealizationEntity.class);
-    query.setParameter(EARNER_TYPE_PARAM_NAME, type);
-    query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     return query.getResultList();
   }
 
@@ -429,21 +410,21 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public RealizationEntity findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
-                                                                                           long domainId,
-                                                                                           String earnerId,
-                                                                                           String receiverId,
-                                                                                           String objectId,
-                                                                                           String objectType) {
+  public RealizationEntity findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(long ruleId,
+                                                                                         String earnerId,
+                                                                                         String receiverId,
+                                                                                         String objectId,
+                                                                                         String objectType) {
     TypedQuery<RealizationEntity> query =
-                                        getEntityManager().createNamedQuery("RealizationEntity.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId",
+                                        getEntityManager().createNamedQuery("RealizationEntity.findReadlizationsByRuleIdAndEarnerIdAndReceiverAndObjectId",
                                                                             RealizationEntity.class);
-    query.setParameter(ACTION_TITLE_PARAM_NAME, actionTitle);
-    query.setParameter(PROGRAM_ID_PARAM_NAME, domainId);
+    query.setParameter(RULE_ID_PARAM_NAME, ruleId);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     query.setParameter(RECEIVER_ID_PARAM_NAME, receiverId);
     query.setParameter(OBJECT_ID_PARAM_NAME, objectId);
     query.setParameter(OBJECT_TYPE_PARAM_NAME, objectType);
+    query.setMaxResults(1);
+
     List<RealizationEntity> resultList = query.getResultList();
     return CollectionUtils.isEmpty(resultList) ? null : resultList.get(0);
   }

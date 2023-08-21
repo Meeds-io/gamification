@@ -30,7 +30,7 @@
       :hide-no-data="!noDataLabel"
       append-icon=""
       menu-props="closeOnClick, closeOnContentClick, maxHeight = 100"
-      class="identitySuggester identitySuggesterInputStyle"
+      class="identitySuggester identitySuggesterInputStyle my-0"
       content-class="identitySuggesterContent"
       width="100%"
       max-width="100%"
@@ -198,10 +198,11 @@ export default {
         term: this.searchTerm || null,
         programId: this.programId,
         excludedRuleIds: this.excludedIds || [],
+        dateFilter: 'ACTIVE',
         status: 'ENABLED',
         programStatus: 'ENABLED',
         offset: 0,
-        limit: limit || 10,
+        limit: limit || 20,
         returnSize: false,
         lang: eXo.env.portal.language,
       })

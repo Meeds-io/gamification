@@ -216,6 +216,11 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
+  public void updateProgramDate(long programId) {
+    programStorage.updateProgramDate(programId);
+  }
+
+  @Override
   public ProgramDTO deleteProgramById(long programId, Identity aclIdentity) throws IllegalAccessException,
                                                                             ObjectNotFoundException {
     ProgramDTO program = programStorage.getProgramById(programId);

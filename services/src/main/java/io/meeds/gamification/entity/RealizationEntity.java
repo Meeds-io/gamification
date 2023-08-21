@@ -46,7 +46,6 @@ import lombok.EqualsAndHashCode;
     + " new io.meeds.gamification.model.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g WHERE g.earnerType = :earnerType AND g.status = :status GROUP BY  g.earnerId ORDER BY total DESC")
 @NamedQuery(name = "RealizationEntity.findRealizationsByEarnerIdSortedByDate", query = "SELECT g FROM RealizationEntity g WHERE g.earnerId = :earnerId AND g.status = :status ORDER BY g.createdDate DESC")
-@NamedQuery(name = "RealizationEntity.findRealizationsByEarnerIdAndByType", query = "SELECT g FROM RealizationEntity g WHERE g.earnerId = :earnerId AND g.type = :type")
 @NamedQuery(name = "RealizationEntity.findAllRealizationsByDateByDomain", query = "SELECT"
     + " new io.meeds.gamification.model.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g WHERE g.createdDate >= :date  AND g.domainEntity.id = :domainId AND g.earnerType = :earnerType  AND g.status = :status GROUP BY  g.earnerId"
@@ -117,25 +116,16 @@ import lombok.EqualsAndHashCode;
 @NamedQuery(name = "RealizationEntity.findRealizationsByRuleIdAndEarnerType", query = "SELECT a FROM RealizationEntity a where a.ruleEntity.id = :ruleId AND a.earnerType = :earnerType order by a.id desc")
 @NamedQuery(name = "RealizationEntity.findRealizationsByRuleIdAndDate", query = "SELECT a FROM RealizationEntity a where a.ruleEntity.id = :ruleId AND a.createdDate >= :fromDate AND a.createdDate < :toDate order by a.id desc")
 @NamedQuery(name = "RealizationEntity.findRealizationsByRuleIdAndDateAndEarnerType", query = "SELECT a FROM RealizationEntity a where a.ruleEntity.id = :ruleId AND a.createdDate >= :fromDate AND a.createdDate < :toDate AND a.earnerType = :earnerType order by a.id desc")
-@NamedQuery(name = "RealizationEntity.findMostRealizedRuleIds", query = "SELECT r.id FROM RealizationEntity a" +
-    " JOIN a.ruleEntity r " +
-    " ON  (r.startDate IS NULL OR r.startDate <= :nowDate)" +
-    " AND (r.endDate IS NULL OR r.endDate >= :nowDate)" +
-    " AND r.isEnabled = true AND r.isDeleted = false" +
-    " JOIN a.domainEntity d " +
-    " ON d.audienceId IS NULL OR d.audienceId IN (:spacesIds)" +
-    " WHERE a.type= :type" +
-    " AND a.createdDate >= :fromDate AND a.createdDate < :toDate" +
-    " group by r.id order by count(*) DESC")
-
-@NamedQuery(name = "RealizationEntity.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId", query = "SELECT g FROM RealizationEntity g"
-    +
-    " WHERE g.actionTitle = :actionTitle" +
-    " AND g.domainEntity.id = :domainId" +
+@NamedQuery(
+  name = "RealizationEntity.findReadlizationsByRuleIdAndEarnerIdAndReceiverAndObjectId",
+  query = "SELECT g FROM RealizationEntity g" +
+    " WHERE g.ruleEntity.id = :ruleId" +
     " AND g.earnerId = :earnerId" +
     " AND g.receiver = :receiverId" +
     " AND g.objectId = :objectId" +
-    " AND g.objectType = :objectType")
+    " AND g.objectType = :objectType" +
+    " ORDER BY g.id DESC"
+)
 
 @NamedQuery(name = "RealizationEntity.getRealizationsByObjectIdAndObjectType", query = "SELECT g FROM RealizationEntity g"
     +

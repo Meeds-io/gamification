@@ -20,12 +20,11 @@
 -->
 <template>
   <div class="d-flex mb-1">
-    <v-icon
+    <rule-icon
       v-if="reduced || expanded"
       :size="reduced && 60 || 45"
-      class="rule-icon align-start primary--text mb-1">
-      {{ actionIcon }}
-    </v-icon>
+      :rule-event="rule.event"
+      class="align-start mb-1" />
     <div v-else class="d-flex flex-column pe-4">
       <v-avatar
         :size="programCoverSize"
@@ -37,9 +36,9 @@
       <v-avatar
         :size="programCoverSize"
         class="rule-icon border-color grey lighten-2 mt-n4 ms-auto me-n4">
-        <v-icon size="24" class="rule-icon primary--text">
-          {{ actionIcon }}
-        </v-icon>
+        <rule-icon
+          :rule-event="rule.event"
+          size="24" />
       </v-avatar>
     </div>
     <div class="d-flex flex-column ms-2">
@@ -67,19 +66,8 @@ export default {
       type: Boolean,
       default: false,
     },
-    actionValueExtensions: {
-      type: Array,
-      default: null,
-    },
   },
   data: () => ({
-    MAX_LENGTH: 1300,
-    editor: false,
-    comment: false,
-    sending: false,
-    templateParams: {},
-    userId: eXo.env.portal.userIdentityId,
-    username: eXo.env.portal.userName,
     programCoverSize: 35,
   }),
   computed: {
@@ -90,17 +78,6 @@ export default {
       } else {
         return this.rule.title;
       }
-    },
-    extension() {
-      if (this.actionValueExtensions) {
-        return Object.values(this.actionValueExtensions)
-          .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
-          .find(extension => extension.match && extension.match(this.rule.event)) || null;
-      }
-      return null;
-    },
-    actionIcon() {
-      return this.rule?.type === 'AUTOMATIC' ? this.extension?.icon : 'fas fa-trophy';
     },
     programAvatarUrl() {
       return this.rule?.program?.avatarUrl;

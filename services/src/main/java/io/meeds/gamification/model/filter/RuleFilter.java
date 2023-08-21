@@ -37,6 +37,8 @@ public class RuleFilter implements Serializable {
 
   private String            term;
 
+  private boolean           favorites;
+
   private Locale            locale;
 
   private String            eventName;
@@ -44,6 +46,8 @@ public class RuleFilter implements Serializable {
   private long              programId;
 
   private List<Long>        spaceIds;
+
+  private boolean           excludeNoSpace;
 
   private List<Long>        ruleIds;
 
@@ -65,16 +69,22 @@ public class RuleFilter implements Serializable {
 
   private boolean           allSpaces;
 
+  private List<String>      tagNames;
+
+  private long              identityId;
+
   public RuleFilter(boolean allSpaces) {
     this.allSpaces = allSpaces;
   }
 
   public RuleFilter clone() { // NOSONAR
     return new RuleFilter(term,
+                          favorites,
                           locale,
                           eventName,
                           programId,
                           spaceIds == null ? null : new ArrayList<>(spaceIds),
+                          excludeNoSpace,
                           ruleIds == null ? null : new ArrayList<>(ruleIds),
                           dateFilterType,
                           type,
@@ -84,7 +94,9 @@ public class RuleFilter implements Serializable {
                           excludedRuleIds == null ? null : new ArrayList<>(excludedRuleIds),
                           sortBy,
                           sortDescending,
-                          allSpaces);
+                          allSpaces,
+                          tagNames,
+                          identityId);
   }
 
 }

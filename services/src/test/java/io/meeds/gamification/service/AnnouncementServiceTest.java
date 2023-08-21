@@ -17,15 +17,15 @@
 
 package io.meeds.gamification.service;
 
-import static io.meeds.gamification.mock.SpaceServiceMock.SPACE_GROUP_ID;
 import static io.meeds.gamification.mock.SpaceServiceMock.SPACE_PRETTY_NAME;
-import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
+import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_COMMENT_TYPE;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ID_TEMPLATE_PARAM;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -37,7 +37,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -50,13 +49,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.testing.BaseExoTestCase;
 import org.exoplatform.services.listener.ListenerService;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
-import org.exoplatform.social.core.space.model.Space;
-import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.Announcement;
@@ -86,9 +84,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
   private ListenerService            listenerService;
 
   @Mock
-  private SpaceService               spaceService;
-
-  @Mock
   private IdentityManager            identityManager;
 
   @Mock
@@ -113,7 +108,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     announcementService = new AnnouncementServiceImpl(announcementStorage,
                                                       ruleService,
                                                       realizationService,
-                                                      spaceService,
                                                       identityManager,
                                                       activityManager,
                                                       listenerService);
@@ -135,7 +129,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     Announcement createdAnnouncement = new Announcement(1,
                                                         rule.getId(),
                                                         rule.getTitle(),
-
                                                         1L,
                                                         "announcement comment",
                                                         1L,
@@ -150,20 +143,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     rootIdentity.setProviderId("organization");
     rootIdentity.setRemoteId("root");
 
-    String[] spaceMembers = {
-        "root"
-    };
-    Space space = new Space();
-    space.setId("1");
-    space.setPrettyName(SPACE_PRETTY_NAME);
-    space.setDisplayName("test space");
-    space.setGroupId(SPACE_GROUP_ID);
-    space.setManagers(spaceMembers);
-    space.setMembers(spaceMembers);
-    space.setRedactors(new String[0]);
-    when(spaceService.getSpaceById("1")).thenReturn(space);
-    when(spaceService.isRedactor(space, "root")).thenReturn(false);
-    when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
     when(announcementStorage.createAnnouncement(announcement)).thenReturn(createdAnnouncement);
@@ -185,7 +164,14 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     assertThrows(ObjectNotFoundException.class,
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
 
-    when(ruleService.findRuleById(rule.getId(), "root")).thenReturn(rule);
+    long activityId = 125l;
+    when(ruleService.findRuleById(rule.getId(), "root")).thenAnswer(invocation -> {
+      rule.setActivityId(activityId);
+      return rule;
+    });
+    ExoSocialActivity activity = mock(ExoSocialActivity.class);
+    when(activity.getId()).thenReturn(String.valueOf(activityId));
+    when(activityManager.getActivity(String.valueOf(activityId))).thenReturn(activity);
 
     assertThrows(IllegalStateException.class,
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
@@ -198,23 +184,28 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identityManager.getIdentity("1")).thenReturn(identity);
     assertThrows(IllegalAccessException.class,
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
+    doAnswer(invocation -> {
+      ExoSocialActivity comment = invocation.getArgument(1);
+      comment.setId("comment25");
+      return null;
+    }).when(activityManager).saveComment(eq(activity), any());
 
     validityContext.setValidAudience(true);
     Announcement newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root");
     assertNotNull(newAnnouncement);
     assertEquals(1l, newAnnouncement.getId());
+    assertNotNull(newAnnouncement.getActivityId());
+    assertEquals(25l, newAnnouncement.getActivityId().longValue());
   }
 
   @Test
   public void testCreateAnnouncementActivity() throws ObjectNotFoundException, IllegalAccessException {
-    String spaceId = "1";
     String userIdentityId = "3";
-    String activityId = "9";
+    String commentId = "9";
     int announcementId = 56;
 
     RuleDTO rule = newRule();
     rule.setType(EntityType.MANUAL);
-    ruleService.updateRule(rule);
 
     Identity userIdentity = new Identity();
     userIdentity.setId(userIdentityId);
@@ -231,25 +222,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                  Utils.toSimpleDateFormat(new Date()),
                                                  null);
 
-    Identity spaceIdentity = new Identity();
-    spaceIdentity.setId("1");
-    spaceIdentity.setProviderId("space");
-    spaceIdentity.setRemoteId(SPACE_PRETTY_NAME);
-
-    String[] spaceMembers = {
-        "root"
-    };
-    Space space = new Space();
-    space.setId("1");
-    space.setPrettyName(SPACE_PRETTY_NAME);
-    space.setDisplayName("test space");
-    space.setGroupId(SPACE_GROUP_ID);
-    space.setManagers(spaceMembers);
-    space.setMembers(spaceMembers);
-    space.setRedactors(new String[0]);
-    when(spaceService.getSpaceById("1")).thenReturn(space);
-    when(spaceService.isRedactor(space, "root")).thenReturn(false);
-    when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(userIdentity);
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(userIdentity);
     when(announcementStorage.createAnnouncement(announcement)).thenAnswer(invocation -> {
@@ -259,6 +231,15 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
     Identity identity = mock(Identity.class);
     when(identity.isEnable()).thenReturn(true);
+    ExoSocialActivity activity = mock(ExoSocialActivity.class);
+    when(activity.getId()).thenReturn(String.valueOf(rule.getActivityId()));
+    long activityId = 125l;
+    when(ruleService.findRuleById(rule.getId(), "root")).thenAnswer(invocation -> {
+      rule.setActivityId(activityId);
+      return rule;
+    });
+    when(activityManager.getActivity(String.valueOf(activityId))).thenReturn(activity);
+
     UTILS.when(() -> Utils.getIdentityByTypeAndId(any(), any()))
          .thenReturn(identity);
     when(identity.getId()).thenReturn("1");
@@ -268,16 +249,15 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(ruleService.findRuleById(anyLong())).thenReturn(rule);
     when(identityManager.getIdentity("1")).thenReturn(identity);
     when(announcementStorage.getAnnouncementById(announcementId)).thenReturn(announcement);
-    when(spaceService.getSpaceById(spaceId)).thenReturn(space);
-    when(identityManager.getOrCreateSpaceIdentity(space.getPrettyName())).thenReturn(spaceIdentity);
     when(identityManager.getIdentity(userIdentity.getId())).thenReturn(userIdentity);
     when(ruleService.findRuleById(rule.getId(), userIdentity.getRemoteId())).thenReturn(rule);
+    when(activityManager.getActivity(String.valueOf(rule.getActivityId()))).thenReturn(activity);
     doAnswer(invocation -> {
-      ExoSocialActivityImpl activity = invocation.getArgument(1);
-      activity.setId(activityId);
-      when(activityManager.getActivity(activityId)).thenReturn(activity);
+      ExoSocialActivityImpl comment = invocation.getArgument(1);
+      comment.setId("comment" + commentId);
+      when(activityManager.getActivity(commentId)).thenReturn(comment);
       return null;
-    }).when(activityManager).saveActivityNoReturn(any(), any());
+    }).when(activityManager).saveComment(any(), any());
     AnnouncementActivity announcementActivity = new AnnouncementActivity(6,
                                                                          rule.getId(),
                                                                          rule.getTitle(),
@@ -288,16 +268,14 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                                          null,
                                                                          null);
 
-    when(spaceService.getSpaceById(spaceId)).thenReturn(space);
-    when(identityManager.getOrCreateSpaceIdentity(space.getPrettyName())).thenReturn(spaceIdentity);
     when(identityManager.getIdentity(userIdentity.getId())).thenReturn(userIdentity);
     when(ruleService.findRuleById(rule.getId(), userIdentity.getRemoteId())).thenReturn(rule);
     doAnswer(invocation -> {
-      ExoSocialActivityImpl activity = invocation.getArgument(1);
-      activity.setId(activityId);
-      when(activityManager.getActivity(activityId)).thenReturn(activity);
+      ExoSocialActivityImpl comment = invocation.getArgument(1);
+      comment.setId(commentId);
+      when(activityManager.getActivity(commentId)).thenReturn(comment);
       return null;
-    }).when(activityManager).saveActivityNoReturn(any(), any());
+    }).when(activityManager).saveComment(any(), any());
     when(realizationService.getRealizationValidityContext(rule,
                                                           userIdentity.getId())).thenReturn(new RealizationValidityContext());
 
@@ -305,23 +283,19 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     assertNotNull(newAnnouncement);
     assertEquals(announcementId, newAnnouncement.getId());
 
-    verify(activityManager, times(1)).saveActivityNoReturn(
-                                                           argThat(spaceIdentityParam -> {
-                                                             return StringUtils.equals(space.getPrettyName(),
-                                                                                       String.valueOf(spaceIdentityParam.getRemoteId()));
-                                                           }),
-                                                           argThat(activity -> {
-                                                             assertEquals(ANNOUNCEMENT_ACTIVITY_TYPE, activity.getType());
-                                                             assertEquals(announcementActivity.getComment(), activity.getTitle());
-                                                             assertEquals(userIdentityId, activity.getUserId());
-                                                             assertEquals(String.valueOf(announcementId),
-                                                                          activity.getTemplateParams()
-                                                                                  .get(ANNOUNCEMENT_ID_TEMPLATE_PARAM));
-                                                             assertEquals(rule.getTitle(),
-                                                                          activity.getTemplateParams()
-                                                                                  .get(ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM));
-                                                             return true;
-                                                           }));
+    verify(activityManager, times(1)).saveComment(any(ExoSocialActivity.class),
+                                                  argThat(comment -> {
+                                                    assertEquals(ANNOUNCEMENT_COMMENT_TYPE, comment.getType());
+                                                    assertEquals(announcementActivity.getComment(), comment.getTitle());
+                                                    assertEquals(userIdentityId, comment.getUserId());
+                                                    assertEquals(String.valueOf(announcementId),
+                                                                 comment.getTemplateParams()
+                                                                        .get(ANNOUNCEMENT_ID_TEMPLATE_PARAM));
+                                                    assertEquals(rule.getTitle(),
+                                                                 comment.getTemplateParams()
+                                                                        .get(ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM));
+                                                    return true;
+                                                  }));
   }
 
   @Test
@@ -335,29 +309,11 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                         1L,
                                                         Utils.toSimpleDateFormat(new Date()),
                                                         null);
-    Identity spaceIdentity = new Identity();
-    spaceIdentity.setId("1");
-    spaceIdentity.setProviderId("space");
-    spaceIdentity.setRemoteId(SPACE_PRETTY_NAME);
     Identity rootIdentity = new Identity();
     rootIdentity.setId("1");
     rootIdentity.setProviderId("organization");
     rootIdentity.setRemoteId("root");
 
-    String[] spaceMembers = {
-        "root"
-    };
-    Space space = new Space();
-    space.setId("1");
-    space.setPrettyName(SPACE_PRETTY_NAME);
-    space.setDisplayName("test space");
-    space.setGroupId(SPACE_GROUP_ID);
-    space.setManagers(spaceMembers);
-    space.setMembers(spaceMembers);
-    space.setRedactors(new String[0]);
-    when(spaceService.getSpaceById("1")).thenReturn(space);
-    when(spaceService.isRedactor(space, "root")).thenReturn(false);
-    when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
     Identity identity = mock(Identity.class);

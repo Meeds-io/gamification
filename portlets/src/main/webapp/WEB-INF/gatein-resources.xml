@@ -18,8 +18,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <gatein-resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/gatein_resources_1_4 http://www.exoplatform.org/xml/ns/gatein_resources_1_4" xmlns="http://www.exoplatform.org/xml/ns/gatein_resources_1_4">
 
-    <!-- CSS for Gamification support in Platform -->
-
   <portlet-skin>
     <application-name>gamification-portlets</application-name>
     <portlet-name>ProfileStats</portlet-name>
@@ -70,23 +68,110 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <portlet-skin>
     <application-name>gamification-portlets</application-name>
-    <portlet-name>EngagementCenter</portlet-name>
+    <portlet-name>EngagementCenterPrograms</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <css-path>/skin/css/engagementCenter.css</css-path>
+  </portlet-skin>
+
+  <portlet-skin>
+    <application-name>gamification-portlets</application-name>
+    <portlet-name>EngagementCenterActions</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <css-path>/skin/css/engagementCenter.css</css-path>
+  </portlet-skin>
+
+  <portlet-skin>
+    <application-name>gamification-portlets</application-name>
+    <portlet-name>EngagementCenterAchievements</portlet-name>
     <skin-name>Enterprise</skin-name>
     <css-path>/skin/css/engagementCenter.css</css-path>
   </portlet-skin>
 
   <portlet>
-    <name>EngagementCenter</name>
+    <name>EngagementCenterPrograms</name>
     <module>
       <script>
         <minify>false</minify>
-        <path>/js/engagementCenter.bundle.js</path>
+        <path>/js/engagementCenterPrograms.bundle.js</path>
       </script>
       <depends>
         <module>commonVueComponents</module>
       </depends>
       <depends>
-        <module>realizationComponents</module>
+        <module>ruleComponents</module>
+      </depends>
+      <depends>
+        <module>translationField</module>
+      </depends>
+      <depends>
+        <module>imageCropper</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>EngagementCenterActions</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/engagementCenterActions.bundle.js</path>
+      </script>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>ruleComponents</module>
+      </depends>
+      <depends>
+        <module>translationField</module>
+      </depends>
+      <depends>
+        <module>imageCropper</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>EngagementCenterAchievements</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/engagementCenterAchievements.bundle.js</path>
+      </script>
+      <depends>
+        <module>commonVueComponents</module>
       </depends>
       <depends>
         <module>ruleComponents</module>
@@ -324,14 +409,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <module>
       <script>
         <minify>false</minify>
-        <path>/js/challengesOverview.bundle.js</path>
+        <path>/js/rulesOverview.bundle.js</path>
       </script>
-      <depends>
-        <module>ruleComponents</module>
-      </depends>
-      <depends>
-        <module>translationField</module>
-      </depends>
       <depends>
         <module>vue</module>
       </depends>
@@ -351,8 +430,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>gamificationCommon</module>
       </depends>
       <depends>
-        <module>jquery</module>
-        <as>$</as>
+        <module>translationField</module>
+      </depends>
+      <depends>
+        <module>ruleComponents</module>
+      </depends>
+      <depends>
+        <module>rulesOverviewWidget</module>
       </depends>
     </module>
   </portlet>
@@ -382,6 +466,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <depends>
         <module>gamificationCommon</module>
       </depends>
+      <depends>
+        <module>translationField</module>
+      </depends>
+      <depends>
+        <module>ruleComponents</module>
+      </depends>
+      <depends>
+        <module>rulesOverviewWidget</module>
+      </depends>
     </module>
   </portlet>
 
@@ -390,7 +483,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <load-group>ActivityStreamGRP</load-group>
     <script>
       <minify>false</minify>
-      <path>/js/engagementCenterActivityStreamExtension.bundle.js</path>
+      <path>/js/activityStreamExtension.bundle.js</path>
     </script>
     <depends>
       <module>extensionRegistry</module>
@@ -403,6 +496,59 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>ruleComponents</module>
+    </depends>
+    <depends>
+      <module>jquery</module>
+      <as>$</as>
+    </depends>
+  </module>
+
+  <module>
+    <name>EngagementCenterFavoriteDrawerExtension</name>
+    <load-group>FavoriteDrawerGRP</load-group>
+    <script>
+      <path>/js/favoriteDrawerExtension.bundle.js</path>
+    </script>
+    <depends>
+      <module>ruleComponents</module>
+    </depends>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+  </module>
+
+  <module>
+    <name>EngagementCenterNotificationPopoverExtension</name>
+    <load-group>TopBarNotificationGRP</load-group>
+    <script>
+      <path>/js/notificationExtension.bundle.js</path>
+    </script>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>ruleExtensions</module>
     </depends>
   </module>
 
@@ -487,35 +633,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <module>
-    <name>realizationComponents</name>
-    <script>
-      <minify>false</minify>
-      <path>/js/realizationsComponents.bundle.js</path>
-    </script>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>vuetify</module>
-    </depends>
-    <depends>
-      <module>commonVueComponents</module>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-    <depends>
-      <module>extensionRegistry</module>
-    </depends>
-  </module>
-
-  <module>
     <name>ruleComponents</name>
-    <load-group>engagement-center-user-actions</load-group>
     <script>
       <minify>false</minify>
       <path>/js/ruleComponents.bundle.js</path>
@@ -533,6 +651,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <module>commonVueComponents</module>
     </depends>
     <depends>
+      <module>ruleExtensions</module>
+    </depends>
+    <depends>
       <module>animationComponents</module>
     </depends>
     <depends>
@@ -544,6 +665,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <depends>
       <module>jquery</module>
       <as>$</as>
+    </depends>
+  </module>
+
+  <module>
+    <name>ruleExtensions</name>
+    <load-group>engagement-center-user-actions</load-group>
+    <script>
+      <minify>false</minify>
+      <path>/js/ruleExtensions.bundle.js</path>
+    </script>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>vue</module>
     </depends>
   </module>
 
@@ -591,6 +730,64 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>extensionRegistry</module>
+    </depends>
+  </module>
+
+  <module>
+    <name>rulesOverviewWidget</name>
+    <script>
+      <minify>false</minify>
+      <path>/js/rulesOverviewWidget.bundle.js</path>
+    </script>
+    <depends>
+      <module>ruleComponents</module>
+    </depends>
+    <depends>
+      <module>translationField</module>
+    </depends>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>vuetify</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>gamificationCommon</module>
+    </depends>
+  </module>
+
+  <module>
+    <name>ruleSearch</name>
+    <script>
+      <minify>false</minify>
+      <path>/js/ruleSearch.bundle.js</path>
+    </script>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>vuetify</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>ruleExtensions</module>
     </depends>
   </module>
 

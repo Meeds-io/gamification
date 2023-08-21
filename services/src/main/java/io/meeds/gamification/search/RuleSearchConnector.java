@@ -54,25 +54,35 @@ public class RuleSearchConnector {
 
   private static final String          LANG                         = "@lang@";
 
-  private static final String          DOMAIN_FILTERING_QUERY       = """
-            ,{
-              "term": {
-                "domainId": {
-                  "value": "@domainId@"
-                }
-              }
-            }
-      """;
+  private static final String          KEYWORD_FILTERING_QUERY      =
+                                                               """
+                                                                         {
+                                                                           "query_string": {
+                                                                             "query": "title:(*@term@*) OR title_@lang@:(*@term@*) OR description:(@term_query@) OR description_@lang@:(@term_query@)",
+                                                                             "default_operator": "AND",
+                                                                             "fuzziness": 1,
+                                                                             "phrase_slop": 1
+                                                                           }
+                                                                         }
+                                                                   """;
 
-  private static final String          AUDIENCE_FILTERING_QUERY     = """
-            ,{
-              "terms": {
-                "audience": [
-                  @spaceList@
-                ]
-              }
-            }
-      """;
+  private static final String          TERMS_FILTERING_QUERY        =
+                                                             """
+                                                                       {
+                                                                         "terms": {
+                                                                           "@field_name@" : ["@field_values@"]
+                                                                         }
+                                                                       }
+                                                                 """;
+
+  private static final String          MATCH_FILTERING_QUERY        =
+                                                             """
+                                                                       {
+                                                                          "match":{
+                                                                             "@field_name@": "@field_value@"
+                                                                          }
+                                                                       }
+                                                                 """;
 
   private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"*~&|#%@";
 
@@ -111,9 +121,6 @@ public class RuleSearchConnector {
     if (limit < 0) {
       throw new IllegalArgumentException("Limit must be positive");
     }
-    if (StringUtils.isBlank(filter.getTerm())) {
-      throw new IllegalArgumentException("Filter term is mandatory");
-    }
     if (filter.getLocale() == null) {
       throw new IllegalArgumentException("Filter locale is mandatory");
     }
@@ -126,43 +133,84 @@ public class RuleSearchConnector {
   }
 
   private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
+    String queryTemplate = retrieveSearchQuery();
+    String filterQuery = computeFilterQuery(filter);
+    return queryTemplate.replace(LANG, filter.getLocale().toLanguageTag())
+                        .replace("@search_filtering@", filterQuery)
+                        .replace("@offset@", String.valueOf(offset))
+                        .replace("@limit@", String.valueOf(limit));
+  }
+
+  private String computeFilterQuery(RuleFilter filter) {
+    StringBuilder searchFiltering = new StringBuilder();
+    appendKeywordQuery(filter, searchFiltering);
+    appendFavoriteQuery(filter, searchFiltering);
+    appendTagsQuery(filter, searchFiltering);
+    appendAudienceQuery(filter, searchFiltering);
+    appendProgramQuery(filter, searchFiltering);
+    return searchFiltering.toString();
+  }
+
+  private void appendKeywordQuery(RuleFilter filter, StringBuilder searchFiltering) {
+    if (StringUtils.isBlank(filter.getTerm())) {
+      return;
+    }
     String term = StringUtils.lowerCase(removeSpecialCharacters(filter.getTerm()));
     term = escapeIllegalCharacterInQuery(term);
-    if (StringUtils.isBlank(term)) {
-      return null;
+    String termQuery = "";
+    if (StringUtils.isNotBlank(term)) {
+      term = term.trim();
+      List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
+        word = word.trim();
+        if (word.length() > 4) {
+          word = word + "~1";
+        }
+        return word;
+      }).toList();
+      termQuery = StringUtils.join(termsQuery, " AND ");
+      searchFiltering.append(KEYWORD_FILTERING_QUERY.replace("@term@", term)
+                                                    .replace("@term_query@", termQuery)
+                                                    .replace(LANG, filter.getLocale().toLanguageTag()));
     }
-    term = term.trim();
-    List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
-      word = word.trim();
-      if (word.length() > 4) {
-        word = word + "~1";
-      }
-      return word;
-    }).toList();
-    String termQuery = StringUtils.join(termsQuery, " AND ");
-    String query = retrieveSearchQuery();
-    if (filter.getProgramId() > 0) {
-      query = query.replace("@domain_filtering@", DOMAIN_FILTERING_QUERY);
-    } else {
-      query = query.replace("@domain_filtering@", "");
-    }
-    if (!CollectionUtils.isEmpty(filter.getSpaceIds())) {
-      query = query.replace("@audience_filtering@", AUDIENCE_FILTERING_QUERY);
-    } else {
-      query = query.replace("@audience_filtering@", "");
-    }
+  }
 
+  private void appendAudienceQuery(RuleFilter filter, StringBuilder query) {
+    if (CollectionUtils.isEmpty(filter.getSpaceIds())) {
+      return;
+    }
     Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds())
                                   .map(HashSet::new)
                                   .orElse(new HashSet<>());
+    query.append((query.isEmpty() ? "" : ","))
+         .append(TERMS_FILTERING_QUERY.replace("@field_name@", "audience")
+                                      .replace("@field_values@", StringUtils.join(spaceList, "\",\"")));
+  }
 
-    return query.replace("@domainId@", String.valueOf(filter.getProgramId()))
-                .replace("@term@", term)
-                .replace(LANG, filter.getLocale().toLanguageTag())
-                .replace("@term_query@", termQuery)
-                .replace("@spaceList@", StringUtils.join(spaceList, ","))
-                .replace("@offset@", String.valueOf(offset))
-                .replace("@limit@", String.valueOf(limit));
+  private void appendTagsQuery(RuleFilter filter, StringBuilder query) {
+    if (CollectionUtils.isEmpty(filter.getTagNames())) {
+      return;
+    }
+    query.append((query.isEmpty() ? "" : ","))
+         .append(TERMS_FILTERING_QUERY.replace("@field_name@", "metadatas.tags.metadataName.keyword")
+                                      .replace("@field_values@", StringUtils.join(filter.getTagNames(), "\",\"")));
+  }
+
+  private void appendFavoriteQuery(RuleFilter filter, StringBuilder query) {
+    if (!isFavoriteQuery(filter)) {
+      return;
+    }
+    query.append((query.isEmpty() ? "" : ","))
+         .append(TERMS_FILTERING_QUERY.replace("@field_name@", "metadatas.favorites.metadataName.keyword")
+                                      .replace("@field_values@", String.valueOf(filter.getIdentityId())));
+  }
+
+  private void appendProgramQuery(RuleFilter filter, StringBuilder query) {
+    if (filter.getProgramId() <= 0) {
+      return;
+    }
+    query.append((query.isEmpty() ? "" : ","))
+         .append(MATCH_FILTERING_QUERY.replace("@field_name@", "domainId")
+                                      .replace("@field_value@", String.valueOf(filter.getProgramId())));
   }
 
   @SuppressWarnings("rawtypes")
@@ -194,6 +242,10 @@ public class RuleSearchConnector {
       }
     }
     return results;
+  }
+
+  private boolean isFavoriteQuery(RuleFilter filter) {
+    return filter.isFavorites() && filter.getIdentityId() > 0;
   }
 
   private long parseLong(JSONObject hitSource, String key) {

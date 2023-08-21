@@ -174,6 +174,14 @@ public class ProgramRest implements ResourceContainer {
                               @Parameter(description = "Term to search.")
                               @QueryParam("query")
                               String query,
+                              @Parameter(description = "Sort field. Possible values: createdDate, startDate, endDate or score.")
+                              @QueryParam("sortBy")
+                              @DefaultValue("title")
+                              String sortField,
+                              @Parameter(description = "Whether to retrieve results sorted descending or not")
+                              @QueryParam("sortDescending")
+                              @DefaultValue("true")
+                              boolean sortDescending,
                               @Parameter(description = "Used to retrieve extra information about the program")
                               @QueryParam("expand")
                               String expand) {
@@ -182,6 +190,8 @@ public class ProgramRest implements ResourceContainer {
     programFilter.setSortByBudget(sortByBudget);
     programFilter.setIncludeDeleted(includeDeleted);
     programFilter.setStatus(programStatus);
+    programFilter.setSortBy(sortField);
+    programFilter.setSortDescending(sortDescending);
     if (StringUtils.isNotEmpty(query)) {
       programFilter.setProgramTitle(query);
     }

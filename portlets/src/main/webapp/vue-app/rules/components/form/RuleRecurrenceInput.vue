@@ -19,9 +19,9 @@
 -->
 <template>
   <v-card max-width="450" flat>
-    <v-card-text class="d-flex flex-grow-1 text-left text-subtitle-1 px-0 py-2">
+    <div class="d-flex flex-grow-1 text-left px-0 pt-4 pb-2">
       {{ $t('gamification.achievementCanBeSubmitted') }}
-    </v-card-text>
+    </div>
 
     <v-btn-toggle
       v-model="period"

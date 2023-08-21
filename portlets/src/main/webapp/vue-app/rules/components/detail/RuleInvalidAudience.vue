@@ -19,7 +19,7 @@
 
 -->
 <template>
-  <div class="rule-end-date-over d-flex align-center justify-center">
+  <div class="rule-invalid-audience d-flex align-center justify-center">
     <v-icon size="26" class="error--text me-2">
       fas fa-times-circle
     </v-icon>
