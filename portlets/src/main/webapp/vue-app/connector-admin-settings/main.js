@@ -35,6 +35,5 @@ export function init() {
       }, `#${appId}`, 'Admin Connectors Settings App');
     });
 }
-Vue.prototype.$utils?.includeExtensions('engagementCenterActions');
 Vue.prototype.$utils.includeExtensions('gamificationAdminConnectorsExtensions');
 
