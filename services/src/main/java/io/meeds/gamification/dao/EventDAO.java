@@ -31,13 +31,13 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 public class EventDAO extends GenericDAOJPAImpl<EventEntity, Long> {
 
-  public static final String   CONNECTOR_TYPE            = "type";
+  public static final String         CONNECTOR_TYPE            = "type";
 
-  public static final String   TRIGGERS                  = "triggers";
+  public static final String         TRIGGERS                  = "triggers";
 
-  private static final String  QUERY_FILTER_FIND_PREFIX  = "Event.findAllEvents";
+  private static final String        QUERY_FILTER_FIND_PREFIX  = "Event.findAllEvents";
 
-  private static final String  QUERY_FILTER_COUNT_PREFIX = "Event.countAllEvents";
+  private static final String        QUERY_FILTER_COUNT_PREFIX = "Event.countAllEvents";
 
   private final Map<String, Boolean> filterNamedQueries        = new HashMap<>();
 
@@ -139,6 +139,9 @@ public class EventDAO extends GenericDAOJPAImpl<EventEntity, Long> {
       queryContent = querySelect;
     } else {
       queryContent = querySelect + " WHERE " + org.apache.commons.lang3.StringUtils.join(predicates, " AND ");
+    }
+    if (!count) {
+      queryContent += " ORDER BY event.id  DESC ";
     }
     return queryContent;
   }

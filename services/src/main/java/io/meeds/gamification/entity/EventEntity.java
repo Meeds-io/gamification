@@ -18,6 +18,7 @@
 package io.meeds.gamification.entity;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.persistence.*;
 
@@ -52,4 +53,10 @@ public class EventEntity implements Serializable {
 
   @Column(name = "TRIGGER", nullable = false)
   protected String          trigger;
+
+  @ElementCollection(fetch = FetchType.EAGER)
+  @MapKeyColumn(name = "NAME")
+  @Column(name = "VALUE")
+  @CollectionTable(name = "GAMIFICATION_EVENT_SETTINGS", joinColumns = { @JoinColumn(name = "ID") })
+  private Map<String, String> properties;
 }

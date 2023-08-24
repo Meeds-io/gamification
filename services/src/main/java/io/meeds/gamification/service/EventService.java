@@ -22,6 +22,7 @@ import java.util.List;
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public interface EventService {
 
@@ -54,33 +55,30 @@ public interface EventService {
    * Add Event to DB
    *
    * @param eventDTO {@link EventDTO} to create
+   * @return {@link EventDTO}
    * @throws ObjectAlreadyExistsException when event already exists
    */
-  void createEvent(EventDTO eventDTO) throws ObjectAlreadyExistsException;
+  EventDTO createEvent(EventDTO eventDTO) throws ObjectAlreadyExistsException;
 
   /**
-   * Check if connector project event is enabled
+   * Retrieves gamification event by event id
    *
-   * @param projectId connector remote project id
-   * @param event event name
-   * @return true if the connector project event is enabled, else false.
+   * @param eventId Event Identifier
+   * @return {@link EventDTO}
    */
-  boolean isEventEnabled(String type, long projectId, String event);
+  EventDTO getEvent(long eventId);
 
   /**
    * Enables/disables connector project event
    *
+   * @param eventId event Id
    * @param projectId connector remote project id
-   * @param event event name
    * @param enabled true to enabled, else false
    * @param currentUser user name attempting to enables/disables event.
    * @throws IllegalAccessException when user is not authorized enables/disables
    *           connector project event
    */
-  void setEventEnabledForProject(String type,
-                                        long projectId,
-                                        String event,
-                                        boolean enabled,
-                                        String currentUser) throws IllegalAccessException;
+  void setEventEnabledForProject(long eventId, long projectId, boolean enabled, String currentUser) throws IllegalAccessException,
+                                                                                                    ObjectNotFoundException;
 
 }

@@ -24,27 +24,18 @@ import io.meeds.gamification.storage.EventStorage;
 import io.meeds.gamification.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
-import org.exoplatform.commons.api.settings.SettingService;
-import org.exoplatform.commons.api.settings.SettingValue;
-import org.exoplatform.commons.api.settings.data.Context;
-import org.exoplatform.commons.api.settings.data.Scope;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class EventServiceImpl implements EventService {
 
-  private static final Scope DISABLED_EVENTS_SCOPE  = Scope.APPLICATION.id("disabledEvents");
+  public static final String ENABLED = ".enabled";
 
   private final EventStorage eventStorage;
 
-  private final SettingService settingService;
-
-  public EventServiceImpl(EventStorage eventStorage, SettingService settingService) {
+  public EventServiceImpl(EventStorage eventStorage) {
     this.eventStorage = eventStorage;
-    this.settingService = settingService;
   }
 
   @Override
@@ -63,7 +54,7 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
-  public void createEvent(EventDTO eventDTO) throws ObjectAlreadyExistsException {
+  public EventDTO createEvent(EventDTO eventDTO) throws ObjectAlreadyExistsException {
     if (eventDTO == null) {
       throw new IllegalArgumentException("event object is mandatory");
     }
@@ -71,44 +62,38 @@ public class EventServiceImpl implements EventService {
     if (similarEvent != null) {
       throw new ObjectAlreadyExistsException("Event with same title and trigger already exist");
     }
-    eventStorage.saveEvent(eventDTO);
+    return eventStorage.saveEvent(eventDTO);
+  }
+
+  public EventDTO getEvent(long eventId) {
+    return eventStorage.getEventById(eventId);
   }
 
   @Override
-  public boolean isEventEnabled(String type, long projectId, String event) {
-    List<String> disabledEventList = new ArrayList<>();
-    SettingValue<?> settingValue = settingService.get(Context.GLOBAL.id(type), DISABLED_EVENTS_SCOPE, String.valueOf(projectId));
-    if (settingValue != null && settingValue.getValue() != null && StringUtils.isNotBlank(settingValue.getValue().toString())) {
-      disabledEventList = Arrays.stream(settingValue.getValue().toString().split(":")).toList();
-    }
-    return !disabledEventList.contains(event);
-  }
-
-  @Override
-  public void setEventEnabledForProject(String type,
+  public void setEventEnabledForProject(long eventId,
                                         long projectId,
-                                        String event,
                                         boolean enabled,
-                                        String currentUser) throws IllegalAccessException {
+                                        String currentUser) throws IllegalAccessException, ObjectNotFoundException {
     if (!Utils.isRewardingManager(currentUser)) {
       throw new IllegalAccessException("The user is not authorized to enable/disable event");
     }
-    List<String> disabledEventList = new ArrayList<>();
-    SettingValue<?> settingValue = settingService.get(Context.GLOBAL.id(type), DISABLED_EVENTS_SCOPE, String.valueOf(projectId));
-    if (settingValue != null && settingValue.getValue() != null && StringUtils.isNotBlank(settingValue.getValue().toString())) {
-      disabledEventList = Arrays.stream(settingValue.getValue().toString().split(":")).collect(Collectors.toList());
+    EventDTO eventDTO = eventStorage.getEventById(eventId);
+    if (eventDTO == null) {
+      throw new ObjectNotFoundException("event not found");
     }
-    if (!enabled) {
-      if (!disabledEventList.contains(event)) {
-        disabledEventList.add(event);
+    Map<String, String> eventProperties = eventDTO.getProperties();
+    if (eventProperties != null && !eventProperties.isEmpty()) {
+      String eventProjectStatus = eventProperties.get(projectId + ENABLED);
+      if (StringUtils.isNotBlank(eventProjectStatus)) {
+        eventProperties.remove(projectId + ENABLED);
+        eventProperties.put(projectId + ENABLED, String.valueOf(enabled));
+        eventDTO.setProperties(eventProperties);
       }
     } else {
-      disabledEventList.remove(event);
+      Map<String, String> properties = new HashMap<>();
+      properties.put(projectId + ENABLED, String.valueOf(enabled));
+      eventDTO.setProperties(properties);
     }
-    String disabledEvents = String.join(":", disabledEventList);
-    settingService.set(Context.GLOBAL.id(type),
-                       DISABLED_EVENTS_SCOPE,
-                       String.valueOf(projectId),
-                       SettingValue.create(disabledEvents));
+    eventStorage.updateEvent(eventDTO);
   }
 }

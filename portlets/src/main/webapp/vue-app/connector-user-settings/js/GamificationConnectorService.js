@@ -138,11 +138,10 @@ export function getEvents(type, projectId, triggers, offset, limit) {
   });
 }
 
-export function saveEventStatus(type, projectId, event, enabled) {
+export function saveEventStatus(eventId, projectId, enabled) {
   const formData = new FormData();
-  formData.append('type', type);
+  formData.append('eventId', eventId);
   formData.append('projectId', projectId);
-  formData.append('event', event);
   formData.append('enabled', enabled);
 
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events/status`, {

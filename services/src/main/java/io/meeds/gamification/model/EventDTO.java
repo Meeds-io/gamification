@@ -21,18 +21,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventDTO {
 
-  private Long    id;
+  private long                id;
 
-  private String  title;
+  private String              title;
 
-  private String  type;
+  private String              type;
 
-  private String  trigger;
+  private String              trigger;
 
-  private boolean canCancel;
+  private boolean             canCancel;
+
+  private Map<String, String> properties;
 }

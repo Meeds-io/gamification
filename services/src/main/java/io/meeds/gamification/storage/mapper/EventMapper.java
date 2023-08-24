@@ -35,6 +35,9 @@ public class EventMapper {
       return null;
     }
     EventEntity eventEntity = new EventEntity();
+    if (eventDTO.getId() > 0) {
+      eventEntity.setId(eventDTO.getId());
+    }
     if (StringUtils.isNotBlank(eventDTO.getTitle())) {
       eventEntity.setTitle(eventDTO.getTitle());
     }
@@ -44,6 +47,9 @@ public class EventMapper {
     if (StringUtils.isNotBlank(eventDTO.getTrigger())) {
       eventEntity.setTrigger(eventDTO.getTrigger());
     }
+    if (eventDTO.getProperties() != null) {
+      eventEntity.setProperties(eventDTO.getProperties());
+    }
     eventEntity.setCanCancel(eventDTO.isCanCancel());
     return eventEntity;
   }
@@ -52,11 +58,12 @@ public class EventMapper {
     if (eventEntity == null) {
       return null;
     }
-    return new EventDTO(eventEntity.getId(),
+    return new EventDTO(eventEntity.getId() != null ? eventEntity.getId() : 0L,
                         eventEntity.getTitle(),
                         eventEntity.getType(),
                         eventEntity.getTrigger(),
-                        eventEntity.isCanCancel());
+                        eventEntity.isCanCancel(),
+                        eventEntity.getProperties());
   }
 
   public static List<EventDTO> fromEntities(List<EventEntity> eventEntities) {

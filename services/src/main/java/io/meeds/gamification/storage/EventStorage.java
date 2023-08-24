@@ -75,4 +75,24 @@ public class EventStorage {
     eventEntity = eventDAO.create(eventEntity);
     return EventMapper.fromEntity(eventEntity);
   }
+
+  /**
+   * Updates Event
+   *
+   * @param eventDTO {@link EventDTO} to update
+   */
+  public void updateEvent(EventDTO eventDTO) {
+    EventEntity eventEntity = EventMapper.toEntity(eventDTO);
+    eventDAO.update(eventEntity);
+  }
+
+  /**
+   * Retrieves gamification event by event id
+   *
+   * @param eventId Event Identifier
+   * @return {@link EventDTO}
+   */
+  public EventDTO getEventById(long eventId) {
+    return EventMapper.fromEntity(eventDAO.find(eventId));
+  }
 }

@@ -26,11 +26,10 @@ import javax.ws.rs.core.Response;
 
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
-import io.meeds.gamification.rest.builder.EventBuilder;
 import io.meeds.gamification.rest.model.EntityList;
-import io.meeds.gamification.rest.model.EventRestEntity;
 import io.meeds.gamification.service.EventService;
 
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,10 +53,8 @@ public class EventRest implements ResourceContainer {
   @RolesAllowed("users")
   @Operation(summary = "Retrieves the list of gamification events", method = "GET")
   @ApiResponses(value = {
-          @ApiResponse(responseCode = "200", description = "Request fulfilled"),
-          @ApiResponse(responseCode = "401", description = "Unauthorized operation"), })
+          @ApiResponse(responseCode = "200", description = "Request fulfilled")})
   public Response getEvents(@Parameter(description = "Used to filter events by Connector type") @QueryParam("type") String type,
-                            @Parameter(description = "Used to know the status of the event according to the project") @QueryParam("projectId") long projectId,
                             @Parameter(description = "Used to filter events by trigger") @QueryParam("trigger") List<String> triggers,
                             @Parameter(description = "Offset of results to retrieve") @QueryParam("offset") @DefaultValue("0") int offset,
                             @Parameter(description = "Limit of results to retrieve") @QueryParam("limit") @DefaultValue("0") int limit,
@@ -66,8 +63,8 @@ public class EventRest implements ResourceContainer {
     EventFilter eventFilter = new EventFilter();
     eventFilter.setType(type);
     eventFilter.setTriggers(triggers);
-    List<EventRestEntity> eventDTOList = getEventsRestEntities(eventService, eventFilter, type, projectId, offset, limit);
-    EntityList<EventRestEntity> eventDTOEntityList = new EntityList<>();
+    List<EventDTO> eventDTOList = eventService.getEvents(eventFilter, offset, limit);
+    EntityList<EventDTO> eventDTOEntityList = new EntityList<>();
     eventDTOEntityList.setEntities(eventDTOList);
     eventDTOEntityList.setOffset(offset);
     eventDTOEntityList.setLimit(limit);
@@ -86,27 +83,18 @@ public class EventRest implements ResourceContainer {
           @ApiResponse(responseCode = "400", description = "Bad request"),
           @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
           @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response updateProjectEventStatus(@Parameter(description = "connector type", required = true) @FormParam("type") String type,
+  public Response updateEventStatus(@Parameter(description = "Event Id", required = true) @FormParam("eventId") long eventId,
                                            @Parameter(description = "connector project remote Id", required = true) @FormParam("projectId") long projectId,
-                                           @Parameter(description = "Event name", required = true) @FormParam("event") String event,
                                            @Parameter(description = "Event status enabled/disabled. possible values: true for enabled, else false", required = true) @FormParam("enabled") boolean enabled) {
 
     String currentUser = getCurrentUser();
     try {
-      eventService.setEventEnabledForProject(type, projectId, event, enabled, currentUser);
+      eventService.setEventEnabledForProject(eventId, projectId, enabled, currentUser);
       return Response.noContent().build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity("Event not found").build();
     }
-  }
-
-  private List<EventRestEntity> getEventsRestEntities(EventService eventService,
-                                                      EventFilter eventFilter,
-                                                      String type,
-                                                      long projectId,
-                                                      int offset,
-                                                      int limit) {
-    List<EventDTO> eventDTOList = eventService.getEvents(eventFilter, offset, limit);
-    return EventBuilder.toRestEntities(eventService, type, projectId, eventDTOList);
   }
 }

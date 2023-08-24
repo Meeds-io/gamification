@@ -30,6 +30,7 @@ import org.exoplatform.container.xml.ValueParam;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class EventServiceTest extends AbstractServiceTest {
 
@@ -47,13 +48,13 @@ public class EventServiceTest extends AbstractServiceTest {
     eventEntity.setTitle("event1");
     eventEntity.setTrigger("trigger1");
     eventEntity.setCanCancel(false);
-    eventService.createEvent(EventMapper.fromEntity(eventEntity));
-
-    assertTrue(eventService.isEventEnabled("connectorName", 1L, "event1"));
-
-    eventService.setEventEnabledForProject("connectorName", 1L, "event1", false, "root1");
-
-    assertFalse(eventService.isEventEnabled("connectorName", 1L, "event1"));
+    EventDTO eventDTO = eventService.createEvent(EventMapper.fromEntity(eventEntity));
+    Map<String, String> eventProperties = eventDTO.getProperties();
+    assertNull(eventProperties);
+    eventService.setEventEnabledForProject(eventDTO.getId(), 1L, false, "root1");
+    eventDTO = eventService.getEvent(eventDTO.getId());
+    eventProperties = eventDTO.getProperties();
+    assertEquals("false", eventProperties.get(1L + ".enabled"));
 
   }
 
