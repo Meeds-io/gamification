@@ -104,6 +104,7 @@ import io.meeds.gamification.utils.UtilsTest;
     ActionAnnouncedNotificationPluginTest.class,
     ActionPublishedNotificationPluginTest.class,
     RuleActivityTypePluginTest.class,
+    EventServiceTest.class,
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
