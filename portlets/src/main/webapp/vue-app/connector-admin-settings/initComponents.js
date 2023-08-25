@@ -18,12 +18,14 @@ import GamificationAdminConnectorSettings from './components/AdminConnectorSetti
 import GamificationAdminConnectorCardList from './components/AdminConnectorCardList.vue';
 import GamificationAdminConnectorCard from './components/AdminConnectorCard.vue';
 import GamificationAdminConnectorDetail from './components/AdminConnectorDetail.vue';
+import GamificationAdminConnectorEvent from './components/AdminConnectorEvent.vue';
 
 const components = {
   'gamification-admin-connector-settings': GamificationAdminConnectorSettings,
   'gamification-admin-connector-card-list': GamificationAdminConnectorCardList,
   'gamification-admin-connector-card': GamificationAdminConnectorCard,
   'gamification-admin-connector-detail': GamificationAdminConnectorDetail,
+  'gamification-admin-connector-event': GamificationAdminConnectorEvent,
 };
 
 for (const key in components) {
