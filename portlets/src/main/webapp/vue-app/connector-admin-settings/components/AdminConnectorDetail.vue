@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div>
+  <v-card flat>
     <div class="py-2 py-sm-5 d-flex align-center">
       <v-tooltip :disabled="$root.isMobile" bottom>
         <template #activator="{ on }">
@@ -51,7 +51,47 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-btn>
     </div>
     <v-card-text class="px-0 text-sub-title">{{ description }}</v-card-text>
-  </div>
+    <v-card
+      class="mx-auto"
+      flat
+      tile>
+      <v-list dense>
+        <v-subheader class="pb-4 ps-0">
+          <v-icon size="20" class="primary--text">fas fa-bolt</v-icon>
+          <div class="text-subtitle-1 dark-grey-color ps-3">{{ eventsSize }} {{ $t('gamification.label.events') }}</div>
+          <v-spacer />
+          <v-card
+            width="220"
+            max-width="100%"
+            flat>
+            <v-text-field
+              v-model="keyword"
+              :placeholder="$t('gamification.label.filter.filterEvents')"
+              prepend-inner-icon="fa-filter icon-default-color"
+              clear-icon="fa-times fa-1x"
+              class="pa-0 me-3 my-auto"
+              clearable
+              hide-details />
+          </v-card>
+        </v-subheader>
+        <gamification-admin-connector-event
+          v-for="event in eventToDisplay"
+          :key="event.title"
+          :event="event"
+          class="py-2" />
+      </v-list>
+    </v-card>
+    <div v-if="hasMoreEvents" class="d-flex justify-center py-4">
+      <v-btn
+        :loading="loading"
+        min-width="95%"
+        class="btn"
+        text
+        @click="loadMore">
+        {{ $t('rules.loadMore') }}
+      </v-btn>
+    </div>
+  </v-card>
 </template>
 <script>
 
@@ -65,6 +105,15 @@ export default {
       type: Object,
       default: null
     },
+  },
+  data() {
+    return {
+      events: [],
+      eventsSize: 0,
+      pageSize: 10,
+      loading: true,
+      keyword: ''
+    };
   },
   computed: {
     title() {
@@ -81,7 +130,25 @@ export default {
     },
     connectorStatusLabel() {
       return this.connectorActivated ? this.$t('gamification.connectors.label.activated') : this.$t('gamification.connectors.label.deactivated');
-    }
+    },
+    hasMoreEvents() {
+      return this.keyword ? this.sortedEvent.length > this.pageSize : this.eventsSize > this.pageSize;
+    },
+    sortedEvent() {
+      let filteredEvent = this.events;
+      if (this.keyword) {
+        filteredEvent = this.events.filter(item =>
+          this.getEventLabel(item).toLowerCase().includes(this.keyword.toLowerCase())
+        );
+      }
+      return filteredEvent.sort((a, b) => this.getEventLabel(a).localeCompare(b.title));
+    },
+    eventToDisplay() {
+      return this.sortedEvent.slice(0, this.pageSize);
+    },
+  },
+  created() {
+    this.retrieveEvents();
   },
   methods: {
     backToConnectorList() {
@@ -90,6 +157,21 @@ export default {
     openConnectorSettings() {
       this.$root.$emit('open-connector-settings', this.connector, this.connectorExtension);
     },
+    retrieveEvents() {
+      this.$gamificationConnectorService.getEvents(this.name)
+        .then(data => {
+          this.events = data.entities;
+          this.eventsSize = data.size;
+        })
+        .finally(() => this.loading = false);
+    },
+    loadMore() {
+      this.pageSize += this.pageSize;
+      this.retrieveEvents();
+    },
+    getEventLabel(event) {
+      return this.$t(`gamification.event.title.${event.title}`);
+    }
   }
 };
 </script>
