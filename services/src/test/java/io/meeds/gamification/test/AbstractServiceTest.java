@@ -28,6 +28,8 @@ import javax.ws.rs.core.SecurityContext;
 
 import io.meeds.gamification.dao.*;
 import io.meeds.gamification.service.*;
+import io.meeds.gamification.service.impl.EventRegistryImpl;
+import io.meeds.gamification.storage.EventStorage;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.web.security.codec.CodecInitializer;
@@ -184,6 +186,14 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   
   protected ConnectorSettingService      connectorSettingService;
 
+  protected EventDAO                     eventDAO;
+
+  protected EventStorage                 eventStorage;
+
+  protected EventService                 eventService;
+
+  protected EventRegistryImpl            eventRegistry;
+
   protected SpaceService                 spaceService;
   
   protected SettingService               settingService;
@@ -233,6 +243,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     ruleIndexingServiceConnector = ExoContainerContext.getService(RuleIndexingServiceConnector.class);
     connectorSettingService = ExoContainerContext.getService(ConnectorSettingService.class);
     connectorService = ExoContainerContext.getService(ConnectorService.class);
+    eventDAO = ExoContainerContext.getService(EventDAO.class);
+    eventStorage = ExoContainerContext.getService(EventStorage.class);
+    eventService = ExoContainerContext.getService(EventService.class);
+    eventRegistry = ExoContainerContext.getService(EventRegistryImpl.class);
     spaceService = ExoContainerContext.getService(SpaceService.class);
     settingService = ExoContainerContext.getService(SettingService.class);
     codecInitializer = ExoContainerContext.getService(CodecInitializer.class);
@@ -264,6 +278,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       ruleDAO.deleteAll();
       programDAO.deleteAll();
       connectorAccountDAO.deleteAll();
+      eventDAO.deleteAll();
       domainStorage.clearCache();
       ruleStorage.clearCache();
       end();

@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div>
+  <v-card flat>
     <div class="py-2 py-sm-5 d-flex align-center">
       <v-tooltip :disabled="$root.isMobile" bottom>
         <template #activator="{ on }">
@@ -51,7 +51,33 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-btn>
     </div>
     <v-card-text class="px-0 text-sub-title">{{ description }}</v-card-text>
-  </div>
+    <v-card
+      class="mx-auto"
+      flat
+      tile>
+      <v-list dense>
+        <v-subheader class="pb-4 ps-0">
+          <v-icon size="20" class="primary--text">fas fa-bolt</v-icon>
+          <div class="text-subtitle-1 dark-grey-color ps-3">{{ eventsSize }} {{ $t('gamification.label.events') }}</div>
+        </v-subheader>
+        <gamification-admin-connector-event
+          v-for="event in events"
+          :key="event.title"
+          :event="event"
+          class="py-2" />
+      </v-list>
+    </v-card>
+    <div v-if="hasMoreEvents" class="d-flex justify-center py-4">
+      <v-btn
+        :loading="loading"
+        min-width="95%"
+        class="btn"
+        text
+        @click="loadMore">
+        {{ $t('rules.loadMore') }}
+      </v-btn>
+    </div>
+  </v-card>
 </template>
 <script>
 
@@ -65,6 +91,15 @@ export default {
       type: Object,
       default: null
     },
+  },
+  data() {
+    return {
+      events: [],
+      eventsSize: 0,
+      pageSize: 10,
+      limit: 10,
+      loading: true,
+    };
   },
   computed: {
     title() {
@@ -81,7 +116,13 @@ export default {
     },
     connectorStatusLabel() {
       return this.connectorActivated ? this.$t('gamification.connectors.label.activated') : this.$t('gamification.connectors.label.deactivated');
-    }
+    },
+    hasMoreEvents() {
+      return this.eventsSize > this.limit;
+    },
+  },
+  created() {
+    this.retrieveEvents();
   },
   methods: {
     backToConnectorList() {
@@ -89,6 +130,18 @@ export default {
     },
     openConnectorSettings() {
       this.$root.$emit('open-connector-settings', this.connector, this.connectorExtension);
+    },
+    retrieveEvents() {
+      this.$gamificationConnectorService.getEvents(this.name, null, null, 0 , this.limit)
+        .then(data => {
+          this.events = data.entities;
+          this.eventsSize = data.size;
+        })
+        .finally(() => this.loading = false);
+    },
+    loadMore() {
+      this.limit += this.pageSize;
+      this.retrieveEvents();
     },
   }
 };
