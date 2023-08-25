@@ -51,7 +51,7 @@ public class EventEntity implements Serializable {
   @Column(name = "CAN_CANCEL", nullable = false)
   private boolean           canCancel;
 
-  @Column(name = "TRIGGER", nullable = false)
+  @Column(name = "EVENT_TRIGGER", nullable = false)
   protected String          trigger;
 
   @ElementCollection(fetch = FetchType.EAGER)
