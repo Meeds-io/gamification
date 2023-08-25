@@ -543,6 +543,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <path>/js/connectorAdminSettings.bundle.js</path>
       </script>
       <depends>
+        <module>ruleComponents</module>
+      </depends>
+      <depends>
         <module>vue</module>
       </depends>
       <depends>
