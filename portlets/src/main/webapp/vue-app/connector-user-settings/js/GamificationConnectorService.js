@@ -105,3 +105,55 @@ export function deleteConnectorSetting(connectorName) {
     }
   });
 }
+
+export function getEvents(type, projectId, triggers, offset, limit) {
+  const formData = new FormData();
+  if (type) {
+    formData.append('type', type);
+  }
+  if (projectId) {
+    formData.append('projectId', projectId);
+  }
+  if (triggers?.length) {
+    triggers.forEach(trigger => formData.append('trigger', trigger));
+  }
+  if (offset) {
+    formData.append('offset', offset);
+  }
+  if (limit) {
+    formData.append('limit', limit);
+  }
+  formData.append('returnSize', 'true');
+  const params = new URLSearchParams(formData).toString();
+
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events?${params}`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.json();
+    } else {
+      throw new Error('Error when getting events');
+    }
+  });
+}
+
+export function saveEventStatus(eventId, projectId, enabled) {
+  const formData = new FormData();
+  formData.append('eventId', eventId);
+  formData.append('projectId', projectId);
+  formData.append('enabled', enabled);
+
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events/status`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(formData).toString(),
+  }).then(resp => {
+    if (!resp?.ok) {
+      throw new Error('Response code indicates a server error', resp);
+    }
+  });
+}
