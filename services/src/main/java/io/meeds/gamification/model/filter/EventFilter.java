@@ -1,7 +1,8 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2023 Meeds Association
- * contact@meeds.io
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -14,26 +15,23 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import './initComponents.js';
-import './services.js';
+package io.meeds.gamification.model.filter;
 
-const appId = 'connectorAdminSettings';
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-//getting language of the PLF
-const lang = eXo.env.portal.language || 'en';
+import java.io.Serializable;
+import java.util.List;
 
-//should expose the locale ressources as REST API 
-const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class EventFilter implements Serializable {
 
-export function init() {
-  exoi18n.loadLanguageAsync(lang, url)
-    .then(i18n => {
-      Vue.createApp({
-        template: `<gamification-admin-connector-settings id="${appId}" />`,
-        i18n,
-        vuetify: Vue.prototype.vuetifyOptions,
-      }, `#${appId}`, 'Admin Connectors Settings App');
-    });
+  private static final long serialVersionUID = 62925783499014933L;
+
+  private String            type;
+
+  private List<String>      triggers;
 }
-Vue.prototype.$utils.includeExtensions('gamificationAdminConnectorsExtensions');
-

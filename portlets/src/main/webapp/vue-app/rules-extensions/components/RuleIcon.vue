@@ -40,8 +40,6 @@ export default {
     },
   },
   data: () => ({
-    extensionApp: 'engagementCenterActions',
-    actionValueExtensionType: 'user-actions',
     actionValueExtensions: {},
   }),
   computed: {

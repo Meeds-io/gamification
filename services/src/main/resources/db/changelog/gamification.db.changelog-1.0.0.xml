@@ -715,4 +715,45 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <changeSet author="exo-gamification" id="1.0.0-64" dbms="oracle,postgresql">
       <createSequence sequenceName="SEQ_GAMIFICATION_CONNECTOR_ACCOUNTS_ID" startValue="1" />
     </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-65">
+        <createTable tableName="GAMIFICATION_EVENTS">
+            <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_EVENTS"/>
+            </column>
+            <column name="TITLE" type="NVARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TYPE" type="NVARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CAN_CANCEL" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TRIGGER" type="NVARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-66" dbms="oracle,postgresql">
+        <createSequence sequenceName="SEQ_GAMIFICATION_EVENTS_ID" startValue="1"/>
+    </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-67">
+        <createTable tableName="GAMIFICATION_EVENT_SETTINGS">
+            <column name="ID" type="BIGINT">
+                <constraints foreignKeyName="FK_GAMIFICATION_EVENT_SETTINGS" references="GAMIFICATION_EVENTS(ID)" deferrable="false" initiallyDeferred="false" deleteCascade="true" />
+            </column>
+            <column name="NAME" type="NVARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="VALUE" type="LONGTEXT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci" />
+        </modifySql>
+    </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-68">
+        <renameColumn tableName="GAMIFICATION_EVENTS" columnDataType="NVARCHAR(250)" oldColumnName="TRIGGER" newColumnName="EVENT_TRIGGER" />
+    </changeSet>
 </databaseChangeLog>
