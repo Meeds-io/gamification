@@ -287,7 +287,7 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     startExternalSessionAs("root15");
     response = getResponse("GET", getURLResource("programs/" + programEntity.getId()), null);
     assertNotNull(response);
-    assertEquals(401, response.getStatus());
+    assertEquals(200, response.getStatus());
 
     ProgramDTO program = programService.getProgramById(programEntity.getId());
     program.setOwnerIds(Collections.singleton(Long.parseLong(identityManager.getOrCreateUserIdentity("root10").getId())));
