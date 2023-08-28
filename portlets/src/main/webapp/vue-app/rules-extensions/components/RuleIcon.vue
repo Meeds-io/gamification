@@ -16,7 +16,10 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-icon :size="size" class="rule-icon" :class="ruleIconColorClass">
+  <v-icon
+    :size="size"
+    class="rule-icon"
+    :class="ruleIconColorClass">
     {{ ruleIcon }}
   </v-icon>
 </template>
