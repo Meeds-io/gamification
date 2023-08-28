@@ -39,12 +39,11 @@ public class RuleAttachmentPluginTest extends AbstractServiceTest {
   private final Identity    adminAclIdentity =
                                              new Identity("root1",
                                                           Arrays.asList(new MembershipEntry(Utils.ADMINS_GROUP),
-                                                                        new MembershipEntry(Utils.REWARDING_GROUP),
-                                                                        new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
+                                                                        new MembershipEntry(Utils.REWARDING_GROUP)));
 
   private final Identity    userAclIdentity  =
                                             new Identity("root2",
-                                                         Arrays.asList(new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
+                                                         Arrays.asList(new MembershipEntry("/platform/externals")));
 
   private AttachmentService attachmentService;
 

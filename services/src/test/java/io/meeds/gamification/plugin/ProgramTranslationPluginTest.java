@@ -37,8 +37,7 @@ import io.meeds.social.translation.service.TranslationService;
 public class ProgramTranslationPluginTest extends AbstractServiceTest {
   private final Identity     adminAclIdentity =
                                               new Identity("root1",
-                                                           Arrays.asList(new MembershipEntry(Utils.ADMINS_GROUP),
-                                                                         new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
+                                                           Arrays.asList(new MembershipEntry(Utils.ADMINS_GROUP)));
 
   private TranslationService translationService;
 

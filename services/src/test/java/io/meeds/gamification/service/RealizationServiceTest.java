@@ -470,7 +470,7 @@ public class RealizationServiceTest extends AbstractServiceTest {
                                                                               ACTIVITY_OBJECT_TYPE);
     assertEquals(1, realizations.size());
 
-    spaceMemberAclIdentity.setMemberships(Arrays.asList(new MembershipEntry(Utils.INTERNAL_USERS_GROUP),
+    spaceMemberAclIdentity.setMemberships(Arrays.asList(new MembershipEntry("/platform/externals"),
                                                         new MembershipEntry(Utils.BLACK_LIST_GROUP)));
     identityRegistry.register(spaceMemberAclIdentity);
 

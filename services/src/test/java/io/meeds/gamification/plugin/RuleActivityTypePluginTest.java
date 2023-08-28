@@ -17,7 +17,6 @@
  */
 package io.meeds.gamification.plugin;
 
-import static io.meeds.gamification.utils.Utils.INTERNAL_USERS_GROUP;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_TYPE;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -42,6 +41,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.api.ActivityStorage;
 
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RuleService;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,6 +55,9 @@ public class RuleActivityTypePluginTest {
 
   @Mock
   private UserACL             userAclService;
+
+  @Mock
+  private ProgramService      programService;
 
   @Mock
   private RuleService         ruleService;
@@ -87,18 +90,18 @@ public class RuleActivityTypePluginTest {
     when(viewer.getUserId()).thenReturn("mary");
     when(identityManager.getOrCreateUserIdentity("mary")).thenReturn(new Identity("2"));
     when(ruleService.findRuleById(ruleId)).thenReturn(rule);
-    when(rule.isOpen()).thenReturn(false);
+    when(rule.getProgramId()).thenReturn(2l);
 
     // no configuration
     // by default: edit activity/comment are all enabled
-    ActivityManager manager = new ActivityManagerImpl(storage,
-                                                      identityManager,
-                                                      spaceService,
-                                                      relationshipManager,
-                                                      userAclService,
-                                                      null);
-    assertTrue(manager.isActivityViewable(activity, owner));
-    assertFalse(manager.isActivityViewable(activity, viewer));
+    ActivityManager activityManager = new ActivityManagerImpl(storage,
+                                                              identityManager,
+                                                              spaceService,
+                                                              relationshipManager,
+                                                              userAclService,
+                                                              null);
+    assertTrue(activityManager.isActivityViewable(activity, owner));
+    assertFalse(activityManager.isActivityViewable(activity, viewer));
 
     InitParams initParams = new InitParams();
     ValueParam valueParam = new ValueParam();
@@ -111,17 +114,14 @@ public class RuleActivityTypePluginTest {
     valueParam.setValue("false");
     initParams.addParameter(valueParam);
 
-    manager.addActivityTypePlugin(new RuleActivityTypePlugin(ruleService, initParams));
+    activityManager.addActivityTypePlugin(new RuleActivityTypePlugin(programService, ruleService, initParams));
 
-    assertTrue(manager.isActivityViewable(activity, owner));
-    assertFalse(manager.isActivityViewable(activity, viewer));
+    when(programService.isProgramMember(rule.getProgramId(), owner.getUserId())).thenReturn(true);
+    assertTrue(activityManager.isActivityViewable(activity, owner));
+    assertFalse(activityManager.isActivityViewable(activity, viewer));
 
-    when(rule.isOpen()).thenReturn(true);
-    assertTrue(manager.isActivityViewable(activity, owner));
-    assertFalse(manager.isActivityViewable(activity, viewer));
-
-    when(viewer.isMemberOf(INTERNAL_USERS_GROUP)).thenReturn(true);
-    assertTrue(manager.isActivityViewable(activity, viewer));
+    when(programService.isProgramMember(rule.getProgramId(), viewer.getUserId())).thenReturn(true);
+    assertTrue(activityManager.isActivityViewable(activity, viewer));
   }
 
 }

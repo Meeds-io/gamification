@@ -315,8 +315,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected org.exoplatform.services.security.Identity registerAdministratorUser(String user) {
     org.exoplatform.services.security.Identity identity =
                                                         new org.exoplatform.services.security.Identity(user,
-                                                                                                       Arrays.asList(new MembershipEntry(Utils.ADMINS_GROUP),
-                                                                                                                     new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
+                                                                                                       Arrays.asList(new MembershipEntry(Utils.ADMINS_GROUP)));
     identityRegistry.register(identity);
     return identity;
   }
@@ -330,7 +329,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected org.exoplatform.services.security.Identity registerInternalUser(String username) {
     org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity(username,
-                                                                                                         Arrays.asList(new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
+                                                                                                         Arrays.asList(new MembershipEntry("/platform/externals")));
     identityRegistry.register(identity);
     return identity;
   }
