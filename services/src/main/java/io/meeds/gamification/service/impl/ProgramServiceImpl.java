@@ -358,7 +358,7 @@ public class ProgramServiceImpl implements ProgramService {
     if (program == null || program.isDeleted()) {
       return false;
     } else if (program.isOpen()) {
-      return Utils.isInternalUser(username);
+      return true;
     }
 
     return Utils.isRewardingManager(username)

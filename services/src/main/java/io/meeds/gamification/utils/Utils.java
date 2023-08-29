@@ -61,9 +61,7 @@ public class Utils {
                                                                           DateTimeFormatter.ofPattern("yyyy-MM-dd['T00:00:00']")
                                                                                            .withResolverStyle(ResolverStyle.LENIENT);
 
-  private static final char[]                       ILLEGAL_MESSAGE_CHARACTERS              = {
-      ',', ';', '\n'
-  };
+  private static final char[]                       ILLEGAL_MESSAGE_CHARACTERS              = { ',', ';', '\n' };
 
   public static final String                        STATISTICS_CREATE_PROGRAM_OPERATION     = "createProgram";
 
@@ -177,8 +175,6 @@ public class Utils {
 
   public static final String                        REWARDING_GROUP                         = "/platform/rewarding";
 
-  public static final String                        INTERNAL_USERS_GROUP                    = "/platform/users";
-
   public static final String                        ADMINS_GROUP                            = "/platform/administrators";
 
   public static final String                        BLACK_LIST_GROUP                        = "/leaderboard-blacklist-users";
@@ -202,9 +198,8 @@ public class Utils {
   public static final ArgumentLiteral<RuleDTO>      RULE_NOTIFICATION_PARAMETER             =
                                                                                 new ArgumentLiteral<>(RuleDTO.class, "rule");
 
-  public static final ArgumentLiteral<String>       RULE_PUBLISHER_NOTIFICATION_PARAMETER   =
-                                                                                          new ArgumentLiteral<>(String.class,
-                                                                                                                "publisher");
+  public static final ArgumentLiteral<String>       RULE_PUBLISHER_NOTIFICATION_PARAMETER   = new ArgumentLiteral<>(String.class,
+                                                                                                                    "publisher");
 
   public static final ArgumentLiteral<Announcement> ANNOUNCEMENT_NOTIFICATION_PARAMETER     =
                                                                                         new ArgumentLiteral<>(Announcement.class,
@@ -333,7 +328,10 @@ public class Utils {
     return message;
   }
 
-  public static String buildAttachmentUrl(String programId, Long lastModifiedDate, String type, String defaultId,
+  public static String buildAttachmentUrl(String programId,
+                                          Long lastModifiedDate,
+                                          String type,
+                                          String defaultId,
                                           boolean isDefault) {
     if (Long.valueOf(programId) == 0) {
       return null;
@@ -409,11 +407,6 @@ public class Utils {
   public static boolean isRewardingManager(String username) {
     org.exoplatform.services.security.Identity aclIdentity = getUserAclIdentity(username);
     return aclIdentity != null && (aclIdentity.isMemberOf(REWARDING_GROUP) || aclIdentity.isMemberOf(ADMINS_GROUP));
-  }
-
-  public static boolean isInternalUser(String username) {
-    org.exoplatform.services.security.Identity aclIdentity = getUserAclIdentity(username);
-    return aclIdentity != null && aclIdentity.isMemberOf(INTERNAL_USERS_GROUP);
   }
 
   public static org.exoplatform.services.security.Identity getUserAclIdentity(String username) {
