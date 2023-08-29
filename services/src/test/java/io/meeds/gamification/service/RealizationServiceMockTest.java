@@ -190,8 +190,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     assertNotNull(createdRealizations);
     assertEquals(3, createdRealizations.size());
 
-    userAclIdentity.setMemberships(Arrays.asList(new MembershipEntry(Utils.ADMINS_GROUP),
-                                                 new MembershipEntry(Utils.INTERNAL_USERS_GROUP)));
+    userAclIdentity.setMemberships(Arrays.asList(new MembershipEntry(Utils.ADMINS_GROUP)));
 
     filter.setFromDate(toDate);
     filter.setToDate(fromDate);
