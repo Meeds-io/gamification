@@ -19,7 +19,6 @@ package io.meeds.gamification.test;
 import static org.exoplatform.commons.notification.template.TemplateUtils.getExcerptSubject;
 
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,13 +36,23 @@ import org.exoplatform.commons.api.notification.service.setting.UserSettingServi
 import org.exoplatform.commons.api.settings.ExoFeatureService;
 import org.exoplatform.commons.notification.channel.MailChannel;
 import org.exoplatform.commons.notification.channel.WebChannel;
+import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.services.cache.CacheService;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
+import org.exoplatform.services.organization.UserHandler;
+import org.exoplatform.settings.jpa.CacheUserSettingServiceImpl;
 import org.exoplatform.social.notification.mock.MockNotificationService;
 
 import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RuleService;
 
-public abstract class AbstractPluginTest extends AbstractServiceTest {
+public abstract class AbstractPluginTest extends AbstractServiceTest { // NOSONAR
+
+  public static final String        ADMIN_USER    = "root1";
+
+  public static final String        SIMPLE_USER   = "root5";
 
   protected Locale                  initialDefaultLocale;
 
@@ -57,15 +66,7 @@ public abstract class AbstractPluginTest extends AbstractServiceTest {
 
   protected ExoFeatureService       exoFeatureService;
 
-  protected ProgramService          programService;
-
-  protected RuleService             ruleService;
-
-  protected AnnouncementService     announcementService;
-
   public abstract BaseNotificationPlugin getPlugin();
-
-  public static final List<String> MANAGED_USERS = Arrays.asList("root", "john", "demo", "mary", "ghost");
 
   @Override
   public void setUp() throws Exception {
@@ -87,6 +88,25 @@ public abstract class AbstractPluginTest extends AbstractServiceTest {
 
     turnON(getPlugin());
     notificationService.clearAll();
+    CacheService cacheService = ExoContainerContext.getService(CacheService.class);
+    cacheService.getCacheInstance(CacheUserSettingServiceImpl.CACHE_NAME).clearCache();
+
+    OrganizationService organizationService = ExoContainerContext.getService(OrganizationService.class);
+    UserHandler userHandler = organizationService.getUserHandler();
+    if (userHandler.findUserByName(ADMIN_USER) == null) {
+      User user = userHandler.createUserInstance(ADMIN_USER);
+      user.setFirstName(ADMIN_USER);
+      user.setLastName(ADMIN_USER);
+      user.setEmail(ADMIN_USER + "@meeds.io");
+      userHandler.createUser(user, false);
+    }
+    if (userHandler.findUserByName(SIMPLE_USER) == null) {
+      User user = userHandler.createUserInstance(SIMPLE_USER);
+      user.setFirstName(SIMPLE_USER);
+      user.setLastName(SIMPLE_USER);
+      user.setEmail(SIMPLE_USER + "@meeds.io");
+      userHandler.createUser(user, false);
+    }
   }
 
   @Override
@@ -99,10 +119,6 @@ public abstract class AbstractPluginTest extends AbstractServiceTest {
     super.tearDown();
   }
 
-  public void destroyPlugins(BaseNotificationPlugin plugin) {
-    plugin = null;
-  }
-
   /**
    * It will be invoked after make Activity, Relationship and New User also.
    * Makes the notification message and retrieve from MockNotificationService
@@ -111,7 +127,7 @@ public abstract class AbstractPluginTest extends AbstractServiceTest {
    */
   protected NotificationInfo getNotificationInfo(String username) {
     List<NotificationInfo> list = notificationService.storeDigest(username);
-    assertTrue(list.size() > 0);
+    assertFalse(list.isEmpty());
     return list.get(0);
   }
 
@@ -196,11 +212,9 @@ public abstract class AbstractPluginTest extends AbstractServiceTest {
    */
   protected List<NotificationInfo> assertMadeWebNotifications(String username, int number) {
     UserSetting setting = userSettingService.get(username);
+    assertTrue(setting.isActive(WebChannel.ID, getPlugin().getKey().getId()));
     List<NotificationInfo> got = notificationService.storeWebNotifs(username);
-    if (setting.isActive(WebChannel.ID, getPlugin().getKey().getId())) {
-      got = notificationService.storeWebNotifs(username);
-      assertEquals(number, got.size());
-    }
+    assertEquals(number, got.size());
     return got;
   }
 

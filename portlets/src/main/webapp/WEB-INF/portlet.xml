@@ -21,12 +21,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <portlet>
     <portlet-name>GamificationManageBadges</portlet-name>
-    <portlet-class>org.exoplatform.addons.gamification.portlets.admin.badge.ManageBadgesPortlet</portlet-class>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/html/manageBadges.html</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <cache-scope>PUBLIC</cache-scope>
     <supports>
       <mime-type>text/html</mime-type>
     </supports>
     <portlet-info>
-      <title>Gamification Manage badges</title>
+      <title>Manage Badges</title>
     </portlet-info>
     <security-role-ref>
       <role-name>admin</role-name>
