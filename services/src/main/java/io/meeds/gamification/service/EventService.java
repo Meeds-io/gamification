@@ -52,6 +52,15 @@ public interface EventService {
   EventDTO getEventByTitleAndTrigger(String title, String trigger);
 
   /**
+   * Get gamification event by event type and title
+   *
+   * @param type event type
+   * @param title event title
+   * @return {@link EventDTO}
+   */
+  EventDTO getEventByTypeAndTitle(String type, String title);
+
+  /**
    * Add Event to DB
    *
    * @param eventDTO {@link EventDTO} to create
@@ -59,6 +68,15 @@ public interface EventService {
    * @throws ObjectAlreadyExistsException when event already exists
    */
   EventDTO createEvent(EventDTO eventDTO) throws ObjectAlreadyExistsException;
+
+  /**
+   * Update event
+   *
+   * @param eventDTO {@link EventDTO} to update
+   * @return updated {@link EventDTO}
+   * @throws ObjectNotFoundException when event doesn't exists
+   */
+  EventDTO updateEvent(EventDTO eventDTO) throws ObjectNotFoundException;
 
   /**
    * Retrieves gamification event by event id
