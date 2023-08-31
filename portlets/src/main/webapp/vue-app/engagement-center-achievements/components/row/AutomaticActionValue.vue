@@ -22,6 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :class="!actionURL && 'not-clickable'"
           class="flex-nowrap flex-grow-1 d-flex text-truncate container--fluid text-truncate"
           :href="actionURL">
+          <rule-icon :rule-event="eventName" :size="20" />
           <v-icon size="15" class="primary--text">{{ actionIcon }}</v-icon>
           <div class="ps-2 text-truncate">{{ actionLabel }}
           </div>
@@ -43,7 +44,7 @@ export default {
       type: String,
       default: null
     },
-    actionIcon: {
+    eventName: {
       type: String,
       default: null
     },
