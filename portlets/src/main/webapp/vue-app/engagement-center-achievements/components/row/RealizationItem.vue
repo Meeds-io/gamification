@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-if="actionValueExtension"
             :action-label="actionLabel"
             :action-u-r-l="realizationLink"
-            :action-icon="actionIcon" />
+            :event-name="eventName" />
           <a
             v-else
             :href="realization.url"
@@ -278,9 +278,6 @@ export default {
     hasActions() {
       return this.canReject || this.canAccept;
     },
-    actionIcon() {
-      return this.actionValueExtension?.icon;
-    },
     objectId() {
       return this.realization?.objectId;
     },
@@ -289,14 +286,6 @@ export default {
     },
     getLink() {
       return this.actionValueExtension?.getLink;
-    },
-    extendedActionValueComponent() {
-      return this.actionValueExtension && {
-        componentName: 'action-value',
-        componentOptions: {
-          vueComponent: this.actionValueExtension.vueComponent,
-        },
-      } || null;
     },
     actionValueExtensions() {
       return this.$root.actionValueExtensions;
