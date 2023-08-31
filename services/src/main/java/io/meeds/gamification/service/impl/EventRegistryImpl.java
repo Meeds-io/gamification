@@ -24,7 +24,6 @@ import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.plugin.EventConfigPlugin;
 import io.meeds.gamification.service.*;
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.picocontainer.Startable;
 
 import org.exoplatform.services.log.ExoLogger;
@@ -32,8 +31,7 @@ import org.exoplatform.services.log.Log;
 
 public class EventRegistryImpl implements Startable, EventRegistry {
 
-  private static final Log                     LOG                                        =
-                                                   ExoLogger.getLogger(EventRegistryImpl.class);
+  private static final Log                     LOG = ExoLogger.getLogger(EventRegistryImpl.class);
 
   private final Map<String, EventConfigPlugin> eventConfigPluginMap;
 
@@ -63,9 +61,10 @@ public class EventRegistryImpl implements Startable, EventRegistry {
   public void start() {
     try {
       for (EventConfigPlugin eventConfigPlugin : eventConfigPluginMap.values()) {
-        EventDTO eventDTO = eventService.getEventByTitleAndTrigger(eventConfigPlugin.getTitle(), eventConfigPlugin.getTrigger());
-        if (eventDTO == null) {
-          store(eventConfigPlugin);
+        EventDTO eventDTO = eventService.getEventByTypeAndTitle(eventConfigPlugin.getType(), eventConfigPlugin.getTitle());
+        if (eventDTO == null || !eventDTO.getTrigger().equals(eventConfigPlugin.getTrigger())
+            || eventDTO.isCanCancel() != eventConfigPlugin.isCanCancel()) {
+          store(eventConfigPlugin, eventDTO);
         }
       }
     } catch (Exception e) {
@@ -78,16 +77,22 @@ public class EventRegistryImpl implements Startable, EventRegistry {
     // Nothing to change
   }
 
-  private void store(EventConfigPlugin eventConfigPlugin) {
-    EventDTO eventDTO = new EventDTO();
-    eventDTO.setTitle(eventConfigPlugin.getTitle());
-    eventDTO.setType(eventConfigPlugin.getType());
-    eventDTO.setTrigger(eventConfigPlugin.getTrigger());
-    eventDTO.setCanCancel(eventConfigPlugin.isCanCancel());
+  private void store(EventConfigPlugin eventConfigPlugin, EventDTO eventDTO) {
     try {
-      eventService.createEvent(eventDTO);
-    } catch (ObjectAlreadyExistsException e) {
-      LOG.error("Event with title {} and trigger {} already exist", eventDTO.getTitle(), eventDTO.getTrigger(), e);
+      if (eventDTO != null) {
+        eventDTO.setTrigger(eventConfigPlugin.getTrigger());
+        eventDTO.setCanCancel(eventConfigPlugin.isCanCancel());
+        eventService.updateEvent(eventDTO);
+      } else {
+        eventDTO = new EventDTO();
+        eventDTO.setTitle(eventConfigPlugin.getTitle());
+        eventDTO.setType(eventConfigPlugin.getType());
+        eventDTO.setTrigger(eventConfigPlugin.getTrigger());
+        eventDTO.setCanCancel(eventConfigPlugin.isCanCancel());
+        eventService.createEvent(eventDTO);
+      }
+    } catch (Exception e) {
+      LOG.error("Error when saving events ", e);
     }
   }
 }
