@@ -103,6 +103,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     drawer-title="rule.form.translateDescription"
                     back-icon
                     rich-editor
+                    rich-editor-oembed
                     @initialized="setFormInitialized">
                     <template #title>
                       <div class="text-subtitle-1">
@@ -117,6 +118,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       :max-length="maxDescriptionLength"
                       :tag-enabled="false"
                       ck-editor-type="rule"
+                      oembed
                       @validity-updated="validDescription = $event"
                       @ready="handleRichEditorReady" />
                   </translation-text-field>
