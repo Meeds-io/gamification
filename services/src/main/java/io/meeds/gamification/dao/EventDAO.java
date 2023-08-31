@@ -31,13 +31,17 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 public class EventDAO extends GenericDAOJPAImpl<EventEntity, Long> {
 
-  public static final String         CONNECTOR_TYPE            = "type";
+  public static final String         TYPE                      = "type";
 
   public static final String         TRIGGERS                  = "triggers";
 
   private static final String        QUERY_FILTER_FIND_PREFIX  = "Event.findAllEvents";
 
   private static final String        QUERY_FILTER_COUNT_PREFIX = "Event.countAllEvents";
+
+  public static final String         TITLE                     = "title";
+
+  public static final String         TRIGGER                   = "trigger";
 
   private final Map<String, Boolean> filterNamedQueries        = new HashMap<>();
 
@@ -51,8 +55,26 @@ public class EventDAO extends GenericDAOJPAImpl<EventEntity, Long> {
   public EventEntity getEventByTitleAndTrigger(String title, String trigger) {
     TypedQuery<EventEntity> query =
                                   getEntityManager().createNamedQuery("EventEntity.getEventByTitleAndTrigger", EventEntity.class);
-    query.setParameter("title", title);
-    query.setParameter("trigger", trigger);
+    query.setParameter(TITLE, title);
+    query.setParameter(TRIGGER, trigger);
+    try {
+      return query.getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+
+  /**
+   * Get gamification event by event title and trigger name
+   *
+   * @param type event type
+   * @param title event title
+   * @return list of type EventEntity
+   */
+  public EventEntity getEventByTypeAndTitle(String type, String title) {
+    TypedQuery<EventEntity> query = getEntityManager().createNamedQuery("EventEntity.getEventByTypeAndTitle", EventEntity.class);
+    query.setParameter(TYPE, type);
+    query.setParameter(TITLE, title);
     try {
       return query.getSingleResult();
     } catch (NoResultException e) {
@@ -125,7 +147,7 @@ public class EventDAO extends GenericDAOJPAImpl<EventEntity, Long> {
 
   private <T> void addQueryFilterParameters(EventFilter filter, TypedQuery<T> query) {
     if (StringUtils.isNotBlank(filter.getType())) {
-      query.setParameter(CONNECTOR_TYPE, filter.getType());
+      query.setParameter(TYPE, filter.getType());
     }
     if (CollectionUtils.isNotEmpty(filter.getTriggers())) {
       query.setParameter(TRIGGERS, filter.getTriggers());
