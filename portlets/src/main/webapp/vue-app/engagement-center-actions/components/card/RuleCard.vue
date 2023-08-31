@@ -101,7 +101,7 @@
           </div>
         </v-card-title>
         <v-card-text
-          v-sanitized-html="description"
+          v-sanitized-html-no-embed="description"
           :class="rule.recurrence && 'text-truncate-2' || 'text-truncate-3'"
           class="rule-card-description rich-editor-content pb-0" />
         <template v-if="isEnabled">
