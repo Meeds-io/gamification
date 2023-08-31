@@ -54,6 +54,11 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  public EventDTO getEventByTypeAndTitle(String type, String title) {
+    return eventStorage.getEventByTypeAndTitle(type, title);
+  }
+
+  @Override
   public EventDTO createEvent(EventDTO eventDTO) throws ObjectAlreadyExistsException {
     if (eventDTO == null) {
       throw new IllegalArgumentException("event object is mandatory");
@@ -61,6 +66,18 @@ public class EventServiceImpl implements EventService {
     EventDTO similarEvent = eventStorage.getEventByTitleAndTrigger(eventDTO.getTitle(), eventDTO.getTrigger());
     if (similarEvent != null) {
       throw new ObjectAlreadyExistsException("Event with same title and trigger already exist");
+    }
+    return eventStorage.saveEvent(eventDTO);
+  }
+
+  @Override
+  public EventDTO updateEvent(EventDTO eventDTO) throws ObjectNotFoundException {
+    if (eventDTO.getId() <= 0) {
+      throw new IllegalArgumentException("Event id must not be null");
+    }
+    EventDTO storedEvent = eventStorage.getEventById(eventDTO.getId());
+    if (storedEvent == null) {
+      throw new ObjectNotFoundException("Event with id " + eventDTO.getId() + " is not found");
     }
     return eventStorage.saveEvent(eventDTO);
   }

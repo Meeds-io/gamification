@@ -26,7 +26,7 @@ import io.meeds.gamification.storage.mapper.EventMapper;
 
 public class EventStorage {
 
-  private EventDAO eventDAO;
+  private final EventDAO eventDAO;
 
   public EventStorage(EventDAO eventDAO) {
     this.eventDAO = eventDAO;
@@ -66,13 +66,29 @@ public class EventStorage {
   }
 
   /**
-   * create Event
+   * Get gamification event by event title and trigger name
+   *
+   * @param type event type
+   * @param title event title
+   * @return {@link EventDTO}
+   */
+  public EventDTO getEventByTypeAndTitle(String type, String title) {
+    return EventMapper.fromEntity(eventDAO.getEventByTypeAndTitle(type, title));
+  }
+
+  /**
+   * save Event
    *
    * @param eventDTO {@link EventDTO} to create
    */
   public EventDTO saveEvent(EventDTO eventDTO) {
     EventEntity eventEntity = EventMapper.toEntity(eventDTO);
-    eventEntity = eventDAO.create(eventEntity);
+
+    if (eventEntity.getId() == null) {
+      eventEntity = eventDAO.create(eventEntity);
+    } else {
+      eventEntity = eventDAO.update(eventEntity);
+    }
     return EventMapper.fromEntity(eventEntity);
   }
 
