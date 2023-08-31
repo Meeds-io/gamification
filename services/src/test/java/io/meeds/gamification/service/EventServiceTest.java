@@ -69,7 +69,7 @@ public class EventServiceTest extends AbstractServiceTest {
     eventEntity.setCanCancel(false);
     eventService.createEvent(EventMapper.fromEntity(eventEntity));
     assertNotNull(eventService.getEvents(eventFilter, offset, limit));
-    assertEquals(eventService.countEvents(eventFilter), 1);
+    assertEquals(1, eventService.countEvents(eventFilter));
   }
 
   public void testGetEvents() {
@@ -97,7 +97,8 @@ public class EventServiceTest extends AbstractServiceTest {
     eventRegistry.start();
 
     assertNotNull(eventService.getEvents(eventFilter, offset, limit));
-    assertEquals(eventService.countEvents(eventFilter), 2);
+    assertEquals(2, eventService.getEvents(eventFilter, offset, limit).size());
+    assertEquals(2, eventService.countEvents(eventFilter));
   }
 
   private void addValueParam(InitParams initParams, String name, String value) {
