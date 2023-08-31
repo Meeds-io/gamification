@@ -27,18 +27,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               height="40"
               width="40" />
           </div>
-          <v-list class="ms-3">
+          <v-list class="d-none d-sm-inline ms-3">
             <v-list-item-title>
               {{ title }}
             </v-list-item-title>
             <v-list-item-subtitle class="text-truncate d-flex caption mt-1">{{ description }}</v-list-item-subtitle>
           </v-list>
+          <a
+            v-if="connectorRemoteIdentifier"
+            class="ps-1 subtitle-1 text-decoration-underline d-sm-none d-flex align-center"
+            :href="connectorRemoteIdentifierLink"
+            target="_blank">{{ connectorRemoteIdentifier }}</a>
         </div>
         <v-spacer />
         <div class="d-flex align-center">
           <template v-if="connectorRemoteIdentifier">
             <a
-              class="pe-4 text-decoration-underline"
+              class="pe-4 text-decoration-underline d-none d-sm-inline"
               :href="connectorRemoteIdentifierLink"
               target="_blank">{{ connectorRemoteIdentifier }}</a>
             <v-btn
@@ -46,7 +51,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               class="btn"
               small
               @click="disconnect">
-              <span class="mx-2 text-capitalize-first-letter subtitle-1">
+              <span class="mx-sm-2 text-capitalize-first-letter subtitle-1">
                 {{ $t('gamification.connectors.label.disconnect') }}
               </span>
             </v-btn>
@@ -57,7 +62,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             class="btn"
             small
             @click="connect">
-            <span class="mx-2 text-capitalize-first-letter subtitle-1">
+            <span class="mx-sm-2 text-capitalize-first-letter subtitle-1">
               {{ $t('gamification.connectors.label.connect') }}
             </span>
           </v-btn>
