@@ -371,8 +371,8 @@ export default {
         const eventObject = {};
         const eventTitle = event.title;
         eventObject.name = eventTitle;
-        let fieldLabelI18NKey = `gamification.event.title.${eventTitle}`;
-        let fieldLabelI18NValue = this.$t(fieldLabelI18NKey);
+        const fieldLabelI18NKey = `gamification.event.title.${eventTitle}`;
+        const fieldLabelI18NValue = this.$t(fieldLabelI18NKey);
         eventObject.label = fieldLabelI18NValue === fieldLabelI18NKey ? eventTitle : fieldLabelI18NValue;
         this.eventMapping.push(eventObject);
       });
