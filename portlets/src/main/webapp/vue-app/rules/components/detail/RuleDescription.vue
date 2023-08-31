@@ -23,8 +23,9 @@
     <div class="subtitle-1 font-weight-bold mb-2">
       {{ $t('rules.description') }}
     </div>
-    <div class="d-flex flex-row rich-editor-content text-break overflow-hidden">
-      <span v-sanitized-html="rule.description"></span>
+    <div
+      v-sanitized-html="rule.description"
+      class="rich-editor-content text-break overflow-hidden">
     </div>
   </div>
 </template>
