@@ -19,13 +19,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-card
       flat>
       <div class="d-flex flex-row">
-        <div class="d-flex">
-          <div class="d-flex align-center">
-            <v-img
-              :src="logo"
-              :alt="title"
-              height="40"
-              width="40" />
+        <div class="d-flex text-truncate">
+          <div class="d-flex align-center pe-1 pe-sm-0">
+            <v-icon
+              size="33"
+              :class="iconColorClass">
+              {{ icon }}
+            </v-icon>
           </div>
           <v-list class="d-none d-sm-inline ms-3">
             <v-list-item-title>
@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-list>
           <a
             v-if="connectorRemoteIdentifier"
-            class="ps-1 subtitle-1 text-decoration-underline d-sm-none d-flex align-center"
+            class="ps-1 pt-1 subtitle-1 text-decoration-underline text-truncate d-sm-none align-center"
             :href="connectorRemoteIdentifierLink"
             target="_blank">{{ connectorRemoteIdentifier }}</a>
         </div>
@@ -97,8 +97,11 @@ export default {
     connectorRemoteIdentifierLink() {
       return `${this.connectorExtension?.PROFILE_BASER_URL}/${this.connectorRemoteIdentifier}`;
     },
-    logo() {
-      return this.connectorExtension?.logo || '';
+    icon() {
+      return this.connectorExtension?.icon || '';
+    },
+    iconColorClass() {
+      return this.connectorExtension?.iconColorClass;
     },
     title() {
       return this.$t(`${this.connectorExtension?.title}`);

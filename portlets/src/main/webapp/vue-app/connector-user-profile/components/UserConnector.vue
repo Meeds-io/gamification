@@ -26,10 +26,11 @@
         target="_blank"
         rel="nofollow noreferrer noopener">
         <v-list-item-avatar class="ms-0 my-0">
-          <v-img
-            :src="logo"
-            height="30"
-            width="30" />
+          <v-icon
+            size="33"
+            :class="iconColorClass">
+            {{ icon }}
+          </v-icon>
         </v-list-item-avatar>
         <span
           class="subtitle-1 text-color my-0">{{ connectorRemoteIdentifier }} </span>
@@ -60,8 +61,11 @@ export default {
     connectorRemoteIdentifierLink() {
       return `${this.connectorExtension?.PROFILE_BASER_URL}/${this.connectorRemoteIdentifier}`;
     },
-    logo() {
-      return this.connectorExtension?.logo || '';
+    icon() {
+      return this.connectorExtension?.icon || '';
+    },
+    iconColorClass() {
+      return this.connectorExtension?.iconColorClass;
     },
   },
 };
