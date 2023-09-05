@@ -26,11 +26,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       @click="openDetail">
       <v-card-text class="d-flex flex-row">
         <div class="d-flex align-center">
-          <v-img
-            :src="logo"
-            :alt="name"
-            height="40"
-            width="40" />
+          <v-icon
+            size="28"
+            :class="iconColorClass">
+            {{ icon }}
+          </v-icon>
           <v-list class="ms-3">
             <v-list-item-title class="font-weight-bold">
               {{ title }}
@@ -59,8 +59,11 @@ export default {
     connectorExtension() {
       return this.connectorExtensions.find(c => c?.componentOptions?.name === this.connector?.name);
     },
-    logo() {
-      return this.connectorExtension?.componentOptions?.logo || '';
+    icon() {
+      return this.connectorExtension?.componentOptions?.icon;
+    },
+    iconColorClass() {
+      return this.connectorExtension?.componentOptions?.iconColorClass;
     },
     name() {
       return this.connectorExtension?.componentOptions?.name || '';
