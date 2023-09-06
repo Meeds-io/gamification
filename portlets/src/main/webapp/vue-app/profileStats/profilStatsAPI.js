@@ -232,14 +232,13 @@ export function replyInvitationToConnect(relationId, reply) {
 }
 
 export function getGamificationPoints(period) {
-  return fetch(`/portal/rest/gamification/api/v1/points?userId=${eXo.env.portal.profileOwner}&period=${period || ''}`, {
+  return fetch(`/portal/rest/gamification/realizations/points?userId=${eXo.env.portal.profileOwner}&period=${period || ''}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
     if (resp?.ok) {
-      return resp.json();
-    }
-    else {
+      return resp.text();
+    } else {
       throw new Error ('Error when getting gamification points');
     }
   });
