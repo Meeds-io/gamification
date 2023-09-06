@@ -19,317 +19,622 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd" xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
 
-    <!-- Rules storage (JPA) -->
-  <component>
-    <type>io.meeds.gamification.dao.RuleDAO</type>
-  </component>
-  <component>
-    <key>io.meeds.gamification.storage.RuleStorage</key>
-    <type>io.meeds.gamification.storage.cached.RuleCachedStorage </type>
-  </component>
-    <!-- Rules Service Layer-->
-  <component>
-    <key>io.meeds.gamification.service.RuleService</key>
-    <type>io.meeds.gamification.service.impl.RuleServiceImpl</type>
-  </component>
+	<!-- Rules storage (JPA) -->
+	<component>
+		<type>io.meeds.gamification.dao.RuleDAO</type>
+	</component>
 
-    <!-- Gamification Settings : Rule -->
-  <component>
-    <key>io.meeds.gamification.service.RuleRegistry</key>
-    <type>io.meeds.gamification.service.impl.RuleRegistryImpl</type>
-  </component>
+	<component>
+		<key>io.meeds.gamification.storage.RuleStorage</key>
+		<type>io.meeds.gamification.storage.cached.RuleCachedStorage </type>
+	</component>
 
-    <!-- Gamification Rule Config -->
-  <external-component-plugins>
-    <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
-    <component-plugin>
-      <name>rule.postActivity</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
+	<!-- Rules Service Layer -->
+	<component>
+		<key>io.meeds.gamification.service.RuleService</key>
+		<type>io.meeds.gamification.service.impl.RuleServiceImpl</type>
+	</component>
+
+	<!-- Gamification Rule Config -->
+	<external-component-plugins>
+    <target-component>io.meeds.gamification.service.EventRegistry</target-component>
+		<component-plugin>
+			<name>rule.postActivity</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-title</name>
           <value>postActivity</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.postActivityComment</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>postActivity</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.postActivityComment</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>postActivityComment</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.likeActivity</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>postActivityComment</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.likeActivity</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>likeActivity</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.likeActivityComment</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>likeActivity</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.likeActivityComment</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>likeActivityComment</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.receiveActivity</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>likeActivityComment</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.receiveActivity</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>receiveActivity</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.receiveCommentOnActivity</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>receiveActivity</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.receiveCommentOnActivity</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>receiveCommentOnActivity</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.receiveLikeOnActivity</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>receiveCommentOnActivity</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.receiveLikeOnActivity</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>receiveLikeOnActivity</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.receiveLikeOnActivityComment</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>receiveLikeOnActivity</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.receiveLikeOnActivityComment</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>receiveLikeOnActivityComment</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.AddUserProfileAvatar</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>receiveLikeOnActivityComment</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.AddUserProfileAvatar</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>addUserProfileAvatar</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.AddUserProfileBanner</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>addUserProfileAvatar</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.AddUserProfileBanner</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>addUserProfileBanner</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.AddUserProfileAboutMe</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>addUserProfileBanner</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.AddUserProfileAboutMe</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>addUserProfileAboutMe</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.addUserProfileContactInformation</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>addUserProfileAboutMe</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.addUserProfileContactInformation</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>addUserProfileContactInformation</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.addUserProfileWorkExperience</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>addUserProfileContactInformation</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.addUserProfileWorkExperience</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>addUserProfileWorkExperience</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.addUserProfileNotificationSetting</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>addUserProfileWorkExperience</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.addUserProfileNotificationSetting</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>addUserProfileNotificationSetting</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.AddSpace</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>addUserProfileNotificationSetting</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.AddSpace</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>addSpace</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.updateSpaceAvatar</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>addSpace</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.updateSpaceAvatar</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>updateSpaceAvatar</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.updateSpaceBanner</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>updateSpaceAvatar</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.updateSpaceBanner</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>updateSpaceBanner</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.updateSpaceDescription</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>updateSpaceBanner</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.updateSpaceDescription</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>updateSpaceDescription</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.inviteUserToSpace</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>updateSpaceDescription</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.inviteUserToSpace</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>inviteUserToSpace</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.updateSpaceApplications</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>inviteUserToSpace</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.updateSpaceApplications</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>updateSpaceApplications</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.pinActivityOnSpace</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>updateSpaceApplications</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.pinActivityOnSpace</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>pinActivityOnSpace</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.JoinSpace</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>pinActivityOnSpace</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.JoinSpace</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>joinSpace</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.GrantUserAsLead</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>joinSpace</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.GrantUserAsLead</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>becomeSpaceManager</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.SendRelationshipRequest</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>becomeSpaceManager</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.SendRelationshipRequest</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>sendRelationshipRequest</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.ReceiveRelationshipRequest</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>sendRelationshipRequest</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.ReceiveRelationshipRequest</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>receiveRelationshipRequest</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-  </external-component-plugins>
-  <external-component-plugins>
-    <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
-    <component-plugin>
-      <name>rule.userLogin</name>
-      <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
-      <init-params>
         <value-param>
-          <name>rule-event</name>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>receiveRelationshipRequest</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+		<component-plugin>
+			<name>rule.userLogin</name>
+			<set-method>addPlugin</set-method>
+			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+			<init-params>
+        <value-param>
+          <name>event-title</name>
           <value>userLogin</value>
         </value-param>
-      </init-params>
-    </component-plugin>
-  </external-component-plugins>
+        <value-param>
+          <name>event-type</name>
+          <value>meeds</value>
+        </value-param>
+        <value-param>
+          <name>event-trigger</name>
+          <value>userLogin</value>
+        </value-param>
+        <value-param>
+          <name>event-can-cancel</name>
+          <value>true</value>
+        </value-param>
+			</init-params>
+		</component-plugin>
+	</external-component-plugins>
 </configuration>

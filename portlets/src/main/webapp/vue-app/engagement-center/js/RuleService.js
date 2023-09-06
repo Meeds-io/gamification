@@ -111,20 +111,6 @@ export function getRuleById(id, filter) {
   });
 }
 
-export function getEvents() {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/api/v1/events`, {
-    method: 'GET',
-    credentials: 'include',
-  }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } else {
-      throw new Error('Error when getting events');
-    }
-  });
-}
-
-
 export function deleteRule(ruleId) {
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules/${ruleId}`, {
     method: 'DELETE',

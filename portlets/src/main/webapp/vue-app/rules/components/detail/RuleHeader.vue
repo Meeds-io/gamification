@@ -72,12 +72,7 @@ export default {
   }),
   computed: {
     ruleTitle() {
-      const key = `exoplatform.gamification.gamificationinformation.rule.title.${this.rule.title}`;
-      if (this.$te(key)) {
-        return this.$t(key);
-      } else {
-        return this.rule.title;
-      }
+      return this.rule.title;
     },
     programAvatarUrl() {
       return this.rule?.program?.avatarUrl;
