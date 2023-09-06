@@ -136,35 +136,6 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetAllEvents() throws Exception {
-    List<String> allEvents = ruleService.getAllEvents();
-    int initialSize = allEvents.size();
-    String eventName1 = "test-event1";
-    String eventName2 = "test-event2";
-
-    InitParams params = new InitParams();
-    ValueParam valueParam = new ValueParam();
-    valueParam.setName("rule-event");
-    valueParam.setValue(eventName1);
-    params.addParameter(valueParam);
-    params.addParameter(valueParam);
-    ruleRegistry.addPlugin(new RuleConfigPlugin(params));
-
-    params = new InitParams();
-    valueParam = new ValueParam();
-    valueParam.setName("rule-title");
-    valueParam.setValue(eventName2);
-    params.addParameter(valueParam);
-    params.addParameter(valueParam);
-    ruleRegistry.addPlugin(new RuleConfigPlugin(params));
-
-    allEvents = ruleService.getAllEvents();
-    assertEquals(initialSize + 2, allEvents.size());
-    assertTrue(allEvents.contains(eventName1));
-    assertTrue(allEvents.contains(eventName2));
-  }
-
-  @Test
   public void testDeleteRule() throws Exception {
     RuleEntity ruleEntity = newRule();
     assertFalse(ruleEntity.isDeleted());

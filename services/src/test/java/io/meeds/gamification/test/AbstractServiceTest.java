@@ -158,8 +158,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected ListenerService              listenerService;
 
-  protected RuleRegistry                 ruleRegistry;
-
   protected RealizationService           realizationService;
 
   protected BadgeDAO                     badgeStorage;
@@ -230,7 +228,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     programService = ExoContainerContext.getService(ProgramService.class);
     ruleService = ExoContainerContext.getService(RuleService.class);
     listenerService = ExoContainerContext.getService(ListenerService.class);
-    ruleRegistry = ExoContainerContext.getService(RuleRegistry.class);
     realizationService = ExoContainerContext.getService(RealizationService.class);
     entityManagerService = ExoContainerContext.getService(EntityManagerService.class);
     manageBadgesEndpoint = ExoContainerContext.getService(BadgeRest.class);

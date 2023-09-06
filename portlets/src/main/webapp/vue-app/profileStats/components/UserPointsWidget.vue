@@ -259,11 +259,11 @@ export default {
       }, 200);
     },
     getGamificationPoints() {
-      return this.$nextTick().then(()=>
-        getGamificationPoints(this.period).then(
-          (data) => {
-            this.userPoints = data.points;
-            if (data.points !== 0) {
+      return this.$nextTick().then(() =>
+        getGamificationPoints(this.period)
+          .then(points => {
+            this.userPoints = points && Number(points) || 0;
+            if (this.userPoints !== 0) {
               this.$emit('seeAll', true);
             }
           })
