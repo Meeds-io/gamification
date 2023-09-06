@@ -28,7 +28,6 @@ import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_SCORE;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_TITLE;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_TYPE;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -89,8 +88,6 @@ public class RuleServiceImpl implements RuleService {
   private final IdentityManager     identityManager;
 
   private final ListenerService     listenerService;
-
-  private final List<String>        automaticEventNames           = new ArrayList<>();
 
   public RuleServiceImpl(ProgramService programService,
                          RuleStorage ruleStorage,
@@ -225,18 +222,6 @@ public class RuleServiceImpl implements RuleService {
     ruleFilter.setProgramId(programId);
     ruleFilter.setDateFilterType(DateFilterType.ACTIVE);
     return countRules(ruleFilter);
-  }
-
-  @Override
-  public List<String> getAllEvents() {
-    return Collections.unmodifiableList(automaticEventNames);
-  }
-
-  @Override
-  public void addAutomaticEvent(String eventName) {
-    if (!automaticEventNames.contains(eventName)) {
-      automaticEventNames.add(eventName);
-    }
   }
 
   @Override
