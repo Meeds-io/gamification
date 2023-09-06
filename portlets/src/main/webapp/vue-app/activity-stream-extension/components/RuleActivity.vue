@@ -107,20 +107,10 @@ export default {
       return this.activity.rule;
     },
     ruleTitle() {
-      const key = `exoplatform.gamification.gamificationinformation.rule.title.${this.rule.title}`;
-      if (this.$te(key)) {
-        return this.$t(key);
-      } else {
-        return this.$utils.htmlToText(this.rule.title);
-      }
+      return this.$utils.htmlToText(this.rule.title);
     },
     ruleDescription() {
-      const key = `exoplatform.gamification.gamificationinformation.rule.description.${this.rule.title}`;
-      if (this.$te(key)) {
-        return this.$t(key);
-      } else {
-        return this.$utils.htmlToText(this.rule.description);
-      }
+      return this.$utils.htmlToText(this.rule.description);
     },
     ruleScore() {
       return this.rule?.score;
