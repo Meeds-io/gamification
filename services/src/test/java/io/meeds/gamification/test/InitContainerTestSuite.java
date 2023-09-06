@@ -80,7 +80,6 @@ import io.meeds.gamification.utils.UtilsTest;
     TestUserReputationEndpoint.class,
     TestLeaderboardEndpoint.class,
     TestSpaceLeaderboardEndpoint.class,
-    TestGamificationRestEndpoint.class,
     TestBadgeRest.class,
     TestRealizationRest.class,
     TestRuleRest.class,

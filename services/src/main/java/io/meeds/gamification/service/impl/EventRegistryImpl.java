@@ -20,28 +20,24 @@ package io.meeds.gamification.service.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.meeds.gamification.model.EventDTO;
-import io.meeds.gamification.plugin.EventConfigPlugin;
-import io.meeds.gamification.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.picocontainer.Startable;
 
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
+
+import io.meeds.gamification.model.EventDTO;
+import io.meeds.gamification.plugin.EventConfigPlugin;
+import io.meeds.gamification.service.EventRegistry;
+import io.meeds.gamification.service.EventService;
 
 public class EventRegistryImpl implements Startable, EventRegistry {
 
-  private static final Log                     LOG = ExoLogger.getLogger(EventRegistryImpl.class);
+  private Map<String, EventConfigPlugin> eventConfigPluginMap = new HashMap<>();
 
-  private final Map<String, EventConfigPlugin> eventConfigPluginMap;
-
-  protected EventService                       eventService;
-
-  protected ProgramService                     programService;
+  private EventService                   eventService;
 
   public EventRegistryImpl(EventService eventService) {
     this.eventService = eventService;
-    this.eventConfigPluginMap = new HashMap<>();
   }
 
   @Override
@@ -59,16 +55,20 @@ public class EventRegistryImpl implements Startable, EventRegistry {
 
   @Override
   public void start() {
-    try {
-      for (EventConfigPlugin eventConfigPlugin : eventConfigPluginMap.values()) {
-        EventDTO eventDTO = eventService.getEventByTypeAndTitle(eventConfigPlugin.getType(), eventConfigPlugin.getTitle());
-        if (eventDTO == null || !eventDTO.getTrigger().equals(eventConfigPlugin.getTrigger())
-            || eventDTO.isCanCancel() != eventConfigPlugin.isCanCancel()) {
-          store(eventConfigPlugin, eventDTO);
+    for (EventConfigPlugin eventConfigPlugin : eventConfigPluginMap.values()) {
+      EventDTO eventDTO = eventService.getEventByTypeAndTitle(eventConfigPlugin.getType(), eventConfigPlugin.getTitle());
+      if (eventDTO == null) {
+        eventDTO = new EventDTO();
+        eventDTO.setTitle(eventConfigPlugin.getTitle());
+        eventDTO.setType(eventConfigPlugin.getType());
+        eventDTO.setTrigger(eventConfigPlugin.getTrigger());
+        eventDTO.setCanCancel(eventConfigPlugin.isCanCancel());
+        try {
+          eventService.createEvent(eventDTO);
+        } catch (ObjectAlreadyExistsException e) {
+          throw new IllegalStateException(String.format("Event '%s' seems already exists", eventConfigPlugin.getType()), e);
         }
       }
-    } catch (Exception e) {
-      LOG.error("Error when processing gamification events ", e);
     }
   }
 
@@ -77,22 +77,4 @@ public class EventRegistryImpl implements Startable, EventRegistry {
     // Nothing to change
   }
 
-  private void store(EventConfigPlugin eventConfigPlugin, EventDTO eventDTO) {
-    try {
-      if (eventDTO != null) {
-        eventDTO.setTrigger(eventConfigPlugin.getTrigger());
-        eventDTO.setCanCancel(eventConfigPlugin.isCanCancel());
-        eventService.updateEvent(eventDTO);
-      } else {
-        eventDTO = new EventDTO();
-        eventDTO.setTitle(eventConfigPlugin.getTitle());
-        eventDTO.setType(eventConfigPlugin.getType());
-        eventDTO.setTrigger(eventConfigPlugin.getTrigger());
-        eventDTO.setCanCancel(eventConfigPlugin.isCanCancel());
-        eventService.createEvent(eventDTO);
-      }
-    } catch (Exception e) {
-      LOG.error("Error when saving events ", e);
-    }
-  }
 }

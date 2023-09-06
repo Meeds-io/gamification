@@ -451,15 +451,6 @@ export default {
         window.history.replaceState('Engagement Center', this.$t('engagementCenter.label.achievements'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`);
       }
     },
-    ruleTitle(rule) {
-      let fieldLabelI18NKey = `exoplatform.gamification.gamificationinformation.rule.title.${rule?.title}`;
-      let fieldLabelI18NValue = this.$t(fieldLabelI18NKey);
-      if (fieldLabelI18NValue === fieldLabelI18NKey) {
-        fieldLabelI18NKey = `exoplatform.gamification.gamificationinformation.rule.title.def_${rule?.title}`;
-        fieldLabelI18NValue = this.$t(fieldLabelI18NKey);
-      }
-      return fieldLabelI18NValue === fieldLabelI18NKey ? rule?.title : fieldLabelI18NValue;
-    },
     waitForEndTyping() {
       window.setTimeout(() => {
         if (Date.now() - this.startTypingKeywordTimeout > this.startSearchAfterInMilliseconds) {

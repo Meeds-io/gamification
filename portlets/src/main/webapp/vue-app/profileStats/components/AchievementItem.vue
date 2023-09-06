@@ -98,7 +98,7 @@ export default {
       return `${this.dateTime} - ${this.$t('exoplatform.gamification.gamificationinformation.Domain')}: ${this.programTitle}`;
     },
     actionTitle() {
-      return this.getLabel('exoplatform.gamification.gamificationinformation.rule.title', this.achievement.actionTitle);
+      return this.getLabel('gamification.event.title', this.achievement.actionTitle);
     },
     dateTime() {
       const dateTime = new Date(this.achievement.createdDate);
