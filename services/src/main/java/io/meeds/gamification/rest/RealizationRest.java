@@ -1,6 +1,11 @@
 package io.meeds.gamification.rest;
 
 import java.io.InputStream;
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -26,9 +31,11 @@ import org.exoplatform.services.rest.http.PATCH;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.filter.RealizationFilter;
@@ -191,6 +198,48 @@ public class RealizationRest implements ResourceContainer {
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
     }
+  }
+
+  @Operation(summary = "Retrieves the points of a given user in last period type")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "400", description = "Bad Request"),
+  })
+  @Path("points")
+  @GET
+  @Produces(MediaType.TEXT_PLAIN)
+  @RolesAllowed("users")
+  public Response getAllPointsByUserId(
+                                       @Parameter(description = "Username to retrieve its points.", required = true)
+                                       @QueryParam("userId")
+                                       String userId,
+                                       @Parameter(description = "Period Type. Possible values: WEEK or MONTH. Default: WEEK.", required = false)
+                                       @QueryParam("period")
+                                       @DefaultValue("WEEK")
+                                       String period) {
+    if (StringUtils.isBlank(userId)) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("missingUserIdParameter").build();
+    } else if (!StringUtils.equalsIgnoreCase("WEEK", period) && !StringUtils.equalsIgnoreCase("MONTH", period)) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("badPeriodParameterValue").build();
+    }
+    org.exoplatform.social.core.identity.model.Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId);
+    long points;
+    if (period == null || StringUtils.equalsIgnoreCase(Period.ALL.name(), period)) {
+      points = realizationService.getScoreByIdentityId(identity.getId());
+    } else {
+      Date fromDate = StringUtils.equalsIgnoreCase("WEEK", period)
+                                                                   ? Date.from(LocalDate.now()
+                                                                                        .with(DayOfWeek.MONDAY)
+                                                                                        .atStartOfDay(ZoneId.systemDefault())
+                                                                                        .toInstant())
+                                                                   : Date.from(LocalDate.now()
+                                                                                        .with(TemporalAdjusters.firstDayOfMonth())
+                                                                                        .atStartOfDay(ZoneId.systemDefault())
+                                                                                        .toInstant());
+      Date toDate = Date.from(Instant.now());
+      points = realizationService.getScoreByIdentityIdAndBetweenDates(identity.getId(), fromDate, toDate);
+    }
+    return Response.ok(String.valueOf(points)).build();
   }
 
   @GET

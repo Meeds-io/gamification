@@ -110,11 +110,6 @@
   </component>
 
   <component>
-    <key>io.meeds.gamification.service.RuleRegistry</key>
-    <type>io.meeds.gamification.service.impl.RuleRegistryImpl</type>
-  </component>
-
-  <component>
     <type>io.meeds.gamification.dao.EventDAO</type>
   </component>
 
