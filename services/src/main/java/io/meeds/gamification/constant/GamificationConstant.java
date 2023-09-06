@@ -100,14 +100,6 @@ public interface GamificationConstant { // NOSONAR
     /** USER LOGIN CONTEXT */
     String GAMIFICATION_ATTENDANCE_USER_LOGIN                                           = "userLogin";
 
-
-    /***************************************************************************************************************************************************/
-    /*************************************************** Prefix fot default data **********************************************/
-    /***************************************************************************************************************************************************/
-
-    String GAMIFICATION_DEFAULT_DATA_PREFIX                          = "def_";
-
-
     //Achievement object types
     
     String IDENTITY_OBJECT_TYPE                                       = "identity";

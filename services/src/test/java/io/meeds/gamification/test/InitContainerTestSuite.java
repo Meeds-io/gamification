@@ -54,7 +54,6 @@ import io.meeds.gamification.rest.TestAnnouncementRest;
 import io.meeds.gamification.rest.TestBadgeRest;
 import io.meeds.gamification.rest.TestConnectorRest;
 import io.meeds.gamification.rest.TestGamificationInformationsEndpoint;
-import io.meeds.gamification.rest.TestGamificationRestEndpoint;
 import io.meeds.gamification.rest.TestLeaderboardEndpoint;
 import io.meeds.gamification.rest.TestProgramRest;
 import io.meeds.gamification.rest.TestRealizationRest;
@@ -100,7 +99,6 @@ import io.meeds.gamification.utils.UtilsTest;
     TestUserReputationEndpoint.class,
     TestLeaderboardEndpoint.class,
     TestSpaceLeaderboardEndpoint.class,
-    TestGamificationRestEndpoint.class,
     TestBadgeRest.class,
     TestRealizationRest.class,
     TestRuleRest.class,

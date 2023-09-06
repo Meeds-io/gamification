@@ -232,7 +232,7 @@ export default {
     },
     actionLabel() {
       if (this.isAutomaticType) {
-        const key = `exoplatform.gamification.gamificationinformation.rule.title.${this.realization.action.title}`;
+        const key = `gamification.event.title.${this.realization.action.title}`;
         if (this.$te(key)) {
           return this.$t(key);
         }

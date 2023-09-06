@@ -398,6 +398,40 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     assertEquals(401, response.getStatus());
   }
 
+  @Test
+  public void testGetAllPointsByUserId() throws Exception {
+    newRealizationDTO();
+
+    String restPath = "/gamification/realizations/points?userId=root1&period=MONTH";
+    EnvironmentContext envctx = new EnvironmentContext();
+    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    assertEquals(TEST__SCORE, response.getEntity().toString());
+
+    restPath = "/gamification/realizations/points?userId=root1&period=WEEK";
+    envctx = new EnvironmentContext();
+    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    response = launcher.service("GET", restPath, "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    assertEquals(TEST__SCORE, response.getEntity().toString());
+
+    restPath = "/gamification/realizations/points?period=MONTH";
+    envctx = new EnvironmentContext();
+    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    response = launcher.service("GET", restPath, "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+  }
+
   private ContainerResponse getPatchResponse(long realizationId, RealizationStatus status) throws Exception {
     byte[] formData = ("id=" + realizationId + "&status=" + status).getBytes();
     MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
