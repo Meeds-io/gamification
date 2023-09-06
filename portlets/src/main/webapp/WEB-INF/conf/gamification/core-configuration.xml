@@ -55,10 +55,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </component>
 
   <component>
-    <type>io.meeds.gamification.rest.GamificationRestEndpoint</type>
-  </component>
-
-  <component>
     <type>io.meeds.gamification.rest.ConnectorRest</type>
   </component>
 
