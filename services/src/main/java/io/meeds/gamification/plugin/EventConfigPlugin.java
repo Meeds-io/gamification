@@ -17,38 +17,31 @@
  */
 package io.meeds.gamification.plugin;
 
+import io.meeds.gamification.model.EventDTO;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.container.component.BaseComponentPlugin;
 import org.exoplatform.container.xml.InitParams;
-import org.exoplatform.container.xml.ValueParam;
 
 @Getter
 public class EventConfigPlugin extends BaseComponentPlugin {
 
-  private String  title;
+  private static final String EVENT_PARAM_NAME = "event";
 
-  private String  type;
-
-  private String  trigger;
-
-  private boolean canCancel;
+  private EventDTO            event;
 
   public EventConfigPlugin(InitParams params) {
-    ValueParam titleParam = params.getValueParam("event-title");
-    if (titleParam != null) {
-      title = titleParam.getValue();
+    if (params != null && params.containsKey(EVENT_PARAM_NAME)) {
+      this.event = (EventDTO) params.getObjectParam(EVENT_PARAM_NAME).getObject();
     }
-    ValueParam typeParam = params.getValueParam("event-type");
-    if (typeParam != null) {
-      type = typeParam.getValue();
+    if (this.event == null || StringUtils.isBlank(this.event.getTitle()) || StringUtils.isBlank(this.event.getType())
+        || StringUtils.isBlank(this.event.getTrigger())) {
+      throw new IllegalStateException("Event is mandatory");
     }
-    ValueParam triggerParam = params.getValueParam("event-trigger");
-    if (triggerParam != null) {
-      trigger = triggerParam.getValue();
-    }
-    ValueParam canCancelParam = params.getValueParam("event-can-cancel");
-    if (canCancelParam != null) {
-      canCancel = Boolean.parseBoolean(canCancelParam.getValue());
-    }
+  }
+
+  @Override
+  public String getName() {
+    return this.event.getTitle();
   }
 }

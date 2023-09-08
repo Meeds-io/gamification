@@ -19,22 +19,22 @@ package io.meeds.gamification.service.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.picocontainer.Startable;
-
-import org.exoplatform.commons.ObjectAlreadyExistsException;
+import java.util.Objects;
 
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.plugin.EventConfigPlugin;
+import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.picocontainer.Startable;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
 import io.meeds.gamification.service.EventRegistry;
 import io.meeds.gamification.service.EventService;
 
 public class EventRegistryImpl implements Startable, EventRegistry {
 
-  private Map<String, EventConfigPlugin> eventConfigPluginMap = new HashMap<>();
+  private final Map<String, EventConfigPlugin> eventConfigPluginMap = new HashMap<>();
 
-  private EventService                   eventService;
+  private final EventService                   eventService;
 
   public EventRegistryImpl(EventService eventService) {
     this.eventService = eventService;
@@ -42,31 +42,39 @@ public class EventRegistryImpl implements Startable, EventRegistry {
 
   @Override
   public void addPlugin(EventConfigPlugin eventConfigPlugin) {
-    if (StringUtils.isNotBlank(eventConfigPlugin.getTitle())) {
-      eventConfigPluginMap.put(eventConfigPlugin.getTitle(), eventConfigPlugin);
+    if (StringUtils.isNotBlank(eventConfigPlugin.getName())) {
+      eventConfigPluginMap.put(eventConfigPlugin.getName(), eventConfigPlugin);
     }
   }
 
   @Override
   public boolean remove(EventConfigPlugin eventConfigPlugin) {
-    eventConfigPluginMap.remove(eventConfigPlugin.getTitle());
+    eventConfigPluginMap.remove(eventConfigPlugin.getName());
     return true;
   }
 
   @Override
   public void start() {
     for (EventConfigPlugin eventConfigPlugin : eventConfigPluginMap.values()) {
-      EventDTO eventDTO = eventService.getEventByTypeAndTitle(eventConfigPlugin.getType(), eventConfigPlugin.getTitle());
+      EventDTO eventConfig = eventConfigPlugin.getEvent();
+      EventDTO eventDTO = eventService.getEventByTypeAndTitle(eventConfig.getType(), eventConfig.getTitle());
       if (eventDTO == null) {
         eventDTO = new EventDTO();
-        eventDTO.setTitle(eventConfigPlugin.getTitle());
-        eventDTO.setType(eventConfigPlugin.getType());
-        eventDTO.setTrigger(eventConfigPlugin.getTrigger());
-        eventDTO.setCanCancel(eventConfigPlugin.isCanCancel());
+        eventDTO.setTitle(eventConfig.getTitle());
+        eventDTO.setType(eventConfig.getType());
+        eventDTO.setTrigger(eventConfig.getTrigger());
+        eventDTO.setCancellerEvents(eventConfig.getCancellerEvents());
         try {
           eventService.createEvent(eventDTO);
         } catch (ObjectAlreadyExistsException e) {
-          throw new IllegalStateException(String.format("Event '%s' seems already exists", eventConfigPlugin.getType()), e);
+          throw new IllegalStateException(String.format("Event '%s' seems already exists", eventConfig.getTitle()), e);
+        }
+      } else if (!Objects.equals(eventDTO.getCancellerEvents(), eventConfig.getCancellerEvents())) {
+        eventDTO.setCancellerEvents(eventConfig.getCancellerEvents());
+        try {
+          eventService.updateEvent(eventDTO);
+        } catch (ObjectNotFoundException e) {
+          throw new IllegalStateException(String.format("Event '%s' not found", eventConfig.getTitle()), e);
         }
       }
     }
@@ -76,5 +84,4 @@ public class EventRegistryImpl implements Startable, EventRegistry {
   public void stop() {
     // Nothing to change
   }
-
 }

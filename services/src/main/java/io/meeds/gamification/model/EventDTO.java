@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -36,7 +37,12 @@ public class EventDTO {
 
   private String              trigger;
 
-  private boolean             canCancel;
+  private List<String>        cancellerEvents;
 
   private Map<String, String> properties;
+
+  @Override
+  public EventDTO clone() { // NOSONAR
+    return new EventDTO(id, title, type, trigger, cancellerEvents, properties);
+  }
 }

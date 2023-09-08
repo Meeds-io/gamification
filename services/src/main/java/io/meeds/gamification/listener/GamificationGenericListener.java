@@ -36,6 +36,8 @@ import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 
@@ -45,6 +47,8 @@ import io.meeds.gamification.service.RuleService;
 
 @Asynchronous
 public class GamificationGenericListener extends Listener<Map<String, String>, String> {
+
+  private static final Log     LOG                = ExoLogger.getLogger(GamificationGenericListener.class);
 
   public static final String   GENERIC_EVENT_NAME = "exo.gamification.generic.action";
 
@@ -87,16 +91,21 @@ public class GamificationGenericListener extends Listener<Map<String, String>, S
       String objectId = event.getSource().get(OBJECT_ID_PARAM);
       String objectType = event.getSource().get(OBJECT_TYPE_PARAM);
 
+      Identity senderIdentity = getIdentity(senderType, senderId);
+      Identity receiverIdentity = getIdentity(receiverType, receiverId);
+
       switch (event.getEventName()) {
       case GENERIC_EVENT_NAME -> realizationService.createRealizationsAsync(gamificationEventId,
-                                                                            getIdentity(senderType, senderId).getId(),
-                                                                            getIdentity(receiverType, receiverId).getId(),
+                                                                            senderIdentity != null ? senderIdentity.getId()
+                                                                                                   : null,
+                                                                            receiverIdentity != null ? receiverIdentity.getId()
+                                                                                                     : null,
                                                                             objectId,
                                                                             objectType);
       case DELETE_EVENT_NAME -> realizationService.deleteRealizations(objectId, objectType);
       case CANCEL_EVENT_NAME -> realizationService.cancelRealizations(gamificationEventId,
-                                                                      getIdentity(senderType, senderId).getId(),
-                                                                      getIdentity(receiverType, receiverId).getId(),
+                                                                      senderIdentity != null ? senderIdentity.getId() : null,
+                                                                      receiverIdentity != null ? receiverIdentity.getId() : null,
                                                                       objectId,
                                                                       objectType);
 
@@ -114,7 +123,8 @@ public class GamificationGenericListener extends Listener<Map<String, String>, S
       identity = identityManager.getIdentity(identityId); // NOSONAR
     }
     if (identity == null) {
-      throw new IllegalStateException("Can't find identity with identityId = " + identityId);
+      LOG.info("Can't find identity with identityId = {}", identityId);
+      return null;
     }
     return identity;
   }

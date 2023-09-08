@@ -726,10 +726,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="TYPE" type="NVARCHAR(250)">
                 <constraints nullable="false"/>
             </column>
-            <column name="CAN_CANCEL" type="BOOLEAN" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-            <column name="TRIGGER" type="NVARCHAR(250)">
+            <column name="CANCELLER_EVENTS" type="NVARCHAR(2000)"/>
+            <column name="EVENT_TRIGGER" type="NVARCHAR(250)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -752,8 +750,5 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <modifySql dbms="mysql">
             <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci" />
         </modifySql>
-    </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-68">
-        <renameColumn tableName="GAMIFICATION_EVENTS" columnDataType="NVARCHAR(250)" oldColumnName="TRIGGER" newColumnName="EVENT_TRIGGER" />
     </changeSet>
 </databaseChangeLog>
