@@ -73,28 +73,4 @@ public class EventRest implements ResourceContainer {
     }
     return Response.ok(eventDTOEntityList).build();
   }
-
-  @Path("status")
-  @POST
-  @RolesAllowed("users")
-  @Operation(summary = "enables/disables event for connector project.", description = "enables/disables event for connector project", method = "POST")
-  @ApiResponses(value = {
-          @ApiResponse(responseCode = "204", description = "Request fulfilled"),
-          @ApiResponse(responseCode = "400", description = "Bad request"),
-          @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-          @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response updateEventStatus(@Parameter(description = "Event Id", required = true) @FormParam("eventId") long eventId,
-                                           @Parameter(description = "connector project remote Id", required = true) @FormParam("projectId") long projectId,
-                                           @Parameter(description = "Event status enabled/disabled. possible values: true for enabled, else false", required = true) @FormParam("enabled") boolean enabled) {
-
-    String currentUser = getCurrentUser();
-    try {
-      eventService.setEventEnabledForProject(eventId, projectId, enabled, currentUser);
-      return Response.noContent().build();
-    } catch (IllegalAccessException e) {
-      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
-    } catch (ObjectNotFoundException e) {
-      return Response.status(Response.Status.NOT_FOUND).entity("Event not found").build();
-    }
-  }
 }

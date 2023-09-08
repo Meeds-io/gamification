@@ -106,13 +106,10 @@ export function deleteConnectorSetting(connectorName) {
   });
 }
 
-export function getEvents(type, projectId, triggers, offset, limit) {
+export function getEvents(type, triggers, offset, limit) {
   const formData = new FormData();
   if (type) {
     formData.append('type', type);
-  }
-  if (projectId) {
-    formData.append('projectId', projectId);
   }
   if (triggers?.length) {
     triggers.forEach(trigger => formData.append('trigger', trigger));
@@ -134,26 +131,6 @@ export function getEvents(type, projectId, triggers, offset, limit) {
       return resp.json();
     } else {
       throw new Error('Error when getting events');
-    }
-  });
-}
-
-export function saveEventStatus(eventId, projectId, enabled) {
-  const formData = new FormData();
-  formData.append('eventId', eventId);
-  formData.append('projectId', projectId);
-  formData.append('enabled', enabled);
-
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events/status`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams(formData).toString(),
-  }).then(resp => {
-    if (!resp?.ok) {
-      throw new Error('Response code indicates a server error', resp);
     }
   });
 }

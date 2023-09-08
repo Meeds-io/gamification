@@ -18,10 +18,12 @@
 package io.meeds.gamification.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.*;
 
+import org.exoplatform.commons.utils.StringListConverter;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 import lombok.Data;
 
@@ -43,7 +45,7 @@ public class EventEntity implements Serializable {
   @SequenceGenerator(name = "SEQ_GAMIFICATION_EVENTS_ID", sequenceName = "SEQ_GAMIFICATION_EVENTS_ID", allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_GAMIFICATION_EVENTS_ID")
   @Column(name = "ID")
-  protected Long            id;
+  private Long            id;
 
   @Column(name = "TITLE", nullable = false)
   private String            title;
@@ -51,11 +53,12 @@ public class EventEntity implements Serializable {
   @Column(name = "TYPE", nullable = false)
   private String            type;
 
-  @Column(name = "CAN_CANCEL", nullable = false)
-  private boolean           canCancel;
-
   @Column(name = "EVENT_TRIGGER", nullable = false)
-  protected String          trigger;
+  private String          trigger;
+
+  @Convert(converter = StringListConverter.class)
+  @Column(name = "CANCELLER_EVENTS")
+  private List<String> cancellerEvents;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @MapKeyColumn(name = "NAME")
