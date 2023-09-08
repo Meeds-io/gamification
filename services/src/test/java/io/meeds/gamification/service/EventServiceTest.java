@@ -26,7 +26,7 @@ import io.meeds.gamification.plugin.EventConfigPlugin;
 import io.meeds.gamification.storage.mapper.EventMapper;
 import io.meeds.gamification.test.AbstractServiceTest;
 import org.exoplatform.container.xml.InitParams;
-import org.exoplatform.container.xml.ValueParam;
+import org.exoplatform.container.xml.ObjectParameter;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,22 +42,6 @@ public class EventServiceTest extends AbstractServiceTest {
     registerAdministratorUser(ADMIN_USER);
   }
 
-  public void testEnabledDisableEventForProject() throws Exception {
-    EventEntity eventEntity = new EventEntity();
-    eventEntity.setType("connectorName");
-    eventEntity.setTitle("event1");
-    eventEntity.setTrigger("trigger1");
-    eventEntity.setCanCancel(false);
-    EventDTO eventDTO = eventService.createEvent(EventMapper.fromEntity(eventEntity));
-    Map<String, String> eventProperties = eventDTO.getProperties();
-    assertNull(eventProperties);
-    eventService.setEventEnabledForProject(eventDTO.getId(), 1L, false, "root1");
-    eventDTO = eventService.getEvent(eventDTO.getId());
-    eventProperties = eventDTO.getProperties();
-    assertEquals("false", eventProperties.get(1L + ".enabled"));
-
-  }
-
   public void testCreateEvent() throws Exception {
     EventFilter eventFilter = new EventFilter();
     assertEquals(Collections.emptyList(), eventService.getEvents(eventFilter, offset, limit));
@@ -66,7 +50,6 @@ public class EventServiceTest extends AbstractServiceTest {
     eventEntity.setType("connectorName");
     eventEntity.setTitle("event1");
     eventEntity.setTrigger("trigger1");
-    eventEntity.setCanCancel(false);
     eventService.createEvent(EventMapper.fromEntity(eventEntity));
     assertNotNull(eventService.getEvents(eventFilter, offset, limit));
     assertEquals(1, eventService.countEvents(eventFilter));
@@ -79,32 +62,24 @@ public class EventServiceTest extends AbstractServiceTest {
     assertEquals(Collections.emptyList(), allEvents);
     String eventTitle1 = "test-event1";
     String eventTitle2 = "test-event2";
-
-    InitParams initParams = new InitParams();
-    addValueParam(initParams, "event-title", eventTitle1);
-    addValueParam(initParams, "event-type", "connectorName");
-    addValueParam(initParams, "event-trigger", "trigger1");
-    addValueParam(initParams, "event-can-cancel", "true");
-    eventRegistry.addPlugin(new EventConfigPlugin(initParams));
-
-    initParams = new InitParams();
-    addValueParam(initParams, "event-title", eventTitle2);
-    addValueParam(initParams, "event-type", "connectorName");
-    addValueParam(initParams, "event-trigger", "trigger2");
-    addValueParam(initParams, "event-can-cancel", "false");
-    eventRegistry.addPlugin(new EventConfigPlugin(initParams));
-
+    eventRegistry.addPlugin(new EventConfigPlugin(newParam(eventTitle1, "connectorName", "trigger1")));
+    eventRegistry.addPlugin(new EventConfigPlugin(newParam(eventTitle2, "connectorName2", "trigger2")));
     eventRegistry.start();
-
     assertNotNull(eventService.getEvents(eventFilter, offset, limit));
     assertEquals(2, eventService.getEvents(eventFilter, offset, limit).size());
     assertEquals(2, eventService.countEvents(eventFilter));
   }
 
-  private void addValueParam(InitParams initParams, String name, String value) {
-    ValueParam valueParam = new ValueParam();
-    valueParam.setName(name);
-    valueParam.setValue(value);
-    initParams.addParameter(valueParam);
+  private InitParams newParam(String title, String type, String trigger) {
+    InitParams params = new InitParams();
+    EventDTO eventDTO = new EventDTO();
+    eventDTO.setTitle(title);
+    eventDTO.setType(type);
+    eventDTO.setTrigger(trigger);
+    ObjectParameter parameter = new ObjectParameter();
+    parameter.setName("event");
+    parameter.setObject(eventDTO);
+    params.addParameter(parameter);
+    return params;
   }
 }
