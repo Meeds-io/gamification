@@ -27,7 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-btn
               class="width-auto ms-n3"
               icon>
-              <v-icon size="18" color="dark" class="black--text mx-2">fa-arrow-left</v-icon>
+              <v-icon size="18" class="black--text mx-2">fa-arrow-left</v-icon>
             </v-btn>
             <div class="black--text text-header-title">{{ $t('gamification.connectors.label.connectors') }}</div>
           </v-card>
