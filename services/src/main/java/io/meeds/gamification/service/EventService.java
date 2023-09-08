@@ -85,18 +85,4 @@ public interface EventService {
    * @return {@link EventDTO}
    */
   EventDTO getEvent(long eventId);
-
-  /**
-   * Enables/disables connector project event
-   *
-   * @param eventId event Id
-   * @param projectId connector remote project id
-   * @param enabled true to enabled, else false
-   * @param currentUser user name attempting to enables/disables event.
-   * @throws IllegalAccessException when user is not authorized enables/disables
-   *           connector project event
-   */
-  void setEventEnabledForProject(long eventId, long projectId, boolean enabled, String currentUser) throws IllegalAccessException,
-                                                                                                    ObjectNotFoundException;
-
 }

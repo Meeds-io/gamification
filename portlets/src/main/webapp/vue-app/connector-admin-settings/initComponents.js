@@ -19,6 +19,7 @@ import GamificationAdminConnectorCardList from './components/AdminConnectorCardL
 import GamificationAdminConnectorCard from './components/AdminConnectorCard.vue';
 import GamificationAdminConnectorDetail from './components/AdminConnectorDetail.vue';
 import GamificationAdminConnectorEvent from './components/AdminConnectorEvent.vue';
+import GamificationCancellerEventsDrawer from './components/CancellerEventsDrawer.vue';
 
 const components = {
   'gamification-admin-connector-settings': GamificationAdminConnectorSettings,
@@ -26,6 +27,7 @@ const components = {
   'gamification-admin-connector-card': GamificationAdminConnectorCard,
   'gamification-admin-connector-detail': GamificationAdminConnectorDetail,
   'gamification-admin-connector-event': GamificationAdminConnectorEvent,
+  'gamification-canceller-events-drawer': GamificationCancellerEventsDrawer,
 };
 
 for (const key in components) {

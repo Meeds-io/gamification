@@ -32,9 +32,11 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class ConnectorRestEntity extends RemoteConnector {
 
-  private String identifier;
+  private static final long serialVersionUID = -5642136012172156570L;
 
-  private String secretKey;
+  private String            identifier;
+
+  private String            secretKey;
 
   public ConnectorRestEntity(String name,
                              String apiKey,
