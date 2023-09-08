@@ -35,13 +35,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 		<type>io.meeds.gamification.service.impl.RuleServiceImpl</type>
 	</component>
 
-	<!-- Gamification Rule Config -->
-	<external-component-plugins>
+  <!-- Gamification Rule Config -->
+  <external-component-plugins>
     <target-component>io.meeds.gamification.service.EventRegistry</target-component>
-		<component-plugin>
-			<name>PostActivity</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    <component-plugin>
+      <name>PostActivity</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -58,11 +58,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>PostActivityComment</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>PostActivityComment</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -79,11 +79,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>LikeActivity</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>LikeActivity</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -100,11 +100,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>LikeActivityComment</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>LikeActivityComment</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -121,11 +121,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>ReceiveActivity</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>ReceiveActivity</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -142,11 +142,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>ReceiveCommentOnActivity</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>ReceiveCommentOnActivity</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -163,11 +163,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>ReceiveLikeOnActivity</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>ReceiveLikeOnActivity</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -184,11 +184,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>ReceiveLikeOnActivityComment</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>ReceiveLikeOnActivityComment</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -205,11 +205,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>AddUserProfileAvatar</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>AddUserProfileAvatar</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -226,11 +226,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>AddUserProfileBanner</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>AddUserProfileBanner</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -247,11 +247,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>AddUserProfileAboutMe</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>AddUserProfileAboutMe</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -268,11 +268,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>AddUserProfileContactInformation</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>AddUserProfileContactInformation</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -289,11 +289,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>AddUserProfileWorkExperience</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>AddUserProfileWorkExperience</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -310,11 +310,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>AddUserProfileNotificationSetting</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>AddUserProfileNotificationSetting</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -331,11 +331,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>AddSpace</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>AddSpace</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -352,11 +352,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>UpdateSpaceAvatar</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>UpdateSpaceAvatar</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -373,11 +373,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>UpdateSpaceBanner</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>UpdateSpaceBanner</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -394,11 +394,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>UpdateSpaceDescription</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>UpdateSpaceDescription</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -415,11 +415,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>InviteUserToSpace</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>InviteUserToSpace</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -436,11 +436,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>UpdateSpaceApplications</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>UpdateSpaceApplications</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -457,11 +457,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>PinActivityOnSpace</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>PinActivityOnSpace</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -478,11 +478,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>JoinSpace</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>JoinSpace</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -499,11 +499,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>GrantUserAsLead</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>GrantUserAsLead</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -520,11 +520,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>SendRelationshipRequest</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>SendRelationshipRequest</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -541,11 +541,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>ReceiveRelationshipRequest</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>ReceiveRelationshipRequest</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -562,11 +562,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-		<component-plugin>
-			<name>UserLogin</name>
-			<set-method>addPlugin</set-method>
-			<type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+    </component-plugin>
+    <component-plugin>
+      <name>UserLogin</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
         <object-param>
           <name>event</name>
@@ -583,6 +583,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </object>
         </object-param>
       </init-params>
-		</component-plugin>
-	</external-component-plugins>
+    </component-plugin>
+  </external-component-plugins>
 </configuration>

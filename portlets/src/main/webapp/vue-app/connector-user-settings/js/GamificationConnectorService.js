@@ -106,7 +106,7 @@ export function deleteConnectorSetting(connectorName) {
   });
 }
 
-export function getEvents(type, triggers, offset, limit, expand) {
+export function getEvents(type, triggers, offset, limit) {
   const formData = new FormData();
   if (type) {
     formData.append('type', type);
@@ -119,9 +119,6 @@ export function getEvents(type, triggers, offset, limit, expand) {
   }
   if (limit) {
     formData.append('limit', limit);
-  }
-  if (expand) {
-    formData.append('expand', expand);
   }
   formData.append('returnSize', 'true');
   const params = new URLSearchParams(formData).toString();
