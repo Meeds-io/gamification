@@ -106,13 +106,10 @@ export function deleteConnectorSetting(connectorName) {
   });
 }
 
-export function getEvents(type, projectId, triggers, offset, limit) {
+export function getEvents(type, triggers, offset, limit) {
   const formData = new FormData();
   if (type) {
     formData.append('type', type);
-  }
-  if (projectId) {
-    formData.append('projectId', projectId);
   }
   if (triggers?.length) {
     triggers.forEach(trigger => formData.append('trigger', trigger));

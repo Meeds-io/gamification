@@ -9,40 +9,33 @@
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.gamification.model;
+package io.meeds.gamification.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class EventDTO {
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
-  private long                id;
+@Converter
+public class StringListConverter implements AttributeConverter<List<String>, String> {
 
-  private String              title;
-
-  private String              type;
-
-  private String              trigger;
-
-  private List<String>        cancellerEvents;
-
-  private Map<String, String> properties;
+  private static final String DELIMITER = ",";
 
   @Override
-  public EventDTO clone() { // NOSONAR
-    return new EventDTO(id, title, type, trigger, cancellerEvents, properties);
+  public String convertToDatabaseColumn(List<String> attribute) {
+    return attribute != null ? String.join(DELIMITER, attribute) : null;
+  }
+
+  @Override
+  public List<String> convertToEntityAttribute(String dbData) {
+    return dbData != null ? Arrays.stream(dbData.split(DELIMITER)).toList() : null;
   }
 }
