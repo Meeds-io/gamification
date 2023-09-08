@@ -106,13 +106,10 @@ export function deleteConnectorSetting(connectorName) {
   });
 }
 
-export function getEvents(type, projectId, triggers, offset, limit) {
+export function getEvents(type, triggers, offset, limit, expand) {
   const formData = new FormData();
   if (type) {
     formData.append('type', type);
-  }
-  if (projectId) {
-    formData.append('projectId', projectId);
   }
   if (triggers?.length) {
     triggers.forEach(trigger => formData.append('trigger', trigger));
@@ -122,6 +119,9 @@ export function getEvents(type, projectId, triggers, offset, limit) {
   }
   if (limit) {
     formData.append('limit', limit);
+  }
+  if (expand) {
+    formData.append('expand', expand);
   }
   formData.append('returnSize', 'true');
   const params = new URLSearchParams(formData).toString();
