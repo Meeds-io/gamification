@@ -36,11 +36,7 @@ import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.RulePublication;
 import io.meeds.gamification.test.AbstractPluginTest;
 
-public class ActionPublishedNotificationPluginTest extends AbstractPluginTest {
-
-  private static final String ADMIN_USER  = "root1";
-
-  private static final String SIMPLE_USER = "root5";
+public class ActionPublishedNotificationPluginTest extends AbstractPluginTest { // NOSONAR
 
   @Override
   public AbstractTemplateBuilder getTemplateBuilder() {
@@ -52,7 +48,7 @@ public class ActionPublishedNotificationPluginTest extends AbstractPluginTest {
     return pluginService.getPlugin(PluginKey.key(RULE_PUBLISHED_NOTIFICATION_ID));
   }
 
-  public void testSimpleCase() throws Exception {
+  public void testSimpleCase() throws Exception { // NOSONAR
     notificationService.clearAll();
 
     // STEP 1 post activity
@@ -80,7 +76,7 @@ public class ActionPublishedNotificationPluginTest extends AbstractPluginTest {
     String message = "Test publication Message";
     rule.setMessage(message);
     RuleDTO createdRule = ruleService.createRule(rule, ADMIN_USER);
-    assertTrue(createdRule.getActivityId() > 0);
+    assertTrue(createdRule.getActivityId() > 0); // NOSONAR
 
     List<NotificationInfo> list = assertMadeWebNotifications(SIMPLE_USER, 1);
     NotificationInfo rulePublicationNotification = list.get(0);

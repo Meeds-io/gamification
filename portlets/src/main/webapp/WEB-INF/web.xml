@@ -24,17 +24,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <absolute-ordering/>
 
-    <!-- Run mode: prod, dev or live -->
-    <context-param>
-        <param-name>juzu.run_mode</param-name>
-        <param-value>${juzu.run_mode:prod}</param-value>
-    </context-param>
-
-    <!-- Injection container to use: guice, spring, cdi or weld -->
-    <context-param>
-        <param-name>juzu.inject</param-name>
-        <param-value>guice</param-value>
-    </context-param>
     <filter>
         <filter-name>ResourceRequestFilter</filter-name>
         <filter-class>org.exoplatform.portal.application.ResourceRequestFilter</filter-class>
@@ -51,18 +40,5 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <listener>
         <listener-class>org.exoplatform.container.web.PortalContainerConfigOwner</listener-class>
     </listener>
-
-    <!-- ================================================================== -->
-    <!-- = Juzu configuration                                             = -->
-    <!-- ================================================================== -->
-    <servlet>
-        <servlet-name>AssetServlet</servlet-name>
-        <servlet-class>juzu.impl.asset.AssetServlet</servlet-class>
-        <load-on-startup>0</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AssetServlet</servlet-name>
-        <url-pattern>/assets/*</url-pattern>
-    </servlet-mapping>
 
 </web-app>
