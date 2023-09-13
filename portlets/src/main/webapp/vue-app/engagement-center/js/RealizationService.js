@@ -29,6 +29,19 @@ export function getRealizations(filter) {
   });
 }
 
+export function getRealizationById(id) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/${id}`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.json();
+    } else {
+      throw new Error('Error when getting realization');
+    }
+  });
+}
+
 export function getRealizationsExportLink(filter) {
   return getRealizationsUrl(filter, true);
 }
