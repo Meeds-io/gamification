@@ -18,8 +18,8 @@
 <template>
   <v-icon
     :size="size"
-    class="rule-icon"
-    :class="ruleIconColorClass">
+    :class="ruleIconColorClass"
+    class="rule-icon">
     {{ ruleIcon }}
   </v-icon>
 </template>
@@ -29,6 +29,10 @@ export default {
     ruleEvent: {
       type: String,
       default: () => null,
+    },
+    iconColorClass: {
+      type: String,
+      default: null,
     },
     size: {
       type: Number,
@@ -51,7 +55,7 @@ export default {
       return this.extension?.icon || 'fas fa-trophy';
     },
     ruleIconColorClass() {
-      return this.extension?.iconColorClass || 'primary--text';
+      return this.iconColorClass || this.extension?.iconColorClass || 'primary--text';
     },
   },
   created() {

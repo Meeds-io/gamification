@@ -8,10 +8,13 @@
     space-avatar>
     <template #actions>
       <div class="text-truncate">
-        <rule-icon :rule-event="ruleEvent" size="14" />
+        <rule-icon
+          :rule-event="ruleEvent"
+          icon-color-class="icon-default-color"
+          size="14" />
         {{ ruleTitle }}
       </div>
-      <div class="my-1">
+      <div class="mt-2">
         <v-btn
           :href="announceUrl"
           color="primary"
