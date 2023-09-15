@@ -12,6 +12,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -189,6 +190,39 @@ public class RealizationRest implements ResourceContainer {
       }
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+    }
+  }
+
+  @GET
+  @Path("{id}")
+  @RolesAllowed("users")
+  @Produces({
+    MediaType.APPLICATION_JSON,
+    MediaType.TEXT_PLAIN
+  })
+  @Operation(summary = "Retrieves an achievement identified by its id", method = "GET")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+  })
+  public Response getRealizations(
+                                  @Context
+                                  HttpServletRequest request,
+                                  @Parameter(description = "Achievement id", required = true)
+                                  @PathParam("id")
+                                  long id) {
+    try {
+      RealizationDTO realization = realizationService.getRealizationById(id, ConversationState.getCurrent().getIdentity());
+      RealizationRestEntity realizationRestEntity = RealizationBuilder.toRestEntity(ruleService,
+                                                                                              translationService,
+                                                                                              identityManager,
+                                                                                              realization,
+                                                                                              getLocale(request));
+      return Response.ok(realizationRestEntity).build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
     }
   }
 
