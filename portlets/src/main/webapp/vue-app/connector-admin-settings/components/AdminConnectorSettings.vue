@@ -60,7 +60,7 @@ export default {
   },
   watch: {
     selectedConnector() {
-      if (this.selectedConnector && this.selectedConnector?.name) {
+      if (this.selectedConnector?.name) {
         window.history.replaceState('gamification connectors', this.$t('gamification.connectors.label.connectors'), `${this.connectorsLinkBasePath}#${this.selectedConnector?.name}`);
       } else {
         window.history.replaceState('gamification connectors', this.$t('gamification.connectors.label.connectors'), `${this.connectorsLinkBasePath}`);
