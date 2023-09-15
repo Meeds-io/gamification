@@ -17,6 +17,15 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+extensionRegistry.registerExtension('WebNotification', 'notification-group-extension', {
+  rank: 30,
+  name: 'gamification',
+  plugins: [
+    'GamificationActionPublishedNotification',
+    'GamificationActionAnnouncedNotification'
+  ],
+  icon: 'fa-trophy',
+});
 extensionRegistry.registerExtension('WebNotification', 'notification-content-extension', {
   type: 'GamificationActionPublishedNotification',
   rank: 10,
