@@ -186,7 +186,7 @@ export default {
   mounted() {
     this.selectedRuleId = this.extractRuleIdFromPath();
     if (this.selectedRuleId) {
-      window.setTimeout(() => this.$root.$emit('rule-detail-drawer-by-id', this.selectedRuleId), 100);
+      window.setTimeout(() => this.$root.$emit('rule-detail-drawer-by-id', this.selectedRuleId, window.location.hash === '#announce'), 100);
     }
   },
   beforeDestroy() {
