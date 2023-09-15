@@ -1,8 +1,7 @@
-﻿<%
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
  *
- * Copyright (C) 2023 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -12,23 +11,27 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-%>
-<li class="$READ clearfix" data-id="$NOTIFICATION_ID">
-  <div class="media">
-    <div class="avatarXSmall pull-left">
-      <img src="$PROGRAM_AVATAR" alt="<%=_ctx.escapeHTML(RULE_TITLE)%>" class="rounded" />
-    </div>
-    <div class="media-body">
-      <div class="contentSmall" data-link="$RULE_URL">
-        <div class="status"><%=_ctx.appRes("Notification.gamification.webNotif.newActionAvailable")%></div>
-        <div class="content"><rule-icon rule-event="<%=RULE_EVENT%>"></rule-icon>$RULE_TITLE</div>
-        <div class="lastUpdatedTime">$LAST_UPDATED_TIME</div>
-      </div>
-    </div>
-  </div>
-  <span class="remove-item" data-rest=""><i class="uiIconClose uiIconLightGray"></i></span>
-</li>
+
+import './initComponents.js';
+import './extensions.js';
+
+const lang = eXo.env.portal.language;
+const urls = [
+  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`,
+  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`
+];
+
+export function init() {
+  return exoi18n.loadLanguageAsync(lang, urls)
+    .then(() => {
+      new Vue({
+        i18n: exoi18n.i18n,
+      });
+    })
+    .finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
+}
