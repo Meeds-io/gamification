@@ -52,9 +52,31 @@ export default {
       connectors: [],
       adminConnectorsExtensions: [],
       editSettings: false,
+      connectorProjectId: null,
       connectorExtension: null,
-      selectedConnector: null
+      selectedConnector: null,
+      connectorsLinkBasePath: '/portal/g/:platform:rewarding/gamificationConnectorsAdministration',
     };
+  },
+  watch: {
+    selectedConnector() {
+      if (this.selectedConnector && this.selectedConnector?.name) {
+        window.history.replaceState('gamification connectors', this.$t('gamification.connectors.label.connectors'), `${this.connectorsLinkBasePath}#${this.selectedConnector?.name}`);
+      } else {
+        window.history.replaceState('gamification connectors', this.$t('gamification.connectors.label.connectors'), `${this.connectorsLinkBasePath}`);
+      }
+    },
+    editSettings() {
+      if (this.connectorProjectId) {
+        window.history.replaceState('gamification connectors', this.$t('gamification.connectors.label.connectors'), `${this.connectorsLinkBasePath}#${this.selectedConnector?.name}-${this.connectorProjectId}`);
+      } else if (this.editSettings && this.selectedConnector?.name) {
+        window.history.replaceState('gamification connectors', this.$t('gamification.connectors.label.connectors'), `${this.connectorsLinkBasePath}#${this.selectedConnector?.name}-configuration`);
+      } else if (this.selectedConnector?.name){
+        window.history.replaceState('gamification connectors', this.$t('gamification.connectors.label.connectors'), `${this.connectorsLinkBasePath}#${this.selectedConnector?.name}`);
+      } else {
+        window.history.replaceState('gamification connectors', this.$t('gamification.connectors.label.connectors'), `${this.connectorsLinkBasePath}`);
+      }
+    },
   },
   created() {
     this.$root.$on('open-connector-detail', this.openConnectorDetail);
@@ -80,8 +102,33 @@ export default {
       // Check connectors status from store
       this.loading = true;
       this.$gamificationConnectorService.getConnectors(eXo.env.portal.userName, 'secretKey')
-        .then(connectors => this.connectors = connectors)
+        .then(connectors => {
+          this.connectors = connectors;
+          const fragment = document.location.hash.substring(1);
+          const match = fragment.split('-');
+          if (match) {
+            const connectorName = match[0];
+            const prefix = match[1];
+            const connector = this.connectors.find(c => c.name === connectorName);
+            if (connector && !prefix) {
+              this.openConnector(connector);
+            } else {
+              if (Number(prefix)) {
+                this.connectorProjectId = Number(prefix);
+              }
+              const connectorSetting = this.connectors.find(c => c.name === connectorName);
+              if (connectorSetting) {
+                const connectorExtension = this.adminConnectorsExtensions.find(c => c?.componentOptions?.name === connectorSetting.name);
+                this.openConnectorSettings(connectorSetting, connectorExtension);
+              }
+            }
+          }
+        })
         .finally(() => this.loading = false);
+    },
+    openConnector(connector) {
+      const connectorExtension = this.adminConnectorsExtensions.find(c => c?.componentOptions?.name === connector.name);
+      this.openConnectorDetail(connector, connectorExtension);
     },
     refreshUserConnectorList() {
       // Get list of connectors from extensionRegistry
