@@ -143,9 +143,6 @@ public class ActionAnnouncedTemplateBuilder extends AbstractTemplateBuilder {
     SocialNotificationUtils.addFooterAndFirstName(notification.getTo(), templateContext);
 
     // Web Notif status
-    templateContext.put("READ",
-                        Boolean.parseBoolean(notification.getValueOwnerParameter(NotificationMessageUtils.READ_PORPERTY.getKey())) ? "read"
-                                                                                                                                   : "unread");
     templateContext.put("NOTIFICATION_ID", notification.getId());
     templateContext.put("LAST_UPDATED_TIME",
                         TimeConvertUtils.convertXTimeAgoByTimeServer(new Date(notification.getLastModifiedDate()),
