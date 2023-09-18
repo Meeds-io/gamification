@@ -39,4 +39,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </portlet-application>
     </container>
   </page>
+  <page>
+    <name>gamificationBadgesAdministration</name>
+    <title>Gamification Badges Administration</title>
+    <access-permissions>*:/platform/rewarding</access-permissions>
+    <edit-permission>manager:/platform/rewarding</edit-permission>
+    <container id="singlePageApplicationContainer" template="system:/groovy/portal/webui/container/UIContainer.gtmpl"
+               cssClass="singlePageApplication">
+      <access-permissions>*:/platform/rewarding</access-permissions>
+      <portlet-application>
+        <portlet>
+          <application-ref>gamification-portlets</application-ref>
+          <portlet-ref>GamificationManageBadges</portlet-ref>
+        </portlet>
+        <title>Gamification Manage Badges</title>
+        <access-permissions>*:/platform/rewarding</access-permissions>
+        <show-info-bar>false</show-info-bar>
+      </portlet-application>
+    </container>
+  </page>
 </page-set>
