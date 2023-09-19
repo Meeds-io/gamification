@@ -1,5 +1,5 @@
 <template>
-  <v-card flat>
+  <div>
     <v-list-item class="ps-0 align-start">
       <rule-icon
         :size="40"
@@ -29,7 +29,7 @@
     <gamification-canceller-events-drawer
       ref="cancellerEventsDrawer"
       :event="event" />
-  </v-card>
+  </div>
 </template>
 
 <script>
