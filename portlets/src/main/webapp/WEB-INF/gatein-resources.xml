@@ -479,7 +479,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <module>
-    <name>EngagementCenterActivityStreamExtension</name>
+    <name>engagementCenterActivityStreamExtension</name>
     <load-group>ActivityStreamGRP</load-group>
     <script>
       <minify>false</minify>
@@ -507,7 +507,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </module>
 
   <module>
-    <name>EngagementCenterFavoriteDrawerExtension</name>
+    <name>engagementCenterFavoriteDrawerExtension</name>
     <load-group>FavoriteDrawerGRP</load-group>
     <script>
       <path>/js/favoriteDrawerExtension.bundle.js</path>
@@ -530,8 +530,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </module>
 
   <module>
-    <name>EngagementCenterNotificationPopoverExtension</name>
-    <load-group>TopBarNotificationGRP</load-group>
+    <name>engagementCenterNotificationExtension</name>
+    <load-group>notificationGRP</load-group>
     <script>
       <path>/js/notificationExtension.bundle.js</path>
     </script>

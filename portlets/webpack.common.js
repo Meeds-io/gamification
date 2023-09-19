@@ -26,7 +26,7 @@ module.exports = {
     engagementCenterAchievements: './src/main/webapp/vue-app/engagement-center-achievements/main.js',
     activityStreamExtension: './src/main/webapp/vue-app/activity-stream-extension/main.js',
     favoriteDrawerExtension: './src/main/webapp/vue-app/favorite-drawer-extension/main.js',
-    notificationExtension: './src/main/webapp/vue-app/notification-popover-extension/main.js',
+    notificationExtension: './src/main/webapp/vue-app/notification-extension/main.js',
     ruleComponents: './src/main/webapp/vue-app/rules/main.js',
     ruleExtensions: './src/main/webapp/vue-app/rules-extensions/main.js',
     ruleSearch: './src/main/webapp/vue-app/rules-search/main.js',

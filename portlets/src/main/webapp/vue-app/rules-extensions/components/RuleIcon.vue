@@ -16,7 +16,10 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-icon :size="size" class="rule-icon primary--text">
+  <v-icon
+    :size="size"
+    :class="ruleIconColorClass"
+    class="rule-icon">
     {{ ruleIcon }}
   </v-icon>
 </template>
@@ -26,6 +29,10 @@ export default {
     ruleEvent: {
       type: String,
       default: () => null,
+    },
+    iconColorClass: {
+      type: String,
+      default: null,
     },
     size: {
       type: Number,
@@ -48,6 +55,9 @@ export default {
     },
     ruleIcon() {
       return this.extension?.icon || 'fas fa-trophy';
+    },
+    ruleIconColorClass() {
+      return this.iconColorClass || this.extension?.iconColorClass || 'primary--text';
     },
   },
   created() {
