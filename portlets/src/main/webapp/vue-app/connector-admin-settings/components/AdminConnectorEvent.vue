@@ -1,12 +1,12 @@
 <template>
-  <v-card flat>
+  <div>
     <v-list-item class="ps-0 align-start">
       <rule-icon
         :size="40"
         :rule-event="eventTitle"
         class="me-4 py-2" />
       <v-list-item-content>
-        <v-list-item-title class="text-subtitle-2 black--text mb-2">{{ eventTitleLabel }}</v-list-item-title>
+        <v-list-item-title class="text-subtitle-2 text-color mb-2">{{ eventTitleLabel }}</v-list-item-title>
         <v-list-item-subtitle class="text-sub-title">{{ eventDescription }}</v-list-item-subtitle>
         <div v-if="cancellerEventsSize" class="d-flex flex-row pt-2px">
           <v-list-item-subtitle class="text-sub-title">
@@ -29,7 +29,7 @@
     <gamification-canceller-events-drawer
       ref="cancellerEventsDrawer"
       :event="event" />
-  </v-card>
+  </div>
 </template>
 
 <script>
