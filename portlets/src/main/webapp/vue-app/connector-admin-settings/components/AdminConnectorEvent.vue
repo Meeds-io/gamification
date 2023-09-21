@@ -27,6 +27,7 @@
       </v-list-item-content>
     </v-list-item>
     <gamification-canceller-events-drawer
+      v-if="event"
       ref="cancellerEventsDrawer"
       :event="event" />
   </div>

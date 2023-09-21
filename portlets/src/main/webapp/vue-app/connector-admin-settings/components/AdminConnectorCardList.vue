@@ -16,7 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-card v-if="enabledConnectors && enabledConnectors.length" flat>
-    <div class="text-header-title py-2 py-sm-5 d-flex align-center">{{ $t('gamification.connectors.label.connectors') }}</div>
+    <div class="dark-grey-color font-weight-bold icon-default-size py-2 py-sm-5 d-flex align-center">{{ $t('gamification.connectors.label.connectors') }}</div>
     <v-card-text class="text-font-size pb-2 pt-0 pb-sm-5 px-0 d-flex align-center">{{ $t('gamification.connectors.label.valueContributions') }}</v-card-text>
     <v-card-text class="pa-0">
       <v-item-group>
@@ -25,10 +25,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <div
               v-for="enabledConnector in enabledConnectors"
               :key="enabledConnector.id"
-              class="pa-0 me-2 my-2 d-flex flex-column col-4">
+              class="ps-0 col-sm-6 col-lg-4 col-12">
               <gamification-admin-connector-card
-                class="full-height"
                 :connector="enabledConnector"
+                :connector-extensions="connectorExtensions" />
+            </div>
+          </div>
+        </v-container>
+      </v-item-group>
+    </v-card-text>
+    <div class="font-weight-bold dark-grey-color text-subtitle-1 py-2 py-sm-5 d-flex align-center">{{ $t('challenges.label.comingSoon') }}</div>
+    <v-card-text class="pa-0">
+      <v-item-group>
+        <v-container class="pa-0">
+          <div class="ma-0 d-flex flex-wrap">
+            <div
+              v-for="upcomingConnector in upcomingConnectors"
+              :key="upcomingConnector.name"
+              class="ps-0 col-sm-6 col-lg-4 col-12">
+              <gamification-admin-connector-card
+                :connector="upcomingConnector"
                 :connector-extensions="connectorExtensions" />
             </div>
           </div>
@@ -41,7 +57,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
   props: {
-    enabledConnectors: {
+    connectors: {
       type: Array,
       default: () => [],
     },
@@ -50,5 +66,13 @@ export default {
       default: () => [],
     },
   },
+  computed: {
+    enabledConnectors() {
+      return this.connectors.filter(connector => this.connectorExtensions.some(item => connector.name === item.componentOptions.name && !item.componentOptions.comingSoon));
+    },
+    upcomingConnectors() {
+      return this.connectors.filter(connector => this.connectorExtensions.some(item => connector.name === item.componentOptions.name && item.componentOptions.comingSoon));
+    }
+  }
 };
 </script>
