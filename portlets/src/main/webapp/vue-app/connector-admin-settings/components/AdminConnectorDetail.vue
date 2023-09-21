@@ -42,13 +42,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-list-item-title>
       </div>
       <v-spacer />
-      <div :class="connectorActivated && 'primary--text'" class="text-sub-title me-3">{{ connectorStatusLabel }}</div>
-      <v-btn
-        small
-        class="btn btn-primary ms-2"
-        @click="openConnectorSettings">
-        {{ $t('gamification.connectors.label.configure') }}
-      </v-btn>
+      <div v-if="idDefaultConnector" class="subtitle-2 text-light-color">{{ $t('gamification.label.defaultConnector') }}</div>
+      <template v-else>
+        <div :class="connectorActivated && 'primary--text'" class="text-sub-title me-3">{{ connectorStatusLabel }}</div>
+        <v-btn
+          small
+          class="btn btn-primary ms-2"
+          @click="openConnectorSettings">
+          {{ $t('gamification.connectors.label.configure') }}
+        </v-btn>
+      </template>
     </div>
     <v-card-text class="px-0 text-sub-title">{{ description }}</v-card-text>
     <v-card
@@ -83,7 +86,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-card>
     <div v-if="hasMoreEvents" class="d-flex justify-center py-4">
       <v-btn
-        :loading="loading"
         min-width="95%"
         class="btn"
         text
@@ -108,10 +110,7 @@ export default {
   },
   data() {
     return {
-      events: [],
-      eventsSize: 0,
       pageSize: 10,
-      loading: true,
       keyword: ''
     };
   },
@@ -131,24 +130,30 @@ export default {
     connectorStatusLabel() {
       return this.connectorActivated ? this.$t('gamification.connectors.label.activated') : this.$t('gamification.connectors.label.deactivated');
     },
+    events() {
+      return this.connector?.events;
+    },
+    eventsSize() {
+      return this.connector?.eventsSize;
+    },
     hasMoreEvents() {
       return this.keyword ? this.sortedEvent.length > this.pageSize : this.eventsSize > this.pageSize;
     },
     sortedEvent() {
       let filteredEvent = this.events;
       if (this.keyword) {
-        filteredEvent = this.events.filter(item =>
+        filteredEvent = this.events?.filter(item =>
           this.getEventLabel(item).toLowerCase().includes(this.keyword.toLowerCase())
         );
       }
-      return filteredEvent.sort((a, b) => this.getEventLabel(a).localeCompare(b.title));
+      return filteredEvent?.sort((a, b) => this.getEventLabel(a).localeCompare(b.title));
     },
     eventToDisplay() {
-      return this.sortedEvent.slice(0, this.pageSize);
+      return this.sortedEvent?.slice(0, this.pageSize);
     },
-  },
-  created() {
-    this.retrieveEvents();
+    idDefaultConnector() {
+      return this.connectorExtension?.componentOptions?.defaultConnector;
+    },
   },
   methods: {
     backToConnectorList() {
@@ -157,17 +162,8 @@ export default {
     openConnectorSettings() {
       this.$root.$emit('open-connector-settings', this.connector, this.connectorExtension);
     },
-    retrieveEvents() {
-      this.$gamificationConnectorService.getEvents(this.name)
-        .then(data => {
-          this.events = data.entities;
-          this.eventsSize = data.size;
-        })
-        .finally(() => this.loading = false);
-    },
     loadMore() {
       this.pageSize += this.pageSize;
-      this.retrieveEvents();
     },
     getEventLabel(event) {
       return this.$t(`gamification.event.title.${event.title}`);
