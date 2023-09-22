@@ -146,7 +146,7 @@ export default {
           this.getEventLabel(item).toLowerCase().includes(this.keyword.toLowerCase())
         );
       }
-      return filteredEvent?.sort((a, b) => this.getEventLabel(a).localeCompare(b.title));
+      return filteredEvent?.sort((a, b) => this.getEventLabel(a).localeCompare(this.getEventLabel(b)));
     },
     eventToDisplay() {
       return this.sortedEvent?.slice(0, this.pageSize);
