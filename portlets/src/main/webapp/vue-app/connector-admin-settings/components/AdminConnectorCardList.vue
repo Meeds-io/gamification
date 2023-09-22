@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-container>
       </v-item-group>
     </v-card-text>
-    <div class="font-weight-bold dark-grey-color text-subtitle-1 py-2 py-sm-5 d-flex align-center">{{ $t('challenges.label.comingSoon') }}</div>
+    <div class="font-weight-bold dark-grey-color text-subtitle-1 py-2 py-sm-5 d-flex align-center">{{ $t('gamification.connectors.label.comingSoon') }}</div>
     <v-card-text class="pa-0">
       <v-item-group>
         <v-container class="pa-0">
