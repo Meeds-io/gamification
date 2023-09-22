@@ -16,13 +16,7 @@ jobs:
           token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
       - name: reset translation branch to develop's
         run: |
-          git fetch origin develop
-          git config --global user.email "exo-swf@exoplatform.com"
-          git config --global user.name "eXo Software Factory"
-          git reset origin/develop
-          git add .
-          git stash
-          git push origin -f
+          git push origin origin/develop:refs/heads/integration/6.5.x-translation -f
 
   check-project-build:
     runs-on: ubuntu-latest
