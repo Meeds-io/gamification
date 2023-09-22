@@ -1,10 +1,11 @@
 <template>
   <div>
     <v-list-item class="ps-0 align-start">
-      <rule-icon
-        :size="40"
-        :rule-event="eventTitle"
-        class="me-4 py-2" />
+      <v-list-item-avatar class="align-self-start" tile>
+        <rule-icon
+          :size="40"
+          :rule-event="eventTitle" />
+      </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title class="text-subtitle-2 text-color mb-2">{{ eventTitleLabel }}</v-list-item-title>
         <v-list-item-subtitle class="text-sub-title">{{ eventDescription }}</v-list-item-subtitle>
@@ -27,6 +28,7 @@
       </v-list-item-content>
     </v-list-item>
     <gamification-canceller-events-drawer
+      v-if="event"
       ref="cancellerEventsDrawer"
       :event="event" />
   </div>

@@ -66,6 +66,7 @@ import io.meeds.gamification.service.BadgeRegistryTest;
 import io.meeds.gamification.service.BadgeServiceTest;
 import io.meeds.gamification.service.ConnectorServiceTest;
 import io.meeds.gamification.service.ConnectorSettingServiceTest;
+import io.meeds.gamification.service.EventServiceTest;
 import io.meeds.gamification.service.ProgramServiceTest;
 import io.meeds.gamification.service.RealizationServiceMockTest;
 import io.meeds.gamification.service.RealizationServiceTest;
