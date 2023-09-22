@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-list-item-subtitle class="my-3 text-sub-title">
               <gamification-admin-connector-card-list
                 v-if="connectors.length"
-                :enabled-connectors="connectors"
+                :connectors="connectors"
                 :connector-extensions="adminConnectorsExtensions" />
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -103,7 +103,23 @@ export default {
       this.loading = true;
       this.$gamificationConnectorService.getConnectors(eXo.env.portal.userName, 'secretKey')
         .then(connectors => {
-          this.connectors = connectors;
+          const filteredList = this.adminConnectorsExtensions.filter(connectorExtension => !connectors.some(item => item.name === connectorExtension.componentOptions.name)).map(item => ({
+            name: item?.componentOptions?.name,
+          })) || [];
+          this.connectors.push(...filteredList);
+          this.connectors.push(...connectors);
+          const promises = [];
+          this.connectors.forEach(connector => {
+            const promise = this.$gamificationConnectorService.getEvents(connector.name)
+              .then(data => {
+                this.$set(connector, 'events', data.entities);
+                this.$set(connector, 'eventsSize', data.size);
+              });
+            promises.push(promise);
+          });
+          return Promise.all(promises);
+        })
+        .then(() => {
           const fragment = document.location.hash.substring(1);
           const match = fragment.split('-');
           if (match) {
@@ -124,7 +140,9 @@ export default {
             }
           }
         })
-        .finally(() => this.loading = false);
+        .finally(() => {
+          this.loading = false;
+        });
     },
     openConnector(connector) {
       const connectorExtension = this.adminConnectorsExtensions.find(c => c?.componentOptions?.name === connector.name);
