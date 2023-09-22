@@ -18,8 +18,6 @@ package io.meeds.gamification.test;
 
 import io.meeds.gamification.dao.*;
 import io.meeds.gamification.rest.*;
-import io.meeds.gamification.service.*;
-import io.meeds.gamification.storage.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -49,6 +47,21 @@ import io.meeds.gamification.plugin.RuleActivityTypePluginTest;
 import io.meeds.gamification.plugin.RuleTranslationPluginTest;
 import io.meeds.gamification.scheduled.ProgramAutoDisableJobTest;
 import io.meeds.gamification.search.RuleSearchConnectorTest;
+import io.meeds.gamification.service.AnnouncementServiceTest;
+import io.meeds.gamification.service.BadgeRegistryTest;
+import io.meeds.gamification.service.BadgeServiceTest;
+import io.meeds.gamification.service.ConnectorServiceTest;
+import io.meeds.gamification.service.ConnectorSettingServiceTest;
+import io.meeds.gamification.service.EventServiceTest;
+import io.meeds.gamification.service.ProgramServiceTest;
+import io.meeds.gamification.service.RealizationServiceMockTest;
+import io.meeds.gamification.service.RealizationServiceTest;
+import io.meeds.gamification.service.RuleServiceTest;
+import io.meeds.gamification.storage.AnnouncementStorageTest;
+import io.meeds.gamification.storage.ConnectorAccountStorageTest;
+import io.meeds.gamification.storage.ProgramStorageTest;
+import io.meeds.gamification.storage.RealizationsStorageTest;
+import io.meeds.gamification.storage.RuleStorageTest;
 import io.meeds.gamification.utils.UtilsTest;
 
 @RunWith(Suite.class)
