@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: integration/6.5.x-translation
+          ref: develop
           token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
       - name: reset translation branch to develop's
         run: |
