@@ -79,6 +79,8 @@ import io.meeds.gamification.utils.Utils;
 
 public class RealizationServiceImpl implements RealizationService, Startable {
 
+  private static final String   REALIZATION_NOT_EXIST_MESSAGE = "Realization with id %s doesn't exist";
+
   private static final Log      LOG                           = ExoLogger.getLogger(RealizationServiceImpl.class);
 
   // File header
@@ -269,7 +271,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   public void updateRealizationStatus(long realizationId, RealizationStatus status) throws ObjectNotFoundException {
     RealizationDTO realization = getRealizationById(realizationId);
     if (realization == null) {
-      throw new ObjectNotFoundException("Realization with id " + realizationId + " doesn't exist");
+      throw new ObjectNotFoundException(String.format(REALIZATION_NOT_EXIST_MESSAGE, realizationId));
     }
     if (status == null) {
       throw new IllegalArgumentException("status is mandatory");
@@ -293,7 +295,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
     RealizationDTO realization = getRealizationById(realizationId);
     if (realization == null) {
-      throw new ObjectNotFoundException("Realization with id " + realizationId + " doesn't exist");
+      throw new ObjectNotFoundException(String.format(REALIZATION_NOT_EXIST_MESSAGE, realizationId));
     }
 
     if (!Utils.isRewardingManager(username)
@@ -522,7 +524,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     RealizationDTO realization = realizationStorage.getRealizationById(realizationId);
     if (realization == null) {
-      throw new ObjectNotFoundException("Realization with id " + realizationId + " doesn't exist");
+      throw new ObjectNotFoundException(String.format(REALIZATION_NOT_EXIST_MESSAGE, realizationId));
     } else if (programService.isProgramOwner(realization.getProgram().getId(), userAclIdentity.getUserId())
         || realization.getEarnerId().equals(userIdentity.getId())) {
       return realization;
