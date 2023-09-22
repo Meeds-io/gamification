@@ -56,7 +56,7 @@ import io.meeds.gamification.model.filter.RealizationFilter;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 
-public class RealizationServiceTest extends AbstractServiceTest {
+public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
 
   private static final String INTERNAL_USER     = "root50";
 
@@ -95,7 +95,7 @@ public class RealizationServiceTest extends AbstractServiceTest {
     internalUserIdentityId = identityManager.getOrCreateUserIdentity(INTERNAL_USER).getId();
   }
 
-  public void testCreateRealizationsByAdmin() throws IllegalAccessException {
+  public void testCreateRealizationsByAdmin() {
     List<RealizationEntity> realizations = realizationDAO.findAll();
     assertEquals(realizations.size(), 0);
     RuleDTO rule = newRuleDTO();
@@ -216,6 +216,45 @@ public class RealizationServiceTest extends AbstractServiceTest {
     assertEquals(spaceMemberIdentityId, realizationEntity.getReceiver());
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.SPACE, realizationEntity.getEarnerType());
+  }
+
+  public void testGetRealizationBySpaceMember() throws IllegalAccessException, ObjectNotFoundException {
+    List<RealizationEntity> realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 0);
+    RuleDTO ruleDTO = newRuleDTO();
+
+    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                                       spaceHostIdentityId,
+                                                                       spaceMemberIdentityId,
+                                                                       ACTIVITY_ID,
+                                                                       ACTIVITY_OBJECT_TYPE)
+                                                   .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 1);
+
+    RealizationEntity realizationEntity = realizations.get(0);
+    assertEquals(spaceHostIdentityId, realizationEntity.getEarnerId());
+    assertEquals(spaceMemberIdentityId, realizationEntity.getReceiver());
+    assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
+    assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
+
+    realization = realizationService.createRealizations(ruleDTO.getEvent(),
+                                                        TEST_SPACE_ID,
+                                                        spaceHostIdentityId,
+                                                        ACTIVITY_ID,
+                                                        ACTIVITY_OBJECT_TYPE)
+                                    .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+
+    realizations = realizationDAO.findAll();
+    assertEquals(realizations.size(), 2);
+
+    RealizationDTO spaceMemberAccessedRealization = realizationService.getRealizationById(realization.getId(), spaceMemberAclIdentity);
+    assertNotNull(spaceMemberAccessedRealization);
+    assertEquals(realization.getId(), spaceMemberAccessedRealization.getId());
   }
 
   public void testCreateRealizationsByInternalUserInSpaceRule() {
@@ -422,7 +461,7 @@ public class RealizationServiceTest extends AbstractServiceTest {
   }
 
   @SuppressWarnings("deprecation")
-  public void testCreateRealizationForBlacklistUser() throws ObjectNotFoundException {
+  public void testCreateRealizationForBlacklistUser() {
 
     List<RealizationEntity> realizationEntities = realizationDAO.findAll();
     assertEquals(0, realizationEntities.size());
