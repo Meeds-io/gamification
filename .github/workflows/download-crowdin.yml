@@ -90,15 +90,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: integration/6.5.x-exo-translation
+          ref: develop-exo
           token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
       - name: reset translation branch to develop's
         run: |
-          git fetch origin develop-exo          
-          git reset origin/develop-exo
-          git add . || true
-          git stash || true
-          git push origin -f
+          git push origin origin/develop-exo:refs/heads/integration/6.5.x-exo-translation -f
   crowdin-download-develop-exo:
     needs: [reset-branch-integration-develop-exo]
     runs-on: ubuntu-latest
@@ -147,22 +143,17 @@ jobs:
             git push origin
           fi
 # develop-meed workflow
-  reset-branch-integration-meed:
+  reset-branch-integration-develop-meed:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: integration/6.5.x-meed-translation
+          ref: develop-meed
           token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
       - name: reset translation branch to develop's
         run: |
-          git fetch origin develop-meed
-          git checkout integration/6.5.x-meed-translation
-          git reset origin/develop-meed
-          git add . || true
-          git stash || true
-          git push origin integration/6.5.x-meed-translation -f
+          git push origin origin/develop-exo:refs/heads/integration/6.5.x-meed-translation -f
   crowdin-download-develop-meed:
     needs: [reset-branch-integration-meed]
     runs-on: ubuntu-latest
