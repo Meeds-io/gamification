@@ -1,0 +1,218 @@
+name: Crowdin  download Action
+
+on:
+  schedule:
+    - cron: "0 17 * * *"
+
+jobs:
+  # develop workflow
+  reset-branch-integration-develop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: integration/6.5.x-translation
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: reset translation branch to develop's
+        run: |
+          git fetch origin develop
+          git config --global user.email "exo-swf@exoplatform.com"
+          git config --global user.name "eXo Software Factory"
+          git reset origin/develop
+          git add .
+          git stash
+          git push origin -f
+
+  check-project-build:
+    runs-on: ubuntu-latest
+    outputs:
+      crowdin_project_available: ${{ steps.is_crowdin_project_available.outputs.project_available }}
+    steps:
+      - name: Check project build in progress
+        id: is_crowdin_project_available
+        run: |
+          wait_exec=0;
+          while [ $(curl -s -H "Accept: application/json" -H "Authorization: Bearer ${{ secrets.CROWDIN_PERSONAL_TOKEN }}"\
+                                                                       https://crowdin.com/api/v2/projects/4464/translations/builds \
+                                                                       | jq -r 'any(.data[].data; select(.status != "finished" ))') == "true" ] && (( wait_exec<30 )) ; do
+           sleep 10;
+           ((wait_exec=wait_exec+1));
+          done
+          if ((wait_exec==10)); then
+            echo "project_available=false" >> $GITHUB_OUTPUT
+          else
+            echo "project_available=true" >> $GITHUB_OUTPUT
+          fi
+  crowdin-download-develop:
+    needs: [reset-branch-integration-develop,check-project-build]
+    if: needs.check-project-build.outputs.crowdin_project_available == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: Crowdin pull
+        uses: crowdin/github-action@v1
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          localization_branch_name: integration/6.5.x-translation
+          create_pull_request: false
+          download_translations_args: '-l af -l ar -l ca -l cs -l de -l en -l es-ES -l eu -l fa 
+          -l fi -l fr -l ga-IE -l he -l hi -l id -l it -l ja -l lt -l no -l pt-BR -l ru
+          -l sv-SE -l tr -l uk -l vi -l zh-CN -l zh-TW'
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+  crowdin-merge-translation-develop:
+    needs: [crowdin-download-develop]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: develop
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: Merge translation to develop
+        run: |
+          git fetch origin integration/6.5.x-translation
+          git config --global user.email "exo-swf@exoplatform.com"
+          git config --global user.name "eXo Software Factory"      
+          changes_to_apply=$(git merge --squash origin/integration/6.5.x-translation 2>&1)            
+          if [[ "$changes_to_apply" == *"up to date"* ]]; then
+            echo "Nothing to Merge"
+          else 
+            git commit -m "Merge Translations"
+            git push origin       
+          fi
+  # develop-exo workflow
+  reset-branch-integration-develop-exo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: integration/6.5.x-exo-translation
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: reset translation branch to develop's
+        run: |
+          git fetch origin develop-exo          
+          git reset origin/develop-exo
+          git add . || true
+          git stash || true
+          git push origin -f
+  crowdin-download-develop-exo:
+    needs: [reset-branch-integration-develop-exo]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+          ref: integration/6.5.x-exo-translation
+      - name: Crowdin pull
+        uses: crowdin/github-action@v1
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          crowdin_branch_name: develop-exo
+          localization_branch_name: integration/6.5.x-exo-translation
+          create_pull_request: false
+          skip_ref_checkout: true
+          download_translations_args: '-l af -l ar -l ca -l cs -l de -l en -l es-ES -l eu -l fa 
+          -l fi -l fr -l ga-IE -l he -l hi -l id -l it -l ja -l lt -l no -l pt-BR -l ru
+          -l sv-SE -l tr -l uk -l vi -l zh-CN -l zh-TW'
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+  crowdin-merge-translation-develop-exo:
+    needs: [crowdin-download-develop-exo]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: develop-exo
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: Merge translation to develop-exo
+        run: |
+          git fetch origin integration/6.5.x-exo-translation
+          git config --global user.email "exo-swf@exoplatform.com"
+          git config --global user.name "eXo Software Factory"      
+          changes_to_apply=$(git merge --squash origin/integration/6.5.x-exo-translation 2>&1)
+          if [[ "$changes_to_apply" == *"up to date"* ]]; then
+            echo "Nothing to commit"
+          else 
+            git commit -m "Merge Translations"
+            git push origin
+          fi
+# develop-meed workflow
+  reset-branch-integration-meed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: integration/6.5.x-meed-translation
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: reset translation branch to develop's
+        run: |
+          git fetch origin develop-meed
+          git checkout integration/6.5.x-meed-translation
+          git reset origin/develop-meed
+          git add . || true
+          git stash || true
+          git push origin integration/6.5.x-meed-translation -f
+  crowdin-download-develop-meed:
+    needs: [reset-branch-integration-meed]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+          ref: integration/6.5.x-meed-translation
+      - name: Crowdin push
+        uses: crowdin/github-action@v1
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          crowdin_branch_name: develop-meed
+          localization_branch_name: integration/6.5.x-meed-translation
+          create_pull_request: false
+          skip_ref_checkout: true
+          download_translations_args: '-l af -l ar -l ca -l cs -l de -l en -l es-ES -l eu -l fa 
+          -l fi -l fr -l ga-IE -l he -l hi -l id -l it -l ja -l lt -l no -l pt-BR -l ru
+          -l sv-SE -l tr -l uk -l vi -l zh-CN -l zh-TW'
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+  crowdin-merge-translation-develop-meed:
+    needs: [crowdin-download-develop-meed]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: develop-meed
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: Merge translation to develop-meed
+        run: |
+          git fetch origin integration/6.5.x-meed-translation
+          git config --global user.email "exo-swf@exoplatform.com"
+          git config --global user.name "eXo Software Factory"       
+          changes_to_apply=$(git merge --squash origin/integration/6.5.x-meed-translation 2>&1)
+          if [[ "$changes_to_apply" == *"up to date"* ]]; then
+            echo "Nothing to commit"
+          else 
+            git commit -m "Merge Translations"
+            git push origin
+          fi

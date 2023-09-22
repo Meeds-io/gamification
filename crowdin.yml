@@ -1,0 +1,100 @@
+#
+# Your Crowdin credentials
+#
+"project_id_env" : "CROWDIN_PROJECT_ID"
+"api_token_env" : "CROWDIN_PERSONAL_TOKEN"
+"base_path" : "."
+"base_url" : "https://api.crowdin.com"
+
+#
+# Choose file structure in Crowdin
+# e.g. true or false
+#
+"preserve_hierarchy": true
+#
+# Files configuration
+#
+files: [
+  {
+     "source" : "/services/src/main/resources/locale/addon/Gamification_en.properties",
+
+    "translation" : "%original_path%/%file_name%!_%locale_with_underscore%.%file_extension%",
+    "translation_replace" : {
+      "_en!":"",
+      "de_DE": "de",
+      "en_US": "en",
+      "es_ES": "es_ES",
+      "fr_FR": "fr",
+      "it_IT": "it",
+      "pt_BR": "pt_BR",
+    },
+    "dest" : "exoplatform/gamification/addon/Gamification.properties",
+    "update_option" : "update_as_unapproved",
+  },
+  {
+    "source": "/portlets/src/main/resources/locale/portlet/Challenges_en.properties",
+
+    "translation": "%original_path%/%file_name%!_%locale_with_underscore%.%file_extension%",
+    "translation_replace": {
+      "_en!": "",
+      "de_DE": "de",
+      "en_US": "en",
+      "es_ES": "es_ES",
+      "fr_FR": "fr",
+      "it_IT": "it",
+      "pt_BR": "pt_BR",
+    },
+    "dest": "exoplatform/gamification/portlet/Challenges.properties",
+    "update_option": "update_as_unapproved",
+  },
+  {
+    "source": "/portlets/src/main/resources/locale/portlet/Analytics_en.properties",
+
+    "translation": "%original_path%/%file_name%!_%locale_with_underscore%.%file_extension%",
+    "translation_replace": {
+      "_en!": "",
+      "de_DE": "de",
+      "en_US": "en",
+      "es_ES": "es_ES",
+      "fr_FR": "fr",
+      "it_IT": "it",
+      "pt_BR": "pt_BR",
+    },
+    "dest": "exoplatform/gamification/portlet/Analytics.properties",
+    "update_option": "update_as_unapproved",
+
+  },
+  {
+    "source": "/portlets/src/main/resources/locale/navigation/portal/global_en.properties",
+    "translation": "%original_path%/%file_name%!_%locale_with_underscore%.%file_extension%",
+    "translation_replace": {
+      "_en!": "",
+      "de_DE": "de",
+      "en_US": "en",
+      "es_ES": "es_ES",
+      "fr_FR": "fr",
+      "it_IT": "it",
+      "pt_BR": "pt_BR",
+    },
+    "dest": "exoplatform/gamification/portlet/global.properties",
+    "update_option": "update_as_unapproved",
+
+  },
+  {
+    "source": "/portlets/src/main/resources/locale/navigation/group/platform/administrators_en.properties",
+
+    "translation": "%original_path%/%file_name%!_%locale_with_underscore%.%file_extension%",
+    "translation_replace": {
+      "_en!": "",
+      "de_DE": "de",
+      "en_US": "en",
+      "es_ES": "es_ES",
+      "fr_FR": "fr",
+      "it_IT": "it",
+      "pt_BR": "pt_BR",
+    },
+    "dest": "exoplatform/gamification/navigation/group/platform/administrators.properties",
+    "update_option": "update_as_unapproved",
+
+  },
+]
