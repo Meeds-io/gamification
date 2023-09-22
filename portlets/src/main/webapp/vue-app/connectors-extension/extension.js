@@ -57,6 +57,15 @@ export function init() {
   });
 
   extensionRegistry.registerComponent('gamification-admin-connector', 'admin-connector-item', {
+    id: 'notionSetting',
+    name: 'notion',
+    image: '/gamification-portlets/images/connector/notion.svg',
+    title: 'Notion',
+    description: 'gamification.admin.notion.label.description',
+    comingSoon: true,
+  });
+
+  extensionRegistry.registerComponent('gamification-admin-connector', 'admin-connector-item', {
     id: 'slackSetting',
     name: 'slack',
     icon: 'fab fa-slack',
@@ -65,6 +74,7 @@ export function init() {
     description: 'gamification.admin.slack.label.description',
     comingSoon: true,
   });
+
   extensionRegistry.registerComponent('gamification-admin-connector', 'admin-connector-item', {
     id: 'twitterSetting',
     name: 'twitter',
