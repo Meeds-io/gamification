@@ -67,7 +67,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               v-if="actionValueExtension"
               :action-label="actionLabel"
               :action-u-r-l="actionURL"
-              :action-icon="actionIcon" />
+              :event-name="eventName" />
             <a
               v-else
               :href="realization.url"
@@ -136,7 +136,7 @@ export default {
     },
     actionLabel() {
       if (this.isAutomaticType) {
-        const key = `exoplatform.gamification.gamificationinformation.rule.title.${this.realization.actionLabel}`;
+        const key = `gamification.event.title.${this.realization.actionLabel}`;
         if (this.$te(key)) {
           return this.$t(key);
         }
@@ -183,9 +183,6 @@ export default {
           .find(extension => extension.match && extension.match(this.eventName)) || null;
       }
       return null;
-    },
-    actionIcon() {
-      return this.actionValueExtension?.icon;
     },
   },
 };

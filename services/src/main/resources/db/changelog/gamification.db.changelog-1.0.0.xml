@@ -697,4 +697,58 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </addColumn>
     </changeSet>
 
+    <changeSet author="exo-gamification" id="1.0.0-63">
+      <createTable tableName="GAMIFICATION_CONNECTOR_ACCOUNTS">
+        <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+          <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_CONNECTOR_ACCOUNTS"/>
+        </column>
+        <column name="CONNECTOR_NAME" type="NVARCHAR(250)">
+          <constraints nullable="false"/>
+        </column>
+        <column name="REMOTE_ID" type="NVARCHAR(250)"/>
+        <column name="USER_ID" type="BIGINT">
+          <constraints nullable="false"/>
+        </column>
+      </createTable>
+      <addUniqueConstraint columnNames="CONNECTOR_NAME, REMOTE_ID" tableName="GAMIFICATION_CONNECTOR_ACCOUNTS"/>
+    </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-64" dbms="oracle,postgresql">
+      <createSequence sequenceName="SEQ_GAMIFICATION_CONNECTOR_ACCOUNTS_ID" startValue="1" />
+    </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-65">
+        <createTable tableName="GAMIFICATION_EVENTS">
+            <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_EVENTS"/>
+            </column>
+            <column name="TITLE" type="NVARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TYPE" type="NVARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CANCELLER_EVENTS" type="NVARCHAR(2000)"/>
+            <column name="EVENT_TRIGGER" type="NVARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-66" dbms="oracle,postgresql">
+        <createSequence sequenceName="SEQ_GAMIFICATION_EVENTS_ID" startValue="1"/>
+    </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-67">
+        <createTable tableName="GAMIFICATION_EVENT_SETTINGS">
+            <column name="ID" type="BIGINT">
+                <constraints foreignKeyName="FK_GAMIFICATION_EVENT_SETTINGS" references="GAMIFICATION_EVENTS(ID)" deferrable="false" initiallyDeferred="false" deleteCascade="true" />
+            </column>
+            <column name="NAME" type="NVARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="VALUE" type="LONGTEXT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci" />
+        </modifySql>
+    </changeSet>
 </databaseChangeLog>

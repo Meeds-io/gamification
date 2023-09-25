@@ -26,7 +26,13 @@ import java.util.TimeZone;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
+import io.meeds.gamification.dao.*;
+import io.meeds.gamification.service.*;
+import io.meeds.gamification.service.impl.EventRegistryImpl;
+import io.meeds.gamification.storage.EventStorage;
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.commons.api.settings.SettingService;
+import org.exoplatform.web.security.codec.CodecInitializer;
 import org.junit.After;
 import org.junit.Before;
 
@@ -60,10 +66,6 @@ import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.RecurrenceType;
-import io.meeds.gamification.dao.BadgeDAO;
-import io.meeds.gamification.dao.ProgramDAO;
-import io.meeds.gamification.dao.RealizationDAO;
-import io.meeds.gamification.dao.RuleDAO;
 import io.meeds.gamification.entity.BadgeEntity;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RealizationEntity;
@@ -75,12 +77,6 @@ import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.rest.BadgeRest;
 import io.meeds.gamification.rest.ProgramRest;
 import io.meeds.gamification.search.RuleIndexingServiceConnector;
-import io.meeds.gamification.service.AnnouncementService;
-import io.meeds.gamification.service.BadgeService;
-import io.meeds.gamification.service.ProgramService;
-import io.meeds.gamification.service.RealizationService;
-import io.meeds.gamification.service.RuleRegistry;
-import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.ProgramStorage;
 import io.meeds.gamification.storage.RealizationStorage;
 import io.meeds.gamification.storage.RuleStorage;
@@ -162,8 +158,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected ListenerService              listenerService;
 
-  protected RuleRegistry                 ruleRegistry;
-
   protected RealizationService           realizationService;
 
   protected BadgeDAO                     badgeStorage;
@@ -179,12 +173,30 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected RuleDAO                      ruleDAO;
 
   protected RealizationDAO               realizationDAO;
+  
+  protected ConnectorAccountDAO          connectorAccountDAO;
 
   protected RealizationStorage           realizationsStorage;
 
   protected RuleIndexingServiceConnector ruleIndexingServiceConnector;
+  
+  protected ConnectorService             connectorService;
+  
+  protected ConnectorSettingService      connectorSettingService;
+
+  protected EventDAO                     eventDAO;
+
+  protected EventStorage                 eventStorage;
+
+  protected EventService                 eventService;
+
+  protected EventRegistryImpl            eventRegistry;
 
   protected SpaceService                 spaceService;
+  
+  protected SettingService               settingService;
+
+  protected CodecInitializer               codecInitializer;
 
   protected IdentityRegistry             identityRegistry;
 
@@ -204,6 +216,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
     ruleDAO = ExoContainerContext.getService(RuleDAO.class);
     realizationDAO = ExoContainerContext.getService(RealizationDAO.class);
+    connectorAccountDAO = ExoContainerContext.getService(ConnectorAccountDAO.class);
     identityManager = ExoContainerContext.getService(IdentityManager.class);
     domainStorage = ExoContainerContext.getService(ProgramStorage.class);
     fileService = ExoContainerContext.getService(FileService.class);
@@ -215,7 +228,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     programService = ExoContainerContext.getService(ProgramService.class);
     ruleService = ExoContainerContext.getService(RuleService.class);
     listenerService = ExoContainerContext.getService(ListenerService.class);
-    ruleRegistry = ExoContainerContext.getService(RuleRegistry.class);
     realizationService = ExoContainerContext.getService(RealizationService.class);
     entityManagerService = ExoContainerContext.getService(EntityManagerService.class);
     manageBadgesEndpoint = ExoContainerContext.getService(BadgeRest.class);
@@ -226,7 +238,15 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     programDAO = ExoContainerContext.getService(ProgramDAO.class);
     realizationsStorage = ExoContainerContext.getService(RealizationStorage.class);
     ruleIndexingServiceConnector = ExoContainerContext.getService(RuleIndexingServiceConnector.class);
+    connectorSettingService = ExoContainerContext.getService(ConnectorSettingService.class);
+    connectorService = ExoContainerContext.getService(ConnectorService.class);
+    eventDAO = ExoContainerContext.getService(EventDAO.class);
+    eventStorage = ExoContainerContext.getService(EventStorage.class);
+    eventService = ExoContainerContext.getService(EventService.class);
+    eventRegistry = ExoContainerContext.getService(EventRegistryImpl.class);
     spaceService = ExoContainerContext.getService(SpaceService.class);
+    settingService = ExoContainerContext.getService(SettingService.class);
+    codecInitializer = ExoContainerContext.getService(CodecInitializer.class);
     identityRegistry = ExoContainerContext.getService(IdentityRegistry.class);
     resourceBinder = ExoContainerContext.getService(ResourceBinder.class);
     RequestHandlerImpl requestHandler = ExoContainerContext.getService(RequestHandlerImpl.class);
@@ -254,6 +274,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       badgeStorage.deleteAll();
       ruleDAO.deleteAll();
       programDAO.deleteAll();
+      connectorAccountDAO.deleteAll();
+      eventDAO.deleteAll();
       domainStorage.clearCache();
       ruleStorage.clearCache();
       end();

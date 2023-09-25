@@ -88,6 +88,10 @@
   </component>
 
   <component>
+    <type>io.meeds.gamification.dao.ConnectorAccountDAO</type>
+  </component>
+
+  <component>
     <key>io.meeds.gamification.service.RealizationService</key>
     <type>io.meeds.gamification.service.impl.RealizationServiceImpl</type>
   </component>
@@ -106,9 +110,23 @@
   </component>
 
   <component>
-    <key>io.meeds.gamification.service.RuleRegistry</key>
-    <type>io.meeds.gamification.service.impl.RuleRegistryImpl</type>
+    <type>io.meeds.gamification.dao.EventDAO</type>
   </component>
+
+  <component>
+    <key>io.meeds.gamification.service.EventRegistry</key>
+    <type>io.meeds.gamification.service.impl.EventRegistryImpl</type>
+  </component>
+
+  <component>
+    <key>io.meeds.gamification.service.EventService</key>
+    <type>io.meeds.gamification.service.impl.EventServiceImpl</type>
+  </component>
+
+  <component>
+    <type>io.meeds.gamification.storage.EventStorage</type>
+  </component>
+
 
   <component>
     <type>org.exoplatform.commons.search.es.client.ElasticIndexingAuditTrail</type>
@@ -116,6 +134,21 @@
 
   <component>
     <type>org.exoplatform.commons.search.es.client.ElasticSearchingClient</type>
+  </component>
+
+  <component>
+    <key>io.meeds.gamification.service.ConnectorService</key>
+    <type>io.meeds.gamification.service.impl.ConnectorServiceImpl</type>
+  </component>
+
+  <component>
+    <key>io.meeds.gamification.storage.ConnectorAccountStorage</key>
+    <type>io.meeds.gamification.storage.cached.ConnectorAccountCachedStorage</type>
+  </component>
+
+  <component>
+    <key>io.meeds.gamification.service.ConnectorSettingService</key>
+    <type>io.meeds.gamification.service.impl.ConnectorSettingServiceImpl</type>
   </component>
 
   <component>

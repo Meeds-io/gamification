@@ -366,14 +366,10 @@ export default {
     eventNames() {
       this.events.filter(event => event != null).forEach(event => {
         const eventObject = {};
-        eventObject.name = event;
-        let fieldLabelI18NKey = `exoplatform.gamification.gamificationinformation.rule.title.${event}`;
-        let fieldLabelI18NValue = this.$t(fieldLabelI18NKey);
-        if (fieldLabelI18NValue === fieldLabelI18NKey) {
-          fieldLabelI18NKey = `exoplatform.gamification.gamificationinformation.rule.title.def_${event}`;
-          fieldLabelI18NValue = this.$t(fieldLabelI18NKey);
-        }
-        eventObject.label = fieldLabelI18NValue === fieldLabelI18NKey ? event : fieldLabelI18NValue;
+        const eventTitle = event.title;
+        eventObject.name = eventTitle;
+        const fieldLabelI18NKey = `gamification.event.title.${eventTitle}`;
+        eventObject.label = this.$te(fieldLabelI18NKey) ? this.$t(fieldLabelI18NKey) : eventTitle;
         this.eventMapping.push(eventObject);
       });
       return this.eventMapping;
@@ -527,8 +523,8 @@ export default {
     },
     retrieveEvents() {
       if (!this.events?.length) {
-        return this.$ruleService.getEvents()
-          .then(events => this.events = events || []);
+        return this.$gamificationConnectorService.getEvents()
+          .then(data => this.events = data.entities || []);
       } else {
         return Promise.resolve(null);
       }

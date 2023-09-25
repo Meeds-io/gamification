@@ -257,14 +257,13 @@ export default {
       );
     },
     getGamificationPoints() {
-      return getGamificationPoints(this.period).then(
-        (data) => {
-          this.userPoints = data.points;
+      return getGamificationPoints(this.period)
+        .then(points => {
+          this.userPoints = points && Number(points) || 0;
           if (this.firstLoadingUserPoints) {
             this.firstLoadingUserPoints = false;
           }
-        }
-      );
+        });
     },
     getSpecificCard(component) {
       this.$emit('specific-card',component);

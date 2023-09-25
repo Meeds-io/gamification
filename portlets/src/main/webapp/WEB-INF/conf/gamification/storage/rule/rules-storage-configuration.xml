@@ -19,316 +19,569 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd" xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
 
-    <!-- Rules storage (JPA) -->
+  <!-- Rules storage (JPA) -->
   <component>
     <type>io.meeds.gamification.dao.RuleDAO</type>
   </component>
+
   <component>
     <key>io.meeds.gamification.storage.RuleStorage</key>
-    <type>io.meeds.gamification.storage.cached.RuleCachedStorage </type>
+    <type>io.meeds.gamification.storage.cached.RuleCachedStorage</type>
   </component>
-    <!-- Rules Service Layer-->
+
+  <!-- Rules Service Layer -->
   <component>
     <key>io.meeds.gamification.service.RuleService</key>
     <type>io.meeds.gamification.service.impl.RuleServiceImpl</type>
   </component>
 
-    <!-- Gamification Settings : Rule -->
-  <component>
-    <key>io.meeds.gamification.service.RuleRegistry</key>
-    <type>io.meeds.gamification.service.impl.RuleRegistryImpl</type>
-  </component>
-
-    <!-- Gamification Rule Config -->
+  <!-- Gamification Rule Config -->
   <external-component-plugins>
-    <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
+    <target-component>io.meeds.gamification.service.EventRegistry</target-component>
     <component-plugin>
-      <name>rule.postActivity</name>
+      <name>PostActivity</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>postActivity</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>postActivity</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>postActivity</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.postActivityComment</name>
+      <name>PostActivityComment</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>postActivityComment</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>postActivityComment</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>postActivityComment</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.likeActivity</name>
+      <name>LikeActivity</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>likeActivity</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>likeActivity</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>likeActivity</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.likeActivityComment</name>
+      <name>LikeActivityComment</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>likeActivityComment</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>likeActivityComment</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>likeActivityComment</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.receiveActivity</name>
+      <name>ReceiveActivity</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>receiveActivity</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>receiveActivity</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>receiveActivity</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.receiveCommentOnActivity</name>
+      <name>ReceiveCommentOnActivity</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>receiveCommentOnActivity</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>receiveCommentOnActivity</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>receiveCommentOnActivity</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.receiveLikeOnActivity</name>
+      <name>ReceiveLikeOnActivity</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>receiveLikeOnActivity</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>receiveLikeOnActivity</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>receiveLikeOnActivity</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.receiveLikeOnActivityComment</name>
+      <name>ReceiveLikeOnActivityComment</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>receiveLikeOnActivityComment</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>receiveLikeOnActivityComment</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>receiveLikeOnActivityComment</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.AddUserProfileAvatar</name>
+      <name>AddUserProfileAvatar</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>addUserProfileAvatar</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>addUserProfileAvatar</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>addUserProfileAvatar</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.AddUserProfileBanner</name>
+      <name>AddUserProfileBanner</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>addUserProfileBanner</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>addUserProfileBanner</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>addUserProfileBanner</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.AddUserProfileAboutMe</name>
+      <name>AddUserProfileAboutMe</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>addUserProfileAboutMe</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>addUserProfileAboutMe</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>addUserProfileAboutMe</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.addUserProfileContactInformation</name>
+      <name>AddUserProfileContactInformation</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>addUserProfileContactInformation</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>addUserProfileContactInformation</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>addUserProfileContactInformation</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.addUserProfileWorkExperience</name>
+      <name>AddUserProfileWorkExperience</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>addUserProfileWorkExperience</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>addUserProfileWorkExperience</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>addUserProfileWorkExperience</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.addUserProfileNotificationSetting</name>
+      <name>AddUserProfileNotificationSetting</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>addUserProfileNotificationSetting</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>addUserProfileNotificationSetting</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>addUserProfileNotificationSetting</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.AddSpace</name>
+      <name>AddSpace</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>addSpace</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>addSpace</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>addSpace</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.updateSpaceAvatar</name>
+      <name>UpdateSpaceAvatar</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>updateSpaceAvatar</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>updateSpaceAvatar</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>updateSpaceAvatar</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.updateSpaceBanner</name>
+      <name>UpdateSpaceBanner</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>updateSpaceBanner</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>updateSpaceBanner</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>updateSpaceBanner</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.updateSpaceDescription</name>
+      <name>UpdateSpaceDescription</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>updateSpaceDescription</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>updateSpaceDescription</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>updateSpaceDescription</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.inviteUserToSpace</name>
+      <name>InviteUserToSpace</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>inviteUserToSpace</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>inviteUserToSpace</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>inviteUserToSpace</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.updateSpaceApplications</name>
+      <name>UpdateSpaceApplications</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>updateSpaceApplications</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>updateSpaceApplications</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>updateSpaceApplications</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.pinActivityOnSpace</name>
+      <name>PinActivityOnSpace</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>pinActivityOnSpace</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>pinActivityOnSpace</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>pinActivityOnSpace</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.JoinSpace</name>
+      <name>JoinSpace</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>joinSpace</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>joinSpace</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>joinSpace</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.GrantUserAsLead</name>
+      <name>GrantUserAsLead</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>becomeSpaceManager</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>becomeSpaceManager</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>becomeSpaceManager</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.SendRelationshipRequest</name>
+      <name>SendRelationshipRequest</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>sendRelationshipRequest</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>sendRelationshipRequest</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>sendRelationshipRequest</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>rule.ReceiveRelationshipRequest</name>
+      <name>ReceiveRelationshipRequest</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>receiveRelationshipRequest</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>receiveRelationshipRequest</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>receiveRelationshipRequest</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
-  </external-component-plugins>
-  <external-component-plugins>
-    <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
     <component-plugin>
-      <name>rule.userLogin</name>
+      <name>UserLogin</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
       <init-params>
-        <value-param>
-          <name>rule-event</name>
-          <value>userLogin</value>
-        </value-param>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>userLogin</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>userLogin</string>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
   </external-component-plugins>
