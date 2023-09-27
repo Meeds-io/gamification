@@ -77,7 +77,7 @@ public class RuleTranslationPluginTest extends AbstractServiceTest {
                                                                 null,
                                                                 Collections.singletonMap(Locale.ENGLISH, "label"),
                                                                 "root2"));
-    assertThrows(IllegalArgumentException.class, // NOSONAR
+    assertThrows(IllegalAccessException.class, // NOSONAR
                  () -> translationService.saveTranslationLabels(RuleTranslationPlugin.RULE_OBJECT_TYPE,
                                                                 ruleId,
                                                                 "title",
