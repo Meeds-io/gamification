@@ -77,7 +77,7 @@ public class ProgramTranslationPluginTest extends AbstractServiceTest {
                                                                 null,
                                                                 Collections.singletonMap(Locale.ENGLISH, "label"),
                                                                 "root2"));
-    assertThrows(IllegalArgumentException.class, // NOSONAR
+    assertThrows(IllegalAccessException.class, // NOSONAR
                  () -> translationService.saveTranslationLabels(ProgramTranslationPlugin.PROGRAM_OBJECT_TYPE,
                                                                 programId,
                                                                 "title",
