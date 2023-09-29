@@ -104,6 +104,11 @@
       <artifactId>analytics-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.exoplatform.addons.analytics</groupId>
+      <artifactId>analytics-listeners</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- Test Dependencies -->
     <dependency>

@@ -116,6 +116,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <set-method>addListener</set-method>
       <type>io.meeds.gamification.listener.MetadataItemModified</type>
     </component-plugin>
+    <component-plugin>
+      <name>attachment.created</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.analytics.RuleAttachmentAnalyticsListener</type>
+      <init-params>
+        <values-param>
+          <name>supported-type</name>
+          <value>rule</value>
+        </values-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>attachment.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.analytics.RuleAttachmentAnalyticsListener</type>
+      <init-params>
+        <values-param>
+          <name>supported-type</name>
+          <value>rule</value>
+        </values-param>
+      </init-params>
+    </component-plugin>
+
   </external-component-plugins>
 
     <!-- Social listeners -->
