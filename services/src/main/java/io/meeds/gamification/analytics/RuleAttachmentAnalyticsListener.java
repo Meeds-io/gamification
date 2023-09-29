@@ -48,17 +48,16 @@ public class RuleAttachmentAnalyticsListener extends BaseAttachmentAnalyticsList
         statisticData.addParameter("programTitle", rule.getProgram().getTitle());
       }
       statisticData.addParameter("ruleTitle", rule.getTitle());
-      statisticData.addParameter("objectType", "rule");
     }
   }
 
   @Override
-  protected String getModule() {
+  protected String getModule(ObjectAttachmentId objectAttachment) {
     return "gamification";
   }
 
   @Override
-  protected String getSubModule() {
+  protected String getSubModule(ObjectAttachmentId objectAttachment) {
     return "rule";
   }
 }
