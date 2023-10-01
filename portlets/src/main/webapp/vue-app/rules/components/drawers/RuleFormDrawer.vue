@@ -499,6 +499,7 @@ export default {
       }
     },
     ruleDescription() {
+      console.warn('ruleDescription', this.ruleDescription);
       if (this.$refs.ruleDescriptionTranslation) {
         this.$refs.ruleDescriptionTranslation.setValue(this.ruleDescription);
       }
