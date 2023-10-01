@@ -33,6 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-form
         ref="RuleForm"
         v-model="isValidForm"
+        autocomplete="off"
         class="form-horizontal pt-0 pb-4"
         flat
         @submit="saveRule">
@@ -120,10 +121,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       ck-editor-type="rule"
                       oembed
                       @validity-updated="validDescription = $event"
-                      @ready="handleRichEditorReady" />
+                      @ready="setFormInitialized" />
                   </translation-text-field>
                 </v-card-text>
-                <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                <v-card-text class="d-flex flex-grow-1 text-wrap text-left text-subtitle-1 px-0 pb-2">
                   {{ $t('rule.form.label.rewards') }}
                 </v-card-text>
                 <v-card
@@ -141,7 +142,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     required />
                   <label class="my-auto">{{ $t('rule.form.label.points') }}</label>
                 </v-card>
-                <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                <v-card-text class="d-flex flex-grow-1 text-wrap text-left text-subtitle-1 px-0 pb-2">
                   {{ $t('rule.form.label.type') }}
                 </v-card-text>
                 <div class="d-flex flex-row pb-4">
@@ -159,7 +160,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   </v-btn>
                 </div>
                 <div v-if="automaticType">
-                  <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                  <v-card-text class="d-flex flex-grow-1 text-wrap text-left text-subtitle-1 px-0 pb-2">
                     {{ $t('rule.form.label.selectEvent') }}
                   </v-card-text>
                   <v-card-text v-if="eventNames.length" class="pa-0">
@@ -193,7 +194,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   </v-card-text>
                 </div>
                 <div v-if="ruleId">
-                  <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                  <v-card-text class="d-flex flex-grow-1 text-wrap text-left text-subtitle-1 px-0 pb-2">
                     {{ $t('rule.form.label.status') }}
                   </v-card-text>
                   <div class="d-flex flex-row">
@@ -325,6 +326,8 @@ export default {
     ruleTitle: null,
     ruleDescription: null,
     originalRule: null,
+    originalRuleTitleTranslations: {},
+    originalRuleDescriptionTranslations: {},
     ruleToUpdate: {},
     ruleTitleTranslations: {},
     ruleDescriptionTranslations: {},
@@ -442,7 +445,38 @@ export default {
       return this.computeRuleModel(this.rule, this.program, this.ruleDescription);
     },
     ruleChanged() {
-      return this.originalRule && JSON.stringify(this.ruleToSave) !== JSON.stringify(this.originalRule);
+      if (!this.originalRule || ! this.originalRuleTitleTranslations || !this.originalRuleDescriptionTranslations) {
+        return false;
+      }
+      return JSON.stringify({
+        title: JSON.parse(JSON.stringify(this.originalRuleTitleTranslations)),
+        description: JSON.parse(JSON.stringify(this.originalRuleDescriptionTranslations)),
+        type: this.originalRule.type,
+        score: this.originalRule.score,
+        enabled: this.originalRule.enabled,
+        event: this.originalRule.type === 'AUTOMATIC' && this.originalRule.event || null,
+        startDate: this.originalRule.startDate,
+        endDate: this.originalRule.endDate,
+        recurrence: this.originalRule.recurrence,
+        prerequisiteRuleIds: this.originalRule.prerequisiteRules?.map?.(r => r.id)?.filter?.(id => id),
+        publish: this.originalRule.publish,
+        message: this.originalRule.message,
+        templateParams: this.originalRule.templateParams
+      }) !== JSON.stringify({
+        title: JSON.parse(JSON.stringify(this.ruleTitleTranslations)),
+        description: JSON.parse(JSON.stringify(this.ruleDescriptionTranslations)),
+        type: this.ruleToSave.type,
+        score: this.ruleToSave.score,
+        enabled: this.ruleToSave.enabled,
+        event: this.ruleToSave.type === 'AUTOMATIC' && this.ruleToSave.event || null,
+        startDate: this.ruleToSave.startDate,
+        endDate: this.ruleToSave.endDate,
+        recurrence: this.ruleToSave.recurrence,
+        prerequisiteRuleIds: this.ruleToSave.prerequisiteRules?.map?.(r => r.id)?.filter?.(id => id),
+        publish: this.ruleToSave.publish,
+        message: this.ruleToSave.message,
+        templateParams: this.ruleToSave.templateParams
+      });
     },
     confirmCloseLabels() {
       return {
@@ -465,6 +499,7 @@ export default {
       }
     },
     ruleDescription() {
+      console.warn('ruleDescription', this.ruleDescription);
       if (this.$refs.ruleDescriptionTranslation) {
         this.$refs.ruleDescriptionTranslation.setValue(this.ruleDescription);
       }
@@ -533,7 +568,6 @@ export default {
       this.$refs.ruleFormDrawer.close();
     },
     clear() {
-      this.$refs.ruleDescriptionEditor?.destroyCKEditor();
       this.stepper = 0;
       this.rule.enabled = true;
       this.rule.event = null;
@@ -567,10 +601,6 @@ export default {
         this.eventExist = this.programEvents.find(programEvent => eventObject.name === programEvent.event && programEvent.ruleId !== this.rule?.id);
       }
     },
-    handleRichEditorReady() {
-      this.setFormInitialized();
-      this.ruleDescription = this.rule?.description || '';
-    },
     saveRule() {
       this.saving = true;
       if (this.rule.id) {
@@ -596,6 +626,8 @@ export default {
             }
             this.saving = false; // To Keep to be able to close drawer
             this.originalRule = null;
+            this.originalRuleTitleTranslations = null;
+            this.originalRuleDescriptionTranslations = null;
             return this.$nextTick();
           })
           .then(() => this.close())
@@ -630,6 +662,8 @@ export default {
             }
             this.saving = false; // To Keep to be able to close drawer
             this.originalRule = null;
+            this.originalRuleTitleTranslations = null;
+            this.originalRuleDescriptionTranslations = null;
             return this.$nextTick();
           })
           .then(() => this.close())
@@ -695,6 +729,8 @@ export default {
     },
     setFormInitialized() {
       this.originalRule = this.computeRuleModel(this.rule, this.program);
+      this.originalRuleTitleTranslations = this.ruleTitleTranslations && JSON.parse(JSON.stringify(this.ruleTitleTranslations));
+      this.originalRuleDescriptionTranslations = this.ruleDescriptionTranslations && JSON.parse(JSON.stringify(this.ruleDescriptionTranslations));
     },
     previousStep(event) {
       if (event) {
