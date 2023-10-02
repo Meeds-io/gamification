@@ -38,6 +38,7 @@
         id="EngagementCenterProgramDrawerForm"
         ref="form"
         v-model="isValidForm"
+        autocomplete="off"
         class="pa-0"
         @submit="
           $event.preventDefault();
@@ -308,6 +309,8 @@ export default {
     programDescription: null,
     programTitleTranslations: {},
     programDescriptionTranslations: {},
+    originalProgramTitleTranslations: {},
+    originalProgramDescriptionTranslations: {},
     audience: null,
     isValidForm: true,
     drawer: false,
@@ -384,9 +387,33 @@ export default {
       );
     },
     programChanged() {
-      return this.deleteCover
-          || this.deleteAvatar
-          || this.originalProgram && JSON.stringify(this.programToSave) !== JSON.stringify(this.originalProgram);
+      if (this.deleteCover || this.deleteAvatar) {
+        return true;
+      } else if (!this.originalProgram || !this.program) {
+        return false;
+      } else {
+        return JSON.stringify({
+          title: this.programTitleTranslations,
+          description: this.programDescriptionTranslations,
+          color: this.programToSave.color,
+          coverUploadId: this.programToSave.coverUploadId,
+          avatarUploadId: this.programToSave.avatarUploadId,
+          spaceId: this.programToSave.spaceId || 0,
+          ownerIds: this.programToSave.ownerIds || null,
+          open: this.programToSave.open || false,
+          enabled: this.program.enabled || false,
+        }) !== JSON.stringify({
+          title: this.originalProgramTitleTranslations,
+          description: this.originalProgramDescriptionTranslations,
+          color: this.originalProgram.color,
+          coverUploadId: this.originalProgram.coverUploadId,
+          avatarUploadId: this.originalProgram.avatarUploadId,
+          spaceId: this.originalProgram.spaceId || 0,
+          ownerIds: this.originalProgram.ownerIds || null,
+          open: this.originalProgram.open || false,
+          enabled: this.originalProgram.enabled || false,
+        });
+      }
     },
     confirmCloseLabels() {
       return {
@@ -509,6 +536,7 @@ export default {
       this.$refs.programDrawer.open();
     },
     close() {
+      this.$refs.programDescriptionEditor?.destroyCKEditor();
       this.$refs.programDrawer.close();
     },
     addDescription(value) {
@@ -531,13 +559,6 @@ export default {
     removeAvatar() {
       this.deleteAvatar = !this.defaultAvatar;
       this.$set(this.program, 'avatarUploadId', null);
-    },
-    handleClosed() {
-      this.clear();
-      this.$refs.programDescriptionEditor?.destroyCKEditor();
-    },
-    clear() {
-      this.stepper = 0;
     },
     save() {
       if (this.disabledSave) {
@@ -629,6 +650,8 @@ export default {
       if (this.originalProgram) {
         this.originalProgram.title = this.programTitle;
         this.originalProgram.description = this.programDescription;
+        this.originalProgramTitleTranslations = this.programTitleTranslations && JSON.parse(JSON.stringify(this.programTitleTranslations));
+        this.originalProgramDescriptionTranslations = this.programDescriptionTranslations && JSON.parse(JSON.stringify(this.programDescriptionTranslations));
       }
     },
   }
