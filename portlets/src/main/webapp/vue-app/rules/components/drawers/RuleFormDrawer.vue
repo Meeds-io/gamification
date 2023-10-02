@@ -33,6 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-form
         ref="RuleForm"
         v-model="isValidForm"
+        autocomplete="off"
         class="form-horizontal pt-0 pb-4"
         flat
         @submit="saveRule">
