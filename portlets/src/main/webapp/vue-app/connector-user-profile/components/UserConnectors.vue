@@ -90,7 +90,7 @@ export default {
       return !this.loading && !this.enabledConnectedConnectors.length;
     },
     displayed() {
-      return this.loading || this.enabledConnectors?.length;
+      return this.loading || (this.enabledConnectors?.length && (!this.notConnectedYet || (this.notConnectedYet && this.isCurrentUserProfile)));
     },
   },
   created() {
