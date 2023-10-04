@@ -66,7 +66,9 @@
         :template-params="templateParams"
         :placeholder="$t('rule.detail.announceEditor.placeholder')"
         :tag-enabled="false"
-        ck-editor-type="announcementContent"
+        :object-id="metadataObjectId"
+        object-type="activity"
+        ck-editor-type="activityComment"
         class="flex my-3"
         autofocus
         @validity-updated="validLength = $event" />
@@ -109,6 +111,7 @@ export default {
     userId: eXo.env.portal.userIdentityId,
     username: eXo.env.portal.userName,
     validLength: true,
+    metadataObjectId: null,
   }),
   computed: {
     spaceId() {
@@ -173,7 +176,13 @@ export default {
       };
       this.sending = true;
       this.$announcementService.createAnnouncement(announcement)
-        .then(createdAnnouncement => {
+        .then((createdAnnouncement) => {
+          this.announcement = createdAnnouncement;
+          this.metadataObjectId = `comment${createdAnnouncement.activityId}`;
+          return this.$nextTick();
+        })
+        .then(() => this.$refs?.announcementEditor?.saveAttachments())
+        .then(() => {
           document.dispatchEvent(new CustomEvent('alert-message-html-confeti', {detail: {
             alertType: 'success',
             alertMessage: `
@@ -181,12 +190,12 @@ export default {
                 ${this.$t('challenges.announcementCreateSuccess')}
               </div>
             `,
-            alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${createdAnnouncement.activityId}`,
+            alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${this.announcement.activityId}`,
             alertLinkText: this.$t('announcement.alert.see'),
             alertLinkTarget: '_self',
           }}));
           this.$root.$emit('announcement-added-event', {detail: {
-            announcement: createdAnnouncement,
+            announcement: this.announcement,
             challengeId: this.rule.id,
           }});
           this.comment = null;
