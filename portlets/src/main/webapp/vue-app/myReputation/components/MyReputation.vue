@@ -138,7 +138,12 @@ export default {
   },
   methods: {
     clickOnKudosEmptyActionLink() {
-      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/people`;
+      document.dispatchEvent(new CustomEvent('exo-kudos-open-send-modal', {detail: {
+        id: eXo.env.portal.userIdentityId,
+        type: 'USER_PROFILE',
+        parentId: '',
+        owner: eXo.env.portal.userName,
+      }}));
     },
   },
 };
