@@ -95,6 +95,7 @@ public class ActionAnnouncedNotificationPlugin extends BaseNotificationPlugin {
     }
     return NotificationInfo.instance()
                            .to(receivers.stream().toList())
+                           .setSpaceId(rule.getSpaceId())
                            .with(ANNOUNCEMENT_ID_NOTIFICATION_PARAM, String.valueOf(announcement.getId()))
                            .with(SocialNotificationUtils.ACTIVITY_ID.getKey(), String.valueOf(announcement.getActivityId()))
                            .key(getId())
