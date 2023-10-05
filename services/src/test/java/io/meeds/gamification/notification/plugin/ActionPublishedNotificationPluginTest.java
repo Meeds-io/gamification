@@ -87,6 +87,7 @@ public class ActionPublishedNotificationPluginTest extends AbstractPluginTest { 
     MessageInfo info = buildMessageInfo(ctx);
 
     assertBody(info, rule.getTitle());
+    assertEquals(1L, rulePublicationNotification.getSpaceId());
   }
 
 }
