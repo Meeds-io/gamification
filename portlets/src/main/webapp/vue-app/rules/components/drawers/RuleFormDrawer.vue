@@ -310,7 +310,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-btn>
         <v-btn
           v-else
-          :disabled="!ruleChanged || disableSaveButton"
+          :disabled="disableSaveButton"
           class="btn btn-primary"
           @click="saveRule">
           {{ saveButtonLabel }}
@@ -419,7 +419,7 @@ export default {
       return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.isValidForm;
     },
     disableSaveButton() {
-      return this.disableNextButton || !this.durationValid || !this.recurrenceValid || !this.prerequisiteRuleValid || (this.enablePublication && !this.validMessage);
+      return !this.ruleChanged || this.disableNextButton || !this.durationValid || !this.recurrenceValid || !this.prerequisiteRuleValid || (this.enablePublication && !this.validMessage);
     },
     drawerTitle() {
       return this.ruleId ? this.$t('rule.form.label.edit') : this.$t('rule.form.label.add');
@@ -447,7 +447,7 @@ export default {
       return this.computeRuleModel(this.rule, this.program, this.ruleDescription);
     },
     ruleChanged() {
-      if (!this.attachmentsEdited || !this.originalRule || ! this.originalRuleTitleTranslations || !this.originalRuleDescriptionTranslations) {
+      if (!this.originalRule || ! this.originalRuleTitleTranslations || !this.originalRuleDescriptionTranslations) {
         return false;
       }
       return this.attachmentsEdited || JSON.stringify({
