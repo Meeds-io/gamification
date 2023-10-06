@@ -71,6 +71,13 @@ jobs:
         with:
           ref: develop
           token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.SWF_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SWF_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
       - name: Merge translation to develop
         run: |
           git fetch origin integration/6.5.x-translation
@@ -130,6 +137,13 @@ jobs:
         with:
           ref: develop-exo
           token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.SWF_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SWF_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
       - name: Merge translation to develop-exo
         run: |
           git fetch origin integration/6.5.x-exo-translation
@@ -189,6 +203,13 @@ jobs:
         with:
           ref: develop-meed
           token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.SWF_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SWF_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
       - name: Merge translation to develop-meed
         run: |
           git fetch origin integration/6.5.x-meed-translation
