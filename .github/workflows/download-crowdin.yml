@@ -28,7 +28,7 @@ jobs:
         run: |
           wait_exec=0;
           while [ $(curl -s -H "Accept: application/json" -H "Authorization: Bearer ${{ secrets.CROWDIN_PERSONAL_TOKEN }}"\
-                                                                       https://crowdin.com/api/v2/projects/4464/translations/builds \
+                                                                       https://crowdin.com/api/v2/projects/${{ secrets.CROWDIN_PROJECT_ID }}/translations/builds \
                                                                        | jq -r 'any(.data[].data; select(.status != "finished" ))') == "true" ] && (( wait_exec<30 )) ; do
            sleep 10;
            ((wait_exec=wait_exec+1));
