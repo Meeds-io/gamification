@@ -19,7 +19,6 @@ package io.meeds.gamification.service;
 
 import java.util.Collection;
 
-import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.services.security.Identity;
 
 import io.meeds.gamification.model.RemoteConnector;
@@ -61,11 +60,8 @@ public interface ConnectorService {
    * @param  identity                     the user identity
    * @return                              the connector identifier
    *                                      {@link String}
-   * @throws ObjectAlreadyExistsException when the remote identifier is already
-   *                                        associated to current or a different
-   *                                        user
    */
-  String connect(String connectorName, String connectorUserId, String accessToken, Identity identity) throws ObjectAlreadyExistsException;
+  String connect(String connectorName, String connectorUserId, String accessToken, Identity identity);
 
   /**
    * Disconnect a user from their connector account

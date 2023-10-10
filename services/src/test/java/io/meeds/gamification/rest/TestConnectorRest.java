@@ -66,14 +66,11 @@ public class TestConnectorRest extends AbstractServiceTest { // NOSONAR
     startSessionAs("root1");
     setConnectorPlugin();
 
-    byte[] formData = ("remoteId=connectorRemoteId&accessToken=accessToken").getBytes();
-    MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
-    headers.putSingle("Content-Type", "application/x-www-form-urlencoded");
-    ContainerResponse response = launcher.service("POST",
-                                                  getURLResource("connectors/connect/connectorName"),
+    ContainerResponse response = launcher.service("GET",
+                                                  getURLResource("connectors/oauthCallback/connectorName?code=accessToken"),
                                                   "",
-                                                  headers,
-                                                  formData,
+                                                  null,
+                                                  null,
                                                   null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
@@ -84,21 +81,18 @@ public class TestConnectorRest extends AbstractServiceTest { // NOSONAR
     startSessionAs("root1");
 
     setConnectorPlugin();
+    ContainerResponse response = launcher.service("GET",
+            getURLResource("connectors/oauthCallback/connectorName?code=accessToken"),
+            "",
+            null,
+            null,
+            null);
 
-    byte[] formData = ("remoteId=connectorRemoteId&accessToken=accessToken").getBytes();
-    MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
-    headers.putSingle("Content-Type", "application/x-www-form-urlencoded");
-    ContainerResponse response = launcher.service("POST",
-                                                  getURLResource("connectors/connect/connectorName"),
-                                                  "",
-                                                  headers,
-                                                  formData,
-                                                  null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
-    formData = ("remoteId=connectorRemoteId").getBytes();
-    headers = new MultivaluedMapImpl();
+    byte[] formData = ("remoteId=connectorRemoteId").getBytes();
+    MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
     headers.putSingle("Content-Type", "application/x-www-form-urlencoded");
     response = launcher.service("DELETE", getURLResource("connectors/disconnect/connectorName"), "", headers, formData, null);
 
