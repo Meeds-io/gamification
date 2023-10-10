@@ -16,13 +16,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-list v-if="connectedConnectors && connectedConnectors.length !== 0" class="pa-0">
-    <v-list-item class="pa-0">
-      <gamification-user-connector-setting-item
-        v-for="connector in connectedConnectors"
-        :key="connector.name"
-        :connector="connector"
-        :connector-extensions="connectorExtensions" />
-    </v-list-item>
+    <gamification-user-connector-setting-item
+      v-for="connector in enabledConnectors"
+      :key="connector.name"
+      :connector="connector"
+      :connector-extensions="connectorExtensions" />
   </v-list>
 </template>
 
@@ -36,6 +34,19 @@ export default {
     connectorExtensions: {
       type: Array,
       default: () => [],
+    },
+  },
+  computed: {
+    enabledConnectors() {
+      return this.connectedConnectors.slice().sort((connector1, connector2) => {
+        return this.getConnectorRank(connector1) - this.getConnectorRank(connector2);
+      });
+    },
+  },
+  methods: {
+    getConnectorRank(connector) {
+      const extension = this.connectorExtensions.find(item => connector.name === item.name);
+      return extension ? extension.rank : 0;
     },
   },
 };
