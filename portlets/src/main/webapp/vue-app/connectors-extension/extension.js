@@ -74,14 +74,4 @@ export function init() {
     description: 'gamification.admin.slack.label.description',
     comingSoon: true,
   });
-
-  extensionRegistry.registerComponent('gamification-admin-connector', 'admin-connector-item', {
-    id: 'twitterSetting',
-    name: 'twitter',
-    icon: 'fab fa-twitter',
-    iconColorClass: 'blue--text text--lighten-1',
-    title: 'Twitter',
-    description: 'gamification.admin.twitter.label.description',
-    comingSoon: true,
-  });
 }
