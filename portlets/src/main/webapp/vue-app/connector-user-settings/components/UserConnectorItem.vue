@@ -22,10 +22,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <div class="d-flex text-truncate">
           <div class="d-flex align-center pe-1 pe-sm-0">
             <v-icon
+              v-if="icon"
               size="33"
               :class="iconColorClass">
               {{ icon }}
             </v-icon>
+            <img
+              v-else
+              :src="image"
+              :alt="name"
+              width="28">
           </div>
           <v-list class="d-none d-sm-inline ms-3">
             <v-list-item-title>
@@ -103,6 +109,9 @@ export default {
     iconColorClass() {
       return this.connectorExtension?.iconColorClass;
     },
+    image() {
+      return this.connectorExtension?.image;
+    },
     title() {
       return this.$t(`${this.connectorExtension?.title}`);
     },
@@ -140,8 +149,7 @@ export default {
     },
     handleConnectCallback(callbackUrl) {
       const url = new URL(callbackUrl);
-      const searchParams = new URLSearchParams(url.search);
-      const accessToken = searchParams.get('code');
+      const accessToken = new URLSearchParams(url.search).toString();
       return this.$gamificationConnectorService.connect(this.connector.name, accessToken, this.connector.identifier)
         .then(() => this.$root.$emit('gamification-connectors-refresh'))
         .catch(e => {
