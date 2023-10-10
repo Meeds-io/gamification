@@ -23,6 +23,7 @@ export function init() {
     title: 'Meeds',
     description: 'gamification.admin.meeds.label.description',
     defaultConnector: true,
+    rank: 10
   });
 
   // Upcoming Connectors
@@ -71,16 +72,6 @@ export function init() {
     iconColorClass: 'purple--text text--darken-4',
     title: 'Slack',
     description: 'gamification.admin.slack.label.description',
-    comingSoon: true,
-  });
-
-  extensionRegistry.registerComponent('gamification-admin-connector', 'admin-connector-item', {
-    id: 'twitterSetting',
-    name: 'twitter',
-    icon: 'fab fa-twitter',
-    iconColorClass: 'blue--text text--lighten-1',
-    title: 'Twitter',
-    description: 'gamification.admin.twitter.label.description',
     comingSoon: true,
   });
 
