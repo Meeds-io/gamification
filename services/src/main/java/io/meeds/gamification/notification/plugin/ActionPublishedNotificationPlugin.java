@@ -75,6 +75,7 @@ public class ActionPublishedNotificationPlugin extends BaseNotificationPlugin {
     }
     return NotificationInfo.instance()
                            .to(targetUsers)
+                           .setSpaceId(rule.getSpaceId())
                            .with(RULE_ID_NOTIFICATION_PARAM, String.valueOf(rule.getId()))
                            .with(RULE_PUBLISHER_NOTIFICATION_PARAM, username)
                            .with(SocialNotificationUtils.ACTIVITY_ID.getKey(), String.valueOf(rule.getActivityId()))

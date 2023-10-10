@@ -97,6 +97,7 @@ public class ActionAnnouncedNotificationPluginTest extends AbstractPluginTest { 
     MessageInfo info = buildMessageInfo(ctx);
 
     assertBody(info, rule.getTitle());
+    assertEquals(1L, ruleAnnouncementNotification.getSpaceId());
   }
 
 }
