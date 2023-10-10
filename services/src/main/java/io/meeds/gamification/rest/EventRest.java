@@ -29,15 +29,12 @@ import io.meeds.gamification.model.filter.EventFilter;
 import io.meeds.gamification.rest.model.EntityList;
 import io.meeds.gamification.service.EventService;
 
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
-import static io.meeds.gamification.utils.Utils.getCurrentUser;
 
 @Path("/gamification/events")
 public class EventRest implements ResourceContainer {

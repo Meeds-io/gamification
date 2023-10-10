@@ -27,10 +27,15 @@
         rel="nofollow noreferrer noopener">
         <v-list-item-avatar class="ms-0 my-0">
           <v-icon
+            v-if="icon"
             size="33"
             :class="iconColorClass">
             {{ icon }}
           </v-icon>
+          <img
+            v-else
+            :src="image"
+            :alt="name">
         </v-list-item-avatar>
         <span
           class="subtitle-1 text-color my-0">{{ connectorRemoteIdentifier }} </span>
@@ -55,8 +60,11 @@ export default {
     connectorRemoteIdentifier() {
       return this.connector?.identifier;
     },
+    name() {
+      return this.connector?.name || '';
+    },
     connectorExtension() {
-      return this.connectorExtensions.find(c => c.name === this.connector?.name);
+      return this.connectorExtensions.find(c => c.name === this.name);
     },
     connectorRemoteIdentifierLink() {
       return `${this.connectorExtension?.PROFILE_BASER_URL}/${this.connectorRemoteIdentifier}`;
@@ -66,6 +74,9 @@ export default {
     },
     iconColorClass() {
       return this.connectorExtension?.iconColorClass;
+    },
+    image() {
+      return this.connectorExtension?.image;
     },
   },
 };
