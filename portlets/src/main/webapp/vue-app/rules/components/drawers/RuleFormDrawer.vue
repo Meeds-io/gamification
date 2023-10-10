@@ -616,11 +616,7 @@ export default {
             if (this.ruleToSave.publish && rule.activityId) {
               document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
                 alertType: 'success',
-                alertMessage: `
-                  <div class="d-flex flex-nowrap pt-1 justify-center">
-                    ${this.$t('programs.details.ruleUpdateAndPublishSuccess')}
-                  </div>
-                `,
+                alertMessage: this.$t('programs.details.ruleUpdateAndPublishSuccess'),
                 alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${rule.activityId}`,
                 alertLinkText: this.$t('rule.alert.see'),
                 alertLinkTarget: '_self',
@@ -659,11 +655,7 @@ export default {
             if (this.ruleToSave.publish && this.originalRule.activityId) {
               document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
                 alertType: 'success',
-                alertMessage: `
-                  <div class="d-flex flex-nowrap pt-1 justify-center">
-                    ${this.$t('programs.details.ruleCreationAndPublishSuccess')}
-                  </div>
-                `,
+                alertMessage: this.$t('programs.details.ruleCreationAndPublishSuccess'),
                 alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${this.originalRule.activityId}`,
                 alertLinkText: this.$t('rule.alert.see'),
                 alertLinkTarget: '_self',
