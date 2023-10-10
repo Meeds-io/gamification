@@ -18,6 +18,13 @@
  *
  */
 import * as gamificationConnectorService from '../connector-user-settings/js/GamificationConnectorService';
+import * as connectorWebSocket from '../connector-user-settings/js/WebSocket.js';
+
+if (!Vue.prototype.$connectorWebSocket) {
+  window.Object.defineProperty(Vue.prototype, '$connectorWebSocket', {
+    value: connectorWebSocket,
+  });
+}
 
 if (!Vue.prototype.$gamificationConnectorService) {
   window.Object.defineProperty(Vue.prototype, '$gamificationConnectorService', {
