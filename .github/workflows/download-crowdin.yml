@@ -55,9 +55,9 @@ jobs:
           download_translations: true
           localization_branch_name: integration/6.5.x-translation
           create_pull_request: false
-          download_translations_args: '-l af -l ar -l ca -l cs -l de -l en -l es-ES -l eu -l fa 
-          -l fi -l fr -l ga-IE -l he -l hi -l id -l it -l ja -l lt -l no -l pt-BR -l ru
-          -l sv-SE -l tr -l uk -l vi -l zh-CN -l zh-TW'
+          download_translations_args: '-l ar -l aro -l az -l ca -l ceb -l co -l cs -l de -l el -l en -l es-ES -l eu -l fa -l fi
+           -l fil -l fr -l hi -l hu -l id -l it -l ja -l kab -l ko -l lt -l ms -l nl -l no -l pcm -l pl -l pt-BR -l pt-PT -l ro -l ru
+           -l sk -l sl -l sv-SE -l th -l tl -l tr -l uk -l ur-IN -l vi -l zh-CN -l zh-TW'
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
@@ -121,9 +121,9 @@ jobs:
           localization_branch_name: integration/6.5.x-exo-translation
           create_pull_request: false
           skip_ref_checkout: true
-          download_translations_args: '-l af -l ar -l ca -l cs -l de -l en -l es-ES -l eu -l fa 
-          -l fi -l fr -l ga-IE -l he -l hi -l id -l it -l ja -l lt -l no -l pt-BR -l ru
-          -l sv-SE -l tr -l uk -l vi -l zh-CN -l zh-TW'
+          download_translations_args: '-l ar -l aro -l az -l ca -l ceb -l co -l cs -l de -l el -l en -l es-ES -l eu -l fa -l fi
+           -l fil -l fr -l hi -l hu -l id -l it -l ja -l kab -l ko -l lt -l ms -l nl -l no -l pcm -l pl -l pt-BR -l pt-PT -l ro -l ru
+           -l sk -l sl -l sv-SE -l th -l tl -l tr -l uk -l ur-IN -l vi -l zh-CN -l zh-TW'
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
@@ -187,9 +187,9 @@ jobs:
           localization_branch_name: integration/6.5.x-meed-translation
           create_pull_request: false
           skip_ref_checkout: true
-          download_translations_args: '-l af -l ar -l ca -l cs -l de -l en -l es-ES -l eu -l fa 
-          -l fi -l fr -l ga-IE -l he -l hi -l id -l it -l ja -l lt -l no -l pt-BR -l ru
-          -l sv-SE -l tr -l uk -l vi -l zh-CN -l zh-TW'
+          download_translations_args: '-l ar -l aro -l az -l ca -l ceb -l co -l cs -l de -l el -l en -l es-ES -l eu -l fa -l fi
+           -l fil -l fr -l hi -l hu -l id -l it -l ja -l kab -l ko -l lt -l ms -l nl -l no -l pcm -l pl -l pt-BR -l pt-PT -l ro -l ru
+           -l sk -l sl -l sv-SE -l th -l tl -l tr -l uk -l ur-IN -l vi -l zh-CN -l zh-TW'
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
