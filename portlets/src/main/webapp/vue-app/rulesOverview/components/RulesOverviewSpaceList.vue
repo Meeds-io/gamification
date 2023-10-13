@@ -20,11 +20,8 @@
     :rules="rules"
     :page-size="pageSize"
     :loading="loading"
-    @hide="$emit('hide')">
-    <template #title>
-      {{ $t('gamification.overview.spaceRulesOverviewTitle') }}
-    </template>
-  </gamification-rules-overview-widget>
+    :title="$t('gamification.overview.spaceRulesOverviewTitle')"
+    @hide="$emit('hide')" />
 </template>
 <script>
 export default {

@@ -16,13 +16,12 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <gamification-overview-widget
+  <widget-wrapper
     v-if="hasValidRules"
-    :see-all-url="actionsPageURL"
-    extra-class="pa-0 justify-space-between height-auto">
-    <template #title>
-      {{ $t('gamification.overview.challengesOverviewTitle') }}
-    </template>
+    :title="$t('gamification.overview.challengesOverviewTitle')"
+    :action-url="actionsPageURL"
+    height="338px"
+    min-width="290px">
     <template #content>
       <template v-if="endingRulesCount">
         <div class="d-flex align-center mx-4">
@@ -64,26 +63,24 @@
           class="flex" />
       </template>
     </template>
-  </gamification-overview-widget>
-  <gamification-overview-widget
+  </widget-wrapper>
+  <widget-wrapper
     v-else
-    :loading="loading">
-    <template #title>
-      {{ $t('gamification.overview.emptyChallengesOverviewTitle') }}
-    </template>
-    <template #content>
-      <gamification-overview-widget-row
-        v-show="!loading"
-        class="my-auto">
-        <template #icon>
-          <v-icon color="secondary" size="55px">fas fa-rocket</v-icon>
-        </template>
-        <template #content>
-          <span v-sanitized-html="emptySummaryText"></span>
-        </template>
-      </gamification-overview-widget-row>
-    </template>
-  </gamification-overview-widget>
+    :title="$t('gamification.overview.emptyChallengesOverviewTitle')"
+    :loading="loading"
+    height="338px"
+    min-width="290px">
+    <gamification-overview-widget-row
+      v-show="!loading"
+      class="my-auto">
+      <template #icon>
+        <v-icon color="secondary" size="55px">fas fa-rocket</v-icon>
+      </template>
+      <template #content>
+        <span v-sanitized-html="emptySummaryText"></span>
+      </template>
+    </gamification-overview-widget-row>
+  </widget-wrapper>
 </template>
 <script>
 export default {

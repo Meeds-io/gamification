@@ -15,37 +15,38 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget
-      :see-all-url="programLink"
+    <widget-wrapper
+      :title="$t('gamification.overview.programsOverviewTitle')"
+      :action-url="programLink"
       :loading="loading"
-      extra-class="pa-0 justify-space-between height-auto">
-      <template #title>
-        <span class="text-truncate">{{ $t('gamification.overview.programsOverviewTitle') }}</span>
-      </template>
-      <template v-if="programsDisplayed" #content>
-        <gamification-overview-program-item
-          v-for="program in programs" 
-          :key="program.id"
-          :program="program"
-          class="flex-grow-1" />
-        <template v-if="remainingCount">
-          <gamification-overview-widget-empty-row
-            v-for="index in remainingCount"
-            :key="index"
+      height="338px"
+      min-width="290px">
+      <template #default>
+        <div v-if="programsDisplayed">
+          <gamification-overview-program-item
+            v-for="program in programs" 
+            :key="program.id"
+            :program="program"
             class="flex-grow-1" />
-        </template>
-      </template>
-      <template v-else-if="!loading" #content>
-        <gamification-overview-widget-row class="my-auto mx-4">
-          <template #icon>
-            <v-icon color="secondary" size="55px">fas fa-bullhorn</v-icon>
+          <template v-if="remainingCount">
+            <gamification-overview-widget-empty-row
+              v-for="index in remainingCount"
+              :key="index"
+              class="flex-grow-1" />
           </template>
-          <template #content>
-            <span v-sanitized-html="emptySummaryText"></span>
-          </template>
-        </gamification-overview-widget-row>
+        </div>
+        <div v-else-if="!loading">
+          <gamification-overview-widget-row class="my-auto mx-4">
+            <template #icon>
+              <v-icon color="secondary" size="55px">fas fa-bullhorn</v-icon>
+            </template>
+            <template #content>
+              <span v-sanitized-html="emptySummaryText"></span>
+            </template>
+          </gamification-overview-widget-row>
+        </div>
       </template>
-    </gamification-overview-widget>
+    </widget-wrapper>
     <gamification-program-detail-drawer />
     <engagement-center-rule-extensions />
   </v-app>

@@ -16,16 +16,13 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <gamification-overview-widget
+  <widget-wrapper
     v-if="hasValidRules"
-    :see-all-url="seeAllUrl"
+    :action-url="seeAllUrl"
+    :title="title"
     height="auto"
-    min-width="auto"
-    extra-class="pa-0 justify-space-between">
-    <template #title>
-      <slot name="title"></slot>
-    </template>
-    <template #content>
+    min-width="auto">
+    <template #default>
       <template v-if="lockedRulesCount">
         <div class="d-flex align-center mx-4">
           <span class="me-2">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
@@ -67,24 +64,24 @@
           :rule="rule" />
       </template>
     </template>
-  </gamification-overview-widget>
-  <gamification-overview-widget
+  </widget-wrapper>
+  <widget-wrapper
     v-else-if="hasRules && !isHiddenWhenEmpty"
     height="240"
     :loading="loading">
     <template #title>
-      <div class="d-flex flex-grow-1 align-center overflow-hidden">
-        <div class="flex-grow-1 flex-shrink-1 text-start text-truncate">
-          {{ $t('gamification.overview.challengesOverviewTitle') }}
-        </div>
-        <v-btn
-          icon
-          @click="hideEmptyWidget">
-          <v-icon>fa-times</v-icon>
-        </v-btn>
+      <div class="flex-grow-1 flex-shrink-1 text-start text-truncate">
+        {{ $t('gamification.overview.challengesOverviewTitle') }}
       </div>
     </template>
-    <template #content>
+    <template #action>
+      <v-btn
+        icon
+        @click="hideEmptyWidget">
+        <v-icon>fa-times</v-icon>
+      </v-btn>
+    </template>
+    <template #default>
       <gamification-overview-widget-row v-show="!loading" class="my-auto">
         <template #content>
           <div class="d-flex mx-auto align-center justify-center overflow-hidden">
@@ -113,7 +110,7 @@
         </template>
       </gamification-overview-widget-row>
     </template>
-  </gamification-overview-widget>
+  </widget-wrapper>
 </template>
 <script>
 export default {
@@ -139,6 +136,10 @@ export default {
       default: false,
     },
     seeAllUrl: {
+      type: String,
+      default: () => '',
+    },
+    title: {
       type: String,
       default: () => '',
     },

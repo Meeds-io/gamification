@@ -15,72 +15,71 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <gamification-overview-widget :loading="loading">
-    <template #title>
-      {{ $t('gamification.myReputation.title') }}
-    </template>
-    <template #content>
-      <v-card flat height="94">
-        <gamification-overview-widget-row v-show="kudosDisplayed && !loading">
-          <template #title>
-            {{ $t('gamification.myReputation.KudosTitle') }}
-          </template>
-          <template #content>
-            <extension-registry-components
-              :params="params"
-              name="my-reputation-overview-kudos"
-              type="my-reputation-item"
-              class="d-flex flex-column mx-n4" />
-          </template>
-        </gamification-overview-widget-row>
-        <gamification-overview-widget-row v-if="!kudosDisplayed && !loading" :disabled="isExternal">
-          <template #title>
-            <div class="mb-6">
-              {{ $t('gamification.myReputation.KudosTitleNoData') }}
-            </div>
-          </template>
-          <template #icon>
-            <v-icon color="secondary" size="55px">fas fa-award</v-icon>
-          </template>
-          <template #content>
-            <span v-html="emptyKudosSummaryText"></span>
-          </template>
-        </gamification-overview-widget-row>
-      </v-card>
-      <gamification-overview-widget-row
-        class="my-0"
-        v-show="badgesDisplayed && !loading">
+  <widget-wrapper 
+    :title="$t('gamification.myReputation.title')"
+    :loading="loading"
+    height="338px"
+    min-width="290px">
+    <v-card flat height="94">
+      <gamification-overview-widget-row v-show="kudosDisplayed && !loading">
         <template #title>
-          <div class="subtitle-2 align-self-start mt-10 mb-2 position-relative">
-            {{ $t('gamification.myReputation.badgesTitle') }}
-          </div>
+          {{ $t('gamification.myReputation.KudosTitle') }}
         </template>
         <template #content>
           <extension-registry-components
             :params="params"
-            name="my-reputation-overview-badges"
+            name="my-reputation-overview-kudos"
             type="my-reputation-item"
             class="d-flex flex-column mx-n4" />
         </template>
       </gamification-overview-widget-row>
-      <gamification-overview-widget-row
-        v-show="!badgesDisplayed && !loading"
-        class="my-auto"
-        disabled>
+      <gamification-overview-widget-row v-if="!kudosDisplayed && !loading" :disabled="isExternal">
         <template #title>
-          <div class="mb-6 mt-3 position-relative">
-            {{ $t('gamification.myReputation.badgesTitle') }}
+          <div class="mb-6">
+            {{ $t('gamification.myReputation.KudosTitleNoData') }}
           </div>
         </template>
         <template #icon>
-          <v-icon color="secondary" size="55px">fas fa-graduation-cap</v-icon>
+          <v-icon color="secondary" size="55px">fas fa-award</v-icon>
         </template>
         <template #content>
-          <span v-html="emptyBadgesSummaryText"></span>
+          <span v-html="emptyKudosSummaryText"></span>
         </template>
       </gamification-overview-widget-row>
-    </template>
-  </gamification-overview-widget>
+    </v-card>
+    <gamification-overview-widget-row
+      class="my-0"
+      v-show="badgesDisplayed && !loading">
+      <template #title>
+        <div class="subtitle-2 align-self-start mt-10 mb-2 position-relative">
+          {{ $t('gamification.myReputation.badgesTitle') }}
+        </div>
+      </template>
+      <template #content>
+        <extension-registry-components
+          :params="params"
+          name="my-reputation-overview-badges"
+          type="my-reputation-item"
+          class="d-flex flex-column mx-n4" />
+      </template>
+    </gamification-overview-widget-row>
+    <gamification-overview-widget-row
+      v-show="!badgesDisplayed && !loading"
+      class="my-auto"
+      disabled>
+      <template #title>
+        <div class="mb-6 mt-3 position-relative">
+          {{ $t('gamification.myReputation.badgesTitle') }}
+        </div>
+      </template>
+      <template #icon>
+        <v-icon color="secondary" size="55px">fas fa-graduation-cap</v-icon>
+      </template>
+      <template #content>
+        <span v-html="emptyBadgesSummaryText"></span>
+      </template>
+    </gamification-overview-widget-row>
+  </widget-wrapper>
 </template>
 <script>
 export default {
