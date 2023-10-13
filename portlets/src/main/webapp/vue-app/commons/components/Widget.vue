@@ -14,23 +14,18 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card
+  <widget-wrapper
     :loading="loading"
+    :action-url="seeAllUrl"
+    :title="title"
+    :subtite="subtitle"
     :height="height"
     :min-width="minWidth"
-    class="white d-flex flex-column"
-    flat>
-    <v-card-title class="subtitle-1 text-sub-title justify-space-between flex-nowrap">
-      <slot name="title"></slot>
-      <a 
-        v-if="seeAllUrl" 
-        class="flex-shrink-0" 
-        :href="seeAllUrl"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
-    </v-card-title>
-    <v-card-text class="d-flex flex-column flex-grow-1" :class="extraClass || ''">
-      <slot name="content"></slot>
-    </v-card-text>
-  </v-card>
+    :extra-class="extraClass">
+    <template #default>
+      <slot></slot>
+    </template>
+  </widget-wrapper>
 </template>
 <script>
 export default {
@@ -38,6 +33,14 @@ export default {
     loading: {
       type: Boolean,
       default: () => false,
+    },
+    title: {
+      type: String,
+      default: () => '',
+    },
+    subtitle: {
+      type: String,
+      default: () => '',
     },
     seeAllUrl: {
       type: String,
