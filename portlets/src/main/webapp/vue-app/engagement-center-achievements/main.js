@@ -59,7 +59,7 @@ export function init(isAdministrator, isProgramManager) {
         document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
         window.setInterval(() => this.now = Date.now(), 1000);
       },
-      template: `<engagement-center-realizations id="${appId}" :is-administrator="${isAdministrator}" :is-program-manager="${isProgramManager}" />`,
+      template: `<engagement-center-realizations id="${appId}" :is-administrator="${isAdministrator}" :is-program-manager="${isProgramManager}" class="card-border-radius overflow-hidden" />`,
       vuetify,
       i18n
     }, `#${appId}`, 'EngagementCenterAchievements');
