@@ -18,7 +18,7 @@
 
 -->
 <template>
-  <v-app>
+  <v-app class="card-border-radius overflow-hidden">
     <main
       id="rulesList"
       :class="classWelcomeMessage"
