@@ -22,12 +22,9 @@
     :page-size="pageSize"
     :loading="loading"
     :see-all-url="actionsPath"
+    :title="$t('gamification.overview.suggestedRulesTitle')"
     @load-more="loadMoreActiveRules"
-    @hide="$emit('hide')">
-    <template #title>
-      {{ $t('gamification.overview.suggestedRulesTitle') }}
-    </template>
-  </gamification-rules-overview-widget>
+    @hide="$emit('hide')" />
 </template>
 <script>
 export default {
