@@ -14,23 +14,21 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card
+  <widget-wrapper
     :loading="loading"
+    :action-url="actionUrl"
+    :title="title"
+    :subtite="subtitle"
     :height="height"
     :min-width="minWidth"
-    class="white d-flex flex-column"
-    flat>
-    <v-card-title class="subtitle-1 text-sub-title justify-space-between flex-nowrap">
+    :extra-class="extraClass">
+    <template #title>
       <slot name="title"></slot>
-      <a 
-        v-if="seeAllUrl" 
-        class="flex-shrink-0" 
-        :href="seeAllUrl"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
-    </v-card-title>
-    <v-card-text class="d-flex flex-column flex-grow-1" :class="extraClass || ''">
-      <slot name="content"></slot>
-    </v-card-text>
-  </v-card>
+    </template> 
+    <template #default>
+      <slot></slot>
+    </template>
+  </widget-wrapper>
 </template>
 <script>
 export default {
@@ -39,7 +37,15 @@ export default {
       type: Boolean,
       default: () => false,
     },
-    seeAllUrl: {
+    title: {
+      type: String,
+      default: () => '',
+    },
+    subtitle: {
+      type: String,
+      default: () => '',
+    },
+    actionUrl: {
       type: String,
       default: () => '',
     },
@@ -49,7 +55,7 @@ export default {
     },
     height: {
       type: String,
-      default: () => '338px',
+      default: () => '348px',
     },
     minWidth: {
       type: String,

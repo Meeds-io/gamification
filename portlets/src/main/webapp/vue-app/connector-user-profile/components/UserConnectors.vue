@@ -23,43 +23,33 @@
     v-if="displayed"
     v-show="!loading"
     class="white">
-    <v-toolbar
-      id="ConnectorUserProfileHeader"
-      color="white"
-      height="64"
-      flat
-      class="border-box-sizing">
-      <div class="d-flex flex py-3">
-        <div class="text-header-title text-sub-title text-no-wrap d-flex align-center">
-          {{ title }}
-        </div>
-      </div>
-    </v-toolbar>
-    <v-list v-if="!loading" class="pa-0">
-      <v-list-item class="pa-0">
-        <div v-if="notConnectedYet" class="mx-auto mb-2 ps-0">
-          <div class="d-flex flex-column">
-            <span class="subtitle-1 text-color">{{ $t('gamification.connectors.profile.notConnectedYet') }}</span>
+    <widget-wrapper :title="title">
+      <v-list v-if="!loading" class="pa-0">
+        <v-list-item v-if="notConnectedYet" class="pa-0">
+          <div class="mx-auto mb-2 ps-0">
+            <div class="d-flex flex-column">
+              <span class="subtitle-1 text-color">{{ $t('gamification.connectors.profile.notConnectedYet') }}</span>
+            </div>
+            <div class="d-flex justify-center my-3">
+              <v-btn
+                :href="settingsLink"
+                color="primary"
+                small
+                depressed>
+                {{ $t('gamification.connectors.label.connect') }}
+              </v-btn>
+            </div>
           </div>
-          <div class="d-flex justify-center my-3">
-            <v-btn
-              :href="settingsLink"
-              color="primary"
-              small
-              depressed>
-              {{ $t('gamification.connectors.label.connect') }}
-            </v-btn>
-          </div>
-        </div>
         <gamification-user-connector-item
           v-else
           v-for="connector in enabledConnectedConnectors"
           :key="connector.name"
           :connector="connector"
           :connector-extensions="connectorExtensions"
-          class="mb-2 ps-0 full-width" />
+          class="mb-2 ps-0 full-width"/>
       </v-list-item>
-    </v-list>
+     </v-list>
+    </widget-wrapper>
   </v-app>
 </template>
 

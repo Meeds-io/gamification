@@ -18,71 +18,62 @@
 <template>
   <gamification-overview-widget
     v-if="hasValidRules"
-    :see-all-url="actionsPageURL"
-    extra-class="pa-0 justify-space-between height-auto">
-    <template #title>
-      {{ $t('gamification.overview.challengesOverviewTitle') }}
+    :title="$t('gamification.overview.challengesOverviewTitle')"
+    :action-url="actionsPageURL">
+    <template v-if="endingRulesCount">
+      <div class="d-flex align-center">
+        <span class="me-2 subtitle-1">{{ $t('gamification.overview.endingActionsTitle') }}</span>
+        <v-divider />
+      </div>
+      <gamification-rules-overview-item
+        v-for="rule in endingRulesToDisplay"
+        :key="rule.id"
+        :rule="rule"
+        dense />
     </template>
-    <template #content>
-      <template v-if="endingRulesCount">
-        <div class="d-flex align-center mx-4">
-          <span class="me-2">{{ $t('gamification.overview.endingActionsTitle') }}</span>
-          <v-divider />
-        </div>
-        <gamification-rules-overview-item
-          v-for="rule in endingRulesToDisplay"
-          :key="rule.id"
-          :rule="rule"
-          dense />
-      </template>
-      <template v-if="activeRulesCount">
-        <div v-if="!hasAvailableRulesOnly" class="d-flex align-center mx-4">
-          <span class="me-2">{{ $t('gamification.overview.availableActionsTitle') }}</span>
-          <v-divider />
-        </div>
-        <gamification-rules-overview-item
-          v-for="rule in activeRulesToDisplay"
-          :key="rule.id"
-          :rule="rule"
-          :dense="!hasAvailableRulesOnly" />
-      </template>
-      <template v-if="upcomingRulesCount">
-        <div class="d-flex align-center mx-4">
-          <span class="me-2">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
-          <v-divider />
-        </div>
-        <gamification-rules-overview-item
-          v-for="rule in upcomingRulesToDisplay"
-          :key="rule.id"
-          :rule="rule"
-          dense />
-      </template>
-      <template v-if="remainingCount">
-        <gamification-overview-widget-empty-row
-          v-for="index in remainingCount"
-          :key="index"
-          class="flex" />
-      </template>
+    <template v-if="activeRulesCount">
+      <div v-if="!hasAvailableRulesOnly" class="d-flex align-center pt-5">
+        <span class="me-2 subtitle-1">{{ $t('gamification.overview.availableActionsTitle') }}</span>
+        <v-divider />
+      </div>
+      <gamification-rules-overview-item
+        v-for="rule in activeRulesToDisplay"
+        :key="rule.id"
+        :rule="rule"
+        :dense="!hasAvailableRulesOnly" />
+    </template>
+    <template v-if="upcomingRulesCount">
+      <div class="d-flex align-center pt-5">
+        <span class="me-2 subtitle-1">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
+        <v-divider />
+      </div>
+      <gamification-rules-overview-item
+        v-for="rule in upcomingRulesToDisplay"
+        :key="rule.id"
+        :rule="rule"
+        dense />
+    </template>
+    <template v-if="remainingCount">
+      <gamification-overview-widget-empty-row
+        v-for="index in remainingCount"
+        :key="index"
+        class="flex" />
     </template>
   </gamification-overview-widget>
   <gamification-overview-widget
     v-else
+    :title="$t('gamification.overview.emptyChallengesOverviewTitle')"
     :loading="loading">
-    <template #title>
-      {{ $t('gamification.overview.emptyChallengesOverviewTitle') }}
-    </template>
-    <template #content>
-      <gamification-overview-widget-row
-        v-show="!loading"
-        class="my-auto">
-        <template #icon>
-          <v-icon color="secondary" size="55px">fas fa-rocket</v-icon>
-        </template>
-        <template #content>
-          <span v-sanitized-html="emptySummaryText"></span>
-        </template>
-      </gamification-overview-widget-row>
-    </template>
+    <gamification-overview-widget-row
+      v-show="!loading"
+      class="my-auto">
+      <template #icon>
+        <v-icon color="secondary" size="55px">fas fa-rocket</v-icon>
+      </template>
+      <template #content>
+        <span v-sanitized-html="emptySummaryText"></span>
+      </template>
+    </gamification-overview-widget-row>
   </gamification-overview-widget>
 </template>
 <script>

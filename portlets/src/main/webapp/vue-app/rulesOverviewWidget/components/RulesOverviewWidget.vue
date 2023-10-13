@@ -18,101 +18,90 @@
 <template>
   <gamification-overview-widget
     v-if="hasValidRules"
-    :see-all-url="seeAllUrl"
+    :action-url="seeAllUrl"
+    :title="title"
     height="auto"
-    min-width="auto"
-    extra-class="pa-0 justify-space-between">
-    <template #title>
-      <slot name="title"></slot>
+    min-width="auto">
+    <template v-if="lockedRulesCount">
+      <div class="d-flex align-center">
+        <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
+        <v-divider />
+      </div>
+      <gamification-rules-overview-item
+        v-for="rule in lockedRulesToDisplay"
+        :key="rule.id"
+        :rule="rule" />
     </template>
-    <template #content>
-      <template v-if="lockedRulesCount">
-        <div class="d-flex align-center mx-4">
-          <span class="me-2">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
-          <v-divider />
-        </div>
-        <gamification-rules-overview-item
-          v-for="rule in lockedRulesToDisplay"
-          :key="rule.id"
-          :rule="rule" />
-      </template>
-      <template v-if="endingRulesCount">
-        <div class="d-flex align-center mx-4">
-          <span class="me-2">{{ $t('gamification.overview.endingActionsTitle') }}</span>
-          <v-divider />
-        </div>
-        <gamification-rules-overview-item
-          v-for="rule in endingRulesToDisplay"
-          :key="rule.id"
-          :rule="rule" />
-      </template>
-      <template v-if="validRulesCount">
-        <div v-if="sectionsCount > 1" class="d-flex align-center mx-4">
-          <span class="me-2">{{ $t('gamification.overview.availableActionsTitle') }}</span>
-          <v-divider />
-        </div>
-        <gamification-rules-overview-item
-          v-for="rule in validRulesToDisplay"
-          :key="rule.id"
-          :rule="rule" />
-      </template>
-      <template v-if="upcomingRulesCount">
-        <div class="d-flex align-center mx-4">
-          <span class="me-2">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
-          <v-divider />
-        </div>
-        <gamification-rules-overview-item
-          v-for="rule in upcomingRulesToDisplay"
-          :key="rule.id"
-          :rule="rule" />
-      </template>
+    <template v-if="endingRulesCount">
+      <div class="d-flex align-center">
+        <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.endingActionsTitle') }}</span>
+        <v-divider />
+      </div>
+      <gamification-rules-overview-item
+        v-for="rule in endingRulesToDisplay"
+        :key="rule.id"
+        :rule="rule" />
+    </template>
+    <template v-if="validRulesCount">
+      <div v-if="sectionsCount > 1" class="d-flex align-center pt-5">
+        <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.availableActionsTitle') }}</span>
+        <v-divider />
+      </div>
+      <gamification-rules-overview-item
+        v-for="rule in validRulesToDisplay"
+        :key="rule.id"
+        :rule="rule" />
+    </template>
+    <template v-if="upcomingRulesCount">
+      <div class="d-flex align-center pt-5">
+        <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
+        <v-divider />
+      </div>
+      <gamification-rules-overview-item
+        v-for="rule in upcomingRulesToDisplay"
+        :key="rule.id"
+        :rule="rule" />
     </template>
   </gamification-overview-widget>
   <gamification-overview-widget
     v-else-if="hasRules && !isHiddenWhenEmpty"
-    height="240"
-    :loading="loading">
-    <template #title>
-      <div class="d-flex flex-grow-1 align-center overflow-hidden">
-        <div class="flex-grow-1 flex-shrink-1 text-start text-truncate">
-          {{ $t('gamification.overview.challengesOverviewTitle') }}
+    :title="$t('gamification.overview.challengesOverviewTitle')"
+    :loading="loading"
+    height="240">
+    <template #action>
+      <v-btn
+        icon
+        @click="hideEmptyWidget">
+        <v-icon>fa-times</v-icon>
+      </v-btn>
+    </template>
+    <gamification-overview-widget-row v-show="!loading" class="my-auto">
+      <template #content>
+        <div class="d-flex mx-auto align-center justify-center overflow-hidden">
+          <v-card
+            class="d-flex flex-column flex-grow-0 me-2 ms-n11 flex-shrink-0 border-box-sizing"
+            min-width="45"
+            max-width="45"
+            min-height="45"
+            max-height="45"
+            color="transparent"
+            flat>
+            <v-avatar
+              size="45"
+              class="rule-program-cover border-color primary--text no-border"
+              rounded>
+              <v-img :src="completedRulesImageUrl" eager />
+            </v-avatar>
+          </v-card>
+          <div class="flex-shrink-1 text-start text-truncate text-sub-title body-1">
+            {{ $t('gamification.overview.rulesOverviewCompletedTitle') }}
+          </div>
         </div>
-        <v-btn
-          icon
-          @click="hideEmptyWidget">
-          <v-icon>fa-times</v-icon>
-        </v-btn>
-      </div>
-    </template>
-    <template #content>
-      <gamification-overview-widget-row v-show="!loading" class="my-auto">
-        <template #content>
-          <div class="d-flex mx-auto align-center justify-center overflow-hidden">
-            <v-card
-              class="d-flex flex-column flex-grow-0 me-2 ms-n11 flex-shrink-0 border-box-sizing"
-              min-width="45"
-              max-width="45"
-              min-height="45"
-              max-height="45"
-              color="transparent"
-              flat>
-              <v-avatar
-                size="45"
-                class="rule-program-cover border-color primary--text no-border"
-                rounded>
-                <v-img :src="completedRulesImageUrl" eager />
-              </v-avatar>
-            </v-card>
-            <div class="flex-shrink-1 text-start text-truncate text-sub-title body-1">
-              {{ $t('gamification.overview.rulesOverviewCompletedTitle') }}
-            </div>
-          </div>
-          <div class="d-flex mx-auto align-center justify-center text-sub-title body-2 my-4">
-            {{ $t('gamification.overview.rulesOverviewCompletedSubtitle') }}
-          </div>
-        </template>
-      </gamification-overview-widget-row>
-    </template>
+        <div class="d-flex mx-auto align-center justify-center text-sub-title body-2 my-4">
+          {{ $t('gamification.overview.rulesOverviewCompletedSubtitle') }}
+        </div>
+      </template>
+    </gamification-overview-widget-row>
   </gamification-overview-widget>
 </template>
 <script>
@@ -139,6 +128,10 @@ export default {
       default: false,
     },
     seeAllUrl: {
+      type: String,
+      default: () => '',
+    },
+    title: {
       type: String,
       default: () => '',
     },
