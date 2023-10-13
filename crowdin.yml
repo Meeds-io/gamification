@@ -28,7 +28,7 @@ files: [
       "sv_SE": "sv_SE","th_TH": "th_TH","tl_PH": "tl","tr_TR": "tr","uk_UA": "uk","ur_IN": "ur_IN","vi_VN": "vi",
       "zh_CN": "zh_CN","zh_TW": "zh_TW",
     },
-    "dest" : "exoplatform/gamification/addon/Gamification.properties",
+    "dest" : "hub/gamification/addon/Gamification.properties",
     "update_option" : "update_as_unapproved",
   },
   {
@@ -44,7 +44,7 @@ files: [
       "sv_SE": "sv_SE","th_TH": "th_TH","tl_PH": "tl","tr_TR": "tr","uk_UA": "uk","ur_IN": "ur_IN","vi_VN": "vi",
       "zh_CN": "zh_CN","zh_TW": "zh_TW",
     },
-    "dest": "exoplatform/gamification/portlet/Challenges.properties",
+    "dest": "hub/gamification/portlet/Challenges.properties",
     "update_option": "update_as_unapproved",
   },
   {
@@ -60,7 +60,7 @@ files: [
       "sv_SE": "sv_SE","th_TH": "th_TH","tl_PH": "tl","tr_TR": "tr","uk_UA": "uk","ur_IN": "ur_IN","vi_VN": "vi",
       "zh_CN": "zh_CN","zh_TW": "zh_TW",
     },
-    "dest": "exoplatform/gamification/portlet/Analytics.properties",
+    "dest": "hub/gamification/portlet/Analytics.properties",
     "update_option": "update_as_unapproved",
 
   },
@@ -76,7 +76,7 @@ files: [
       "sv_SE": "sv_SE","th_TH": "th_TH","tl_PH": "tl","tr_TR": "tr","uk_UA": "uk","ur_IN": "ur_IN","vi_VN": "vi",
       "zh_CN": "zh_CN","zh_TW": "zh_TW",
     },
-    "dest": "exoplatform/gamification/portlet/global.properties",
+    "dest": "hub/gamification/portlet/global.properties",
     "update_option": "update_as_unapproved",
 
   },
@@ -93,7 +93,7 @@ files: [
       "sv_SE": "sv_SE","th_TH": "th_TH","tl_PH": "tl","tr_TR": "tr","uk_UA": "uk","ur_IN": "ur_IN","vi_VN": "vi",
       "zh_CN": "zh_CN","zh_TW": "zh_TW",
     },
-    "dest": "exoplatform/gamification/navigation/group/platform/administrators.properties",
+    "dest": "hub/gamification/navigation/group/platform/administrators.properties",
     "update_option": "update_as_unapproved",
 
   },
