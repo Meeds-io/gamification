@@ -16,29 +16,25 @@
 <template>
   <v-app>
     <gamification-overview-widget
+      :title="$t('gamification.overview.topChallengersTitle')"
       :loading="loading"
-      :see-all-url="!isExternal && peopleURL || ''">
-      <template #title>
-        {{ $t('gamification.overview.topChallengersTitle') }}
-      </template>
-      <template #content>
-        <gamification-overview-widget-row
-          v-show="displayPlaceholder"
-          disabled
-          class="my-auto">
-          <template #icon>
-            <v-icon color="secondary" size="55px">fas fa-trophy</v-icon>
-          </template>
-          <template #content>
-            <span v-sanitized-html="$t('gamification.overview.topChallengersSummary')"></span>
-          </template>
-        </gamification-overview-widget-row>
-        <gamification-overview-widget-row class="my-auto" v-show="rankDisplayed && !isExternal">
-          <template #content>
-            <gamification-rank :is-overview-display="true" />
-          </template>
-        </gamification-overview-widget-row>
-      </template>
+      :action-url="!isExternal && peopleURL || ''">
+      <gamification-overview-widget-row
+        v-show="displayPlaceholder"
+        disabled
+        class="my-auto">
+        <template #icon>
+          <v-icon color="secondary" size="55px">fas fa-trophy</v-icon>
+        </template>
+        <template #content>
+          <span v-sanitized-html="$t('gamification.overview.topChallengersSummary')"></span>
+        </template>
+      </gamification-overview-widget-row>
+      <gamification-overview-widget-row class="my-auto" v-show="rankDisplayed && !isExternal">
+        <template #content>
+          <gamification-rank :is-overview-display="true" />
+        </template>
+      </gamification-overview-widget-row>
     </gamification-overview-widget>
   </v-app>
 </template>

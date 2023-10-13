@@ -22,13 +22,13 @@
         :style="programStyle"
         height="48"
         width="48"
-        class="border-color rounded my-auto me-auto ms-4"
+        class="border-color rounded my-auto me-auto"
         tile>
         <v-img :src="program.avatarUrl" />
       </v-list-item-avatar>
     </template>
     <template #content>
-      <v-list-item class="ps-0">
+      <v-list-item class="px-0">
         <v-list-item-content class="py-0 my-auto">
           <v-list-item-title>
             {{ program.title }}
