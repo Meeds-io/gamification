@@ -24,13 +24,13 @@
     <template #icon>
       <v-card
         min-width="35"
-        class="d-flex align-center justify-center ms-4 transparent"
+        class="d-flex align-center justify-center transparent"
         flat>
         <rule-icon :rule-event="rule.event" size="30" />
       </v-card>
     </template>
     <template #content>
-      <v-list-item class="ps-0">
+      <v-list-item class="px-0">
         <v-list-item-content class="py-0 my-auto">
           <v-list-item-title>
             {{ rule.title }}
