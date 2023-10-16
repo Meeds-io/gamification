@@ -1,6 +1,6 @@
 <template>
   <v-list class="py-0" :disabled="disabled">
-    <div v-if="$slots.title" class="subtitle-2">
+    <div v-if="$slots.title" class="subtitle-1">
       <slot name="title"></slot>
     </div>
     <v-list-item
