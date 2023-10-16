@@ -30,10 +30,10 @@
     <template #content>
       <v-list-item class="px-0">
         <v-list-item-content class="py-0 my-auto">
-          <v-list-item-title>
+          <v-list-item-title class="subtitle-2">
             {{ program.title }}
           </v-list-item-title>
-          <v-list-item-subtitle class="d-flex flex-nowrap align-center">
+          <v-list-item-subtitle class="d-flex flex-nowrap align-center subtitle-2">
             {{ program.activeRulesCount }} {{ $t('gamification.overview.label.actionsAvailable') }}
           </v-list-item-subtitle>
         </v-list-item-content>

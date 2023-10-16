@@ -32,21 +32,21 @@
     <template #content>
       <v-list-item class="px-0">
         <v-list-item-content class="py-0 my-auto">
-          <v-list-item-title>
+          <v-list-item-title class="subtitle-2">
             {{ rule.title }}
           </v-list-item-title>
-          <v-list-item-subtitle v-if="upcoming || ending" class="d-flex flex-nowrap align-center">
+          <v-list-item-subtitle v-if="upcoming || ending" class="d-flex flex-nowrap align-center subtitle-2">
             <engagement-center-rule-date-info-chip
               :rule="rule"
               size="18" />
           </v-list-item-subtitle>
-          <v-list-item-subtitle v-else-if="rule.realizationsCount === 0">
+          <v-list-item-subtitle v-else-if="rule.realizationsCount === 0" class="subtitle-2">
             {{ $t('gamification.overview.label.firstAnnounecement') }}
           </v-list-item-subtitle>
-          <v-list-item-subtitle v-else-if="rule.realizationsCount === 1">
+          <v-list-item-subtitle v-else-if="rule.realizationsCount === 1" class="subtitle-2">
             1 {{ $t('gamification.overview.label.participation') }}
           </v-list-item-subtitle>
-          <v-list-item-subtitle v-else>
+          <v-list-item-subtitle v-else class="subtitle-2">
             {{ rule.realizationsCount }} {{ $t('gamification.overview.label.participations') }}
           </v-list-item-subtitle>
         </v-list-item-content>
