@@ -16,12 +16,15 @@
 <template>
   <widget-wrapper
     :loading="loading"
-    :action-url="seeAllUrl"
+    :action-url="actionUrl"
     :title="title"
     :subtite="subtitle"
     :height="height"
     :min-width="minWidth"
     :extra-class="extraClass">
+    <template #title>
+      <slot name="title"></slot>
+    </template> 
     <template #default>
       <slot></slot>
     </template>
@@ -42,7 +45,7 @@ export default {
       type: String,
       default: () => '',
     },
-    seeAllUrl: {
+    actionUrl: {
       type: String,
       default: () => '',
     },
@@ -52,7 +55,7 @@ export default {
     },
     height: {
       type: String,
-      default: () => '338px',
+      default: () => '348px',
     },
     minWidth: {
       type: String,
