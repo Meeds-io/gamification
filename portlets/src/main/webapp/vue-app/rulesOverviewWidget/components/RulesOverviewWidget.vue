@@ -22,47 +22,45 @@
     :title="title"
     height="auto"
     min-width="auto">
-    <template>
-      <template v-if="lockedRulesCount">
-        <div class="d-flex align-center mx-4">
-          <span class="me-2">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
-          <v-divider />
-        </div>
-        <gamification-rules-overview-item
-          v-for="rule in lockedRulesToDisplay"
-          :key="rule.id"
-          :rule="rule" />
-      </template>
-      <template v-if="endingRulesCount">
-        <div class="d-flex align-center mx-4">
-          <span class="me-2">{{ $t('gamification.overview.endingActionsTitle') }}</span>
-          <v-divider />
-        </div>
-        <gamification-rules-overview-item
-          v-for="rule in endingRulesToDisplay"
-          :key="rule.id"
-          :rule="rule" />
-      </template>
-      <template v-if="validRulesCount">
-        <div v-if="sectionsCount > 1" class="d-flex align-center mx-4">
-          <span class="me-2">{{ $t('gamification.overview.availableActionsTitle') }}</span>
-          <v-divider />
-        </div>
-        <gamification-rules-overview-item
-          v-for="rule in validRulesToDisplay"
-          :key="rule.id"
-          :rule="rule" />
-      </template>
-      <template v-if="upcomingRulesCount">
-        <div class="d-flex align-center mx-4">
-          <span class="me-2">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
-          <v-divider />
-        </div>
-        <gamification-rules-overview-item
-          v-for="rule in upcomingRulesToDisplay"
-          :key="rule.id"
-          :rule="rule" />
-      </template>
+    <template v-if="lockedRulesCount">
+      <div class="d-flex align-center mx-4">
+        <span class="me-2">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
+        <v-divider />
+      </div>
+      <gamification-rules-overview-item
+        v-for="rule in lockedRulesToDisplay"
+        :key="rule.id"
+        :rule="rule" />
+    </template>
+    <template v-if="endingRulesCount">
+      <div class="d-flex align-center mx-4">
+        <span class="me-2">{{ $t('gamification.overview.endingActionsTitle') }}</span>
+        <v-divider />
+      </div>
+      <gamification-rules-overview-item
+        v-for="rule in endingRulesToDisplay"
+        :key="rule.id"
+        :rule="rule" />
+    </template>
+    <template v-if="validRulesCount">
+      <div v-if="sectionsCount > 1" class="d-flex align-center mx-4">
+        <span class="me-2">{{ $t('gamification.overview.availableActionsTitle') }}</span>
+        <v-divider />
+      </div>
+      <gamification-rules-overview-item
+        v-for="rule in validRulesToDisplay"
+        :key="rule.id"
+        :rule="rule" />
+    </template>
+    <template v-if="upcomingRulesCount">
+      <div class="d-flex align-center mx-4">
+        <span class="me-2">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
+        <v-divider />
+      </div>
+      <gamification-rules-overview-item
+        v-for="rule in upcomingRulesToDisplay"
+        :key="rule.id"
+        :rule="rule" />
     </template>
   </gamification-overview-widget>
   <gamification-overview-widget
