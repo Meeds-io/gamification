@@ -19,7 +19,7 @@
       :title="$t('gamification.overview.programsOverviewTitle')"
       :action-url="programLink"
       :loading="loading">
-      <template #default>
+      <template>
         <div v-if="programsDisplayed">
           <gamification-overview-program-item
             v-for="program in programs" 
@@ -33,16 +33,14 @@
               class="flex-grow-1" />
           </template>
         </div>
-        <div v-else-if="!loading">
-          <gamification-overview-widget-row class="my-auto mx-4">
-            <template #icon>
-              <v-icon color="secondary" size="55px">fas fa-bullhorn</v-icon>
-            </template>
-            <template #content>
-              <span v-sanitized-html="emptySummaryText"></span>
-            </template>
-          </gamification-overview-widget-row>
-        </div>
+        <gamification-overview-widget-row v-else-if="!loading" class="my-auto mx-4">
+          <template #icon>
+            <v-icon color="secondary" size="55px">fas fa-bullhorn</v-icon>
+          </template>
+          <template #content>
+            <span v-sanitized-html="emptySummaryText"></span>
+          </template>
+        </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
     <gamification-program-detail-drawer />
