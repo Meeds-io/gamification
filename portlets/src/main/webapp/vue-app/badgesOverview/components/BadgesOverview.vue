@@ -19,37 +19,39 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
     class="white"
     id="badgesOverview">
-    <v-toolbar
-      v-if="!isOverviewDisplay"
-      id="badgesOverviewHeader"
-      color="white"
-      flat
-      class="border-box-sizing"
-      :height="isOverviewDisplay ? '50' : '64'">
-      <div class="text-header-title text-sub-title">
-        {{ $t('exoplatform.gamification.badgesByDomain') }}
-      </div>
-    </v-toolbar>
-    <v-card flat>
-      <v-card-text
-        :class="isOverviewDisplay && 'my-auto pa-0' || 'pt-0'"
-        class="d-flex flex-wrap justify-space-between">
-        <template v-if="badges && badges.length">
-          <badges-overview-item
-            v-for="badge in badgesToDisplay"
-            :key="badge.id"
-            :badge="badge" />
-        </template>
-        <div
-          v-else
-          class="d-flex justify-center"
-          :class="isOverviewDisplay && 'my-auto' || 'py-4 mx-auto'">
-          <span class="emptyBadgesIcon display-3 my-1">
-            Ø
-          </span>
+    <div class="card-border-radius overflow-hidden">
+      <v-toolbar
+        v-if="!isOverviewDisplay"
+        id="badgesOverviewHeader"
+        color="white"
+        flat
+        class="border-box-sizing"
+        :class="isOverviewDisplay ? 'mb-5' : '64'">
+        <div class="widget-text-header text-truncate">
+          {{ $t('exoplatform.gamification.badgesByDomain') }}
         </div>
-      </v-card-text>
-    </v-card>
+      </v-toolbar>
+      <v-card flat>
+        <v-card-text
+          :class="isOverviewDisplay && 'my-auto pa-0' || 'pt-0'"
+          class="d-flex flex-wrap justify-space-between">
+          <template v-if="badges && badges.length">
+            <badges-overview-item
+              v-for="badge in badgesToDisplay"
+              :key="badge.id"
+              :badge="badge" />
+          </template>
+          <div
+            v-else
+            class="d-flex justify-center"
+            :class="isOverviewDisplay && 'my-auto' || 'py-4 mx-auto'">
+            <span class="emptyBadgesIcon display-3 my-1">
+              Ø
+            </span>
+          </div>
+        </v-card-text>
+      </v-card>
+    </div>
     <badges-overview-drawer />
   </v-app>
 </template>
