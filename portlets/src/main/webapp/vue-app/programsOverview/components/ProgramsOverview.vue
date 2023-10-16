@@ -19,7 +19,7 @@
       :title="$t('gamification.overview.programsOverviewTitle')"
       :action-url="programLink"
       :loading="loading">
-      <div v-if="programsDisplayed">
+      <div v-if="programsDisplayed" class="mt-5">
         <gamification-overview-program-item
           v-for="program in programs" 
           :key="program.id"
@@ -32,7 +32,7 @@
             class="flex-grow-1" />
         </template>
       </div>
-      <gamification-overview-widget-row v-else-if="!loading" class="my-auto mx-4">
+      <gamification-overview-widget-row v-else-if="!loading" class="my-auto">
         <template #icon>
           <v-icon color="secondary" size="55px">fas fa-bullhorn</v-icon>
         </template>
