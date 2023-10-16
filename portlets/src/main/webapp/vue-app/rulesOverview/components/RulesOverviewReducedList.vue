@@ -21,8 +21,8 @@
     :title="$t('gamification.overview.challengesOverviewTitle')"
     :action-url="actionsPageURL">
     <template v-if="endingRulesCount">
-      <div class="d-flex align-center mx-4">
-        <span class="me-2">{{ $t('gamification.overview.endingActionsTitle') }}</span>
+      <div class="d-flex align-center">
+        <span class="me-2 subtitle-1">{{ $t('gamification.overview.endingActionsTitle') }}</span>
         <v-divider />
       </div>
       <gamification-rules-overview-item
@@ -32,8 +32,8 @@
         dense />
     </template>
     <template v-if="activeRulesCount">
-      <div v-if="!hasAvailableRulesOnly" class="d-flex align-center mx-4">
-        <span class="me-2">{{ $t('gamification.overview.availableActionsTitle') }}</span>
+      <div v-if="!hasAvailableRulesOnly" class="d-flex align-center pt-5">
+        <span class="me-2 subtitle-1">{{ $t('gamification.overview.availableActionsTitle') }}</span>
         <v-divider />
       </div>
       <gamification-rules-overview-item
@@ -43,8 +43,8 @@
         :dense="!hasAvailableRulesOnly" />
     </template>
     <template v-if="upcomingRulesCount">
-      <div class="d-flex align-center mx-4">
-        <span class="me-2">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
+      <div class="d-flex align-center pt-5">
+        <span class="me-2 subtitle-1">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
         <v-divider />
       </div>
       <gamification-rules-overview-item
