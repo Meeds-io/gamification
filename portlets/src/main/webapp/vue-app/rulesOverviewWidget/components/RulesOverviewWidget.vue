@@ -16,7 +16,7 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <widget-wrapper
+  <gamification-overview-widget
     v-if="hasValidRules"
     :action-url="seeAllUrl"
     :title="title"
@@ -64,16 +64,12 @@
           :rule="rule" />
       </template>
     </template>
-  </widget-wrapper>
-  <widget-wrapper
+  </gamification-overview-widget>
+  <gamification-overview-widget
     v-else-if="hasRules && !isHiddenWhenEmpty"
-    height="240"
-    :loading="loading">
-    <template #title>
-      <div class="flex-grow-1 flex-shrink-1 text-start text-truncate">
-        {{ $t('gamification.overview.challengesOverviewTitle') }}
-      </div>
-    </template>
+    :title="$t('gamification.overview.challengesOverviewTitle')"
+    :loading="loading"
+    height="240">
     <template #action>
       <v-btn
         icon
@@ -110,7 +106,7 @@
         </template>
       </gamification-overview-widget-row>
     </template>
-  </widget-wrapper>
+  </gamification-overview-widget>
 </template>
 <script>
 export default {

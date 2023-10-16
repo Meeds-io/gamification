@@ -15,18 +15,16 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <widget-wrapper 
-    :title="$t('overview.myContributions.title')"
+  <gamification-overview-widget 
     :action-url="achievementsURL" 
     :loading="loading"
-    height="338px"
-    min-width="290px">
+    :title="$t('overview.myContributions.title')">
     <user-points-widget
       v-show="!loading"
       overview-display
       @seeAll="updateDisplaySeeAll($event)"
       @loaded="loading = false" />
-  </widget-wrapper>
+  </gamification-overview-widget>
 </template>
 <script>
 export default {

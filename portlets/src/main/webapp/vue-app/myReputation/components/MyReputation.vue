@@ -15,11 +15,9 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <widget-wrapper 
+  <gamification-overview-widget 
     :title="$t('gamification.myReputation.title')"
-    :loading="loading"
-    height="338px"
-    min-width="290px">
+    :loading="loading">
     <v-card flat height="94">
       <gamification-overview-widget-row v-show="kudosDisplayed && !loading">
         <template #title>
@@ -79,7 +77,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <span v-html="emptyBadgesSummaryText"></span>
       </template>
     </gamification-overview-widget-row>
-  </widget-wrapper>
+  </gamification-overview-widget>
 </template>
 <script>
 export default {
