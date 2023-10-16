@@ -15,12 +15,10 @@
 -->
 <template>
   <v-app>
-    <widget-wrapper
+    <gamification-overview-widget
       :title="$t('gamification.overview.programsOverviewTitle')"
       :action-url="programLink"
-      :loading="loading"
-      height="338px"
-      min-width="290px">
+      :loading="loading">
       <template #default>
         <div v-if="programsDisplayed">
           <gamification-overview-program-item
@@ -46,7 +44,7 @@
           </gamification-overview-widget-row>
         </div>
       </template>
-    </widget-wrapper>
+    </gamification-overview-widget>
     <gamification-program-detail-drawer />
     <engagement-center-rule-extensions />
   </v-app>

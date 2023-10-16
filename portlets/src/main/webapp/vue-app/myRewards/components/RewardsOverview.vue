@@ -15,12 +15,10 @@
 -->
 <template>
   <v-app>
-    <widget-wrapper 
+    <gamification-overview-widget
       :title="$t('gamification.overview.rewardsTitle')"
       :action-url="walletURL" 
-      :loading="loading"
-      height="338px"
-      min-width="290px">
+      :loading="loading">
       <v-card
         v-if="!loading"
         min-height="114"
@@ -105,7 +103,7 @@
             type="my-rewards-perkstore-item" />
         </template>
       </gamification-overview-widget-row>
-    </widget-wrapper>
+    </gamification-overview-widget>
     <div id="WalletAPIApp"></div>
   </v-app>
 </template>

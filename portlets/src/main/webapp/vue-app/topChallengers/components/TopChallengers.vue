@@ -15,12 +15,10 @@
 -->
 <template>
   <v-app>
-    <widget-wrapper
+    <gamification-overview-widget
       :title="$t('gamification.overview.topChallengersTitle')"
       :loading="loading"
-      :action-url="!isExternal && peopleURL || ''"
-      height="338px"
-      min-width="290px">
+      :action-url="!isExternal && peopleURL || ''">
       <gamification-overview-widget-row
         v-show="displayPlaceholder"
         disabled
@@ -37,7 +35,7 @@
           <gamification-rank :is-overview-display="true" />
         </template>
       </gamification-overview-widget-row>
-    </widget-wrapper>
+    </gamification-overview-widget>
   </v-app>
 </template>
 <script>
