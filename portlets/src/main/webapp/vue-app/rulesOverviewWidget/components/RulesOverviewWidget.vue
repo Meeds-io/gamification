@@ -22,7 +22,7 @@
     :title="title"
     height="auto"
     min-width="auto">
-    <template #default>
+    <template>
       <template v-if="lockedRulesCount">
         <div class="d-flex align-center mx-4">
           <span class="me-2">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
@@ -77,7 +77,7 @@
         <v-icon>fa-times</v-icon>
       </v-btn>
     </template>
-    <template #default>
+    <template>
       <gamification-overview-widget-row v-show="!loading" class="my-auto">
         <template #content>
           <div class="d-flex mx-auto align-center justify-center overflow-hidden">
