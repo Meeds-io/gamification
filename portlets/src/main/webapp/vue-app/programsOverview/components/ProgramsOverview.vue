@@ -15,10 +15,23 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget
-      :title="$t('gamification.overview.programsOverviewTitle')"
-      :action-url="programLink"
-      :loading="loading">
+    <gamification-overview-widget :loading="loading">
+      <template v-if="programsDisplayed || loading" #title>
+        <div v-if="programsDisplayed" class="d-flex flex-grow-1 full-width">
+          <div class="widget-text-header text-none text-truncate">
+            {{ $t('gamification.overview.programsOverviewTitle') }}
+          </div>
+          <v-spacer />
+          <v-btn
+            height="auto"
+            min-width="auto"
+            class="pa-0"
+            text
+            @click="$refs.listDrawer.open()">
+            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+          </v-btn>
+        </div>
+      </template>
       <div v-if="programsDisplayed">
         <gamification-overview-program-item
           v-for="program in programs" 
@@ -31,13 +44,15 @@
             :key="index"
             class="flex-grow-1" />
         </template>
+        <gamification-program-list-drawer
+          ref="listDrawer" />
       </div>
-      <gamification-overview-widget-row v-else-if="!loading" class="my-auto mx-4">
-        <template #icon>
-          <v-icon color="secondary" size="55px">fas fa-bullhorn</v-icon>
-        </template>
+      <gamification-overview-widget-row v-else-if="!loading" class="my-auto">
         <template #content>
-          <span v-sanitized-html="emptySummaryText"></span>
+          <div class="d-flex flex-column align-center justify-center">
+            <v-icon color="secondary" size="54">fa-puzzle-piece</v-icon>
+            <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.programs') }}</span>
+          </div>
         </template>
       </gamification-overview-widget-row>
     </gamification-overview-widget>
