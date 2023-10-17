@@ -185,11 +185,7 @@ export default {
         .then(() => {
           document.dispatchEvent(new CustomEvent('alert-message-html-confeti', {detail: {
             alertType: 'success',
-            alertMessage: `
-              <div class="d-flex flex-nowrap pt-1 justify-center">
-                ${this.$t('challenges.announcementCreateSuccess')}
-              </div>
-            `,
+            alertMessage: this.$t('challenges.announcementCreateSuccess'),
             alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${this.announcement.activityId}`,
             alertLinkText: this.$t('announcement.alert.see'),
             alertLinkTarget: '_self',
