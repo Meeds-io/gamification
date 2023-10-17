@@ -38,7 +38,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -94,11 +93,10 @@ public class ConnectorRest implements ResourceContainer {
     return Response.ok(connectorRestEntities).build();
   }
 
-  @POST
-  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @GET
   @Produces(MediaType.TEXT_PLAIN)
   @RolesAllowed("users")
-  @Path("connect/{connectorName}")
+  @Path("oauthCallback/{connectorName}")
   @Operation(summary = "Validate Remote user identifier on a selected connector and associate it in his current profile.", description = "Validate Remote user identifier on a selected connector and associate it in his current profile.", method = "POST")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Request fulfilled"),
@@ -110,19 +108,12 @@ public class ConnectorRest implements ResourceContainer {
                           @Parameter(description = "Connector name", required = true)
                           @PathParam("connectorName")
                           String connectorName,
-                          @Parameter(description = "User Remote identifier", required = false)
-                          @FormParam("remoteId")
-                          String remoteId,
                           @Parameter(description = "Access Token", required = true)
-                          @FormParam("accessToken")
-                          String accessToken) {
+                          @QueryParam("code")
+                          String code) {
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
-    try {
-      String identifier = connectorService.connect(connectorName, remoteId, accessToken, identity);
-      return Response.ok(identifier).build();
-    } catch (ObjectAlreadyExistsException e) {
-      return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
-    }
+    connectorService.connect(connectorName, null, code, identity);
+    return Response.ok().build();
   }
 
   @DELETE
