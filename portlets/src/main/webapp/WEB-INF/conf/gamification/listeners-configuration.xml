@@ -183,4 +183,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <type>io.meeds.gamification.listener.GamificationProfileListener</type>
     </component-plugin>
   </external-component-plugins>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+    <component-plugin>
+      <name>connector.identifier.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.websocket.listener.ConnectorIdentifierUpdateBroadcast</type>
+    </component-plugin>
+  </external-component-plugins>
 </configuration>
