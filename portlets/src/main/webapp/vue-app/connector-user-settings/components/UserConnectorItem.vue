@@ -131,8 +131,6 @@ export default {
       this.loading = true;
       this.popup = this.connectorExtension.openOauthPopup(this.connector);
       this.$root.$on('gamification-connector-identifier-updated', (updateParams) => {
-        this.popup.close();
-        console.warn('rrrrrrr', updateParams);
         if (updateParams?.wsEventName === 'connectorIdentifierUsed') {
           document.dispatchEvent(new CustomEvent('notification-alert', {detail: {
             message: this.$t('gamification.connectors.error.alreadyUsed',  {
@@ -140,7 +138,7 @@ export default {
             }),
             type: 'error',
           }}));
-        } else if (updateParams?.wsEventName === 'connectorIdentifierUpdated'){
+        } else if (updateParams?.wsEventName === 'connectorIdentifierUpdated' && updateParams?.message?.hashmap?.connectorName === this.connector?.name) {
           this.$set(this.connector, 'identifier', updateParams?.message?.hashmap?.connectorIdentifier);
         }
         this.loading = false;

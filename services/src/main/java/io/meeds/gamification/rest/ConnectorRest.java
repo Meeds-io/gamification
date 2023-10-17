@@ -94,7 +94,7 @@ public class ConnectorRest implements ResourceContainer {
   }
 
   @GET
-  @Produces(MediaType.TEXT_PLAIN)
+  @Produces(MediaType.TEXT_HTML)
   @RolesAllowed("users")
   @Path("oauthCallback/{connectorName}")
   @Operation(summary = "Validate Remote user identifier on a selected connector and associate it in his current profile.", description = "Validate Remote user identifier on a selected connector and associate it in his current profile.", method = "POST")
@@ -113,7 +113,7 @@ public class ConnectorRest implements ResourceContainer {
                           String code) {
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     connectorService.connect(connectorName, null, code, identity);
-    return Response.ok().build();
+    return Response.ok("<html><body><script type=text/javascript>window.close();</script></body></html>").build();
   }
 
   @DELETE
