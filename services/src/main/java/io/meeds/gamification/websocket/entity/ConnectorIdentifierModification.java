@@ -1,9 +1,8 @@
 /*
- *
  * This file is part of the Meeds project (https://meeds.io/).
  *
- * Copyright (C) 2023 Meeds Association contact@meeds.io
- *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -12,22 +11,37 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
  */
-import * as gamificationConnectorService from '../connector-user-settings/js/GamificationConnectorService';
-import * as connectorWebSocket from '../connector-user-settings/js/WebSocket.js';
+package io.meeds.gamification.websocket.entity;
 
-if (!Vue.prototype.$connectorWebSocket) {
-  window.Object.defineProperty(Vue.prototype, '$connectorWebSocket', {
-    value: connectorWebSocket,
-  });
-}
+import org.exoplatform.ws.frameworks.json.impl.JsonException;
+import org.exoplatform.ws.frameworks.json.impl.JsonGeneratorImpl;
 
-if (!Vue.prototype.$gamificationConnectorService) {
-  window.Object.defineProperty(Vue.prototype, '$gamificationConnectorService', {
-    value: gamificationConnectorService,
-  });
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class ConnectorIdentifierModification {
+
+  private String eventName;
+
+  private String connectorName;
+
+  private String username;
+
+  private String connectorIdentifier;
+
+  @Override
+  public String toString() {
+    try {
+      return new JsonGeneratorImpl().createJsonObject(this).toString();
+    } catch (JsonException e) {
+      throw new IllegalStateException("Error parsing object to JSON string", e);
+    }
+  }
 }
