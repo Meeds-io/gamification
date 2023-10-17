@@ -1,8 +1,7 @@
 /*
- *
  * This file is part of the Meeds project (https://meeds.io/).
  *
- * Copyright (C) 2023 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,19 +14,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
  */
-import * as gamificationConnectorService from '../connector-user-settings/js/GamificationConnectorService';
-import * as connectorWebSocket from '../connector-user-settings/js/WebSocket.js';
-
-if (!Vue.prototype.$connectorWebSocket) {
-  window.Object.defineProperty(Vue.prototype, '$connectorWebSocket', {
-    value: connectorWebSocket,
+export function initCometd(callback) {
+  cCometd.subscribe('/GamificationConnectors', null, (event) => {
+    const data = event.data && JSON.parse(event.data);
+    if (!data) {
+      return;
+    }
+    callback(data);
   });
 }
 
-if (!Vue.prototype.$gamificationConnectorService) {
-  window.Object.defineProperty(Vue.prototype, '$gamificationConnectorService', {
-    value: gamificationConnectorService,
-  });
+export function isDisconnected() {
+  return cCometd.isDisconnected();
 }

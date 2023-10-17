@@ -167,7 +167,7 @@ export default {
       this.editSettings = false;
     },
     saveConnectorSetting(event) {
-      if (event?.detail) {
+      if (event?.detail && event?.detail?.name === this.selectedConnector?.name) {
         const setting = event?.detail;
         this.$gamificationConnectorService.saveConnectorSettings(setting?.name, setting?.apiKey, setting?.secretKey, setting?.redirectUrl, setting?.enabled).then(() => {
           this.selectedConnector = Object.assign(this.selectedConnector, setting);
