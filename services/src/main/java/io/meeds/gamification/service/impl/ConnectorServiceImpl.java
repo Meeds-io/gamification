@@ -139,7 +139,7 @@ public class ConnectorServiceImpl implements ConnectorService {
       } catch (Exception exception) {
         LOG.warn("Error while broadcasting operation '{}' for connector {}", "connectorIdentifierUsed", connectorName, e);
       }
-
+      return null;
     }
     try {
       listenerService.broadcast(IDENTIFIER_UPDATED_EVENT_NAME,
@@ -151,7 +151,6 @@ public class ConnectorServiceImpl implements ConnectorService {
     } catch (Exception e) {
       LOG.warn("Error while broadcasting operation '{}' for connector {}", "connectorIdentifierUpdated", connectorName, e);
     }
-
     return connectorUserId;
   }
 
