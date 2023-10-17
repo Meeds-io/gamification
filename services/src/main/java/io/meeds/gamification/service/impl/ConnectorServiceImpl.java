@@ -23,9 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.meeds.gamification.websocket.entity.ConnectorIdentifierModification;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.ObjectAlreadyExistsException;
+import org.exoplatform.services.listener.ListenerService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 
@@ -39,6 +43,8 @@ import io.meeds.gamification.storage.ConnectorAccountStorage;
 
 public class ConnectorServiceImpl implements ConnectorService {
 
+  private static final Log                   LOG                              = ExoLogger.getLogger(ConnectorServiceImpl.class);
+
   public static final String                 CONNECTOR_NAME_IS_MANDATORY      = "Connector name is mandatory";
 
   public static final String                 USERNAME_IS_MANDATORY            = "Username is mandatory";
@@ -46,6 +52,8 @@ public class ConnectorServiceImpl implements ConnectorService {
   public static final String                 CONNECTOR_REMOTE_ID_IS_MANDATORY = "connector RemoteId is mandatory";
 
   public static final String                 ACCESS_TOKEN_IS_MANDATORY        = "Access Token is mandatory";
+
+  public static final String                 IDENTIFIER_UPDATED_EVENT_NAME    = "connector.identifier.updated";
 
   private final Map<String, ConnectorPlugin> connectorPlugins                 = new HashMap<>();
 
@@ -55,12 +63,16 @@ public class ConnectorServiceImpl implements ConnectorService {
 
   private final ConnectorSettingService      connectorSettingService;
 
+  private final ListenerService              listenerService;
+
   public ConnectorServiceImpl(ConnectorAccountStorage connectorAccountStorage,
                               IdentityManager identityManager,
-                              ConnectorSettingService connectorSettingService) {
+                              ConnectorSettingService connectorSettingService,
+                              ListenerService listenerService) {
     this.connectorAccountStorage = connectorAccountStorage;
     this.connectorSettingService = connectorSettingService;
     this.identityManager = identityManager;
+    this.listenerService = listenerService;
   }
 
   @Override
@@ -101,10 +113,7 @@ public class ConnectorServiceImpl implements ConnectorService {
   }
 
   @Override
-  public String connect(String connectorName,
-                        String connectorUserId,
-                        String accessToken,
-                        Identity userAclIdentity) throws ObjectAlreadyExistsException {
+  public String connect(String connectorName, String connectorUserId, String accessToken, Identity userAclIdentity) {
     if (connectorName == null) {
       throw new IllegalArgumentException(CONNECTOR_NAME_IS_MANDATORY);
     }
@@ -114,9 +123,34 @@ public class ConnectorServiceImpl implements ConnectorService {
     String username = userAclIdentity.getUserId();
     String userIdentityId = identityManager.getOrCreateUserIdentity(username).getId();
     connectorUserId = getConnectorPlugin(connectorName).validateToken(connectorUserId, accessToken);
-    connectorAccountStorage.saveConnectorAccount(new ConnectorAccount(connectorName,
-                                                                      connectorUserId,
-                                                                      Long.parseLong(userIdentityId)));
+    try {
+      connectorAccountStorage.saveConnectorAccount(new ConnectorAccount(connectorName,
+                                                                        connectorUserId,
+                                                                        Long.parseLong(userIdentityId)));
+    } catch (ObjectAlreadyExistsException e) {
+
+      try {
+        listenerService.broadcast(IDENTIFIER_UPDATED_EVENT_NAME,
+                                  new ConnectorIdentifierModification("connectorIdentifierUsed",
+                                                                      connectorName,
+                                                                      username,
+                                                                      connectorUserId),
+                                  username);
+      } catch (Exception exception) {
+        LOG.warn("Error while broadcasting operation '{}' for connector {}", "connectorIdentifierUsed", connectorName, e);
+      }
+      return null;
+    }
+    try {
+      listenerService.broadcast(IDENTIFIER_UPDATED_EVENT_NAME,
+                                new ConnectorIdentifierModification("connectorIdentifierUpdated",
+                                                                    connectorName,
+                                                                    username,
+                                                                    connectorUserId),
+                                username);
+    } catch (Exception e) {
+      LOG.warn("Error while broadcasting operation '{}' for connector {}", "connectorIdentifierUpdated", connectorName, e);
+    }
     return connectorUserId;
   }
 
