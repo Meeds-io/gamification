@@ -23,6 +23,7 @@ export function init() {
     title: 'Meeds',
     description: 'gamification.admin.meeds.label.description',
     defaultConnector: true,
+    rank: 10
   });
 
   // Upcoming Connectors
