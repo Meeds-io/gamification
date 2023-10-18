@@ -39,12 +39,6 @@
           <icon>fas fa-graduation-cap</icon>
           <page-reference>portal::administration::gamificationBadgesAdministration</page-reference>
         </node>
-        <node>
-          <name>connectors</name>
-          <label>#{portal.administration.connectors}</label>
-          <icon>fas fa-plug</icon>
-          <page-reference>portal::administration::gamificationConnectorsAdministration</page-reference>
-        </node>
       </node>
     </node>
   </page-nodes>

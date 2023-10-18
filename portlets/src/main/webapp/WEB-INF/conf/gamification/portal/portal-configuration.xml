@@ -85,6 +85,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <set-method>initListener</set-method>
       <type>org.exoplatform.portal.config.NewPortalConfigListener</type>
       <description>this listener init the portal configuration</description>
+      <priority>760</priority>
       <init-params>
         <object-param>
           <name>portal.configuration</name>
@@ -100,13 +101,46 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <string>portal</string>
             </field>
             <field name="templateLocation">
-              <string>war:/conf/gamification/portal</string>
+              <string>war:/conf/gamification/portal/badges</string>
             </field>
             <field name="override">
               <boolean>${exo.gamification.portalConfig.administration.override:true}</boolean>
             </field>
             <field name="importMode">
               <string>${exo.gamification.portalConfig.administration.importmode:merge}</string>
+            </field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
+	<component-plugin>
+      <name>new.portal.config.user.listener</name>
+      <set-method>initListener</set-method>
+      <type>org.exoplatform.portal.config.NewPortalConfigListener</type>
+      <description>this listener init the portal configuration</description>
+      <priority>800</priority>
+      <init-params>
+        <object-param>
+          <name>portal.configuration</name>
+          <object type="org.exoplatform.portal.config.NewPortalConfig">
+            <field name="predefinedOwner">
+              <collection type="java.util.HashSet">
+                <value>
+                  <string>administration</string>
+                </value>
+              </collection>
+            </field>
+            <field name="ownerType">
+              <string>portal</string>
+            </field>
+            <field name="templateLocation">
+              <string>war:/conf/gamification/portal/connectors</string>
+            </field>
+            <field name="override">
+              <boolean>${exo.gamification.portalConfig.administration.override:true}</boolean>
+            </field>
+            <field name="importMode">
+              <string>${exo.gamification.portalConfig.administration.importmode:insert}</string>
             </field>
           </object>
         </object-param>
