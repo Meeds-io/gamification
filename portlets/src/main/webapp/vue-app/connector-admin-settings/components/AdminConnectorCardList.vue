@@ -68,11 +68,19 @@ export default {
   },
   computed: {
     enabledConnectors() {
-      return this.connectors.filter(connector => this.connectorExtensions.some(item => connector.name === item.componentOptions.name && !item.componentOptions.comingSoon));
+      return this.connectors.filter(connector => this.connectorExtensions.some(item => connector.name === item.componentOptions.name && !item.componentOptions.comingSoon)).sort((connector1, connector2) => {
+        return this.getConnectorRank(connector1) - this.getConnectorRank(connector2);
+      });
     },
     upcomingConnectors() {
       return this.connectors.filter(connector => this.connectorExtensions.some(item => connector.name === item.componentOptions.name && item.componentOptions.comingSoon));
     }
-  }
+  },
+  methods: {
+    getConnectorRank(connector) {
+      const extension = this.connectorExtensions.find(item => connector.name === item.componentOptions.name);
+      return extension ? extension.componentOptions.rank : 0;
+    },
+  },
 };
 </script>
