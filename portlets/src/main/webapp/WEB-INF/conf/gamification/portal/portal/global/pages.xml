@@ -144,21 +144,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <portlet-application>
               <portlet>
                 <application-ref>social-portlet</application-ref>
-                <portlet-ref>OverviewBanner</portlet-ref>
+                <portlet-ref>Image</portlet-ref>
                 <preferences>
                   <preference>
-                    <name>bannerUrl</name>
-                    <value>/gamification-portlets/images/banner/overviewBanner.webp</value>
-                    <read-only>false</read-only>
+                    <name>name</name>
+                    <value>overivewBanner</value>
                   </preference>
                   <preference>
-                    <name>bannerTitle</name>
-                    <value>overview.overviewBanner.title</value>
-                    <read-only>false</read-only>
-                  </preference>
-                  <preference>
-                    <name>bannerCaption</name>
-                    <value>overview.overviewBanner.caption</value>
+                    <name>image-path</name>
+                    <value>war:/../images/banner/overviewBanner.webp</value>
                     <read-only>false</read-only>
                   </preference>
                 </preferences>
