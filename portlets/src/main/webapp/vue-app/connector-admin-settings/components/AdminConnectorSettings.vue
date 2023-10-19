@@ -16,7 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <v-card class="border-radius" flat>
+    <v-card class="my-3 card-border-radius" flat>
       <template v-if="selectedConnector">
         <extension-registry-component
           v-if="editSettings"
@@ -168,7 +168,7 @@ export default {
       this.editSettings = false;
     },
     saveConnectorSetting(event) {
-      if (event?.detail) {
+      if (event?.detail && event?.detail?.name === this.selectedConnector?.name) {
         const setting = event?.detail;
         this.$gamificationConnectorService.saveConnectorSettings(setting?.name, setting?.apiKey, setting?.secretKey, setting?.redirectUrl, setting?.enabled).then(() => {
           this.selectedConnector = Object.assign(this.selectedConnector, setting);
