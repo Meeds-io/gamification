@@ -105,6 +105,7 @@ export default {
         .then(connectors => {
           const filteredList = this.adminConnectorsExtensions.filter(connectorExtension => !connectors.some(item => item.name === connectorExtension.componentOptions.name)).map(item => ({
             name: item?.componentOptions?.name,
+            title: item?.componentOptions?.title,
           })) || [];
           this.connectors.push(...filteredList);
           this.connectors.push(...connectors);
