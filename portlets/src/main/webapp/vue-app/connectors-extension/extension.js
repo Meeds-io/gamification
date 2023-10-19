@@ -38,12 +38,11 @@ export function init() {
   });
 
   extensionRegistry.registerComponent('gamification-admin-connector', 'admin-connector-item', {
-    id: 'gitLabSetting',
-    name: 'gitLab',
-    icon: 'fab fa-gitlab',
-    iconColorClass: 'orange--text',
-    title: 'GitLab',
-    description: 'gamification.admin.gitlab.label.description',
+    id: 'evmSetting',
+    name: 'evm',
+    image: '/gamification-portlets/images/connector/EVM.png',
+    title: 'EVM Blockhain',
+    description: 'gamification.admin.evm.label.description',
     comingSoon: true,
   });
 
@@ -73,6 +72,34 @@ export function init() {
     iconColorClass: 'purple--text text--darken-4',
     title: 'Slack',
     description: 'gamification.admin.slack.label.description',
+    comingSoon: true,
+  });
+
+  extensionRegistry.registerComponent('gamification-admin-connector', 'admin-connector-item', {
+    id: 'snapshotSetting',
+    name: 'snapshot',
+    image: '/gamification-portlets/images/connector/snapshot.png',
+    title: 'Snapshot',
+    description: 'gamification.admin.snapshot.label.description',
+    comingSoon: true,
+  });
+
+  extensionRegistry.registerComponent('gamification-admin-connector', 'admin-connector-item', {
+    id: 'teamsSetting',
+    name: 'teams',
+    image: '/gamification-portlets/images/connector/teams.png',
+    title: 'Teams',
+    description: 'gamification.admin.teams.label.description',
+    comingSoon: true,
+  });
+
+  extensionRegistry.registerComponent('gamification-admin-connector', 'admin-connector-item', {
+    id: 'telegramSetting',
+    name: 'telegram',
+    icon: 'fab fa-telegram',
+    iconColorClass: 'blue--text text---darken-1',
+    title: 'Telegram',
+    description: 'gamification.admin.telegram.label.description',
     comingSoon: true,
   });
 }
