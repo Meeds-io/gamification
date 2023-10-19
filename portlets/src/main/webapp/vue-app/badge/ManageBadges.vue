@@ -33,7 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       {{ $t(`exoplatform.gamification.${errorType}`) }}
     </div>
 
-    <section>
+    <section class="card-border-radius">
       <save-badge-form
         :badge="badgeInForm"
         :programs="programs"
