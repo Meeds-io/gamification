@@ -19,12 +19,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
     class="white"
     id="badgesOverview">
-    <widget-wrapper
-      :default-padding="isOverviewDisplay && 'px-0' || 'px-5 pb-5'"
-      :hide-padding-top="isOverviewDisplay">
-      <template v-if="!isOverviewDisplay" #title>
-        <span class="widget-text-header text-truncate">{{ $t('exoplatform.gamification.badgesByDomain') }}</span>
-      </template>
+    <div class="card-border-radius overflow-hidden">
+      <v-toolbar
+        v-if="!isOverviewDisplay"
+        id="badgesOverviewHeader"
+        color="white"
+        flat
+        class="border-box-sizing"
+        :class="isOverviewDisplay ? 'mb-5' : '64'">
+        <div class="widget-text-header text-truncate">
+          {{ $t('exoplatform.gamification.badgesByDomain') }}
+        </div>
+      </v-toolbar>
       <v-card flat>
         <v-card-text
           :class="isOverviewDisplay && 'my-auto pa-0' || 'pt-0'"
@@ -45,7 +51,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </div>
         </v-card-text>
       </v-card>
-    </widget-wrapper>
+    </div>
     <badges-overview-drawer />
   </v-app>
 </template>
@@ -64,7 +70,7 @@ export default {
     }
   },
   data: () => ({
-    badges: []
+    badges: [],
   }),
   created() {
     this.refresh();
