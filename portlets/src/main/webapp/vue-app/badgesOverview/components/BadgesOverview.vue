@@ -20,19 +20,25 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     class="white"
     id="badgesOverview">
     <widget-wrapper
-      :title="$t('exoplatform.gamification.badgesByDomain')">
+      :default-padding="isOverviewDisplay && 'px-0' || 'px-5 pb-5'"
+      :hide-padding-top="isOverviewDisplay">
+      <template v-if="!isOverviewDisplay" #title>
+        <span class="widget-text-header text-truncate">{{ $t('exoplatform.gamification.badgesByDomain') }}</span>
+      </template>
       <v-card flat>
         <v-card-text
-          class="d-flex flex-wrap justify-space-between pa-0">
+          :class="isOverviewDisplay && 'my-auto pa-0' || 'pt-0'"
+          class="d-flex flex-wrap justify-space-between">
           <template v-if="badges && badges.length">
             <badges-overview-item
-              v-for="badge in badges"
+              v-for="badge in badgesToDisplay"
               :key="badge.id"
               :badge="badge" />
           </template>
           <div
             v-else
-            class="d-flex justify-center mx-auto pa-0">
+            class="d-flex justify-center"
+            :class="isOverviewDisplay && 'my-auto' || 'py-4 mx-auto'">
             <span class="emptyBadgesIcon display-3 my-1">
               Ø
             </span>
@@ -58,8 +64,7 @@ export default {
     }
   },
   data: () => ({
-    badges: [],
-    test: true
+    badges: []
   }),
   created() {
     this.refresh();

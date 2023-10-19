@@ -16,7 +16,7 @@
 <template>
   <widget-wrapper
     :loading="loading"
-    :action-url="seeAllUrl"
+    :action-url="actionUrl"
     :title="title"
     :subtite="subtitle"
     :height="height"
@@ -45,7 +45,7 @@ export default {
       type: String,
       default: () => '',
     },
-    seeAllUrl: {
+    actionUrl: {
       type: String,
       default: () => '',
     },
