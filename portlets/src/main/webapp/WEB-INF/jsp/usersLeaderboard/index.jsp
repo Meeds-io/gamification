@@ -32,7 +32,7 @@
 %>
 <div class="VuetifyApp">
   <div data-app="true"
-    class="v-application v-application--is-ltr theme--light"
+    class="v-application v-application--is-ltr theme--light card-border-radius"
     id="usersLeaderboard">
     <div class="flex position-relative v-application--wrap">
       <div role="progressbar" aria-valuemin="0" aria-valuemax="100" class="v-progress-linear v-progress-linear--rounded theme--light app-cached-content ${cacheId}-cached-content" style="height: 1px; position: absolute; z-index: 1">
@@ -40,10 +40,10 @@
           <div class="v-progress-linear__indeterminate short primary"></div>
         </div>
       </div>
-      <div class="pa-3 v-card v-card--flat v-sheet theme--light">
+      <div class="pa-5 v-card v-card--flat v-sheet theme--light card-border-radius">
         <div class="UserGamificationHeader text-color d-flex">
           <div class="align-start d-flex">
-            <div class="d-inline-block">
+            <div class="d-inline-block widget-text-header text-truncate">
               <%=bundle.getString("exoplatform.gamification.userLeaderboard.title")%>
             </div>
           </div>

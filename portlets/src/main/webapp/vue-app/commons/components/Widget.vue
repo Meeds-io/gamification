@@ -22,6 +22,9 @@
     :height="height"
     :min-width="minWidth"
     :extra-class="extraClass">
+    <template #title>
+      <slot name="title"></slot>
+    </template> 
     <template #default>
       <slot></slot>
     </template>
@@ -52,7 +55,7 @@ export default {
     },
     height: {
       type: String,
-      default: () => '338px',
+      default: () => '358px',
     },
     minWidth: {
       type: String,

@@ -16,11 +16,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <v-card flat class="pa-3">
+    <v-card flat class="pa-5 card-border-radius">
       <div class="UserGamificationHeader text-color d-flex">
         <div class="align-start d-flex">
           <div
-            class="d-inline-block">
+            class="d-inline-block widget-text-header text-truncate">
             {{ $t('exoplatform.gamification.userLeaderboard.title') }}
           </div>
           <a
