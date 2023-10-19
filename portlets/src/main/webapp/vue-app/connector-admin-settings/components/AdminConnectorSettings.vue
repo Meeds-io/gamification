@@ -16,7 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <v-card class="my-3 border-radius" flat>
+    <v-card class="my-3 card-border-radius" flat>
       <template v-if="selectedConnector">
         <extension-registry-component
           v-if="editSettings"
