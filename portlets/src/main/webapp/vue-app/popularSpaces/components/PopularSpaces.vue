@@ -16,10 +16,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <v-card flat>
-      <v-card-title class="text-sub-title subtitle-1 text-uppercase pb-2">
-        {{ $t('popularSpaces.title') }}
-      </v-card-title>
+    <widget-wrapper
+      :title="$t('popularSpaces.title')">
       <v-layout>
         <v-col>
           <v-list
@@ -41,7 +39,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </div>
         </v-col>
       </v-layout>
-    </v-card>
+    </widget-wrapper>
   </v-app>
 </template>
 <script>
