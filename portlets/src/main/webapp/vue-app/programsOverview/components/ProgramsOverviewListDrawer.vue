@@ -35,14 +35,12 @@
     </template>
     <template #content>
       <gamification-overview-widget height="auto">
-        <template #content>
-          <gamification-overview-program-item
-            v-for="program in programs"
-            :key="program.id"
-            :program="program"
-            class="flex-grow-1"
-            go-back-button />
-        </template>
+        <gamification-overview-program-item
+          v-for="program in programs" 
+          :key="program.id"
+          :program="program"
+          class="flex-grow-1"
+          go-back-button />
       </gamification-overview-widget>
     </template>
   </exo-drawer>
