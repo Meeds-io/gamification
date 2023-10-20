@@ -71,7 +71,7 @@ export default {
       return this.connectors.filter(connector => this.connectorExtensions.some(item => connector.name === item.componentOptions.name && !item.componentOptions.comingSoon));
     },
     upcomingConnectors() {
-      return this.connectors.filter(connector => this.connectorExtensions.some(item => connector.name === item.componentOptions.name && item.componentOptions.comingSoon));
+      return this.connectors.filter(connector => this.connectorExtensions.some(item => connector.name === item.componentOptions.name && item.componentOptions.comingSoon)).sort((a, b) => a.title.localeCompare(b.title));
     }
   }
 };
