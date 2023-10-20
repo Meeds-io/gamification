@@ -16,29 +16,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <v-card :loading="loading" flat>
-      <v-card-title class="text-sub-title subtitle-1 text-uppercase pb-2">
-        {{ $t('popularSpaces.title') }}
-      </v-card-title>
-      <v-list
-        v-if="spaces && spaces.length"
-        loading="loading"
-        two-line
-        class="pa-0 mb-n2">
-        <popular-spaces-item
-          v-for="space in spaces"
-          :key="space.technicalId"
-          :space="space"
-          @refresh="refresh" />
-      </v-list>
-      <div
-        v-else-if="!loading"
-        class="d-flex justify-center">
-        <span class="emptySpacesLeaderboardIcon mb-2">
-          Ø
-        </span>
-      </div>
-    </v-card>
+    <widget-wrapper
+      :title="$t('popularSpaces.title')">
+      <v-card :loading="loading" flat>
+        <v-list
+          v-if="spaces && spaces.length"
+          loading="loading"
+          two-line
+          class="pa-0 mb-n2">
+          <popular-spaces-item
+            v-for="space in spaces"
+            :key="space.technicalId"
+            :space="space"
+            @refresh="refresh" />
+        </v-list>
+        <div
+          v-else-if="!loading"
+          class="d-flex justify-center">
+          <span class="emptySpacesLeaderboardIcon mb-2">
+            Ø
+          </span>
+        </div>
+      </v-card>
+    </widget-wrapper>
   </v-app>
 </template>
 <script>
