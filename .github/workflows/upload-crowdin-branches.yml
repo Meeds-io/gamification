@@ -1,0 +1,72 @@
+name: Crowdin Upload branches
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - develop-exo
+      - develop-meed
+
+jobs:
+  check-translation-change:
+    runs-on: ubuntu-latest
+    outputs:
+      translation_change: ${{ steps.are_translations_changes.outputs.run_jobs }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: lots0logs/gh-action-get-changed-files@2.2.2
+        id: files_impacted
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: check changes in translations properties
+        id: are_translations_changes
+        run: |
+          codeChanges="${{ steps.files_impacted.outputs.all }}"
+          if [[ "$codeChanges" == *"properties"* ]]; then
+            echo "run_jobs=true" >> $GITHUB_OUTPUT            
+          else
+            echo "run_jobs=false" >> $GITHUB_OUTPUT 
+          fi 
+  check-project-build:
+    needs: [check-translation-change]
+    if: needs.check-translation-change.outputs.translation_change == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      crowdin_project_available: ${{ steps.is_crowdin_project_available.outputs.project_available }}
+    steps:
+    - name: Check project build in progress
+      id: is_crowdin_project_available
+      run: |
+        wait_exec=0;
+        while [ $(curl -s -H "Accept: application/json" -H "Authorization: Bearer ${{ secrets.CROWDIN_PERSONAL_TOKEN }}"\
+                                                                     https://crowdin.com/api/v2/projects/${{ secrets.CROWDIN_PROJECT_ID }}/translations/builds \
+                                                                     | jq -r 'any(.data[].data; select(.status != "finished" ))') == "true" ] && (( wait_exec<10 )) ; do
+         sleep 10;
+         ((wait_exec=wait_exec+1));
+        done
+        if ((wait_exec==10)); then
+          echo "project_available=false" >> $GITHUB_OUTPUT
+        else
+          echo "project_available=true" >> $GITHUB_OUTPUT
+        fi
+  crowdin-upload:
+    needs: [check-translation-change,check-project-build]
+    if: needs.check-translation-change.outputs.translation_change == 'true' &&  needs.check-project-build.outputs.crowdin_project_available == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: "extract branch name"
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+      - name: Crowdin push
+        uses: crowdin/github-action@v1
+        with:
+          upload_sources: true
+          upload_translations: false
+          download_translations: false
+          crowdin_branch_name: ${{ steps.extract_branch.outputs.branch }}
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
