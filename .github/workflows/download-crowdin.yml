@@ -169,7 +169,7 @@ jobs:
         run: |
           git push origin origin/develop-exo:refs/heads/integration/6.5.x-meed-translation -f
   crowdin-download-develop-meed:
-    needs: [reset-branch-integration-meed]
+    needs: [reset-branch-integration-develop-meed]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
