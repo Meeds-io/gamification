@@ -3,6 +3,7 @@ name: Crowdin  download Action
 on:
   schedule:
     - cron: "0 17 * * *"
+  workflow_dispatch:
 
 jobs:
   # develop workflow
@@ -167,7 +168,7 @@ jobs:
           token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
       - name: reset translation branch to develop's
         run: |
-          git push origin origin/develop-exo:refs/heads/integration/6.5.x-meed-translation -f
+          git push origin origin/develop-meed:refs/heads/integration/6.5.x-meed-translation -f
   crowdin-download-develop-meed:
     needs: [reset-branch-integration-develop-meed]
     runs-on: ubuntu-latest
