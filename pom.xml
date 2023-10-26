@@ -16,8 +16,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>addons-parent-pom</artifactId>
@@ -27,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <groupId>org.exoplatform.addons.gamification</groupId>
     <artifactId>gamification</artifactId>
-    <version>2.5.x-exo-SNAPSHOT</version>
+    <version>2.5.0-exo-20231026</version>
     <packaging>pom</packaging>
     <name>eXo Gamification</name>
     <description>eXo Gamification extension</description>
@@ -41,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <scm>
         <connection>scm:git:git://github.com/meeds-io/gamification.git</connection>
         <developerConnection>scm:git:git@github.com:meeds-io/gamification.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>2.5.0-exo-20231026</tag>
         <url>https://github.com/meeds-io/gamification</url>
         
     </scm>
