@@ -34,6 +34,7 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.model.filter.ProgramFilter;
 
@@ -119,6 +120,9 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
       query.setParameter("spacesIds", filter.getSpacesIds());
     }
+    if (filter.getOwnerId() == 0 && (CollectionUtils.isNotEmpty(filter.getSpacesIds()) || !filter.isAllSpaces())) {
+      query.setParameter("openVisibility", EntityVisibility.OPEN);
+    }
     EntityFilterType type = filter.getType();
     if (type != null && type != EntityFilterType.ALL) {
       query.setParameter("type", EntityType.valueOf(type.name()));
@@ -173,10 +177,10 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
       }
     } else if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
       suffixes.add("Audience");
-      predicates.add("(d.audienceId IS NULL OR d.audienceId in (:spacesIds))");
+      predicates.add("(d.audienceId IS NULL OR d.visibility = :openVisibility OR d.audienceId in (:spacesIds))");
     } else if (!filter.isAllSpaces()) {
       suffixes.add("OpenAudience");
-      predicates.add("d.audienceId IS NULL");
+      predicates.add("(d.audienceId IS NULL OR d.visibility = :openVisibility)");
     }
     if (StringUtils.isNotBlank(filter.getSortBy())) {
       suffixes.add("SortBy");
