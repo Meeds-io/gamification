@@ -67,6 +67,8 @@ import io.meeds.gamification.rest.model.ProgramList;
 import io.meeds.gamification.rest.model.ProgramRestEntity;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RuleService;
+import io.meeds.gamification.utils.Utils;
+import io.meeds.portal.security.service.SecuritySettingService;
 import io.meeds.social.translation.service.TranslationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -100,37 +102,40 @@ public class ProgramRest implements ResourceContainer {
     CACHECONTROL.setPrivate(false);
   }
 
-  protected PortalContainer    portalContainer;
+  protected PortalContainer        portalContainer;
 
-  protected ProgramService     programService;
+  protected ProgramService         programService;
 
-  protected RuleService        ruleService;
+  protected RuleService            ruleService;
 
-  protected IdentityManager    identityManager;
+  protected IdentityManager        identityManager;
 
-  protected TranslationService translationService;
+  protected TranslationService     translationService;
 
-  public byte[]                defaultProgramCover  = null; // NOSONAR
+  protected SecuritySettingService securitySettingService;
 
-  public byte[]                defaultProgramAvatar = null; // NOSONAR
+  public byte[]                    defaultProgramCover  = null; // NOSONAR
+
+  public byte[]                    defaultProgramAvatar = null; // NOSONAR
 
   public ProgramRest(PortalContainer portalContainer,
                      ProgramService programService,
                      RuleService ruleService,
                      TranslationService translationService,
-                     IdentityManager identityManager) {
+                     IdentityManager identityManager,
+                     SecuritySettingService securitySettingService) {
     this.portalContainer = portalContainer;
     this.programService = programService;
     this.ruleService = ruleService;
     this.translationService = translationService;
     this.identityManager = identityManager;
+    this.securitySettingService = securitySettingService;
   }
 
   @GET
   @Produces({
       MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN
   })
-  @RolesAllowed("users")
   @Operation(summary = "Retrieves the list of available programs", method = "GET")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Request fulfilled"),
@@ -185,6 +190,9 @@ public class ProgramRest implements ResourceContainer {
                               @Parameter(description = "Used to retrieve extra information about the program")
                               @QueryParam("expand")
                               String expand) {
+    if (!Utils.canAccessAnonymousResources(securitySettingService)) {
+      return Response.status(Status.UNAUTHORIZED).build();
+    }
 
     ProgramFilter programFilter = new ProgramFilter();
     programFilter.setSortByBudget(sortByBudget);
@@ -196,7 +204,11 @@ public class ProgramRest implements ResourceContainer {
       programFilter.setProgramTitle(query);
     }
     if (owned) {
-      programFilter.setOwnerId(getCurrentUserIdentityId());
+      long currentUserIdentityId = getCurrentUserIdentityId();
+      if (currentUserIdentityId == 0) {
+        return Response.status(Response.Status.UNAUTHORIZED).build();
+      }
+      programFilter.setOwnerId(currentUserIdentityId);
     }
     List<String> expandFields = getExpandOptions(expand);
 
@@ -536,7 +548,6 @@ public class ProgramRest implements ResourceContainer {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("{programId}")
-  @RolesAllowed("users")
   @Operation(summary = "Retrieves a program by its technical identifier", method = "GET")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Request fulfilled"),
@@ -559,6 +570,8 @@ public class ProgramRest implements ResourceContainer {
                                  String expand) {
     if (programId == 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Program Id must be not null").build();
+    } else if (!Utils.canAccessAnonymousResources(securitySettingService)) {
+      return Response.status(Status.UNAUTHORIZED).build();
     }
     String currentUser = getCurrentUser();
     try {
