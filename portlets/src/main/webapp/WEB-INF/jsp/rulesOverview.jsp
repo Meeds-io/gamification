@@ -18,8 +18,10 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 %>
+<%@page import="io.meeds.gamification.utils.Utils"%>
 <%
   Object showLocked = request.getAttribute("showLocked");
+ if (Utils.canAccessAnonymousResources()) {
 %>
 <div class="VuetifyApp">
   <div id="rulesOverview">
@@ -28,3 +30,4 @@
     </script>
   </div>
 </div>
+<% } %>

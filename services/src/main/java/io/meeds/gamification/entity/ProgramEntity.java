@@ -25,6 +25,8 @@ import javax.persistence.*;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.EntityVisibility;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -45,41 +47,45 @@ public class ProgramEntity extends AbstractAuditingEntity implements Serializabl
   @Id
   @SequenceGenerator(name = "SEQ_GAMIFICATION_DOMAIN_ID", sequenceName = "SEQ_GAMIFICATION_DOMAIN_ID", allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_GAMIFICATION_DOMAIN_ID")
-  protected Long            id;
+  protected Long             id;
 
   @Column(name = "TITLE", unique = true, nullable = false)
-  protected String          title;
+  protected String           title;
 
   @Column(name = "DESCRIPTION")
-  protected String          description;
+  protected String           description;
 
   @Column(name = "COLOR")
-  protected String          color;
+  protected String           color;
 
   @Column(name = "PRIORITY")
-  protected int             priority;
+  protected int              priority;
 
   @Column(name = "DELETED", nullable = false)
-  protected boolean         isDeleted;
+  protected boolean          isDeleted;
 
   @Column(name = "ENABLED", nullable = false)
-  protected boolean         isEnabled;
+  protected boolean          isEnabled;
 
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "TYPE", nullable = false)
-  protected EntityType      type;
+  protected EntityType       type;
 
   @Column(name = "BUDGET")
-  protected long            budget;
+  protected long             budget;
 
   @Column(name = "COVER_FILE_ID")
-  protected long            coverFileId;
+  protected long             coverFileId;
 
   @Column(name = "AVATAR_FILE_ID")
-  protected long            avatarFileId;
+  protected long             avatarFileId;
 
   @Column(name = "AUDIENCE_ID")
-  protected Long            audienceId;
+  protected Long             audienceId;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "VISIBILITY")
+  protected EntityVisibility visibility;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "GAMIFICATION_DOMAIN_OWNERS", joinColumns = @JoinColumn(name = "DOMAIN_ID"))

@@ -40,13 +40,13 @@ public interface ProgramService {
   /**
    * Gets programs by filter.
    *
-   * @param  programFilter          {@link ProgramFilter} used to filter results
-   * @param  username               User name accessing programs
-   * @param  offset                 index of the search
-   * @param  limit                  limit of results to return
-   * @return                        A {@link List &lt;ProgramDTO&gt;} object
+   * @param programFilter {@link ProgramFilter} used to filter results
+   * @param username User name accessing programs
+   * @param offset index of the search
+   * @param limit limit of results to return
+   * @return A {@link List &lt;ProgramDTO&gt;} object
    * @throws IllegalAccessException when user is not authorized to get another
-   *                                  owner's programs list
+   *           owner's programs list
    */
   List<ProgramDTO> getPrograms(ProgramFilter programFilter,
                                String username,
@@ -56,13 +56,13 @@ public interface ProgramService {
   /**
    * Gets Program Ids by filter.
    *
-   * @param  programFilter          {@link ProgramFilter} used to filter results
-   * @param  username               User name accessing Programs
-   * @param  offset                 index of the search
-   * @param  limit                  limit of results to return
-   * @return                        A {@link List &lt;ProgramDTO&gt;} object
+   * @param programFilter {@link ProgramFilter} used to filter results
+   * @param username User name accessing Programs
+   * @param offset index of the search
+   * @param limit limit of results to return
+   * @return A {@link List &lt;ProgramDTO&gt;} object
    * @throws IllegalAccessException when user is not authorized to get another
-   *                                  owner's Programs list
+   *           owner's Programs list
    */
   List<Long> getProgramIds(ProgramFilter programFilter,
                            String username,
@@ -72,88 +72,84 @@ public interface ProgramService {
   /**
    * Gets Program Ids by filter.
    *
-   * @param  programFilter {@link ProgramFilter} used to filter results
-   * @param  offset        index of the search
-   * @param  limit         limit of results to return
-   * @return               A {@link List &lt;ProgramDTO&gt;} object
+   * @param programFilter {@link ProgramFilter} used to filter results
+   * @param offset index of the search
+   * @param limit limit of results to return
+   * @return A {@link List &lt;ProgramDTO&gt;} object
    */
   List<Long> getProgramIds(ProgramFilter programFilter,
                            int offset,
                            int limit);
 
   /**
-   * @param  username user name
-   * @param  offset   start index for fetch
-   * @param  limit    limit to fetch
-   * @return          {@link List} of {@link ProgramDTO} id of programs where
-   *                  the user is owner
+   * @param username user name
+   * @param offset start index for fetch
+   * @param limit limit to fetch
+   * @return {@link List} of {@link ProgramDTO} id of programs where the user is
+   *         owner
    */
   List<Long> getOwnedProgramIds(String username, int offset, int limit);
 
   /**
-   * @param  username user name
-   * @param  offset   start index for fetch
-   * @param  limit    limit to fetch
-   * @return          {@link List} of {@link ProgramDTO} id of programs where
-   *                  the user is member of
+   * @param username user name
+   * @param offset start index for fetch
+   * @param limit limit to fetch
+   * @return {@link List} of {@link ProgramDTO} id of programs where the user is
+   *         member of
    */
   List<Long> getMemberProgramIds(String username, int offset, int limit);
 
   /**
    * Find a Program by title
    * 
-   * @param  programTitle : Program title
-   * @return              found {@link ProgramDTO}
+   * @param programTitle : Program title
+   * @return found {@link ProgramDTO}
    */
   ProgramDTO getProgramByTitle(String programTitle);
 
   /**
    * Creates a new Program
    * 
-   * @param  program                : an object of type ProgramDTO
-   * @param  aclIdentity            Security identity of user attempting to
-   *                                  create a program
-   * @return                        created {@link ProgramDTO}
+   * @param program : an object of type ProgramDTO
+   * @param aclIdentity Security identity of user attempting to create a program
+   * @return created {@link ProgramDTO}
    * @throws IllegalAccessException when user is not authorized to create a
-   *                                  Program for the designated owner defined
-   *                                  in object
+   *           Program for the designated owner defined in object
    */
   ProgramDTO createProgram(ProgramDTO program, Identity aclIdentity) throws IllegalAccessException;
 
   /**
    * Creates a new Program
    * 
-   * @param  program : an object of type ProgramDTO
-   * @return         created {@link ProgramDTO}
+   * @param program : an object of type ProgramDTO
+   * @return created {@link ProgramDTO}
    */
   ProgramDTO createProgram(ProgramDTO program);
 
   /**
    * Update an existing Program
    * 
-   * @param  program                  : an instance of type ProgramDTO
-   * @param  aclIdentity              Security identity of user attempting to
-   *                                    update a program
-   * @return                          updated object {@link ProgramDTO}
+   * @param program : an instance of type ProgramDTO
+   * @param aclIdentity Security identity of user attempting to update a program
+   * @return updated object {@link ProgramDTO}
    * @throws IllegalArgumentException when user is not authorized to update the
-   *                                    Program
-   * @throws ObjectNotFoundException  when the Program identified by its
-   *                                    technical identifier is not found
-   * @throws IllegalAccessException   when user is not authorized to create a
-   *                                    Program for the designated owner defined
-   *                                    in object
+   *           Program
+   * @throws ObjectNotFoundException when the Program identified by its
+   *           technical identifier is not found
+   * @throws IllegalAccessException when user is not authorized to create a
+   *           Program for the designated owner defined in object
    */
   ProgramDTO updateProgram(ProgramDTO program, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException;
 
   /**
    * Update an existing Program
    * 
-   * @param  program                  : an instance of type ProgramDTO
-   * @return                          updated object {@link ProgramDTO}
+   * @param program : an instance of type ProgramDTO
+   * @return updated object {@link ProgramDTO}
    * @throws IllegalArgumentException when user is not authorized to update the
-   *                                    Program
-   * @throws ObjectNotFoundException  when the Program identified by its
-   *                                    technical identifier is not found
+   *           Program
+   * @throws ObjectNotFoundException when the Program identified by its
+   *           technical identifier is not found
    */
   ProgramDTO updateProgram(ProgramDTO program) throws ObjectNotFoundException;
 
@@ -162,12 +158,11 @@ public interface ProgramService {
   /**
    * Deletes an existing Program by id
    *
-   * @param  programId               Program technical identifier to delete
-   * @param  aclIdentity             Security identity of user attempting to
-   *                                   delete a program
-   * @return                         deleted {@link ProgramDTO}
-   * @throws IllegalAccessException  when user is not authorized to delete
-   *                                   program
+   * @param programId Program technical identifier to delete
+   * @param aclIdentity Security identity of user attempting to delete a program
+   * @return deleted {@link ProgramDTO}
+   * @throws IllegalAccessException when user is not authorized to delete
+   *           program
    * @throws ObjectNotFoundException program not found
    */
   ProgramDTO deleteProgramById(long programId, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException; // NOSONAR
@@ -175,11 +170,11 @@ public interface ProgramService {
   /**
    * Delete program Cover identified by program id
    * 
-   * @param  programId               {@link ProgramDTO} technical identifier
-   * @param  aclIdentity             Security identity of user attempting to
-   *                                   delete the program cover
-   * @throws IllegalAccessException  when user is not authorized to delete
-   *                                   program cover
+   * @param programId {@link ProgramDTO} technical identifier
+   * @param aclIdentity Security identity of user attempting to delete the
+   *          program cover
+   * @throws IllegalAccessException when user is not authorized to delete
+   *           program cover
    * @throws ObjectNotFoundException program not found
    */
   void deleteProgramCoverById(long programId, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException; // NOSONAR
@@ -187,11 +182,11 @@ public interface ProgramService {
   /**
    * Delete program Avatar identified by program id
    * 
-   * @param  programId               {@link ProgramDTO} technical identifier
-   * @param  aclIdentity             Security identity of user attempting to
-   *                                   delete the program avatar
-   * @throws IllegalAccessException  when user is not authorized to delete
-   *                                   program avatar
+   * @param programId {@link ProgramDTO} technical identifier
+   * @param aclIdentity Security identity of user attempting to delete the
+   *          program avatar
+   * @throws IllegalAccessException when user is not authorized to delete
+   *           program avatar
    * @throws ObjectNotFoundException program not found
    */
   void deleteProgramAvatarById(long programId, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException;
@@ -199,8 +194,8 @@ public interface ProgramService {
   /**
    * Retrieves a program identified by its technical identifier.
    * 
-   * @param  programId : program id
-   * @return           found {@link ProgramDTO}
+   * @param programId : program id
+   * @return found {@link ProgramDTO}
    */
   ProgramDTO getProgramById(long programId);
 
@@ -208,11 +203,11 @@ public interface ProgramService {
    * Retrieves a program identified by its technical identifier accessed by a
    * user
    * 
-   * @param  programId
-   * @param  username
-   * @return                         found {@link ProgramDTO}
-   * @throws IllegalAccessException  when user is not authorized to access
-   *                                   program
+   * @param programId
+   * @param username
+   * @return found {@link ProgramDTO}
+   * @throws IllegalAccessException when user is not authorized to access
+   *           program
    * @throws ObjectNotFoundException program not found
    */
   ProgramDTO getProgramById(long programId, String username) throws IllegalAccessException, ObjectNotFoundException;
@@ -220,63 +215,59 @@ public interface ProgramService {
   /**
    * Count all Programs by filter
    *
-   * @param  programFilter          {@link ProgramFilter} used to filter
-   *                                  Programs
-   * @param  username               User name accessing Programs
-   * @return                        Programs count
+   * @param programFilter {@link ProgramFilter} used to filter Programs
+   * @param username User name accessing Programs
+   * @return Programs count
    * @throws IllegalAccessException when user is not authorized to get another
-   *                                  owner's Programs list
+   *           owner's Programs list
    */
   int countPrograms(ProgramFilter programFilter, String username) throws IllegalAccessException;
 
   /**
    * Count all Programs by filter
    *
-   * @param  programFilter {@link ProgramFilter} used to filter Programs
-   * @return               Programs count
+   * @param programFilter {@link ProgramFilter} used to filter Programs
+   * @return Programs count
    */
   int countPrograms(ProgramFilter programFilter);
 
   /**
-   * @param  username User name accessing Programs
-   * @return          Owned Programs count for a given user identified by its
-   *                  name
+   * @param username User name accessing Programs
+   * @return Owned Programs count for a given user identified by its name
    */
   int countOwnedPrograms(String username);
 
   /**
-   * @param  username User name accessing Programs
-   * @return          Programs as member count for a given user identified by
-   *                  its name
+   * @param username User name accessing Programs
+   * @return Programs as member count for a given user identified by its name
    */
   int countMemberPrograms(String username);
 
   /**
    * Retrieves the program cover identified by Program technical identifier.
    *
-   * @param  programId               Program unique identifier
-   * @return                         found {@link InputStream}
+   * @param programId Program unique identifier
+   * @return found {@link InputStream}
    * @throws ObjectNotFoundException When program not found or file attachment
-   *                                   not found
+   *           not found
    */
   InputStream getProgramCoverStream(long programId) throws ObjectNotFoundException;
 
   /**
    * Retrieves the program avatar identified by Program technical identifier.
    *
-   * @param  programId               Program unique identifier
-   * @return                         found {@link InputStream}
+   * @param programId Program unique identifier
+   * @return found {@link InputStream}
    * @throws ObjectNotFoundException When program not found or file attachment
-   *                                   not found
+   *           not found
    */
   InputStream getProgramAvatarStream(long programId) throws ObjectNotFoundException;
 
   /**
    * Check whether user can add programs or not
    * 
-   * @param  aclIdentity Security identity of user
-   * @return             true if user has enough privileges to create a program,
-   *                     else false
+   * @param aclIdentity Security identity of user
+   * @return true if user has enough privileges to create a program, else false
    */
   boolean canAddProgram(Identity aclIdentity);
 
@@ -292,21 +283,28 @@ public interface ProgramService {
   /**
    * Check whether user can add programs or not
    * 
-   * @param  programId technical identifier of program
-   * @param  username  user name
-   * @return           true if user has enough privileges to create a program,
-   *                   else false
+   * @param programId technical identifier of program
+   * @param username user name
+   * @return true if user has enough privileges to create a program, else false
    */
   boolean isProgramOwner(long programId, String username);
 
   /**
    * Check whether user is member of program or not
    * 
-   * @param  programId technical identifier of program
-   * @param  username  user name
-   * @return           true if user has enough privileges to see a program, else
-   *                   false
+   * @param programId technical identifier of program
+   * @param username user name
+   * @return true if user has enough privileges to see a program, else false
    */
   boolean isProgramMember(long programId, String username);
+
+  /**
+   * Check whether user can view program details or not
+   * 
+   * @param programId technical identifier of program
+   * @param username user name
+   * @return true if user has enough privileges to see a program, else false
+   */
+  boolean canViewProgram(long programId, String username);
 
 }

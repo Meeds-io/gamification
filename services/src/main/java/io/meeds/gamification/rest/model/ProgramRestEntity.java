@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.exoplatform.social.core.space.model.Space;
 
+import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.UserInfo;
 import lombok.AllArgsConstructor;
@@ -73,7 +74,8 @@ public class ProgramRestEntity extends ProgramDTO {
                            Space space,
                            UserInfo userInfo,
                            List<UserInfo> owners,
-                           int activeRulesCount) {
+                           int activeRulesCount,
+                           EntityVisibility visibility) {
     super(id,
           title,
           description,
@@ -96,7 +98,8 @@ public class ProgramRestEntity extends ProgramDTO {
           avatarUrl,
           ownerIds,
           rulesTotalScore,
-          open);
+          open,
+          visibility);
     this.space = space;
     this.userInfo = userInfo;
     this.owners = owners;
