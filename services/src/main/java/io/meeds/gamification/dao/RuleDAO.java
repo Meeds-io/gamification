@@ -39,6 +39,7 @@ import io.meeds.gamification.constant.DateFilterType;
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.model.filter.RuleFilter;
 
@@ -215,6 +216,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
       query.setParameter("filterType", EntityType.valueOf(filter.getType().name()));
     }
+    if ((CollectionUtils.isNotEmpty(filter.getSpaceIds()) && !filter.isExcludeNoSpace())
+        || (CollectionUtils.isEmpty(filter.getSpaceIds()) && !filter.isAllSpaces())) {
+      query.setParameter("openVisibility", EntityVisibility.OPEN);
+    }
   }
 
   private String getQueryFilterName(String sortField,
@@ -311,11 +316,11 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
         predicates.add("r.domainEntity.audienceId in (:ids)");
       } else {
         suffixes.add("Audience");
-        predicates.add("(r.domainEntity.audienceId IS NULL OR r.domainEntity.audienceId in (:ids))");
+        predicates.add("(r.domainEntity.audienceId IS NULL OR r.domainEntity.visibility = :openVisibility OR r.domainEntity.audienceId in (:ids))");
       }
     } else if (!filter.isAllSpaces()) {
       suffixes.add("OpenAudience");
-      predicates.add("r.domainEntity.audienceId IS NULL");
+      predicates.add("(r.domainEntity.audienceId IS NULL OR r.domainEntity.visibility = :openVisibility)");
     }
     if (CollectionUtils.isNotEmpty(filter.getExcludedRuleIds())) {
       suffixes.add("ExcludeIds");

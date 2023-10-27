@@ -45,12 +45,33 @@ public class ProgramSpaceListener extends SpaceListenerPlugin {
     CompletableFuture.runAsync(() -> removePrograms(event));
   }
 
+  @Override
+  public void spaceRegistrationEdited(SpaceLifeCycleEvent event) {
+    CompletableFuture.runAsync(() -> updateProgramsVisibility(event));
+  }
+
+  @ExoTransactional
+  public void updateProgramsVisibility(SpaceLifeCycleEvent event) {
+    String spaceId = event.getSpace().getId();
+    List<Long> programIds = getSpaceProgramIds(spaceId);
+    programIds.forEach(programId -> {
+      try {
+        ProgramDTO program = programService.getProgramById(programId);
+        // Force update visibility computing by updating the program
+        programService.updateProgram(program);
+      } catch (Exception e) {
+        LOG.warn("Error updating program with id {} while its space registration with id {} had changed",
+                 programId,
+                 spaceId,
+                 e);
+      }
+    });
+  }
+
   @ExoTransactional
   public void removePrograms(SpaceLifeCycleEvent event) {
-    ProgramFilter spaceProgramsFilter = new ProgramFilter(true);
     String spaceId = event.getSpace().getId();
-    spaceProgramsFilter.setSpacesIds(Collections.singletonList(Long.parseLong(spaceId)));
-    List<Long> programIds = programService.getProgramIds(spaceProgramsFilter, 0, -1);
+    List<Long> programIds = getSpaceProgramIds(spaceId);
     programIds.forEach(programId -> {
       try {
         ProgramDTO program = programService.getProgramById(programId);
@@ -63,6 +84,12 @@ public class ProgramSpaceListener extends SpaceListenerPlugin {
                  e);
       }
     });
+  }
+
+  private List<Long> getSpaceProgramIds(String spaceId) {
+    ProgramFilter spaceProgramsFilter = new ProgramFilter(true);
+    spaceProgramsFilter.setSpacesIds(Collections.singletonList(Long.parseLong(spaceId)));
+    return programService.getProgramIds(spaceProgramsFilter, 0, -1);
   }
 
 }
