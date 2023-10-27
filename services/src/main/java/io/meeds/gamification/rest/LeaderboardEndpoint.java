@@ -34,6 +34,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
@@ -56,44 +57,50 @@ import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.LeaderboardFilter;
 import io.meeds.gamification.service.RealizationService;
+import io.meeds.gamification.utils.Utils;
+import io.meeds.portal.security.service.SecuritySettingService;
+
 import io.swagger.v3.oas.annotations.Parameter;
 
 @Path("/gamification/leaderboard")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("users")
 public class LeaderboardEndpoint implements ResourceContainer {
 
-  private static final Log      LOG                   = ExoLogger.getLogger(LeaderboardEndpoint.class);
+  private static final Log         LOG                   = ExoLogger.getLogger(LeaderboardEndpoint.class);
 
-  private static final String   YOUR_CURRENT_RANK_MSG = "Your current rank";
+  private static final String      YOUR_CURRENT_RANK_MSG = "Your current rank";
 
-  private static final int      DEFAULT_LOAD_CAPACITY = 10;
+  private static final int         DEFAULT_LOAD_CAPACITY = 10;
 
-  private static final int      MAX_LOAD_CAPACITY     = 100;
+  private static final int         MAX_LOAD_CAPACITY     = 100;
 
-  protected IdentityManager     identityManager       = null;
+  protected IdentityManager        identityManager       = null;
 
-  protected RealizationService  realizationService    = null;
+  protected RealizationService     realizationService    = null;
 
-  protected RelationshipManager relationshipManager;
+  protected RelationshipManager    relationshipManager;
 
-  protected SpaceService        spaceService;
+  protected SpaceService           spaceService;
+
+  protected SecuritySettingService securitySettingService;
 
   public LeaderboardEndpoint(IdentityManager identityManager,
                              RealizationService realizationService,
                              RelationshipManager relationshipManager,
-                             SpaceService spaceService) {
+                             SpaceService spaceService,
+                             SecuritySettingService securitySettingService) {
     this.identityManager = identityManager;
     this.realizationService = realizationService;
     this.relationshipManager = relationshipManager;
     this.spaceService = spaceService;
+    this.securitySettingService = securitySettingService;
   }
 
   @GET
   @Path("rank/all")
-  @RolesAllowed("users")
-  public Response getAllLeadersByRank(@Context
-  UriInfo uriInfo,
+  public Response getAllLeadersByRank(
+                                      @Context
+                                      UriInfo uriInfo,
                                       @Parameter(description = "Get leaderboard of user or space")
                                       @DefaultValue("user")
                                       @QueryParam("earnerType")
@@ -110,6 +117,9 @@ public class LeaderboardEndpoint implements ResourceContainer {
                                       @DefaultValue("true")
                                       @QueryParam("loadCapacity")
                                       boolean loadCapacity) {
+    if (!Utils.canAccessAnonymousResources(securitySettingService)) {
+      return Response.status(Status.UNAUTHORIZED).build();
+    }
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
     IdentityType identityType = IdentityType.getType(earnerType);
     leaderboardFilter.setIdentityType(identityType);
@@ -125,7 +135,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
       period = Period.ALL.name();
     }
     leaderboardFilter.setPeriod(period);
-    leaderboardFilter.setCurrentUser(ConversationState.getCurrent().getIdentity().getUserId());
+    String currentUser = Utils.getCurrentUser();
+    leaderboardFilter.setCurrentUser(currentUser);
 
     List<LeaderboardInfo> leaderboardList = new ArrayList<>();
 
@@ -135,21 +146,24 @@ public class LeaderboardEndpoint implements ResourceContainer {
         return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).build();
       }
       int index = 1;
+      boolean isAnonymous = StringUtils.isBlank(currentUser);
       for (StandardLeaderboard element : standardLeaderboards) {
         Identity identity = identityManager.getIdentity(element.getEarnerId());
         if (identity == null) {
           continue;
         }
         LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
-        leaderboardInfo.setSocialId(identity.getId());
-        String technicalId = computeTechnicalId(identity);
-        leaderboardInfo.setTechnicalId(technicalId);
-        leaderboardInfo.setScore(element.getReputationScore());
-        leaderboardInfo.setRemoteId(identity.getRemoteId());
         leaderboardInfo.setFullname(identity.getProfile().getFullName());
         leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-        leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
+        leaderboardInfo.setScore(element.getReputationScore());
         leaderboardInfo.setRank(index);
+        if (!isAnonymous) {
+          leaderboardInfo.setRemoteId(identity.getRemoteId());
+          leaderboardInfo.setSocialId(identity.getId());
+          String technicalId = computeTechnicalId(identity);
+          leaderboardInfo.setTechnicalId(technicalId);
+          leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
+        }
         leaderboardList.add(leaderboardInfo);
         index++;
       }
@@ -168,13 +182,15 @@ public class LeaderboardEndpoint implements ResourceContainer {
           break;
         }
 
-        // Check if the current user is already in top10
-        LeaderboardInfo leader = buildCurrentUserRank(date,
-                                                      leaderboardFilter.getProgramId(),
-                                                      leaderboardList);
-        // Complete the final leaderboard
-        if (leader != null) {
-          leaderboardList.add(leader);
+        if (!isAnonymous) {
+          // Check if the current user is already in top10
+          LeaderboardInfo leader = buildCurrentUserRank(date,
+                                                        leaderboardFilter.getProgramId(),
+                                                        leaderboardList);
+          // Complete the final leaderboard
+          if (leader != null) {
+            leaderboardList.add(leader);
+          }
         }
       }
       return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).build();

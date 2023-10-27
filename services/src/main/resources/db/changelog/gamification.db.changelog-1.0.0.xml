@@ -751,4 +751,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci" />
         </modifySql>
     </changeSet>
+
+    <!--
+      Merged to Table definition, thus 1.0.0-68 is skipped
+      <changeSet author="exo-gamification" id="1.0.0-68">
+          <renameColumn tableName="GAMIFICATION_EVENTS" columnDataType="NVARCHAR(250)" oldColumnName="TRIGGER" newColumnName="EVENT_TRIGGER" />
+      </changeSet>
+    -->
+
+    <changeSet  author="exo-gamification" id="1.0.0-69">
+      <addColumn tableName="GAMIFICATION_DOMAIN">
+        <column name="VISIBILITY" type="INT" defaultValueNumeric="0" />
+      </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

@@ -27,10 +27,15 @@ import org.junit.Test;
 import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.security.ConversationState;
 
+import io.meeds.gamification.constant.EntityFilterType;
+import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.entity.ProgramEntity;
+import io.meeds.gamification.mock.SpaceServiceMock;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.UserInfoContext;
+import io.meeds.gamification.model.filter.ProgramFilter;
+import io.meeds.gamification.rest.model.ProgramList;
 import io.meeds.gamification.rest.model.ProgramRestEntity;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
@@ -173,8 +178,8 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
                                      StandardCharsets.UTF_8);
 
     ContainerResponse response = getResponse("GET",
-                                             getURLResource("programs/" + Utils.DEFAULT_COVER_REMOTE_ID + "/cover?lastModified="
-                                                 + lastUpdateCoverTime + "&r=" + token),
+                                             getURLResource("programs/" + Utils.DEFAULT_COVER_REMOTE_ID + "/cover?lastModified=" +
+                                                 lastUpdateCoverTime + "&r=" + token),
                                              null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
@@ -184,17 +189,15 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     assertEquals(404, response.getStatus());
 
     response = getResponse("GET",
-                           getURLResource("programs/" + manualDomain.getId() + "/cover?lastModified=" + lastUpdateCoverTime
-                               + "&r="
-                               + token),
+                           getURLResource("programs/" + manualDomain.getId() + "/cover?lastModified=" + lastUpdateCoverTime +
+                               "&r=" + token),
                            null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
     response = getResponse("GET",
-                           getURLResource("programs/" + manualDomain.getId() + "/cover?lastModified=" + lastUpdateCoverTime
-                               + "&r="
-                               + "wrongToken"),
+                           getURLResource("programs/" + manualDomain.getId() + "/cover?lastModified=" + lastUpdateCoverTime +
+                               "&r=" + "wrongToken"),
                            null);
     assertNotNull(response);
     assertEquals(403, response.getStatus());
@@ -209,8 +212,8 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
                                      StandardCharsets.UTF_8);
 
     ContainerResponse response = getResponse("GET",
-                                             getURLResource("programs/" + Utils.DEFAULT_AVATAR_REMOTE_ID + "/avatar?lastModified="
-                                                 + lastUpdateAvatarTime + "&r=" + token),
+                                             getURLResource("programs/" + Utils.DEFAULT_AVATAR_REMOTE_ID +
+                                                 "/avatar?lastModified=" + lastUpdateAvatarTime + "&r=" + token),
                                              null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
@@ -221,17 +224,15 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     assertEquals(404, response.getStatus());
 
     response = getResponse("GET",
-                           getURLResource("programs/" + manualDomain.getId() + "/avatar?lastModified=" + lastUpdateAvatarTime
-                               + "&r="
-                               + token),
+                           getURLResource("programs/" + manualDomain.getId() + "/avatar?lastModified=" + lastUpdateAvatarTime +
+                               "&r=" + token),
                            null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
     response = getResponse("GET",
-                           getURLResource("programs/" + manualDomain.getId() + "/avatar?lastModified=" + lastUpdateAvatarTime
-                               + "&r="
-                               + "wrongToken"),
+                           getURLResource("programs/" + manualDomain.getId() + "/avatar?lastModified=" + lastUpdateAvatarTime +
+                               "&r=" + "wrongToken"),
                            null);
     assertNotNull(response);
     assertEquals(403, response.getStatus());
@@ -305,4 +306,77 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     assertTrue(((UserInfoContext) savedProgram.getUserInfo()).isMember());
     assertTrue(((UserInfoContext) savedProgram.getUserInfo()).isProgramOwner());
   }
+
+  @Test
+  public void testGetAccessibleProgramById() throws Exception {
+    ProgramFilter filter = new ProgramFilter();
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
+    assertEquals(0, programService.getPrograms(filter, null, offset, 10).size());
+    assertEquals(0, programService.countPrograms(filter, null));
+
+    ProgramEntity programEntity = newDomain(EntityType.AUTOMATIC, "testGetAccessibleProgramById", true, Collections.emptySet());
+    ContainerResponse response = getResponse("GET", getURLResource("programs/" + programEntity.getId()), null);
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
+
+    ProgramDTO program = programService.getProgramById(programEntity.getId());
+    program.setSpaceId(Long.parseLong(SpaceServiceMock.SPACE_ID_2));
+    programService.updateProgram(program);
+
+    response = getResponse("GET", getURLResource("programs/" + programEntity.getId()), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    ProgramRestEntity programRestEntity = (ProgramRestEntity) response.getEntity();
+    assertNotNull(programRestEntity);
+    assertEquals(programEntity.getId().longValue(), programRestEntity.getId());
+    assertTrue(((UserInfoContext) programRestEntity.getUserInfo()).isCanView());
+    assertFalse(((UserInfoContext) programRestEntity.getUserInfo()).isCanEdit());
+    assertFalse(((UserInfoContext) programRestEntity.getUserInfo()).isManager());
+    assertFalse(((UserInfoContext) programRestEntity.getUserInfo()).isMember());
+    assertFalse(((UserInfoContext) programRestEntity.getUserInfo()).isProgramOwner());
+  }
+
+  @Test
+  public void testGetAccessiblePrograms() throws Exception {
+    ProgramFilter filter = new ProgramFilter();
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
+    assertEquals(0, programService.getPrograms(filter, null, offset, 10).size());
+    assertEquals(0, programService.countPrograms(filter, null));
+
+    ProgramEntity programEntity = newDomain(EntityType.AUTOMATIC, "testGetAccessiblePrograms", true, Collections.emptySet());
+    ContainerResponse response = getResponse("GET", getURLResource("programs?offset=0&limit=10&returnSize=true"), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    ProgramList programList = (ProgramList) response.getEntity();
+    assertNotNull(programList);
+    assertEquals(0, programList.getSize());
+    assertEquals(0, programList.getPrograms().size());
+
+    ProgramDTO program = programService.getProgramById(programEntity.getId());
+    program.setSpaceId(Long.parseLong(SpaceServiceMock.SPACE_ID_2));
+    programService.updateProgram(program);
+
+    response = getResponse("GET", getURLResource("programs?offset=0&limit=10&returnSize=true"), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    programList = (ProgramList) response.getEntity();
+    assertNotNull(programList);
+    assertNotNull(programList.getPrograms());
+    assertEquals(1, programList.getPrograms().size());
+    assertEquals(1, programList.getSize());
+
+    ProgramRestEntity programRestEntity = programList.getPrograms().get(0);
+    assertNotNull(programRestEntity);
+    assertEquals(programEntity.getId().longValue(), programRestEntity.getId());
+    assertTrue(((UserInfoContext) programRestEntity.getUserInfo()).isCanView());
+    assertFalse(((UserInfoContext) programRestEntity.getUserInfo()).isCanEdit());
+    assertFalse(((UserInfoContext) programRestEntity.getUserInfo()).isManager());
+    assertFalse(((UserInfoContext) programRestEntity.getUserInfo()).isMember());
+    assertFalse(((UserInfoContext) programRestEntity.getUserInfo()).isProgramOwner());
+  }
+
 }

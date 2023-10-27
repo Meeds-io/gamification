@@ -61,7 +61,8 @@ public class ProgramWithRulesRestEntity extends ProgramDTO {
           program.getAvatarUrl(),
           program.getOwnerIds(),
           program.getRulesTotalScore(),
-          program.isOpen());
+          program.isOpen(),
+          program.getVisibility());
   }
 
 }

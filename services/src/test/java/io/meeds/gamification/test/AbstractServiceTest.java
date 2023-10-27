@@ -261,6 +261,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     resourceBinder.clear();
     ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providerBinder, null));
     launcher = new ResourceLauncher(requestHandler);
+    ConversationState.setCurrent(null);
     begin();
   }
 
