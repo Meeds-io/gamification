@@ -76,6 +76,7 @@ import io.meeds.gamification.storage.ConnectorAccountStorageTest;
 import io.meeds.gamification.storage.ProgramStorageTest;
 import io.meeds.gamification.storage.RealizationsStorageTest;
 import io.meeds.gamification.storage.RuleStorageTest;
+import io.meeds.gamification.upgrade.ProgramVisibilityUpgradePluginTest;
 import io.meeds.gamification.utils.UtilsTest;
 
 @RunWith(Suite.class)
@@ -132,6 +133,7 @@ import io.meeds.gamification.utils.UtilsTest;
     ActionPublishedNotificationPluginTest.class,
     RuleActivityTypePluginTest.class,
     EventServiceTest.class,
+    ProgramVisibilityUpgradePluginTest.class,
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
