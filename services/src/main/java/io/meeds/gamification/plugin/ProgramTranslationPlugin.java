@@ -58,7 +58,7 @@ public class ProgramTranslationPlugin extends TranslationPlugin {
 
   @Override
   public boolean hasAccessPermission(long programId, String username) throws ObjectNotFoundException {
-    return programService.isProgramMember(programId, username);
+    return programService.canViewProgram(programId, username);
   }
 
   @Override

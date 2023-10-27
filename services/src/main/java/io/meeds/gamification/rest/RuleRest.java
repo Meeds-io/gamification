@@ -67,6 +67,8 @@ import io.meeds.gamification.rest.model.RuleRestEntity;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
+import io.meeds.gamification.utils.Utils;
+import io.meeds.portal.security.service.SecuritySettingService;
 import io.meeds.social.translation.service.TranslationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -80,26 +82,29 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "/gamification/rules", description = "Manages rules")
 public class RuleRest implements ResourceContainer {
 
-  private final CacheControl   cacheControl;
+  private final CacheControl       cacheControl;
 
-  protected ProgramService     programService;
+  protected ProgramService         programService;
 
-  protected RuleService        ruleService;
+  protected RuleService            ruleService;
 
-  protected RealizationService realizationService;
+  protected RealizationService     realizationService;
 
-  protected TranslationService translationService;
+  protected TranslationService     translationService;
 
-  protected FavoriteService    favoriteService;
+  protected FavoriteService        favoriteService;
 
-  protected IdentityManager    identityManager;
+  protected IdentityManager        identityManager;
+
+  protected SecuritySettingService securitySettingService;
 
   public RuleRest(ProgramService programService,
                   RuleService ruleService,
                   RealizationService realizationService,
                   TranslationService translationService,
                   FavoriteService favoriteService,
-                  IdentityManager identityManager) {
+                  IdentityManager identityManager,
+                  SecuritySettingService securitySettingService) {
     cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
     cacheControl.setNoStore(true);
@@ -109,11 +114,11 @@ public class RuleRest implements ResourceContainer {
     this.translationService = translationService;
     this.favoriteService = favoriteService;
     this.identityManager = identityManager;
+    this.securitySettingService = securitySettingService;
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @RolesAllowed("users")
   @Operation(summary = "Retrieves the list of available rules", method = "GET")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Request fulfilled"),
@@ -210,6 +215,9 @@ public class RuleRest implements ResourceContainer {
     if (limit < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
+    if (!Utils.canAccessAnonymousResources(securitySettingService)) {
+      return Response.status(Status.UNAUTHORIZED).build();
+    }
 
     Locale locale = getLocale(lang);
 
@@ -286,7 +294,6 @@ public class RuleRest implements ResourceContainer {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @RolesAllowed("users")
   @Path("{id}")
   @Operation(summary = "Retrieves the list of available rules", method = "GET")
   @ApiResponses(value = {
@@ -311,6 +318,10 @@ public class RuleRest implements ResourceContainer {
                           @Parameter(description = "Asking for a full representation of a specific subresource, ex: countRealizations", required = false)
                           @QueryParam("expand")
                           String expand) {
+    if (!Utils.canAccessAnonymousResources(securitySettingService)) {
+      return Response.status(Status.UNAUTHORIZED).build();
+    }
+
     String currentUser = getCurrentUser();
     try {
       RuleDTO rule = ruleService.findRuleById(id, currentUser);

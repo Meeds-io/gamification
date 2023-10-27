@@ -21,13 +21,12 @@
 <%@ page import="io.meeds.gamification.service.ProgramService"%>
 <%@ page import="org.exoplatform.container.ExoContainerContext"%>
 <%@ page import="io.meeds.gamification.utils.Utils" %>
-<%@ page import="org.exoplatform.services.security.ConversationState" %>
 
 <%
-boolean isAdministrator = Utils.isRewardingManager(ConversationState.getCurrent().getIdentity().getUserId());
-boolean isProgramManager = isAdministrator || ExoContainerContext.getService(ProgramService.class).countOwnedPrograms(ConversationState.getCurrent().getIdentity().getUserId()) > 0;
+  if (Utils.canAccessAnonymousResources()) {
+    boolean isAdministrator = request.getRemoteUser() != null && Utils.isRewardingManager(request.getRemoteUser());
+    boolean isProgramManager = request.getRemoteUser() != null && (isAdministrator || ExoContainerContext.getService(ProgramService.class).countOwnedPrograms(request.getRemoteUser()) > 0);
 %>
-
 <div class="VuetifyApp singlePageApplication">
   <div id="EngagementCenterActions">
     <script type="text/javascript">
@@ -35,3 +34,5 @@ boolean isProgramManager = isAdministrator || ExoContainerContext.getService(Pro
     </script>
   </div>
 </div>
+<% } %>
+
