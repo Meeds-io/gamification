@@ -45,7 +45,9 @@ public class SpaceServiceMock implements SpaceService {
 
   public static final String       SPACE_DISPLAY_NAME = "test space";
 
-  public static final String       SPACE_ID           = "1";
+  public static final String       SPACE_ID_1         = "1";
+
+  public static final String       SPACE_ID_2         = "200";
 
   public static final List<String> SPACE_MEMBERS      = Arrays.asList(new String[] {
       "root",
@@ -85,10 +87,10 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public Space getSpaceById(String spaceId) {
-    if (!SPACE_ID.equals(spaceId)) {
+    if (!SPACE_ID_1.equals(spaceId) && !SPACE_ID_2.equals(spaceId)) {
       return null;
     }
-    return getSpace();
+    return getSpace(spaceId);
   }
 
   public boolean isRedactor(Space space, String userId) {
@@ -134,7 +136,7 @@ public class SpaceServiceMock implements SpaceService {
 
   public List<String> getMemberSpacesIds(String username, int offset, int limit) {
     if (SPACE_MEMBERS.contains(username)) {
-      return Collections.singletonList(SPACE_ID);
+      return Collections.singletonList(SPACE_ID_1);
     } else {
       return Collections.emptyList();
     }
@@ -142,7 +144,7 @@ public class SpaceServiceMock implements SpaceService {
 
   public List<String> getManagerSpacesIds(String username, int offset, int limit) {
     if (SPACE_MANAGERS.contains(username)) {
-      return Collections.singletonList(SPACE_ID);
+      return Collections.singletonList(SPACE_ID_1);
     } else {
       return Collections.emptyList();
     }
@@ -673,8 +675,12 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   private Space getSpace() {
+    return getSpace(SPACE_ID_1);
+  }
+
+  private Space getSpace(String spaceId) {
     Space space = new Space();
-    space.setId(SPACE_ID);
+    space.setId(spaceId);
     space.setPrettyName(SPACE_PRETTY_NAME);
     space.setDisplayName(SPACE_DISPLAY_NAME);
     space.setGroupId("/spaces/" + SPACE_PRETTY_NAME);
@@ -682,6 +688,7 @@ public class SpaceServiceMock implements SpaceService {
         "root1",
     });
     space.setMembers(SPACE_MEMBERS.toArray(new String[0]));
+    space.setRegistration(SPACE_ID_1.equals(spaceId) ? Space.VALIDATION : Space.OPEN);
     return space;
   }
 

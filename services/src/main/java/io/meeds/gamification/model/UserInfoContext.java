@@ -29,6 +29,8 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class UserInfoContext extends UserInfo {
 
+  private boolean                    canView;
+
   private boolean                    canEdit;
 
   private boolean                    isAllowedToRealize;
