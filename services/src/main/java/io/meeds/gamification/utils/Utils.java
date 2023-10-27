@@ -29,6 +29,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.IdentityConstants;
 import org.exoplatform.services.security.IdentityRegistry;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -42,6 +43,9 @@ import org.exoplatform.web.security.security.TokenServiceInitializationException
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.portal.security.constant.UserRegistrationType;
+import io.meeds.portal.security.service.SecuritySettingService;
+
 import org.exoplatform.ws.frameworks.json.JsonGenerator;
 import org.exoplatform.ws.frameworks.json.impl.*;
 
@@ -262,12 +266,21 @@ public class Utils {
     Identity identity = identityManager.getOrCreateUserIdentity(username);
     return identity == null ? 0l : Long.parseLong(identity.getId());
   }
-
+  
   public static final String getCurrentUser() {
     if (ConversationState.getCurrent() != null && ConversationState.getCurrent().getIdentity() != null) {
-      return ConversationState.getCurrent().getIdentity().getUserId();
+      String userId = ConversationState.getCurrent().getIdentity().getUserId();
+      return StringUtils.equals(userId, IdentityConstants.ANONIM) ? null : userId;
     }
     return null;
+  }
+
+  public static final boolean canAccessAnonymousResources() {
+    return canAccessAnonymousResources(ExoContainerContext.getService(SecuritySettingService.class));
+  }
+
+  public static final boolean canAccessAnonymousResources(SecuritySettingService securitySettingService) {
+    return StringUtils.isNotBlank(getCurrentUser()) || securitySettingService.getRegistrationType() == UserRegistrationType.OPEN;
   }
 
   public static String toRFC3339Date(Date dateTime) {
@@ -415,6 +428,9 @@ public class Utils {
   }
 
   public static org.exoplatform.services.security.Identity getUserAclIdentity(String username) {
+    if (StringUtils.isBlank(username)) {
+      return null;
+    }
     IdentityRegistry identityRegistry = ExoContainerContext.getService(IdentityRegistry.class);
     org.exoplatform.services.security.Identity aclIdentity = identityRegistry.getIdentity(username);
     if (aclIdentity == null) {

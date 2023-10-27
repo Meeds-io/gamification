@@ -143,7 +143,8 @@ public class RealizationRest implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).entity("Either use limit or dates to limit returned results").build();
     }
 
-    Identity identity = ConversationState.getCurrent().getIdentity();
+    ConversationState conversationState = ConversationState.getCurrent();
+    Identity identity = conversationState == null ? null : conversationState.getIdentity();
     Date fromDate = Utils.parseRFC3339Date(fromDateRfc3339);
     Date toDate = Utils.parseRFC3339Date(toDateRfc3339);
 

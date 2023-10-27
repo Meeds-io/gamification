@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.dao.RuleDAO;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.model.ProgramDTO;
@@ -58,8 +59,10 @@ public class ProgramMapper {
     programEntity.setEnabled(program.isEnabled());
     if (program.getSpaceId() > 0 && !program.isOpen()) {
       programEntity.setAudienceId(program.getSpaceId());
+      programEntity.setVisibility(program.getVisibility());
     } else {
       programEntity.setAudienceId(null);
+      programEntity.setVisibility(EntityVisibility.OPEN);
     }
     if (program.getCreatedDate() != null) {
       programEntity.setCreatedDate(Utils.parseRFC3339Date(program.getCreatedDate()));
@@ -119,6 +122,10 @@ public class ProgramMapper {
     program.setAvatarUrl(avatarUrl);
     program.setOwnerIds(programEntity.getOwners());
     program.setOpen(programEntity.getAudienceId() == null);
+    program.setVisibility(programEntity.getVisibility());
+    if (program.getVisibility() == null) {
+      program.setVisibility(EntityVisibility.RESTRICTED);
+    }
     program.setRulesTotalScore(programEntity.isDeleted() || !programEntity.isEnabled() ? 0
                                                                                        : ruleDAO.getRulesTotalScoreByProgramId(programEntity.getId()));
     return program;
