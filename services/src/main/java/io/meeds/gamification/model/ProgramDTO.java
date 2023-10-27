@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.meeds.gamification.constant.EntityVisibility;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,33 +31,33 @@ import lombok.NoArgsConstructor;
 @Data
 public class ProgramDTO implements Serializable, Cloneable {
 
-  private static final long serialVersionUID = -8857818632949907592L;
+  private static final long  serialVersionUID = -8857818632949907592L;
 
-  protected long            id;
+  protected long             id;
 
-  protected String          title;
+  protected String           title;
 
-  protected String          description;
+  protected String           description;
 
-  protected String          color;
+  protected String           color;
 
-  protected long            spaceId;
+  protected long             spaceId;
 
-  protected int             priority;
+  protected int              priority;
 
-  protected String          createdBy;
+  protected String           createdBy;
 
-  protected String          createdDate;
+  protected String           createdDate;
 
-  protected String          lastModifiedBy;
+  protected String           lastModifiedBy;
 
-  protected String          lastModifiedDate;
+  protected String           lastModifiedDate;
 
-  protected boolean         deleted;
+  protected boolean          deleted;
 
-  protected boolean         enabled;
+  protected boolean          enabled;
 
-  protected long            budget;
+  protected long             budget;
 
   /**
    * @deprecated There is no difference anymore between Automatic or Manual
@@ -63,25 +65,27 @@ public class ProgramDTO implements Serializable, Cloneable {
    *             used
    */
   @Deprecated(forRemoval = false, since = "1.5.0")
-  protected String          type;
+  protected String           type;
 
-  protected String          coverUploadId;
+  protected String           coverUploadId;
 
-  protected String          avatarUploadId;
+  protected String           avatarUploadId;
 
-  protected long            coverFileId;
+  protected long             coverFileId;
 
-  protected long            avatarFileId;
+  protected long             avatarFileId;
 
-  protected String          coverUrl;
+  protected String           coverUrl;
 
-  protected String          avatarUrl;
+  protected String           avatarUrl;
 
-  protected Set<Long>       ownerIds;                                // NOSONAR
+  protected Set<Long>        ownerIds;                                // NOSONAR
 
-  protected long            rulesTotalScore;
+  protected long             rulesTotalScore;
 
-  protected boolean         open;
+  protected boolean          open;
+
+  protected EntityVisibility visibility;
 
   /**
    * Deprecated should be renamed to spaceId knowing that audienceId should
@@ -131,7 +135,8 @@ public class ProgramDTO implements Serializable, Cloneable {
                           avatarUrl,
                           ownerIds == null ? null : new HashSet<>(ownerIds),
                           rulesTotalScore,
-                          open);
+                          open,
+                          visibility);
   }
 
 }

@@ -196,7 +196,7 @@ export default {
         });
     },
     retrievePrograms() {
-      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs?type=ALL&sortByBudget=true`, {
+      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs?type=ALL`, {
         credentials: 'include',
       }).then(resp => resp?.ok && resp.json())
         .then(data => {

@@ -525,7 +525,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     RealizationDTO realization = realizationStorage.getRealizationById(realizationId);
     if (realization == null) {
       throw new ObjectNotFoundException(String.format(REALIZATION_NOT_EXIST_MESSAGE, realizationId));
-    } else if (programService.isProgramMember(realization.getProgram().getId(), userAclIdentity.getUserId())
+    } else if (programService.canViewProgram(realization.getProgram().getId(), userAclIdentity.getUserId())
         || realization.getEarnerId().equals(userIdentity.getId())) {
       return realization;
     } else {
@@ -583,7 +583,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       throw new IllegalArgumentException("filter is mandatory");
     }
     if (userAclIdentity == null) {
-      throw new IllegalArgumentException("identity is mandatory");
+      return null;
     }
     realizationFilter = realizationFilter.clone();
     checkDates(realizationFilter.getFromDate(), realizationFilter.getToDate());
@@ -607,7 +607,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
           realizationFilter.setProgramIds(ownedProgramIds);
         }
       }
-    } else if (isFilterByPrograms && !isProgramsMember(filterProgramIds, userAclIdentity.getUserId())) {
+    } else if (isFilterByPrograms && !canViewPrograms(filterProgramIds, userAclIdentity.getUserId())) {
       throw new IllegalAccessException("User is not member of one or several selected programs :" + filterProgramIds);
     } else if (!isFilterByPrograms && !isSelfFilter(realizationFilter, username)) {
       List<Long> memberProgramIds = programService.getMemberProgramIds(userAclIdentity.getUserId(), 0, -1);
@@ -656,9 +656,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                      .allMatch(programId -> programService.isProgramOwner(programId, username));
   }
 
-  private boolean isProgramsMember(List<Long> programIds, String username) {
+  private boolean canViewPrograms(List<Long> programIds, String username) {
     return programIds.stream()
-                     .allMatch(programId -> programService.isProgramMember(programId, username));
+                     .allMatch(programId -> programService.canViewProgram(programId, username));
   }
 
   private List<StandardLeaderboard> filterAuthorizedSpaces(List<StandardLeaderboard> result,

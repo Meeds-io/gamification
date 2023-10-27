@@ -38,6 +38,7 @@ import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.entity.ProgramEntity;
+import io.meeds.gamification.mock.SpaceServiceMock;
 import io.meeds.gamification.model.ProgramColorAlreadyExists;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
@@ -214,14 +215,38 @@ public class ProgramServiceTest extends AbstractServiceTest {
     filter.setType(EntityFilterType.ALL);
     filter.setStatus(EntityStatusType.ENABLED);
     assertEquals(0, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
-    ProgramEntity domainEntity = newDomain(EntityType.AUTOMATIC, "domain10", true, Collections.emptySet());
+    assertEquals(0, programService.countPrograms(filter, SPACE_MEMBER_USER));
+
+    ProgramEntity programEntity = newDomain(EntityType.AUTOMATIC, "domain10", true, Collections.emptySet());
     filter.setOwnerId(10);
     assertEquals(0, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
+    assertEquals(0, programService.countPrograms(filter, SPACE_MEMBER_USER));
 
-    domainEntity.setOwners(Collections.singleton(10l));
-    programDAO.update(domainEntity);
+    programEntity.setOwners(Collections.singleton(10l));
+    programDAO.update(programEntity);
 
     assertEquals(1, programService.getPrograms(filter, SPACE_MEMBER_USER, offset, 10).size());
+    assertEquals(1, programService.countPrograms(filter, SPACE_MEMBER_USER));
+  }
+
+  @Test
+  public void testGetDomainsByAnonym() throws IllegalAccessException, ObjectNotFoundException {
+    ProgramFilter filter = new ProgramFilter();
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
+    assertEquals(0, programService.getPrograms(filter, null, offset, 10).size());
+    assertEquals(0, programService.countPrograms(filter, null));
+
+    ProgramEntity programEntity = newDomain(EntityType.AUTOMATIC, "domain10", true, Collections.emptySet());
+    assertEquals(0, programService.getPrograms(filter, null, offset, 10).size());
+    assertEquals(0, programService.countPrograms(filter, null));
+
+    ProgramDTO program = programService.getProgramById(programEntity.getId());
+    program.setSpaceId(Long.parseLong(SpaceServiceMock.SPACE_ID_2));
+    programService.updateProgram(program);
+
+    assertEquals(1, programService.getPrograms(filter, null, offset, 10).size());
+    assertEquals(1, programService.countPrograms(filter, null));
   }
 
   @Test
