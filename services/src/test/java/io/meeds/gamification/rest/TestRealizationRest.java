@@ -212,6 +212,14 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     List<RealizationRestEntity> realizations = realizationList.getRealizations();
     assertEquals(0, realizations.size());
 
+    startSessionAs("root1");
+    response = getResponse("GET", getURLResource(restPath), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    realizationList = (RealizationList) response.getEntity();
+    realizations = realizationList.getRealizations();
+    assertEquals(0, realizations.size());
+
     // add new realization
     List<RealizationEntity> createdActionHistories = new ArrayList<>();
     ProgramEntity domainEntity = newDomain();

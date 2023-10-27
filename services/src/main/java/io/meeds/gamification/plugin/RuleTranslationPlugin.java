@@ -65,7 +65,7 @@ public class RuleTranslationPlugin extends TranslationPlugin {
   public boolean hasAccessPermission(long ruleId, String username) throws ObjectNotFoundException {
     try {
       RuleDTO rule = this.ruleService.findRuleById(ruleId, username);
-      return rule != null && programService.isProgramMember(rule.getProgramId(), username);
+      return rule != null && programService.canViewProgram(rule.getProgramId(), username);
     } catch (IllegalAccessException e) {
       return false;
     }

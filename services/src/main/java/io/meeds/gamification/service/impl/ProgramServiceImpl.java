@@ -36,6 +36,7 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.model.ProgramColorAlreadyExists;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
@@ -47,6 +48,8 @@ import io.meeds.gamification.utils.Utils;
 public class ProgramServiceImpl implements ProgramService {
 
   private static final Log        LOG = ExoLogger.getLogger(ProgramServiceImpl.class);
+
+  private static final String     PROGRAM_DOESN_T_EXIST = "Program doesn't exist";
 
   protected final ProgramStorage  programStorage;
 
@@ -97,6 +100,9 @@ public class ProgramServiceImpl implements ProgramService {
 
   @Override
   public List<Long> getOwnedProgramIds(String username, int offset, int limit) {
+    if (StringUtils.isBlank(username)) {
+      return Collections.emptyList();
+    }
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     long userIdentityId = Long.parseLong(userIdentity.getId());
     ProgramFilter programFilter = computeOwnedProgramsFilter(userIdentity.getRemoteId(), userIdentityId);
@@ -105,6 +111,9 @@ public class ProgramServiceImpl implements ProgramService {
 
   @Override
   public List<Long> getMemberProgramIds(String username, int offset, int limit) {
+    if (StringUtils.isBlank(username)) {
+      return Collections.emptyList();
+    }
     ProgramFilter programFilter = computeMemberProgramsFilter(username);
     return getProgramIds(programFilter, offset, limit);
   }
@@ -130,6 +139,9 @@ public class ProgramServiceImpl implements ProgramService {
 
   @Override
   public int countOwnedPrograms(String username) {
+    if (StringUtils.isBlank(username)) {
+      return 0;
+    }
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     long userIdentityId = Long.parseLong(userIdentity.getId());
     ProgramFilter programFilter = computeOwnedProgramsFilter(userIdentity.getRemoteId(), userIdentityId);
@@ -138,6 +150,9 @@ public class ProgramServiceImpl implements ProgramService {
 
   @Override
   public int countMemberPrograms(String username) {
+    if (StringUtils.isBlank(username)) {
+      return 0;
+    }
     ProgramFilter programFilter = computeMemberProgramsFilter(username);
     return countPrograms(programFilter);
   }
@@ -173,7 +188,7 @@ public class ProgramServiceImpl implements ProgramService {
                                                                             ObjectNotFoundException {
     ProgramDTO storedProgram = programStorage.getProgramById(program.getId());
     if (storedProgram == null) {
-      throw new ObjectNotFoundException("Program doesn't exist");
+      throw new ObjectNotFoundException(PROGRAM_DOESN_T_EXIST);
     }
     if (storedProgram.isDeleted()) {
       throw new ObjectNotFoundException("Program is marked as deleted");
@@ -204,7 +219,7 @@ public class ProgramServiceImpl implements ProgramService {
   public ProgramDTO updateProgram(ProgramDTO program) throws ObjectNotFoundException {
     ProgramDTO storedProgram = programStorage.getProgramById(program.getId());
     if (storedProgram == null) {
-      throw new ObjectNotFoundException("Program doesn't exist");
+      throw new ObjectNotFoundException(PROGRAM_DOESN_T_EXIST);
     }
     if (storedProgram.isDeleted()) {
       throw new ObjectNotFoundException("Program is marked as deleted");
@@ -225,12 +240,13 @@ public class ProgramServiceImpl implements ProgramService {
                                                                             ObjectNotFoundException {
     ProgramDTO program = programStorage.getProgramById(programId);
     if (program == null) {
-      throw new ObjectNotFoundException("program doesn't exist");
+      throw new ObjectNotFoundException(PROGRAM_DOESN_T_EXIST);
     }
     if (aclIdentity == null || !isProgramOwner(programId, aclIdentity.getUserId())) {
       throw new IllegalAccessException("The user is not authorized to delete the program");
     }
     program.setDeleted(true);
+    program.setVisibility(EntityVisibility.RESTRICTED);
     program = programStorage.saveProgram(program);
     broadcast(GAMIFICATION_DOMAIN_DELETE_LISTENER, program, aclIdentity.getUserId());
     return program;
@@ -241,7 +257,7 @@ public class ProgramServiceImpl implements ProgramService {
                                                                            IllegalAccessException {
     ProgramDTO program = programStorage.getProgramById(programId);
     if (program == null) {
-      throw new ObjectNotFoundException("program doesn't exist");
+      throw new ObjectNotFoundException(PROGRAM_DOESN_T_EXIST);
     }
     if (aclIdentity == null || !isProgramOwner(programId, aclIdentity.getUserId())) {
       throw new IllegalAccessException("The user is not authorized to delete the program cover");
@@ -261,7 +277,7 @@ public class ProgramServiceImpl implements ProgramService {
                                                                             IllegalAccessException {
     ProgramDTO program = programStorage.getProgramById(programId);
     if (program == null) {
-      throw new ObjectNotFoundException("program doesn't exist");
+      throw new ObjectNotFoundException(PROGRAM_DOESN_T_EXIST);
     }
     if (aclIdentity == null || !isProgramOwner(programId, aclIdentity.getUserId())) {
       throw new IllegalAccessException("The user is not authorized to delete the program avatar");
@@ -278,18 +294,14 @@ public class ProgramServiceImpl implements ProgramService {
 
   @Override
   public ProgramDTO getProgramById(long programId, String username) throws IllegalAccessException, ObjectNotFoundException {
-    if (StringUtils.isBlank(username)) {
-      throw new IllegalAccessException("Username is mandatory");
-    }
     ProgramDTO program = getProgramById(programId);
     if (program == null) {
-      throw new ObjectNotFoundException("Program doesn't exist");
+      throw new ObjectNotFoundException(PROGRAM_DOESN_T_EXIST);
     }
     if (program.isDeleted()) {
       throw new ObjectNotFoundException("Program has been deleted");
     }
-    if (!isProgramMember(programId, username)
-        || (!program.isEnabled() && !isProgramOwner(program.getId(), username))) {
+    if (!canViewProgram(program, username)) {
       throw new IllegalAccessException("Program isn't accessible");
     }
     return program;
@@ -307,10 +319,10 @@ public class ProgramServiceImpl implements ProgramService {
   public InputStream getProgramCoverStream(long programId) throws ObjectNotFoundException {
     ProgramDTO program = programStorage.getProgramById(programId);
     if (program == null) {
-      throw new ObjectNotFoundException("program with id " + programId + " doesn't exist");
+      throw new ObjectNotFoundException(String.format("program with id %s doesn't exist", programId));
     }
     if (program.getCoverFileId() == 0) {
-      throw new ObjectNotFoundException("program with id " + programId + " doesn't have a coverId");
+      throw new ObjectNotFoundException(String.format("program with id %s doesn't have a coverId", programId));
     }
     return programStorage.getImageAsStream(program.getCoverFileId());
   }
@@ -374,6 +386,18 @@ public class ProgramServiceImpl implements ProgramService {
     return canUseProgramColor(color, program == null ? null : program.getColor());
   }
 
+  @Override
+  public boolean canViewProgram(long programId, String username) {
+    ProgramDTO program = getProgramById(programId);
+    return canViewProgram(program, username);
+  }
+
+  private boolean canViewProgram(ProgramDTO program, String username) {
+    return program != null
+           && (program.getVisibility() == EntityVisibility.OPEN || isProgramMember(program.getId(), username))
+           && (program.isEnabled() || isProgramOwner(program.getId(), username));
+  }
+
   @SuppressWarnings("unchecked")
   private ProgramFilter computeUserSpaces(ProgramFilter programFilter, String username) throws IllegalAccessException { // NOSONAR
     programFilter = programFilter.clone();
@@ -397,7 +421,7 @@ public class ProgramServiceImpl implements ProgramService {
         }
         programFilter.setSpacesIds(managedSpaceIds);
       }
-    } else {
+    } else if (StringUtils.isNotBlank(username)) {
       List<Long> memberSpacesIds = spaceService.getMemberSpacesIds(username, 0, -1).stream().map(Long::parseLong).toList();
       if (CollectionUtils.isNotEmpty(programFilter.getSpacesIds())) {
         memberSpacesIds = (List<Long>) CollectionUtils.intersection(memberSpacesIds, programFilter.getSpacesIds());
@@ -428,6 +452,7 @@ public class ProgramServiceImpl implements ProgramService {
     if (program.isOpen()) {
       program.setSpaceId(0);
     }
+    program.setVisibility(isSpaceOpen(program.getSpaceId()) ? EntityVisibility.OPEN : EntityVisibility.RESTRICTED);
     checkProgramColorUnicity(program.getColor(), null);
     return programStorage.saveProgram(program);
   }
@@ -468,13 +493,21 @@ public class ProgramServiceImpl implements ProgramService {
     }
     return spaceService.isManager(space, username);
   }
-
+  
   private boolean isSpaceMember(long spaceId, String username) {
+    if (StringUtils.isBlank(username)) {
+      return false;
+    }
     Space space = spaceService.getSpaceById(String.valueOf(spaceId));
     if (space == null) {
       return false;
     }
     return spaceService.isMember(space, username);
+  }
+
+  private boolean isSpaceOpen(long spaceId) {
+    Space space = spaceId > 0 ? spaceService.getSpaceById(String.valueOf(spaceId)) : null;
+    return space == null || Space.OPEN.equals(space.getRegistration());
   }
 
   private ProgramFilter computeOwnedProgramsFilter(String username, long userIdentityId) {
@@ -512,6 +545,7 @@ public class ProgramServiceImpl implements ProgramService {
 
   private ProgramDTO saveProgramAndBroadcast(ProgramDTO program, ProgramDTO storedProgram, String username) {
     checkProgramColorUnicity(program.getColor(), storedProgram.getColor());
+    program.setVisibility(isSpaceOpen(program.getSpaceId()) ? EntityVisibility.OPEN : EntityVisibility.RESTRICTED);
     program = programStorage.saveProgram(program);
     if (storedProgram.isEnabled() && !program.isEnabled()) {
       broadcast(GAMIFICATION_DOMAIN_DISABLE_LISTENER, program, username);

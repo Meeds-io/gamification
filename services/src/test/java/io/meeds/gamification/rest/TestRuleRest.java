@@ -32,8 +32,11 @@ import org.exoplatform.services.security.ConversationState;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RuleEntity;
+import io.meeds.gamification.mock.SpaceServiceMock;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.model.UserInfo;
+import io.meeds.gamification.model.UserInfoContext;
 import io.meeds.gamification.rest.model.ProgramWithRulesRestEntity;
 import io.meeds.gamification.rest.model.RuleList;
 import io.meeds.gamification.rest.model.RuleRestEntity;
@@ -263,7 +266,7 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     assertNotNull(response);
     assertEquals(404, response.getStatus());
   }
-
+  
   @Test
   public void testGetRuleById() throws Exception {
     startSessionAs("root1");
@@ -271,40 +274,40 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     StringWriter writer = new StringWriter();
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
-              .key("title")
-              .value("Rule")
-              .key("description")
-              .value("Rule description")
-              .key("startDate")
-              .value(START_DATE)
-              .key("endDate")
-              .value(END_DATE)
-              .key("points")
-              .value("10")
-              .key("program")
-              .object()
-              .key("id")
-              .value(domain.getId())
-              .endObject()
-              .endObject();
-
+    .key("title")
+    .value("Rule")
+    .key("description")
+    .value("Rule description")
+    .key("startDate")
+    .value(START_DATE)
+    .key("endDate")
+    .value(END_DATE)
+    .key("points")
+    .value("10")
+    .key("program")
+    .object()
+    .key("id")
+    .value(domain.getId())
+    .endObject()
+    .endObject();
+    
     ContainerResponse response = getResponse("POST", getURLResource("rules"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     RuleRestEntity ruleRestEntity = (RuleRestEntity) response.getEntity();
     assertNotNull(ruleRestEntity);
     startSessionAs("root2");
-
+    
     response = getResponse("GET", getURLResource("rules/0"), null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
-
+    
     response = getResponse("GET", getURLResource("rules/555"), null);
     assertNotNull(response);
     assertEquals(404, response.getStatus());
-
+    
     startSessionAs("root1");
-
+    
     response = getResponse("GET", getURLResource("rules/" + ruleRestEntity.getId()), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
@@ -313,43 +316,43 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     assertEquals(ruleRestEntity.getId(), savedRuleRestEntity.getId());
     assertFalse(savedRuleRestEntity.isPublished());
   }
-
+  
   @Test
   public void testGetRules() throws Exception {
     ProgramEntity domainEntity = newDomain();
-
+    
     newRule("rule", domainEntity.getId());
     newRule("rule1", domainEntity.getId());
-
+    
     startSessionAs("root0");
     ContainerResponse response = getResponse("GET", getURLResource("rules?returnSize=true"), null);
     assertEquals(200, response.getStatus());
-
+    
     response = getResponse("GET", getURLResource("rules?returnSize=true&limit=-1"), null);
     assertEquals(400, response.getStatus());
-
+    
     response = getResponse("GET", getURLResource("rules?returnSize=true&offset=-1"), null);
     assertEquals(400, response.getStatus());
-
+    
     response = getResponse("GET", getURLResource("rules?returnSize=true&programId=" + domainEntity.getId()), null);
     assertEquals(200, response.getStatus());
     RuleList rules = (RuleList) response.getEntity();
     assertNotNull(rules);
     assertEquals(0, rules.getSize());
-
+    
     startSessionAsAdministrator("root1");
     response = getResponse("GET", getURLResource("rules?returnSize=true&programId=" + domainEntity.getId()), null);
     assertEquals(200, response.getStatus());
     rules = (RuleList) response.getEntity();
     assertNotNull(rules);
     assertEquals(2, rules.getSize());
-
+    
     response = getResponse("GET", getURLResource("rules?returnSize=true&spaceId=5555"), null);
     assertEquals(200, response.getStatus());
     rules = (RuleList) response.getEntity();
     assertNotNull(rules);
     assertEquals(0, rules.getSize());
-
+    
     response = getResponse("GET",
                            getURLResource("rules?returnSize=true&spaceId=" + domainEntity.getAudienceId() + "&spaceId=5555"),
                            null);
@@ -358,7 +361,7 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     assertNotNull(rules);
     assertEquals(2, rules.getSize());
   }
-
+  
   @Test
   public void testGetRulesByUser() throws Exception {
     startSessionAs("root1");
@@ -367,27 +370,27 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     StringWriter writer = new StringWriter();
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
-              .key("title")
-              .value("Rule")
-              .key("description")
-              .value("Rule description")
-              .key("startDate")
-              .value(START_DATE)
-              .key("endDate")
-              .value(END_DATE)
-              .key("points")
-              .value("10")
-              .key("enabled")
-              .value(true)
-              .key("program")
-              .object()
-              .key("id")
-              .value(domain.getId())
-              .endObject()
-              .endObject();
-
+    .key("title")
+    .value("Rule")
+    .key("description")
+    .value("Rule description")
+    .key("startDate")
+    .value(START_DATE)
+    .key("endDate")
+    .value(END_DATE)
+    .key("points")
+    .value("10")
+    .key("enabled")
+    .value(true)
+    .key("program")
+    .object()
+    .key("id")
+    .value(domain.getId())
+    .endObject()
+    .endObject();
+    
     ContainerResponse response = getResponse("POST", restPath, writer.getBuffer().toString());
-
+    
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     RuleRestEntity rule = (RuleRestEntity) response.getEntity();
@@ -398,23 +401,23 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     rule = (RuleRestEntity) response.getEntity();
     assertNotNull(rule);
     startSessionAs("root2");
-
+    
     restPath = GAMIFICATION_RULES_REST_PATH + "?offset=0&limit=10";
     response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     RuleList savedRules = (RuleList) response.getEntity();
     assertEquals(0, savedRules.getSize());
-
+    
     startSessionAs("root1");
-
+    
     restPath = GAMIFICATION_RULES_REST_PATH + "?offset=0&limit=10&programId=" + domain.getId() + "&announcements=4";
     response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     savedRules = (RuleList) response.getEntity();
     assertEquals(2, savedRules.getRules().size());
-
+    
     restPath = GAMIFICATION_RULES_REST_PATH + "?offset=0&limit=10&programId=0&announcements=4&groupByProgram=true";
     response = getResponse("GET", restPath, null);
     assertNotNull(response);
@@ -422,7 +425,7 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     List<ProgramWithRulesRestEntity> domainWithRules = (List<ProgramWithRulesRestEntity>) response.getEntity();
     assertEquals(1, domainWithRules.size());
     assertEquals(2, domainWithRules.get(0).getRules().size());
-
+    
     restPath = GAMIFICATION_RULES_REST_PATH + "?offset=0&limit=1&returnSize=true";
     response = getResponse("GET", restPath, null);
     assertNotNull(response);
@@ -430,6 +433,83 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     savedRules = (RuleList) response.getEntity();
     assertEquals(2, savedRules.getSize());
     assertEquals(1, savedRules.getRules().size());
+  }
+
+  @Test
+  public void testGetRuleByAnonym() throws Exception {
+    ProgramDTO program = newProgram();
+    program = programService.createProgram(program);
+
+    RuleEntity rule = newRule("testGetRuleByAnonym", program.getId());
+
+    ContainerResponse response = getResponse("GET", getURLResource("rules/0"), null);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+
+    response = getResponse("GET", getURLResource("rules/555"), null);
+    assertNotNull(response);
+    assertEquals(404, response.getStatus());
+
+    response = getResponse("GET", getURLResource("rules/" + rule.getId()), null);
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
+
+    program.setSpaceId(Long.parseLong(SpaceServiceMock.SPACE_ID_2));
+    programService.updateProgram(program);
+
+    response = getResponse("GET", getURLResource("rules/" + rule.getId()), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    RuleRestEntity ruleRestEntity = (RuleRestEntity) response.getEntity();
+    assertNotNull(ruleRestEntity);
+    assertEquals(rule.getId(), ruleRestEntity.getId());
+    UserInfoContext userInfo = (UserInfoContext) ruleRestEntity.getUserInfo();
+    assertTrue(userInfo.isCanView());
+    assertFalse(userInfo.isCanEdit());
+    assertFalse(userInfo.isManager());
+    assertFalse(userInfo.isMember());
+    assertFalse(userInfo.isProgramOwner());
+    assertFalse(userInfo.isRedactor());
+  }
+
+  @Test
+  public void testGetRulesByAnonym() throws Exception {
+    ProgramDTO program = newProgram();
+    program = programService.createProgram(program);
+
+    RuleEntity rule = newRule("testGetRulesByAnonym", program.getId());
+
+    ContainerResponse response = getResponse("GET", getURLResource("rules?offset=0&limit=10&returnSize=true"), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    RuleList ruleList = (RuleList) response.getEntity();
+    assertNotNull(ruleList);
+    assertEquals(0, ruleList.getSize());
+    assertNotNull(ruleList.getRules());
+    assertEquals(0, ruleList.getRules().size());
+
+    program.setSpaceId(Long.parseLong(SpaceServiceMock.SPACE_ID_2));
+    programService.updateProgram(program);
+
+    response = getResponse("GET", getURLResource("rules?offset=0&limit=10&returnSize=true"), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    ruleList = (RuleList) response.getEntity();
+    assertNotNull(ruleList);
+    assertEquals(1, ruleList.getSize());
+    assertNotNull(ruleList.getRules());
+    assertEquals(1, ruleList.getRules().size());
+
+    RuleRestEntity ruleRestEntity = ruleList.getRules().get(0);
+    assertNotNull(ruleRestEntity);
+    assertEquals(rule.getId(), ruleRestEntity.getId());
+    UserInfoContext userInfo = (UserInfoContext) ruleRestEntity.getUserInfo();
+    assertTrue(userInfo.isCanView());
+    assertFalse(userInfo.isCanEdit());
+    assertFalse(userInfo.isManager());
+    assertFalse(userInfo.isMember());
+    assertFalse(userInfo.isProgramOwner());
+    assertFalse(userInfo.isRedactor());
   }
 
   @Test
