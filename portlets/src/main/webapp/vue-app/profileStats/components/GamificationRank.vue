@@ -68,12 +68,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           justify-center
           align-end>
           <div v-if="leaderBoardArray[1]" class="transparent mx-1 align-center">
-            <exo-user-avatar
+            <user-avatar
               :profile-id="leaderBoardArray[1].remoteId"
+              :name="leaderBoardArray[1].fullname"
+              :avatar-url="leaderBoardArray[1].avatarUrl"
+              :popover="leaderBoardArray[1].remoteId"
               :size="40"
               extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
               avatar
-              popover
               popover-left-position />
             <v-card-text
               class="top2 grey lighten-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
@@ -82,12 +84,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-card-text>
           </div>
           <div v-if="leaderBoardArray[0]" class="transparent mx-1 align-center">
-            <exo-user-avatar
+            <user-avatar
               :profile-id="leaderBoardArray[0].remoteId"
+              :name="leaderBoardArray[0].fullname"
+              :avatar-url="leaderBoardArray[0].avatarUrl"
+              :popover="leaderBoardArray[0].remoteId"
               :size="40"
               extra-class="ml-2 me-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
               avatar
-              popover
               popover-left-position />
             <v-card-text
               class="top1 yellow darken-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
@@ -96,12 +100,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-card-text>
           </div>
           <div v-if="leaderBoardArray[2]" class="transparent mx-1 align-center">
-            <exo-user-avatar
+            <user-avatar
               :profile-id="leaderBoardArray[2].remoteId"
+              :name="leaderBoardArray[2].fullname"
+              :avatar-url="leaderBoardArray[2].avatarUrl"
+              :popover="leaderBoardArray[1].remoteId"
               :size="40"
               extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
               avatar
-              popover
               popover-left-position />
             <v-card-text
               class="top3 amber darken-1 px-3 pb-1 flex d-flex white--text justify-center font-weight-bold pt-2px"
@@ -126,14 +132,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 flat>
                 {{ item.rank }}
               </v-card>
-              <exo-user-avatar
+              <user-avatar
                 :profile-id="item.remoteId"
+                :name="item.fullname"
+                :avatar-url="item.avatarUrl"
+                :popover="item.remoteId"
+                :bold-title="identityId && item.socialId === identityId"
                 :size="25"
-                :bold-title="item.socialId === identityId"
                 extra-class="me-0 pa-0 my-0 text-truncate-2"
                 popover-left-position
-                offset-x
-                popover />
+                offset-x />
               <v-list-item-action class="ml-auto">
                 <span>{{ item.score }}</span>
               </v-list-item-action>

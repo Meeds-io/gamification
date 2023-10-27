@@ -157,7 +157,8 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     when(identityManager.getOrCreateUserIdentity(userAclIdentity.getUserId())).thenReturn(adminIdentity);
     assertThrows(IllegalArgumentException.class,
                  () -> realizationService.getRealizationsByFilter(null, userAclIdentity, offset, limit));
-    assertThrows(IllegalArgumentException.class, () -> realizationService.getRealizationsByFilter(filter, null, offset, limit));
+    assertEquals(0, realizationService.getRealizationsByFilter(filter, null, offset, limit).size());
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, userAclIdentity));
 
     // When
     filter.setFromDate(fromDate);
@@ -201,7 +202,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(null, userAclIdentity));
-    assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(filter, null));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, null));
 
     // When
     filter.setEarnerIds(null);
