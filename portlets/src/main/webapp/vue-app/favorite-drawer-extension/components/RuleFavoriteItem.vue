@@ -53,7 +53,7 @@ export default {
       return this.rule?.event;
     },
     ruleUrl() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions/${this.ruleId}`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions/${this.ruleId}`;
     },
   },
   created() {
