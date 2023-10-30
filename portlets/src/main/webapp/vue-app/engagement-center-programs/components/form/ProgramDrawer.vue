@@ -466,6 +466,11 @@ export default {
         this.$refs.programDrawer.endLoading();
       }
     },
+    drawer() {
+      if (!this.drawer && window.location.hash === '#create') {
+        window.location.hash = '';
+      }
+    },
   },
   created() {
     this.$root.$on('program-form-open', this.open);
@@ -476,6 +481,11 @@ export default {
         }, 200);
       }
     });
+  },
+  mounted() {
+    if (window.location.hash === '#create') {
+      this.open();
+    }
   },
   methods: {
     open(program, freshInstance) {
