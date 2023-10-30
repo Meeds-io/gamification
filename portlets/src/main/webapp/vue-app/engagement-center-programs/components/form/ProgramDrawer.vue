@@ -194,6 +194,9 @@
                     :width="220"
                     sugester-class="ma-0 no-box-shadow border-color"
                     include-spaces />
+                  <div v-if="openSpace !== null" class="caption text-light-color mt-2">
+                    {{ openSpace && $t('programs.label.openSpaceSubtitle') || $t('programs.label.restrictedSpaceSubtitle') }}
+                  </div>
                 </div>
                 <div class="mt-4">
                   <span class="subtitle-1 d-flex align-center">
@@ -321,6 +324,7 @@ export default {
     defaultCover: false,
     deleteAvatar: false,
     defaultAvatar: false,
+    openSpace: null,
   }),
   computed: {
     showDrawerContent() {
@@ -469,6 +473,13 @@ export default {
     drawer() {
       if (!this.drawer && window.location.hash === '#create') {
         window.location.hash = '';
+      }
+    },
+    spaceId() {
+      this.openSpace = null;
+      if (this.spaceId) {
+        this.$spaceService.getSpaceById(this.spaceId)
+          .then(space => this.openSpace = (space?.subscription === 'open'));
       }
     },
   },
