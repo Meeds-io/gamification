@@ -150,7 +150,7 @@ export default {
       return this.program?.title || '-';
     },
     programUrl() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program?.id}`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.program?.id}`;
     },
     score() {
       return this.realization?.score || '-';
