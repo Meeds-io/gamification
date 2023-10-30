@@ -312,7 +312,7 @@ export default {
         });
     },
     openSpace() {
-      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/spaces`;
+      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/spaces`;
     },
     updateRequestsSize(spacesRequestsSize) {
       this.spaceRequests = spacesRequestsSize;

@@ -110,8 +110,8 @@
 <script>
 export default {
   data: () => ({
-    walletLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/wallet`,
-    perkstoreLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/perkstore`,
+    walletLink: `${eXo.env.portal.context}/${eXo.env.portal.myCraftSiteName}/wallet`,
+    perkstoreLink: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/perkstore`,
     emptyPerkstoreActionName: 'gamification-perk-store-check-actions',
     loading: true,
     hasConfiguredWallet: false,
