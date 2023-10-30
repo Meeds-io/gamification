@@ -29,6 +29,7 @@ export function init(showLocked) {
     .then(i18n => {
       Vue.createApp({
         data: {
+          isAnonymous: !!eXo.env.portal.userIdentityId?.length,
           now: Date.now(),
           showLocked,
         },
