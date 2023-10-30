@@ -121,7 +121,7 @@ export default {
   }),
   computed: {
     infoUrl() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`;
     },
     canLoadMore() {
       return !this.selectionChanged && this.users && this.limit <= this.users.length;
