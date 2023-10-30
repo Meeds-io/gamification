@@ -118,7 +118,7 @@ export default {
       return this.rule.descriptionExcerpt || this.rule.description || '';
     },
     ruleLink() {
-      return `/${eXo.env.portal.containerName}/${eXo.env.portal.portalName}/contributions/actions/${this.rule.id}`;
+      return `/${eXo.env.portal.containerName}/${eXo.env.portal.engagementSiteName}/contributions/actions/${this.rule.id}`;
     },
     isFavorite() {
       return this.rule.favorite;
