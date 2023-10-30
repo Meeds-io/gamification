@@ -63,7 +63,7 @@ export default {
   }),
   computed: {
     settingsLink() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/settings`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/settings`;
     },
     title() {
       return this.isCurrentUserProfile ? this.$t('gamification.connectors.profile.YourGamifiedProfiles') : this.$t('gamification.connectors.profile.MyGamifiedProfiles');
