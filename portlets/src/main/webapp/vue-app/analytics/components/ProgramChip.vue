@@ -55,7 +55,7 @@ export default {
   }),
   computed: {
     programLink() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.programId}`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.programId}`;
     },
   },
   created() {
