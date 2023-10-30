@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     achievementsURL() {
-      return this.seeAllDisplay && !this.loading ? `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements` : '';
+      return this.seeAllDisplay && !this.loading ? `${eXo.env.portal.context}/${eXo.env.portal.myCraftSiteName}/contributions/achievements` : '';
     }
   },
   methods: {

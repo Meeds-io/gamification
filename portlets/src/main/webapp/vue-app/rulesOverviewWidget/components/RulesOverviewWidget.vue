@@ -144,7 +144,7 @@ export default {
     },
   },
   data: () => ({
-    actionsPageURL: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
+    actionsPageURL: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`,
     hideIfEmpty: false,
     weekInMs: 604800000,
   }),

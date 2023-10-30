@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     getLinkActivity(id) {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${id}`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${id}`;
     },
     openDrawer(event) {
       if (event?.detail?.rule) {
