@@ -16,8 +16,8 @@
 <template>
   <v-app>
     <gamification-overview-widget
-      :title="$t('gamification.overview.programsOverviewTitle')"
-      :action-url="programLink"
+      :title="programsDisplayed && $t('gamification.overview.programsOverviewTitle')"
+      :action-url="programsDisplayed && programLink"
       :loading="loading">
       <div v-if="programsDisplayed" class="mt-5">
         <gamification-overview-program-item
@@ -33,16 +33,16 @@
         </template>
       </div>
       <gamification-overview-widget-row v-else-if="!loading" class="my-auto">
-        <template #icon>
-          <v-icon color="secondary" size="55px">fas fa-bullhorn</v-icon>
-        </template>
         <template #content>
-          <span v-sanitized-html="emptySummaryText"></span>
+          <div class="d-flex flex-column align-center justify-center">
+            <v-icon color="secondary" size="54">fa-puzzle-piece</v-icon>
+            <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.programs') }}</span>
+          </div>
         </template>
       </gamification-overview-widget-row>
     </gamification-overview-widget>
-    <gamification-program-detail-drawer />
-    <engagement-center-rule-extensions />
+    <gamification-program-detail-drawer v-if="programsDisplayed" />
+    <engagement-center-rule-extensions v-if="programsDisplayed" />
   </v-app>
 </template>
 <script>
@@ -54,12 +54,6 @@ export default {
     programsDisplayed: false
   }),
   computed: {
-    emptySummaryText() {
-      return this.$t('gamification.overview.programsOverviewSummary', {
-        0: `<a class="primary--text font-weight-bold" href="${this.programURL}">`,
-        1: '</a>',
-      });
-    },
     programURL() {
       return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`;
     },
