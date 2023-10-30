@@ -325,6 +325,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <portlet>
+    <portlet-name>CreateProgramButton</portlet-name>
+    <display-name>Create Program Button</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/html/createProgramButton.html</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Create Program Button</title>
+      <keywords>Create Program Button</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
     <portlet-name>ConnectorUserProfile</portlet-name>
     <display-name>Gamified Profiles</display-name>
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
