@@ -475,13 +475,6 @@ export default {
         window.location.hash = '';
       }
     },
-    spaceId() {
-      this.openSpace = null;
-      if (this.spaceId) {
-        this.$spaceService.getSpaceById(this.spaceId)
-          .then(space => this.openSpace = (space?.subscription === 'open'));
-      }
-    },
   },
   created() {
     this.$root.$on('program-form-open', this.open);

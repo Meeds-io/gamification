@@ -80,17 +80,22 @@
       <gamification-rules-overview-list-drawer
         ref="listDrawer" />
     </template>
-    <gamification-overview-widget-row
-      v-else
-      v-show="!loading"
-      class="my-auto">
-      <template #content>
-        <div class="d-flex flex-column align-center justify-center">
-          <v-icon color="secondary" size="48">fa-rocket</v-icon>
-          <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.actions') }}</span>
-        </div>
-      </template>
-    </gamification-overview-widget-row>
+  </gamification-overview-widget>
+  <gamification-overview-widget
+    v-else
+    :loading="loading">
+    <template #content>
+      <gamification-overview-widget-row
+        v-show="!loading"
+        class="my-auto">
+        <template #content>
+          <div class="d-flex flex-column align-center justify-center">
+            <v-icon color="secondary" size="48">fa-rocket</v-icon>
+            <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.actions') }}</span>
+          </div>
+        </template>
+      </gamification-overview-widget-row>
+    </template>
   </gamification-overview-widget>
 </template>
 <script>

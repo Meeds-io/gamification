@@ -22,22 +22,26 @@
 <template>
   <v-app>
     <gamification-overview-widget
-      :loading="loading">
-      <template #title>
-        <div v-if="!displayPlaceholder && !loading" class="d-flex flex-grow-1 full-width">
-          <div class="widget-text-header text-capitalize-first-letter text-truncate">
-            {{ $t('gamification.overview.topChallengersTitle') }}
-          </div>
-          <div class="spacer"></div>
-          <v-btn
-            height="auto"
-            min-width="auto"
-            class="pa-0"
-            text
-            @click="$refs.detailsDrawer.open()">
-            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
-          </v-btn>
-        </div>
+      :title="!displayPlaceholder && $t('gamification.overview.topChallengersTitle')"
+      :loading="loading"
+      :action-url="!displayPlaceholder && !isExternal && peopleURL || ''">
+      <template #content>
+        <gamification-overview-widget-row
+          v-show="displayPlaceholder"
+          disabled
+          class="my-auto">
+          <template #content>
+            <div class="d-flex flex-column align-center justify-center">
+              <v-icon color="secondary" size="54">fa-trophy</v-icon>
+              <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.leaderboard') }}</span>
+            </div>
+          </template>
+        </gamification-overview-widget-row>
+        <gamification-overview-widget-row class="my-auto" v-show="rankDisplayed && !isExternal">
+          <template #content>
+            <gamification-rank :is-overview-display="true" />
+          </template>
+        </gamification-overview-widget-row>
       </template>
       <gamification-overview-widget-row
         v-if="displayPlaceholder"
