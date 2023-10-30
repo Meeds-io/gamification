@@ -35,6 +35,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.model.ProgramColorAlreadyExists;
@@ -47,7 +48,7 @@ import io.meeds.gamification.utils.Utils;
 @SuppressWarnings("deprecation")
 public class ProgramServiceImpl implements ProgramService {
 
-  private static final Log        LOG = ExoLogger.getLogger(ProgramServiceImpl.class);
+  private static final Log        LOG                   = ExoLogger.getLogger(ProgramServiceImpl.class);
 
   private static final String     PROGRAM_DOESN_T_EXIST = "Program doesn't exist";
 
@@ -119,6 +120,13 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
+  public List<Long> getPublicProgramIds(int offset, int limit) {
+    ProgramFilter programFilter = new ProgramFilter();
+    programFilter.setStatus(EntityStatusType.ENABLED);
+    return getProgramIds(programFilter, offset, limit);
+  }
+
+  @Override
   public ProgramDTO getProgramByTitle(String programTitle) {
     if (StringUtils.isBlank(programTitle)) {
       throw new IllegalArgumentException("programTitle has to be not null");
@@ -154,6 +162,13 @@ public class ProgramServiceImpl implements ProgramService {
       return 0;
     }
     ProgramFilter programFilter = computeMemberProgramsFilter(username);
+    return countPrograms(programFilter);
+  }
+
+  @Override
+  public int countPublicPrograms() {
+    ProgramFilter programFilter = new ProgramFilter();
+    programFilter.setStatus(EntityStatusType.ENABLED);
     return countPrograms(programFilter);
   }
 
@@ -374,7 +389,7 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     return Utils.isRewardingManager(username)
-        || isSpaceMember(program.getSpaceId(), username);
+           || isSpaceMember(program.getSpaceId(), username);
   }
 
   @Override
@@ -479,8 +494,8 @@ public class ProgramServiceImpl implements ProgramService {
       return true;
     }
     return (openProgram || isSpaceMember(spaceId, username))
-        && ownerIds != null
-        && ownerIds.contains(Long.parseLong(userIdentity.getId()));
+           && ownerIds != null
+           && ownerIds.contains(Long.parseLong(userIdentity.getId()));
   }
 
   private boolean isSpaceManager(long spaceId, String username) {
@@ -493,7 +508,7 @@ public class ProgramServiceImpl implements ProgramService {
     }
     return spaceService.isManager(space, username);
   }
-  
+
   private boolean isSpaceMember(long spaceId, String username) {
     if (StringUtils.isBlank(username)) {
       return false;

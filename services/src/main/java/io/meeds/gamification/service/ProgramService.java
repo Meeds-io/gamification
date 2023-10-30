@@ -100,6 +100,14 @@ public interface ProgramService {
   List<Long> getMemberProgramIds(String username, int offset, int limit);
 
   /**
+   * @param offset start index for fetch
+   * @param limit limit to fetch
+   * @return {@link List} of {@link ProgramDTO} id of programs publically
+   *         accessible
+   */
+  List<Long> getPublicProgramIds(int offset, int limit);
+
+  /**
    * Find a Program by title
    * 
    * @param programTitle : Program title
@@ -242,6 +250,11 @@ public interface ProgramService {
    * @return Programs as member count for a given user identified by its name
    */
   int countMemberPrograms(String username);
+
+  /**
+   * @return Programs publically accessible count
+   */
+  int countPublicPrograms();
 
   /**
    * Retrieves the program cover identified by Program technical identifier.
