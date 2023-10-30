@@ -40,7 +40,7 @@ export default {
     endingRules: [],
     loading: true,
     hidden: false,
-    actionsPath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions#all`,
+    actionsPath: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions#all`,
   }),
   computed: {
     rules() {

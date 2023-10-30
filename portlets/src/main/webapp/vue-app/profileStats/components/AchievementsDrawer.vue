@@ -82,7 +82,7 @@ export default {
   }),
   computed: {
     infoUrl() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`;
     },
     hasMore() {
       return this.loading || this.achievements.length >= this.limit;

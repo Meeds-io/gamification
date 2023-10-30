@@ -50,7 +50,7 @@ export default {
   }),
   computed: {
     peopleURL() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/people`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/people`;
     },
     isExternal() {
       return eXo.env.portal.isExternal === 'true';

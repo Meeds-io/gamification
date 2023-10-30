@@ -34,7 +34,7 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
       'receiveLikeOnActivityComment',
     ].includes(actionLabel),
     getLink: (realization) => {
-      Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${realization?.objectId}`);
+      Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${realization?.objectId}`);
     }
   },
 });
@@ -58,7 +58,7 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     getLink: (realization) => {
       if (realization?.objectId && !realization.link) {
         Vue.prototype.$identityService.getIdentityById(realization?.objectId)
-          .then(identity => Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${identity.remoteId}`));
+          .then(identity => Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/profile/${identity.remoteId}`));
       }
     },
   },

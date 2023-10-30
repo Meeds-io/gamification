@@ -617,7 +617,7 @@ export default {
               document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
                 alertType: 'success',
                 alertMessage: this.$t('programs.details.ruleUpdateAndPublishSuccess'),
-                alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${rule.activityId}`,
+                alertLink: `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${rule.activityId}`,
                 alertLinkText: this.$t('rule.alert.see'),
                 alertLinkTarget: '_self',
               }}));
@@ -656,7 +656,7 @@ export default {
               document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
                 alertType: 'success',
                 alertMessage: this.$t('programs.details.ruleCreationAndPublishSuccess'),
-                alertLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${this.originalRule.activityId}`,
+                alertLink: `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.originalRule.activityId}`,
                 alertLinkText: this.$t('rule.alert.see'),
                 alertLinkTarget: '_self',
               }}));
