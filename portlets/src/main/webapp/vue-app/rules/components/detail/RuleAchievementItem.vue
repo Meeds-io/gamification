@@ -67,7 +67,7 @@ export default {
   },
   data() {
     return {
-      basePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}`,
+      basePath: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}`,
     };
   },
   computed: {

@@ -100,7 +100,7 @@ export default {
       connectionsRequests: [],
       connectionsRequestsSize: '',
       items: [],
-      receivedInvitationsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`,
+      receivedInvitationsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.defaultPortal }/connexions/receivedInvitations`,
     };
   },
   created(){

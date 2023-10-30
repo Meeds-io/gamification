@@ -64,7 +64,7 @@ export default {
       return this.program?.color && `border: 1px solid ${this.program.color} !important;` || '';
     },
     programURL() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`;
     },
     programTotalScore() {
       return new Intl.NumberFormat(eXo.env.portal.language, {
