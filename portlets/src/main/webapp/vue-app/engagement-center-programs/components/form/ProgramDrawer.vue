@@ -85,6 +85,16 @@
                     @updated="addAvatar"
                     @deleted="removeAvatar" />
                 </div>
+                <div class="mt-4">
+                  <span class="subtitle-1 d-flex align-center">
+                    {{ $t('program.form.programColorTitle') }}
+                  </span>
+                  <engagement-center-program-color-picker
+                    id="engagementCenterProgramColorPicker"
+                    v-model="program.color"
+                    :program="program"
+                    :allow-expand="expanded" />
+                </div>
                 <translation-text-field
                   ref="programTitle"
                   id="programTitle"
@@ -152,22 +162,9 @@
             </v-stepper-step>
             <v-slide-y-transition>
               <div v-show="expanded || stepper > 1" class="px-6">
-                <div class="mt-4">
-                  <span class="subtitle-1 d-flex align-center">
-                    {{ $t('program.form.programColorTitle') }}
-                    <v-divider class="ms-4" />
-                  </span>
-                  <engagement-center-program-color-picker
-                    id="engagementCenterProgramColorPicker"
-                    v-model="program.color"
-                    :program="program"
-                    :allow-expand="expanded"
-                    class="mt-4" />
-                </div>
-                <div class="mt-4">
+                <div>
                   <span class="subtitle-1 d-flex align-center">
                     {{ $t('programs.label.audienceSpace') }}
-                    <v-divider class="ms-4" />
                   </span>
                   <div class="mt-4">
                     <div class="d-flex align-center">
@@ -201,7 +198,6 @@
                 <div class="mt-4">
                   <span class="subtitle-1 d-flex align-center">
                     {{ $t('programs.label.programOwners') }}
-                    <v-divider class="ms-4" />
                   </span>
                   <div class="d-flex align-center">
                     <span class="caption text-light-color"> {{ $t('programs.label.accessPermission') }}</span>
