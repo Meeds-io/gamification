@@ -62,16 +62,15 @@
   </gamification-overview-widget>
   <gamification-overview-widget
     v-else
-    :title="$t('gamification.overview.emptyChallengesOverviewTitle')"
     :loading="loading">
     <gamification-overview-widget-row
       v-show="!loading"
       class="my-auto">
-      <template #icon>
-        <v-icon color="secondary" size="55px">fas fa-rocket</v-icon>
-      </template>
       <template #content>
-        <span v-sanitized-html="emptySummaryText"></span>
+        <div class="d-flex flex-column align-center justify-center">
+          <v-icon color="secondary" size="48">fa-rocket</v-icon>
+          <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.actions') }}</span>
+        </div>
       </template>
     </gamification-overview-widget-row>
   </gamification-overview-widget>
@@ -89,12 +88,6 @@ export default {
     weekInMs: 604800000,
   }),
   computed: {
-    emptySummaryText() {
-      return this.$t('gamification.overview.challengesOverviewSummary', {
-        0: `<a class="primary--text font-weight-bold" href="${this.actionsPageURL}">`,
-        1: '</a>',
-      });
-    },
     endingRulesToDisplay() {
       if (!this.endingRules?.length) {
         return [];
