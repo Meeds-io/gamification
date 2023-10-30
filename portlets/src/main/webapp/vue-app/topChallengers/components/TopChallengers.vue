@@ -16,21 +16,19 @@
 <template>
   <v-app>
     <gamification-overview-widget
+      :title="!displayPlaceholder && $t('gamification.overview.topChallengersTitle')"
       :loading="loading"
-      :see-all-url="!isExternal && peopleURL || ''">
-      <template #title>
-        {{ $t('gamification.overview.topChallengersTitle') }}
-      </template>
+      :action-url="!displayPlaceholder && !isExternal && peopleURL || ''">
       <template #content>
         <gamification-overview-widget-row
           v-show="displayPlaceholder"
           disabled
           class="my-auto">
-          <template #icon>
-            <v-icon color="secondary" size="55px">fas fa-trophy</v-icon>
-          </template>
           <template #content>
-            <span v-sanitized-html="$t('gamification.overview.topChallengersSummary')"></span>
+            <div class="d-flex flex-column align-center justify-center">
+              <v-icon color="secondary" size="54">fa-trophy</v-icon>
+              <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.leaderboard') }}</span>
+            </div>
           </template>
         </gamification-overview-widget-row>
         <gamification-overview-widget-row class="my-auto" v-show="rankDisplayed && !isExternal">
