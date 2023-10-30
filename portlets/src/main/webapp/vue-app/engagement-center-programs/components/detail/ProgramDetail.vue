@@ -258,7 +258,7 @@ export default {
       status: 'ENABLED',
       keyword: null,
       realizationsLimit: 3,
-      programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`,
+      programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`,
     };
   },
   computed: {

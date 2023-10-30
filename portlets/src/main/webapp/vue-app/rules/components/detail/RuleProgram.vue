@@ -63,7 +63,7 @@ export default {
       return this.rule?.program?.title;
     },
     programUrl() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.programId}`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.programId}`;
     },
     programStyle() {
       return this.rule?.program?.color && `border: 1px solid ${this.rule?.program.color} !important;` || '';
