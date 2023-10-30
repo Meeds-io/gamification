@@ -28,14 +28,14 @@
     <edit-permission>manager:/platform/rewarding</edit-permission>
     <container id="singlePageApplicationContainer" template="system:/groovy/portal/webui/container/UIContainer.gtmpl"
                cssClass="singlePageApplication">
-      <access-permissions>*:/platform/rewarding</access-permissions>
+      <access-permissions>everyone</access-permissions>
       <portlet-application>
         <portlet>
           <application-ref>gamification-portlets</application-ref>
           <portlet-ref>ConnectorAdminSettings</portlet-ref>
         </portlet>
         <title>Gamification Connectors Administration</title>
-        <access-permissions>*:/platform/rewarding</access-permissions>
+        <access-permissions>everyone</access-permissions>
         <show-info-bar>false</show-info-bar>
       </portlet-application>
     </container>
