@@ -89,7 +89,7 @@ export default {
       return this.achievement.socialId;
     },
     achievementUrl() {
-      return this.achievement.objectId && this.achievement.objectId.replace('/portal/intranet/', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/`);
+      return this.achievement.objectId && this.achievement.objectId.replace('/portal/intranet/', `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/`);
     },
     programTitle() {
       return this.getLabel('exoplatform.gamification.leaderboard.domain', this.achievement.program?.title);

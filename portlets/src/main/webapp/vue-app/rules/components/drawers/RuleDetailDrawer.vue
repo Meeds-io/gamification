@@ -177,7 +177,7 @@ export default {
     expanded: false,
     rule: {},
     loading: false,
-    linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
+    linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`,
     validAnnouncement: false,
     sending: false,
     announcementFormOpened: false,

@@ -52,7 +52,7 @@ export default {
     program: null,
     displayProgramDetail: false,
     newlyCreated: false,
-    programsLinkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`,
+    programsLinkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`,
   }),
   watch: {
     displayProgramDetail() {

@@ -131,7 +131,7 @@ export default {
   }),
   computed: {
     programLink() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.program.id}`;
     },
     space() {
       return this.program?.space;

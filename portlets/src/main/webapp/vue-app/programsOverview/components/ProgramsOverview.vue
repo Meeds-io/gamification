@@ -61,7 +61,7 @@ export default {
       });
     },
     programURL() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`;
     },
     programLink() {
       return this.programsDisplayed && this.programURL || null;
