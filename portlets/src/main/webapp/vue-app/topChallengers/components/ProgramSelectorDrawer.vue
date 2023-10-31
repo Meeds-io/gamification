@@ -20,57 +20,83 @@
 
 -->
 <template>
-  <v-app>
-    <v-card
-      class="pa-5 card-border-radius"
-      flat>
-      <div class="UserGamificationHeader text-color d-flex">
-        <div class="align-start d-flex">
-          <div
-            class="d-inline-block">
-            {{ $t('exoplatform.gamification.userLeaderboard.title') }}
-          </div>
-          <a
-            :href="infoUrl"
-            :title="$t('exoplatform.gamification.leaderboard.Howearnpoints')"
-            class="d-inline-block mx-3">
-            <i class="uiIconInformation uiIconLightBlue"></i>
-          </a>
-        </div>
-        <div class="flex-grow-1"></div>
-        <div class="align-end selectProgramFilterParent">
-          <select
-            v-model="selectedProgramId"
-            class="selectProgramFilter ignore-vuetify-classes mb-0">
-            <users-leaderboard-domain-option
-              v-for="program in programs"
-              :key="program.id"
-              :program="program" />
-          </select>
-        </div>
+  <exo-drawer
+    ref="drawer"
+    v-model="drawer"
+    :loading="loading"
+    id="leaderboardDrawer"
+    class="leaderboard-drawer"
+    allow-expand
+    right>
+    <template #title>
+      {{ $t('gamification.overview.leaderboard.drawer.title') }}
+    </template>
+    <template v-if="drawer" #content>
+      <v-radio-group v-model="programId" class="px-5 pb-5">
+        <v-radio
+          v-for="program in programs"
+          :key="program.id"
+          :label="program.label || program.title"
+          :value="program.id" />
+      </v-radio-group>
+    </template>
+    <template #footer>
+      <div class="d-flex">
+        <v-btn
+          class="dark-grey-color px-0 hidden-xs-only"
+          text
+          outlined
+          @click="reset">
+          <v-icon size="18" class="icon-default-color me-2">fa-redo</v-icon>
+          {{ $t('challenge.button.resetFilter') }}
+        </v-btn>
+        <v-spacer />
+        <v-btn
+          class="btn me-2"
+          @click="close">
+          {{ $t('programs.details.filter.cancel') }}
+        </v-btn>
+        <v-btn
+          class="btn btn-primary"
+          @click="apply">
+          {{ $t('gamification.apply') }}
+        </v-btn>
       </div>
-      <users-leaderboard-tabs
-        v-if="!loading"
-        :program-id="selectedProgramId" />
-    </v-card>
-  </v-app>
+    </template>
+  </exo-drawer>
 </template>
 <script>
 export default {
-  data: () => ({
-    programs: [],
-    selectedProgramId: '0',
-    loading: false,
-  }),
-  computed: {
-    infoUrl() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`;
+  props: {
+    value: {
+      type: String,
+      default: null,
     },
   },
+  data: () => ({
+    programs: [],
+    programId: '0',
+    drawer: null,
+    loading: false,
+  }),
   created() {
     this.init();
   },
   methods: {
+    open() {
+      this.reset();
+      this.$refs.drawer.open();
+    },
+    close() {
+      this.$refs.drawer.close();
+    },
+    apply() {
+      this.$emit('input', this.programId);
+      this.close();
+    },
+    reset() {
+      this.programId = this.value;
+    },
     init() {
       this.loading = true;
       return this.retrievePrograms()
@@ -81,7 +107,7 @@ export default {
         });
     },
     retrievePrograms() {
-      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs?type=ALL`, {
+      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs`, {
         credentials: 'include',
       }).then(resp => resp?.ok && resp.json())
         .then(data => {
