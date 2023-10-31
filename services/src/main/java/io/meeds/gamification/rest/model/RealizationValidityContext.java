@@ -48,9 +48,12 @@ public class RealizationValidityContext implements Cloneable {
 
   private long                 nextOccurenceMillis = 0;
 
+  public boolean isValidForIdentity() {
+    return validIdentity && isValid();
+  }
+
   public boolean isValid() {
-    return validIdentity
-        && validProgram
+    return validProgram
         && validAudience
         && validRule
         && validDates
@@ -71,4 +74,5 @@ public class RealizationValidityContext implements Cloneable {
                                           validPrerequisites,
                                           nextOccurenceMillis);
   }
+
 }
