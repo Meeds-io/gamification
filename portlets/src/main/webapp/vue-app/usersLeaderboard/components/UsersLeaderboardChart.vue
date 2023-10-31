@@ -79,6 +79,10 @@ export default {
         .then(() => this.init());
     },
     loadChartData() {
+      if (this.$root.isAnonymous) {
+        return this.$nextTick();
+      }
+
       if (this.chartData) {
         return this.$nextTick().then(() => this.chartData);
       }
@@ -102,6 +106,9 @@ export default {
       });
     },
     init() {
+      if (this.$root.isAnonymous) {
+        return this.$nextTick();
+      }
       return new Promise((resolve, reject) => {
         if (this.echarts) {
           resolve(this.echarts);
