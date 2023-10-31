@@ -67,7 +67,7 @@
           class="text-color text-wrap text-start text-break rich-editor-content mt-2"
           v-sanitized-html="program.description">
         </div>
-        <div class="d-flex flex-column mt-6">
+        <div v-if="!$root.isAnonymous" class="d-flex flex-column mt-6">
           <div class="d-flex flex-row">
             <div class="subtitle-1 dark-grey-color font-weight-bold flex-start text-start flex-grow-1 flex-shrink-1 text-truncate">
               {{ $t('programs.details.label.audienceSpace') }}

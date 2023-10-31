@@ -108,7 +108,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
   @Override
   public boolean canAnnounce(RuleDTO rule, String earnerIdentityId) {
-    return realizationService.getRealizationValidityContext(rule, earnerIdentityId).isValid();
+    return realizationService.getRealizationValidityContext(rule, earnerIdentityId).isValidForIdentity();
   }
 
   @Override

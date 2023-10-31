@@ -68,10 +68,14 @@ export default {
   },
   methods: {
     openAchievementsDrawer() {
-      document.dispatchEvent(new CustomEvent('open-achievements-drawer', {detail: {
-        rule: this.rule,
-        backIcon: true,
-      }}));
+      if (this.$root.isAnonymous) {
+        window.location.href = '/portal/login';
+      } else {
+        document.dispatchEvent(new CustomEvent('open-achievements-drawer', {detail: {
+          rule: this.rule,
+          backIcon: true,
+        }}));
+      }
     },
   },
 };
