@@ -30,6 +30,7 @@ files: [
     },
     "dest" : "hub/gamification/Gamification.properties",
     "update_option" : "update_as_unapproved",
+    "escape_special_characters": 0,
   },
   {
     "source": "/portlets/src/main/resources/locale/portlet/Challenges_en.properties",
@@ -46,6 +47,7 @@ files: [
     },
     "dest": "hub/gamification/Challenges.properties",
     "update_option": "update_as_unapproved",
+    "escape_special_characters": 0,
   },
   {
     "source": "/portlets/src/main/resources/locale/portlet/Analytics_en.properties",
@@ -62,6 +64,7 @@ files: [
     },
     "dest": "hub/gamification/Analytics.properties",
     "update_option": "update_as_unapproved",
+    "escape_special_characters": 0,
 
   },
   {
@@ -78,6 +81,7 @@ files: [
     },
     "dest": "hub/gamification/global.properties",
     "update_option": "update_as_unapproved",
+    "escape_special_characters": 0,
 
   },
   {
@@ -95,6 +99,7 @@ files: [
     },
     "dest": "hub/gamification/NotificationAdministration.properties",
     "update_option": "update_as_unapproved",
+    "escape_special_characters": 0,
 
   },
   {
@@ -112,6 +117,7 @@ files: [
     },
     "dest": "hub/gamification/rewarding.properties",
     "update_option": "update_as_unapproved",
+    "escape_special_characters": 0,
 
   },
   {
@@ -129,6 +135,7 @@ files: [
     },
     "dest": "hub/gamification/hamburgerMenu.properties",
     "update_option": "update_as_unapproved",
+    "escape_special_characters": 0,
 
   },
 ]
