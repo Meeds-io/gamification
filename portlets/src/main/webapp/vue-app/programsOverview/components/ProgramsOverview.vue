@@ -19,7 +19,7 @@
       :title="programsDisplayed && $t('gamification.overview.programsOverviewTitle')"
       :action-url="programsDisplayed && programLink"
       :loading="loading">
-      <div v-if="programsDisplayed">
+      <template v-if="programsDisplayed" #content>
         <gamification-overview-program-item
           v-for="program in programs" 
           :key="program.id"

@@ -15,11 +15,15 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import TopChallengers from './components/TopChallengers.vue';
-import  gamificationRank  from '../profileStats/components/GamificationRank.vue';
+import LeaderboardDrawer from './components/LeaderboardDrawer.vue';
+import ProgramSelectorDrawer from './components/ProgramSelectorDrawer.vue';
+import GamificationRank  from '../profileStats/components/GamificationRank.vue';
 
 const components = {
   'gamification-overview-top-challengers': TopChallengers,
-  'gamification-rank': gamificationRank,
+  'gamification-overview-leaderboard-drawer': LeaderboardDrawer,
+  'gamification-overview-program-selector-drawer': ProgramSelectorDrawer,
+  'gamification-rank': GamificationRank,
 };
 
 for (const key in components) {
