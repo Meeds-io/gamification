@@ -264,7 +264,7 @@ public class ProgramRest implements ResourceContainer {
                                                      program,
                                                      getLocale(request),
                                                      null,
-                                                     identity.getUserId()))
+                                                     getCurrentUser()))
                      .build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
@@ -309,7 +309,7 @@ public class ProgramRest implements ResourceContainer {
                                                      program,
                                                      getLocale(request),
                                                      null,
-                                                     identity.getUserId()))
+                                                     getCurrentUser()))
                      .build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();

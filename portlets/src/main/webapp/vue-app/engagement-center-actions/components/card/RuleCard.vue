@@ -31,6 +31,7 @@
         <div v-show="hover" class="d-flex position-absolute full-width z-index-drawer">
           <div class="ms-auto mb-auto mt-4 me-4">
             <div
+              v-if="isProgramMember"
               v-show="hover"
               :class="hover && 'd-inline-flex'"
               class="my-auto">
@@ -88,6 +89,7 @@
               :class="hover && 'd-inline-flex'"
               class="my-auto">
               <rule-favorite-button
+                v-if="isProgramMember"
                 :rule-id="rule.id"
                 :space-id="rule.spaceId"
                 :favorite.sync="rule.favorite"
@@ -186,6 +188,9 @@ export default {
     },
     programStyle() {
       return this.ruleProgram?.color && `border: 1px solid ${this.ruleProgram.color} !important;` || '';
+    },
+    isProgramMember() {
+      return this.rule?.userInfo?.member;
     },
   },
   created() {

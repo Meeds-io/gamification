@@ -256,7 +256,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
     return rules.stream()
                 .distinct()
-                .filter(rule -> getRealizationValidityContext(rule, earnerIdentity.getId()).isValid())
+                .filter(rule -> getRealizationValidityContext(rule, earnerIdentity.getId()).isValidForIdentity())
                 .map(rule -> toRealization(rule,
                                            earnerIdentity,
                                            receiverIdentityId,
@@ -352,28 +352,26 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   @Override
   public RealizationValidityContext getRealizationValidityContext(RuleDTO rule, String earnerIdentityId) { // NOSONAR
     RealizationValidityContext realizationRestriction = new RealizationValidityContext();
-
-    org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId);
-    if (identity == null
-        || identity.isDeleted()
-        || !identity.isEnable()
-        || (identity.isUser()
-            && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId()))) {
-      realizationRestriction.setValidIdentity(false);
-      return realizationRestriction;
-    } else if (rule == null
+    if (rule == null
         || rule.isDeleted()
         || !rule.isEnabled()) {
       realizationRestriction.setValidRule(false);
       return realizationRestriction;
-    } else if (!isValidProgram(rule.getProgram())) {
+    }
+
+    org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId);
+    boolean anonymous = identity == null || identity.isDeleted() || !identity.isEnable();
+    if (anonymous || (identity.isUser() && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId()))) {
+      realizationRestriction.setValidIdentity(false);
+    }
+    if (!isValidProgram(rule.getProgram())) {
       realizationRestriction.setValidProgram(false);
       return realizationRestriction;
     } else {
       if (!isValidDates(rule)) {
         realizationRestriction.setValidDates(false);
       }
-      if (!isRecurrenceValid(rule, earnerIdentityId)) {
+      if (!anonymous && !isRecurrenceValid(rule, earnerIdentityId)) {
         realizationRestriction.setValidRecurrence(false);
         RecurrenceType recurrence = rule.getRecurrence();
         if (recurrence == RecurrenceType.DAILY || recurrence == RecurrenceType.WEEKLY || recurrence == RecurrenceType.MONTHLY) {
@@ -385,7 +383,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
           }
         }
       }
-      if (CollectionUtils.isNotEmpty(rule.getPrerequisiteRuleIds())) {
+      if (!anonymous && CollectionUtils.isNotEmpty(rule.getPrerequisiteRuleIds())) {
         realizationRestriction.setValidPrerequisites(new HashMap<>());
         rule.getPrerequisiteRuleIds().forEach(prerequisiteRuleId -> {
           boolean prerequisiteRealized = realizationStorage.countRealizationsByRuleIdAndEarnerId(earnerIdentityId,
@@ -396,14 +394,14 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         });
       }
     }
-    if (realizationRestriction.isValid()) { // NOSONAR
+    if (!anonymous && realizationRestriction.isValidForIdentity()) {
       if (!rule.isOpen()) {
         Space space = spaceService.getSpaceById(String.valueOf(rule.getSpaceId()));
         if (space == null) {
           realizationRestriction.setValidAudience(false);
         }
       }
-      if (identity.isUser() && isUserBlacklisted(identity.getRemoteId())) { // NOSONAR
+      if (identity.isUser() && isUserBlacklisted(identity.getRemoteId())) {
         realizationRestriction.setValidWhitelist(false);
       }
     }
