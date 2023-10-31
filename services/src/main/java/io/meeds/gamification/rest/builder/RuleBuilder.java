@@ -67,13 +67,14 @@ public class RuleBuilder {
                                             List<String> expandFields,
                                             int realizationsLimit,
                                             boolean noProgram,
+                                            boolean anonymous,
                                             PeriodType periodType) {
     if (rule == null) {
       return null;
     }
     boolean retrieveRealizations = realizationsLimit > 0;
     List<RealizationRestEntity> realizationEntities = null;
-    if (retrieveRealizations) {
+    if (retrieveRealizations && !anonymous) {
       List<RealizationDTO> realizations = getRealizations(realizationService,
                                                           rule.getId(),
                                                           periodType,
@@ -90,12 +91,14 @@ public class RuleBuilder {
     if (countRealizations) {
       realizationsCount = countRealizations(realizationService, rule.getId(), periodType);
     }
-    boolean isFavorite = expandFields != null && expandFields.contains("favorites")
-        && favoriteService.isFavorite(new Favorite(RULE_OBJECT_TYPE,
-                                                   String.valueOf(rule.getId()),
-                                                   null,
-                                                   Utils.getCurrentUserIdentityId(),
-                                                   rule.getSpaceId()));
+    boolean isFavorite = !anonymous
+                         && expandFields != null
+                         && expandFields.contains("favorites")
+                         && favoriteService.isFavorite(new Favorite(RULE_OBJECT_TYPE,
+                                                                    String.valueOf(rule.getId()),
+                                                                    null,
+                                                                    Utils.getCurrentUserIdentityId(),
+                                                                    rule.getSpaceId()));
     boolean expandPrerequisites = expandFields != null && expandFields.contains("expandPrerequisites");
     List<RuleDTO> prerequisiteRules = ruleService.getPrerequisiteRules(rule.getId())
                                                  .stream()
@@ -111,6 +114,7 @@ public class RuleBuilder {
                                                                          expandFields,
                                                                          realizationsLimit,
                                                                          noProgram,
+                                                                         anonymous,
                                                                          periodType);
 
                                                    } else {
@@ -135,9 +139,9 @@ public class RuleBuilder {
                               program,
                               rule.isEnabled(),
                               rule.isDeleted(),
-                              rule.getCreatedBy(),
+                              anonymous ? null : rule.getCreatedBy(),
                               rule.getCreatedDate(),
-                              rule.getLastModifiedBy(),
+                              anonymous ? null : rule.getLastModifiedBy(),
                               rule.getEvent(),
                               rule.getLastModifiedDate(),
                               rule.getStartDate(),
@@ -186,7 +190,7 @@ public class RuleBuilder {
     RealizationValidityContext realizationRestriction = realizationService.getRealizationValidityContext(rule,
                                                                                                          String.valueOf(Utils.getUserIdentityId(username)));
     userContext.setContext(realizationRestriction);
-    userContext.setAllowedToRealize(realizationRestriction.isValid());
+    userContext.setAllowedToRealize(realizationRestriction.isValidForIdentity());
     return userContext;
   }
 

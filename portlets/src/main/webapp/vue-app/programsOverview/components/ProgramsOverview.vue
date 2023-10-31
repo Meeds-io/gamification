@@ -16,13 +16,10 @@
 <template>
   <v-app>
     <gamification-overview-widget
-      :see-all-url="programLink"
-      :loading="loading"
-      extra-class="pa-0 justify-space-between height-auto">
-      <template #title>
-        <span class="text-truncate">{{ $t('gamification.overview.programsOverviewTitle') }}</span>
-      </template>
-      <template v-if="programsDisplayed" #content>
+      :title="programsDisplayed && $t('gamification.overview.programsOverviewTitle')"
+      :action-url="programsDisplayed && programLink"
+      :loading="loading">
+      <div v-if="programsDisplayed">
         <gamification-overview-program-item
           v-for="program in programs" 
           :key="program.id"
@@ -47,7 +44,7 @@
       </template>
     </gamification-overview-widget>
     <gamification-program-detail-drawer v-if="programsDisplayed" />
-    <engagement-center-rule-extensions v-if="programsDisplayed" />
+    <engagement-center-rule-extensions />
   </v-app>
 </template>
 <script>
