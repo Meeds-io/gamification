@@ -31,6 +31,9 @@ export function init() {
     .then(i18n => {
       // init Vue app when locale ressources are ready
       Vue.createApp({
+        data: {
+          isAnonymous: !eXo.env.portal.userIdentityId?.length,
+        },
         template: `<users-leaderboard id='${appId}' />`,
         i18n,
         vuetify,
