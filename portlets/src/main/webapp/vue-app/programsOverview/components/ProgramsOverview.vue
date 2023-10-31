@@ -19,7 +19,7 @@
       :title="programsDisplayed && $t('gamification.overview.programsOverviewTitle')"
       :action-url="programsDisplayed && programLink"
       :loading="loading">
-      <div v-if="programsDisplayed" class="mt-5">
+      <div v-if="programsDisplayed">
         <gamification-overview-program-item
           v-for="program in programs" 
           :key="program.id"
@@ -42,7 +42,7 @@
       </gamification-overview-widget-row>
     </gamification-overview-widget>
     <gamification-program-detail-drawer v-if="programsDisplayed" />
-    <engagement-center-rule-extensions v-if="programsDisplayed" />
+    <engagement-center-rule-extensions />
   </v-app>
 </template>
 <script>
