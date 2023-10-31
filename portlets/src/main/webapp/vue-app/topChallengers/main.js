@@ -28,7 +28,7 @@ export function init() {
     .then(i18n => {
       Vue.createApp({
         data: {
-          isAnonymous: !!eXo.env.portal.userIdentityId?.length,
+          isAnonymous: !eXo.env.portal.userIdentityId?.length,
         },
         template: `<gamification-overview-top-challengers id="${appId}" />`,
         i18n,
