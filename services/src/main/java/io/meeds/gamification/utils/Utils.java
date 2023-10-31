@@ -275,12 +275,16 @@ public class Utils {
     return null;
   }
 
+  public static final boolean isAnonymous() {
+    return StringUtils.isBlank(getCurrentUser());
+  }
+
   public static final boolean canAccessAnonymousResources() {
     return canAccessAnonymousResources(ExoContainerContext.getService(SecuritySettingService.class));
   }
 
   public static final boolean canAccessAnonymousResources(SecuritySettingService securitySettingService) {
-    return StringUtils.isNotBlank(getCurrentUser()) || securitySettingService.getRegistrationType() == UserRegistrationType.OPEN;
+    return !isAnonymous() || securitySettingService.getRegistrationType() == UserRegistrationType.OPEN;
   }
 
   public static String toRFC3339Date(Date dateTime) {
