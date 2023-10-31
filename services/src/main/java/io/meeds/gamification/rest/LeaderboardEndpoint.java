@@ -56,6 +56,7 @@ import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.LeaderboardFilter;
+import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.utils.Utils;
 import io.meeds.portal.security.service.SecuritySettingService;
@@ -82,17 +83,21 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
   protected SpaceService           spaceService;
 
+  protected ProgramService         programService;
+
   protected SecuritySettingService securitySettingService;
 
   public LeaderboardEndpoint(IdentityManager identityManager,
                              RealizationService realizationService,
                              RelationshipManager relationshipManager,
                              SpaceService spaceService,
+                             ProgramService programService,
                              SecuritySettingService securitySettingService) {
     this.identityManager = identityManager;
     this.realizationService = realizationService;
     this.relationshipManager = relationshipManager;
     this.spaceService = spaceService;
+    this.programService = programService;
     this.securitySettingService = securitySettingService;
   }
 
@@ -152,19 +157,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
         if (identity == null) {
           continue;
         }
-        LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
-        leaderboardInfo.setFullname(identity.getProfile().getFullName());
-        leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-        leaderboardInfo.setScore(element.getReputationScore());
-        leaderboardInfo.setRank(index);
-        if (!isAnonymous) {
-          leaderboardInfo.setRemoteId(identity.getRemoteId());
-          leaderboardInfo.setSocialId(identity.getId());
-          String technicalId = computeTechnicalId(identity);
-          leaderboardInfo.setTechnicalId(technicalId);
-          leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
-        }
-        leaderboardList.add(leaderboardInfo);
+        leaderboardList.add(toLeaderboardInfo(element, identity, isAnonymous, index));
         index++;
       }
 
@@ -205,7 +198,6 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
   @GET
   @Path("filter")
-  @RolesAllowed("users")
   public Response filter(
                          @Context
                          UriInfo uriInfo,
@@ -218,6 +210,12 @@ public class LeaderboardEndpoint implements ResourceContainer {
     // Init search criteria
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
     leaderboardFilter.setProgramId(programId);
+    String currentUser = Utils.getCurrentUser();
+    if (programId != null
+        && programId > 0
+        && !programService.canViewProgram(programId, currentUser)) {
+      return Response.status(Status.UNAUTHORIZED).build();
+    }
     if (StringUtils.isBlank(period)) {
       leaderboardFilter.setPeriod(Period.WEEK.name());
     } else {
@@ -231,28 +229,22 @@ public class LeaderboardEndpoint implements ResourceContainer {
     }
 
     // hold leaderboard flow
-    LeaderboardInfo leaderboardInfo = null;
-
     try {
-
       List<StandardLeaderboard> standardLeaderboards = realizationService.getLeaderboard(leaderboardFilter);
-      List<LeaderboardInfo> leaderboardInfoList = new ArrayList<>();
+      List<LeaderboardInfo> leaderboardList = new ArrayList<>();
       if (standardLeaderboards == null || standardLeaderboards.isEmpty()) {
-        return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).build();
+        return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).build();
       }
 
-      for (StandardLeaderboard leader : standardLeaderboards) {
-        Identity identity = identityManager.getIdentity(leader.getEarnerId());
-        leaderboardInfo = new LeaderboardInfo();
-        String technicalId = computeTechnicalId(identity);
-        leaderboardInfo.setTechnicalId(technicalId);
-        leaderboardInfo.setSocialId(identity.getId());
-        leaderboardInfo.setScore(leader.getReputationScore());
-        leaderboardInfo.setRemoteId(identity.getRemoteId());
-        leaderboardInfo.setFullname(identity.getProfile().getFullName());
-        leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-        leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
-        leaderboardInfoList.add(leaderboardInfo);
+      boolean isAnonymous = StringUtils.isBlank(currentUser);
+      int index = 1;
+      for (StandardLeaderboard element : standardLeaderboards) {
+        Identity identity = identityManager.getIdentity(element.getEarnerId());
+        if (identity == null) {
+          continue;
+        }
+        leaderboardList.add(toLeaderboardInfo(element, identity, isAnonymous, index));
+        index++;
       }
       // Check if the current user is already in top10
       Date date = null;
@@ -267,14 +259,18 @@ public class LeaderboardEndpoint implements ResourceContainer {
                                   .toInstant());
         break;
       }
-      LeaderboardInfo leader = buildCurrentUserRank(date,
-                                                    leaderboardFilter.getProgramId(),
-                                                    leaderboardInfoList);
-      // Complete the final leaderboard
-      if (leader != null)
-        leaderboardInfoList.add(leader);
 
-      return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).build();
+      if (!isAnonymous) {
+        // Check if the current user is already in top10
+        LeaderboardInfo leader = buildCurrentUserRank(date,
+                                                      leaderboardFilter.getProgramId(),
+                                                      leaderboardList);
+        // Complete the final leaderboard
+        if (leader != null) {
+          leaderboardList.add(leader);
+        }
+      }
+      return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).build();
 
     } catch (Exception e) {
 
@@ -379,6 +375,22 @@ public class LeaderboardEndpoint implements ResourceContainer {
       }
     } catch (Exception e) {
       LOG.error("Error building Rank for user {} ", currentUser, e);
+    }
+    return leaderboardInfo;
+  }
+
+  private LeaderboardInfo toLeaderboardInfo(StandardLeaderboard element, Identity identity, boolean isAnonymous, int index) {
+    LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
+    leaderboardInfo.setFullname(identity.getProfile().getFullName());
+    leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+    leaderboardInfo.setScore(element.getReputationScore());
+    leaderboardInfo.setRank(index);
+    if (!isAnonymous) {
+      leaderboardInfo.setRemoteId(identity.getRemoteId());
+      leaderboardInfo.setSocialId(identity.getId());
+      String technicalId = computeTechnicalId(identity);
+      leaderboardInfo.setTechnicalId(technicalId);
+      leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
     }
     return leaderboardInfo;
   }
