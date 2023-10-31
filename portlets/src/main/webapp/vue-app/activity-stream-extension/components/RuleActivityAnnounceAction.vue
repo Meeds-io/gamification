@@ -71,7 +71,7 @@ export default {
       return this.rule?.id;
     },
     canAnnounce() {
-      return this.rule?.userInfo?.context?.valid && this.rule?.type === 'MANUAL';
+      return this.rule?.userInfo?.context?.validForIdentity && this.rule?.type === 'MANUAL';
     },
     isMobile() {
       return this.$vuetify.breakpoint.name === 'sm' || this.$vuetify.breakpoint.name === 'xs';

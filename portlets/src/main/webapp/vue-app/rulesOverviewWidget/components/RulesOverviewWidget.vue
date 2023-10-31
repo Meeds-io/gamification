@@ -243,6 +243,7 @@ export default {
     },
     isHiddenWhenEmpty() {
       return (this.hideIfEmpty && !this.hideEmptyPlaceholder)
+        || this.$root.isAnonymous
         || (eXo.env.portal.spaceId
             && eXo.env.portal.hiddenGamOverviewEmptyWidgetBySpace
             && eXo.env.portal.hiddenGamOverviewEmptyWidgetBySpace[eXo.env.portal.spaceId]);
