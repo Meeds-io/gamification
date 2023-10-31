@@ -43,6 +43,9 @@ if (!document.getElementById(appId)) {
   exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       Vue.createApp({
+        data: {
+          isAnonymous: !eXo.env.portal.userIdentityId?.length,
+        },
         template: `<engagement-center-rule-drawers id="${appId}" />`,
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,

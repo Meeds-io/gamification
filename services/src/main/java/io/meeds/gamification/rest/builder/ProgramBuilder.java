@@ -66,6 +66,7 @@ public class ProgramBuilder {
     if (program == null) {
       return null;
     }
+    boolean anonymous = StringUtils.isBlank(username);
     translatedLabels(translationService, program, locale);
 
     int activeRulesCount = 0;
@@ -98,9 +99,12 @@ public class ProgramBuilder {
                                  program.getOwnerIds(),
                                  program.getRulesTotalScore(),
                                  program.isOpen(),
-                                 program.getSpaceId() > 0 ? Utils.getSpaceById(String.valueOf(program.getSpaceId())) : null,
+                                 !anonymous && program.getSpaceId() > 0 ?
+                                                                        Utils.getSpaceById(String.valueOf(program.getSpaceId())) :
+                                                                        null,
                                  toUserContext(programService, program, username),
-                                 getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId()),
+                                 anonymous ? Collections.emptyList() :
+                                           getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId()),
                                  activeRulesCount,
                                  program.getVisibility());
   }
@@ -181,10 +185,11 @@ public class ProgramBuilder {
     Identity identity = StringUtils.isBlank(username) ? null : identityManager.getOrCreateUserIdentity(username);
     mapUserInfo(userContext, identity);
     if (program != null) {
-      boolean isOwner = programService.isProgramOwner(program.getId(), username);
-      boolean isMember = programService.isProgramMember(program.getId(), username);
+      boolean anonymous = identity == null;
       boolean canView = programService.canViewProgram(program.getId(), username);
-      boolean canEdit = isOwner && !program.isDeleted();
+      boolean isOwner = !anonymous && programService.isProgramOwner(program.getId(), username);
+      boolean isMember = !anonymous && programService.isProgramMember(program.getId(), username);
+      boolean canEdit = !anonymous && isOwner && !program.isDeleted();
       userContext.setManager(isOwner);
       userContext.setCanEdit(canEdit);
       userContext.setMember(isMember);
@@ -196,7 +201,7 @@ public class ProgramBuilder {
       } else {
         Space space = Utils.getSpaceById(String.valueOf(program.getSpaceId()));
         if (space != null) {
-          boolean isRedactor = StringUtils.isNotBlank(username)
+          boolean isRedactor = !anonymous
                                && CommonsUtils.getService(SpaceService.class)
                                               .canRedactOnSpace(space, Utils.getUserAclIdentity(username));
           userContext.setRedactor(isRedactor);

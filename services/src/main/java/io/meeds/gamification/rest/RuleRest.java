@@ -336,6 +336,7 @@ public class RuleRest implements ResourceContainer {
                                                            expandFields,
                                                            realizationsLimit,
                                                            false,
+                                                           isAnonymous(),
                                                            PeriodType.ALL);
       return Response.ok(ruleEntity).build();
     } catch (IllegalArgumentException e) {
@@ -477,6 +478,7 @@ public class RuleRest implements ResourceContainer {
                                                       expandFields,
                                                       realizationsLimit,
                                                       noProgram,
+                                                      isAnonymous(),
                                                       periodType))
                 .toList();
   }
@@ -492,6 +494,7 @@ public class RuleRest implements ResourceContainer {
                                     null,
                                     0,
                                     false,
+                                    isAnonymous(),
                                     PeriodType.ALL);
   }
 }
