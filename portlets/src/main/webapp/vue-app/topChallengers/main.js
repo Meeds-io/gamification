@@ -29,10 +29,12 @@ export function init() {
       Vue.createApp({
         data: {
           isAnonymous: !eXo.env.portal.userIdentityId?.length,
+          actionValueExtensions: [],
         },
         template: `<gamification-overview-top-challengers id="${appId}" />`,
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'Top Challengers');
-    });
+    })
+    .finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
 }
