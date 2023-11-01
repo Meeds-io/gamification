@@ -16,13 +16,11 @@
  */
 import TopChallengers from './components/TopChallengers.vue';
 import LeaderboardDrawer from './components/LeaderboardDrawer.vue';
-import ProgramSelectorDrawer from './components/ProgramSelectorDrawer.vue';
 import GamificationRank  from '../profileStats/components/GamificationRank.vue';
 
 const components = {
   'gamification-overview-top-challengers': TopChallengers,
   'gamification-overview-leaderboard-drawer': LeaderboardDrawer,
-  'gamification-overview-program-selector-drawer': ProgramSelectorDrawer,
   'gamification-rank': GamificationRank,
 };
 

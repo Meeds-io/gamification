@@ -27,14 +27,14 @@ public class PiechartLeaderboard extends AbstractLeaderboard implements Serializ
 
   private static final long serialVersionUID = 1130426830639479087L;
 
+  private long              programId;
+
   private String            label;
 
   private long              value;
 
-  public PiechartLeaderboard(String label, long value) {
-
-    this.label = label;
-
+  public PiechartLeaderboard(long programId, long value) {
+    this.programId = programId;
     this.value = value;
   }
 

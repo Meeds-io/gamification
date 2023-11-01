@@ -51,6 +51,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.LeaderboardFilter;
+import io.meeds.gamification.rest.model.LeaderboardInfo;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.utils.GamificationUtils;
 
@@ -95,9 +96,9 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
       LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
 
       // Hold leaderboard flow
-      List<LeaderboardEndpoint.LeaderboardInfo> leaderboardList = new ArrayList<>();
+      List<LeaderboardInfo> leaderboardList = new ArrayList<>();
 
-      LeaderboardEndpoint.LeaderboardInfo leaderboardInfo = null;
+      LeaderboardInfo leaderboardInfo = null;
 
       Identity identity = null;
 
@@ -119,7 +120,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
           identity = identityManager.getIdentity(element.getEarnerId());
 
           if (spaceService.isMember(space, identity.getRemoteId())) {
-            leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
+            leaderboardInfo = new LeaderboardInfo();
             String technicalId = computeTechnicalId(identity);
             leaderboardInfo.setTechnicalId(technicalId);
             leaderboardInfo.setSocialId(identity.getId());
@@ -176,10 +177,10 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
         leaderboardFilter.setPeriod(period);
 
       // hold leaderboard flow
-      LeaderboardEndpoint.LeaderboardInfo leaderboardInfo = null;
+      LeaderboardInfo leaderboardInfo = null;
 
       // Build leaderboard list
-      List<LeaderboardEndpoint.LeaderboardInfo> leaderboardInfoList = null;
+      List<LeaderboardInfo> leaderboardInfoList = null;
 
       try {
         // Find current space
@@ -200,7 +201,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
           identity = identityManager.getIdentity(leader.getEarnerId());
 
           if (spaceService.isMember(space, identity.getRemoteId()) && leaderboardInfoList.size() < Integer.parseInt(capacity)) {
-            leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
+            leaderboardInfo = new LeaderboardInfo();
             String technicalId = computeTechnicalId(identity);
             leaderboardInfo.setTechnicalId(technicalId);
             leaderboardInfo.setSocialId(identity.getId());
@@ -226,7 +227,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
                                     .toInstant());
           break;
         }
-        LeaderboardEndpoint.LeaderboardInfo leader = buildCurrentUserRank(conversationState.getIdentity().getUserId(),
+        LeaderboardInfo leader = buildCurrentUserRank(conversationState.getIdentity().getUserId(),
                                                                           date,
                                                                           leaderboardFilter.getProgramId(),
                                                                           leaderboardInfoList);
@@ -265,14 +266,14 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
     return space == null ? null : space.getId();
   }
 
-  private LeaderboardEndpoint.LeaderboardInfo buildCurrentUserRank(String identityId,
+  private LeaderboardInfo buildCurrentUserRank(String identityId,
                                                                    Date date,
                                                                    Long programId,
-                                                                   List<LeaderboardEndpoint.LeaderboardInfo> leaderboardList) {
+                                                                   List<LeaderboardInfo> leaderboardList) {
     if (CollectionUtils.isEmpty(leaderboardList)) {
       return null;
     }
-    LeaderboardEndpoint.LeaderboardInfo leaderboardInfo = null;
+    LeaderboardInfo leaderboardInfo = null;
     String currentUser = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, identityId).getId();
     if (!isCurrentUserInTopTen(currentUser, leaderboardList)) {
 
@@ -281,7 +282,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
 
       if (rank > 0) {
 
-        leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
+        leaderboardInfo = new LeaderboardInfo();
 
         // Set score
         leaderboardInfo.setRank(rank);
@@ -303,11 +304,11 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
 
   }
 
-  private boolean isCurrentUserInTopTen(String username, List<LeaderboardEndpoint.LeaderboardInfo> leaderboard) {
+  private boolean isCurrentUserInTopTen(String username, List<LeaderboardInfo> leaderboard) {
 
     if (leaderboard.isEmpty())
       return false;
 
-    return leaderboard.stream().map(LeaderboardEndpoint.LeaderboardInfo::getSocialId).anyMatch(username::equals);
+    return leaderboard.stream().map(LeaderboardInfo::getSocialId).anyMatch(username::equals);
   }
 }

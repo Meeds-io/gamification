@@ -1,7 +1,9 @@
 /*
+ *
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 Meeds Association
- * contact@meeds.io
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -13,13 +15,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
  */
-import UsersLeaderboard from './components/UsersLeaderboard.vue';
+import * as leaderboardService from './js/LeaderboardService.js';
+import * as realizationService from '../engagement-center/js/RealizationService.js';
 
-const components = {
-  'users-leaderboard': UsersLeaderboard,
-};
+if (!Vue.prototype.$leaderboardService) {
+  window.Object.defineProperty(Vue.prototype, '$leaderboardService', {
+    value: leaderboardService,
+  });
+}
 
-for (const key in components) {
-  Vue.component(key, components[key]);
+if (!Vue.prototype.$realizationService) {
+  window.Object.defineProperty(Vue.prototype, '$realizationService', {
+    value: realizationService,
+  });
 }
