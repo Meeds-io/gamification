@@ -262,6 +262,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>commonVueComponents</module>
       </depends>
       <depends>
+        <module>usersLeaderboardCommon</module>
+      </depends>
+      <depends>
         <module>jquery</module>
         <as>$</as>
       </depends>
@@ -270,6 +273,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>ruleExtensions</module>
       </depends>
     </module>
   </portlet>
@@ -423,13 +429,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>eXoVueI18n</module>
       </depends>
       <depends>
-        <module>commonVueComponents</module>
-      </depends>
-      <depends>
         <module>extensionRegistry</module>
       </depends>
       <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>usersLeaderboardCommon</module>
+      </depends>
+      <depends>
         <module>gamificationCommon</module>
+      </depends>
+      <depends>
+        <module>ruleExtensions</module>
       </depends>
     </module>
   </portlet>
@@ -791,6 +803,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <depends>
       <module>jquery</module>
       <as>$</as>
+    </depends>
+  </module>
+
+  <module>
+    <name>usersLeaderboardCommon</name>
+    <script>
+      <minify>false</minify>
+      <path>/js/usersLeaderboardCommon.bundle.js</path>
+    </script>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>ruleExtensions</module>
     </depends>
   </module>
 

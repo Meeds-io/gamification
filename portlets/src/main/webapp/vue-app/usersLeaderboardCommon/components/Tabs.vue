@@ -21,17 +21,36 @@
 -->
 <template>
   <div>
-    <v-tabs v-model="selectedPeriod">
-      <v-tab
-        v-for="period in periods"
-        :key="period.value"
-        :href="`#${period.value}`"
-        class="overflow-hidden px-2">
-        <span class="text-none">{{ period.text }}</span>
-      </v-tab>
-      <v-tabs-slider color="tertiary" />
-      <slot name="tabButton"></slot>
-    </v-tabs>
+    <div class="d-flex">
+      <v-tabs v-model="selectedPeriod" class="flex-grow-1 flex-shrink-1 width-auto">
+        <v-tab
+          v-for="period in periods"
+          :key="period.value"
+          :href="`#${period.value}`"
+          class="overflow-hidden px-2">
+          <span class="text-none">{{ period.text }}</span>
+        </v-tab>
+        <v-tabs-slider color="tertiary" />
+      </v-tabs>
+      <v-btn
+        small
+        :icon="isAllPrograms"
+        :class="!isAllPrograms && 'pa-0' || 'my-auto'"
+        height="auto"
+        width="auto"
+        text
+        class="ms-auto flex-grow-0 flex-shrink-0"
+        @click="$refs.programSelectorDrawer.open()">
+        <v-icon :class="!isAllPrograms && 'primary--text me-1' || 'icon-default-color'" size="16">
+          fa-sliders-h
+        </v-icon>
+        <span
+          v-if="!isAllPrograms"
+          class="caption">
+          (1)
+        </span>
+      </v-btn>
+    </div>
     <v-tabs-items v-model="selectedPeriod">
       <v-tab-item
         v-for="period in periods"
@@ -39,30 +58,14 @@
         :key="period.value"
         :value="period.value">
         <v-progress-linear v-if="loading" indeterminate />
-        <v-list v-if="!selectionChanged">
-          <users-leaderboard-profile
-            v-for="(user, index) in sortedUsers"
-            :key="user.remoteId"
-            :user="user"
-            :rank="index + 1"
-            :programs="programs" />
-          <template v-if="currentRank">
-            <v-divider class="ma-0" />
-            <v-list-item class="disabled-background">
-              <div class="me-4">
-                {{ $t('exoplatform.gamification.leaderboard.rank') }}
-              </div>
-              <div>
-                <v-avatar color="tertiary" size="32">
-                  {{ currentRank }}
-                </v-avatar>
-              </div>
-            </v-list-item>
-          </template>
-        </v-list>
+        <users-leaderboard-profiles
+          v-if="!selectionChanged"
+          :users="users"
+          :current-rank="!loading && currentRank"
+          :period="period.value" />
       </v-tab-item>
     </v-tabs-items>
-    <v-card-actions v-if="canLoadMore && !hideLoadMore">
+    <v-card-actions v-if="canLoadMore && !embedded">
       <v-spacer />
       <v-btn
         :loading="loading"
@@ -74,16 +77,16 @@
       </v-btn>
       <v-spacer />
     </v-card-actions>
+    <users-leaderboard-program-selector-drawer
+      ref="programSelectorDrawer"
+      v-model="programId"
+      :go-back-button="embedded" />
   </div>
 </template>
 <script>
 export default {
   props: {
-    programId: {
-      type: String,
-      default: () => '0',
-    },
-    hideLoadMore: {
+    embedded: {
       type: Boolean,
       default: false,
     },
@@ -92,18 +95,13 @@ export default {
     users: [],
     pageSize: 10,
     limit: 10,
+    programId: '0',
     currentRank: null,
     loading: false,
     selectionChanged: false,
     selectedPeriod: 'WEEK',
   }),
   computed: {
-    canLoadMore() {
-      return !this.selectionChanged && this.hasMore;
-    },
-    hasMore() {
-      return this.users && this.limit <= this.users.length;
-    },
     periods() {
       return [{
         value: 'WEEK',
@@ -116,8 +114,14 @@ export default {
         text: this.$t('exoplatform.gamification.leaderboard.selectedPeriod.ALL'),
       }];
     },
-    sortedUsers() {
-      return this.users.slice().sort((a, b) => b.score - a.score);
+    hasMore() {
+      return this.users && this.limit <= this.users.length;
+    },
+    canLoadMore() {
+      return !this.selectionChanged && this.hasMore;
+    },
+    isAllPrograms() {
+      return this.programId === '0';
     },
   },
   watch: {
@@ -151,22 +155,16 @@ export default {
       if (!limit) {
         limit = this.limit;
       }
-      const formData = new FormData();
-      if (this.programId && this.programId !== '0') {
-        formData.append('programId', this.programId);
-      }
-      formData.append('period', this.selectedPeriod || 'WEEK');
-      formData.append('capacity', limit);
-      const params = decodeURIComponent(new URLSearchParams(formData).toString());
 
       this.loading = true;
-      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard/filter?${params}`, {
-        credentials: 'include',
-      }).then(resp => resp?.ok && resp.json())
+      return this.$leaderboardService.getLeaderboard({
+        programId: this.programId,
+        period: this.selectedPeriod,
+        limit,
+      })
         .then(data => {
-          const currentUser = !this.$root.isAnonymous && data?.find?.(user => !user.socialId);
-          this.currentRank = currentUser?.rank;
-          this.users = this.$root.isAnonymous && data || data.filter(user => user.socialId);
+          this.users = data?.filter?.(user => user.socialId) || [];
+          this.currentRank = !this.$root.isAnonymous && this.users.find(user => !user.socialId)?.rank;
           this.limit = limit;
         })
         .finally(() => {
@@ -175,10 +173,7 @@ export default {
         });
     },
     loadMore() {
-      this.loading = true;
-      this.refreshBoard(this.limit + this.pageSize)
-        .then(() => this.$nextTick())
-        .finally(() => this.loading = false);
+      this.refreshBoard(this.limit + this.pageSize);
     },
   },
 };

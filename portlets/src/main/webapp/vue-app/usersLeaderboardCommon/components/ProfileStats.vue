@@ -20,48 +20,59 @@
 
 -->
 <template>
-  <exo-drawer
-    ref="drawer"
-    v-model="drawer"
-    id="leaderboardDrawer"
-    class="leaderboard-drawer"
-    allow-expand
-    fixed
-    right>
-    <template #title>
-      {{ $t('gamification.overview.leaderboard.drawer.title') }}
-    </template>
-    <template v-if="drawer" #content>
-      <users-leaderboard-tabs
-        ref="leaderboard"
-        class="px-5 pb-5"
-        embedded
-        @loading="loading = $event"
-        @has-more="hasMore = $event" />
-    </template>
-    <template #footer>
-      <div v-if="hasMore" class="d-flex">
-        <v-btn
-          :loading="loading"
-          class="btn"
-          block
-          @click="$refs.leaderboard.loadMore()">
-          {{ $t('exoplatform.gamification.leaderboard.showMore') }}
-        </v-btn>
-      </div>
-    </template>
-  </exo-drawer>
+  <div>
+    <v-list-item class="pa-0">
+      <v-avatar
+        v-if="user.rank"
+        color="tertiary"
+        class="me-2"
+        size="32">
+        {{ user.rank }}
+      </v-avatar>
+      <user-avatar
+        :profile-id="user.remoteId"
+        :name="user.fullname"
+        :avatar-url="user.avatarUrl"
+        :popover="user.remoteId"
+        :size="25"
+        extra-class="me-0 pa-0 my-0 text-truncate-2"
+        popover-left-position
+        offset-x />
+      <v-list-item-action class="ml-auto">
+        <span>{{ user.score }}</span>
+      </v-list-item-action>
+    </v-list-item>
+    <users-leaderboard-profile-chart
+      :identity-id="user.socialId"
+      :programs="programs"
+      :period="period" />
+  </div>
 </template>
+
 <script>
 export default {
+  props: {
+    user: {
+      type: Object,
+      default: null,
+    },
+    programs: {
+      type: Array,
+      default: null,
+    },
+    period: {
+      type: String,
+      default: null,
+    },
+  },
   data: () => ({
     drawer: false,
     loading: false,
     hasMore: false,
-    programId: '0',
   }),
   methods: {
-    open() {
+    open(user) {
+      this.user = user;
       this.$refs.drawer.open();
     },
     close() {
