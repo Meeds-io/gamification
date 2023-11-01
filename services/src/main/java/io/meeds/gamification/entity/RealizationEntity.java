@@ -67,12 +67,12 @@ import lombok.EqualsAndHashCode;
     + " FROM RealizationEntity g" + " WHERE g.createdDate >= :date" + "     AND g.domainEntity.id = :domainId"
     + "     AND g.earnerType = :earnerType" + "     GROUP BY  g.earnerId" + "     ORDER BY total DESC")
 @NamedQuery(name = "RealizationEntity.findStatsByUser", query = "SELECT"
-    + " new io.meeds.gamification.model.PiechartLeaderboard(g.domainEntity.title,SUM(g.actionScore))"
-    + " FROM RealizationEntity g" + " WHERE g.earnerId = :earnerId" + "     GROUP BY  g.domainEntity.title")
+    + " new io.meeds.gamification.model.PiechartLeaderboard(g.domainEntity.id, SUM(g.actionScore))"
+    + " FROM RealizationEntity g" + " WHERE g.earnerId = :earnerId" + "     GROUP BY  g.domainEntity.id")
 @NamedQuery(name = "RealizationEntity.findStatsByUserByDates", query = "SELECT"
-    + " new io.meeds.gamification.model.PiechartLeaderboard(g.domainEntity.title,SUM(g.actionScore))"
+    + " new io.meeds.gamification.model.PiechartLeaderboard(g.domainEntity.id, SUM(g.actionScore))"
     + " FROM RealizationEntity g WHERE g.earnerId = :earnerId AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
-    + " GROUP BY  g.domainEntity.title"
+    + " GROUP BY  g.domainEntity.id"
     + " ORDER BY SUM(g.actionScore) DESC")
 @NamedQuery(name = "RealizationEntity.findDomainScoreByUserId", query = "SELECT"
     + " new io.meeds.gamification.model.ProfileReputation(g.domainEntity.id,SUM(g.actionScore))"

@@ -6,17 +6,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.manager.IdentityManager;
-import org.exoplatform.social.core.space.model.Space;
 
+import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.rest.model.ProgramRestEntity;
 import io.meeds.gamification.rest.model.RealizationRestEntity;
+import io.meeds.gamification.rest.model.RuleRestEntity;
+import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.utils.Utils;
 import io.meeds.social.translation.service.TranslationService;
@@ -29,48 +32,71 @@ public class RealizationBuilder {
     // Class with static methods
   }
 
-  public static RealizationRestEntity toRestEntity(RuleService ruleService, // NOSONAR
+  public static RealizationRestEntity toRestEntity(ProgramService programService, // NOSONAR
+                                                   RuleService ruleService,
                                                    TranslationService translationService,
                                                    IdentityManager identityManager,
                                                    RealizationDTO realization,
+                                                   String username,
                                                    Locale locale) {
     try {
-      String spaceName = "";
-      if (realization.getRuleId() != null && realization.getRuleId() != 0) {
-        RuleDTO rule = ruleService.findRuleById(realization.getRuleId());
-        if (rule != null) {
-          long spaceId = rule.getSpaceId();
-          if (spaceId > 0) {
-            Space space = Utils.getSpaceById(String.valueOf(spaceId));
-            if (space != null) {
-              spaceName = space.getDescription();
-            }
-          }
-        }
-      } else {
-        spaceName = Utils.getSpaceFromObjectID(realization.getObjectId());
+      boolean anonymous = StringUtils.isBlank(username);
+      ProgramDTO program = realization.getProgram();
+      boolean canViewProgram = program != null && programService.canViewProgram(program.getId(), username);
+
+      ProgramRestEntity programRestEntity = null;
+      if (canViewProgram && program != null) {
+        programRestEntity = ProgramBuilder.toRestEntity(programService,
+                                                        ruleService,
+                                                        translationService,
+                                                        program,
+                                                        locale,
+                                                        null,
+                                                        username);
       }
       RuleDTO rule = realization.getRuleId() != null
           && realization.getRuleId() != 0 ? ruleService.findRuleById(realization.getRuleId())
                                           : ruleService.findRuleByTitle(realization.getActionTitle());
+      RuleRestEntity ruleRestEntity = null;
+      if (rule != null && canViewProgram) {
+        ruleRestEntity = RuleBuilder.toRestEntity(programService,
+                                                  ruleService,
+                                                  null,
+                                                  translationService,
+                                                  null,
+                                                  rule,
+                                                  locale,
+                                                  null,
+                                                  0,
+                                                  true,
+                                                  anonymous,
+                                                  null);
+      }
 
-      boolean actionLabelChanged = !StringUtils.equals(realization.getActionTitle(), rule.getTitle());
-      boolean programLabelChanged = !StringUtils.equals(realization.getProgramLabel(), rule.getProgram().getTitle());
-      translatedLabels(translationService, realization, rule, locale);
+      boolean actionLabelChanged = canViewProgram && (rule == null || !StringUtils.equals(realization.getActionTitle(), rule.getTitle()));
+      boolean programLabelChanged = canViewProgram && (rule == null || rule.getProgram() == null || !StringUtils.equals(realization.getProgramLabel(), rule.getProgram().getTitle()));
 
+      String actionLabel = realization.getActionTitle() != null ? realization.getActionTitle() :
+                                                                Objects.requireNonNull(rule).getTitle();
+      String spaceDisplayName = programRestEntity != null && programRestEntity.getSpace() != null ?
+                                                                                                  programRestEntity.getSpace()
+                                                                                                                   .getDisplayName() :
+                                                                                                  null;
       return new RealizationRestEntity(realization.getId(),
-                                       Utils.getIdentityEntity(identityManager, Long.parseLong(realization.getEarnerId())),
-                                       rule,
-                                       realization.getProgram(),
-                                       realization.getProgramLabel(),
-                                       realization.getActionTitle() != null ? realization.getActionTitle()
-                                                                            : Objects.requireNonNull(rule).getTitle(),
+                                       anonymous ? null :
+                                                 Utils.getIdentityEntity(identityManager,
+                                                                         Long.parseLong(realization.getEarnerId())),
+                                       ruleRestEntity,
+                                       programRestEntity,
+                                       canViewProgram ? realization.getProgramLabel() : null,
+                                       canViewProgram ? actionLabel : null,
                                        realization.getActionScore(),
-                                       Utils.getUserFullName(realization.getCreator() != null ? String.valueOf(realization.getCreator())
-                                                                                              : realization.getReceiver()),
+                                       anonymous ?
+                                                 null :
+                                                 getCreatorFullName(realization),
                                        realization.getCreatedDate(),
                                        realization.getStatus(),
-                                       spaceName,
+                                       canViewProgram && !anonymous ? spaceDisplayName : null,
                                        realization.getObjectId(),
                                        realization.getObjectType(),
                                        realization.getActivityId(),
@@ -96,21 +122,32 @@ public class RealizationBuilder {
     }
   }
 
-  public static List<RealizationRestEntity> toRestEntities(RuleService ruleService,
+  public static List<RealizationRestEntity> toRestEntities(ProgramService programService,
+                                                           RuleService ruleService,
                                                            TranslationService translationService,
                                                            IdentityManager identityManager,
                                                            List<RealizationDTO> realizations,
+                                                           String username,
                                                            Locale locale) {
     if (CollectionUtils.isEmpty(realizations)) {
       return new ArrayList<>(Collections.emptyList());
     } else {
       return realizations.stream()
-                         .map(realization -> toRestEntity(ruleService,
+                         .map(realization -> toRestEntity(programService,
+                                                          ruleService,
                                                           translationService,
                                                           identityManager,
                                                           realization,
+                                                          username,
                                                           locale))
                          .toList();
     }
   }
+
+  private static String getCreatorFullName(RealizationDTO realization) {
+    return Utils.getUserFullName(realization.getCreator()
+        != null ? String.valueOf(realization.getCreator()) :
+                realization.getReceiver());
+  }
+
 }
