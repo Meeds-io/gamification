@@ -47,54 +47,45 @@ public class TestLeaderboardEndpoint extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
-  public void testGetAllLeadersByRank() {
-
-    try {
-      String restPath = "/gamification/leaderboard/rank/all?period=MONTH"; // NOSONAR
-      EnvironmentContext envctx = new EnvironmentContext();
-      HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-      envctx.put(HttpServletRequest.class, httpRequest);
-      envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-      ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
-      assertNotNull(response);
-      assertEquals(200, response.getStatus());
-    } catch (Exception e) {
-      fail();
-    }
-
+  public void testGetAllLeadersByRank() throws Exception {
+    String restPath = "/gamification/leaderboard/rank/all?period=MONTH"; // NOSONAR
+    EnvironmentContext envctx = new EnvironmentContext();
+    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
   }
 
   @Test
-  public void testFilter() {
-
-    try {
-      String restPath = "/gamification/leaderboard/filter?period=MONTH"; // NOSONAR
-      EnvironmentContext envctx = new EnvironmentContext();
-      HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-      envctx.put(HttpServletRequest.class, httpRequest);
-      envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-      ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
-      assertNotNull(response);
-      assertEquals(200, response.getStatus());
-    } catch (Exception e) {
-      fail();
-    }
+  public void testFilter() throws Exception {
+    String restPath = "/gamification/leaderboard/filter?period=MONTH"; // NOSONAR
+    EnvironmentContext envctx = new EnvironmentContext();
+    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
   }
 
   @Test
-  public void testStats() {
-
-    try {
-      String restPath = "/gamification/leaderboard/stats?period=MONTH&userSocialId="; // NOSONAR
-      EnvironmentContext envctx = new EnvironmentContext();
-      HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-      envctx.put(HttpServletRequest.class, httpRequest);
-      envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-      ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
-      assertNotNull(response);
-      assertEquals(200, response.getStatus());
-    } catch (Exception e) {
-      fail();
-    }
+  public void testStats() throws Exception {
+    String restPath = "/gamification/leaderboard/stats?period=MONTH&username="; // NOSONAR
+    EnvironmentContext envctx = new EnvironmentContext();
+    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+    response = launcher.service("GET", restPath + "notExists", "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+    response = launcher.service("GET", restPath + "root1", "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
   }
+
 }

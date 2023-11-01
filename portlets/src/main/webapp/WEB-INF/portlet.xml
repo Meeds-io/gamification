@@ -310,10 +310,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <name>preload.resource.bundles</name>
       <value>locale.addon.Gamification</value>
     </init-param>
-    <init-param>
-      <name>preload.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/programs?returnSize=true&limit=4&status=ENABLED&sortBy=modifiedDate&sortDescending=true&lang=en&expand=countActiveRules]]></value>
-    </init-param>
     <supports>
       <mime-type>text/html</mime-type>
     </supports>
