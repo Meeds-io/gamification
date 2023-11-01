@@ -16,6 +16,10 @@
  */
 package io.meeds.gamification.rest;
 
+import static io.meeds.gamification.rest.builder.LeaderboardBuilder.buildCurrentUserRank;
+import static io.meeds.gamification.rest.builder.LeaderboardBuilder.buildLeaderboardEntities;
+import static io.meeds.gamification.rest.builder.LeaderboardBuilder.toLeaderboardInfo;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -26,9 +30,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -39,16 +45,10 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
-import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
-import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
-import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.IdentityType;
@@ -56,10 +56,12 @@ import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.LeaderboardFilter;
+import io.meeds.gamification.rest.model.LeaderboardInfo;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.utils.Utils;
 import io.meeds.portal.security.service.SecuritySettingService;
+import io.meeds.social.translation.service.TranslationService;
 
 import io.swagger.v3.oas.annotations.Parameter;
 
@@ -67,9 +69,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 @Produces(MediaType.APPLICATION_JSON)
 public class LeaderboardEndpoint implements ResourceContainer {
 
-  private static final Log         LOG                   = ExoLogger.getLogger(LeaderboardEndpoint.class);
+  private static final String      MONTH_PERIOD_NAME     = "MONTH";
 
-  private static final String      YOUR_CURRENT_RANK_MSG = "Your current rank";
+  private static final String      WEEK_PERIOD_NAME      = "WEEK";
 
   private static final int         DEFAULT_LOAD_CAPACITY = 10;
 
@@ -85,6 +87,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
   protected ProgramService         programService;
 
+  protected TranslationService     translationService;
+
   protected SecuritySettingService securitySettingService;
 
   public LeaderboardEndpoint(IdentityManager identityManager,
@@ -92,18 +96,20 @@ public class LeaderboardEndpoint implements ResourceContainer {
                              RelationshipManager relationshipManager,
                              SpaceService spaceService,
                              ProgramService programService,
+                             TranslationService translationService,
                              SecuritySettingService securitySettingService) {
     this.identityManager = identityManager;
     this.realizationService = realizationService;
     this.relationshipManager = relationshipManager;
     this.spaceService = spaceService;
     this.programService = programService;
+    this.translationService = translationService;
     this.securitySettingService = securitySettingService;
   }
 
   @GET
   @Path("rank/all")
-  public Response getAllLeadersByRank(
+  public Response getAllLeadersByRank( // NOSONAR
                                       @Context
                                       UriInfo uriInfo,
                                       @Parameter(description = "Get leaderboard of user or space")
@@ -136,69 +142,62 @@ public class LeaderboardEndpoint implements ResourceContainer {
       }
     }
     leaderboardFilter.setLoadCapacity(limit);
-    if (StringUtils.isBlank(period)) {
-      period = Period.ALL.name();
-    }
+    period = StringUtils.isBlank(period) ? Period.ALL.name() : period.toUpperCase();
     leaderboardFilter.setPeriod(period);
     String currentUser = Utils.getCurrentUser();
     leaderboardFilter.setCurrentUser(currentUser);
 
-    List<LeaderboardInfo> leaderboardList = new ArrayList<>();
-
-    try {
-      List<StandardLeaderboard> standardLeaderboards = realizationService.getLeaderboard(leaderboardFilter);
-      if (standardLeaderboards == null) {
-        return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).build();
-      }
-      int index = 1;
-      boolean isAnonymous = StringUtils.isBlank(currentUser);
-      for (StandardLeaderboard element : standardLeaderboards) {
-        Identity identity = identityManager.getIdentity(element.getEarnerId());
-        if (identity == null) {
-          continue;
-        }
-        leaderboardList.add(toLeaderboardInfo(element, identity, isAnonymous, index));
-        index++;
-      }
-
-      if (identityType.isUser()) {
-        Date date = null;
-        switch (leaderboardFilter.getPeriod()) {
-        case "WEEK":
-          date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
-          break;
-        case "MONTH":
-          date = Date.from(LocalDate.now()
-                                    .with(TemporalAdjusters.firstDayOfMonth())
-                                    .atStartOfDay(ZoneId.systemDefault())
-                                    .toInstant());
-          break;
-        }
-
-        if (!isAnonymous) {
-          // Check if the current user is already in top10
-          LeaderboardInfo leader = buildCurrentUserRank(date,
-                                                        leaderboardFilter.getProgramId(),
-                                                        leaderboardList);
-          // Complete the final leaderboard
-          if (leader != null) {
-            leaderboardList.add(leader);
-          }
-        }
-      }
-      return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).build();
-    } catch (Exception e) {
-      LOG.error("Error building leaderboard ", e);
-      return Response.serverError()
-
-                     .entity("Error building leaderboard")
-                     .build();
+    List<LeaderboardInfo> result = new ArrayList<>();
+    List<StandardLeaderboard> standardLeaderboards = realizationService.getLeaderboard(leaderboardFilter);
+    if (standardLeaderboards == null) {
+      return Response.ok(result, MediaType.APPLICATION_JSON).build();
     }
+    int index = 1;
+    boolean isAnonymous = StringUtils.isBlank(currentUser);
+    for (StandardLeaderboard element : standardLeaderboards) {
+      Identity identity = identityManager.getIdentity(element.getEarnerId());
+      if (identity == null) {
+        continue;
+      }
+      result.add(toLeaderboardInfo(spaceService, element, identity, isAnonymous, index));
+      index++;
+    }
+
+    if (identityType.isUser()) {
+      Date date = null;
+      switch (leaderboardFilter.getPeriod()) {
+      case WEEK_PERIOD_NAME:
+        date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        break;
+      case MONTH_PERIOD_NAME:
+        date = Date.from(LocalDate.now()
+                                  .with(TemporalAdjusters.firstDayOfMonth())
+                                  .atStartOfDay(ZoneId.systemDefault())
+                                  .toInstant());
+        break;
+      default:
+        date = null;
+      }
+
+      if (!isAnonymous) {
+        // Check if the current user is already in top10
+        LeaderboardInfo leader = buildCurrentUserRank(realizationService,
+                                                      identityManager,
+                                                      date,
+                                                      leaderboardFilter.getProgramId(),
+                                                      result);
+        // Complete the final leaderboard
+        if (leader != null) {
+          result.add(leader);
+        }
+      }
+    }
+    return Response.ok(result, MediaType.APPLICATION_JSON).build();
   }
 
   @GET
   @Path("filter")
-  public Response filter(
+  public Response filter( // NOSONAR
                          @Context
                          UriInfo uriInfo,
                          @QueryParam("programId")
@@ -207,6 +206,9 @@ public class LeaderboardEndpoint implements ResourceContainer {
                          String period,
                          @QueryParam("capacity")
                          int capacity) {
+    if (!Utils.canAccessAnonymousResources(securitySettingService)) {
+      return Response.status(Status.UNAUTHORIZED).build();
+    }
     // Init search criteria
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
     leaderboardFilter.setProgramId(programId);
@@ -216,266 +218,120 @@ public class LeaderboardEndpoint implements ResourceContainer {
         && !programService.canViewProgram(programId, currentUser)) {
       return Response.status(Status.UNAUTHORIZED).build();
     }
-    if (StringUtils.isBlank(period)) {
-      leaderboardFilter.setPeriod(Period.WEEK.name());
-    } else {
-      leaderboardFilter.setPeriod(period);
-    }
-
-    if (capacity <= 0) {
-      leaderboardFilter.setLoadCapacity(DEFAULT_LOAD_CAPACITY);
-    } else {
-      leaderboardFilter.setLoadCapacity(capacity);
-    }
+    leaderboardFilter.setPeriod(StringUtils.isBlank(period) ? Period.WEEK.name() : period.toUpperCase());
+    leaderboardFilter.setLoadCapacity(capacity <= 0 ? DEFAULT_LOAD_CAPACITY : capacity);
 
     // hold leaderboard flow
-    try {
-      List<StandardLeaderboard> standardLeaderboards = realizationService.getLeaderboard(leaderboardFilter);
-      List<LeaderboardInfo> leaderboardList = new ArrayList<>();
-      if (standardLeaderboards == null || standardLeaderboards.isEmpty()) {
-        return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).build();
-      }
-
-      boolean isAnonymous = StringUtils.isBlank(currentUser);
-      int index = 1;
-      for (StandardLeaderboard element : standardLeaderboards) {
-        Identity identity = identityManager.getIdentity(element.getEarnerId());
-        if (identity == null) {
-          continue;
-        }
-        leaderboardList.add(toLeaderboardInfo(element, identity, isAnonymous, index));
-        index++;
-      }
-      // Check if the current user is already in top10
-      Date date = null;
-      switch (leaderboardFilter.getPeriod()) {
-      case "WEEK":
-        date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
-        break;
-      case "MONTH":
-        date = Date.from(LocalDate.now()
-                                  .with(TemporalAdjusters.firstDayOfMonth())
-                                  .atStartOfDay(ZoneId.systemDefault())
-                                  .toInstant());
-        break;
-      }
-
-      if (!isAnonymous) {
-        // Check if the current user is already in top10
-        LeaderboardInfo leader = buildCurrentUserRank(date,
-                                                      leaderboardFilter.getProgramId(),
-                                                      leaderboardList);
-        // Complete the final leaderboard
-        if (leader != null) {
-          leaderboardList.add(leader);
-        }
-      }
+    List<StandardLeaderboard> standardLeaderboards = realizationService.getLeaderboard(leaderboardFilter);
+    List<LeaderboardInfo> leaderboardList = new ArrayList<>();
+    if (standardLeaderboards == null || standardLeaderboards.isEmpty()) {
       return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).build();
-
-    } catch (Exception e) {
-
-      LOG.error("Error filtering leaderbaord by Doamin : {} and by Period {} ",
-                leaderboardFilter.getProgramId(),
-                leaderboardFilter.getPeriod(),
-                e);
-
-      return Response.serverError()
-                     .entity("Error filtering leaderboard")
-                     .build();
     }
+
+    boolean isAnonymous = StringUtils.isBlank(currentUser);
+    int index = 1;
+    for (StandardLeaderboard element : standardLeaderboards) {
+      Identity identity = identityManager.getIdentity(element.getEarnerId());
+      if (identity == null) {
+        continue;
+      }
+      leaderboardList.add(toLeaderboardInfo(spaceService, element, identity, isAnonymous, index));
+      index++;
+    }
+    // Check if the current user is already in top10
+    Date date = null;
+    switch (leaderboardFilter.getPeriod()) {
+    case WEEK_PERIOD_NAME:
+      date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+      break;
+    case MONTH_PERIOD_NAME:
+      date = Date.from(LocalDate.now()
+                                .with(TemporalAdjusters.firstDayOfMonth())
+                                .atStartOfDay(ZoneId.systemDefault())
+                                .toInstant());
+      break;
+    default:
+      date = null;
+    }
+
+    if (!isAnonymous) {
+      // Check if the current user is already in top10
+      LeaderboardInfo leader = buildCurrentUserRank(realizationService,
+                                                    identityManager,
+                                                    date,
+                                                    leaderboardFilter.getProgramId(),
+                                                    leaderboardList);
+      // Complete the final leaderboard
+      if (leader != null) {
+        leaderboardList.add(leader);
+      }
+    }
+    return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).build();
   }
 
   @GET
   @Path("stats")
   @RolesAllowed("users")
-  public Response stats(@Context
-  UriInfo uriInfo, @QueryParam("username")
-  String userSocialId, @QueryParam("period")
-  String period) {
-    ConversationState conversationState = ConversationState.getCurrent();
-    if (conversationState != null) {
-      try {
-        if (userSocialId != null) {
-          userSocialId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userSocialId).getId();
-        }
-        period = StringUtils.isBlank(period) ? Period.ALL.name() : period.toUpperCase();
-        // Check if the current user is already in top10
-        Date startDate = null;
-        switch (period) {
-        case "WEEK":
-          startDate = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
-          break;
-        case "MONTH":
-          startDate = Date.from(LocalDate.now()
-                                         .with(TemporalAdjusters.firstDayOfMonth())
-                                         .atStartOfDay(ZoneId.systemDefault())
-                                         .toInstant());
-          break;
-        }
-
-        // Find user's stats
-        List<PiechartLeaderboard> userStats = realizationService.getStatsByIdentityId(userSocialId,
-                                                                                      startDate,
-                                                                                      Calendar.getInstance().getTime());
-
-        return Response.ok(userStats, MediaType.APPLICATION_JSON).build();
-
-      } catch (Exception e) {
-
-        LOG.error("Error building statistics for user {} ", userSocialId, e);
-
-        return Response.serverError()
-                       .entity("Error building statistics")
-                       .build();
-      }
-
-    } else {
-      return Response.status(Response.Status.UNAUTHORIZED)
-                     .entity("Unauthorized user")
-                     .build();
+  public Response stats(
+                        @Context
+                        HttpServletRequest request,
+                        @QueryParam("username")
+                        String username,
+                        @QueryParam("period")
+                        String period) {
+    if (StringUtils.isBlank(username)) {
+      return Response.status(Status.BAD_REQUEST).build();
     }
+    Identity identity = identityManager.getOrCreateUserIdentity(username);
+    if (identity == null) {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+    return getIdentityStats(request, identity.getId(), period, "programTitle");
   }
 
-  private boolean isEarnerInTopTen(String username, List<LeaderboardInfo> leaderboard) {
-    if (leaderboard.isEmpty())
-      return false;
-    return leaderboard.stream().map(LeaderboardInfo::getSocialId).anyMatch(username::equals);
-  }
-
-  private String computeTechnicalId(Identity identity) {
-    if (!SpaceIdentityProvider.NAME.equals(identity.getProviderId())) {
-      return null;
+  @GET
+  @Path("stats/{identityId}")
+  public Response getIdentityStats(
+                                   @Context
+                                   HttpServletRequest request,
+                                   @PathParam("identityId")
+                                   String identityId,
+                                   @QueryParam("period")
+                                   String period,
+                                   @QueryParam("expand")
+                                   String expand) {
+    if (!Utils.canAccessAnonymousResources(securitySettingService)) {
+      return Response.status(Status.UNAUTHORIZED).build();
     }
-    Space space = spaceService.getSpaceByPrettyName(identity.getRemoteId());
-    return space == null ? null : space.getId();
-  }
-
-  private LeaderboardInfo buildCurrentUserRank(Date date,
-                                               Long programId,
-                                               List<LeaderboardInfo> leaderboardList) {
-    if (leaderboardList.isEmpty()) {
-      return null;
-    }
-
-    String currentUser = ConversationState.getCurrent().getIdentity().getUserId();
-    LeaderboardInfo leaderboardInfo = null;
-    try {
-      String earnerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUser).getId();
-      if (!isEarnerInTopTen(earnerIdentity, leaderboardList)) {
-        // Get GaamificationScore for current user
-        int rank = realizationService.getLeaderboardRank(earnerIdentity, date, programId);
-        if (rank > 0) {
-          leaderboardInfo = new LeaderboardInfo();
-          leaderboardInfo.setRank(rank);
-          leaderboardInfo.setRemoteId(YOUR_CURRENT_RANK_MSG);
-          leaderboardInfo.setFullname(YOUR_CURRENT_RANK_MSG);
-          leaderboardInfo.setAvatarUrl(YOUR_CURRENT_RANK_MSG);
-          leaderboardInfo.setProfileUrl(YOUR_CURRENT_RANK_MSG);
-        }
-      }
-    } catch (Exception e) {
-      LOG.error("Error building Rank for user {} ", currentUser, e);
-    }
-    return leaderboardInfo;
-  }
-
-  private LeaderboardInfo toLeaderboardInfo(StandardLeaderboard element, Identity identity, boolean isAnonymous, int index) {
-    LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
-    leaderboardInfo.setFullname(identity.getProfile().getFullName());
-    leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-    leaderboardInfo.setScore(element.getReputationScore());
-    leaderboardInfo.setRank(index);
-    if (!isAnonymous) {
-      leaderboardInfo.setRemoteId(identity.getRemoteId());
-      leaderboardInfo.setSocialId(identity.getId());
-      String technicalId = computeTechnicalId(identity);
-      leaderboardInfo.setTechnicalId(technicalId);
-      leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
-    }
-    return leaderboardInfo;
-  }
-
-  public static class LeaderboardInfo {
-
-    String technicalId;
-
-    String socialId;
-
-    String avatarUrl;
-
-    String remoteId;
-
-    String fullname;
-
-    long   score;
-
-    String profileUrl;
-
-    int    rank;
-
-    public int getRank() {
-      return rank;
+    period = StringUtils.isBlank(period) ? Period.ALL.name() : period.toUpperCase();
+    // Check if the current user is already in top10
+    Date startDate = null;
+    switch (period) {
+    case WEEK_PERIOD_NAME:
+      startDate = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+      break;
+    case MONTH_PERIOD_NAME:
+      startDate = Date.from(LocalDate.now()
+                                     .with(TemporalAdjusters.firstDayOfMonth())
+                                     .atStartOfDay(ZoneId.systemDefault())
+                                     .toInstant());
+      break;
+    default:
+      startDate = null;
     }
 
-    public void setRank(int rank) {
-      this.rank = rank;
-    }
+    // Find user's stats
+    List<PiechartLeaderboard> userStats = realizationService.getStatsByIdentityId(identityId,
+                                                                                  startDate,
+                                                                                  Calendar.getInstance().getTime());
 
-    public String getAvatarUrl() {
-      return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-      this.avatarUrl = avatarUrl;
-    }
-
-    public String getRemoteId() {
-      return remoteId;
-    }
-
-    public void setRemoteId(String remoteId) {
-      this.remoteId = remoteId;
-    }
-
-    public String getFullname() {
-      return fullname;
-    }
-
-    public void setFullname(String fullname) {
-      this.fullname = fullname;
-    }
-
-    public long getScore() {
-      return score;
-    }
-
-    public void setScore(long score) {
-      this.score = score;
-    }
-
-    public String getProfileUrl() {
-      return profileUrl;
-    }
-
-    public void setProfileUrl(String profileUrl) {
-      this.profileUrl = profileUrl;
-    }
-
-    public String getSocialId() {
-      return socialId;
-    }
-
-    public void setSocialId(String socialId) {
-      this.socialId = socialId;
-    }
-
-    public String getTechnicalId() {
-      return technicalId;
-    }
-
-    public void setTechnicalId(String technicalId) {
-      this.technicalId = technicalId;
-    }
+    userStats = buildLeaderboardEntities(programService,
+                                         translationService,
+                                         userStats,
+                                         Utils.getCurrentUser(),
+                                         request.getLocale(),
+                                         expand);
+    return Response.ok(userStats, MediaType.APPLICATION_JSON).build();
   }
 
 }
