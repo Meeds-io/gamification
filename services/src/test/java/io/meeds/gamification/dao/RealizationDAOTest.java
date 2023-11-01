@@ -186,7 +186,10 @@ public class RealizationDAOTest extends AbstractServiceTest {
                                                                                          fromDate,
                                                                                          toDate);
     assertEquals(pieChartLeaderboardList.size(), 1);
-    assertEquals(pieChartLeaderboardList.get(0).getLabel(), GAMIFICATION_DOMAIN);
+    PiechartLeaderboard piechartLeaderboard = pieChartLeaderboardList.get(0);
+    ProgramDTO program = programService.getProgramById(piechartLeaderboard.getProgramId());
+    assertNotNull(program);
+    assertEquals(GAMIFICATION_DOMAIN, program.getTitle());
   }
 
   @Test
