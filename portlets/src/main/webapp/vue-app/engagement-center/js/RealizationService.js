@@ -115,6 +115,9 @@ function getRealizationsFormData(filter) {
   if (filter?.sortBy) {
     formData.append('sortBy', filter.sortBy);
   }
+  if (filter?.allPrograms) {
+    formData.append('allPrograms', filter.allPrograms);
+  }
   if (filter?.sortDescending) {
     formData.append('sortDescending', 'true');
   } else {
