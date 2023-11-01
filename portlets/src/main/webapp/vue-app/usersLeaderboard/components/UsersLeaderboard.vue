@@ -24,84 +24,41 @@
     <v-card
       flat
       class="pa-5 card-border-radius">
-      <div class="UserGamificationHeader text-color d-flex">
-        <div class="align-start d-flex">
-          <div
-            class="d-inline-block widget-text-header text-truncate">
-            {{ $t('exoplatform.gamification.userLeaderboard.title') }}
-          </div>
-          <a
-            :href="infoUrl"
-            :title="$t('exoplatform.gamification.leaderboard.Howearnpoints')"
-            class="d-inline-block mx-3">
-            <i class="uiIconInformation uiIconLightBlue"></i>
-          </a>
+      <div class="d-flex UserGamificationHeader text-color">
+        <div
+          class="d-inline-block widget-text-header text-truncate">
+          {{ $t('exoplatform.gamification.userLeaderboard.title') }}
         </div>
-        <div class="flex-grow-1"></div>
-        <div class="align-end selectProgramFilterParent">
-          <select
-            v-model="selectedProgramId"
-            class="selectProgramFilter ignore-vuetify-classes mb-0">
-            <users-leaderboard-domain-option
-              v-for="program in programs"
-              :key="program.id"
-              :program="program" />
-          </select>
-        </div>
+        <v-spacer />
+        <v-tooltip bottom>
+          <template #activator="{on, bind}">
+            <v-btn
+              v-on="on"
+              v-bind="bind"
+              :href="infoUrl"
+              height="auto"
+              width="auto"
+              icon
+              small
+              class="d-inline-block ms-3">
+              <v-icon class="primary--text" size="16">fa-info-circle</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('exoplatform.gamification.leaderboard.Howearnpoints') }}</span>
+        </v-tooltip>
       </div>
       <users-leaderboard-tabs
-        v-if="!loading"
+        v-model="selectedProgramId"
         :program-id="selectedProgramId" />
     </v-card>
+    <engagement-center-rule-extensions />
   </v-app>
 </template>
 <script>
 export default {
-  data: () => ({
-    programs: [],
-    selectedProgramId: '0',
-    loading: false,
-  }),
   computed: {
     infoUrl() {
       return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`;
-    },
-  },
-  created() {
-    this.init();
-  },
-  methods: {
-    init() {
-      this.loading = true;
-      return this.retrievePrograms()
-        .then(() => this.$nextTick())
-        .finally(() => {
-          this.loading = false;
-          this.$root.$applicationLoaded();
-        });
-    },
-    retrievePrograms() {
-      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs?type=ALL`, {
-        credentials: 'include',
-      }).then(resp => resp?.ok && resp.json())
-        .then(data => {
-          const programs = data?.programs || [];
-          programs.forEach(program => {
-            if (!program || program.label || !program.title) {
-              return;
-            }
-            const programKey = `exoplatform.gamification.gamificationinformation.domain.${program.title}`;
-            const translation = this.$t(programKey);
-            program.label = translation === programKey && this.$t(program.title) || translation;
-          });
-          const defaultProgram = {
-            id: '0',
-            title: 'All',
-            label: this.$t('exoplatform.gamification.leaderboard.domain.all'),
-          };
-          this.programs = [defaultProgram, ...programs];
-          this.selectedProgramId = '0';
-        });
     },
   },
 };

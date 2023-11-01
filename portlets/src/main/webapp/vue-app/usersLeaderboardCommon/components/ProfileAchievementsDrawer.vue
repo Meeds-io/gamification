@@ -23,19 +23,25 @@
   <exo-drawer
     ref="drawer"
     v-model="drawer"
-    id="leaderboardDrawer"
-    class="leaderboard-drawer"
+    :loading="loading"
+    :go-back-button="goBackButton"
+    class="user-achievements-drawer"
     allow-expand
     fixed
     right>
     <template #title>
-      {{ $t('gamification.overview.leaderboard.drawer.title') }}
+      {{ $t('gamification.overview.userAchievementsList.drawer.title') }}
     </template>
-    <template v-if="drawer" #content>
-      <users-leaderboard-tabs
-        ref="leaderboard"
-        class="px-5 pb-5"
-        embedded
+    <template v-if="drawer && user && programs" #content>
+      <users-leaderboard-profile-stats
+        class="pa-5"
+        :user="user"
+        :programs="programs"
+        :period="period" />
+      <users-leaderboard-profile-realizations
+        ref="realizations"
+        :identity-id="user.socialId"
+        class="px-5 pb-5 pt-0"
         @loading="loading = $event"
         @has-more="hasMore = $event" />
     </template>
@@ -45,8 +51,8 @@
           :loading="loading"
           class="btn"
           block
-          @click="$refs.leaderboard.loadMore()">
-          {{ $t('exoplatform.gamification.leaderboard.showMore') }}
+          @click="$refs.realizations.loadMore()">
+          {{ $t('gamification.showMore') }}
         </v-btn>
       </div>
     </template>
@@ -54,15 +60,31 @@
 </template>
 <script>
 export default {
+  props: {
+    goBackButton: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     drawer: false,
     loading: false,
     hasMore: false,
-    programId: '0',
+    user: null,
+    period: null,
+    programs: null,
   }),
   methods: {
-    open() {
+    open(user, period) {
+      this.user = user;
+      this.period = period;
       this.$refs.drawer.open();
+      if (!this.programs) {
+        this.loading = true;
+        return this.$leaderboardService.getPrograms()
+          .then(data => this.programs = data?.programs || [])
+          .finally(() => this.loading = false);
+      }
     },
     close() {
       this.$refs.drawer.close();

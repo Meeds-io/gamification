@@ -259,7 +259,6 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
       query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     }
     return query.getResultList();
-
   }
 
   /**

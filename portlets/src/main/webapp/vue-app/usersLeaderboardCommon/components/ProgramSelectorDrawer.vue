@@ -24,15 +24,19 @@
     ref="drawer"
     v-model="drawer"
     :loading="loading"
-    id="leaderboardDrawer"
-    class="leaderboard-drawer"
+    :go-back-button="goBackButton"
+    id="programSelectorDrawer"
+    class="program-selector-drawer"
     allow-expand
-    right>
+    right
+    @click.stop.prevent="0">
     <template #title>
-      {{ $t('gamification.overview.leaderboard.drawer.title') }}
+      {{ $t('gamification.overview.programsFilter.drawer.title') }}
     </template>
     <template v-if="drawer" #content>
-      <v-radio-group v-model="programId" class="px-5 pb-5">
+      <v-radio-group
+        v-model="programId"
+        class="px-5 pb-5">
         <v-radio
           v-for="program in programs"
           :key="program.id"
@@ -57,6 +61,7 @@
           {{ $t('programs.details.filter.cancel') }}
         </v-btn>
         <v-btn
+          :disabled="!modified"
           class="btn btn-primary"
           @click="apply">
           {{ $t('gamification.apply') }}
@@ -72,15 +77,27 @@ export default {
       type: String,
       default: null,
     },
+    goBackButton: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     programs: [],
     programId: '0',
-    drawer: null,
+    drawer: false,
     loading: false,
   }),
+  computed: {
+    modified() {
+      return this.programId !== this.value;
+    },
+  },
   created() {
     this.init();
+  },
+  mounted() {
+    document.querySelector('#vuetify-apps').appendChild(this.$el);
   },
   methods: {
     open() {
@@ -107,26 +124,15 @@ export default {
         });
     },
     retrievePrograms() {
-      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs`, {
-        credentials: 'include',
-      }).then(resp => resp?.ok && resp.json())
+      return this.$leaderboardService.getPrograms()
         .then(data => {
           const programs = data?.programs || [];
-          programs.forEach(program => {
-            if (!program || program.label || !program.title) {
-              return;
-            }
-            const programKey = `exoplatform.gamification.gamificationinformation.domain.${program.title}`;
-            const translation = this.$t(programKey);
-            program.label = translation === programKey && this.$t(program.title) || translation;
-          });
           const defaultProgram = {
             id: '0',
             title: 'All',
             label: this.$t('exoplatform.gamification.leaderboard.domain.all'),
           };
           this.programs = [defaultProgram, ...programs];
-          this.selectedProgramId = '0';
         });
     },
   },
