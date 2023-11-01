@@ -33,10 +33,12 @@ export function init() {
       Vue.createApp({
         data: {
           isAnonymous: !eXo.env.portal.userIdentityId?.length,
+          actionValueExtensions: [],
         },
         template: `<users-leaderboard id='${appId}' />`,
         i18n,
         vuetify,
       }, `#${appId}`, 'Users Leaderboard');
-    });
+    })
+    .finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
 }

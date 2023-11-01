@@ -34,7 +34,7 @@
             min-width="auto"
             class="pa-0"
             text
-            @click="openDetails">
+            @click="$refs.detailsDrawer.open()">
             <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
           </v-btn>
         </div>
@@ -57,8 +57,8 @@
       </gamification-overview-widget-row>
     </gamification-overview-widget>
     <gamification-overview-leaderboard-drawer
-      v-if="details"
       ref="detailsDrawer" />
+    <engagement-center-rule-extensions />
   </v-app>
 </template>
 <script>
@@ -66,8 +66,6 @@ export default {
   data: () => ({
     rankDisplayed: false,
     loading: true,
-    openingDetails: false,
-    details: false,
   }),
   computed: {
     peopleURL() {
@@ -87,18 +85,6 @@ export default {
         this.loading = false;
       }
     });
-  },
-  methods: {
-    openDetails() {
-      this.openingDetails = true;
-      window.require(['PORTLET/gamification-portlets/UsersLeaderboard'], () => {
-        this.details = true;
-        this.$nextTick().then(() => {
-          this.$refs?.detailsDrawer?.open?.();
-          this.openingDetails = false;
-        });
-      });
-    },
   },
 };
 </script>
