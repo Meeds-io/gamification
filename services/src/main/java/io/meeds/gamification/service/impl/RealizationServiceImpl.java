@@ -580,14 +580,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (realizationFilter == null) {
       throw new IllegalArgumentException("filter is mandatory");
     }
-    if (userAclIdentity == null) {
-      return null;
-    }
     realizationFilter = realizationFilter.clone();
     checkDates(realizationFilter.getFromDate(), realizationFilter.getToDate());
 
-    String username = userAclIdentity.getUserId();
-    if (Utils.isRewardingManager(username)) {
+    String username = userAclIdentity == null ? null : userAclIdentity.getUserId();
+    if (Utils.isRewardingManager(username) || realizationFilter.isAllPrograms()) {
       return realizationFilter;
     }
 
@@ -595,20 +592,20 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     boolean isFilterByPrograms = CollectionUtils.isNotEmpty(filterProgramIds);
 
     if (realizationFilter.isOwned()) {
-      if (isFilterByPrograms && !isProgramsOwner(filterProgramIds, userAclIdentity.getUserId())) {
+      if (isFilterByPrograms && !isProgramsOwner(filterProgramIds, username)) {
         throw new IllegalAccessException("User is not owner of one or several selected programs :" + filterProgramIds);
       } else if (!isFilterByPrograms) {
-        List<Long> ownedProgramIds = programService.getOwnedProgramIds(userAclIdentity.getUserId(), 0, -1);
+        List<Long> ownedProgramIds = programService.getOwnedProgramIds(username, 0, -1);
         if (CollectionUtils.isEmpty(ownedProgramIds)) {
           return null;
         } else {
           realizationFilter.setProgramIds(ownedProgramIds);
         }
       }
-    } else if (isFilterByPrograms && !canViewPrograms(filterProgramIds, userAclIdentity.getUserId())) {
+    } else if (isFilterByPrograms && !canViewPrograms(filterProgramIds, username)) {
       throw new IllegalAccessException("User is not member of one or several selected programs :" + filterProgramIds);
     } else if (!isFilterByPrograms && !isSelfFilter(realizationFilter, username)) {
-      List<Long> memberProgramIds = programService.getMemberProgramIds(userAclIdentity.getUserId(), 0, -1);
+      List<Long> memberProgramIds = programService.getMemberProgramIds(username, 0, -1);
       if (CollectionUtils.isEmpty(memberProgramIds)) {
         return null;
       } else {

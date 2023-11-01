@@ -122,7 +122,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-card>
   </div>
 </template>
-
 <script>
 import {getGamificationPointsStats, getGamificationPoints} from '../profilStatsAPI';
 export default {
@@ -176,7 +175,9 @@ export default {
         }],
         tooltip: { 
           trigger: 'item',
-          formatter: '{b} : {c} ({d}%)',
+          formatter(param) {
+            return `${param.data.label} (${param.percent}%)`;
+          },
           position: ['center', 'center'],
         },
         series: [
@@ -276,33 +277,35 @@ export default {
           const programLabels = [];
           for (let i=0;i < data.length; i++) {
             const optionSeriesName = data[i].label;
-            let name;
-            let serie;
+            let label;
             if (this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`).includes('exoplatform.gamification.gamificationinformation.domain')){
-              name = optionSeriesName.charAt(0).toUpperCase()+optionSeriesName.slice(1);
+              label = optionSeriesName.charAt(0).toUpperCase()+optionSeriesName.slice(1);
             } else {
-              name = this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`);
+              label = this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`);
             }
+            let serie;
             if (i > 4) {
               serie = {
-                name: this.$t('exoplatform.gamification.gamificationinformation.domain.others'),
+                name: i,
+                label: this.$t('exoplatform.gamification.gamificationinformation.domain.others'),
                 value: seriesData[4].value + data[i].value
               };
               seriesData[4] = serie;
             } else {
               serie = {
-                name,
+                name: i,
+                label,
                 value: data[i].value
               };
               seriesData.push(serie);
             }
             if (i <= 4) {
               programLabels.push({
-                name: serie.name,
+                name: serie.label,
                 color: this.colors[i],
               });
             } else {
-              programLabels[4].name = serie.name;
+              programLabels[4].name = serie.label;
             }
           }
           this.programLabels = programLabels;

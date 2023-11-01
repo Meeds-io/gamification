@@ -74,26 +74,29 @@ public class RuleBuilder {
     }
     boolean retrieveRealizations = realizationsLimit > 0;
     List<RealizationRestEntity> realizationEntities = null;
-    if (retrieveRealizations && !anonymous) {
+    if (retrieveRealizations && realizationService != null && !anonymous) {
       List<RealizationDTO> realizations = getRealizations(realizationService,
                                                           rule.getId(),
                                                           periodType,
                                                           realizationsLimit);
-      realizationEntities = RealizationBuilder.toRestEntities(ruleService,
+      realizationEntities = RealizationBuilder.toRestEntities(programService,
+                                                              ruleService,
                                                               translationService,
                                                               ExoContainerContext.getService(IdentityManager.class),
                                                               realizations,
+                                                              Utils.getCurrentUser(),
                                                               null);
     }
 
     boolean countRealizations = retrieveRealizations || (expandFields != null && expandFields.contains("countRealizations"));
     long realizationsCount = 0;
-    if (countRealizations) {
+    if (countRealizations && realizationService != null) {
       realizationsCount = countRealizations(realizationService, rule.getId(), periodType);
     }
     boolean isFavorite = !anonymous
                          && expandFields != null
                          && expandFields.contains("favorites")
+                         && favoriteService != null
                          && favoriteService.isFavorite(new Favorite(RULE_OBJECT_TYPE,
                                                                     String.valueOf(rule.getId()),
                                                                     null,
@@ -124,10 +127,11 @@ public class RuleBuilder {
                                                  })
                                                  .toList();
     ProgramDTO program = noProgram ? null : rule.getProgram();
-    UserInfoContext userContext = toUserContext(programService,
-                                                realizationService,
-                                                rule,
-                                                Utils.getCurrentUser());
+    UserInfoContext userContext = realizationService == null ? null :
+                                                             toUserContext(programService,
+                                                                           realizationService,
+                                                                           rule,
+                                                                           Utils.getCurrentUser());
     translatedLabels(translationService, rule, locale);
     boolean published = isPublished(rule);
 
