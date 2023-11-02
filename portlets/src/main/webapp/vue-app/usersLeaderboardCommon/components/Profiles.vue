@@ -22,13 +22,11 @@
 <template>
   <v-list>
     <users-leaderboard-profile
-      v-for="(user, index) in sortedUsers"
-      :key="user.socialId"
+      v-for="user in users"
+      :key="user.identityId"
       :user="user"
-      :rank="index + 1"
-      :programs="programs"
       @open="$refs.profileStatsDrawer.open(user, period)" />
-    <template v-if="currentRank">
+    <template v-if="currentRank && currentRank > users.length">
       <v-divider class="ma-0" />
       <v-list-item class="disabled-background">
         <div class="me-4">
@@ -64,11 +62,6 @@ export default {
     embedded: {
       type: Boolean,
       default: false,
-    },
-  },
-  computed: {
-    sortedUsers() {
-      return this.users.slice().sort((a, b) => b.score - a.score);
     },
   },
 };

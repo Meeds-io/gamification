@@ -20,7 +20,7 @@
 
 -->
 <template>
-  <v-list>
+  <v-list class="pa-0">
     <users-leaderboard-profile-realization-item
       v-for="r in realizations"
       :key="r.id"
@@ -31,6 +31,10 @@
 export default {
   props: {
     identityId: {
+      type: String,
+      default: null,
+    },
+    programId: {
       type: String,
       default: null,
     },
@@ -51,6 +55,7 @@ export default {
       return {
         status: 'ACCEPTED',
         earnerIds: [this.identityId],
+        programIds: this.programId && [this.programId],
         allPrograms: true,
         sortBy: this.sortBy,
         sortDescending: this.sortDescending,
@@ -63,6 +68,10 @@ export default {
     },
     hasMore() {
       this.$emit('has-more', this.hasMore);
+    },
+    programId() {
+      this.realizations = [];
+      this.retrieveRealizations();
     },
   },
   created() {

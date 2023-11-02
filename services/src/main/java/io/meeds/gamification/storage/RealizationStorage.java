@@ -69,12 +69,12 @@ public class RealizationStorage {
     return fromEntities(programStorage, realizationEntities);
   }
 
-  public List<StandardLeaderboard> findRealizationsByDate(IdentityType identityType, Date date) {
-    return gamificationHistoryDAO.findRealizationsByDate(identityType, date);
+  public List<StandardLeaderboard> findRealizationsByDate(IdentityType identityType, Date fromDate) {
+    return gamificationHistoryDAO.findRealizationsByDate(identityType, fromDate);
   }
 
-  public List<StandardLeaderboard> findRealizationsByDateAndProgramId(IdentityType identityType, Date date, long programId) {
-    return gamificationHistoryDAO.findRealizationsByDateAndProgramId(identityType, date, programId);
+  public List<StandardLeaderboard> findRealizationsByDateAndProgramId(IdentityType identityType, Date fromDate, long programId) {
+    return gamificationHistoryDAO.findRealizationsByDateAndProgramId(identityType, fromDate, programId);
   }
 
   public List<StandardLeaderboard> findRealizationsAgnostic(IdentityType identityType) {

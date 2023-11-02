@@ -20,33 +20,12 @@
 
 -->
 <template>
-  <div>
-    <v-list-item class="pa-0">
-      <v-avatar
-        v-if="user.rank"
-        color="tertiary"
-        class="me-2"
-        size="32">
-        {{ user.rank }}
-      </v-avatar>
-      <user-avatar
-        :profile-id="user.remoteId"
-        :name="user.fullname"
-        :avatar-url="user.avatarUrl"
-        :popover="user.remoteId"
-        :size="25"
-        extra-class="me-0 pa-0 my-0 text-truncate-2"
-        popover-left-position
-        offset-x />
-      <v-list-item-action class="ml-auto">
-        <span>{{ user.score }}</span>
-      </v-list-item-action>
-    </v-list-item>
-    <users-leaderboard-profile-chart
-      :identity-id="user.socialId"
-      :programs="programs"
-      :period="period" />
-  </div>
+  <users-leaderboard-profile-chart
+    :identity-id="user.identityId"
+    :programs="programs"
+    :period="period"
+    :program-id="programId"
+    @select="$emit('select', $event)" />
 </template>
 
 <script>
@@ -60,9 +39,13 @@ export default {
       type: Array,
       default: null,
     },
-    period: {
+    programId: {
       type: String,
       default: null,
+    },
+    period: {
+      type: String,
+      default: () => 'WEEK',
     },
   },
   data: () => ({
