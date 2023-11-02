@@ -83,7 +83,7 @@
       </v-card>
       <gamification-overview-widget-row class="mt-5 fill-height d-flex flex-column flex-grow-1">
         <template #title>
-          <div class="d-flex mb-n1">
+          <div v-if="!loading" class="d-flex mb-n1">
             {{ $t('gamification.overview.rewardsPerkstoreSubtitle') }}
             <div v-if="productsLoaded && hasConfiguredWallet" class="ms-auto">
               <a :href="perkstoreLink">
