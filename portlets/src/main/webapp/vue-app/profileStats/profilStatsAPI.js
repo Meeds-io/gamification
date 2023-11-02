@@ -14,19 +14,6 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-export function getUsersByGamificationRank(period) {
-  return fetch( `/portal/rest/gamification/leaderboard/rank/all?loadCapacity=false&period=${period || 'WEEK'}`, {
-    method: 'GET',
-    credentials: 'include',
-  }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } 
-    else {
-      throw new Error ('Error when getting users by gamification rank');
-    }
-  });
-}
 export function getReputationStatus() {
   return fetch( `/portal/rest/gamification/reputation/status?username=${eXo.env.portal.profileOwner}`, {
     method: 'GET',
@@ -121,19 +108,6 @@ export function getSuggestionsSpace(){
       });
     } else {
       return resp.json();
-    }
-  });
-}
-
-export function getAchievements(providerId, remoteId, limit) {
-  return fetch(`/portal/rest/gamification/gameficationinformationsboard/history/all?capacity=${limit}&providerId=${providerId}&remoteId=${remoteId}`, {
-    method: 'GET',
-    credentials: 'include',
-  }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } else {
-      throw new Error ('Error when getting achievements');
     }
   });
 }
@@ -245,7 +219,7 @@ export function getGamificationPoints(period) {
 }
 
 export function getGamificationPointsStats(period) {
-  return fetch(`/portal/rest/gamification/leaderboard/stats?username=${eXo.env.portal.profileOwner}&period=${period || ''}`, {
+  return fetch(`/portal/rest/gamification/leaderboard/stats/${eXo.env.portal.profileOwnerIdentityId}?period=${period || 'WEEK'}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

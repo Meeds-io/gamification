@@ -17,6 +17,8 @@
 
 package io.meeds.gamification.rest;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.SecurityContext;
 
@@ -27,6 +29,7 @@ import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 
+import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.test.AbstractServiceTest;
 
 public class TestLeaderboardEndpoint extends AbstractServiceTest { // NOSONAR
@@ -47,20 +50,8 @@ public class TestLeaderboardEndpoint extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
-  public void testGetAllLeadersByRank() throws Exception {
-    String restPath = "/gamification/leaderboard/rank/all?period=MONTH"; // NOSONAR
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
-    assertNotNull(response);
-    assertEquals(200, response.getStatus());
-  }
-
-  @Test
-  public void testFilter() throws Exception {
-    String restPath = "/gamification/leaderboard/filter?period=MONTH"; // NOSONAR
+  public void testGetAllLeaderboard() throws Exception {
+    String restPath = "/gamification/leaderboard?period=MONTH"; // NOSONAR
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -72,18 +63,12 @@ public class TestLeaderboardEndpoint extends AbstractServiceTest { // NOSONAR
 
   @Test
   public void testStats() throws Exception {
-    String restPath = "/gamification/leaderboard/stats?period=MONTH&username="; // NOSONAR
+    String restPath = "/gamification/leaderboard/stats/"; // NOSONAR
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
-    assertNotNull(response);
-    assertEquals(400, response.getStatus());
-    response = launcher.service("GET", restPath + "notExists", "", null, null, envctx);
-    assertNotNull(response);
-    assertEquals(400, response.getStatus());
-    response = launcher.service("GET", restPath + "root1", "", null, null, envctx);
+    ContainerResponse response = launcher.service("GET", restPath + "1", "", null, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
   }
