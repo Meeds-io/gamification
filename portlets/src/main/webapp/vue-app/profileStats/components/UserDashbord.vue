@@ -108,15 +108,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             d-flex
             justify-center
             align-center>
-            <v-card flat>
-              <a @click="getSpecificCard('user-points-widget')">
-                <v-card-text class="headline text-color font-weight-bold pa-1">
-                  <span>{{ userPoints }}</span>
-                </v-card-text>
-                <v-card-text class="pa-1 subtitle-1 text-color">
-                  <span>{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
-                </v-card-text>
-              </a>
+            <v-card
+              flat
+              @click="openAchievementsDrawer()">
+              <v-card-text class="headline text-color font-weight-bold pa-1">
+                <span>{{ userPoints }}</span>
+              </v-card-text>
+              <v-card-text class="pa-1 subtitle-1 text-color">
+                <span>{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
+              </v-card-text>
             </v-card>
           </v-flex>
           <v-flex
@@ -125,15 +125,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             xs6
             justify-center
             align-center>
-            <v-card flat align-center>
-              <a @click="getSpecificCard('gamification-rank')">
-                <v-card-text class="headline text-color font-weight-bold pa-1">
-                  <span>{{ gamificationRank }}</span>
-                </v-card-text>
-                <v-card-text class="pa-1 subtitle-1 text-color">
-                  <span>{{ $t('homepage.profileStatus.weeklyRank') }}</span>
-                </v-card-text>
-              </a>
+            <v-card
+              align-center
+              flat
+              @click="getSpecificCard('gamification-rank')">
+              <v-card-text class="headline text-color font-weight-bold pa-1">
+                <span>{{ gamificationRank }}</span>
+              </v-card-text>
+              <v-card-text class="pa-1 subtitle-1 text-color">
+                <span>{{ $t('homepage.profileStatus.weeklyRank') }}</span>
+              </v-card-text>
             </v-card>
           </v-flex>
         </v-layout>
@@ -267,6 +268,9 @@ export default {
     },
     getSpecificCard(component) {
       this.$emit('specific-card',component);
+    },
+    openAchievementsDrawer() {
+      this.$emit('openAchievementsDrawer');
     },
     openConnectionsDrawer() {
       this.$emit('openConnectionsDrawer');

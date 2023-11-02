@@ -39,9 +39,14 @@ export function init() {
     .then(i18n => {
       // init Vue app when locale ressources are ready
       Vue.createApp({
+        data: {
+          isAnonymous: !eXo.env.portal.userIdentityId?.length,
+          actionValueExtensions: [],
+        },
         template: `<profile-stats id="${appId}" v-cacheable="{cacheId: '${cacheId}'}" />`,
         i18n,
         vuetify,
       }, appElement, 'Profile Stats');
-    });
+    })
+    .finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
 }

@@ -33,17 +33,37 @@
       {{ $t('gamification.overview.userAchievementsList.drawer.title') }}
     </template>
     <template v-if="drawer && user && programs" #content>
-      <users-leaderboard-profile-stats
-        class="pa-5"
-        :user="user"
-        :programs="programs"
-        :period="period" />
-      <users-leaderboard-profile-realizations
-        ref="realizations"
-        :identity-id="user.socialId"
-        class="px-5 pb-5 pt-0"
-        @loading="loading = $event"
-        @has-more="hasMore = $event" />
+      <div class="pa-5">
+        <users-leaderboard-profile
+          :user="user"
+          no-action />
+
+        <div class="d-flex align-center mb-2 mt-5">
+          <div class="subtitle-1 me-2">
+            {{ $t(`gamification.profileStats.${period}`) }}
+          </div>
+          <v-divider />
+        </div>
+        <users-leaderboard-profile-stats
+          :user="user"
+          :programs="programs"
+          :period="period"
+          :program-id="programId"
+          @select="programId = $event" />
+
+        <div class="d-flex align-center mb-2 mt-5">
+          <div class="subtitle-1 me-2">
+            {{ $t('gamification.profileStats.achievements') }}
+          </div>
+          <v-divider />
+        </div>
+        <users-leaderboard-profile-realizations
+          ref="realizations"
+          :identity-id="user.identityId"
+          :program-id="programId"
+          @loading="loading = $event"
+          @has-more="hasMore = $event" />
+      </div>
     </template>
     <template #footer>
       <div v-if="hasMore" class="d-flex">
@@ -73,14 +93,42 @@ export default {
     user: null,
     period: null,
     programs: null,
+    programId: null,
   }),
+  mounted() {
+    document.querySelector('#vuetify-apps').appendChild(this.$el);
+  },
   methods: {
-    open(user, period) {
-      this.user = user;
-      this.period = period;
+    openByIdentityId(identityId, period) {
+      this.period = period || 'WEEK';
+      this.user = null;
+      this.programId = null;
+
       this.$refs.drawer.open();
-      if (!this.programs) {
-        this.loading = true;
+      this.loading = true;
+      this.$leaderboardService.getLeaderboard({
+        identityId,
+        period,
+        limit: 0,
+      })
+        .then(data => this.user = data.find(u => Number(u.identityId) === Number(identityId)))
+        .then(() => this.retrievePrograms())
+        .finally(() => this.loading = false);
+    },
+    open(user, period) {
+      this.period = period || 'WEEK';
+      this.user = user;
+      this.programId = null;
+
+      this.$refs.drawer.open();
+      this.loading = true;
+      return this.retrievePrograms()
+        .finally(() => this.loading = false);
+    },
+    retrievePrograms() {
+      if (this.programs) {
+        return Promise.resolve(this.programs);
+      } else {
         return this.$leaderboardService.getPrograms()
           .then(data => this.programs = data?.programs || [])
           .finally(() => this.loading = false);
