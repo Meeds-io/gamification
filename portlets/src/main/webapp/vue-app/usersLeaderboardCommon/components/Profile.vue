@@ -22,16 +22,21 @@
 <template>
   <v-list-item
     :id="id"
+    v-on="!noAction && {
+      click: () => $emit('open'),
+    }"
     class="px-0"
-    @click="$emit('open')">
+    dense>
     <div class="me-3">
       <v-avatar
         :color="currentUser && 'tertiary' || ''"
+        :class="!currentUser && 'border-color'"
+        class="my-auto"
         size="32">
-        {{ rank }}
+        {{ user.rank }}
       </v-avatar>
     </div>
-    <v-list-item-avatar class="me-4">
+    <v-list-item-avatar size="32" class="me-4 my-auto">
       <v-img
         :lazy-src="userAvatar"
         :src="userAvatar"
@@ -40,13 +45,24 @@
     </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title>
-        <span class="text-color">
+        <user-avatar
+          v-if="noAction && !$root.isAnonymous"
+          :profile-id="user.remoteId"
+          :name="user.fullname"
+          :popover="user.remoteId"
+          :avatar="false"
+          :size="25"
+          fullname
+          extra-class="me-0 pa-0 my-0 text-truncate-2"
+          popover-left-position
+          offset-x />
+        <span v-else class="text-color subtitle-2">
           {{ user.fullname }}
         </span>
       </v-list-item-title>
     </v-list-item-content>
-    <v-list-item-action class="me-4">
-      {{ user.score }}
+    <v-list-item-action class="justify-end">
+      <span class="primary--text font-weight-bold">{{ user.score }}</span>
     </v-list-item-action>
   </v-list-item>
 </template>
@@ -57,13 +73,9 @@ export default {
       type: Object,
       default: () => null,
     },
-    programs: {
-      type: Array,
-      default: () => [],
-    },
-    rank: {
-      type: Number,
-      default: null,
+    noAction: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
@@ -72,7 +84,7 @@ export default {
   }),
   computed: {
     id() {
-      return this.user && `users-leaderboarditem-${this.user.socialId}` || '';
+      return this.user && `users-leaderboard-${this.user.identityId}` || '';
     },
     userAvatar() {
       return this.user && this.user.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${this.user.username}/avatar`;

@@ -69,7 +69,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </init-param>
     <init-param>
       <name>preload.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/realizations/points?userId={username}&period=WEEK,/portal/rest/gamification/leaderboard/stats?username={username}&period=WEEK]]></value>
+      <value><![CDATA[/portal/rest/gamification/realizations/points?userId={username}&period=WEEK,/portal/rest/gamification/leaderboard/stats/{userId}?period=WEEK]]></value>
     </init-param>
     <expiration-cache>-1</expiration-cache>
     <cache-scope>PUBLIC</cache-scope>
@@ -126,7 +126,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </init-param>
     <init-param>
       <name>prefetch.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/programs?type=ALL|/portal/rest/gamification/leaderboard/filter?period=WEEK&capacity=10]]></value>
+      <value><![CDATA[/portal/rest/gamification/programs?type=ALL|/portal/rest/gamification/leaderboard?period=WEEK&limit=6]]></value>
     </init-param>
     <supports>
       <mime-type>text/html</mime-type>
@@ -262,7 +262,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </init-param>
     <init-param>
       <name>prefetch.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/leaderboard/rank/all?loadCapacity=false&period=WEEK]]></value>
+      <value><![CDATA[/portal/rest/gamification/leaderboard?period=WEEK&limit=6]]></value>
     </init-param>
     <supports>
       <mime-type>text/html</mime-type>
