@@ -454,8 +454,8 @@ export default {
     joinAudience() {
       this.joining = true;
       return this.$spaceService.join(this.spaceId)
-        .then(() => this.$root('alert-message', this.$t('rule.detail.successfullyJoined'), 'success'))
-        .catch(() => this.$root('alert-message', this.$t('rule.detail.errorJoining'), 'error'))
+        .then(() => this.$root.$emit('alert-message', this.$t('rule.detail.successfullyJoined'), 'success'))
+        .catch(() => this.$root.$emit('alert-message', this.$t('rule.detail.errorJoining'), 'error'))
         .then(() => this.openById(this.rule.id))
         .finally(() => this.joining = false);
     },

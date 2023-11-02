@@ -15,7 +15,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 export function getSpaceLeaderBord(period, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard/rank/all?earnerType=space&limit=${limit}&period=${period}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard?earnerType=space&limit=${limit || 10}&period=${period}`, {
     credentials: 'include',
     method: 'GET',
   }).then((resp) => {

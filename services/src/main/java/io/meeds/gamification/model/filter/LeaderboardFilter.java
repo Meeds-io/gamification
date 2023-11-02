@@ -25,9 +25,9 @@ public class LeaderboardFilter {
 
   private int          loadCapacity = 10;
 
-  private String       currentUser  = null;
-
   private Long         programId    = null;
+
+  private Long         identityId   = null;
 
   private IdentityType identityType = IdentityType.USER;
 
