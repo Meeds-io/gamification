@@ -298,9 +298,19 @@ public interface ProgramService {
    * 
    * @param programId technical identifier of program
    * @param username user name
-   * @return true if user has enough privileges to create a program, else false
+   * @return true if user is a program owner, else false
    */
   boolean isProgramOwner(long programId, String username);
+
+  /**
+   * Check whether user was program owner before deleting it or not
+   * 
+   * @param programId technical identifier of program
+   * @param username user name
+   * @return true if user is a program owner or was a program owner before
+   *         deleting the program, else false
+   */
+  boolean wasProgramOwner(long programId, String username);
 
   /**
    * Check whether user is member of program or not
@@ -310,6 +320,16 @@ public interface ProgramService {
    * @return true if user has enough privileges to see a program, else false
    */
   boolean isProgramMember(long programId, String username);
+
+  /**
+   * Check whether user was program member before deleting it or not
+   * 
+   * @param programId technical identifier of program
+   * @param username user name
+   * @return true if user is a program member or was a program member before
+   *         deleting the program, else false
+   */
+  boolean wasProgramMember(long programId, String username);
 
   /**
    * Check whether user can view program details or not

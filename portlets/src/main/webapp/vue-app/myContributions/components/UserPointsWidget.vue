@@ -123,7 +123,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </div>
 </template>
 <script>
-import {getGamificationPointsStats, getGamificationPoints} from '../profilStatsAPI';
+import {getGamificationPointsStats, getGamificationPoints} from '../../profileStats/profilStatsAPI.js';
 export default {
   props: {
     overviewDisplay: {
@@ -276,13 +276,6 @@ export default {
           const seriesData = [];
           const programLabels = [];
           for (let i=0;i < data.length; i++) {
-            const optionSeriesName = data[i].label;
-            let label;
-            if (this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`).includes('exoplatform.gamification.gamificationinformation.domain')){
-              label = optionSeriesName.charAt(0).toUpperCase()+optionSeriesName.slice(1);
-            } else {
-              label = this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`);
-            }
             let serie;
             if (i > 4) {
               serie = {
@@ -294,7 +287,7 @@ export default {
             } else {
               serie = {
                 name: i,
-                label,
+                label: data[i].label,
                 value: data[i].value
               };
               seriesData.push(serie);
