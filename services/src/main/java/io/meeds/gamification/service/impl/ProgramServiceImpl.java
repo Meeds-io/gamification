@@ -361,35 +361,22 @@ public class ProgramServiceImpl implements ProgramService {
 
   @Override
   public boolean isProgramOwner(long programId, String username) {
-    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
-      return false;
-    }
-    ProgramDTO program = programStorage.getProgramById(programId);
-    if (program == null || program.isDeleted()) {
-      return false;
-    }
-    return isProgramOwner(program.getSpaceId(),
-                          program.getOwnerIds(),
-                          program.isOpen(),
-                          userIdentity);
+    return isProgramOwner(programId, username, true);
+  }
+
+  @Override
+  public boolean wasProgramOwner(long programId, String username) {
+    return isProgramOwner(programId, username, false);
   }
 
   @Override
   public boolean isProgramMember(long programId, String username) {
-    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
-      return false;
-    }
-    ProgramDTO program = programStorage.getProgramById(programId);
-    if (program == null || program.isDeleted()) {
-      return false;
-    } else if (program.isOpen()) {
-      return true;
-    }
+    return isProgramMember(programId, username, true);
+  }
 
-    return Utils.isRewardingManager(username)
-           || isSpaceMember(program.getSpaceId(), username);
+  @Override
+  public boolean wasProgramMember(long programId, String username) {
+    return isProgramMember(programId, username, false);
   }
 
   @Override
@@ -409,8 +396,10 @@ public class ProgramServiceImpl implements ProgramService {
 
   private boolean canViewProgram(ProgramDTO program, String username) {
     return program != null
-           && (program.getVisibility() == EntityVisibility.OPEN || isProgramMember(program.getId(), username))
-           && (program.isEnabled() || isProgramOwner(program.getId(), username));
+           && (isProgramOwner(program.getId(), username)
+               || (program.isEnabled()
+                   && !program.isDeleted()
+                   && (program.getVisibility() == EntityVisibility.OPEN || isProgramMember(program.getId(), username))));
   }
 
   @SuppressWarnings("unchecked")
@@ -507,6 +496,37 @@ public class ProgramServiceImpl implements ProgramService {
       return false;
     }
     return spaceService.isManager(space, username);
+  }
+
+  private boolean isProgramMember(long programId, String username, boolean checkDeleted) {
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
+    if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
+      return false;
+    }
+    ProgramDTO program = programStorage.getProgramById(programId);
+    if (program == null || (checkDeleted && program.isDeleted())) {
+      return false;
+    } else if (program.isOpen()) {
+      return true;
+    }
+
+    return Utils.isRewardingManager(username)
+           || isSpaceMember(program.getSpaceId(), username);
+  }
+
+  private boolean isProgramOwner(long programId, String username, boolean checkDeleted) {
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
+    if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
+      return false;
+    }
+    ProgramDTO program = programStorage.getProgramById(programId);
+    if (program == null || (checkDeleted && program.isDeleted())) {
+      return false;
+    }
+    return isProgramOwner(program.getSpaceId(),
+                          program.getOwnerIds(),
+                          program.isOpen(),
+                          userIdentity);
   }
 
   private boolean isSpaceMember(long spaceId, String username) {

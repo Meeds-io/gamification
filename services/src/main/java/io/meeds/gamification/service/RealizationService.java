@@ -305,10 +305,12 @@ public interface RealizationService {
   /**
    * Retrieves Leaderboard switch designated filter
    * 
-   * @param  filter of type {@link LeaderboardFilter}, used to filter query
-   * @return        {@link List} of objects of type StandardLeaderboard
+   * @param filter of type {@link LeaderboardFilter}, used to filter query
+   * @param currentUser Currrent user name
+   * @return {@link List} of objects of type StandardLeaderboard
+   * @throws IllegalAccessException when space board and anonymous access
    */
-  List<StandardLeaderboard> getLeaderboard(LeaderboardFilter filter);
+  List<StandardLeaderboard> getLeaderboard(LeaderboardFilter filter, String currentUser) throws IllegalAccessException;
 
   /**
    * Retrieves identities total score between designated dates

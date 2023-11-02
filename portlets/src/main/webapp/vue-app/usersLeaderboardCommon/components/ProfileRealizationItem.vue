@@ -1,19 +1,19 @@
 <!--
 
   This file is part of the Meeds project (https://meeds.io/).
-  
+
   Copyright (C) 2023 Meeds Association contact@meeds.io
-  
+
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
   version 3 of the License, or (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public License
   along with this program; if not, write to the Free Software Foundation,
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -44,11 +44,9 @@
           :value="realization.createdDate" />
       </v-list-item-subtitle>
     </v-list-item-content>
-    <v-list-item-avatar class="ma-0">
-      <v-avatar color="primary" dark>
-        {{ realization.score }}
-      </v-avatar>
-    </v-list-item-avatar>
+    <v-list-item-action class="ma-0 pa-0 justify-end">
+      <span class="primary--text font-weight-bold">{{ realization.score }}</span>
+    </v-list-item-action>
   </v-list-item>
 </template>
 <script>
@@ -74,7 +72,7 @@ export default {
       return this.realization?.action?.type === 'MANUAL';
     },
     actionLabel() {
-      return this.realization?.action?.title;
+      return this.realization?.action?.title || this.realization?.actionLabel;
     },
     actionEventName() {
       return this.realization?.action?.event;

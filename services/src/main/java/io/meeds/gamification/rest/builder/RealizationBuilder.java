@@ -37,12 +37,19 @@ public class RealizationBuilder {
                                                    TranslationService translationService,
                                                    IdentityManager identityManager,
                                                    RealizationDTO realization,
-                                                   String username,
+                                                   String currentUsername,
                                                    Locale locale) {
     try {
-      boolean anonymous = StringUtils.isBlank(username);
+      boolean anonymous = StringUtils.isBlank(currentUsername);
       ProgramDTO program = realization.getProgram();
-      boolean canViewProgram = program != null && programService.canViewProgram(program.getId(), username);
+      boolean canViewProgram = Utils.isRewardingManager(currentUsername)
+                               || (program != null
+                                   && (StringUtils.equals(currentUsername, realization.getEarnerId())
+                                       || StringUtils.equals(String.valueOf(Utils.getCurrentUserIdentityId()),
+                                                             realization.getEarnerId())
+                                       || programService.canViewProgram(program.getId(), currentUsername)
+                                       || (program.isDeleted()
+                                           && programService.wasProgramMember(program.getId(), currentUsername))));
 
       ProgramRestEntity programRestEntity = null;
       if (canViewProgram && program != null) {
@@ -52,7 +59,7 @@ public class RealizationBuilder {
                                                         program,
                                                         locale,
                                                         null,
-                                                        username);
+                                                        currentUsername);
       }
       RuleDTO rule = realization.getRuleId() != null
           && realization.getRuleId() != 0 ? ruleService.findRuleById(realization.getRuleId())
@@ -75,9 +82,6 @@ public class RealizationBuilder {
 
       boolean actionLabelChanged = canViewProgram && (rule == null || !StringUtils.equals(realization.getActionTitle(), rule.getTitle()));
       boolean programLabelChanged = canViewProgram && (rule == null || rule.getProgram() == null || !StringUtils.equals(realization.getProgramLabel(), rule.getProgram().getTitle()));
-
-      String actionLabel = realization.getActionTitle() != null ? realization.getActionTitle() :
-                                                                Objects.requireNonNull(rule).getTitle();
       String spaceDisplayName = programRestEntity != null && programRestEntity.getSpace() != null ?
                                                                                                   programRestEntity.getSpace()
                                                                                                                    .getDisplayName() :
@@ -89,7 +93,7 @@ public class RealizationBuilder {
                                        ruleRestEntity,
                                        programRestEntity,
                                        canViewProgram ? realization.getProgramLabel() : null,
-                                       canViewProgram ? actionLabel : null,
+                                       canViewProgram ? realization.getActionTitle() : null,
                                        realization.getActionScore(),
                                        anonymous ?
                                                  null :
@@ -127,7 +131,7 @@ public class RealizationBuilder {
                                                            TranslationService translationService,
                                                            IdentityManager identityManager,
                                                            List<RealizationDTO> realizations,
-                                                           String username,
+                                                           String currentUsername,
                                                            Locale locale) {
     if (CollectionUtils.isEmpty(realizations)) {
       return new ArrayList<>(Collections.emptyList());
@@ -138,7 +142,7 @@ public class RealizationBuilder {
                                                           translationService,
                                                           identityManager,
                                                           realization,
-                                                          username,
+                                                          currentUsername,
                                                           locale))
                          .toList();
     }
