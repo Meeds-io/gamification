@@ -1035,14 +1035,14 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(1, realizationService.getScorePerProgramByIdentityId(adminIdentityId).size());
   }
 
-  public void testFilterByDomainId() {
+  public void testFilterByDomainId() throws IllegalAccessException {
     RuleDTO ruleDTO = newRuleDTO();
     LeaderboardFilter filter = new LeaderboardFilter();
     filter.setPeriod(Period.ALL.name());
     filter.setIdentityType(IdentityType.USER);
     filter.setLoadCapacity(limit);
     filter.setProgramId(ruleDTO.getProgram().getId());
-    List<StandardLeaderboard> filteredLeaderboard = realizationService.getLeaderboard(filter);
+    List<StandardLeaderboard> filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(0, filteredLeaderboard.size());
 
     realizationService.createRealizations(ruleDTO.getEvent(),
@@ -1051,28 +1051,28 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
 
-    filteredLeaderboard = realizationService.getLeaderboard(filter);
+    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(1, filteredLeaderboard.size());
     StandardLeaderboard userLeaderboard = filteredLeaderboard.get(0);
     assertEquals(adminIdentityId, userLeaderboard.getEarnerId());
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setPeriod(Period.WEEK.name());
-    filteredLeaderboard = realizationService.getLeaderboard(filter);
+    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(1, filteredLeaderboard.size());
     userLeaderboard = filteredLeaderboard.get(0);
     assertEquals(adminIdentityId, userLeaderboard.getEarnerId());
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setPeriod(Period.MONTH.name());
-    filteredLeaderboard = realizationService.getLeaderboard(filter);
+    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(1, filteredLeaderboard.size());
     userLeaderboard = filteredLeaderboard.get(0);
     assertEquals(adminIdentityId, userLeaderboard.getEarnerId());
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setIdentityType(IdentityType.SPACE);
-    filteredLeaderboard = realizationService.getLeaderboard(filter);
+    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(0, filteredLeaderboard.size());
   }
 

@@ -4,7 +4,7 @@ public class LeaderboardInfo {
 
   String technicalId;
 
-  String socialId;
+  long   identityId;
 
   String avatarUrl;
 
@@ -66,12 +66,12 @@ public class LeaderboardInfo {
     this.profileUrl = profileUrl;
   }
 
-  public String getSocialId() {
-    return socialId;
+  public long getIdentityId() {
+    return identityId;
   }
 
-  public void setSocialId(String socialId) {
-    this.socialId = socialId;
+  public void setIdentityId(long socialId) {
+    this.identityId = socialId;
   }
 
   public String getTechnicalId() {

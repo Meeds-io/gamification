@@ -186,18 +186,18 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public int getLeaderboardRank(String earnerIdentityId, Date date, Long programId) {
+  public int getLeaderboardRank(String earnerIdentityId, Date fromDate, Long programId) {
     List<StandardLeaderboard> leaderboard = null;
     org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId); // NOSONAR
     // :
     // profile load
     // is always true
     IdentityType identityType = IdentityType.getType(identity.getProviderId());
-    if (date != null) {
+    if (fromDate != null) {
       if (programId == null || programId <= 0) {
-        leaderboard = realizationStorage.findRealizationsByDate(identityType, date);
+        leaderboard = realizationStorage.findRealizationsByDate(identityType, fromDate);
       } else {
-        leaderboard = realizationStorage.findRealizationsByDateAndProgramId(identityType, date, programId);
+        leaderboard = realizationStorage.findRealizationsByDateAndProgramId(identityType, fromDate, programId);
       }
     } else {
       if (programId == null || programId <= 0) {
@@ -409,7 +409,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public List<StandardLeaderboard> getLeaderboard(LeaderboardFilter filter) { // NOSONAR
+  public List<StandardLeaderboard> getLeaderboard(LeaderboardFilter filter, String currentUser) throws IllegalAccessException { // NOSONAR
     int limit = filter.getLoadCapacity();
     IdentityType identityType = filter.getIdentityType();
     if (identityType.isSpace()) {
@@ -457,9 +457,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
     // Filter on spaces switch user identity
     if (identityType.isSpace() && result != null && !result.isEmpty()) {
-      final String currentUser = filter.getCurrentUser();
-
-      if (StringUtils.isNotBlank(currentUser)) {
+      if (StringUtils.isBlank(currentUser)) {
+        throw new IllegalAccessException("Anonymous user can't access spaces board");
+      } else {
         result = filterAuthorizedSpaces(result, currentUser, filter.getLoadCapacity());
       }
     }
