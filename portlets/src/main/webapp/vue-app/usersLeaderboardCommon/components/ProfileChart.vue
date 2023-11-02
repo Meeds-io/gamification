@@ -31,13 +31,18 @@
         class="col-5 ps-0 pe-1 my-auto overflow-y-auto overflow-x-hidden"
         flat>
         <v-tooltip
-          v-for="(label, index) in programLabels"
+          v-for="(item, index) in involvedPrograms"
           :key="index"
           bottom>
           <template #activator="{ on }">
-            <span
+            <v-card
+              v-on="{
+                ...on,
+                click: () => select(item.id),
+              }"
+              :color="item.id === programId && 'primary' || ''"
               class="text-truncate-2 caption font-weight-light my-1"
-              v-on="on">
+              flat>
               <div class="d-inline-block">
                 <v-card
                   :color="colors[index % colors.length]"
@@ -47,10 +52,10 @@
                   class="me-1 mb-n1"
                   flat />
               </div>
-              {{ label || $t('gamification.hiddenProgram') }}
-            </span>
+              {{ item.label || $t('gamification.hiddenProgram') }}
+            </v-card>
           </template>
-          <span>{{ label || $t('gamification.hiddenProgramTooltip') }}</span>
+          <span>{{ item.label || $t('gamification.hiddenProgramTooltip') }}</span>
         </v-tooltip>
       </v-card>
       <v-flex
@@ -63,6 +68,10 @@
 export default {
   props: {
     identityId: {
+      type: String,
+      default: null,
+    },
+    programId: {
       type: String,
       default: null,
     },
@@ -89,7 +98,7 @@ export default {
     id: `Chart${parseInt(Math.random() * 100000)}`,
     loading: false,
     chartData: null,
-    programLabels: [],
+    involvedPrograms: [],
     chart: null,
     echarts: null,
     colors: [
@@ -119,19 +128,32 @@ export default {
           .then(stats => {
             let id = 0;
             this.chartData = stats.map(s => {
-              const program = this.programs.find(p => p.id === s.programId);
-              const label = program?.title || this.$t('gamification.hiddenProgram');
-              this.programLabels.push(program?.title);
+              this.involvedPrograms.push({
+                id: s.programId,
+                label: s.label,
+                hidden: !s.label,
+              });
               return {
+                id: s.programId,
                 name: id++,
-                label,
+                label: s.label || this.$t('gamification.hiddenProgram'),
                 value: s.value,
+                hidden: !s.label,
               };
             });
             this.$nextTick().then(() => resolve(this.chartData));
           })
           .catch(e => reject(e));
       });
+    },
+    select(programId) {
+      if (programId) {
+        if (this.programId === programId) {
+          this.$emit('select', null);
+        } else {
+          this.$emit('select', programId);
+        }
+      }
     },
     init() {
       return new Promise((resolve, reject) => {
@@ -170,6 +192,7 @@ export default {
             data: this.chartData,
           }]
         }, true);
+        this.chart.on('click', params => this.select(params?.data?.id));
       });
     },
   }

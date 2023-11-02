@@ -23,8 +23,8 @@
   <v-app>
     <gamification-overview-widget
       :loading="loading">
-      <template v-if="!displayPlaceholder" #title>
-        <div class="d-flex flex-grow-1 full-width">
+      <template #title>
+        <div v-if="!displayPlaceholder && !loading" class="d-flex flex-grow-1 full-width">
           <div class="widget-text-header text-capitalize-first-letter text-truncate">
             {{ $t('gamification.overview.topChallengersTitle') }}
           </div>
@@ -41,7 +41,7 @@
       </template>
       <template #content>
         <gamification-overview-widget-row
-          v-show="displayPlaceholder"
+          v-if="displayPlaceholder"
           disabled
           class="my-auto">
           <template #content>
@@ -51,7 +51,10 @@
             </div>
           </template>
         </gamification-overview-widget-row>
-        <gamification-overview-widget-row class="my-auto" v-show="rankDisplayed && !isExternal">
+        <gamification-overview-widget-row
+          v-show="!displayPlaceholder"
+          class="my-auto"
+          dense>
           <template #content>
             <gamification-rank :is-overview-display="true" />
           </template>
@@ -73,11 +76,8 @@ export default {
     peopleURL() {
       return `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/people`;
     },
-    isExternal() {
-      return eXo.env.portal.isExternal === 'true';
-    },
     displayPlaceholder() {
-      return (this.isExternal || !this.rankDisplayed) && !this.loading;
+      return !this.rankDisplayed && !this.loading;
     }
   },
   created() {

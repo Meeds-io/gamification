@@ -166,7 +166,6 @@ export default {
       if (!this.validComment) {
         return;
       }
-      console.warn('this.templateParams', this.templateParams);
       const announcement = {
         assignee: this.userId,
         comment: this.comment,

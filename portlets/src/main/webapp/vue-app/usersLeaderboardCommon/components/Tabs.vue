@@ -62,7 +62,8 @@
           v-if="!selectionChanged"
           :users="users"
           :current-rank="!loading && currentRank"
-          :period="period.value" />
+          :period="period.value"
+          :embedded="embedded" />
       </v-tab-item>
     </v-tabs-items>
     <v-card-actions v-if="canLoadMore && !embedded">
@@ -159,12 +160,13 @@ export default {
       this.loading = true;
       return this.$leaderboardService.getLeaderboard({
         programId: this.programId,
+        identityId: eXo.env.portal.profileOwnerIdentityId,
         period: this.selectedPeriod,
         limit,
       })
         .then(data => {
-          this.users = data?.filter?.(user => user.socialId) || [];
-          this.currentRank = !this.$root.isAnonymous && this.users.find(user => !user.socialId)?.rank;
+          this.users = data.slice(0, limit);
+          this.currentRank = !this.$root.isAnonymous && data.find(user => String(user.identityId) === eXo.env.portal.profileOwnerIdentityId)?.rank;
           this.limit = limit;
         })
         .finally(() => {
