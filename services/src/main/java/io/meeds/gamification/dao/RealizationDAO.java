@@ -152,15 +152,14 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   /**
    * Find all gamification entries by date
    *
-   * @param  date       : date from when entries are loaded
+   * @param  fromDate   : date from when entries are loaded
    * @param  earnerType : {@link IdentityType} USER or SPACE
    * @return            list of object of type StandardLeaderboard
    */
-  public List<StandardLeaderboard> findRealizationsByDate(IdentityType earnerType, Date date) {
-    TypedQuery<StandardLeaderboard> query =
-                                          getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByDate",
-                                                                              StandardLeaderboard.class);
-    query.setParameter(DATE_PARAM_NAME, date);
+  public List<StandardLeaderboard> findRealizationsByDate(IdentityType earnerType, Date fromDate) {
+    TypedQuery<StandardLeaderboard> query = getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByDate",
+                                                                                StandardLeaderboard.class);
+    query.setParameter(DATE_PARAM_NAME, fromDate);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     return query.getResultList();
@@ -169,16 +168,16 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   /**
    * Find all gamification entries by date
    * 
-   * @param  date       : date from when entries are loaded
+   * @param  fromDate   : date from when entries are loaded
    * @param  earnerType : {@link IdentityType} USER or SPACE
    * @param  limit      : limit of the query
    * @return            list of object of type StandardLeaderboard
    */
-  public List<StandardLeaderboard> findRealizationsByDate(Date date, IdentityType earnerType, int limit) {
+  public List<StandardLeaderboard> findRealizationsByDate(Date fromDate, IdentityType earnerType, int limit) {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByDate",
                                                                               StandardLeaderboard.class);
-    query.setParameter(DATE_PARAM_NAME, date);
+    query.setParameter(DATE_PARAM_NAME, fromDate);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     query.setMaxResults(limit);
@@ -218,20 +217,20 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   /**
    * Find {@link RealizationEntity} by data and domain
    * 
-   * @param  date       : date from when we aim to track user
+   * @param  fromDate   : date from when we aim to track user
    * @param  earnerType : {@link IdentityType} USER or SPACE
    * @param  domainId   : program Id we aim to track
    * @param  limit      : how many records we should load from DB
    * @return            a list of object of type StandardLraderboard
    */
-  public List<StandardLeaderboard> findRealizationsByDateByProgramId(Date date,
+  public List<StandardLeaderboard> findRealizationsByDateByProgramId(Date fromDate,
                                                                      IdentityType earnerType,
                                                                      long domainId,
                                                                      int limit) {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByDateByDomain",
                                                                               StandardLeaderboard.class);
-    query.setParameter(DATE_PARAM_NAME, date)
+    query.setParameter(DATE_PARAM_NAME, fromDate)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
          .setParameter(PROGRAM_ID_PARAM_NAME, domainId);
     query.setMaxResults(limit);

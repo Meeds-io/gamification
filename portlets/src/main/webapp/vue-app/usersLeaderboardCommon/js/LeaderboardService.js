@@ -68,10 +68,13 @@ export function getLeaderboard(filter) {
   if (filter.programId && filter.programId !== '0') {
     formData.append('programId', filter.programId);
   }
+  if (filter.identityId) {
+    formData.append('identityId', filter.identityId);
+  }
   formData.append('period', filter.period || 'WEEK');
-  formData.append('capacity', filter.limit || 10);
+  formData.append('limit', filter.limit || 0);
   const params = decodeURIComponent(new URLSearchParams(formData).toString());
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard/filter?${params}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard?${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
