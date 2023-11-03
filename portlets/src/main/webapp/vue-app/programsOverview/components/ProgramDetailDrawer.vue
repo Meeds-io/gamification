@@ -31,7 +31,7 @@
         {{ $t('programs.label.programSummary') }}
       </span>
     </template>
-    <template #titleIcons>
+    <template v-if="!$root.isAnonymous" #titleIcons>
       <v-btn
         :href="programLink"
         icon>
