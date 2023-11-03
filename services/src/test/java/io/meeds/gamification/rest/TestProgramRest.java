@@ -30,6 +30,7 @@ import org.exoplatform.services.security.ConversationState;
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.mock.SpaceServiceMock;
 import io.meeds.gamification.model.ProgramDTO;
@@ -308,11 +309,10 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
-  public void testGetAccessibleProgramById() throws Exception {
+  public void testGetAccessibleProgramByIdByAnonymous() throws Exception {
     ProgramFilter filter = new ProgramFilter();
-    filter.setType(EntityFilterType.ALL);
     filter.setStatus(EntityStatusType.ENABLED);
-    assertEquals(0, programService.getPrograms(filter, null, offset, 10).size());
+    assertEquals(0, programService.getPrograms(filter, null, OFFSET, 10).size());
     assertEquals(0, programService.countPrograms(filter, null));
 
     ProgramEntity programEntity = newDomain(EntityType.AUTOMATIC, "testGetAccessibleProgramById", true, Collections.emptySet());
@@ -338,11 +338,10 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
-  public void testGetAccessiblePrograms() throws Exception {
+  public void testGetAccessibleProgramsByAnonymous() throws Exception {
     ProgramFilter filter = new ProgramFilter();
-    filter.setType(EntityFilterType.ALL);
     filter.setStatus(EntityStatusType.ENABLED);
-    assertEquals(0, programService.getPrograms(filter, null, offset, 10).size());
+    assertEquals(0, programService.getPrograms(filter, null, OFFSET, 10).size());
     assertEquals(0, programService.countPrograms(filter, null));
 
     ProgramEntity programEntity = newDomain(EntityType.AUTOMATIC, "testGetAccessiblePrograms", true, Collections.emptySet());
@@ -377,6 +376,40 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     assertFalse(((UserInfoContext) programRestEntity.getUserInfo()).isManager());
     assertFalse(((UserInfoContext) programRestEntity.getUserInfo()).isMember());
     assertFalse(((UserInfoContext) programRestEntity.getUserInfo()).isProgramOwner());
+  }
+
+  @Test
+  public void testGetAccessibleProgramsByAnonymousWhenRestrictedHubAccess() throws Exception {
+    ProgramFilter filter = new ProgramFilter();
+    filter.setStatus(EntityStatusType.ENABLED);
+    assertEquals(0, programService.getPrograms(filter, null, OFFSET, 10).size());
+    assertEquals(0, programService.countPrograms(filter, null));
+
+    newDomain(EntityType.AUTOMATIC, "testGetAccessibleProgramsByAnonymousWhenNotOpen", true, Collections.emptySet());
+    ContainerResponse response = getResponse("GET", getURLResource("programs?offset=0&limit=10&returnSize=true"), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    setRestrictedHubAccess();
+    response = getResponse("GET", getURLResource("programs?offset=0&limit=10&returnSize=true"), null);
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
+  }
+
+  @Test
+  public void testGetAccessibleProgramByIdByAnonymousWhenRestrictedHubAccess() throws Exception {
+    ProgramEntity programEntity = newDomain(EntityType.AUTOMATIC, "testGetAccessibleProgramByIdByAnonymousWhenRestrictedHubAccess", true, Collections.emptySet());
+    programEntity.setVisibility(EntityVisibility.OPEN);
+    programDAO.update(programEntity);
+
+    ContainerResponse response = getResponse("GET", getURLResource("programs/" + programEntity.getId()), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    setRestrictedHubAccess();
+    response = getResponse("GET", getURLResource("programs/" + programEntity.getId()), null);
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
   }
 
 }

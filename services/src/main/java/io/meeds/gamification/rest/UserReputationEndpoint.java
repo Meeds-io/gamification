@@ -420,7 +420,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
 
                 // Find user's stats
-                List<PiechartLeaderboard> userStats = realizationService.getStatsByIdentityId(actorId, null, null);
+                List<PiechartLeaderboard> userStats = realizationService.getLeaderboardStatsByIdentityId(actorId, null, null);
 
                 return Response.ok(userStats, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
