@@ -50,7 +50,7 @@
           class="dark-grey-color px-0 hidden-xs-only"
           text
           outlined
-          @click="reset">
+          @click="resetFilter">
           <v-icon size="18" class="icon-default-color me-2">fa-redo</v-icon>
           {{ $t('challenge.button.resetFilter') }}
         </v-btn>
@@ -110,6 +110,9 @@ export default {
     apply() {
       this.$emit('input', this.programId);
       this.close();
+    },
+    resetFilter() {
+      this.programId = '0';
     },
     reset() {
       this.programId = this.value;
