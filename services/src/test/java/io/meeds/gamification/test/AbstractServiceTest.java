@@ -16,6 +16,7 @@
  */
 package io.meeds.gamification.test;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Date;
@@ -85,13 +86,16 @@ import io.meeds.gamification.storage.mapper.ProgramMapper;
 import io.meeds.gamification.storage.mapper.RealizationMapper;
 import io.meeds.gamification.storage.mapper.RuleMapper;
 import io.meeds.gamification.utils.Utils;
+import io.meeds.portal.security.constant.UserRegistrationType;
+import io.meeds.portal.security.service.SecuritySettingService;
 
 @ConfiguredBy({
     @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/gamification-test-configuration.xml"),
 })
-public abstract class AbstractServiceTest extends BaseExoTestCase {
+public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
+
 
   public static final String             GAMIFICATION_DOMAIN = "TeamWork";
 
@@ -116,15 +120,23 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   public static final String             TEST_GLOBAL_SCORE   = "245590";
 
-  public static final String             TEST__SCORE         = "50";
+  public static final String             TEST_SCORE         = "50";
 
   public static final long               MILLIS_IN_A_DAY     = 1000 * 60 * 60 * 24;           // NOSONAR
 
   public static final TimeZone           DEFAULT_TIMEZONE    = TimeZone.getDefault();
 
-  public static final int                offset              = 0;
+  public static final int                OFFSET              = 0;
 
-  public static final int                limit               = 3;
+  public static final int                LIMIT               = 3;
+
+  public static final String             DESCRIPTION         = "Description";
+
+  public static final String             PROGRAM_CREATOR     = "gamification";
+
+  public static final String             OBJECT_TYPE         = "objectType";
+
+  public static final String             OBJECT_ID           = "objectId";
 
   protected IdentityManager              identityManager;
 
@@ -153,6 +165,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected BadgeService                 badgeService;
 
   protected ProgramService               programService;
+
+  protected SecuritySettingService       securitySettingService;
 
   protected RuleService                  ruleService;
 
@@ -206,7 +220,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected Date                         toDate;
 
-  protected Date                         OutOfRangeDate;
+  protected Date                         outOfRangeDate;
+
+  protected boolean                      hubRestricted;
 
   @Override
   @Before
@@ -225,6 +241,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     relationshipManager = ExoContainerContext.getService(RelationshipManager.class);
     announcementService = ExoContainerContext.getService(AnnouncementService.class);
     badgeService = ExoContainerContext.getService(BadgeService.class);
+    securitySettingService = ExoContainerContext.getService(SecuritySettingService.class);
     programService = ExoContainerContext.getService(ProgramService.class);
     ruleService = ExoContainerContext.getService(RuleService.class);
     listenerService = ExoContainerContext.getService(ListenerService.class);
@@ -232,7 +249,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     entityManagerService = ExoContainerContext.getService(EntityManagerService.class);
     manageBadgesEndpoint = ExoContainerContext.getService(BadgeRest.class);
     manageDomainsEndpoint = ExoContainerContext.getService(ProgramRest.class);
-    requestHandler = ExoContainerContext.getService(RequestHandlerImpl.class);
     rootIdentity = new Identity(OrganizationIdentityProvider.NAME, "root");
     badgeStorage = ExoContainerContext.getService(BadgeDAO.class);
     programDAO = ExoContainerContext.getService(ProgramDAO.class);
@@ -249,19 +265,19 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     codecInitializer = ExoContainerContext.getService(CodecInitializer.class);
     identityRegistry = ExoContainerContext.getService(IdentityRegistry.class);
     resourceBinder = ExoContainerContext.getService(ResourceBinder.class);
-    RequestHandlerImpl requestHandler = ExoContainerContext.getService(RequestHandlerImpl.class);
+    requestHandler = ExoContainerContext.getService(RequestHandlerImpl.class);
     // reset default providers to be sure it is clean.
     ProviderBinder.setInstance(new ProviderBinder());
     providerBinder = ProviderBinder.getInstance();
 
     fromDate = new Date(System.currentTimeMillis());
     toDate = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
-    OutOfRangeDate = new Date(fromDate.getTime() - 2 * MILLIS_IN_A_DAY);
+    outOfRangeDate = new Date(fromDate.getTime() - 2 * MILLIS_IN_A_DAY);
 
     resourceBinder.clear();
     ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providerBinder, null));
     launcher = new ResourceLauncher(requestHandler);
-    ConversationState.setCurrent(null);
+    resetUserSession();
     begin();
   }
 
@@ -269,6 +285,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   @After
   public void tearDown() {
     TimeZone.setDefault(DEFAULT_TIMEZONE);
+    if (hubRestricted) {
+      restartTransaction();
+      setOpenHubAccess();
+    }
     if (realizationDAO != null) {
       restartTransaction();
       realizationDAO.deleteAll();
@@ -285,6 +305,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected void registry(Class<?> resourceClass) {
     resourceBinder.addResource(resourceClass, null);
+  }
+
+  protected void resetUserSession() {
+    ConversationState.setCurrent(null);
   }
 
   protected ConversationState startSessionAs(String username) {
@@ -327,7 +351,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected org.exoplatform.services.security.Identity registerInternalUser(String username) {
     org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity(username,
-                                                                                                         Arrays.asList(new MembershipEntry("/platform/externals")));
+                                                                                                         Arrays.asList(new MembershipEntry("/platform/users")));
     identityRegistry.register(identity);
     return identity;
   }
@@ -336,9 +360,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     RuleEntity rule = ruleDAO.findRuleByTitle(GAMIFICATION_DOMAIN);
     if (rule == null) {
       rule = new RuleEntity();
-      rule.setScore(Integer.parseInt(TEST__SCORE));
+      rule.setScore(Integer.parseInt(TEST_SCORE));
       rule.setTitle(RULE_NAME);
-      rule.setDescription("Description");
+      rule.setDescription(DESCRIPTION);
       rule.setEnabled(true);
       rule.setDeleted(false);
       rule.setEvent(RULE_NAME);
@@ -359,9 +383,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     RuleEntity rule = ruleDAO.findActiveRuleByEventAndProgramId(name, domainId);
     if (rule == null) {
       rule = new RuleEntity();
-      rule.setScore(Integer.parseInt(TEST__SCORE));
+      rule.setScore(Integer.parseInt(TEST_SCORE));
       rule.setTitle(name);
-      rule.setDescription("Description");
+      rule.setDescription(DESCRIPTION);
       rule.setEnabled(true);
       rule.setDeleted(false);
       rule.setEvent(name);
@@ -382,9 +406,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     RuleEntity rule = ruleDAO.findActiveRuleByEventAndProgramId(name, domainId);
     if (rule == null) {
       rule = new RuleEntity();
-      rule.setScore(Integer.parseInt(TEST__SCORE));
+      rule.setScore(Integer.parseInt(TEST_SCORE));
       rule.setTitle(name);
-      rule.setDescription("Description");
+      rule.setDescription(DESCRIPTION);
       rule.setEnabled(true);
       rule.setDeleted(false);
       rule.setEvent(name);
@@ -413,9 +437,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     RuleEntity rule = ruleDAO.findRuleByTitle(name);
     if (rule == null) {
       rule = new RuleEntity();
-      rule.setScore(Integer.parseInt(TEST__SCORE));
+      rule.setScore(Integer.parseInt(TEST_SCORE));
       rule.setTitle(name);
-      rule.setDescription("Description");
+      rule.setDescription(DESCRIPTION);
       rule.setEnabled(isEnabled);
       rule.setDeleted(false);
       rule.setEvent(name);
@@ -438,7 +462,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected ProgramEntity newDomain() {
     ProgramEntity domain = new ProgramEntity();
     domain.setTitle(GAMIFICATION_DOMAIN);
-    domain.setDescription("Description");
+    domain.setDescription(DESCRIPTION);
     domain.setCreatedBy(TEST_USER_EARNER);
     domain.setLastModifiedBy(TEST_USER_EARNER);
     domain.setDeleted(false);
@@ -447,7 +471,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     domain.setType(EntityType.AUTOMATIC);
     domain.setCreatedDate(new Date());
     domain.setAudienceId(1L);
-    HashSet<Long> owners = new HashSet<Long>();
+    HashSet<Long> owners = new HashSet<>();
     owners.add(1L);
     domain.setOwners(owners);
     domain = programDAO.create(domain);
@@ -462,7 +486,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected ProgramEntity newDomain(EntityType entityType, String name, boolean status, Set<Long> owners, Long audienceId) {
     ProgramEntity domain = new ProgramEntity();
     domain.setTitle(name);
-    domain.setDescription("Description");
+    domain.setDescription(DESCRIPTION);
     domain.setCreatedBy(TEST_USER_EARNER);
     domain.setLastModifiedBy(TEST_USER_EARNER);
     domain.setDeleted(false);
@@ -524,7 +548,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     ProgramEntity domainEntity = programDAO.find(domainId);
     BadgeEntity badge = new BadgeEntity();
     badge.setTitle(BADGE_NAME);
-    badge.setDescription("Description");
+    badge.setDescription(DESCRIPTION);
     badge.setNeededScore(10);
     badge.setIconFileId(10245);
     badge.setEnabled(true);
@@ -541,7 +565,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected BadgeEntity newBadgeWithScore() {
     BadgeEntity badge = new BadgeEntity();
     badge.setTitle(BADGE_NAME);
-    badge.setDescription("Description");
+    badge.setDescription(DESCRIPTION);
     badge.setNeededScore(160);
     badge.setIconFileId(10245);
     badge.setEnabled(true);
@@ -559,7 +583,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     ProgramEntity domainEntity = programDAO.find(domainId);
     BadgeEntity badge = new BadgeEntity();
     badge.setTitle(name);
-    badge.setDescription("Description");
+    badge.setDescription(DESCRIPTION);
     badge.setNeededScore(Integer.parseInt(TEST_GLOBAL_SCORE));
     badge.setIconFileId(10245);
     badge.setEnabled(true);
@@ -586,9 +610,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
     gHistory.setRuleEntity(rule);
-    gHistory.setCreatedBy("gamification");
-    gHistory.setObjectId("objectId");
-    gHistory.setObjectType("objectType");
+    gHistory.setCreatedBy(PROGRAM_CREATOR);
+    gHistory.setObjectId(OBJECT_ID);
+    gHistory.setObjectType(OBJECT_TYPE);
     gHistory.setCreatedDate(fromDate);
     gHistory.setType(rule.getType());
     gHistory = realizationDAO.create(gHistory);
@@ -609,8 +633,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
     gHistory.setRuleEntity(rule);
-    gHistory.setCreatedBy("gamification");
-    gHistory.setObjectId("objectId");
+    gHistory.setCreatedBy(PROGRAM_CREATOR);
+    gHistory.setObjectId(OBJECT_ID);
     gHistory.setCreatedDate(fromDate);
     gHistory.setType(EntityType.AUTOMATIC);
     gHistory = realizationDAO.create(gHistory);
@@ -633,9 +657,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setGlobalScore(rule.getScore());
     gHistory.setRuleEntity(rule);
     gHistory.setDomainEntity(newDomain());
-    gHistory.setObjectId("objectId");
+    gHistory.setObjectId(OBJECT_ID);
     gHistory.setCreatedDate(fromDate);
-    gHistory.setCreatedBy("gamification");
+    gHistory.setCreatedBy(PROGRAM_CREATOR);
     gHistory.setType(rule.getType());
     gHistory = realizationDAO.create(gHistory);
     return gHistory;
@@ -655,9 +679,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
     gHistory.setRuleEntity(rule);
-    gHistory.setCreatedBy("gamification");
+    gHistory.setCreatedBy(PROGRAM_CREATOR);
     gHistory.setDomainEntity(newDomain());
-    gHistory.setObjectId("objectId");
+    gHistory.setObjectId(OBJECT_ID);
     gHistory.setCreatedDate(fromDate);
     gHistory.setType(rule.getType());
     gHistory = realizationDAO.create(gHistory);
@@ -678,9 +702,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
     gHistory.setRuleEntity(rule);
-    gHistory.setCreatedBy("gamification");
+    gHistory.setCreatedBy(PROGRAM_CREATOR);
     gHistory.setDomainEntity(newDomain());
-    gHistory.setObjectId("objectId");
+    gHistory.setObjectId(OBJECT_ID);
     gHistory.setCreatedDate(fromDate);
     gHistory.setType(rule.getType());
     gHistory = realizationDAO.create(gHistory);
@@ -703,9 +727,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
     gHistory.setRuleEntity(rule);
-    gHistory.setCreatedBy("gamification");
+    gHistory.setCreatedBy(PROGRAM_CREATOR);
     gHistory.setDomainEntity(newDomain());
-    gHistory.setObjectId("objectId");
+    gHistory.setObjectId(OBJECT_ID);
     gHistory.setCreatedDate(createdDate);
     gHistory.setType(rule.getType());
     gHistory = realizationDAO.create(gHistory);
@@ -766,8 +790,18 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     }
   }
 
+  protected void setOpenHubAccess() {
+    securitySettingService.saveRegistrationType(UserRegistrationType.OPEN);
+    this.hubRestricted = false;
+  }
+
+  protected void setRestrictedHubAccess() {
+    securitySettingService.saveRegistrationType(UserRegistrationType.RESTRICTED);
+    this.hubRestricted = true;
+  }
+
   protected ContainerResponse getResponse(String method, String restPath, String input) throws Exception {
-    byte[] jsonData = (StringUtils.isBlank(input) ? "" : input).getBytes("UTF-8");
+    byte[] jsonData = (StringUtils.isBlank(input) ? "" : input).getBytes(StandardCharsets.UTF_8);
     MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
     headers.putSingle("content-type", "application/json");
     headers.putSingle("content-length", "" + jsonData.length);

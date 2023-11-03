@@ -324,25 +324,6 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     assertEquals(IdentityType.SPACE, realizationEntity.getEarnerType());
   }
 
-  public void testComputeTotalScore() {
-    RuleDTO ruleDTO = newRuleDTO();
-    RealizationDTO realization1 = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                                        TEST_USER_EARNER,
-                                                                        TEST_USER_RECEIVER,
-                                                                        ACTIVITY_ID,
-                                                                        ACTIVITY_OBJECT_TYPE)
-                                                    .get(0);
-
-    RealizationDTO realization2 = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                                        TEST_USER_EARNER,
-                                                                        TEST_USER_RECEIVER,
-                                                                        ACTIVITY_ID,
-                                                                        ACTIVITY_OBJECT_TYPE)
-                                                    .get(0);
-
-    assertEquals(realization1.getActionScore() + realization2.getActionScore(), realizationDAO.getTotalScore(TEST_USER_EARNER));
-  }
-
   public void testLeaderboardRank() {
     ProgramDTO program = newProgram();
     RuleDTO ruleDTO = newRuleDTO(RULE_NAME, program.getId());

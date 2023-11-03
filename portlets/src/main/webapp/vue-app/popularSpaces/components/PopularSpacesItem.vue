@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-list-item class="pa-0 spaceItem">
+  <v-list-item class="pa-0 spaceItem" dense>
     <exo-space-avatar
       :space="space"
       class="text-truncate"
@@ -27,7 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </span>
       </template>
     </exo-space-avatar>
-    <v-list-item-action class="ma-0 pe-4 flex-row align-self-center ml-auto flex-shrink-0" :class="displaySecondButton ? 'secondButtonDisplayed' : ''">
+    <v-list-item-action class="ma-0 flex-row align-self-center ml-auto flex-shrink-0 border-box-sizing" :class="displaySecondButton ? 'secondButtonDisplayed' : ''">
       <div v-if="space.isInvited || skeleton" class="invitationButtons">
         <div class="acceptToJoinSpaceButtonParent">
           <v-btn

@@ -152,6 +152,7 @@ export default {
   },
   data: () => ({
     users: [],
+    limit: 6,
     identityId: eXo.env.portal.profileOwnerIdentityId,
   }),
   computed: {
@@ -174,10 +175,10 @@ export default {
       return this.$leaderboardService.getLeaderboard({
         identityId: eXo.env.portal.profileOwnerIdentityId,
         period: 'WEEK',
-        limit: 6,
+        limit: this.limit,
       })
         .then(data => {
-          this.users = data.slice();
+          this.users = data.slice(0, this.limit);
           document.dispatchEvent(new CustomEvent('listOfRankedConnections', {detail: this.users.length}));
         });
     },

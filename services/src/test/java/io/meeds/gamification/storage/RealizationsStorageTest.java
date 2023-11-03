@@ -42,11 +42,11 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setEarnerType(IdentityType.getType(""));
     filter.setProgramIds(domainIds);
     ProgramEntity domainEntity = newDomain();
-    assertEquals(0, realizationsStorage.getRealizationsByFilter(filter, offset, limit).size());
+    assertEquals(0, realizationsStorage.getRealizationsByFilter(filter, OFFSET, LIMIT).size());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    assertEquals(3, realizationsStorage.getRealizationsByFilter(filter, offset, limit).size());
+    assertEquals(3, realizationsStorage.getRealizationsByFilter(filter, OFFSET, LIMIT).size());
   }
   
   @Test
@@ -58,12 +58,12 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setEarnerIds(new ArrayList<>(Collections.singleton("1")));
     filter.setEarnerType(IdentityType.getType(""));
     filter.setProgramIds(domainIds);
-    assertEquals(0, realizationsStorage.getRealizationsByFilter(filter, offset, limit).size());
+    assertEquals(0, realizationsStorage.getRealizationsByFilter(filter, OFFSET, LIMIT).size());
     ProgramEntity domainEntity = newDomain();
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    assertEquals(3, realizationsStorage.getRealizationsByFilter(filter, offset, limit).size());
+    assertEquals(3, realizationsStorage.getRealizationsByFilter(filter, OFFSET, LIMIT).size());
   }
 
   @Test
@@ -75,7 +75,7 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setEarnerIds(new ArrayList<>());
     filter.setEarnerType(IdentityType.getType(""));
     filter.setProgramIds(domainIds);
-    assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
+    assertEquals(realizationsStorage.getRealizationsByFilter(filter, OFFSET, LIMIT).size(), 0);
     RealizationDTO gHistory = newRealizationDTO();
     RealizationDTO newGHistory = realizationsStorage.getRealizationById(gHistory.getId());
     assertNotNull(newGHistory);
@@ -91,7 +91,7 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setEarnerIds(new ArrayList<>());
     filter.setEarnerType(IdentityType.getType(""));
     filter.setProgramIds(domainIds);
-    assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
+    assertEquals(realizationsStorage.getRealizationsByFilter(filter, OFFSET, LIMIT).size(), 0);
     RealizationDTO gHistory = newRealizationDTO();
     assertEquals(gHistory.getStatus(), RealizationStatus.ACCEPTED.name());
     gHistory.setStatus(RealizationStatus.REJECTED.name());
