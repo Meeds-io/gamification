@@ -44,29 +44,29 @@ public class EventServiceTest extends AbstractServiceTest {
 
   public void testCreateEvent() throws Exception {
     EventFilter eventFilter = new EventFilter();
-    assertEquals(Collections.emptyList(), eventService.getEvents(eventFilter, offset, limit));
+    assertEquals(Collections.emptyList(), eventService.getEvents(eventFilter, OFFSET, LIMIT));
     assertThrows(IllegalArgumentException.class, () -> eventService.createEvent(null));
     EventEntity eventEntity = new EventEntity();
     eventEntity.setType("connectorName");
     eventEntity.setTitle("event1");
     eventEntity.setTrigger("trigger1");
     eventService.createEvent(EventMapper.fromEntity(eventEntity));
-    assertNotNull(eventService.getEvents(eventFilter, offset, limit));
+    assertNotNull(eventService.getEvents(eventFilter, OFFSET, LIMIT));
     assertEquals(1, eventService.countEvents(eventFilter));
   }
 
   public void testGetEvents() {
     EventFilter eventFilter = new EventFilter();
 
-    List<EventDTO> allEvents = eventService.getEvents(eventFilter, offset, limit);
+    List<EventDTO> allEvents = eventService.getEvents(eventFilter, OFFSET, LIMIT);
     assertEquals(Collections.emptyList(), allEvents);
     String eventTitle1 = "test-event1";
     String eventTitle2 = "test-event2";
     eventRegistry.addPlugin(new EventConfigPlugin(newParam(eventTitle1, "connectorName", "trigger1")));
     eventRegistry.addPlugin(new EventConfigPlugin(newParam(eventTitle2, "connectorName2", "trigger2")));
     eventRegistry.start();
-    assertNotNull(eventService.getEvents(eventFilter, offset, limit));
-    assertEquals(2, eventService.getEvents(eventFilter, offset, limit).size());
+    assertNotNull(eventService.getEvents(eventFilter, OFFSET, LIMIT));
+    assertEquals(2, eventService.getEvents(eventFilter, OFFSET, LIMIT).size());
     assertEquals(2, eventService.countEvents(eventFilter));
   }
 

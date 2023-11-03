@@ -186,7 +186,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertEquals(ruleDAO.findAll().size(), 0);
     assertThrows(IllegalArgumentException.class, () -> ruleService.createRule(null, SPACE_MEMBER_USER));
     RuleEntity rule = new RuleEntity();
-    rule.setScore(Integer.parseInt(TEST__SCORE));
+    rule.setScore(Integer.parseInt(TEST_SCORE));
     rule.setTitle(RULE_NAME);
     rule.setDescription("Description");
     rule.setEnabled(true);
@@ -262,7 +262,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     ProgramDTO program = newProgram(GAMIFICATION_DOMAIN);
 
     RulePublication rule = new RulePublication();
-    rule.setScore(Integer.parseInt(TEST__SCORE));
+    rule.setScore(Integer.parseInt(TEST_SCORE));
     rule.setTitle(RULE_NAME);
     rule.setDescription("Description");
     rule.setEnabled(true);
@@ -305,7 +305,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     ProgramDTO program = newProgram(GAMIFICATION_DOMAIN);
 
     RulePublication rule = new RulePublication();
-    rule.setScore(Integer.parseInt(TEST__SCORE));
+    rule.setScore(Integer.parseInt(TEST_SCORE));
     rule.setTitle(RULE_NAME);
     rule.setDescription("Description");
     rule.setEnabled(true);
