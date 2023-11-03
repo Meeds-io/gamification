@@ -39,7 +39,9 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 @SuppressWarnings("all")
 public class SpaceServiceMock implements SpaceService {
 
-  public static final String       SPACE_PRETTY_NAME  = "space100";
+  public static final String       SPACE_PRETTY_NAME  = "space150";
+
+  public static final String       SPACE_PRETTY_NAME2 = "space152";
 
   public static final String       SPACE_GROUP_ID     = "/spaces/" + SPACE_PRETTY_NAME;
 
@@ -66,15 +68,17 @@ public class SpaceServiceMock implements SpaceService {
     if (SPACE_DISPLAY_NAME.equals(spaceDisplayName)) {
       return getSpace();
     } else {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException(spaceDisplayName);
     }
   }
 
   public Space getSpaceByPrettyName(String spacePrettyName) {
     if (SPACE_PRETTY_NAME.equals(spacePrettyName)) {
-      return getSpace();
+      return getSpace(SPACE_ID_1);
+    } else if (SPACE_PRETTY_NAME2.equals(spacePrettyName)) {
+      return getSpace(SPACE_ID_2);
     } else {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException(spacePrettyName);
     }
   }
 
@@ -82,7 +86,7 @@ public class SpaceServiceMock implements SpaceService {
     if (groupId.equals(SPACE_GROUP_ID)) {
       return getSpace();
     } else {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException(groupId);
     }
   }
 
