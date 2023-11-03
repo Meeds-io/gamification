@@ -68,32 +68,32 @@ public class ProgramStorageTest extends AbstractServiceTest {
     filter.setType(EntityFilterType.ALL);
     filter.setStatus(EntityStatusType.ENABLED);
     filter.setAllSpaces(true);
-    assertEquals(0, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
+    assertEquals(0, domainStorage.getProgramIdsByFilter(filter, OFFSET, 10).size());
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
     newDomain(EntityType.AUTOMATIC, "domain3", true, new HashSet<>());
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
-    assertEquals(4, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
+    assertEquals(4, domainStorage.getProgramIdsByFilter(filter, OFFSET, 10).size());
 
     filter.setType(EntityFilterType.AUTOMATIC);
-    assertEquals(2, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
+    assertEquals(2, domainStorage.getProgramIdsByFilter(filter, OFFSET, 10).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
-    assertEquals(2, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
+    assertEquals(2, domainStorage.getProgramIdsByFilter(filter, OFFSET, 10).size());
 
     filter.setType(EntityFilterType.MANUAL);
-    assertEquals(2, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
+    assertEquals(2, domainStorage.getProgramIdsByFilter(filter, OFFSET, 10).size());
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
-    assertEquals(2, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
+    assertEquals(2, domainStorage.getProgramIdsByFilter(filter, OFFSET, 10).size());
 
     filter.setStatus(EntityStatusType.ALL);
     filter.setType(EntityFilterType.ALL);
-    assertEquals(6, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
+    assertEquals(6, domainStorage.getProgramIdsByFilter(filter, OFFSET, 10).size());
     filter.setStatus(EntityStatusType.DISABLED);
-    assertEquals(2, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
+    assertEquals(2, domainStorage.getProgramIdsByFilter(filter, OFFSET, 10).size());
     filter.setType(EntityFilterType.AUTOMATIC);
-    assertEquals(1, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
+    assertEquals(1, domainStorage.getProgramIdsByFilter(filter, OFFSET, 10).size());
     filter.setType(EntityFilterType.MANUAL);
-    assertEquals(1, domainStorage.getProgramIdsByFilter(filter, offset, 10).size());
+    assertEquals(1, domainStorage.getProgramIdsByFilter(filter, OFFSET, 10).size());
   }
 
   @Test
