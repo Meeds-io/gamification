@@ -203,7 +203,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     filter.setType(EntityFilterType.MANUAL);
     assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     RuleEntity ruleEntityNotStarted = new RuleEntity();
-    ruleEntityNotStarted.setScore(Integer.parseInt(TEST__SCORE));
+    ruleEntityNotStarted.setScore(Integer.parseInt(TEST_SCORE));
     ruleEntityNotStarted.setTitle("ruleEntityNotStarted");
     ruleEntityNotStarted.setDescription("ruleEntityNotStarted Description");
     ruleEntityNotStarted.setEnabled(true);
@@ -227,7 +227,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertEquals(3, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
 
     RuleEntity ruleEntityEnded = new RuleEntity();
-    ruleEntityEnded.setScore(Integer.parseInt(TEST__SCORE));
+    ruleEntityEnded.setScore(Integer.parseInt(TEST_SCORE));
     ruleEntityEnded.setTitle("ruleEntityEnded");
     ruleEntityEnded.setDescription("ruleEntityEnded Description");
     ruleEntityEnded.setEnabled(true);

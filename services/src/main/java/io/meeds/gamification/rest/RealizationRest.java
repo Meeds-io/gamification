@@ -131,8 +131,8 @@ public class RealizationRest implements ResourceContainer {
                                   String returnType,
                                   @Parameter(description = "Earner type, either USER or SPACE. Default: USER", required = false)
                                   @DefaultValue("USER")
-                                  @QueryParam("earnerType")
-                                  IdentityType earnerType,
+                                  @QueryParam("identityType")
+                                  IdentityType identityType,
                                   @Parameter(description = "Realization status. Possible values: ACCEPTED, REJECTED, CANCELED, DELETED", required = false)
                                   @QueryParam("status")
                                   RealizationStatus status,
@@ -146,7 +146,7 @@ public class RealizationRest implements ResourceContainer {
                                   @QueryParam("owned")
                                   @DefaultValue("false")
                                   boolean owned,
-                                  @Parameter(description = "If true, this will all realizations, even the ones where user can't access, will be retrieved by anonymizing the associated program and rule", required = false)
+                                  @Parameter(description = "If true, this will return all realizations, even the ones where user can't access, will be retrieved by anonymizing the associated program and rule", required = false)
                                   @QueryParam("allPrograms")
                                   @DefaultValue("false")
                                   boolean allPrograms,
@@ -173,7 +173,7 @@ public class RealizationRest implements ResourceContainer {
                                                      fromDate,
                                                      toDate,
                                                      status,
-                                                     earnerType,
+                                                     identityType,
                                                      programIds,
                                                      ruleIds,
                                                      allPrograms);
@@ -194,7 +194,7 @@ public class RealizationRest implements ResourceContainer {
           return Response.status(Response.Status.UNAUTHORIZED).entity("Must be authenticated to export XLS file").build();
         }
         if (allPrograms) {
-          return Response.status(Response.Status.UNAUTHORIZED).entity("'allPrograms' not allowed when exporting XLSX").build();
+          return Response.status(Response.Status.UNAUTHORIZED).entity("'allPrograms' not allowed when exporting XLS file").build();
         }
         String filename = "report_Actions";
         InputStream xlsxInputStream = realizationService.exportXlsx(filter, identity, filename, request.getLocale());
