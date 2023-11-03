@@ -22,7 +22,10 @@
 <template>
   <div>
     <div class="d-flex">
-      <v-tabs v-model="selectedPeriod" class="flex-grow-1 flex-shrink-1 width-auto">
+      <v-tabs
+        v-model="selectedPeriod"
+        :show-arrows="mobile"
+        class="flex-grow-1 flex-shrink-1 width-auto">
         <v-tab
           v-for="period in periods"
           :key="period.value"
