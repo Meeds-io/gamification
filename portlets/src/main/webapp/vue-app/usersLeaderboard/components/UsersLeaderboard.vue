@@ -29,37 +29,9 @@
           class="d-inline-block widget-text-header text-truncate">
           {{ $t('exoplatform.gamification.userLeaderboard.title') }}
         </div>
-        <v-spacer />
-        <v-tooltip bottom>
-          <template #activator="{on, bind}">
-            <v-btn
-              v-on="on"
-              v-bind="bind"
-              :href="infoUrl"
-              height="auto"
-              width="auto"
-              icon
-              small
-              class="d-inline-block ms-3">
-              <v-icon class="primary--text" size="16">fa-info-circle</v-icon>
-            </v-btn>
-          </template>
-          <span>{{ $t('exoplatform.gamification.leaderboard.Howearnpoints') }}</span>
-        </v-tooltip>
       </div>
-      <users-leaderboard-tabs
-        v-model="selectedProgramId"
-        :program-id="selectedProgramId" />
+      <users-leaderboard-tabs />
     </v-card>
     <engagement-center-rule-extensions />
   </v-app>
 </template>
-<script>
-export default {
-  computed: {
-    infoUrl() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`;
-    },
-  },
-};
-</script>
