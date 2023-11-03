@@ -18,27 +18,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-app>
     <widget-wrapper
       :title="$t('popularSpaces.title')">
-      <v-layout>
-        <v-col>
-          <v-list
-            v-if="spaces && spaces.length"
-            two-line
-            class="pt-0 px-3">
-            <popular-spaces-item
-              v-for="space in spaces"
-              :key="space.technicalId"
-              :space="space"
-              @refresh="refresh" />
-          </v-list>
-          <div
-            v-else
-            class="d-flex justify-center">
-            <span class="emptySpacesLeaderboardIcon mb-2">
-              Ø
-            </span>
-          </div>
-        </v-col>
-      </v-layout>
+      <v-card :loading="loading" flat>
+        <v-list
+          v-if="spaces && spaces.length"
+          loading="loading"
+          two-line
+          class="pa-0 mb-n2">
+          <popular-spaces-item
+            v-for="space in spaces"
+            :key="space.technicalId"
+            :space="space"
+            @refresh="refresh" />
+        </v-list>
+        <div
+          v-else-if="!loading"
+          class="d-flex justify-center">
+          <span class="emptySpacesLeaderboardIcon mb-2">
+            Ø
+          </span>
+        </div>
+      </v-card>
     </widget-wrapper>
   </v-app>
 </template>
@@ -58,12 +57,14 @@ export default {
   },
   data: () => ({
     spaces: [],
+    loading: true,
   }),
   created() {
     this.refresh();
   },
   methods: {
     refresh() {
+      this.loading = true;
       return popularSpacesService.getSpaceLeaderBord(this.period, this.limit)
         .then((spacesByPoints) => {
           const promises = [];
@@ -84,7 +85,10 @@ export default {
         }).then((spacesByPoints) => {
           this.spaces = spacesByPoints.sort((s1, s2) => s1.rank - s2.rank);
           return this.$nextTick();
-        }).finally(() => this.$root.$applicationLoaded());
+        }).finally(() => {
+          this.loading = false;
+          this.$root.$applicationLoaded();
+        });
     },
   },
 };

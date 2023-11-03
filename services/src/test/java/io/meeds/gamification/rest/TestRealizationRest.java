@@ -166,7 +166,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
   @Test
   public void testGetAllRealizationsSortByDateDescending() throws Exception {
     String restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
-        + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true" + "&returnType=" + JSON_TYPE;
+        + "&offset=0&limit=" + LIMIT + "&sortBy=date&sortDescending=true" + "&returnType=" + JSON_TYPE;
 
     startSessionAs("root1");
 
@@ -180,7 +180,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     // add new realization
     List<RealizationEntity> createdActionHistories = new ArrayList<>();
     ProgramEntity domainEntity = newDomain();
-    for (int i = 0; i < limit * 2; i++) {
+    for (int i = 0; i < LIMIT * 2; i++) {
       createdActionHistories.add(newRealizationEntity("rule", domainEntity.getId()));
     }
     Collections.reverse(createdActionHistories);
@@ -189,8 +189,8 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     realizationList = (RealizationList) response.getEntity();
-    assertEquals(limit, realizationList.getRealizations().size());
-    assertEquals(createdActionHistories.subList(0, limit)
+    assertEquals(LIMIT, realizationList.getRealizations().size());
+    assertEquals(createdActionHistories.subList(0, LIMIT)
                                        .stream()
                                        .map(RealizationEntity::getId)
                                        .toList(),
@@ -203,7 +203,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
   @Test
   public void testGetAllRealizationsSortByDateAscending() throws Exception {
     String restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
-        + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=false" + "&returnType=" + JSON_TYPE;
+        + "&offset=0&limit=" + LIMIT + "&sortBy=date&sortDescending=false" + "&returnType=" + JSON_TYPE;
 
     ContainerResponse response = getResponse("GET", getURLResource(restPath), null);
     assertNotNull(response);
@@ -223,7 +223,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     // add new realization
     List<RealizationEntity> createdActionHistories = new ArrayList<>();
     ProgramEntity domainEntity = newDomain();
-    for (int i = 0; i < limit * 2; i++) {
+    for (int i = 0; i < LIMIT * 2; i++) {
       createdActionHistories.add(newRealizationEntity("rule", domainEntity.getId()));
     }
 
@@ -232,8 +232,8 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     assertEquals(200, response.getStatus());
     realizationList = (RealizationList) response.getEntity();
     realizations = realizationList.getRealizations();
-    assertEquals(limit, realizations.size());
-    assertEquals(createdActionHistories.subList(0, limit)
+    assertEquals(LIMIT, realizations.size());
+    assertEquals(createdActionHistories.subList(0, LIMIT)
                                        .stream()
                                        .map(RealizationEntity::getId)
                                        .toList(),
@@ -248,15 +248,15 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
 
     // add new realization
     List<RealizationEntity> createdActionHistories = new ArrayList<>();
-    for (int i = 0; i < limit; i++) {
+    for (int i = 0; i < LIMIT; i++) {
       createdActionHistories.add(0, newRealizationEntityWithRuleId(rule2Manual.getEvent(), rule2Manual.getId()));
     }
-    for (int i = 0; i < limit; i++) {
+    for (int i = 0; i < LIMIT; i++) {
       createdActionHistories.add(0, newRealizationEntityWithRuleId(rule1Automatic.getEvent(), rule1Automatic.getId()));
     }
 
     String restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
-        + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true" + "&returnType=" + JSON_TYPE;
+        + "&offset=0&limit=" + LIMIT + "&sortBy=date&sortDescending=true" + "&returnType=" + JSON_TYPE;
 
     startSessionAs("root1");
 
@@ -266,8 +266,8 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     assertEquals(200, response.getStatus());
     RealizationList realizationList = (RealizationList) response.getEntity();
     List<RealizationRestEntity> realizations = realizationList.getRealizations();
-    assertEquals(limit, realizations.size());
-    assertEquals(createdActionHistories.subList(0, limit)
+    assertEquals(LIMIT, realizations.size());
+    assertEquals(createdActionHistories.subList(0, LIMIT)
                                        .stream()
                                        .map(RealizationEntity::getId)
                                        .toList(),
@@ -293,15 +293,15 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
 
     // add new realization
     List<RealizationEntity> createdActionHistories = new ArrayList<>();
-    for (int i = 0; i < limit; i++) {
+    for (int i = 0; i < LIMIT; i++) {
       createdActionHistories.add(0, newRealizationEntityWithRuleId(rule1Automatic.getEvent(), rule1Automatic.getId()));
     }
-    for (int i = 0; i < limit; i++) {
+    for (int i = 0; i < LIMIT; i++) {
       createdActionHistories.add(0, newRealizationEntityWithRuleId(rule2Manual.getEvent(), rule2Manual.getId()));
     }
 
     String restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
-        + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true" + "&returnType=" + JSON_TYPE;
+        + "&offset=0&limit=" + LIMIT + "&sortBy=date&sortDescending=true" + "&returnType=" + JSON_TYPE;
 
     startSessionAs("root1");
 
@@ -310,8 +310,8 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     assertEquals(200, response.getStatus());
     RealizationList realizationList = (RealizationList) response.getEntity();
     List<RealizationRestEntity> realizations = realizationList.getRealizations();
-    assertEquals(limit, realizations.size());
-    assertEquals(createdActionHistories.subList(0, limit)
+    assertEquals(LIMIT, realizations.size());
+    assertEquals(createdActionHistories.subList(0, LIMIT)
                                        .stream()
                                        .map(RealizationEntity::getId)
                                        .toList(),
@@ -418,7 +418,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    assertEquals(TEST__SCORE, response.getEntity().toString());
+    assertEquals(TEST_SCORE, response.getEntity().toString());
 
     restPath = "/gamification/realizations/points?userId=root1&period=WEEK";
     envctx = new EnvironmentContext();
@@ -428,7 +428,7 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     response = launcher.service("GET", restPath, "", null, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    assertEquals(TEST__SCORE, response.getEntity().toString());
+    assertEquals(TEST_SCORE, response.getEntity().toString());
 
     restPath = "/gamification/realizations/points?period=MONTH";
     envctx = new EnvironmentContext();

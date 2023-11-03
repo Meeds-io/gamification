@@ -52,7 +52,7 @@ import io.meeds.gamification.plugin.RuleTranslationPluginTest;
 import io.meeds.gamification.rest.TestAnnouncementRest;
 import io.meeds.gamification.rest.TestBadgeRest;
 import io.meeds.gamification.rest.TestConnectorRest;
-import io.meeds.gamification.rest.TestLeaderboardEndpoint;
+import io.meeds.gamification.rest.TestLeaderboardRest;
 import io.meeds.gamification.rest.TestProgramRest;
 import io.meeds.gamification.rest.TestRealizationRest;
 import io.meeds.gamification.rest.TestRuleRest;
@@ -104,7 +104,7 @@ import io.meeds.gamification.utils.UtilsTest;
     UtilsTest.class,
     TestProgramRest.class,
     TestUserReputationEndpoint.class,
-    TestLeaderboardEndpoint.class,
+    TestLeaderboardRest.class,
     TestBadgeRest.class,
     TestRealizationRest.class,
     TestRuleRest.class,
