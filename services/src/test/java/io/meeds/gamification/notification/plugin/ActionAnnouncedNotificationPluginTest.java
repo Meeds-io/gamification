@@ -64,7 +64,7 @@ public class ActionAnnouncedNotificationPluginTest extends AbstractPluginTest { 
     program = programService.createProgram(program);
 
     RulePublication rule = new RulePublication();
-    rule.setScore(Integer.parseInt(TEST__SCORE));
+    rule.setScore(Integer.parseInt(TEST_SCORE));
     rule.setTitle(RULE_NAME);
     rule.setDescription("Description");
     rule.setEnabled(true);

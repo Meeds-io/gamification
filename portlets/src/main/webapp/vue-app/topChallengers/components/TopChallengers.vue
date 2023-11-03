@@ -71,9 +71,6 @@ export default {
     loading: true,
   }),
   computed: {
-    peopleURL() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/people`;
-    },
     displayPlaceholder() {
       return !this.rankDisplayed && !this.loading;
     }
