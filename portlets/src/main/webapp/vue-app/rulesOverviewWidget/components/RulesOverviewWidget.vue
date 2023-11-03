@@ -22,6 +22,9 @@
     :title="title"
     height="auto"
     min-width="auto">
+    <template #title>
+      <slot name="title"></slot>
+    </template>
     <template v-if="lockedRulesCount">
       <div class="d-flex align-center">
         <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
