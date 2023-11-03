@@ -23,45 +23,60 @@
   <v-card
     :loading="loading"
     :min-height="size"
-    class="flex full-width flex-grow-1"
+    class="d-flex flex-row overflow-hidden subtitle-2 text-color full-width flex-grow-1"
     flat>
-    <div class="d-flex flex-row overflow-hidden subtitle-2 text-color">
-      <v-card
-        :max-height="size"
-        class="col-5 ps-0 pe-1 my-auto overflow-y-auto overflow-x-hidden"
-        flat>
-        <v-tooltip
-          v-for="(item, index) in involvedPrograms"
-          :key="index"
-          bottom>
-          <template #activator="{ on }">
-            <v-card
-              v-on="{
-                ...on,
-                click: () => select(item.id),
-              }"
-              :color="item.id === programId && 'primary' || ''"
-              class="text-truncate-2 caption font-weight-light my-1"
-              flat>
-              <div class="d-inline-block">
-                <v-card
-                  :color="colors[index % colors.length]"
-                  min-width="30px"
-                  width="30px"
-                  height="17px"
-                  class="me-1 mb-n1"
-                  flat />
-              </div>
-              {{ item.label || $t('gamification.hiddenProgram') }}
-            </v-card>
-          </template>
-          <span>{{ item.label || $t('gamification.hiddenProgramTooltip') }}</span>
-        </v-tooltip>
-      </v-card>
-      <v-flex
+    <v-card
+      :max-height="size"
+      class="flex-grow-1 ps-0 pe-1 my-auto overflow-y-auto overflow-x-hidden"
+      flat>
+      <v-tooltip
+        v-for="(item, index) in involvedPrograms"
+        :key="index"
+        :value="viewHoverTooltip && hoverProgramId === item.id"
+        bottom>
+        <template #activator="{ on }">
+          <v-card
+            v-on="{
+              ...on,
+              click: () => select(item.id),
+            }"
+            :id="`${id}-${item.id}`"
+            :color="item.id === programId && 'primary' || ''"
+            :class="hoverProgramId === item.id && 'primary-border-color py-1 mt-1'"
+            class="text-truncate-2 caption font-weight-light my-1"
+            flat>
+            <div class="d-inline-block">
+              <v-card
+                :color="colors[index % colors.length]"
+                min-width="30px"
+                width="30px"
+                height="17px"
+                class="me-1 mb-n1"
+                flat />
+            </div>
+            {{ item.label || $t('gamification.hiddenProgram') }}
+          </v-card>
+        </template>
+        <v-card
+          max-width="200px"
+          class="transparent"
+          flat
+          dark>
+          {{ item.label || $t('gamification.hiddenProgramTooltip') }} {{ hoverProgramPercent && `(${hoverProgramPercent}%)` || '' }}
+        </v-card>
+      </v-tooltip>
+    </v-card>
+    <v-card
+      width="215"
+      class="position-relative flex-grow-1 flex-shrink-0 d-flex align-center justify-center me-n4"
+      flat>
+      <div
         :id="id"
-        class="usersLeaderboardChartParent d-flex justify-end" />
-    </div>
+        min-width="250"
+        max-width="250"
+        class="usersLeaderboardChartParent absolute-horizontal-center align-center justify-center"
+        flat></div>
+    </v-card>
   </v-card>
 </template>
 <script>
@@ -99,6 +114,9 @@ export default {
     loading: false,
     chartData: null,
     involvedPrograms: [],
+    hoverProgramId: null,
+    hoverProgramPercent: null,
+    viewHoverTooltip: false,
     chart: null,
     echarts: null,
     colors: [
@@ -108,6 +126,17 @@ export default {
       '#a47e1b', '#ff4d6d', '#62b0de', '#FF97D0', '#92e03a', '#f44336', '#3d6d8a', '#E0A5FF', '#FF9DB8', '#808080'
     ],
   }),
+  watch: {
+    hoverProgramId() {
+      if (this.hoverProgramId) {
+        const programCard = document.querySelector(`#${this.id}-${this.hoverProgramId}`);
+
+        this.viewHoverTooltip = false;
+        programCard.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        window.setTimeout(() => this.viewHoverTooltip = true, 300);
+      }
+    },
+  },
   mounted() {
     this.refresh();
   },
@@ -155,6 +184,10 @@ export default {
         }
       }
     },
+    hover(programId, percent) {
+      this.hoverProgramPercent = percent;
+      this.hoverProgramId = programId;
+    },
     init() {
       return new Promise((resolve, reject) => {
         if (this.echarts) {
@@ -177,12 +210,13 @@ export default {
         });
         this.chart.setOption({
           tooltip: {
-            trigger: 'item',
-            z: 2000,
-            confine: true,
-            formatter(param) {
-              return `${param.data.label} (${param.percent}%)`;
-            },
+            trigger: false,
+          },
+          grid: {
+            left: '0px',
+            top: '0px',
+            right: '0px',
+            bottom: '0px'
           },
           color: this.colors,
           series: [{
@@ -193,6 +227,8 @@ export default {
           }]
         }, true);
         this.chart.on('click', params => this.select(params?.data?.id));
+        this.chart.on('mouseover', params => this.hover(params?.data?.id, params?.percent));
+        this.chart.on('mouseout', () => this.hover());
       });
     },
   }
