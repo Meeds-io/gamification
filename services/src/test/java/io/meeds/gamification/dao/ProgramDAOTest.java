@@ -33,32 +33,32 @@ public class ProgramDAOTest extends AbstractServiceTest {
     filter.setType(EntityFilterType.ALL);
     filter.setStatus(EntityStatusType.ENABLED);
     filter.setAllSpaces(true);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     newDomain(EntityType.MANUAL, "domain1", true, null);
     newDomain(EntityType.MANUAL, "domain2", true, null);
     newDomain(EntityType.AUTOMATIC, "domain3", true, null);
     newDomain(EntityType.AUTOMATIC, "domain4", true, null);
-    assertEquals(4, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(4, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
 
     filter.setType(EntityFilterType.AUTOMATIC);
-    assertEquals(2, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(2, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, null);
-    assertEquals(2, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(2, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
 
     filter.setType(EntityFilterType.MANUAL);
-    assertEquals(2, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(2, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     newDomain(EntityType.MANUAL, "domain6", false, null);
-    assertEquals(2, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(2, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
 
     filter.setStatus(EntityStatusType.ALL);
     filter.setType(EntityFilterType.ALL);
-    assertEquals(6, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(6, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     filter.setStatus(EntityStatusType.DISABLED);
-    assertEquals(2, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(2, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     filter.setType(EntityFilterType.AUTOMATIC);
-    assertEquals(1, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(1, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     filter.setType(EntityFilterType.MANUAL);
-    assertEquals(1, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(1, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
   }
 
   @Test
@@ -67,32 +67,32 @@ public class ProgramDAOTest extends AbstractServiceTest {
     filter.setType(EntityFilterType.ALL);
     filter.setStatus(EntityStatusType.ENABLED);
     filter.setAllSpaces(false);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     newDomain(EntityType.MANUAL, "domain1", true, null, null);
     newDomain(EntityType.MANUAL, "domain2", true, null, null);
     newDomain(EntityType.AUTOMATIC, "domain3", true, null, null);
     newDomain(EntityType.AUTOMATIC, "domain4", true, null, null);
-    assertEquals(4, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(4, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
 
     filter.setType(EntityFilterType.AUTOMATIC);
-    assertEquals(2, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(2, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, null, null);
-    assertEquals(2, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(2, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
 
     filter.setType(EntityFilterType.MANUAL);
-    assertEquals(2, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(2, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     newDomain(EntityType.MANUAL, "domain6", false, null, null);
-    assertEquals(2, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(2, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
 
     filter.setStatus(EntityStatusType.ALL);
     filter.setType(EntityFilterType.ALL);
-    assertEquals(6, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(6, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     filter.setStatus(EntityStatusType.DISABLED);
-    assertEquals(2, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(2, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     filter.setType(EntityFilterType.AUTOMATIC);
-    assertEquals(1, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(1, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     filter.setType(EntityFilterType.MANUAL);
-    assertEquals(1, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(1, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
   }
 
   @Test
@@ -101,33 +101,33 @@ public class ProgramDAOTest extends AbstractServiceTest {
     filter.setType(EntityFilterType.ALL);
     filter.setStatus(EntityStatusType.ENABLED);
     filter.setAllSpaces(true);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     newDomain(EntityType.MANUAL, "domain1", true, null);
     newDomain(EntityType.MANUAL, "domain2", true, null);
     newDomain(EntityType.AUTOMATIC, "domain3", true, null);
     newDomain(EntityType.AUTOMATIC, "domain4", true, null, null);
     filter.setProgramTitle("domain1");
-    assertEquals(1, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(1, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
 
     filter.setType(EntityFilterType.AUTOMATIC);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, null);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
 
     filter.setType(EntityFilterType.MANUAL);
-    assertEquals(1, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(1, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     newDomain(EntityType.AUTOMATIC, "domain1", true, null);
-    assertEquals(1, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(1, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
 
     filter.setStatus(EntityStatusType.ALL);
     filter.setType(EntityFilterType.ALL);
-    assertEquals(2, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(2, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     filter.setStatus(EntityStatusType.DISABLED);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     filter.setType(EntityFilterType.AUTOMATIC);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     filter.setType(EntityFilterType.MANUAL);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
   }
 
   @Test
@@ -136,34 +136,34 @@ public class ProgramDAOTest extends AbstractServiceTest {
     filter.setType(EntityFilterType.ALL);
     filter.setStatus(EntityStatusType.ENABLED);
     filter.setAllSpaces(false);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     newDomain(EntityType.MANUAL, "domain1", true, null, null);
     newDomain(EntityType.MANUAL, "domain2", true, null, null);
     newDomain(EntityType.AUTOMATIC, "domain3", true, null, null);
     newDomain(EntityType.AUTOMATIC, "domain4", true, null, null);
     newDomain(EntityType.AUTOMATIC, "adminDomain", true, null, 1l);
     filter.setProgramTitle("domain1");
-    assertEquals(1, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(1, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
 
     filter.setType(EntityFilterType.AUTOMATIC);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, null, null);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
 
     filter.setType(EntityFilterType.MANUAL);
-    assertEquals(1, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(1, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     newDomain(EntityType.AUTOMATIC, "domain1", true, null, null);
-    assertEquals(1, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(1, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
 
     filter.setStatus(EntityStatusType.ALL);
     filter.setType(EntityFilterType.ALL);
-    assertEquals(2, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(2, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     filter.setStatus(EntityStatusType.DISABLED);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     filter.setType(EntityFilterType.AUTOMATIC);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
     filter.setType(EntityFilterType.MANUAL);
-    assertEquals(0, programDAO.getProgramIdsByFilter(offset, 10, filter).size());
+    assertEquals(0, programDAO.getProgramIdsByFilter(OFFSET, 10, filter).size());
   }
 
   @Test

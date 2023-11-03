@@ -40,7 +40,7 @@ public class RuleStorageTest extends AbstractServiceTest {
   public void testSaveRule() {
     assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule = new RuleDTO();
-    rule.setScore(Integer.parseInt(TEST__SCORE));
+    rule.setScore(Integer.parseInt(TEST_SCORE));
     rule.setTitle(RULE_NAME);
     rule.setDescription("Description");
     rule.setEnabled(true);
@@ -79,7 +79,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     RuleDTO rule2 = newRuleDTO();
     RuleDTO rule3 = newRuleDTO();
     RuleDTO manualRule = new RuleDTO();
-    manualRule.setScore(Integer.parseInt(TEST__SCORE));
+    manualRule.setScore(Integer.parseInt(TEST_SCORE));
     manualRule.setTitle(RULE_NAME);
     manualRule.setDescription("Description");
     manualRule.setEnabled(true);
@@ -125,7 +125,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     assertEquals(0, rules.size());
 
     RuleDTO rule1 = new RuleDTO();
-    rule1.setScore(Integer.parseInt(TEST__SCORE));
+    rule1.setScore(Integer.parseInt(TEST_SCORE));
     rule1.setTitle("rule1");
     rule1.setDescription("Description");
     rule1.setEnabled(true);
@@ -139,7 +139,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule1.setType(EntityType.MANUAL);
 
     RuleDTO rule2 = new RuleDTO();
-    rule2.setScore(Integer.parseInt(TEST__SCORE));
+    rule2.setScore(Integer.parseInt(TEST_SCORE));
     rule2.setTitle("rule2");
     rule2.setDescription("Description");
     rule2.setEnabled(true);
@@ -153,7 +153,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule2.setType(EntityType.MANUAL);
 
     RuleDTO rule3 = new RuleDTO();
-    rule3.setScore(Integer.parseInt(TEST__SCORE));
+    rule3.setScore(Integer.parseInt(TEST_SCORE));
     rule3.setTitle("rule3");
     rule3.setDescription("Description");
     rule3.setEnabled(true);
@@ -211,7 +211,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     assertEquals(0, ruleStorage.countRulesByFilter(filter));
 
     RuleDTO rule1 = new RuleDTO();
-    rule1.setScore(Integer.parseInt(TEST__SCORE));
+    rule1.setScore(Integer.parseInt(TEST_SCORE));
     rule1.setTitle("rule1");
     rule1.setDescription("Description");
     rule1.setEnabled(true);
@@ -225,7 +225,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule1.setType(EntityType.MANUAL);
 
     RuleDTO rule2 = new RuleDTO();
-    rule2.setScore(Integer.parseInt(TEST__SCORE));
+    rule2.setScore(Integer.parseInt(TEST_SCORE));
     rule2.setTitle("rule2");
     rule2.setDescription("Description");
     rule2.setEnabled(true);
@@ -239,7 +239,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule2.setType(EntityType.MANUAL);
 
     RuleDTO rule3 = new RuleDTO();
-    rule3.setScore(Integer.parseInt(TEST__SCORE));
+    rule3.setScore(Integer.parseInt(TEST_SCORE));
     rule3.setTitle("rule3");
     rule3.setDescription("Description");
     rule3.setEnabled(true);

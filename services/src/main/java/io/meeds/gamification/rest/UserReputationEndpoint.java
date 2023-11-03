@@ -21,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.commons.file.services.FileStorageException;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -420,7 +419,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
 
                 // Find user's stats
-                List<PiechartLeaderboard> userStats = realizationService.getStatsByIdentityId(actorId, null, null);
+                List<PiechartLeaderboard> userStats = realizationService.getLeaderboardStatsByIdentityId(actorId, null, null);
 
                 return Response.ok(userStats, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 

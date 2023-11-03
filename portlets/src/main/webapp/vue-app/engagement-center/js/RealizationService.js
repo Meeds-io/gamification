@@ -106,8 +106,8 @@ function getRealizationsFormData(filter) {
       formData.append('earnerIds', earnerId);
     }
   }
-  if (filter?.earnerType) {
-    formData.append('earnerType', filter.earnerType);
+  if (filter?.identityType) {
+    formData.append('identityType', filter.identityType.toUpperCase());
   }
   if (filter?.status) {
     formData.append('status', filter.status);

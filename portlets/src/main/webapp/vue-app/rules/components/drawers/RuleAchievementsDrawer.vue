@@ -66,7 +66,7 @@ export default {
       limit: 10,
       loading: true,
       realizations: [],
-      earnerType: 'USER',
+      identityType: 'USER',
       status: 'ACCEPTED',
     };
   },
@@ -122,7 +122,7 @@ export default {
     retrieveRealizations() {
       this.loading = true;
       this.$realizationService.getRealizations({
-        earnerType: this.earnerType,
+        identityType: this.identityType,
         status: this.status,
         ruleIds: [this.ruleId],
         sortBy: 'date',
