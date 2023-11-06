@@ -76,9 +76,11 @@ import io.meeds.gamification.storage.RealizationsStorageTest;
 import io.meeds.gamification.storage.RuleStorageTest;
 import io.meeds.gamification.upgrade.ProgramVisibilityUpgradePluginTest;
 import io.meeds.gamification.utils.UtilsTest;
+import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+    PublicActionAccessFilterTest.class,
     RealizationServiceTest.class,
     BadgeServiceTest.class,
     BadgeRegistryTest.class,
