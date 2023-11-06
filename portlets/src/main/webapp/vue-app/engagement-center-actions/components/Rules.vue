@@ -111,9 +111,11 @@ export default {
     type: 'ALL',
     status: 'STARTED',
     ruleNotFound: false,
-    linkBasePath: '/contributions/actions',
   }),
   computed: {
+    linkBasePath() {
+      return eXo.env.portal.portalName === 'public' && '/overview/actions' || 'contributions/actions';
+    },
     filtersCount() {
       return (this.status !== 'STARTED' && 1 || 0)
         + (this.type !== 'ALL' && 1 || 0);

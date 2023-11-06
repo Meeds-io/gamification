@@ -142,7 +142,6 @@ export default {
       seriesData: [],
       loading: true,
       show: false,
-      actionsPageURL: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`,
       colors: [
         '#4ad66d', '#ffe169', '#ff8fa3', '#20a8ea', '#C155F4', '#F7A35B', '#A0C7FF', '#FD6A6A', '#059d98', '#b7efc5',
         '#dbb42c', '#c9184a', '#1273d4', '#E65ABC', '#00FF56', '#B1F6FF', '#FFFF46', '#26a855', '#f10000', '#208b3a',
@@ -205,6 +204,9 @@ export default {
     },
     initialized() {
       return this.show && !this.loading;
+    },
+    actionsPageURL() {
+      return eXo.env.portal.portalName === 'public' && '/portal/public/overview/actions' || `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`;
     },
   },
   watch: {
