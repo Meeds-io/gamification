@@ -80,11 +80,11 @@ export default {
   methods: {
     retrieveRealizations() {
       this.loading = true;
-      return this.$realizationService.getRealizations(Object.assign({
+      return this.$realizationService.getRealizations({
         offset: this.realizations.length,
         limit: this.pageSize,
         returnSize: true,
-      }, this.realizationsFilter))
+        ...this.realizationsFilter})
         .then(data => {
           if (data.realizations.length) {
             this.realizations.push(...data.realizations);

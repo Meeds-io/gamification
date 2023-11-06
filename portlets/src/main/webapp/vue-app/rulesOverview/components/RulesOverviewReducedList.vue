@@ -11,59 +11,77 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
+
   You should have received a copy of the GNU Lesser General Public License
   along with this program; if not, write to the Free Software Foundation,
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <gamification-overview-widget
-    v-if="hasValidRules"
-    :title="$t('gamification.overview.challengesOverviewTitle')"
-    :action-url="actionsPageURL">
-    <template v-if="endingRulesCount">
-      <div class="d-flex align-center">
-        <span class="me-2 subtitle-1">{{ $t('gamification.overview.endingActionsTitle') }}</span>
-        <v-divider />
+  <gamification-overview-widget :loading="loading">
+    <template v-if="hasValidRules || loading" #title>
+      <div v-if="hasValidRules" class="d-flex flex-grow-1 full-width">
+        <div class="widget-text-header text-none text-truncate">
+          {{ $t('gamification.overview.challengesOverviewTitle') }}
+        </div>
+        <v-spacer />
+        <v-btn
+          height="auto"
+          min-width="auto"
+          class="pa-0"
+          text
+          @click="$refs.listDrawer.open()">
+          <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+        </v-btn>
       </div>
-      <gamification-rules-overview-item
-        v-for="rule in endingRulesToDisplay"
-        :key="rule.id"
-        :rule="rule"
-        dense />
     </template>
-    <template v-if="activeRulesCount">
-      <div v-if="!hasAvailableRulesOnly" class="d-flex align-center pt-5">
-        <span class="me-2 subtitle-1">{{ $t('gamification.overview.availableActionsTitle') }}</span>
-        <v-divider />
-      </div>
-      <gamification-rules-overview-item
-        v-for="rule in activeRulesToDisplay"
-        :key="rule.id"
-        :rule="rule"
-        :dense="!hasAvailableRulesOnly" />
+    <template v-if="hasValidRules" #default>
+      <template v-if="endingRulesCount">
+        <div class="d-flex align-center">
+          <span class="me-2 subtitle-1">{{ $t('gamification.overview.endingActionsTitle') }}</span>
+          <v-divider />
+        </div>
+        <gamification-rules-overview-item
+          v-for="rule in endingRulesToDisplay"
+          :key="rule.id"
+          :rule="rule"
+          dense />
+      </template>
+      <template v-if="activeRulesCount">
+        <div
+          v-if="!hasAvailableRulesOnly"
+          :class="endingRulesCount && 'pt-5'"
+          class="d-flex align-center">
+          <span class="me-2 subtitle-1">{{ $t('gamification.overview.availableActionsTitle') }}</span>
+          <v-divider />
+        </div>
+        <gamification-rules-overview-item
+          v-for="rule in activeRulesToDisplay"
+          :key="rule.id"
+          :rule="rule"
+          :dense="!hasAvailableRulesOnly" />
+      </template>
+      <template v-if="upcomingRulesCount">
+        <div class="d-flex align-center pt-5">
+          <span class="me-2 subtitle-1">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
+          <v-divider />
+        </div>
+        <gamification-rules-overview-item
+          v-for="rule in upcomingRulesToDisplay"
+          :key="rule.id"
+          :rule="rule"
+          dense />
+      </template>
+      <template v-if="remainingCount">
+        <gamification-overview-widget-empty-row
+          v-for="index in remainingCount"
+          :key="index"
+          class="flex" />
+      </template>
+      <gamification-rules-overview-list-drawer
+        ref="listDrawer" />
     </template>
-    <template v-if="upcomingRulesCount">
-      <div class="d-flex align-center pt-5">
-        <span class="me-2 subtitle-1">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
-        <v-divider />
-      </div>
-      <gamification-rules-overview-item
-        v-for="rule in upcomingRulesToDisplay"
-        :key="rule.id"
-        :rule="rule"
-        dense />
-    </template>
-    <template v-if="remainingCount">
-      <gamification-overview-widget-empty-row
-        v-for="index in remainingCount"
-        :key="index"
-        class="flex" />
-    </template>
-  </gamification-overview-widget>
-  <gamification-overview-widget
-    v-else
-    :loading="loading">
     <gamification-overview-widget-row
+      v-else
       v-show="!loading"
       class="my-auto">
       <template #content>

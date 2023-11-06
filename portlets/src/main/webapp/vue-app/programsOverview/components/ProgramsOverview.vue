@@ -15,10 +15,23 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget
-      :title="programsDisplayed && $t('gamification.overview.programsOverviewTitle')"
-      :action-url="programsDisplayed && programLink"
-      :loading="loading">
+    <gamification-overview-widget :loading="loading">
+      <template v-if="programsDisplayed || loading" #title>
+        <div v-if="programsDisplayed" class="d-flex flex-grow-1 full-width">
+          <div class="widget-text-header text-none text-truncate">
+            {{ $t('gamification.overview.programsOverviewTitle') }}
+          </div>
+          <v-spacer />
+          <v-btn
+            height="auto"
+            min-width="auto"
+            class="pa-0"
+            text
+            @click="$refs.listDrawer.open()">
+            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+          </v-btn>
+        </div>
+      </template>
       <div v-if="programsDisplayed">
         <gamification-overview-program-item
           v-for="program in programs" 
@@ -31,6 +44,8 @@
             :key="index"
             class="flex-grow-1" />
         </template>
+        <gamification-program-list-drawer
+          ref="listDrawer" />
       </div>
       <gamification-overview-widget-row v-else-if="!loading" class="my-auto">
         <template #content>
@@ -69,6 +84,7 @@ export default {
   },
   methods: {
     retrievePrograms() {
+      this.loading = true;
       return this.$programService.getPrograms({
         limit: this.limitToLoad,
         type: 'ALL',
@@ -81,8 +97,8 @@ export default {
         .then((data) => {
           this.programs = data?.programs || [];
           this.programsDisplayed = data.size > 0;
-          this.loading = false;
-        });
+        })
+        .finally(() => this.loading = false);
     },
   },
 };
