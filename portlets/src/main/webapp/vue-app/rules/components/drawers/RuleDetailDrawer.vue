@@ -200,7 +200,6 @@ export default {
     rule: {},
     loading: false,
     joining: false,
-    linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`,
     validAnnouncement: false,
     sending: false,
     announcementFormOpened: false,
@@ -214,6 +213,9 @@ export default {
   computed: {
     now() {
       return this.$root.now || this.time;
+    },
+    linkBasePath() {
+      return eXo.env.portal.portalName === 'public' && '/portal/public/overview/actions' || `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`;
     },
     isProgramMember() {
       return this.rule?.userInfo?.member;
