@@ -87,13 +87,13 @@ export default {
       return this.user && `users-leaderboard-${this.user.identityId}` || '';
     },
     userAvatar() {
-      return this.user && this.user.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${this.user.username}/avatar`;
+      return this.user?.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${this.user.username}/avatar`;
     },
     profileUrl() {
       return this.username && `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/profile/${this.username}`;
     },
     username() {
-      return this.user && this.user.remoteId;
+      return this.user?.remoteId;
     },
     currentUser() {
       return this.username === eXo.env.portal.userName;
