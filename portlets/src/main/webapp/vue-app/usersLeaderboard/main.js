@@ -19,7 +19,7 @@ import './initComponents.js';
 const vuetify = Vue.prototype.vuetifyOptions;
 
 // getting language of user
-const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
+const lang = eXo?.env?.portal?.language || 'en';
 
 const resourceBundleName = 'locale.addon.Gamification';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
