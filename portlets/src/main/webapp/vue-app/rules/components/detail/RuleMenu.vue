@@ -105,7 +105,7 @@ export default {
       return `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.rule.activityId}`;
     },
     ruleLink() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions/${this.rule.id}`;
+      return eXo.env.portal.portalName === 'public' && `/portal/public/overview/actions/${this.rule.id}` || `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions/${this.rule.id}`;
     },
     ruleAbsoluteLink() {
       return `${document.location.href.split(eXo.env.portal.context)[0]}${this.ruleLink}`;
