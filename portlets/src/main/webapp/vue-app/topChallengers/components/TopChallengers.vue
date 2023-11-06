@@ -47,7 +47,7 @@
           <template #content>
             <div class="d-flex flex-column align-center justify-center">
               <v-icon color="secondary" size="54">fa-trophy</v-icon>
-              <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.leaderboard') }}</span>
+              <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.weeklyLeaderboard') }}</span>
             </div>
           </template>
         </gamification-overview-widget-row>
