@@ -92,10 +92,11 @@ export default {
     emitProgramOwnersDrawerInternaly(event) {
       this.$root.$emit('open-owners-drawer-event', event?.detail?.avatars, event?.detail?.backIcon);
     },
-    emitOpenRuleDrawerGlobally(rule, openAnnouncement) {
+    emitOpenRuleDrawerGlobally(rule, openAnnouncement, goBackButton) {
       document.dispatchEvent(new CustomEvent('rule-detail-drawer-event', {detail: {
         rule,
         openAnnouncement,
+        goBackButton,
       }}));
     },
     emitOpenRuleFormDrawerGlobally(rule, program) {
@@ -104,10 +105,11 @@ export default {
         program,
       }}));
     },
-    emitOpenRuleDrawerByIdGlobally(ruleId, openAnnouncement) {
+    emitOpenRuleDrawerByIdGlobally(ruleId, openAnnouncement, goBackButton) {
       document.dispatchEvent(new CustomEvent('rule-detail-drawer-by-id-event', {detail: {
         ruleId,
         openAnnouncement,
+        goBackButton,
       }}));
     },
     emitRuleDeletedGlobally(data) {

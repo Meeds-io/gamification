@@ -25,6 +25,7 @@
     v-model="drawer"
     v-draggable="enabled"
     :right="!$vuetify.rtl"
+    :go-back-button="goBackButton"
     allow-expand
     @closed="onClose"
     @expand-updated="expanded = $event">
@@ -207,6 +208,7 @@ export default {
     drawerUrl: null,
     time: Date.now(),
     interval: null,
+    goBackButton: false,
     objectType: 'activity'
   }),
   computed: {
@@ -322,17 +324,18 @@ export default {
     this.$root.$on('rule-detail-drawer-by-id', this.openById);
     this.$root.$on('rule-form-drawer-opened', this.close);
     this.$root.$on('rule-deleted', this.close);
-    document.addEventListener('rule-detail-drawer-event', event => this.open(event?.detail?.rule, event?.detail?.openAnnouncement));
+    document.addEventListener('rule-detail-drawer-event', event => this.open(event?.detail?.rule, event?.detail?.openAnnouncement, event?.detail?.goBackButton));
     document.addEventListener('rule-detail-drawer-by-id-event', event => this.openById(event?.detail?.ruleId, event?.detail?.openAnnouncement));
   },
   methods: {
-    open(ruleToDisplay, displayAnnouncementForm) {
-      this.openById(ruleToDisplay?.id, displayAnnouncementForm);
+    open(ruleToDisplay, displayAnnouncementForm, goBackButton) {
+      this.openById(ruleToDisplay?.id, displayAnnouncementForm, goBackButton);
     },
-    openById(id, displayAnnouncementForm) {
+    openById(id, displayAnnouncementForm, goBackButton) {
       if (!id || !this.$refs.ruleDetailDrawer) {
         return;
       }
+      this.goBackButton = goBackButton || false;
       this.clear();
       this.checkTime();
       this.rule = {id};

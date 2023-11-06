@@ -33,7 +33,8 @@
       <gamification-rules-overview-item
         v-for="rule in lockedRulesToDisplay"
         :key="rule.id"
-        :rule="rule" />
+        :rule="rule"
+        :go-back-button="goBackButton" />
     </template>
     <template v-if="endingRulesCount">
       <div class="d-flex align-center">
@@ -43,7 +44,8 @@
       <gamification-rules-overview-item
         v-for="rule in endingRulesToDisplay"
         :key="rule.id"
-        :rule="rule" />
+        :rule="rule"
+        :go-back-button="goBackButton" />
     </template>
     <template v-if="validRulesCount">
       <div v-if="sectionsCount > 1" class="d-flex align-center pt-5">
@@ -53,7 +55,8 @@
       <gamification-rules-overview-item
         v-for="rule in validRulesToDisplay"
         :key="rule.id"
-        :rule="rule" />
+        :rule="rule"
+        :go-back-button="goBackButton" />
     </template>
     <template v-if="upcomingRulesCount">
       <div class="d-flex align-center pt-5">
@@ -63,7 +66,8 @@
       <gamification-rules-overview-item
         v-for="rule in upcomingRulesToDisplay"
         :key="rule.id"
-        :rule="rule" />
+        :rule="rule"
+        :go-back-button="goBackButton" />
     </template>
   </gamification-overview-widget>
   <gamification-overview-widget
@@ -127,6 +131,10 @@ export default {
       default: false,
     },
     hideEmptyPlaceholder: {
+      type: Boolean,
+      default: false,
+    },
+    goBackButton: {
       type: Boolean,
       default: false,
     },
