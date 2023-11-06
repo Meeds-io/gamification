@@ -16,7 +16,7 @@
  */
 import './initComponents.js';
 
-const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
+const lang = eXo?.env?.portal?.language || 'en';
 const urls = [
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`,
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`

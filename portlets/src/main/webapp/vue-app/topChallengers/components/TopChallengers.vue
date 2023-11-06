@@ -21,8 +21,7 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget
-      :loading="loading">
+    <gamification-overview-widget :loading="loading">
       <template #title>
         <div v-if="!displayPlaceholder && !loading" class="d-flex flex-grow-1 full-width">
           <div class="widget-text-header text-capitalize-first-letter text-truncate">
