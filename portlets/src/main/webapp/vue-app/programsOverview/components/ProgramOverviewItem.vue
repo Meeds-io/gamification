@@ -16,7 +16,7 @@
 <template>
   <gamification-overview-widget-row
     clickable
-    @open="$root.$emit('program-detail-drawer', program)">
+    @open="$root.$emit('program-detail-drawer', program, goBackButton)">
     <template #icon>
       <v-list-item-avatar
         :style="programStyle"
@@ -57,6 +57,10 @@ export default {
     program: {
       type: Object,
       default: null,
+    },
+    goBackButton: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
