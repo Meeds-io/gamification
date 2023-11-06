@@ -41,9 +41,13 @@ export function init() {
       Vue.createApp({
         data: {
           isAnonymous: !eXo.env.portal.userIdentityId?.length,
+          now: Date.now(),
           actionValueExtensions: [],
         },
         template: `<profile-stats id="${appId}" v-cacheable="{cacheId: '${cacheId}'}" />`,
+        created() {
+          window.setInterval(() => this.now = Date.now(), 1000);
+        },
         i18n,
         vuetify,
       }, appElement, 'Profile Stats');
