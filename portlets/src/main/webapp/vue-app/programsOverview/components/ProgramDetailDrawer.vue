@@ -23,7 +23,8 @@
     id="programDetailDrawer"
     ref="drawer"
     v-model="drawer"
-    :right="!$vuetify.rtl">
+    :right="!$vuetify.rtl"
+    :go-back-button="goBackButton">
     <template #title>
       <span
         :title="$t('rule.detail.letsSeeWhatToDo')"
@@ -109,6 +110,7 @@
         :loading="loading"
         :see-all-url="programLink"
         hide-empty-placeholder
+        go-back-button
         class="mt-n4 mb-4 mx-1">
         <template #title>
           <div class="subtitle-1 dark-grey-color font-weight-bold text-truncate">
@@ -126,6 +128,7 @@ export default {
     drawer: false,
     program: null,
     loading: false,
+    goBackButton: false,
     rules: null,
     rulesLimit: 4,
   }),
@@ -173,8 +176,9 @@ export default {
     this.$root.$on('rule-deleted', this.retrieveRules);
   },
   methods: {
-    open(program) {
+    open(program, goBackButton) {
       this.program = program;
+      this.goBackButton = goBackButton || false;
       this.rules = null;
       this.$refs.drawer.open();
       this.$nextTick()
