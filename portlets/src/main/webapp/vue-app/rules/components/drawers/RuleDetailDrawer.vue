@@ -35,7 +35,7 @@
         {{ $t('rule.detail.letsSeeWhatToDo') }}
       </span>
     </template>
-    <template v-if="rule && !loading && drawer" #titleIcons>
+    <template v-if="rule && !loading && drawer && !$root.isAnonymous" #titleIcons>
       <rule-favorite-button
         v-if="isProgramMember"
         :rule-id="rule.id"

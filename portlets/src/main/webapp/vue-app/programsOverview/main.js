@@ -29,9 +29,13 @@ export function init() {
     .then(i18n => {
       Vue.createApp({
         data: {
+          now: Date.now(),
           isAnonymous: !eXo.env.portal.userIdentityId?.length,
         },
         template: `<gamification-overview-programs id="${appId}" />`,
+        created() {
+          window.setInterval(() => this.now = Date.now(), 1000);
+        },
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'Program Overview');

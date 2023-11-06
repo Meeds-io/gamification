@@ -49,6 +49,7 @@ export function init(isAdministrator, isProgramManager) {
     Vue.createApp({
       data: {
         now: Date.now(),
+        isAnonymous: !eXo.env.portal.userIdentityId?.length,
       },
       computed: {
         isMobile() {
