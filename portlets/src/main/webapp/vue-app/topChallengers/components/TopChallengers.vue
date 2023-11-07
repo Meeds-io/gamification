@@ -39,17 +39,10 @@
           </v-btn>
         </div>
       </template>
-      <gamification-overview-widget-row
-        v-if="displayPlaceholder"
-        disabled
-        class="my-auto">
-        <template #content>
-          <div class="d-flex flex-column align-center justify-center">
-            <v-icon color="secondary" size="54">fa-trophy</v-icon>
-            <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.weeklyLeaderboard') }}</span>
-          </div>
-        </template>
-      </gamification-overview-widget-row>
+      <div v-if="displayPlaceholder" class="d-flex flex-column align-center justify-center full-width full-height">
+        <v-icon color="secondary" size="54">fa-trophy</v-icon>
+        <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.weeklyLeaderboard') }}</span>
+      </div>
       <gamification-overview-widget-row
         v-show="!displayPlaceholder"
         class="my-auto"
