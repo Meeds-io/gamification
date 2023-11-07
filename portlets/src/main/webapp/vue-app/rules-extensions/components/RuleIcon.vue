@@ -16,7 +16,13 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
+  <img
+    v-if="image"
+    :src="image"
+    :alt="ruleEvent"
+    width="28">
   <v-icon
+    v-else
     :size="size"
     :class="ruleIconColorClass"
     class="rule-icon">
@@ -56,6 +62,9 @@ export default {
     },
     ruleIconColorClass() {
       return this.iconColorClass || this.extension?.iconColorClass || 'primary--text';
+    },
+    image() {
+      return this.extension?.image;
     },
   },
   created() {
