@@ -37,6 +37,8 @@ public interface ProgramService {
 
   public static final String GAMIFICATION_DOMAIN_ENABLE_LISTENER  = "exo.gamification.domain.enable";
 
+  public static final String PROGRAM_AUDIENCE_UPDATED_EVENT       = "gamification.program.audience.updated";
+
   /**
    * Gets programs by filter.
    *
@@ -316,10 +318,11 @@ public interface ProgramService {
    * 
    * @param programId technical identifier of program
    * @param username user name
+   * @param checkDeleted Whether to consider if the program is deleted or not
    * @return true if user is a program owner or was a program owner before
    *         deleting the program, else false
    */
-  boolean wasProgramOwner(long programId, String username);
+  boolean isProgramOwner(long programId, String username, boolean checkDeleted);
 
   /**
    * Check whether user is member of program or not
@@ -336,10 +339,11 @@ public interface ProgramService {
    * 
    * @param programId technical identifier of program
    * @param username user name
+   * @param checkDeleted Whether to consider if the program is deleted or not
    * @return true if user is a program member or was a program member before
    *         deleting the program, else false
    */
-  boolean wasProgramMember(long programId, String username);
+  boolean isProgramMember(long programId, String username, boolean checkDeleted);
 
   /**
    * Check whether user can view program details or not
