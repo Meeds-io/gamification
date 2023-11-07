@@ -15,29 +15,25 @@
 -->
 <template>
   <v-app>
+    <gamification-overview-widget v-if="!hasConfiguredWallet" :loading="loading">
+      <div v-if="!loading" class="d-flex flex-column align-center justify-center full-height full-width">
+        <v-icon color="secondary" size="54">fa-money-bill</v-icon>
+        <span
+          v-html="noWalletSummaryText"
+          class="subtitle-1 font-weight-bold mt-7"></span>
+      </div>
+    </gamification-overview-widget>
     <gamification-overview-widget
+      v-else
       :title="$t('gamification.overview.rewardsTitle')"
-      :action-url="walletURL" 
+      :action-url="walletURL"
       :loading="loading">
       <v-card
         v-if="!loading"
         min-height="114"
         max-height="114"
         flat>
-        <gamification-overview-widget-row v-if="!hasConfiguredWallet" class="flex-grow-1">
-          <template #title>
-            <div class="mb-6">
-              {{ $t('gamification.overview.rewards.walletTitle') }}
-            </div>
-          </template>
-          <template #icon>
-            <v-icon class="secondary--text" size="55">fas fa-wallet</v-icon>
-          </template>
-          <template #content>
-            <span v-sanitized-html="emptyWalletSummaryText"></span>
-          </template>
-        </gamification-overview-widget-row>
-        <div class="d-flex flex-grow-1" v-else>
+        <div class="d-flex flex-grow-1">
           <gamification-overview-widget-row class="col col-6 px-0" normal-height>
             <template #title>
               <div class="d-flex">
@@ -85,7 +81,7 @@
         <template #title>
           <div v-if="!loading" class="d-flex mb-n1">
             {{ $t('gamification.overview.rewardsPerkstoreSubtitle') }}
-            <div v-if="productsLoaded && hasConfiguredWallet" class="ms-auto">
+            <div v-if="productsLoaded" class="ms-auto">
               <a :href="perkstoreLink">
                 <span class="text-font-size primary--text my-0">{{ $t('overview.myContributions.seeAll') }}</span>
               </a>
@@ -120,6 +116,18 @@ export default {
   computed: {
     displayPerkstorePlaceholder() {
       return !this.loading && (!this.hasConfiguredWallet || !this.productsLoaded);
+    },
+    noWalletSummaryText() {
+      return this.$t('gamification.overview.noWalletMessage', {
+        0: `<a class="primary--text font-weight-bold" href="${this.walletLink}">`,
+        1: '</a>',
+      });
+    },
+    noWalletSummaryText() {
+      return this.$t('gamification.overview.noWalletMessage', {
+        0: `<a class="primary--text font-weight-bold" href="${this.walletLink}">`,
+        1: '</a>',
+      });
     },
     emptyWalletSummaryText() {
       return this.$t('gamification.overview.rewardsWalletSummary', {
