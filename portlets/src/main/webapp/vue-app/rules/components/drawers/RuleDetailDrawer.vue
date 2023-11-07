@@ -120,7 +120,7 @@
                 @sent="close" />
             </v-col>
             <v-col
-              v-else-if="!isProgramMember"
+              v-else-if="!isDisabled && !isProgramMember"
               cols="12"
               class="px-0 d-flex rule-not-member">
               <v-btn
