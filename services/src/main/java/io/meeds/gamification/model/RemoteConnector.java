@@ -28,6 +28,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class RemoteConnector implements Serializable {
 
+  private static final long serialVersionUID = -5423886714771209536L;
+
   protected String  name;
 
   protected String  apiKey;

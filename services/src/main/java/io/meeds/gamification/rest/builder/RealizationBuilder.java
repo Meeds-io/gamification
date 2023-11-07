@@ -43,13 +43,10 @@ public class RealizationBuilder {
       boolean anonymous = StringUtils.isBlank(currentUsername);
       ProgramDTO program = realization.getProgram();
       boolean canViewProgram = Utils.isRewardingManager(currentUsername)
-                               || (program != null
-                                   && (StringUtils.equals(currentUsername, realization.getEarnerId())
-                                       || StringUtils.equals(String.valueOf(Utils.getCurrentUserIdentityId()),
-                                                             realization.getEarnerId())
-                                       || programService.canViewProgram(program.getId(), currentUsername)
-                                       || (program.isDeleted()
-                                           && programService.wasProgramMember(program.getId(), currentUsername))));
+                               || (program != null && programService.isProgramMember(program.getId(), currentUsername, false));
+      boolean canViewTitle = canViewProgram
+                             || StringUtils.equals(currentUsername, realization.getEarnerId())
+                             || StringUtils.equals(String.valueOf(Utils.getCurrentUserIdentityId()), realization.getEarnerId());
 
       ProgramRestEntity programRestEntity = null;
       if (canViewProgram && program != null) {
@@ -92,8 +89,8 @@ public class RealizationBuilder {
                                                                          Long.parseLong(realization.getEarnerId())),
                                        ruleRestEntity,
                                        programRestEntity,
-                                       canViewProgram ? realization.getProgramLabel() : null,
-                                       canViewProgram ? realization.getActionTitle() : null,
+                                       canViewTitle ? realization.getProgramLabel() : null,
+                                       canViewTitle ? realization.getActionTitle() : null,
                                        realization.getActionScore(),
                                        anonymous ?
                                                  null :
