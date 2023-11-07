@@ -29,7 +29,7 @@
           min-width="auto"
           class="pa-0"
           text
-          @click="$refs.listDrawer.open()">
+          @click="$emit('open-list')">
           <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
         </v-btn>
       </div>
@@ -77,25 +77,11 @@
           :key="index"
           class="flex" />
       </template>
-      <gamification-rules-overview-list-drawer
-        ref="listDrawer" />
     </template>
-  </gamification-overview-widget>
-  <gamification-overview-widget
-    v-else
-    :loading="loading">
-    <template #content>
-      <gamification-overview-widget-row
-        v-show="!loading"
-        class="my-auto">
-        <template #content>
-          <div class="d-flex flex-column align-center justify-center">
-            <v-icon color="secondary" size="48">fa-rocket</v-icon>
-            <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.actions') }}</span>
-          </div>
-        </template>
-      </gamification-overview-widget-row>
-    </template>
+    <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
+      <v-icon color="secondary" size="48">fa-rocket</v-icon>
+      <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.actions') }}</span>
+    </div>
   </gamification-overview-widget>
 </template>
 <script>
