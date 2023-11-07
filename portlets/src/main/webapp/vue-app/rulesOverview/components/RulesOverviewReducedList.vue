@@ -29,7 +29,7 @@
           min-width="auto"
           class="pa-0"
           text
-          @click="$refs.listDrawer.open()">
+          @click="$emit('open-list')">
           <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
         </v-btn>
       </div>
@@ -77,8 +77,6 @@
           :key="index"
           class="flex" />
       </template>
-      <gamification-rules-overview-list-drawer
-        ref="listDrawer" />
     </template>
     <gamification-overview-widget-row
       v-else
