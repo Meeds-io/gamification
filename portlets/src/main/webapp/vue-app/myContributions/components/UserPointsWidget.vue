@@ -17,21 +17,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <div class="d-flex flex-column full-height full-width">
     <div class="flex d-flex flex-grow-0 flex-shrink-1">
+      <div v-if="overviewDisplay && !hasZeroPoints && initialized" class="d-flex flex-grow-1 full-width">
+        <div class="widget-text-header text-capitalize-first-letter text-truncate">
+          {{ $t('gamification.overview.contributionsTitle') }}
+        </div>
+      </div>
       <v-layout
-        v-if="overviewDisplay && !hasZeroPoints"
-        row
-        wrap
-        align-start
-        mx-0>
-        <v-flex
-          d-flex>
-          <div>
-            <span class="subtitle-2 profile-card-header text-color">{{ $t('overview.myContributions.points') }}</span>
-          </div>
-        </v-flex>
-      </v-layout>
-      <v-layout
-        v-else-if="!overviewDisplay"
+        v-if="!overviewDisplay"
         row
         wrap
         align-start
@@ -69,19 +61,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-list
       v-if="hasZeroPoints"
       height="180"
-      class="d-flex flex-shrink-0 flex-grow-1">
-      <v-list-item>
-        <v-list-item-icon class="my-auto">
-          <v-icon size="65" class="secondary--text me-1">fas fa-chart-pie</v-icon>
-        </v-list-item-icon>
-        <v-list-item-content>
-          <div class="d-flex flex-grow-0 flex-shrink-1">
-            <span
-              class="align-self-center text-wrap text-left text-break"
-              v-sanitized-html="$t('overview.myContributions.zeroPoints.description', {0: `<a href='${actionsPageURL}' class='primary--text font-weight-bold' rel='nofollow noreferrer noopener'>${$t('overview.myContributions.zeroPoints.description.this')}</a>`})"></span>
-          </div>
-        </v-list-item-content>
-      </v-list-item>
+      class="d-flex flex-shrink-0 flex-grow-1 align-center justify-center">
+      <div class="d-flex flex-column align-center justify-center">
+        <v-icon color="secondary" size="54">fa-chart-pie</v-icon>
+        <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.weeklyAchievements') }}</span>
+      </div>
     </v-list>
     <v-card
       v-else
