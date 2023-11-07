@@ -130,8 +130,7 @@ public class RuleServiceImpl implements RuleService {
       throw new ObjectNotFoundException("Rule has been deleted");
     }
     if (!isRuleManager(rule, username)
-        && (!rule.isEnabled()
-            || rule.getProgram() == null
+        && (rule.getProgram() == null
             || !programService.canViewProgram(rule.getProgram().getId(), username))) {
       throw new IllegalAccessException("Rule isn't accessible");
     }
