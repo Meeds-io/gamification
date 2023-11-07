@@ -116,11 +116,11 @@ public class RuleActivityTypePluginTest {
 
     activityManager.addActivityTypePlugin(new RuleActivityTypePlugin(programService, ruleService, initParams));
 
-    when(programService.canViewProgram(rule.getProgramId(), owner.getUserId())).thenReturn(true);
+    when(programService.isProgramMember(rule.getProgramId(), owner.getUserId(), false)).thenReturn(true);
     assertTrue(activityManager.isActivityViewable(activity, owner));
     assertFalse(activityManager.isActivityViewable(activity, viewer));
 
-    when(programService.canViewProgram(rule.getProgramId(), viewer.getUserId())).thenReturn(true);
+    when(programService.isProgramMember(rule.getProgramId(), viewer.getUserId(), false)).thenReturn(true);
     assertTrue(activityManager.isActivityViewable(activity, viewer));
   }
 

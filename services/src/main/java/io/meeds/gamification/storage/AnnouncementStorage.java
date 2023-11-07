@@ -2,12 +2,7 @@ package io.meeds.gamification.storage;
 
 import static io.meeds.gamification.constant.GamificationConstant.ACTIVITY_OBJECT_TYPE;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
@@ -130,14 +125,6 @@ public class AnnouncementStorage {
                             realization.getCreator(),
                             realization.getCreatedDate(),
                             realization.getActivityId());
-  }
-
-  private List<Announcement> fromAnnouncementEntities(List<RealizationDTO> announcementEntities) {
-    if (CollectionUtils.isEmpty(announcementEntities)) {
-      return new ArrayList<>(Collections.emptyList());
-    } else {
-      return announcementEntities.stream().map(this::fromRealization).toList();
-    }
   }
 
 }
