@@ -47,14 +47,10 @@
         <gamification-program-list-drawer
           ref="listDrawer" />
       </div>
-      <gamification-overview-widget-row v-else-if="!loading" class="my-auto">
-        <template #content>
-          <div class="d-flex flex-column align-center justify-center">
-            <v-icon color="secondary" size="54">fa-puzzle-piece</v-icon>
-            <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.programs') }}</span>
-          </div>
-        </template>
-      </gamification-overview-widget-row>
+      <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
+        <v-icon color="secondary" size="54">fa-puzzle-piece</v-icon>
+        <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.programs') }}</span>
+      </div>
     </gamification-overview-widget>
     <gamification-program-detail-drawer v-if="programsDisplayed" />
     <engagement-center-rule-extensions />
