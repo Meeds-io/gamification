@@ -22,10 +22,13 @@
 <template>
   <users-leaderboard-profile-chart
     :identity-id="user.identityId"
+    :score="user.score"
     :programs="programs"
     :period="period"
     :program-id="programId"
-    @select="$emit('select', $event)" />
+    :central-points="centralPoints"
+    @select="$emit('select', $event)"
+    @open="$emit('open')" />
 </template>
 
 <script>
@@ -47,19 +50,9 @@ export default {
       type: String,
       default: () => 'WEEK',
     },
-  },
-  data: () => ({
-    drawer: false,
-    loading: false,
-    hasMore: false,
-  }),
-  methods: {
-    open(user) {
-      this.user = user;
-      this.$refs.drawer.open();
-    },
-    close() {
-      this.$refs.drawer.close();
+    centralPoints: {
+      type: Boolean,
+      default: false,
     },
   },
 };
