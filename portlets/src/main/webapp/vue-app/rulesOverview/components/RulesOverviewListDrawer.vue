@@ -128,12 +128,14 @@ export default {
     },
   },
   created() {
+    document.addEventListener('rules-overview-list-drawer', this.open);
     this.$root.$on('rules-overview-list-drawer', this.open);
     this.$root.$on('announcement-added', this.refreshRules);
     this.$root.$on('rule-updated', this.refreshRules);
     this.$root.$on('rule-deleted', this.refreshRules);
   },
   beforeDestroy() {
+    document.removeEventListener('rules-overview-list-drawer', this.open);
     this.$root.$off('rules-overview-list-drawer', this.open);
     this.$root.$off('announcement-added', this.refreshRules);
     this.$root.$off('rule-updated', this.refreshRules);
