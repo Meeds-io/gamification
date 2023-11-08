@@ -79,7 +79,8 @@ export default {
         })
         .then(data => {
           let badges = data || [];
-          badges = badges.filter(tmp => tmp.program?.title === this.badge.zone);
+          const currentBadgeProgram = badges.find(tmp => tmp.id && tmp.id === this.badge?.id)?.program;
+          badges = badges.filter(tmp => tmp?.program?.id && tmp?.program?.id === currentBadgeProgram?.id);
           badges.push({
             isCurrent: true,
             neededScore: this.badge.score,

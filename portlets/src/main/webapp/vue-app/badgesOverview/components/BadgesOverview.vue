@@ -93,17 +93,12 @@ export default {
           document.dispatchEvent(new CustomEvent('badgesCount', {detail: this.badges.length}));
           this.badges.forEach(badge => {
             badge.avatar = badge.url;
-            badge.programLabel = this.getLabel('exoplatform.gamification.gamificationinformation.domain', badge.zone);
-            badge.badgeLabel = this.getLabel('exoplatform.gamification.gamificationinformation.domain', badge.title);
+            badge.programLabel = badge?.program?.title;
+            badge.badgeLabel = badge.title;
           });
           return this.$nextTick();
         })
         .finally(() => this.$root.$applicationLoaded());
-    },
-    getLabel(base, key) {
-      const label = `${base}.${key}`;
-      const translation = this.$t(label);
-      return translation === label && key || translation;
     },
   },
 };

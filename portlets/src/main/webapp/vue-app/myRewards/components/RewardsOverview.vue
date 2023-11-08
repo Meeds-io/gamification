@@ -26,33 +26,17 @@
     <gamification-overview-widget
       v-else
       :title="$t('gamification.overview.rewardsTitle')"
-      :action-url="walletURL"
       :loading="loading">
       <v-card
         v-if="!loading"
         min-height="114"
-        max-height="114"
+        class="fill-height"
         flat>
-        <div class="d-flex flex-grow-1">
-          <gamification-overview-widget-row class="col col-6 px-0" normal-height>
+        <div class="d-flex flex-grow-1 fill-height">
+          <gamification-overview-widget-row class="d-flex flex-column col col-6 px-0" normal-height>
             <template #title>
               <div class="d-flex">
                 {{ $t('gamification.overview.rewards.earningsTitle') }}
-                <v-tooltip
-                  z-index="4"
-                  max-width="300px"
-                  bottom>
-                  <template #activator="{ on, attrs }">
-                    <v-icon
-                      size="18"
-                      class="primary--text mx-2"
-                      v-bind="attrs"
-                      v-on="on">
-                      fas fa-info-circle
-                    </v-icon>
-                  </template>
-                  <span>{{ $t('gamification.overview.rewards.earningsTooltip') }}</span>
-                </v-tooltip>
               </div>
             </template>
             <template #content>
@@ -60,39 +44,52 @@
                 :params="params"
                 name="my-rewards-overview"
                 type="my-rewards-item"
-                class="d-flex flex-row mt-4" />
+                class="d-flex flex-row my-auto" />
             </template>
           </gamification-overview-widget-row>
-          <gamification-overview-widget-row class="col col-6 px-0" normal-height>
+          <gamification-overview-widget-row class="d-flex flex-column col col-6 px-0" normal-height>
             <template #title>
-              {{ $t('gamification.overview.rewards.walletTitle') }}
+              <div class="subtitle-1 d-flex">
+                <div>{{ $t('gamification.overview.rewards.walletTitle') }}</div>
+                <v-spacer />
+                <v-btn
+                  :href="walletURL"
+                  height="auto"
+                  min-width="auto"
+                  class="pa-0"
+                  text>
+                  <span class="primary--text text-none mt-n1 pt-2px">{{ $t('rules.seeAll') }}</span>
+                </v-btn>
+              </div>
             </template>
             <template #content>
               <extension-registry-components
                 :params="params"
                 name="my-rewards-wallet-overview"
                 type="my-rewards-wallet-item"
-                class="d-flex flex-row mt-4" />
+                class="d-flex flex-row my-auto" />
             </template>
           </gamification-overview-widget-row>
         </div>
       </v-card>
-      <gamification-overview-widget-row class="mt-5 fill-height d-flex flex-column flex-grow-1">
-        <template #title>
-          <div v-if="!loading" class="d-flex mb-n1">
+      <gamification-overview-widget-row class="fill-height d-flex flex-column flex-grow-1">
+        <template v-if="!displayPerkstorePlaceholder && productsLoaded" #title>
+          <div class="d-flex mb-n1">
             {{ $t('gamification.overview.rewardsPerkstoreSubtitle') }}
-            <div v-if="productsLoaded" class="ms-auto">
+            <div v-if="hasProducts" class="ms-auto">
               <a :href="perkstoreLink">
                 <span class="text-font-size primary--text my-0">{{ $t('overview.myContributions.seeAll') }}</span>
               </a>
             </div>
           </div>
         </template>
-        <template v-if="displayPerkstorePlaceholder" #icon>
-          <v-icon color="secondary" size="55px">fas fa-shopping-cart</v-icon>
-        </template>
         <template v-if="!loading" #content>
-          <span v-if="displayPerkstorePlaceholder" v-sanitized-html="emptyPerkstoreSummaryText"></span>
+          <div v-if="displayPerkstorePlaceholder && productsLoaded" class="d-flex flex-column align-center justify-center">
+            <v-icon color="secondary" size="54">fa-shopping-cart</v-icon>
+            <span
+              v-sanitized-html="emptyPerkstoreSummaryText"
+              class="subtitle-1 font-weight-bold mt-7"></span>
+          </div>
           <extension-registry-components
             v-if="hasConfiguredWallet"
             name="my-rewards-perkstore-overview"
@@ -108,14 +105,17 @@ export default {
   data: () => ({
     walletLink: `${eXo.env.portal.context}/${eXo.env.portal.myCraftSiteName}/wallet`,
     perkstoreLink: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/perkstore`,
+    createPerkstoreProductLink: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/perkstore/catalog#create`,
     emptyPerkstoreActionName: 'gamification-perk-store-check-actions',
     loading: true,
     hasConfiguredWallet: false,
+    hasProducts: false,
+    canAddProduct: false,
     productsLoaded: false,
   }),
   computed: {
     displayPerkstorePlaceholder() {
-      return !this.loading && (!this.hasConfiguredWallet || !this.productsLoaded);
+      return !this.loading && (!this.hasConfiguredWallet || !this.hasProducts);
     },
     noWalletSummaryText() {
       return this.$t('gamification.overview.noWalletMessage', {
@@ -130,12 +130,14 @@ export default {
       });
     },
     emptyPerkstoreSummaryText() {
-      const labelKey = this.hasConfiguredWallet && 'gamification.overview.rewardsPerkstoreNoProductsSummary' || 'gamification.overview.rewardsPerkstoreSummary';
-      const link = this.hasConfiguredWallet && this.perkstoreLink || this.walletLink;
-      return this.$t(labelKey, {
-        0: `<a class="primary--text font-weight-bold" href="${link}">`,
-        1: '</a>',
-      });
+      if (this.canAddProduct) {
+        return this.$t('gamification.overview.noProducts', {
+          0: `<a class="primary--text font-weight-bold" href="${this.createPerkstoreProductLink}">`,
+          1: '</a>',
+        });
+      } else {
+        return this.$t('gamification.overview.noProductsNoCreate');
+      }
     },
     params() {
       return {
@@ -160,7 +162,9 @@ export default {
     document.removeEventListener('perk-store-products-loaded', this.handleProductsLoaded);
   },
   methods: {
-    handleProductsLoaded() {
+    handleProductsLoaded(event) {
+      this.canAddProduct = event?.detail?.canAddProduct;
+      this.hasProducts = event?.detail?.hasProducts;
       this.productsLoaded = true;
     },
     init() {
