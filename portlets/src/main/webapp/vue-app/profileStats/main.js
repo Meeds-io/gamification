@@ -48,6 +48,11 @@ export function init() {
         created() {
           window.setInterval(() => this.now = Date.now(), 1000);
         },
+        beforeDestroy() {
+          if (this.interval) {
+            window.clearInterval(this.interval);
+          }
+        },
         i18n,
         vuetify,
       }, appElement, 'Profile Stats');
