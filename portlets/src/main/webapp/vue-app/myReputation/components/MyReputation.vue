@@ -20,11 +20,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     :loading="loading">
     <v-card
       :class="!kudosDisplayed && 'align-center justify-center'"
-      class="d-flex flex-grow-1"
+      class="d-flex flex-grow-1 fill-height"
       flat>
-      <gamification-overview-widget-row v-show="kudosDisplayed && !loading">
+      <gamification-overview-widget-row
+        v-show="kudosDisplayed && !loading"
+        :class="kudosDisplayed && !loading && 'd-flex flex-column'">
         <template #title>
-          {{ $t('gamification.myReputation.KudosTitle') }}
+          <div class="subtitle-1 d-flex">
+            <span>{{ $t('gamification.myReputation.KudosTitle') }}</span>
+            <v-spacer />
+            <v-btn
+              height="auto"
+              min-width="auto"
+              class="pa-0"
+              text
+              @click="clickOnKudosEmptyActionLink">
+              <span class="primary--text text-none">{{ $t('gamification.overview.send') }}</span>
+            </v-btn>
+          </div>
         </template>
         <template #content>
           <extension-registry-components
@@ -42,24 +55,30 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </div>
     </v-card>
     <v-card
-      :class="!badgesDisplayed && 'align-center justify-center'"
-      class="d-flex flex-grow-1"
+      class="d-flex flex-grow-1 fill-height full-width"
       flat>
-      <gamification-overview-widget-row v-show="badgesDisplayed && !loading">
-        <template #title>
-          <div class="subtitle-2 align-self-start mt-10 mb-2 position-relative">
-            {{ $t('gamification.myReputation.badgesTitle') }}
+      <v-card
+        v-show="badgesDisplayed && !loading"
+        class="full-height full-width"
+        flat>
+        <div class="d-flex flex-column full-height">
+          <div class="subtitle-1 d-flex">
+            {{ $t('gamification.overview.badges') }}
           </div>
-        </template>
-        <template #content>
-          <extension-registry-components
-            :params="params"
-            name="my-reputation-overview-badges"
-            type="my-reputation-item"
-            class="d-flex flex-column mx-n4" />
-        </template>
-      </gamification-overview-widget-row>
-      <div v-if="!badgesDisplayed && !loading" class="d-flex flex-column align-center justify-center">
+          <card-carousel
+            v-if="badgesDisplayed"
+            class="d-flex flex-shrink-0 flex-grow-1 align-center justify-center"
+            dense>
+            <extension-registry-components
+              :params="params"
+              name="my-reputation-overview-badges"
+              type="my-reputation-item"
+              class="d-flex flex-column"
+              element-class="px-2" />
+          </card-carousel>
+        </div>
+      </v-card>
+      <div v-if="!badgesDisplayed && !loading" class="d-flex flex-column align-center justify-center full-width">
         <v-icon color="secondary" size="54">fa-graduation-cap</v-icon>
         <span
           v-html="emptyBadgesSummaryText"

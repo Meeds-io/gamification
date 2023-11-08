@@ -237,12 +237,6 @@ export default {
           tooltip: {
             trigger: false,
           },
-          grid: {
-            left: '0px',
-            top: '0px',
-            right: '0px',
-            bottom: '0px'
-          },
           color: this.colors,
           series: [{
             type: 'pie',
