@@ -20,7 +20,6 @@
     :rules="rules"
     :rules-count="overallActiveRulesCount"
     :page-size="pageSize"
-    :loading="loading"
     :see-all-url="actionsPath"
     :title="$t('gamification.overview.suggestedRulesTitle')"
     @load-more="loadMoreActiveRules"
@@ -35,7 +34,6 @@ export default {
     upcomingRules: [],
     activeRules: [],
     endingRules: [],
-    loading: true,
     hidden: false,
     actionsPath: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions#all`,
   }),
@@ -63,12 +61,9 @@ export default {
   },
   methods: {
     retrieveRules() {
-      this.loading = true;
-      Promise.all([
-        this.retrieveEndingRules(),
-        this.retrieveActiveRules(),
-        this.retrieveUpcomingRules(),
-      ]).finally(() => this.loading = false);
+      this.retrieveEndingRules();
+      this.retrieveActiveRules();
+      this.retrieveUpcomingRules();
     },
     retrieveEndingRules() {
       return this.$ruleService.getRules({
@@ -116,13 +111,8 @@ export default {
       }).then(result => this.upcomingRules = result?.rules || []);
     },
     loadMoreActiveRules() {
-      if (this.loading) {
-        return;
-      }
       this.overallActiveRulesLimit = this.overallActiveRulesLimit * 2;
-      this.loading = true;
-      this.retrieveActiveRules()
-        .finally(() => this.loading = false);
+      this.retrieveActiveRules();
     },
   },
 };

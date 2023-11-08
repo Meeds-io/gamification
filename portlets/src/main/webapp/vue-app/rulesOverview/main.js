@@ -31,11 +31,17 @@ export function init(showLocked) {
         data: {
           isAnonymous: !eXo.env.portal.userIdentityId?.length,
           now: Date.now(),
+          interval: null,
           showLocked,
         },
         template: `<gamification-rules-overview id="${appId}" />`,
         created() {
-          window.setInterval(() => this.now = Date.now(), 1000);
+          this.interval = window.setInterval(() => this.now = Date.now(), 1000);
+        },
+        beforeDestroy() {
+          if (this.interval) {
+            window.clearInterval(this.interval);
+          }
         },
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
