@@ -61,6 +61,7 @@
           ref="realizations"
           :identity-id="user.identityId"
           :program-id="programId"
+          :page-size="pageSize"
           @loading="loading = $event"
           @has-more="hasMore = $event" />
       </div>
@@ -94,6 +95,7 @@ export default {
     period: null,
     programs: null,
     programId: null,
+    pageSize: Math.max(10, parseInt((window.innerHeight - 560) / 62)),
   }),
   mounted() {
     document.querySelector('#vuetify-apps').appendChild(this.$el);
