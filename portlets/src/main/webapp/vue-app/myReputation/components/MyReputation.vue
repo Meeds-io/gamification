@@ -39,13 +39,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-btn>
           </div>
         </template>
-        <template #content>
-          <extension-registry-components
-            :params="params"
-            name="my-reputation-overview-kudos"
-            type="my-reputation-item"
-            class="d-flex flex-column mx-n4" />
-        </template>
+        <extension-registry-components
+          :params="params"
+          name="my-reputation-overview-kudos"
+          type="my-reputation-item"
+          class="d-flex flex-column mx-n4" />
       </gamification-overview-widget-row>
       <div v-if="!kudosDisplayed && !loading" class="d-flex flex-column align-center justify-center">
         <v-icon color="secondary" size="54">fa-award</v-icon>

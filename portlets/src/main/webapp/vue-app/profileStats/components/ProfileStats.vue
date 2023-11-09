@@ -24,27 +24,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         wrap
         mx-0
         class="white profileCard card-border-radius overflow-hidden">
-        <user-dashbord
-          v-if="!isFlipped"
-          :key="userDashBordKey"
-          :commons-space-default-size="commonsSpaceDefaultSize"
-          :is-current-user-profile="isCurrentUserProfile"
-          :common-connections-size="commonConnections.length"
-          class="profileFlippedCard profileStats"
-          @specific-card="setFlippedCard"
-          @openAchievementsDrawer="openAchievementsDrawer"
-          @openConnectionsDrawer="openConnectionsDrawer"
-          @openSpaceDrawer="openSpaceDrawer"
-          @shouldShowRequests="shouldShowRequests"
-          @showRequestsSpace="showRequestsSpace" />
-        <compnent
-          :is="currentComponent"
-          v-if="isFlipped"
-          d-flex
-          xs12
-          sm12
-          class="profileFlippedCard ConnexionsRequests px-5 pb-5"
-          @isProfileStats="setFlippedCard" />
+        <v-fade-transition>
+          <user-dashbord
+            v-show="!isFlipped"
+            :key="userDashBordKey"
+            :commons-space-default-size="commonsSpaceDefaultSize"
+            :is-current-user-profile="isCurrentUserProfile"
+            :common-connections-size="commonConnections.length"
+            class="profileFlippedCard profileStats"
+            @flip="flip"
+            @openAchievementsDrawer="openAchievementsDrawer"
+            @openConnectionsDrawer="openConnectionsDrawer"
+            @openSpaceDrawer="openSpaceDrawer"
+            @shouldShowRequests="shouldShowRequests"
+            @showRequestsSpace="showRequestsSpace" />
+        </v-fade-transition>
+        <v-fade-transition>
+          <gamification-rank
+            v-show="isFlipped"
+            class="profileFlippedCard ConnexionsRequests px-5 pb-5"
+            @flip="flip" />
+        </v-fade-transition>
       </v-layout>
     </v-container>
     <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
@@ -92,10 +92,9 @@ export default {
     }
   },
   methods: {
-    setFlippedCard(component) {
+    flip() {
       const profileWrapper = document.querySelector('.profileCard');
       profileWrapper.classList.toggle('is-flipped');
-      this.currentComponent = component;
       this.isFlipped = !this.isFlipped;
     },
     commonsSpaces() {
