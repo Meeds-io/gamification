@@ -12,7 +12,7 @@
       </v-list-item-action-text>
       <v-list-item-content :class="dense && 'pa-0'">
         <v-list-item-title class="text-wrap">
-          <slot name="content"></slot>
+          <slot></slot>
         </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
