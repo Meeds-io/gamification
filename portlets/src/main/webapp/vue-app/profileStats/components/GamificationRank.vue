@@ -40,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-flex class="xs12 mb-1">
         <v-layout class="podium-layout row wrap mx-0">
           <v-flex
-            :class="isOverviewDisplay && 'mb-7'"
+            :class="isOverviewDisplay && 'mb-4'"
             d-flex
             justify-center
             align-end>
@@ -108,7 +108,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-layout>
       </v-flex>
       <v-flex xs12>
-        <v-list :class="!isOverviewDisplay && 'pt-0'" min-height="110">
+        <v-list class="py-0" min-height="110">
           <users-leaderboard-profile
             v-for="user in listBelowPoduim"
             :key="user.identityId"
