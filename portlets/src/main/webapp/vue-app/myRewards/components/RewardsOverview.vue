@@ -39,13 +39,11 @@
                 {{ $t('gamification.overview.rewards.earningsTitle') }}
               </div>
             </template>
-            <template #content>
-              <extension-registry-components
-                :params="params"
-                name="my-rewards-overview"
-                type="my-rewards-item"
-                class="d-flex flex-row my-auto" />
-            </template>
+            <extension-registry-components
+              :params="params"
+              name="my-rewards-overview"
+              type="my-rewards-item"
+              class="d-flex flex-row my-auto" />
           </gamification-overview-widget-row>
           <gamification-overview-widget-row class="d-flex flex-column col col-6 px-0" normal-height>
             <template #title>
@@ -62,13 +60,11 @@
                 </v-btn>
               </div>
             </template>
-            <template #content>
-              <extension-registry-components
-                :params="params"
-                name="my-rewards-wallet-overview"
-                type="my-rewards-wallet-item"
-                class="d-flex flex-row my-auto" />
-            </template>
+            <extension-registry-components
+              :params="params"
+              name="my-rewards-wallet-overview"
+              type="my-rewards-wallet-item"
+              class="d-flex flex-row my-auto" />
           </gamification-overview-widget-row>
         </div>
       </v-card>
@@ -83,7 +79,7 @@
             </div>
           </div>
         </template>
-        <template v-if="!loading" #content>
+        <template v-if="!loading">
           <div v-if="displayPerkstorePlaceholder && productsLoaded" class="d-flex flex-column align-center justify-center">
             <v-icon color="secondary" size="54">fa-shopping-cart</v-icon>
             <span
