@@ -22,14 +22,29 @@
 <template>
   <v-app>
     <gamification-overview-widget
-      :title="!displayPlaceholder && !loading && $t('gamification.overview.topChallengersTitle')"
       :loading="loading"
-      :action-url="!displayPlaceholder && !loading && peopleURL || ''"
       class="d-flex">
+      <template #title>
+        <div v-if="!displayPlaceholder && !loading" class="d-flex flex-grow-1 full-width">
+          <div class="widget-text-header text-capitalize-first-letter text-truncate">
+            {{ $t('gamification.overview.topChallengersTitle') }}
+          </div>
+          <div class="spacer"></div>
+          <v-btn
+            height="auto"
+            min-width="auto"
+            class="pa-0"
+            text
+            @click="$refs.detailsDrawer.open()">
+            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+          </v-btn>
+        </div>
+      </template>
       <gamification-rank is-overview-display />
     </gamification-overview-widget>
     <gamification-overview-leaderboard-drawer
-      ref="detailsDrawer" />
+      ref="detailsDrawer"
+      :page-size="pageSize" />
     <engagement-center-rule-extensions />
   </v-app>
 </template>
@@ -38,11 +53,12 @@ export default {
   data: () => ({
     rankDisplayed: false,
     loading: true,
+    pageSize: Math.max(10, parseInt((window.innerHeight - 122) / 45)),
   }),
   computed: {
     displayPlaceholder() {
       return !this.rankDisplayed && !this.loading;
-    }
+    },
   },
   created() {
     document.addEventListener('listOfRankedConnections', (event) => {
