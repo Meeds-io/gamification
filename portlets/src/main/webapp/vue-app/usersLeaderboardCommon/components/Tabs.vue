@@ -90,6 +90,10 @@
 <script>
 export default {
   props: {
+    pageSize: {
+      type: Number,
+      default: () => 10,
+    },
     embedded: {
       type: Boolean,
       default: false,
@@ -149,6 +153,7 @@ export default {
     },
   },
   created() {
+    this.limit = this.pageSize;
     this.loading = true;
     this.refreshBoard()
       .then(() => this.$nextTick())
