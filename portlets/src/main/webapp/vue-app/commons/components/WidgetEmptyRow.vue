@@ -17,8 +17,6 @@
 -->
 <template>
   <gamification-overview-widget-row>
-    <template #content>
-      <v-list-item />
-    </template>
+    <v-list-item />
   </gamification-overview-widget-row>
 </template>
