@@ -26,7 +26,7 @@
     </template>
     <template #content>
       <exo-user-avatar
-        v-for="owner in listOwners" 
+        v-for="owner in ownersToDisplay" 
         :key="owner.userName"
         :profile-id="owner.userName"
         :size="44"
@@ -35,6 +35,16 @@
         link-style
         popover /> 
     </template>
+    <template #footer>
+      <v-btn
+        v-if="hasMore"
+        class="btn"
+        block
+        text
+        @click="loadMore">
+        {{ $t('rules.loadMore') }}
+      </v-btn>
+    </template>
   </exo-drawer>
 </template>
 <script>
@@ -42,9 +52,18 @@ export default {
   data() {
     return {
       listOwners: [],
+      limit: 10,
       program: null,
       backIcon: false,
     };
+  },
+  computed: {
+    ownersToDisplay() {
+      return this.listOwners.slice(0, this.limit);
+    },
+    hasMore() {
+      return this.ownersToDisplay.length < this.listOwners.length;
+    },
   },
   created() {
     this.$root.$on('open-owners-drawer-event', this.open);
@@ -57,6 +76,9 @@ export default {
       this.listOwners = avatars;
       this.backIcon = backIcon;
       this.$refs.ownersDetails.open();
+    },
+    loadMore() {
+      this.limit += 10;
     },
   }
 };
