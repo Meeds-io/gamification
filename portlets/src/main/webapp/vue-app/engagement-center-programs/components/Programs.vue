@@ -21,10 +21,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-show="!displayProgramDetail"
         id="engagementCenterProgramsTab"
         :is-administrator="isAdministrator"
-        :is-program-manager="isProgramManager" />
+        :is-program-manager="isProgramManager"
+        @administrators-loaded="administrators = $event" />
       <engagement-center-program-detail
         v-if="displayProgramDetail"
         :program="program"
+        :administrators="administrators"
         :newly-created="newlyCreated"
         :is-administrator="isAdministrator" />
     </main>
@@ -50,6 +52,7 @@ export default {
   data: () => ({
     tab: null,
     program: null,
+    administrators: null,
     displayProgramDetail: false,
     newlyCreated: false,
     programsLinkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`,
@@ -97,6 +100,7 @@ export default {
       })
         .then(program => {
           if (program?.id) {
+            this.administrators = program.administrators;
             this.openProgramDetail(program, newlyCreated);
           }
         });
@@ -104,8 +108,11 @@ export default {
     openCreatedProgramDetail(program) {
       this.openProgramDetail(program, true);
     },
-    openProgramDetail(program, newlyCreated) {
+    openProgramDetail(program, newlyCreated, administrators) {
       this.newlyCreated = newlyCreated || false;
+      if (!this.administrators) {
+        this.administrators = program.administrators || administrators;
+      }
       this.program = program;
       this.displayProgramDetail = true;
     },

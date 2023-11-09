@@ -136,6 +136,12 @@
 
 <script>
 export default {
+  props: {
+    administrators: {
+      type: Array,
+      default: null
+    },
+  },
   data: () => ({
     drawer: false,
     program: null,
@@ -164,13 +170,21 @@ export default {
       }));
     },
     addedOwners() {
-      return (this.program?.owners || []).filter(owner => !this.program?.space || !this.program?.space?.managers.includes(owner.remoteId))
+      return (this.program?.owners || [])
         .map(owner => ({
           userName: owner.remoteId
         }));
     },
+    administratorUsernames() {
+      return (this.administrators || this.program?.administrators || []).map(admin => ({
+        userName: admin.remoteId
+      }));
+    },
     owners() {
-      return this.addedOwners.concat(this.spaceManagersList);
+      return this.addedOwners
+        .concat(this.spaceManagersList)
+        .concat(this.administratorUsernames)
+        .filter((v, i, array) => array.indexOf(v) === i);
     },
     ownersCount() {
       return this.owners?.length;

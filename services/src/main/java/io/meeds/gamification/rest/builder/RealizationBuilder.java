@@ -55,8 +55,9 @@ public class RealizationBuilder {
                                                         translationService,
                                                         program,
                                                         locale,
+                                                        currentUsername,
                                                         null,
-                                                        currentUsername);
+                                                        false);
       }
       RuleDTO rule = realization.getRuleId() != null
           && realization.getRuleId() != 0 ? ruleService.findRuleById(realization.getRuleId())
