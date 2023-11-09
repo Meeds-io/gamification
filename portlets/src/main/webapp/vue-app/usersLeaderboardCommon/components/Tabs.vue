@@ -90,6 +90,10 @@
 <script>
 export default {
   props: {
+    pageSize: {
+      type: Number,
+      default: () => 10,
+    },
     embedded: {
       type: Boolean,
       default: false,
@@ -97,7 +101,6 @@ export default {
   },
   data: () => ({
     users: [],
-    pageSize: 10,
     limit: 10,
     programId: '0',
     currentRank: null,
@@ -149,6 +152,7 @@ export default {
     },
   },
   created() {
+    this.limit = this.pageSize;
     this.loading = true;
     this.refreshBoard()
       .then(() => this.$nextTick())
