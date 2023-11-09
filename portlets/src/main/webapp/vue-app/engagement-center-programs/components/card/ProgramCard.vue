@@ -96,6 +96,10 @@ export default {
       type: Object,
       default: null
     },
+    administrators: {
+      type: Array,
+      default: null
+    },
     isAdministrator: {
       type: Boolean,
       default: false,
@@ -115,7 +119,7 @@ export default {
       return this.program?.rulesTotalScore || 0;
     },
     addedOwnersList() {
-      return (this.program?.owners || []).filter(owner => !this.program?.space || !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
+      return (this.program?.owners || []).map(owner => ({
         userName: owner.remoteId
       }));
     },
@@ -127,8 +131,15 @@ export default {
         userName: owner
       }));
     },
+    administratorUsernames() {
+      return (this.program?.administrators || this.administrators || []).map(admin => ({
+        userName: admin.remoteId
+      }));
+    },
     owners() {
-      return this.addedOwnersList.concat(this.spaceManagersList);
+      return this.addedOwnersList.concat(this.spaceManagersList)
+        .concat(this.administratorUsernames)
+        .filter((v, i, array) => array.indexOf(v) === i);
     },
     ownersCount() {
       return this.owners?.length;
@@ -139,7 +150,7 @@ export default {
   },
   methods: {
     openProgramDetail() {
-      this.$root.$emit('open-program-detail', this.program);
+      this.$root.$emit('open-program-detail', this.program, this.administrators);
     },
   }
 };
