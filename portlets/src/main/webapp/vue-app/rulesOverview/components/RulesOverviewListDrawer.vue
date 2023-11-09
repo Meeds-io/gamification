@@ -20,14 +20,14 @@
     id="rulesOverviewListDrawer"
     ref="drawer"
     v-model="drawer"
-    :loading="loading"
+    :loading="loading > 0"
     :right="!$vuetify.rtl">
     <template #title>
       {{ $t('gamification.overview.actionsList') }}
     </template>
     <template #titleIcons>
       <v-btn
-        :href="actionsPageURL"
+        :href="pageLink"
         icon>
         <v-icon size="24">fa-external-link-alt</v-icon>
       </v-btn>
@@ -75,15 +75,36 @@
         </template>
       </gamification-overview-widget>
     </template>
+    <template #footer>
+      <div
+        v-if="hasMore"
+        class="d-flex justify-center">
+        <v-btn
+          :loading="loading > 0"
+          class="btn"
+          block
+          text
+          @click="loadMore">
+          {{ $t('rules.loadMore') }}
+        </v-btn>
+      </div>
+    </template>
   </exo-drawer>
 </template>
 <script>
 export default {
+  props: {
+    programId: {
+      type: String,
+      default: null,
+    },
+  },
   data: () => ({
     pageSize: 10,
+    page: 1,
     drawer: false,
-    loading: false,
-    rules: [],
+    loading: 0,
+    rulesSize: 0,
     activeRules: [],
     upcomingRules: [],
     endingRules: [],
@@ -93,7 +114,7 @@ export default {
     endingRulesToDisplay() {
       return this.endingRules
         .filter(r => r.endDate && (new Date(r.endDate).getTime() - Date.now()) < this.weekInMs)
-        .slice(0, 2);
+        .slice(0, 2 * this.page);
     },
     endingRulesCount() {
       return this.endingRulesToDisplay.length;
@@ -101,18 +122,24 @@ export default {
     upcomingRulesToDisplay() {
       return this.upcomingRules
         .filter(r => r.startDate && (new Date(r.startDate).getTime() - Date.now()) < this.weekInMs)
-        .slice(0, 2);
+        .slice(0, 2 * this.page);
     },
     upcomingRulesCount() {
       return this.upcomingRulesToDisplay.length;
     },
-    actionsPageURL() {
+    actionsLink() {
       return eXo.env.portal.portalName === 'public' && '/portal/public/overview/actions' || `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`;
+    },
+    programLink() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.programId}`;
+    },
+    pageLink() {
+      return this.programId && this.programLink || this.actionsLink;
     },
     activeRulesToDisplay() {
       return this.activeRules
         .filter(r => !this.endingRulesToDisplay.find(rule => rule.id === r.id))
-        .slice(0, this.pageSize - (this.endingRulesCount && 2 || 0) - (this.upcomingRulesCount && 2 || 0));
+        .slice(0, (this.pageSize * this.page) - (this.endingRulesCount && (2 * this.page) || 0) - (this.upcomingRulesCount && (2 * this.page) || 0));
     },
     activeRulesCount() {
       return this.activeRulesToDisplay.length;
@@ -125,6 +152,12 @@ export default {
     },
     hasAvailableRulesOnly() {
       return this.activeRulesCount && !this.endingRulesCount && !this.upcomingRulesCount;
+    },
+    limit() {
+      return this.pageSize * this.page;
+    },
+    hasMore() {
+      return this.rulesSize > this.limit;
     },
   },
   created() {
@@ -153,21 +186,27 @@ export default {
       }
       this.retrieveRules();
     },
+    loadMore() {
+      this.page++;
+      this.retrieveRules();
+    },
     retrieveRules() {
-      this.loading = true;
-      Promise.all([
-        this.retrieveEndingRules(),
-        this.retrieveActiveRules(),
-        this.retrieveUpcomingRules(),
-      ]).finally(() => this.loading = false);
+      this.loading = 3;
+      this.retrieveEndingRules()
+        .finally(() => this.loading--);
+      this.retrieveActiveRules()
+        .finally(() => this.loading--);
+      this.retrieveUpcomingRules()
+        .finally(() => this.loading--);
     },
     retrieveEndingRules() {
       return this.$ruleService.getRules({
         status: 'ENABLED',
         programStatus: 'ENABLED',
         dateFilter: 'STARTED_WITH_END',
+        programId: this.programId,
         offset: 0,
-        limit: 2,
+        limit: 2 * this.page,
         sortBy: 'endDate',
         sortDescending: false,
         expand: 'countRealizations',
@@ -180,22 +219,27 @@ export default {
         status: 'ENABLED',
         programStatus: 'ENABLED',
         dateFilter: 'STARTED',
+        programId: this.programId,
         offset: 0,
-        limit: this.pageSize,
+        limit: this.limit,
         sortBy: 'createdDate',
         sortDescending: true,
         expand: 'countRealizations',
         lang: eXo.env.portal.language,
-        returnSize: false,
-      }).then(result => this.activeRules = result?.rules || []);
+        returnSize: true,
+      }).then(result => {
+        this.activeRules = result?.rules || [];
+        this.rulesSize = result?.size || 0;
+      });
     },
     retrieveUpcomingRules() {
       return this.$ruleService.getRules({
         status: 'ENABLED',
         programStatus: 'ENABLED',
         dateFilter: 'UPCOMING',
+        programId: this.programId,
         offset: 0,
-        limit: 2,
+        limit: 2 * this.page,
         sortBy: 'startDate',
         sortDescending: false,
         expand: 'countRealizations',
