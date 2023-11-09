@@ -46,7 +46,7 @@ public class ProgramRestEntity extends ProgramDTO {
 
   private List<UserInfo>    owners;                                  // NOSONAR
 
-  private List<UserInfo>    administrators;                          // NOSONAR
+  private List<String>      administrators;                          // NOSONAR
 
   private int               activeRulesCount;                        // NOSONAR
 
@@ -76,7 +76,7 @@ public class ProgramRestEntity extends ProgramDTO {
                            Space space,
                            UserInfo userInfo,
                            List<UserInfo> owners,
-                           List<UserInfo> administrators,
+                           List<String> administrators,
                            int activeRulesCount,
                            EntityVisibility visibility) {
     super(id,

@@ -61,7 +61,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :commons-space-default-size="commonsSpaceDefaultSize"
       @closed="refreshUserDashBord" />
     <users-leaderboard-profile-achievements-drawer
-      ref="profileAchievementsDrawer" />
+      ref="profileAchievementsDrawer"
+      relative />
     <engagement-center-rule-extensions />
   </v-app>
 </template>

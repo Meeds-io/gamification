@@ -23,10 +23,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       class="d-flex flex-grow-1 fill-height"
       flat>
       <gamification-overview-widget-row
-        v-show="kudosDisplayed && !loading"
-        :class="kudosDisplayed && !loading && 'd-flex flex-column'">
+        v-show="!loading"
+        :class="!loading && 'd-flex flex-column'">
         <template #title>
-          <div class="subtitle-1 d-flex">
+          <div v-if="kudosDisplayed" class="subtitle-1 d-flex">
             <span>{{ $t('gamification.myReputation.KudosTitle') }}</span>
             <v-spacer />
             <v-btn
@@ -45,51 +45,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           type="my-reputation-item"
           class="d-flex flex-column mx-n4" />
       </gamification-overview-widget-row>
-      <div v-if="!kudosDisplayed && !loading" class="d-flex flex-column align-center justify-center">
-        <v-icon color="secondary" size="54">fa-award</v-icon>
-        <span
-          v-html="emptyKudosSummaryText"
-          class="subtitle-1 font-weight-bold mt-7"></span>
-      </div>
     </v-card>
     <v-card
       class="d-flex flex-grow-1 fill-height full-width"
       flat>
       <v-card
-        v-show="badgesDisplayed && !loading"
         class="full-height full-width"
         flat>
         <div class="d-flex flex-column full-height">
-          <div class="subtitle-1 d-flex">
-            {{ $t('gamification.overview.badges') }}
-          </div>
-          <card-carousel
-            v-if="badgesDisplayed"
-            class="d-flex flex-shrink-0 flex-grow-1 align-center justify-center"
-            dense>
-            <extension-registry-components
-              :params="params"
-              name="my-reputation-overview-badges"
-              type="my-reputation-item"
-              class="d-flex flex-column"
-              element-class="px-2" />
-          </card-carousel>
+          <extension-registry-components
+            :params="params"
+            name="my-reputation-overview-badges"
+            type="my-reputation-item"
+            class="d-flex flex-column" />
         </div>
       </v-card>
-      <div v-if="!badgesDisplayed && !loading" class="d-flex flex-column align-center justify-center full-width">
-        <v-icon color="secondary" size="54">fa-graduation-cap</v-icon>
-        <span
-          v-html="emptyBadgesSummaryText"
-          class="subtitle-1 font-weight-bold mt-7"></span>
-      </div>
     </v-card>
   </gamification-overview-widget>
 </template>
 <script>
 export default {
   data: () => ({
-    emptyKudosActionName: 'gamification-myReputation-kudos-check-actions',
-    emptyBadgesActionName: 'gamification-myReputation-bagdes-check-actions',
     receivedKudosCount: 0,
     kudosDisplayed: true,
     badgesDisplayed: true,
@@ -111,25 +87,18 @@ export default {
     isExternal() {
       return eXo.env.portal.isExternal === 'true';
     },
-    emptyKudosSummaryText() {
-      return this.$t('gamification.overview.emptyKudosMessage', {
-        0: !this.isExternal && `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyKudosActionName}'))">` || '',
-        1: !this.isExternal && '</a>' || '',
-      });
-    },
-    emptyBadgesSummaryText() {
-      return this.$t('gamification.overview.emptyBadgesMessage', {
-        0: !this.isExternal && `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyBadgesActionName}'))">` || '',
-        1: !this.isExternal && '</a>' || '',
-      });
-    },
     kudosData() {
       return (this.sentKudosSize + this.receivedKudosSize) > 0;
     }
   },
+  watch: {
+    loading() {
+      if (!this.loading) {
+        this.$root.$applicationLoaded();
+      }
+    },
+  },
   created() {
-    document.addEventListener(this.emptyKudosActionName, this.clickOnKudosEmptyActionLink);
-    document.addEventListener(this.emptyBadgesActionName, this.clickOnBadgesEmptyActionLink);
     document.addEventListener('kudosCount', (event) => {
       if (event) {
         this.kudosDisplayed = event.detail > 0;
@@ -142,11 +111,6 @@ export default {
         this.$nextTick().then(() => this.loadingBadges = false);
       }
     });
-    this.$root.$applicationLoaded();
-  },
-  beforeDestroy() {
-    document.removeEventListener(this.emptyKudosActionName, this.clickOnKudosEmptyActionLink);
-    document.removeEventListener(this.emptyBadgesActionName, this.clickOnBadgesEmptyActionLink);
   },
   methods: {
     clickOnKudosEmptyActionLink() {
@@ -156,9 +120,6 @@ export default {
         parentId: '',
         owner: eXo.env.portal.userName,
       }}));
-    },
-    clickOnBadgesEmptyActionLink() {
-      document.dispatchEvent(new CustomEvent('rules-overview-list-drawer'));
     },
   },
 };
