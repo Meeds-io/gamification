@@ -46,7 +46,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.IOUtil;
@@ -221,6 +221,10 @@ public class ProgramRest implements ResourceContainer {
                                                                          limit,
                                                                          expandFields,
                                                                          currentUser);
+      boolean anonymous = StringUtils.isBlank(currentUser);
+      if (expandFields.contains("administrators") && !anonymous) {
+        programList.setAdministrators(ProgramBuilder.buildAdministrators(programService));
+      }
       if (returnSize) {
         int programsSize = programService.countPrograms(programFilter, currentUser);
         programList.setSize(programsSize);
@@ -263,8 +267,9 @@ public class ProgramRest implements ResourceContainer {
                                                      translationService,
                                                      program,
                                                      getLocale(request),
+                                                     getCurrentUser(),
                                                      null,
-                                                     getCurrentUser()))
+                                                     true))
                      .build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
@@ -308,8 +313,9 @@ public class ProgramRest implements ResourceContainer {
                                                      translationService,
                                                      program,
                                                      getLocale(request),
+                                                     getCurrentUser(),
                                                      null,
-                                                     getCurrentUser()))
+                                                     true))
                      .build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
@@ -582,8 +588,9 @@ public class ProgramRest implements ResourceContainer {
                                                      translationService,
                                                      program,
                                                      getLocale(lang),
+                                                     currentUser,
                                                      expandFields,
-                                                     currentUser))
+                                                     true))
                      .build();
     } catch (IllegalArgumentException e) {
       return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
