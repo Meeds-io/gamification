@@ -294,7 +294,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>vuetify</module>
       </depends>
       <depends>
+        <module>ruleExtensions</module>
+      </depends>
+      <depends>
         <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>gamificationCommon</module>
       </depends>
       <depends>
         <module>jquery</module>
@@ -375,7 +381,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>extensionRegistry</module>
       </depends>
       <depends>
-        <module>gamificationCommon</module>
+        <module>rulesOverviewWidget</module>
       </depends>
       <depends>
         <module>eCharts</module>
@@ -435,13 +441,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>commonVueComponents</module>
       </depends>
       <depends>
-        <module>usersLeaderboardCommon</module>
-      </depends>
-      <depends>
-        <module>gamificationCommon</module>
-      </depends>
-      <depends>
-        <module>ruleExtensions</module>
+        <module>rulesOverviewWidget</module>
       </depends>
     </module>
   </portlet>
@@ -467,9 +467,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>extensionRegistry</module>
-      </depends>
-      <depends>
-        <module>gamificationCommon</module>
       </depends>
       <depends>
         <module>translationField</module>
@@ -504,9 +501,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>extensionRegistry</module>
-      </depends>
-      <depends>
-        <module>gamificationCommon</module>
       </depends>
       <depends>
         <module>translationField</module>
@@ -768,7 +762,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>extensionRegistry</module>
       </depends>
       <depends>
-        <module>gamificationCommon</module>
+        <module>rulesOverviewWidget</module>
       </depends>
     </module>
   </portlet>
@@ -826,6 +820,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>gamificationCommon</module>
     </depends>
     <depends>
       <module>ruleExtensions</module>
@@ -926,6 +923,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>gamificationCommon</module>
+    </depends>
+    <depends>
+      <module>usersLeaderboardCommon</module>
     </depends>
   </module>
 

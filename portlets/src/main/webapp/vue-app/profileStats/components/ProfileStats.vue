@@ -41,13 +41,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-fade-transition>
         <v-fade-transition>
           <gamification-rank
+            v-if="isFlipped || wasFlipped"
             v-show="isFlipped"
             class="profileFlippedCard ConnexionsRequests px-5 pb-5"
             @flip="flip" />
         </v-fade-transition>
       </v-layout>
     </v-container>
-    <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
     <connections-drawer
       ref="connectionsDrawer"
       :connection-requests="connectionRequests"
@@ -61,7 +61,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :commons-space-default-size="commonsSpaceDefaultSize"
       @closed="refreshUserDashBord" />
     <users-leaderboard-profile-achievements-drawer
-      ref="profileAchievementsDrawer" />
+      ref="profileAchievementsDrawer"
+      relative />
     <engagement-center-rule-extensions />
   </v-app>
 </template>
@@ -72,6 +73,7 @@ export default {
     return {
       currentComponent: null,
       isFlipped: false,
+      wasFlipped: false,
       connectionRequests: null,
       spaceRequests: null,
       userDashBordKey: 0,
@@ -81,10 +83,14 @@ export default {
       PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/profile/`,
     };
   },
+  watch: {
+    isFlipped() {
+      if (this.isFlipped) {
+        this.wasFlipped = true;
+      }
+    },
+  },
   created() {
-    this.$root.$on('open-achievement', (userPoints) => {
-      this.$refs.achievementsDrawer.open(userPoints);
-    });
     this.isCurrentUserProfile = eXo.env.portal.userName === eXo.env.portal.profileOwner;
     if (!this.isCurrentUserProfile) {
       this.commonsSpaces();
