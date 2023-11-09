@@ -21,6 +21,8 @@ import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 
+import java.util.List;
+
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.commons.file.services.FileService;
@@ -29,12 +31,16 @@ import org.exoplatform.services.cache.ExoCache;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.listener.ListenerService;
+import org.exoplatform.services.organization.Membership;
+import org.exoplatform.services.organization.MembershipEventListener;
+import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.upload.UploadService;
 
 import io.meeds.gamification.dao.ProgramDAO;
 import io.meeds.gamification.dao.RuleDAO;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.storage.ProgramStorage;
+import io.meeds.gamification.utils.Utils;
 
 public class ProgramCachedStorage extends ProgramStorage {
 
@@ -42,13 +48,16 @@ public class ProgramCachedStorage extends ProgramStorage {
 
   private FutureExoCache<Long, ProgramDTO, Object> programFutureCache;
 
+  private List<String>                             administrators;
+
   public ProgramCachedStorage(FileService fileService,
                               UploadService uploadService,
                               ProgramDAO programDAO,
                               RuleDAO ruleDAO,
                               CacheService cacheService,
-                              ListenerService listenerService) {
-    super(fileService, uploadService, programDAO, ruleDAO);
+                              ListenerService listenerService,
+                              OrganizationService organizationService) {
+    super(fileService, uploadService, programDAO, ruleDAO, organizationService);
     ExoCache<Long, ProgramDTO> programCache = cacheService.getCacheInstance(PROGRAM_CACHE_NAME);
     Loader<Long, ProgramDTO, Object> programLoader = new Loader<>() {
       @Override
@@ -60,6 +69,7 @@ public class ProgramCachedStorage extends ProgramStorage {
     listenerService.addListener(POST_CREATE_RULE_EVENT, new RuleUpdatedListener());
     listenerService.addListener(POST_DELETE_RULE_EVENT, new RuleUpdatedListener());
     listenerService.addListener(POST_UPDATE_RULE_EVENT, new RuleUpdatedListener());
+    organizationService.getMembershipHandler().addMembershipEventListener(new RewardingAdministratorMembershipListener());
   }
 
   @Override
@@ -97,6 +107,14 @@ public class ProgramCachedStorage extends ProgramStorage {
   }
 
   @Override
+  public List<String> getAdministrators() {
+    if (this.administrators == null) {
+      this.administrators = super.getAdministrators();
+    }
+    return administrators;
+  }
+
+  @Override
   public void clearCache() {
     programFutureCache.clear();
   }
@@ -105,6 +123,24 @@ public class ProgramCachedStorage extends ProgramStorage {
     @Override
     public void onEvent(Event<Object, String> event) throws Exception {
       clearCache();
+    }
+  }
+
+  public class RewardingAdministratorMembershipListener extends MembershipEventListener {
+    @Override
+    public void postSave(Membership m, boolean isNew) throws Exception {
+      clearCachedAdministrators(m);
+    }
+
+    @Override
+    public void postDelete(Membership m) throws Exception {
+      clearCachedAdministrators(m);
+    }
+
+    private void clearCachedAdministrators(Membership m) {
+      if (m != null && Utils.REWARDING_GROUP.equals(m.getGroupId())) {
+        ProgramCachedStorage.this.administrators = null;
+      }
     }
   }
 
