@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <exo-drawer
     ref="spaceDrawer"
-    v-model="spaceDrawer"
+    v-model="drawer"
     class="spaceDrawer"
     body-classes="hide-scroll decrease-z-index-more"
     right
@@ -51,7 +51,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-icon size="20">mdi-filter-remove</v-icon>
       </v-btn>
     </template>
-    <template #content>
+    <template v-if="drawer" #content>
       <div class="overflow-hidden">
         <template v-if="isCurrentUserProfile">
           <v-row v-if="showSpacesRequests" class="px-4 ma-0">
@@ -216,7 +216,7 @@ export default {
       spaces: [],
       spacesSuggestionsList: [],
       commonsSpaces: [],
-      spaceDrawer: false,
+      drawer: false,
       offset: 0,
       spaceSize: 0,
       commonsSpaceSize: 0,
