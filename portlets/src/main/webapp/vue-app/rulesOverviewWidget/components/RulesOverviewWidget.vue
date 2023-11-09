@@ -83,31 +83,29 @@
       </v-btn>
     </template>
     <gamification-overview-widget-row v-show="!loading" class="my-auto">
-      <template #content>
-        <div class="d-flex mx-auto align-center justify-center overflow-hidden">
-          <v-card
-            class="d-flex flex-column flex-grow-0 me-2 ms-n11 flex-shrink-0 border-box-sizing"
-            min-width="45"
-            max-width="45"
-            min-height="45"
-            max-height="45"
-            color="transparent"
-            flat>
-            <v-avatar
-              size="45"
-              class="rule-program-cover border-color primary--text no-border"
-              rounded>
-              <v-img :src="completedRulesImageUrl" eager />
-            </v-avatar>
-          </v-card>
-          <div class="flex-shrink-1 text-start text-truncate text-sub-title body-1">
-            {{ $t('gamification.overview.rulesOverviewCompletedTitle') }}
-          </div>
+      <div class="d-flex mx-auto align-center justify-center overflow-hidden">
+        <v-card
+          class="d-flex flex-column flex-grow-0 me-2 ms-n11 flex-shrink-0 border-box-sizing"
+          min-width="45"
+          max-width="45"
+          min-height="45"
+          max-height="45"
+          color="transparent"
+          flat>
+          <v-avatar
+            size="45"
+            class="rule-program-cover border-color primary--text no-border"
+            rounded>
+            <v-img :src="completedRulesImageUrl" eager />
+          </v-avatar>
+        </v-card>
+        <div class="flex-shrink-1 text-start text-truncate text-sub-title body-1">
+          {{ $t('gamification.overview.rulesOverviewCompletedTitle') }}
         </div>
-        <div class="d-flex mx-auto align-center justify-center text-sub-title body-2 my-4">
-          {{ $t('gamification.overview.rulesOverviewCompletedSubtitle') }}
-        </div>
-      </template>
+      </div>
+      <div class="d-flex mx-auto align-center justify-center text-sub-title body-2 my-4">
+        {{ $t('gamification.overview.rulesOverviewCompletedSubtitle') }}
+      </div>
     </gamification-overview-widget-row>
   </gamification-overview-widget>
 </template>
