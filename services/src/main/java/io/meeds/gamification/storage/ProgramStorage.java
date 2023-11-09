@@ -19,17 +19,24 @@ package io.meeds.gamification.storage;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
+import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.Group;
+import org.exoplatform.services.organization.Membership;
+import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.security.IdentityConstants;
 import org.exoplatform.upload.UploadResource;
 import org.exoplatform.upload.UploadService;
@@ -40,6 +47,7 @@ import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.storage.mapper.ProgramMapper;
+import io.meeds.gamification.utils.Utils;
 
 public class ProgramStorage {
 
@@ -47,22 +55,26 @@ public class ProgramStorage {
 
   private static final String FILE_API_NAME_SPACE = "gamification";
 
-  private final ProgramDAO    programDAO;
+  private final ProgramDAO          programDAO;
 
-  private final RuleDAO       ruleDAO;
+  private final RuleDAO             ruleDAO;
 
-  private final FileService   fileService;
+  private final FileService         fileService;
 
-  private final UploadService uploadService;
+  private final UploadService       uploadService;
+
+  private final OrganizationService organizationService;
 
   public ProgramStorage(FileService fileService,
                         UploadService uploadService,
                         ProgramDAO programDAO,
-                        RuleDAO ruleDAO) {
+                        RuleDAO ruleDAO,
+                        OrganizationService organizationService) {
     this.programDAO = programDAO;
     this.fileService = fileService;
     this.uploadService = uploadService;
     this.ruleDAO = ruleDAO;
+    this.organizationService = organizationService;
   }
 
   public ProgramDTO saveProgram(ProgramDTO program) {
@@ -150,6 +162,28 @@ public class ProgramStorage {
       }
     } catch (Exception e) {
       LOG.warn("Error deleting file image with id {}", fileId, e);
+    }
+  }
+
+  public List<String> getAdministrators() {
+    try {
+      Group rewardingGroup = organizationService.getGroupHandler().findGroupById(Utils.REWARDING_GROUP);
+      if (rewardingGroup != null) {
+        ListAccess<Membership> membershipsListAccess = organizationService.getMembershipHandler()
+                                                                          .findAllMembershipsByGroup(rewardingGroup);
+        int membershipSize = membershipsListAccess.getSize();
+        if (membershipSize > 0) {
+          Membership[] memberships = membershipsListAccess.load(0, membershipSize);
+          return Arrays.stream(memberships)
+                       .filter(Objects::nonNull)
+                       .map(Membership::getUserName)
+                       .distinct()
+                       .toList();
+        }
+      }
+      return Collections.emptyList();
+    } catch (Exception e) {
+      throw new IllegalStateException("Error retrieving rewarding administrators group members", e);
     }
   }
 
