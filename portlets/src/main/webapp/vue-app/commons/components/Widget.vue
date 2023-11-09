@@ -25,6 +25,9 @@
     <template #title>
       <slot name="title"></slot>
     </template> 
+    <template #action>
+      <slot name="action"></slot>
+    </template> 
     <template #default>
       <slot></slot>
     </template>
@@ -39,19 +42,19 @@ export default {
     },
     title: {
       type: String,
-      default: () => '',
+      default: null,
     },
     subtitle: {
       type: String,
-      default: () => '',
+      default: null,
     },
     actionUrl: {
       type: String,
-      default: () => '',
+      default: null,
     },
     extraClass: {
       type: String,
-      default: () => '',
+      default: null,
     },
     height: {
       type: String,
