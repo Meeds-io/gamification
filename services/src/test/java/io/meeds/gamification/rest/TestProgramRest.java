@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.security.ConversationState;
 
-import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.EntityVisibility;
@@ -62,8 +61,7 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
-  public void testGetAllDomains() throws Exception {
-
+  public void testGetPrograms() throws Exception {
     startSessionAs("root1");
 
     ContainerResponse response = getResponse("GET", getURLResource("programs"), null);
@@ -80,7 +78,28 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
-  public void testCreateDomain() throws Exception {
+  public void testGetProgramAdministrators() throws Exception {
+    startSessionAs("root1");
+
+    ContainerResponse response = getResponse("GET", getURLResource("programs"), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    ProgramList programList = (ProgramList) response.getEntity();
+    assertNotNull(programList);
+    assertNull(programList.getAdministrators());
+
+    response = getResponse("GET", getURLResource("programs?expand=administrators"), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    programList = (ProgramList) response.getEntity();
+    assertNotNull(programList);
+    assertNotNull(programList.getAdministrators());
+  }
+
+  @Test
+  public void testCreateProgram() throws Exception {
 
     ProgramDTO domain = manualDomain.clone();
     domain.setId(0);
@@ -116,7 +135,7 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
-  public void testUpdateDomain() throws Exception {
+  public void testUpdateProgram() throws Exception {
     ProgramDTO domain = autoDomain.clone();
     domain.setId(0);
 
@@ -345,12 +364,13 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     assertEquals(0, programService.countPrograms(filter, null));
 
     ProgramEntity programEntity = newDomain(EntityType.AUTOMATIC, "testGetAccessiblePrograms", true, Collections.emptySet());
-    ContainerResponse response = getResponse("GET", getURLResource("programs?offset=0&limit=10&returnSize=true"), null);
+    ContainerResponse response = getResponse("GET", getURLResource("programs?offset=0&limit=10&returnSize=true&expand=administrators"), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
     ProgramList programList = (ProgramList) response.getEntity();
     assertNotNull(programList);
+    assertNull(programList.getAdministrators());
     assertEquals(0, programList.getSize());
     assertEquals(0, programList.getPrograms().size());
 

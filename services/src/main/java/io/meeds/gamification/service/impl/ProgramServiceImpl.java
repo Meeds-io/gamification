@@ -431,9 +431,8 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public List<org.exoplatform.social.core.identity.model.Identity> getAdministrators() {
-    List<String> userNames = programStorage.getAdministrators();
-    return userNames.stream().map(identityManager::getOrCreateUserIdentity).toList();
+  public List<String> getAdministrators() {
+    return programStorage.getAdministrators();
   }
 
   private boolean canViewProgram(ProgramDTO program, String username, boolean checkEnabled) {
