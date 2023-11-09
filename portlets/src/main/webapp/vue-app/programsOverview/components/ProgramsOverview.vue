@@ -52,14 +52,17 @@
         <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.programs') }}</span>
       </div>
     </gamification-overview-widget>
-    <gamification-program-detail-drawer v-if="programsDisplayed" />
-    <engagement-center-rule-extensions />
+    <gamification-program-detail-drawer
+      v-if="programsDisplayed"
+      :administrators="administrators" />
+    <engagement-center-rule-extensions v-if="programsDisplayed" />
   </v-app>
 </template>
 <script>
 export default {
   data: () => ({
     programs: [],
+    administrators: null,
     limitToLoad: 4,
     loading: true,
     programsDisplayed: false
@@ -85,12 +88,13 @@ export default {
         limit: this.limitToLoad,
         type: 'ALL',
         status: 'ENABLED',
-        expand: 'countActiveRules',
         sortBy: 'modifiedDate',
         sortDescending: true,
         lang: eXo.env.portal.language,
+        expand: 'countActiveRules,administrators'
       })
         .then((data) => {
+          this.administrators = data?.administrators || [];
           this.programs = data?.programs || [];
           this.programsDisplayed = data.size > 0;
         })

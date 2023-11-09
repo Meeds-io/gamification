@@ -31,6 +31,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -56,13 +58,14 @@ public class ProgramBuilder {
     // Class with static methods
   }
 
-  public static ProgramRestEntity toRestEntity(ProgramService programService,
+  public static ProgramRestEntity toRestEntity(ProgramService programService, // NOSONAR
                                                RuleService ruleService,
                                                TranslationService translationService,
                                                ProgramDTO program,
                                                Locale locale,
+                                               String username,
                                                List<String> expandFields,
-                                               String username) {
+                                               boolean expandAdministrators) {
     if (program == null) {
       return null;
     }
@@ -104,7 +107,9 @@ public class ProgramBuilder {
                                                                         null,
                                  toUserContext(programService, program, username),
                                  anonymous ? Collections.emptyList() :
-                                           getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId()),
+                                   getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId()),
+                                 anonymous || !expandAdministrators ? null :
+                                                                    buildAdministrators(programService),
                                  activeRulesCount,
                                  program.getVisibility());
   }
@@ -142,9 +147,20 @@ public class ProgramBuilder {
                                                 translationService,
                                                 program,
                                                 locale,
+                                                username,
                                                 expandFields,
-                                                username))
+                                                false))
                    .toList();
+  }
+
+  public static List<UserInfo> buildAdministrators(ProgramService programService) {
+    List<Identity> administrators = programService.getAdministrators();
+    String superUser = ExoContainerContext.getService(UserACL.class).getSuperUser();
+    return CollectionUtils.isEmpty(administrators) ? null :
+                                                   administrators.stream()
+                                                                 .filter(u -> !superUser.equals(u.getRemoteId()))
+                                                                 .map(ProgramBuilder::toUserInfo)
+                                                                 .toList();
   }
 
   private static List<UserInfo> getProgramOwnersByIds(Set<Long> ids, long spaceId) {
