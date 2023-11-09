@@ -23,6 +23,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,6 +34,7 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.rest.api.RestUtils;
 
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
@@ -42,9 +44,11 @@ import io.meeds.gamification.model.filter.RealizationFilter;
 import io.meeds.gamification.rest.builder.RealizationBuilder;
 import io.meeds.gamification.rest.model.RealizationList;
 import io.meeds.gamification.rest.model.RealizationRestEntity;
+import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.utils.Utils;
+import io.meeds.portal.security.service.SecuritySettingService;
 import io.meeds.social.translation.service.TranslationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -56,26 +60,33 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "/gamification/realizations", description = "Manages users realizations")
 public class RealizationRest implements ResourceContainer {
 
-  private RuleService          ruleService;
+  private ProgramService         programService;
 
-  private RealizationService   realizationService;
+  private RuleService            ruleService;
 
-  private IdentityManager      identityManager;
+  private RealizationService     realizationService;
 
-  protected TranslationService translationService;
+  private IdentityManager        identityManager;
 
-  public RealizationRest(RuleService ruleService,
+  private TranslationService     translationService;
+
+  private SecuritySettingService securitySettingService;
+
+  public RealizationRest(ProgramService programService,
+                         RuleService ruleService,
                          TranslationService translationService,
                          RealizationService realizationService,
-                         IdentityManager identityManager) {
+                         IdentityManager identityManager,
+                         SecuritySettingService securitySettingService) {
+    this.programService = programService;
     this.ruleService = ruleService;
     this.translationService = translationService;
     this.realizationService = realizationService;
     this.identityManager = identityManager;
+    this.securitySettingService = securitySettingService;
   }
 
   @GET
-  @RolesAllowed("users")
   @Produces({
       MediaType.APPLICATION_JSON,
       "application/vnd.ms-excel",
@@ -87,7 +98,7 @@ public class RealizationRest implements ResourceContainer {
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
-  public Response getRealizations(
+  public Response getRealizations( // NOSONAR
                                   @Context
                                   HttpServletRequest request,
                                   @Parameter(description = "result fromDate", required = true)
@@ -120,8 +131,8 @@ public class RealizationRest implements ResourceContainer {
                                   String returnType,
                                   @Parameter(description = "Earner type, either USER or SPACE. Default: USER", required = false)
                                   @DefaultValue("USER")
-                                  @QueryParam("earnerType")
-                                  IdentityType earnerType,
+                                  @QueryParam("identityType")
+                                  IdentityType identityType,
                                   @Parameter(description = "Realization status. Possible values: ACCEPTED, REJECTED, CANCELED, DELETED", required = false)
                                   @QueryParam("status")
                                   RealizationStatus status,
@@ -135,15 +146,23 @@ public class RealizationRest implements ResourceContainer {
                                   @QueryParam("owned")
                                   @DefaultValue("false")
                                   boolean owned,
+                                  @Parameter(description = "If true, this will return all realizations, even the ones where user can't access, will be retrieved by anonymizing the associated program and rule", required = false)
+                                  @QueryParam("allPrograms")
+                                  @DefaultValue("false")
+                                  boolean allPrograms,
                                   @Parameter(description = "If true, this will return the total count of filtered realizations. Possible values = true or false. Default value = false.", required = false)
                                   @QueryParam("returnSize")
                                   @DefaultValue("false")
                                   boolean returnSize) {
+    if (!Utils.canAccessAnonymousResources(securitySettingService)) {
+      return Response.status(Status.UNAUTHORIZED).build();
+    }
     if (limit == 0 && (StringUtils.isBlank(fromDateRfc3339) || StringUtils.isBlank(toDateRfc3339))) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Either use limit or dates to limit returned results").build();
     }
 
-    Identity identity = ConversationState.getCurrent().getIdentity();
+    ConversationState conversationState = ConversationState.getCurrent();
+    Identity identity = conversationState == null ? null : conversationState.getIdentity();
     Date fromDate = Utils.parseRFC3339Date(fromDateRfc3339);
     Date toDate = Utils.parseRFC3339Date(toDateRfc3339);
 
@@ -154,9 +173,10 @@ public class RealizationRest implements ResourceContainer {
                                                      fromDate,
                                                      toDate,
                                                      status,
-                                                     earnerType,
+                                                     identityType,
                                                      programIds,
-                                                     ruleIds);
+                                                     ruleIds,
+                                                     allPrograms);
 
     boolean isXlsx = StringUtils.isNotBlank(returnType) && returnType.equals("xlsx");
     if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXlsx) {
@@ -170,6 +190,12 @@ public class RealizationRest implements ResourceContainer {
     }
     try {
       if (isXlsx) {
+        if (RestUtils.isAnonymous()) {
+          return Response.status(Response.Status.UNAUTHORIZED).entity("Must be authenticated to export XLS file").build();
+        }
+        if (allPrograms) {
+          return Response.status(Response.Status.UNAUTHORIZED).entity("'allPrograms' not allowed when exporting XLS file").build();
+        }
         String filename = "report_Actions";
         InputStream xlsxInputStream = realizationService.exportXlsx(filter, identity, filename, request.getLocale());
         return Response.ok(xlsxInputStream)
@@ -181,10 +207,12 @@ public class RealizationRest implements ResourceContainer {
                                                                                        identity,
                                                                                        offset,
                                                                                        limit);
-        List<RealizationRestEntity> realizationRestEntities = RealizationBuilder.toRestEntities(ruleService,
+        List<RealizationRestEntity> realizationRestEntities = RealizationBuilder.toRestEntities(programService,
+                                                                                                ruleService,
                                                                                                 translationService,
                                                                                                 identityManager,
                                                                                                 realizations,
+                                                                                                Utils.getCurrentUser(),
                                                                                                 getLocale(request));
         RealizationList realizationList = new RealizationList();
         realizationList.setRealizations(realizationRestEntities);
@@ -244,7 +272,6 @@ public class RealizationRest implements ResourceContainer {
 
   @GET
   @Path("{id}")
-  @RolesAllowed("users")
   @Produces({
     MediaType.APPLICATION_JSON,
     MediaType.TEXT_PLAIN
@@ -254,19 +281,24 @@ public class RealizationRest implements ResourceContainer {
       @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
   })
-  public Response getRealizations(
-                                  @Context
-                                  HttpServletRequest request,
-                                  @Parameter(description = "Achievement id", required = true)
-                                  @PathParam("id")
-                                  long id) {
+  public Response getRealization(
+                                 @Context
+                                 HttpServletRequest request,
+                                 @Parameter(description = "Achievement id", required = true)
+                                 @PathParam("id")
+                                 long id) {
+    if (!Utils.canAccessAnonymousResources(securitySettingService)) {
+      return Response.status(Status.UNAUTHORIZED).build();
+    }
     try {
       RealizationDTO realization = realizationService.getRealizationById(id, ConversationState.getCurrent().getIdentity());
-      RealizationRestEntity realizationRestEntity = RealizationBuilder.toRestEntity(ruleService,
-                                                                                              translationService,
-                                                                                              identityManager,
-                                                                                              realization,
-                                                                                              getLocale(request));
+      RealizationRestEntity realizationRestEntity = RealizationBuilder.toRestEntity(programService,
+                                                                                    ruleService,
+                                                                                    translationService,
+                                                                                    identityManager,
+                                                                                    realization,
+                                                                                    Utils.getCurrentUser(),
+                                                                                    getLocale(request));
       return Response.ok(realizationRestEntity).build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();

@@ -15,12 +15,22 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget
-      :see-all-url="programLink"
-      :loading="loading"
-      extra-class="pa-0 justify-space-between height-auto">
-      <template #title>
-        <span class="text-truncate">{{ $t('gamification.overview.programsOverviewTitle') }}</span>
+    <gamification-overview-widget :loading="loading">
+      <template v-if="programsDisplayed || loading" #title>
+        <div v-if="programsDisplayed" class="d-flex flex-grow-1 full-width">
+          <div class="widget-text-header text-none text-truncate">
+            {{ $t('gamification.overview.programsOverviewTitle') }}
+          </div>
+          <v-spacer />
+          <v-btn
+            height="auto"
+            min-width="auto"
+            class="pa-0"
+            text
+            @click="$refs.listDrawer.open()">
+            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+          </v-btn>
+        </div>
       </template>
       <template v-if="programsDisplayed" #content>
         <gamification-overview-program-item
@@ -34,19 +44,21 @@
             :key="index"
             class="flex-grow-1" />
         </template>
+        <gamification-program-list-drawer
+          ref="listDrawer" />
       </template>
       <template v-else-if="!loading" #content>
-        <gamification-overview-widget-row class="my-auto mx-4">
-          <template #icon>
-            <v-icon color="secondary" size="55px">fas fa-bullhorn</v-icon>
-          </template>
+        <gamification-overview-widget-row class="my-auto">
           <template #content>
-            <span v-sanitized-html="emptySummaryText"></span>
+            <div class="d-flex flex-column align-center justify-center">
+              <v-icon color="secondary" size="54">fa-puzzle-piece</v-icon>
+              <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.programs') }}</span>
+            </div>
           </template>
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
-    <gamification-program-detail-drawer />
+    <gamification-program-detail-drawer v-if="programsDisplayed" />
     <engagement-center-rule-extensions />
   </v-app>
 </template>
@@ -59,14 +71,8 @@ export default {
     programsDisplayed: false
   }),
   computed: {
-    emptySummaryText() {
-      return this.$t('gamification.overview.programsOverviewSummary', {
-        0: `<a class="primary--text font-weight-bold" href="${this.programURL}">`,
-        1: '</a>',
-      });
-    },
     programURL() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`;
     },
     programLink() {
       return this.programsDisplayed && this.programURL || null;
@@ -80,6 +86,7 @@ export default {
   },
   methods: {
     retrievePrograms() {
+      this.loading = true;
       return this.$programService.getPrograms({
         limit: this.limitToLoad,
         type: 'ALL',
@@ -92,8 +99,8 @@ export default {
         .then((data) => {
           this.programs = data?.programs || [];
           this.programsDisplayed = data.size > 0;
-          this.loading = false;
-        });
+        })
+        .finally(() => this.loading = false);
     },
   },
 };

@@ -16,24 +16,24 @@
 <template>
   <gamification-overview-widget-row
     clickable
-    @open="$root.$emit('program-detail-drawer', program)">
+    @open="$root.$emit('program-detail-drawer', program, goBackButton)">
     <template #icon>
       <v-list-item-avatar
         :style="programStyle"
         height="48"
         width="48"
-        class="border-color rounded my-auto me-auto ms-4"
+        class="border-color rounded my-auto me-auto"
         tile>
         <v-img :src="program.avatarUrl" />
       </v-list-item-avatar>
     </template>
     <template #content>
-      <v-list-item class="ps-0">
+      <v-list-item class="px-0">
         <v-list-item-content class="py-0 my-auto">
-          <v-list-item-title>
+          <v-list-item-title class="subtitle-2">
             {{ program.title }}
           </v-list-item-title>
-          <v-list-item-subtitle class="d-flex flex-nowrap align-center">
+          <v-list-item-subtitle class="d-flex flex-nowrap align-center subtitle-2">
             {{ program.activeRulesCount }} {{ $t('gamification.overview.label.actionsAvailable') }}
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -58,13 +58,17 @@ export default {
       type: Object,
       default: null,
     },
+    goBackButton: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     programStyle() {
       return this.program?.color && `border: 1px solid ${this.program.color} !important;` || '';
     },
     programURL() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`;
     },
     programTotalScore() {
       return new Intl.NumberFormat(eXo.env.portal.language, {

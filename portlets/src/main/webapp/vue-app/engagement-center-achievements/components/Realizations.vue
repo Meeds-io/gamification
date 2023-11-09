@@ -187,7 +187,7 @@ export default {
     isMobile: false,
     filterActivated: false,
     selected: 'Date',
-    programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`,
+    programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`,
     tabName: window.location.hash === '#hosted' ? 'OWNED' : 'YOURS',
   }),
   computed: {

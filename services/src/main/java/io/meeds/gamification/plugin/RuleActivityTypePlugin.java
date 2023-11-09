@@ -45,7 +45,7 @@ public class RuleActivityTypePlugin extends ActivityTypePlugin {
     if (rule == null) {
       throw new UnsupportedOperationException();
     } else {
-      return programService.isProgramMember(rule.getProgramId(), userAclIdentity.getUserId());
+      return programService.isProgramMember(rule.getProgramId(), userAclIdentity.getUserId(), false);
     }
   }
 

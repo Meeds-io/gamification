@@ -52,12 +52,10 @@ import io.meeds.gamification.plugin.RuleTranslationPluginTest;
 import io.meeds.gamification.rest.TestAnnouncementRest;
 import io.meeds.gamification.rest.TestBadgeRest;
 import io.meeds.gamification.rest.TestConnectorRest;
-import io.meeds.gamification.rest.TestGamificationInformationsEndpoint;
-import io.meeds.gamification.rest.TestLeaderboardEndpoint;
+import io.meeds.gamification.rest.TestLeaderboardRest;
 import io.meeds.gamification.rest.TestProgramRest;
 import io.meeds.gamification.rest.TestRealizationRest;
 import io.meeds.gamification.rest.TestRuleRest;
-import io.meeds.gamification.rest.TestSpaceLeaderboardEndpoint;
 import io.meeds.gamification.rest.TestUserReputationEndpoint;
 import io.meeds.gamification.scheduled.ProgramAutoDisableJobTest;
 import io.meeds.gamification.search.RuleSearchConnectorTest;
@@ -76,10 +74,13 @@ import io.meeds.gamification.storage.ConnectorAccountStorageTest;
 import io.meeds.gamification.storage.ProgramStorageTest;
 import io.meeds.gamification.storage.RealizationsStorageTest;
 import io.meeds.gamification.storage.RuleStorageTest;
+import io.meeds.gamification.upgrade.ProgramVisibilityUpgradePluginTest;
 import io.meeds.gamification.utils.UtilsTest;
+import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+    PublicActionAccessFilterTest.class,
     RealizationServiceTest.class,
     BadgeServiceTest.class,
     BadgeRegistryTest.class,
@@ -103,11 +104,9 @@ import io.meeds.gamification.utils.UtilsTest;
     ConnectorSettingServiceTest.class,
     ConnectorServiceTest.class,
     UtilsTest.class,
-    TestGamificationInformationsEndpoint.class,
     TestProgramRest.class,
     TestUserReputationEndpoint.class,
-    TestLeaderboardEndpoint.class,
-    TestSpaceLeaderboardEndpoint.class,
+    TestLeaderboardRest.class,
     TestBadgeRest.class,
     TestRealizationRest.class,
     TestRuleRest.class,
@@ -132,6 +131,7 @@ import io.meeds.gamification.utils.UtilsTest;
     ActionPublishedNotificationPluginTest.class,
     RuleActivityTypePluginTest.class,
     EventServiceTest.class,
+    ProgramVisibilityUpgradePluginTest.class,
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {

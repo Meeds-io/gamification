@@ -921,31 +921,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
   }
 
-  public void testComputeTotalScore() {
-    RuleDTO ruleDTO = newRuleDTO();
-    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                                       adminIdentityId,
-                                                                       spaceMemberIdentityId,
-                                                                       ACTIVITY_ID,
-                                                                       ACTIVITY_OBJECT_TYPE)
-                                                   .get(0);
-    assertNotNull(realization);
-    assertTrue(realization.getId() > 0);
-
-    RealizationDTO realization1 = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                                        adminIdentityId,
-                                                                        spaceMemberIdentityId,
-                                                                        ACTIVITY_ID,
-                                                                        ACTIVITY_OBJECT_TYPE)
-                                                    .get(0);
-    assertNotNull(realization1);
-    assertTrue(realization1.getId() > 0);
-
-    assertEquals(realization.getActionScore() + realization1.getActionScore(),
-                 realizationDAO.getTotalScore(adminIdentityId));
-  }
-
-  public void testLeaderboardRank() {
+  public void testLeaderboardRank() throws IllegalAccessException {
     ProgramDTO program = newProgram();
     RuleDTO rule = newRuleDTO(RULE_NAME, program.getId());
     realizationService.createRealizations(rule.getEvent(),
@@ -1001,7 +977,20 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     Date date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
     assertEquals(1, realizationService.getLeaderboardRank(adminIdentityId, date, program.getId()));
+    LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
+    leaderboardFilter.setIdentityType(IdentityType.USER);
+    leaderboardFilter.setProgramId(program.getId());
+    leaderboardFilter.setPeriod("WEEK");
+    assertEquals(2, realizationService.getLeaderboard(leaderboardFilter, null).size());
+
+    assertEquals(1, realizationService.getLeaderboardRank(adminIdentityId, date, program.getId()));
     assertEquals(2, realizationService.getLeaderboardRank(spaceMemberIdentityId, date, program.getId()));
+
+    leaderboardFilter = new LeaderboardFilter();
+    leaderboardFilter.setIdentityType(IdentityType.SPACE);
+    leaderboardFilter.setProgramId(program.getId());
+    leaderboardFilter.setPeriod("WEEK");
+    assertEquals(2, realizationService.getLeaderboard(leaderboardFilter, ADMIN_USER).size());
 
     assertEquals(1, realizationService.getLeaderboardRank(TEST_SPACE2_ID, date, program.getId()));
     assertEquals(2, realizationService.getLeaderboardRank(TEST_SPACE_ID, date, program.getId()));
@@ -1035,14 +1024,14 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(1, realizationService.getScorePerProgramByIdentityId(adminIdentityId).size());
   }
 
-  public void testFilterByDomainId() {
+  public void testFilterByDomainId() throws IllegalAccessException {
     RuleDTO ruleDTO = newRuleDTO();
     LeaderboardFilter filter = new LeaderboardFilter();
     filter.setPeriod(Period.ALL.name());
     filter.setIdentityType(IdentityType.USER);
-    filter.setLoadCapacity(limit);
+    filter.setLoadCapacity(LIMIT);
     filter.setProgramId(ruleDTO.getProgram().getId());
-    List<StandardLeaderboard> filteredLeaderboard = realizationService.getLeaderboard(filter);
+    List<StandardLeaderboard> filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(0, filteredLeaderboard.size());
 
     realizationService.createRealizations(ruleDTO.getEvent(),
@@ -1051,28 +1040,28 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
 
-    filteredLeaderboard = realizationService.getLeaderboard(filter);
+    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(1, filteredLeaderboard.size());
     StandardLeaderboard userLeaderboard = filteredLeaderboard.get(0);
     assertEquals(adminIdentityId, userLeaderboard.getEarnerId());
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setPeriod(Period.WEEK.name());
-    filteredLeaderboard = realizationService.getLeaderboard(filter);
+    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(1, filteredLeaderboard.size());
     userLeaderboard = filteredLeaderboard.get(0);
     assertEquals(adminIdentityId, userLeaderboard.getEarnerId());
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setPeriod(Period.MONTH.name());
-    filteredLeaderboard = realizationService.getLeaderboard(filter);
+    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(1, filteredLeaderboard.size());
     userLeaderboard = filteredLeaderboard.get(0);
     assertEquals(adminIdentityId, userLeaderboard.getEarnerId());
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setIdentityType(IdentityType.SPACE);
-    filteredLeaderboard = realizationService.getLeaderboard(filter);
+    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(0, filteredLeaderboard.size());
   }
 

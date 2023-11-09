@@ -122,9 +122,6 @@ public class RuleServiceImpl implements RuleService {
     if (ruleId <= 0) {
       throw new IllegalArgumentException("ruleId is mandatory");
     }
-    if (StringUtils.isBlank(username)) {
-      throw new IllegalAccessException(USERNAME_IS_MANDATORY_MESSAGE);
-    }
     RuleDTO rule = findRuleById(ruleId);
     if (rule == null) {
       throw new ObjectNotFoundException("Rule doesn't exist");
@@ -133,9 +130,8 @@ public class RuleServiceImpl implements RuleService {
       throw new ObjectNotFoundException("Rule has been deleted");
     }
     if (!isRuleManager(rule, username)
-        && (!rule.isEnabled()
-            || rule.getProgram() == null
-            || !programService.isProgramMember(rule.getProgram().getId(), username))) {
+        && (rule.getProgram() == null
+            || !programService.canViewProgram(rule.getProgram().getId(), username))) {
       throw new IllegalAccessException("Rule isn't accessible");
     }
     if (rule.getProgram() != null) {
@@ -438,7 +434,7 @@ public class RuleServiceImpl implements RuleService {
 
   private boolean isRuleManager(RuleDTO rule, String username) {
     ProgramDTO program = rule.getProgram();
-    if (program == null) {
+    if (program == null || StringUtils.isBlank(username)) {
       return false;
     } else {
       return programService.isProgramOwner(program.getId(), username);

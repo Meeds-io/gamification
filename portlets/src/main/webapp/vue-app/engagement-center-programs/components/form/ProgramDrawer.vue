@@ -85,6 +85,16 @@
                     @updated="addAvatar"
                     @deleted="removeAvatar" />
                 </div>
+                <div class="mt-4">
+                  <span class="subtitle-1 d-flex align-center">
+                    {{ $t('program.form.programColorTitle') }}
+                  </span>
+                  <engagement-center-program-color-picker
+                    id="engagementCenterProgramColorPicker"
+                    v-model="program.color"
+                    :program="program"
+                    :allow-expand="expanded" />
+                </div>
                 <translation-text-field
                   ref="programTitle"
                   id="programTitle"
@@ -152,22 +162,9 @@
             </v-stepper-step>
             <v-slide-y-transition>
               <div v-show="expanded || stepper > 1" class="px-6">
-                <div class="mt-4">
-                  <span class="subtitle-1 d-flex align-center">
-                    {{ $t('program.form.programColorTitle') }}
-                    <v-divider class="ms-4" />
-                  </span>
-                  <engagement-center-program-color-picker
-                    id="engagementCenterProgramColorPicker"
-                    v-model="program.color"
-                    :program="program"
-                    :allow-expand="expanded"
-                    class="mt-4" />
-                </div>
-                <div class="mt-4">
+                <div>
                   <span class="subtitle-1 d-flex align-center">
                     {{ $t('programs.label.audienceSpace') }}
-                    <v-divider class="ms-4" />
                   </span>
                   <div class="mt-4">
                     <div class="d-flex align-center">
@@ -197,11 +194,13 @@
                     :width="220"
                     sugester-class="ma-0 no-box-shadow border-color"
                     include-spaces />
+                  <div v-if="openSpace !== null" class="caption text-light-color mt-2">
+                    {{ openSpace && $t('programs.label.openSpaceSubtitle') || $t('programs.label.restrictedSpaceSubtitle') }}
+                  </div>
                 </div>
                 <div class="mt-4">
                   <span class="subtitle-1 d-flex align-center">
                     {{ $t('programs.label.programOwners') }}
-                    <v-divider class="ms-4" />
                   </span>
                   <div class="d-flex align-center">
                     <span class="caption text-light-color"> {{ $t('programs.label.accessPermission') }}</span>
@@ -325,6 +324,7 @@ export default {
     defaultCover: false,
     deleteAvatar: false,
     defaultAvatar: false,
+    openSpace: null,
   }),
   computed: {
     showDrawerContent() {
@@ -470,6 +470,18 @@ export default {
         this.$refs.programDrawer.endLoading();
       }
     },
+    drawer() {
+      if (!this.drawer && window.location.hash === '#create') {
+        window.location.hash = '';
+      }
+    },
+    spaceId() {
+      this.openSpace = null;
+      if (this.spaceId) {
+        this.$spaceService.getSpaceById(this.spaceId)
+          .then(space => this.openSpace = (space?.subscription === 'open'));
+      }
+    },
   },
   created() {
     this.$root.$on('program-form-open', this.open);
@@ -480,6 +492,11 @@ export default {
         }, 200);
       }
     });
+  },
+  mounted() {
+    if (window.location.hash === '#create') {
+      this.open();
+    }
   },
   methods: {
     open(program, freshInstance) {

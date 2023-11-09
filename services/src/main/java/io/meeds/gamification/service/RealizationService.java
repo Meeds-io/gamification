@@ -9,7 +9,6 @@ import java.util.Map;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
 
-import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.ProfileReputation;
@@ -289,26 +288,17 @@ public interface RealizationService {
    * @param  endDate
    * @return                  a list of object of type PiechartLeaderboard
    */
-  List<PiechartLeaderboard> getStatsByIdentityId(String earnerIdentityId, Date startDate, Date endDate);
-
-  /**
-   * Retrieves Leaderboard switch designated {@link IdentityType} and between
-   * two dates
-   * 
-   * @param  earnedType {@link IdentityType}
-   * @param  fromDate   From date of type {@link Date}
-   * @param  toDate     To date of type {@link Date}
-   * @return            {@link List} of objects of type StandardLeaderboard
-   */
-  List<StandardLeaderboard> getLeaderboardBetweenDate(IdentityType earnedType, Date fromDate, Date toDate);
+  List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId, Date startDate, Date endDate);
 
   /**
    * Retrieves Leaderboard switch designated filter
    * 
-   * @param  filter of type {@link LeaderboardFilter}, used to filter query
-   * @return        {@link List} of objects of type StandardLeaderboard
+   * @param filter of type {@link LeaderboardFilter}, used to filter query
+   * @param currentUser Currrent user name
+   * @return {@link List} of objects of type StandardLeaderboard
+   * @throws IllegalAccessException when space board and anonymous access
    */
-  List<StandardLeaderboard> getLeaderboard(LeaderboardFilter filter);
+  List<StandardLeaderboard> getLeaderboard(LeaderboardFilter filter, String currentUser) throws IllegalAccessException;
 
   /**
    * Retrieves identities total score between designated dates

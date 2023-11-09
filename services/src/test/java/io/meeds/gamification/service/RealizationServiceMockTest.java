@@ -157,7 +157,8 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     when(identityManager.getOrCreateUserIdentity(userAclIdentity.getUserId())).thenReturn(adminIdentity);
     assertThrows(IllegalArgumentException.class,
                  () -> realizationService.getRealizationsByFilter(null, userAclIdentity, offset, limit));
-    assertThrows(IllegalArgumentException.class, () -> realizationService.getRealizationsByFilter(filter, null, offset, limit));
+    assertEquals(0, realizationService.getRealizationsByFilter(filter, null, offset, limit).size());
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, userAclIdentity));
 
     // When
     filter.setFromDate(fromDate);
@@ -201,7 +202,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(null, userAclIdentity));
-    assertThrows(IllegalArgumentException.class, () -> realizationService.countRealizationsByFilter(filter, null));
+    assertEquals(0, realizationService.countRealizationsByFilter(filter, null));
 
     // When
     filter.setEarnerIds(null);
@@ -323,25 +324,6 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     assertEquals(IdentityType.SPACE, realizationEntity.getEarnerType());
   }
 
-  public void testComputeTotalScore() {
-    RuleDTO ruleDTO = newRuleDTO();
-    RealizationDTO realization1 = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                                        TEST_USER_EARNER,
-                                                                        TEST_USER_RECEIVER,
-                                                                        ACTIVITY_ID,
-                                                                        ACTIVITY_OBJECT_TYPE)
-                                                    .get(0);
-
-    RealizationDTO realization2 = realizationService.createRealizations(ruleDTO.getEvent(),
-                                                                        TEST_USER_EARNER,
-                                                                        TEST_USER_RECEIVER,
-                                                                        ACTIVITY_ID,
-                                                                        ACTIVITY_OBJECT_TYPE)
-                                                    .get(0);
-
-    assertEquals(realization1.getActionScore() + realization2.getActionScore(), realizationDAO.getTotalScore(TEST_USER_EARNER));
-  }
-
   public void testLeaderboardRank() {
     ProgramDTO program = newProgram();
     RuleDTO ruleDTO = newRuleDTO(RULE_NAME, program.getId());
@@ -437,14 +419,14 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     assertEquals(1, realizationService.getScorePerProgramByIdentityId(TEST_USER_EARNER).size());
   }
 
-  public void testFilterByDomainId() {
+  public void testFilterByDomainId() throws IllegalAccessException {
     RuleDTO ruleDTO = newRuleDTO();
     LeaderboardFilter filter = new LeaderboardFilter();
     filter.setPeriod(Period.ALL.name());
     filter.setIdentityType(IdentityType.USER);
     filter.setLoadCapacity(limit);
     filter.setProgramId(ruleDTO.getProgram().getId());
-    List<StandardLeaderboard> filteredLeaderboard = realizationService.getLeaderboard(filter);
+    List<StandardLeaderboard> filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(0, filteredLeaderboard.size());
 
     realizationService.createRealizations(ruleDTO.getEvent(),
@@ -453,28 +435,28 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
 
-    filteredLeaderboard = realizationService.getLeaderboard(filter);
+    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(1, filteredLeaderboard.size());
     StandardLeaderboard userLeaderboard = filteredLeaderboard.get(0);
     assertEquals(TEST_USER_EARNER, userLeaderboard.getEarnerId());
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setPeriod(Period.WEEK.name());
-    filteredLeaderboard = realizationService.getLeaderboard(filter);
+    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(1, filteredLeaderboard.size());
     userLeaderboard = filteredLeaderboard.get(0);
     assertEquals(TEST_USER_EARNER, userLeaderboard.getEarnerId());
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setPeriod(Period.MONTH.name());
-    filteredLeaderboard = realizationService.getLeaderboard(filter);
+    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(1, filteredLeaderboard.size());
     userLeaderboard = filteredLeaderboard.get(0);
     assertEquals(TEST_USER_EARNER, userLeaderboard.getEarnerId());
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setIdentityType(IdentityType.SPACE);
-    filteredLeaderboard = realizationService.getLeaderboard(filter);
+    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(0, filteredLeaderboard.size());
   }
 

@@ -56,7 +56,7 @@ export default {
       return this.rule?.program?.avatarUrl;
     },
     actionUrl() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions/${this.rule?.id}`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions/${this.rule?.id}`;
     },
     announceUrl() {
       return `${this.actionUrl}#announce`;

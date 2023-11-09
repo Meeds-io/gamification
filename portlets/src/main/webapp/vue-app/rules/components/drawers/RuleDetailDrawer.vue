@@ -25,6 +25,7 @@
     v-model="drawer"
     v-draggable="enabled"
     :right="!$vuetify.rtl"
+    :go-back-button="goBackButton"
     allow-expand
     @closed="onClose"
     @expand-updated="expanded = $event">
@@ -35,10 +36,11 @@
         {{ $t('rule.detail.letsSeeWhatToDo') }}
       </span>
     </template>
-    <template v-if="rule && !loading && drawer" #titleIcons>
+    <template v-if="rule && !loading && drawer && !$root.isAnonymous" #titleIcons>
       <rule-favorite-button
+        v-if="isProgramMember"
         :rule-id="rule.id"
-        :space-id="rule.spaceId"
+        :space-id="spaceId"
         :favorite.sync="rule.favorite"
         type="rule"
         type-label="rules"
@@ -92,14 +94,14 @@
             <v-col
               v-if="showEndDate"
               cols="6"
-              class="px-0">
+              class="px-0 rule-has-end-date">
               <engagement-center-rule-date-end
                 :rule="rule" />
             </v-col>
             <v-col
               v-if="hasRecurrence"
               :class="showEndDate && 'align-end'"
-              class="px-0"
+              class="px-0 rule-has-recurrence"
               cols="6">
               <engagement-center-rule-recurrence
                 :rule="rule"
@@ -108,7 +110,7 @@
             <v-col
               v-if="canAnnounce"
               cols="12"
-              class="px-0">
+              class="px-0 rule-can-announce">
               <engagement-center-rule-announcement-form
                 ref="ruleAnnouncementForm"
                 v-model="validAnnouncement"
@@ -118,9 +120,29 @@
                 @sent="close" />
             </v-col>
             <v-col
+              v-else-if="!isDisabled && !isProgramMember"
+              cols="12"
+              class="px-0 d-flex rule-not-member">
+              <v-btn
+                v-bind="$root.isAnonymous && {
+                  href: '/portal/login'
+                }"
+                v-on="!$root.isAnonymous && {
+                  click: () => joinAudience()
+                }"
+                :loading="joining"
+                class="primary mx-auto my-4"
+                outlined>
+                <v-icon size="16">fa-rocket</v-icon>
+                <span class="font-weight-bold my-auto ms-3 text-none">
+                  {{ $t('rule.detail.participate') }}
+                </span>
+              </v-btn>
+            </v-col>
+            <v-col
               v-else-if="hasValidityMessage"
               cols="12"
-              class="px-0 py-6">
+              class="px-0 py-6 rule-has-validity-message">
               <engagement-center-rule-disabled
                 v-if="isDisabled" />
               <engagement-center-rule-invalid-audience
@@ -177,7 +199,7 @@ export default {
     expanded: false,
     rule: {},
     loading: false,
-    linkBasePath: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/actions`,
+    joining: false,
     validAnnouncement: false,
     sending: false,
     announcementFormOpened: false,
@@ -185,11 +207,18 @@ export default {
     drawerUrl: null,
     time: Date.now(),
     interval: null,
+    goBackButton: false,
     objectType: 'activity'
   }),
   computed: {
     now() {
       return this.$root.now || this.time;
+    },
+    linkBasePath() {
+      return eXo.env.portal.portalName === 'public' && '/portal/public/overview/actions' || `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`;
+    },
+    isProgramMember() {
+      return this.rule?.userInfo?.member;
     },
     expandedView() {
       return !this.$root.isMobile && this.expanded;
@@ -199,6 +228,7 @@ export default {
         || this.canAnnounce
         || this.hasRecurrence
         || this.showEndDate
+        || !this.isProgramMember
         || false;
     },
     hasValidityMessage() {
@@ -252,11 +282,14 @@ export default {
       return !this.alreadyEnded && this.alreadyStarted && this.endDateMillis || false;
     },
     canAnnounce() {
-      return this.rule?.userInfo?.context?.valid && this.rule?.type === 'MANUAL';
+      return this.rule?.userInfo?.context?.validForIdentity && this.rule?.type === 'MANUAL';
     },
     enabled() {
       return eXo.env.portal.editorAttachImageEnabled && eXo.env.portal.attachmentObjectTypes?.indexOf(this.objectType) >= 0;
-    }
+    },
+    spaceId() {
+      return this.rule?.program?.spaceId;
+    },
   },
   watch: {
     sending() {
@@ -293,17 +326,18 @@ export default {
     this.$root.$on('rule-detail-drawer-by-id', this.openById);
     this.$root.$on('rule-form-drawer-opened', this.close);
     this.$root.$on('rule-deleted', this.close);
-    document.addEventListener('rule-detail-drawer-event', event => this.open(event?.detail?.rule, event?.detail?.openAnnouncement));
+    document.addEventListener('rule-detail-drawer-event', event => this.open(event?.detail?.rule, event?.detail?.openAnnouncement, event?.detail?.goBackButton));
     document.addEventListener('rule-detail-drawer-by-id-event', event => this.openById(event?.detail?.ruleId, event?.detail?.openAnnouncement));
   },
   methods: {
-    open(ruleToDisplay, displayAnnouncementForm) {
-      this.openById(ruleToDisplay?.id, displayAnnouncementForm);
+    open(ruleToDisplay, displayAnnouncementForm, goBackButton) {
+      this.openById(ruleToDisplay?.id, displayAnnouncementForm, goBackButton);
     },
-    openById(id, displayAnnouncementForm) {
+    openById(id, displayAnnouncementForm, goBackButton) {
       if (!id || !this.$refs.ruleDetailDrawer) {
         return;
       }
+      this.goBackButton = goBackButton || false;
       this.clear();
       this.checkTime();
       this.rule = {id};
@@ -311,7 +345,7 @@ export default {
       this.$refs.ruleDetailDrawer.open();
 
       this.loading = true;
-      this.$ruleService.getRuleById(id, {
+      return this.$ruleService.getRuleById(id, {
         lang: eXo.env.portal.language,
         expand: 'countRealizations,favorites',
         realizationsLimit: 3,
@@ -397,7 +431,7 @@ export default {
             subModule: 'rule',
             userId: eXo.env.portal.userIdentityId,
             userName: eXo.env.portal.userName,
-            spaceId: this.rule.program?.spaceId || 0,
+            spaceId: this.spaceId || 0,
             operation: 'viewRule',
             timestamp: Date.now(),
             parameters: {
@@ -421,6 +455,14 @@ export default {
           }
         }));
       }
+    },
+    joinAudience() {
+      this.joining = true;
+      return this.$spaceService.join(this.spaceId)
+        .then(() => this.$root.$emit('alert-message', this.$t('rule.detail.successfullyJoined'), 'success'))
+        .catch(() => this.$root.$emit('alert-message', this.$t('rule.detail.errorJoining'), 'error'))
+        .then(() => this.openById(this.rule.id))
+        .finally(() => this.joining = false);
     },
   }
 };

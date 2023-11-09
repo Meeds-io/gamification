@@ -50,7 +50,7 @@ export default {
       getTitle: activity => {
         const announcementAssigneeUsername = activity?.templateParams?.announcementAssigneeUsername  || '';
         const announcementAssigneeFullName = activity?.templateParams?.announcementAssigneeFullName  || '';
-        const title = `<a class="primary--text" href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${ announcementAssigneeUsername}">${ announcementAssigneeFullName}</a>`;
+        const title = `<a class="primary--text" href="${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/profile/${ announcementAssigneeUsername}">${ announcementAssigneeFullName}</a>`;
 
         return {
           key: 'challenges.succeededChallenge',

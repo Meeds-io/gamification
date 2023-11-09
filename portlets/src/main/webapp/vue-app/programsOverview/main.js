@@ -17,7 +17,7 @@
 import './initComponents.js';
 import '../engagement-center/services.js';
 
-const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
+const lang = eXo?.env?.portal?.language || 'en';
 const urls = [
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`,
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`
@@ -28,7 +28,14 @@ export function init() {
   exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       Vue.createApp({
+        data: {
+          now: Date.now(),
+          isAnonymous: !eXo.env.portal.userIdentityId?.length,
+        },
         template: `<gamification-overview-programs id="${appId}" />`,
+        created() {
+          window.setInterval(() => this.now = Date.now(), 1000);
+        },
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'Program Overview');

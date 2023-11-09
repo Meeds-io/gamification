@@ -69,7 +69,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </init-param>
     <init-param>
       <name>preload.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/realizations/points?userId={username}&period=WEEK,/portal/rest/gamification/leaderboard/stats?username={username}&period=WEEK]]></value>
+      <value><![CDATA[/portal/rest/gamification/realizations/points?userId={username}&period=WEEK,/portal/rest/gamification/leaderboard/stats/{userId}?period=WEEK]]></value>
     </init-param>
     <expiration-cache>-1</expiration-cache>
     <cache-scope>PUBLIC</cache-scope>
@@ -126,7 +126,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </init-param>
     <init-param>
       <name>prefetch.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/programs?type=ALL&sortByBudget=true|/portal/rest/gamification/leaderboard/filter?period=WEEK&capacity=10]]></value>
+      <value><![CDATA[/portal/rest/gamification/programs?type=ALL|/portal/rest/gamification/leaderboard?period=WEEK&limit=6]]></value>
     </init-param>
     <supports>
       <mime-type>text/html</mime-type>
@@ -258,14 +258,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/html/topChallengers.html</value>
+      <value>/WEB-INF/jsp/topChallengers.jsp</value>
     </init-param>
     <init-param>
       <name>prefetch.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/leaderboard/rank/all?loadCapacity=false&period=WEEK]]></value>
+      <value><![CDATA[/portal/rest/gamification/leaderboard?period=WEEK&limit=6]]></value>
     </init-param>
-    <expiration-cache>-1</expiration-cache>
-    <cache-scope>PUBLIC</cache-scope>
     <supports>
       <mime-type>text/html</mime-type>
     </supports>
@@ -282,7 +280,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/WEB-INF/jsp/rulesOverview/index.jsp</value>
+      <value>/WEB-INF/jsp/rulesOverview.jsp</value>
     </init-param>
     <supports>
       <mime-type>text/html</mime-type>
@@ -306,18 +304,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/html/programsOverview.html</value>
+      <value>/WEB-INF/jsp/programsOverview.jsp</value>
     </init-param>
     <init-param>
       <name>preload.resource.bundles</name>
       <value>locale.addon.Gamification</value>
     </init-param>
-    <init-param>
-      <name>preload.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/programs?returnSize=true&limit=3&type=ALL&status=ENABLED&includeDeleted=false&sortByBudget=true]]></value>
-    </init-param>
-    <expiration-cache>-1</expiration-cache>
-    <cache-scope>PUBLIC</cache-scope>
     <supports>
       <mime-type>text/html</mime-type>
     </supports>
@@ -325,6 +317,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-info>
       <title>Programs Overview</title>
       <keywords>Programs Overview</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
+    <portlet-name>CreateProgramButton</portlet-name>
+    <display-name>Create Program Button</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/html/createProgramButton.html</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Create Program Button</title>
+      <keywords>Create Program Button</keywords>
     </portlet-info>
   </portlet>
 

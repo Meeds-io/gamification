@@ -66,7 +66,7 @@ export default {
       limit: 10,
       loading: true,
       realizations: [],
-      earnerType: 'USER',
+      identityType: 'USER',
       status: 'ACCEPTED',
     };
   },
@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     getLinkActivity(id) {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${id}`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${id}`;
     },
     openDrawer(event) {
       if (event?.detail?.rule) {
@@ -122,7 +122,7 @@ export default {
     retrieveRealizations() {
       this.loading = true;
       this.$realizationService.getRealizations({
-        earnerType: this.earnerType,
+        identityType: this.identityType,
         status: this.status,
         ruleIds: [this.ruleId],
         sortBy: 'date',

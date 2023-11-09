@@ -19,7 +19,7 @@ import './initComponents.js';
 const vuetify = Vue.prototype.vuetifyOptions;
 
 // getting language of user
-const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
+const lang = eXo?.env?.portal?.language || 'en';
 
 const resourceBundleName = 'locale.addon.Gamification';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
@@ -31,9 +31,14 @@ export function init() {
     .then(i18n => {
       // init Vue app when locale ressources are ready
       Vue.createApp({
+        data: {
+          isAnonymous: !eXo.env.portal.userIdentityId?.length,
+          actionValueExtensions: [],
+        },
         template: `<users-leaderboard id='${appId}' />`,
         i18n,
         vuetify,
       }, `#${appId}`, 'Users Leaderboard');
-    });
+    })
+    .finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
 }

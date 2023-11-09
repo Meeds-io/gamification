@@ -249,7 +249,7 @@ export default {
       return this.program?.title || '-';
     },
     programUrl() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program?.id}`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.program?.id}`;
     },
     score() {
       return this.realization?.score || '-';
@@ -342,7 +342,7 @@ export default {
       if (this.status === 'DELETED' || this.status === 'CANCELED') {
         this.$set(this.realization, 'link', null);
       } else if (!this.isAutomaticType) {
-        this.$set(this.realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${this.realization?.objectId}`);
+        this.$set(this.realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.realization?.objectId}`);
       } else if (!this.objectType && this.objectId) {
         this.$set(this.realization, 'link', this.objectId);
       } else if (this.getLink) {

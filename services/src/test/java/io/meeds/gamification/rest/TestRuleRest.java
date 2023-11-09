@@ -32,8 +32,11 @@ import org.exoplatform.services.security.ConversationState;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RuleEntity;
+import io.meeds.gamification.mock.SpaceServiceMock;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.model.UserInfo;
+import io.meeds.gamification.model.UserInfoContext;
 import io.meeds.gamification.rest.model.ProgramWithRulesRestEntity;
 import io.meeds.gamification.rest.model.RuleList;
 import io.meeds.gamification.rest.model.RuleRestEntity;
@@ -263,7 +266,7 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     assertNotNull(response);
     assertEquals(404, response.getStatus());
   }
-
+  
   @Test
   public void testGetRuleById() throws Exception {
     startSessionAs("root1");
@@ -313,7 +316,7 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     assertEquals(ruleRestEntity.getId(), savedRuleRestEntity.getId());
     assertFalse(savedRuleRestEntity.isPublished());
   }
-
+  
   @Test
   public void testGetRules() throws Exception {
     ProgramEntity domainEntity = newDomain();
@@ -358,7 +361,7 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     assertNotNull(rules);
     assertEquals(2, rules.getSize());
   }
-
+  
   @Test
   public void testGetRulesByUser() throws Exception {
     startSessionAs("root1");
@@ -430,6 +433,93 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     savedRules = (RuleList) response.getEntity();
     assertEquals(2, savedRules.getSize());
     assertEquals(1, savedRules.getRules().size());
+  }
+
+  @Test
+  public void testGetRuleByAnonym() throws Exception {
+    ProgramDTO program = newProgram();
+    program = programService.createProgram(program);
+
+    RuleEntity rule = newRule("testGetRuleByAnonym", program.getId());
+
+    ContainerResponse response = getResponse("GET", getURLResource("rules/0"), null);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+
+    response = getResponse("GET", getURLResource("rules/555"), null);
+    assertNotNull(response);
+    assertEquals(404, response.getStatus());
+
+    response = getResponse("GET", getURLResource("rules/" + rule.getId()), null);
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
+
+    program.setSpaceId(Long.parseLong(SpaceServiceMock.SPACE_ID_2));
+    programService.updateProgram(program);
+
+    response = getResponse("GET", getURLResource("rules/" + rule.getId()), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    RuleRestEntity ruleRestEntity = (RuleRestEntity) response.getEntity();
+    assertNotNull(ruleRestEntity);
+    assertEquals(rule.getId(), ruleRestEntity.getId());
+    UserInfoContext userInfo = (UserInfoContext) ruleRestEntity.getUserInfo();
+    assertTrue(userInfo.isCanView());
+    assertFalse(userInfo.isCanEdit());
+    assertFalse(userInfo.isManager());
+    assertFalse(userInfo.isMember());
+    assertFalse(userInfo.isProgramOwner());
+    assertFalse(userInfo.isRedactor());
+
+    setRestrictedHubAccess();
+    response = getResponse("GET", getURLResource("rules/" + rule.getId()), null);
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
+  }
+
+  @Test
+  public void testGetRulesByAnonym() throws Exception {
+    ProgramDTO program = newProgram();
+    program = programService.createProgram(program);
+
+    RuleEntity rule = newRule("testGetRulesByAnonym", program.getId());
+
+    ContainerResponse response = getResponse("GET", getURLResource("rules?offset=0&limit=10&returnSize=true"), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    RuleList ruleList = (RuleList) response.getEntity();
+    assertNotNull(ruleList);
+    assertEquals(0, ruleList.getSize());
+    assertNotNull(ruleList.getRules());
+    assertEquals(0, ruleList.getRules().size());
+
+    program.setSpaceId(Long.parseLong(SpaceServiceMock.SPACE_ID_2));
+    programService.updateProgram(program);
+
+    response = getResponse("GET", getURLResource("rules?offset=0&limit=10&returnSize=true"), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    ruleList = (RuleList) response.getEntity();
+    assertNotNull(ruleList);
+    assertEquals(1, ruleList.getSize());
+    assertNotNull(ruleList.getRules());
+    assertEquals(1, ruleList.getRules().size());
+
+    RuleRestEntity ruleRestEntity = ruleList.getRules().get(0);
+    assertNotNull(ruleRestEntity);
+    assertEquals(rule.getId(), ruleRestEntity.getId());
+    UserInfoContext userInfo = (UserInfoContext) ruleRestEntity.getUserInfo();
+    assertTrue(userInfo.isCanView());
+    assertFalse(userInfo.isCanEdit());
+    assertFalse(userInfo.isManager());
+    assertFalse(userInfo.isMember());
+    assertFalse(userInfo.isProgramOwner());
+    assertFalse(userInfo.isRedactor());
+
+    setRestrictedHubAccess();
+    response = getResponse("GET", getURLResource("rules?offset=0&limit=10&returnSize=true"), null);
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
   }
 
   @Test

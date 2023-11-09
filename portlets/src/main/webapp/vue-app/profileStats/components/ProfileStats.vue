@@ -27,22 +27,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <user-dashbord
           v-if="!isFlipped"
           :key="userDashBordKey"
-          class="profileFlippedCard profileStats"
           :commons-space-default-size="commonsSpaceDefaultSize"
           :is-current-user-profile="isCurrentUserProfile"
           :common-connections-size="commonConnections.length"
+          class="profileFlippedCard profileStats"
           @specific-card="setFlippedCard"
+          @openAchievementsDrawer="openAchievementsDrawer"
           @openConnectionsDrawer="openConnectionsDrawer"
           @openSpaceDrawer="openSpaceDrawer"
           @shouldShowRequests="shouldShowRequests"
           @showRequestsSpace="showRequestsSpace" />
-        <v-flex
+        <compnent
           :is="currentComponent"
           v-if="isFlipped"
           d-flex
           xs12
           sm12
-          class="profileFlippedCard ConnexionsRequests"
+          class="profileFlippedCard ConnexionsRequests px-5 pb-5"
           @isProfileStats="setFlippedCard" />
       </v-layout>
     </v-container>
@@ -59,6 +60,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :is-current-user-profile="isCurrentUserProfile"
       :commons-space-default-size="commonsSpaceDefaultSize"
       @closed="refreshUserDashBord" />
+    <users-leaderboard-profile-achievements-drawer
+      ref="profileAchievementsDrawer" />
+    <engagement-center-rule-extensions />
   </v-app>
 </template>
 <script>
@@ -74,7 +78,7 @@ export default {
       commonsSpaceDefaultSize: 0,
       isCurrentUserProfile: false,
       commonConnections: [],
-      PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/`,
+      PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/profile/`,
     };
   },
   created() {
@@ -110,6 +114,9 @@ export default {
           });
           return this.$nextTick();
         });
+    },
+    openAchievementsDrawer() {
+      this.$refs.profileAchievementsDrawer.openByIdentityId(eXo.env.portal.profileOwnerIdentityId, 'WEEK');
     },
     openConnectionsDrawer() {
       this.$refs.connectionsDrawer.open();

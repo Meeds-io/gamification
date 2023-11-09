@@ -39,32 +39,83 @@ import io.meeds.gamification.model.filter.RealizationFilter;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 
-public class RealizationDAOTest extends AbstractServiceTest {
+public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
 
   @Test
-  public void testFindAllActionsHistoryAgnostic() {
-    assertEquals(realizationDAO.findRealizationsAgnostic(IdentityType.USER).size(), 0);
+  public void testGetLeaderboardRank() {
+    assertEquals(0, realizationDAO.getLeaderboardRank(IdentityType.USER, TEST_USER_EARNER));
+    ProgramEntity domainEntity1 = newDomain();
+    RealizationEntity realizationEntity1 = newRealizationEntity("rule", domainEntity1.getId());
+    assertEquals(1, realizationDAO.getLeaderboardRank(IdentityType.USER, TEST_USER_EARNER));
+
+    realizationEntity1.setStatus(RealizationStatus.REJECTED);
+    realizationDAO.update(realizationEntity1);
+    restartTransaction();
+    assertEquals(0, realizationDAO.getLeaderboardRank(IdentityType.USER, TEST_USER_EARNER));
+
+    ProgramEntity domainEntity2 = newDomain();
+    newRealizationEntity("rule", domainEntity2.getId());
+    assertEquals(1, realizationDAO.getLeaderboardRank(IdentityType.USER, TEST_USER_EARNER));
+
+    assertEquals(1, realizationDAO.getLeaderboardRankByDate(IdentityType.USER, TEST_USER_EARNER, fromDate));
+    assertEquals(0, realizationDAO.getLeaderboardRankByDate(IdentityType.USER, TEST_USER_EARNER, toDate));
+
+    assertEquals(1,
+                 realizationDAO.getLeaderboardRankByProgramId(IdentityType.USER,
+                                                              TEST_USER_EARNER,
+                                                              domainEntity2.getId()));
+    assertEquals(0,
+                 realizationDAO.getLeaderboardRankByProgramId(IdentityType.USER,
+                                                              TEST_USER_EARNER,
+                                                              domainEntity1.getId()));
+
+    assertEquals(0,
+                 realizationDAO.getLeaderboardRankByDateAndProgramId(IdentityType.USER,
+                                                                     TEST_USER_EARNER,
+                                                                     fromDate,
+                                                                     domainEntity1.getId()));
+    assertEquals(0,
+                 realizationDAO.getLeaderboardRankByDateAndProgramId(IdentityType.USER,
+                                                                     TEST_USER_EARNER,
+                                                                     toDate,
+                                                                     domainEntity2.getId()));
+    assertEquals(1,
+                 realizationDAO.getLeaderboardRankByDateAndProgramId(IdentityType.USER,
+                                                                     TEST_USER_EARNER,
+                                                                     fromDate,
+                                                                     domainEntity2.getId()));
+    assertEquals(0,
+                 realizationDAO.getLeaderboardRankByDateAndProgramId(IdentityType.USER,
+                                                                     TEST_USER_EARNER,
+                                                                     toDate,
+                                                                     domainEntity1.getId()));
+  }
+
+  @Test
+  public void testGetLeaderboard() {
+    assertEquals(0, realizationDAO.getLeaderboard(IdentityType.USER, 10).size());
     ProgramEntity domainEntity = newDomain();
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    List<StandardLeaderboard> leaderboardList = realizationDAO.findRealizationsAgnostic(IdentityType.USER);
+    List<StandardLeaderboard> leaderboardList = realizationDAO.getLeaderboard(IdentityType.USER, 10);
     assertEquals(1, leaderboardList.size());
     assertEquals(TEST_USER_EARNER, leaderboardList.get(0).getEarnerId());
-    assertEquals(Integer.parseInt(TEST__SCORE) * 3L, leaderboardList.get(0).getReputationScore());
+    assertEquals(Integer.parseInt(TEST_SCORE) * 3L, leaderboardList.get(0).getReputationScore());
     realizationEntity.setStatus(RealizationStatus.REJECTED);
     realizationDAO.update(realizationEntity);
-    leaderboardList = realizationDAO.findRealizationsAgnostic(IdentityType.USER);
+    leaderboardList = realizationDAO.getLeaderboard(IdentityType.USER, 10);
     assertEquals(1, leaderboardList.size());
     assertEquals(TEST_USER_EARNER, leaderboardList.get(0).getEarnerId());
-    assertEquals(Integer.parseInt(TEST__SCORE) * 2L, leaderboardList.get(0).getReputationScore());
+    assertEquals(Integer.parseInt(TEST_SCORE) * 2L, leaderboardList.get(0).getReputationScore());
   }
 
   @Test
   public void testFindActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId() {
     ProgramEntity domainEntity = newDomain();
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
-    assertNotNull(realizationDAO.findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(realizationEntity.getRuleEntity().getId(),
+    assertNotNull(realizationDAO.findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(realizationEntity.getRuleEntity()
+                                                                                                                .getId(),
                                                                                                TEST_USER_EARNER,
                                                                                                TEST_USER_EARNER,
                                                                                                "objectId",
@@ -75,128 +126,122 @@ public class RealizationDAOTest extends AbstractServiceTest {
   public void testFindAllActionsHistoryByDateByDomain() {
     ProgramEntity domainEntity = newDomain();
     assertEquals(0,
-                 realizationDAO.findRealizationsByDateAndProgramId(IdentityType.USER, fromDate, domainEntity.getId())
+                 realizationDAO.getLeaderboardByDateAndProgramId(fromDate, IdentityType.USER, domainEntity.getId(), 10)
                                .size());
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     List<StandardLeaderboard> leaderboardList = realizationDAO
-                                                              .findRealizationsByDateAndProgramId(IdentityType.USER,
-                                                                                               fromDate,
-                                                                                               domainEntity.getId());
+                                                              .getLeaderboardByDateAndProgramId(fromDate,
+                                                                                                IdentityType.USER,
+                                                                                                domainEntity.getId(),
+                                                                                                10);
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_EARNER);
-    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST__SCORE) * 3L);
+    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST_SCORE) * 3L);
     realizationEntity.setStatus(RealizationStatus.REJECTED);
     realizationDAO.update(realizationEntity);
-    leaderboardList = realizationDAO.findRealizationsAgnostic(IdentityType.USER);
+    leaderboardList = realizationDAO.getLeaderboard(IdentityType.USER, 10);
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_EARNER);
-    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST__SCORE) * 2L);
+    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST_SCORE) * 2L);
   }
 
   @Test
   public void testFindAllActionsHistoryByDomain() {
     ProgramEntity domainEntity = newDomain();
     assertEquals(0,
-                 realizationDAO.findRealizationsByProgramId(IdentityType.USER, domainEntity.getId()).size());
+                 realizationDAO.getLeaderboardByProgramId(domainEntity.getId(), IdentityType.USER, 10).size());
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     List<StandardLeaderboard> leaderboardList = realizationDAO
-                                                              .findRealizationsByProgramId(IdentityType.USER,
-                                                                                        domainEntity.getId());
+                                                              .getLeaderboardByProgramId(domainEntity.getId(),
+                                                                                         IdentityType.USER,
+                                                                                         10);
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_EARNER);
-    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST__SCORE) * 3L);
+    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST_SCORE) * 3L);
     realizationEntity.setStatus(RealizationStatus.REJECTED);
     realizationDAO.update(realizationEntity);
-    leaderboardList = realizationDAO.findRealizationsAgnostic(IdentityType.USER);
+    leaderboardList = realizationDAO.getLeaderboard(IdentityType.USER, 10);
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_EARNER);
-    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST__SCORE) * 2L);
+    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST_SCORE) * 2L);
   }
 
   @Test
   public void testFindAllActionsHistoryByDate() {
-    assertEquals(realizationDAO.findRealizationsByDate(IdentityType.USER, fromDate).size(), 0);
+    assertEquals(realizationDAO.getLeaderboardByDate(fromDate, IdentityType.USER, 10).size(), 0);
     ProgramEntity domainEntity = newDomain();
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    List<StandardLeaderboard> leaderboardList = realizationDAO
-                                                              .findRealizationsByDate(IdentityType.USER, fromDate);
+    List<StandardLeaderboard> leaderboardList = realizationDAO.getLeaderboardByDate(fromDate, IdentityType.USER, 10);
     assertEquals(1, leaderboardList.size());
     assertEquals(TEST_USER_EARNER, leaderboardList.get(0).getEarnerId());
-    assertEquals(Integer.parseInt(TEST__SCORE) * 3L, leaderboardList.get(0).getReputationScore());
+    assertEquals(Integer.parseInt(TEST_SCORE) * 3L, leaderboardList.get(0).getReputationScore());
     realizationEntity.setStatus(RealizationStatus.REJECTED);
     realizationDAO.update(realizationEntity);
-    leaderboardList = realizationDAO.findRealizationsByDate(IdentityType.USER, fromDate);
+    leaderboardList = realizationDAO.getLeaderboardByDate(fromDate, IdentityType.USER, 10);
     assertEquals(1, leaderboardList.size());
     assertEquals(TEST_USER_EARNER, leaderboardList.get(0).getEarnerId());
-    assertEquals(Integer.parseInt(TEST__SCORE) * 2, leaderboardList.get(0).getReputationScore());
+    assertEquals(Integer.parseInt(TEST_SCORE) * 2, leaderboardList.get(0).getReputationScore());
   }
 
   @Test
   public void testFindAllActionsHistory() {
-    assertEquals(realizationDAO.findRealizations(IdentityType.USER, limit).size(), 0);
+    assertEquals(realizationDAO.getLeaderboard(IdentityType.USER, LIMIT).size(), 0);
     ProgramEntity domainEntity = newDomain();
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    List<StandardLeaderboard> leaderboardList = realizationDAO.findRealizations(IdentityType.USER, limit);
+    List<StandardLeaderboard> leaderboardList = realizationDAO.getLeaderboard(IdentityType.USER, LIMIT);
     assertEquals(1, leaderboardList.size());
     assertEquals(TEST_USER_EARNER, leaderboardList.get(0).getEarnerId());
-    assertEquals(Integer.parseInt(TEST__SCORE) * 3L, leaderboardList.get(0).getReputationScore());
+    assertEquals(Integer.parseInt(TEST_SCORE) * 3L, leaderboardList.get(0).getReputationScore());
     realizationEntity.setStatus(RealizationStatus.REJECTED);
     realizationDAO.update(realizationEntity);
-    leaderboardList = realizationDAO.findRealizationsByDate(IdentityType.USER, fromDate);
+    leaderboardList = realizationDAO.getLeaderboardByDate(fromDate, IdentityType.USER, 10);
     assertEquals(1, leaderboardList.size());
     assertEquals(TEST_USER_EARNER, leaderboardList.get(0).getEarnerId());
-    assertEquals(Integer.parseInt(TEST__SCORE) * 2L, leaderboardList.get(0).getReputationScore());
+    assertEquals(Integer.parseInt(TEST_SCORE) * 2L, leaderboardList.get(0).getReputationScore());
   }
 
   @Test
   public void testFindActionsHistoryByDateByDomain() {
     ProgramEntity domainEntity = newDomain();
     assertEquals(realizationDAO
-                               .findRealizationsByDateByProgramId(fromDate, IdentityType.USER, domainEntity.getId(), limit)
+                               .getLeaderboardByDateAndProgramId(fromDate, IdentityType.USER, domainEntity.getId(), LIMIT)
                                .size(),
                  0);
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    List<StandardLeaderboard> leaderboardList = realizationDAO.findRealizationsByDateByProgramId(fromDate,
-                                                                                              IdentityType.USER,
-                                                                                              domainEntity.getId(),
-                                                                                              limit);
+    List<StandardLeaderboard> leaderboardList = realizationDAO.getLeaderboardByDateAndProgramId(fromDate,
+                                                                                                IdentityType.USER,
+                                                                                                domainEntity.getId(),
+                                                                                                LIMIT);
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_EARNER);
-    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST__SCORE) * 3L);
+    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST_SCORE) * 3L);
   }
 
   @Test
   public void testFindStatsByUserId() {
-    assertEquals(realizationDAO.findStatsByUserId(TEST_USER_EARNER, fromDate, toDate).size(), 0);
+    assertEquals(realizationDAO.getLeaderboardStatsByIdentityId(TEST_USER_EARNER, fromDate, toDate).size(), 0);
     ProgramEntity domainEntity = newDomain();
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    List<PiechartLeaderboard> pieChartLeaderboardList = realizationDAO.findStatsByUserId(TEST_USER_EARNER,
-                                                                                         fromDate,
-                                                                                         toDate);
+    List<PiechartLeaderboard> pieChartLeaderboardList = realizationDAO.getLeaderboardStatsByIdentityId(TEST_USER_EARNER,
+                                                                                                       fromDate,
+                                                                                                       toDate);
     assertEquals(pieChartLeaderboardList.size(), 1);
-    assertEquals(pieChartLeaderboardList.get(0).getLabel(), GAMIFICATION_DOMAIN);
-  }
-
-  @Test
-  public void testGetAllPointsByDomain() {
-    ProgramEntity domainEntity = newDomain();
-    assertEquals(0, realizationDAO.getAllPointsByDomain(domainEntity.getId()).size());
-    newRealizationEntity("rule", domainEntity.getId());
-    newRealizationEntity("rule2", domainEntity.getId());
-    newRealizationEntity("rule3", domainEntity.getId());
-    assertEquals(limit, realizationDAO.getAllPointsByDomain(domainEntity.getId()).size());
+    PiechartLeaderboard piechartLeaderboard = pieChartLeaderboardList.get(0);
+    ProgramDTO program = programService.getProgramById(piechartLeaderboard.getProgramId());
+    assertNotNull(program);
+    assertEquals(GAMIFICATION_DOMAIN, program.getTitle());
   }
 
   @Test
@@ -207,23 +252,23 @@ public class RealizationDAOTest extends AbstractServiceTest {
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     assertEquals(1, realizationDAO.getScorePerProgramByIdentityId(TEST_USER_EARNER).size());
-    assertEquals(Integer.parseInt(TEST__SCORE) * 3L,
+    assertEquals(Integer.parseInt(TEST_SCORE) * 3L,
                  realizationDAO.getScorePerProgramByIdentityId(TEST_USER_EARNER).get(0).getScore());
   }
 
   @Test
   public void testFindUserReputationScoreBetweenDate() {
-    assertEquals(realizationDAO.findUserReputationScoreBetweenDate(TEST_USER_EARNER, fromDate, toDate), 0);
+    assertEquals(realizationDAO.getScoreByIdentityIdAndBetweenDates(TEST_USER_EARNER, fromDate, toDate), 0);
     ProgramEntity domainEntity = newDomain();
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    assertEquals(Integer.parseInt(TEST__SCORE) * 3L,
-                 realizationDAO.findUserReputationScoreBetweenDate(TEST_USER_EARNER, fromDate, toDate));
+    assertEquals(Integer.parseInt(TEST_SCORE) * 3L,
+                 realizationDAO.getScoreByIdentityIdAndBetweenDates(TEST_USER_EARNER, fromDate, toDate));
     realizationEntity.setStatus(RealizationStatus.REJECTED);
     realizationDAO.update(realizationEntity);
-    assertEquals(Integer.parseInt(TEST__SCORE) * 2L,
-                 realizationDAO.findUserReputationScoreBetweenDate(TEST_USER_EARNER, fromDate, toDate));
+    assertEquals(Integer.parseInt(TEST_SCORE) * 2L,
+                 realizationDAO.getScoreByIdentityIdAndBetweenDates(TEST_USER_EARNER, fromDate, toDate));
   }
 
   @Test
@@ -231,79 +276,35 @@ public class RealizationDAOTest extends AbstractServiceTest {
 
     List<String> earnersId = new ArrayList<>();
     earnersId.add(TEST_USER_EARNER);
-    Map<Long, Long> scores = realizationDAO.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
+    Map<Long, Long> scores = realizationDAO.getScoreByIdentityIdsAndBetweenDates(earnersId, fromDate, toDate);
     assertEquals(Long.valueOf(0), java.util.Optional.ofNullable(scores.get(Long.parseLong(TEST_USER_EARNER))).orElse(0L));
     ProgramEntity domainEntity = newDomain();
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
 
-    scores = realizationDAO.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
-    Long expected = Integer.parseInt(TEST__SCORE) * 3L;
+    scores = realizationDAO.getScoreByIdentityIdsAndBetweenDates(earnersId, fromDate, toDate);
+    Long expected = Integer.parseInt(TEST_SCORE) * 3L;
     assertEquals(expected, java.util.Optional.ofNullable(scores.get(Long.parseLong(TEST_USER_EARNER))).orElse(0L));
 
     realizationEntity.setStatus(RealizationStatus.REJECTED);
     realizationDAO.update(realizationEntity);
-    expected = Integer.parseInt(TEST__SCORE) * 2L;
-    scores = realizationDAO.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
+    expected = Integer.parseInt(TEST_SCORE) * 2L;
+    scores = realizationDAO.getScoreByIdentityIdsAndBetweenDates(earnersId, fromDate, toDate);
     assertEquals(expected, java.util.Optional.ofNullable(scores.get(Long.parseLong(TEST_USER_EARNER))).orElse(0L));
-  }
-
-  @Test
-  public void testFindUserReputationScoreByMonth() {
-    assertEquals(realizationDAO.findUserReputationScoreByMonth(TEST_USER_EARNER, fromDate), 0);
-    ProgramEntity domainEntity = newDomain();
-    newRealizationEntity("rule", domainEntity.getId());
-    newRealizationEntity("rule", domainEntity.getId());
-    newRealizationEntity("rule", domainEntity.getId());
-    assertEquals(Integer.parseInt(TEST__SCORE) * 3L,
-                 realizationDAO.findUserReputationScoreByMonth(TEST_USER_EARNER, fromDate));
-  }
-
-  @Test
-  public void testFindUserReputationScoreByDomainBetweenDate() {
-    ProgramEntity domainEntity = newDomain();
-    assertEquals(realizationDAO.findUserReputationScoreByDomainBetweenDate(TEST_USER_EARNER,
-                                                                           domainEntity.getId(),
-                                                                           fromDate,
-                                                                           toDate),
-                 0);
-    newRealizationEntity("rule", domainEntity.getId());
-    newRealizationEntity("rule", domainEntity.getId());
-    newRealizationEntity("rule", domainEntity.getId());
-    assertEquals(realizationDAO.findUserReputationScoreByDomainBetweenDate(TEST_USER_EARNER,
-                                                                           domainEntity.getId(),
-                                                                           fromDate,
-                                                                           toDate),
-                 Integer.parseInt(TEST__SCORE) * 3);
   }
 
   @Test
   public void testFindActionsHistoryByEarnerIdSortedByDate() {
-    assertEquals(realizationDAO.findRealizationsByIdentityIdSortedByDate(TEST_USER_EARNER, limit).size(), 0);
+    assertEquals(realizationDAO.findRealizationsByIdentityIdSortedByDate(TEST_USER_EARNER, LIMIT).size(), 0);
     ProgramEntity domainEntity = newDomain();
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    assertEquals(limit, realizationDAO.findRealizationsByIdentityIdSortedByDate(TEST_USER_EARNER, limit).size());
+    assertEquals(LIMIT, realizationDAO.findRealizationsByIdentityIdSortedByDate(TEST_USER_EARNER, LIMIT).size());
     realizationEntity.setStatus(RealizationStatus.REJECTED);
     realizationDAO.update(realizationEntity);
-    assertEquals(limit - 1, realizationDAO.findRealizationsByIdentityIdSortedByDate(TEST_USER_EARNER, limit).size());
-  }
-
-  @Test
-  public void testFindAllLeaderboardBetweenDate() {
-    assertEquals(realizationDAO.findAllLeaderboardBetweenDate(IdentityType.USER, fromDate, toDate).size(), 0);
-    ProgramEntity domainEntity = newDomain();
-    newRealizationEntity("rule", domainEntity.getId());
-    newRealizationEntity("rule", domainEntity.getId());
-    newRealizationEntity("rule", domainEntity.getId());
-    List<StandardLeaderboard> leaderboardList = realizationDAO.findAllLeaderboardBetweenDate(IdentityType.USER,
-                                                                                             fromDate,
-                                                                                             toDate);
-    assertEquals(1, leaderboardList.size());
-    assertEquals(TEST_USER_EARNER, leaderboardList.get(0).getEarnerId());
-    assertEquals(Integer.parseInt(TEST__SCORE) * 3L, leaderboardList.get(0).getReputationScore());
+    assertEquals(LIMIT - 1, realizationDAO.findRealizationsByIdentityIdSortedByDate(TEST_USER_EARNER, LIMIT).size());
   }
 
   @Test
@@ -384,20 +385,20 @@ public class RealizationDAOTest extends AbstractServiceTest {
     dateFilter.setProgramIds(domainIds);
     // Test default Sort field = 'date' with sort descending = false
     List<RealizationEntity> filteredRealizations = realizationDAO.findRealizationsByFilter(dateFilter,
-                                                                                           offset,
-                                                                                           limit);
+                                                                                           OFFSET,
+                                                                                           LIMIT);
     assertEquals(0, filteredRealizations.size());
 
     List<RealizationEntity> createdActionHistories = new ArrayList<>();
     ProgramEntity domainEntity = newDomain();
     long domainId = domainEntity.getId();
-    for (int i = 0; i < limit * 2; i++) {
+    for (int i = 0; i < LIMIT * 2; i++) {
       createdActionHistories.add(newRealizationEntity("rule", domainId));
     }
 
-    filteredRealizations = realizationDAO.findRealizationsByFilter(dateFilter, offset, limit);
-    assertEquals(limit, filteredRealizations.size());
-    assertEquals(createdActionHistories.subList(0, limit)
+    filteredRealizations = realizationDAO.findRealizationsByFilter(dateFilter, OFFSET, LIMIT);
+    assertEquals(LIMIT, filteredRealizations.size());
+    assertEquals(createdActionHistories.subList(0, LIMIT)
                                        .stream()
                                        .map(RealizationEntity::getId)
                                        .toList(),
@@ -408,8 +409,8 @@ public class RealizationDAOTest extends AbstractServiceTest {
     // Test explicit Sort field = 'date' with sort descending = false
     dateFilter.setSortField("date");
     dateFilter.setSortDescending(false);
-    filteredRealizations = realizationDAO.findRealizationsByFilter(dateFilter, offset, limit);
-    assertEquals(limit, filteredRealizations.size());
+    filteredRealizations = realizationDAO.findRealizationsByFilter(dateFilter, OFFSET, LIMIT);
+    assertEquals(LIMIT, filteredRealizations.size());
     assertEquals(createdActionHistories.subList(0, 3)
                                        .stream()
                                        .map(RealizationEntity::getId)
@@ -422,7 +423,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     dateFilter.setSortField("date");
     dateFilter.setSortDescending(true);
 
-    filteredRealizations = realizationDAO.findRealizationsByFilter(dateFilter, offset, limit);
+    filteredRealizations = realizationDAO.findRealizationsByFilter(dateFilter, OFFSET, LIMIT);
     Collections.reverse(createdActionHistories);
     assertEquals(createdActionHistories.subList(0, 3)
                                        .stream()
@@ -441,20 +442,20 @@ public class RealizationDAOTest extends AbstractServiceTest {
 
     List<RealizationEntity> histories = new ArrayList<>();
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(fromDate,
-                                                                                 rule1Automatic.getEvent(),
-                                                                                 rule1Automatic.getId()));
+                                                                  rule1Automatic.getEvent(),
+                                                                  rule1Automatic.getId()));
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(fromDate, "", rule3Manual.getId()));
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(fromDate, "", rule1Automatic.getId()));
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(fromDate,
-                                                                                 rule3Manual.getEvent(),
-                                                                                 rule3Manual.getId()));
+                                                                  rule3Manual.getEvent(),
+                                                                  rule3Manual.getId()));
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(fromDate, "", rule2Automatic.getId()));
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(fromDate,
-                                                                                 rule2Automatic.getEvent(),
-                                                                                 rule2Automatic.getId()));
-    histories.add(newRealizationToBeSortedByActionTypeInDateRange(OutOfRangeDate,
-                                                                                 rule3Manual.getEvent(),
-                                                                                 rule3Manual.getId()));
+                                                                  rule2Automatic.getEvent(),
+                                                                  rule2Automatic.getId()));
+    histories.add(newRealizationToBeSortedByActionTypeInDateRange(outOfRangeDate,
+                                                                  rule3Manual.getEvent(),
+                                                                  rule3Manual.getId()));
 
     RealizationFilter dateFilter = new RealizationFilter();
     List<Long> domainIds = Collections.emptyList();

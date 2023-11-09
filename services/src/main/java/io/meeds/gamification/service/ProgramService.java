@@ -37,6 +37,8 @@ public interface ProgramService {
 
   public static final String GAMIFICATION_DOMAIN_ENABLE_LISTENER  = "exo.gamification.domain.enable";
 
+  public static final String PROGRAM_AUDIENCE_UPDATED_EVENT       = "gamification.program.audience.updated";
+
   /**
    * Gets programs by filter.
    *
@@ -98,6 +100,14 @@ public interface ProgramService {
    *                  the user is member of
    */
   List<Long> getMemberProgramIds(String username, int offset, int limit);
+
+  /**
+   * @param offset start index for fetch
+   * @param limit limit to fetch
+   * @return {@link List} of {@link ProgramDTO} id of programs publically
+   *         accessible
+   */
+  List<Long> getPublicProgramIds(int offset, int limit);
 
   /**
    * Find a Program by title
@@ -252,6 +262,11 @@ public interface ProgramService {
   int countMemberPrograms(String username);
 
   /**
+   * @return Programs publically accessible count
+   */
+  int countPublicPrograms();
+
+  /**
    * Retrieves the program cover identified by Program technical identifier.
    *
    * @param  programId               Program unique identifier
@@ -294,19 +309,49 @@ public interface ProgramService {
    * 
    * @param  programId technical identifier of program
    * @param  username  user name
-   * @return           true if user has enough privileges to create a program,
-   *                   else false
+   * @return true if user is a program owner, else false
    */
   boolean isProgramOwner(long programId, String username);
+
+  /**
+   * Check whether user was program owner before deleting it or not
+   * 
+   * @param programId technical identifier of program
+   * @param username user name
+   * @param checkDeleted Whether to consider if the program is deleted or not
+   * @return true if user is a program owner or was a program owner before
+   *         deleting the program, else false
+   */
+  boolean isProgramOwner(long programId, String username, boolean checkDeleted);
 
   /**
    * Check whether user is member of program or not
    * 
    * @param  programId technical identifier of program
    * @param  username  user name
-   * @return           true if user has enough privileges to see a program, else
+   * @return           true if user has enough privileges to access the program, else
    *                   false
    */
   boolean isProgramMember(long programId, String username);
+
+  /**
+   * Check whether user was program member before deleting it or not
+   * 
+   * @param programId technical identifier of program
+   * @param username user name
+   * @param checkDeleted Whether to consider if the program is deleted or not
+   * @return true if user is a program member or was a program member before
+   *         deleting the program, else false
+   */
+  boolean isProgramMember(long programId, String username, boolean checkDeleted);
+
+  /**
+   * Check whether user can view program details or not
+   * 
+   * @param programId technical identifier of program
+   * @param username user name
+   * @return true if user has enough privileges to see a program, else false
+   */
+  boolean canViewProgram(long programId, String username);
 
 }

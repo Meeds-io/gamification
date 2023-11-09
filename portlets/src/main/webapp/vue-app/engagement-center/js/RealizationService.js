@@ -106,14 +106,17 @@ function getRealizationsFormData(filter) {
       formData.append('earnerIds', earnerId);
     }
   }
-  if (filter?.earnerType) {
-    formData.append('earnerType', filter.earnerType);
+  if (filter?.identityType) {
+    formData.append('identityType', filter.identityType.toUpperCase());
   }
   if (filter?.status) {
     formData.append('status', filter.status);
   }
   if (filter?.sortBy) {
     formData.append('sortBy', filter.sortBy);
+  }
+  if (filter?.allPrograms) {
+    formData.append('allPrograms', filter.allPrograms);
   }
   if (filter?.sortDescending) {
     formData.append('sortDescending', 'true');

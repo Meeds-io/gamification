@@ -186,32 +186,22 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public int getLeaderboardRank(String earnerIdentityId, Date date, Long programId) {
-    List<StandardLeaderboard> leaderboard = null;
+  public int getLeaderboardRank(String earnerIdentityId, Date fromDate, Long programId) {
     org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId); // NOSONAR
-    // :
-    // profile load
-    // is always true
     IdentityType identityType = IdentityType.getType(identity.getProviderId());
-    if (date != null) {
+    if (fromDate != null) {
       if (programId == null || programId <= 0) {
-        leaderboard = realizationStorage.findRealizationsByDate(identityType, date);
+        return realizationStorage.getLeaderboardRankByDate(identityType, earnerIdentityId, fromDate);
       } else {
-        leaderboard = realizationStorage.findRealizationsByDateAndProgramId(identityType, date, programId);
+        return realizationStorage.getLeaderboardRankByDateAndProgramId(identityType, earnerIdentityId, fromDate, programId);
       }
     } else {
       if (programId == null || programId <= 0) {
-        leaderboard = realizationStorage.findRealizationsAgnostic(identityType);
+        return realizationStorage.getLeaderboardRank(identityType, earnerIdentityId);
       } else {
-        leaderboard = realizationStorage.findRealizationsByProgramId(identityType, programId);
+        return realizationStorage.getLeaderboardRankByProgramId(identityType, earnerIdentityId, programId);
       }
     }
-    // Get username
-    StandardLeaderboard item = leaderboard.stream()
-                                          .filter(g -> earnerIdentityId.equals(g.getEarnerId()))
-                                          .findAny()
-                                          .orElse(null);
-    return (leaderboard.indexOf(item) + 1);
   }
 
   @Override
@@ -256,7 +246,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
     return rules.stream()
                 .distinct()
-                .filter(rule -> getRealizationValidityContext(rule, earnerIdentity.getId()).isValid())
+                .filter(rule -> getRealizationValidityContext(rule, earnerIdentity.getId()).isValidForIdentity())
                 .map(rule -> toRealization(rule,
                                            earnerIdentity,
                                            receiverIdentityId,
@@ -352,28 +342,26 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   @Override
   public RealizationValidityContext getRealizationValidityContext(RuleDTO rule, String earnerIdentityId) { // NOSONAR
     RealizationValidityContext realizationRestriction = new RealizationValidityContext();
-
-    org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId);
-    if (identity == null
-        || identity.isDeleted()
-        || !identity.isEnable()
-        || (identity.isUser()
-            && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId()))) {
-      realizationRestriction.setValidIdentity(false);
-      return realizationRestriction;
-    } else if (rule == null
+    if (rule == null
         || rule.isDeleted()
         || !rule.isEnabled()) {
       realizationRestriction.setValidRule(false);
       return realizationRestriction;
-    } else if (!isValidProgram(rule.getProgram())) {
+    }
+
+    org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId);
+    boolean anonymous = identity == null || identity.isDeleted() || !identity.isEnable();
+    if (anonymous || (identity.isUser() && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId()))) {
+      realizationRestriction.setValidIdentity(false);
+    }
+    if (!isValidProgram(rule.getProgram())) {
       realizationRestriction.setValidProgram(false);
       return realizationRestriction;
     } else {
       if (!isValidDates(rule)) {
         realizationRestriction.setValidDates(false);
       }
-      if (!isRecurrenceValid(rule, earnerIdentityId)) {
+      if (!anonymous && !isRecurrenceValid(rule, earnerIdentityId)) {
         realizationRestriction.setValidRecurrence(false);
         RecurrenceType recurrence = rule.getRecurrence();
         if (recurrence == RecurrenceType.DAILY || recurrence == RecurrenceType.WEEKLY || recurrence == RecurrenceType.MONTHLY) {
@@ -385,7 +373,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
           }
         }
       }
-      if (CollectionUtils.isNotEmpty(rule.getPrerequisiteRuleIds())) {
+      if (!anonymous && CollectionUtils.isNotEmpty(rule.getPrerequisiteRuleIds())) {
         realizationRestriction.setValidPrerequisites(new HashMap<>());
         rule.getPrerequisiteRuleIds().forEach(prerequisiteRuleId -> {
           boolean prerequisiteRealized = realizationStorage.countRealizationsByRuleIdAndEarnerId(earnerIdentityId,
@@ -396,14 +384,14 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         });
       }
     }
-    if (realizationRestriction.isValid()) { // NOSONAR
+    if (!anonymous && realizationRestriction.isValidForIdentity()) {
       if (!rule.isOpen()) {
         Space space = spaceService.getSpaceById(String.valueOf(rule.getSpaceId()));
         if (space == null) {
           realizationRestriction.setValidAudience(false);
         }
       }
-      if (identity.isUser() && isUserBlacklisted(identity.getRemoteId())) { // NOSONAR
+      if (identity.isUser() && isUserBlacklisted(identity.getRemoteId())) {
         realizationRestriction.setValidWhitelist(false);
       }
     }
@@ -411,7 +399,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public List<StandardLeaderboard> getLeaderboard(LeaderboardFilter filter) { // NOSONAR
+  public List<StandardLeaderboard> getLeaderboard(LeaderboardFilter filter, String currentUser) throws IllegalAccessException { // NOSONAR
     int limit = filter.getLoadCapacity();
     IdentityType identityType = filter.getIdentityType();
     if (identityType.isSpace()) {
@@ -420,58 +408,42 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       limit = limit * 3;
     }
 
-    List<StandardLeaderboard> result = null;
-    if (filter.getProgramId() == null || filter.getProgramId() <= 0) {
+    String period = filter.getPeriod();
+    long programId = filter.getProgramId() == null ? 0 : filter.getProgramId();
+
+    List<StandardLeaderboard> leaderboardItems = null;
+    Date fromDate = getFromDate(period);
+    if (programId <= 0) {
       // Compute date
-      LocalDate now = LocalDate.now();
-      // Check the period
-      if (filter.getPeriod().equals(Period.WEEK.name())) {
-        Date fromDate = from(now.with(DayOfWeek.MONDAY)
-                                .atStartOfDay(ZoneId.systemDefault())
-                                .toInstant());
-        result = realizationStorage.findRealizationsByDate(fromDate, identityType, limit);
-      } else if (filter.getPeriod().equals(Period.MONTH.name())) {
-        Date fromDate = from(now.with(TemporalAdjusters.firstDayOfMonth())
-                                .atStartOfDay(ZoneId.systemDefault())
-                                .toInstant());
-        result = realizationStorage.findRealizationsByDate(fromDate, identityType, limit);
+      if (period.equals(Period.ALL.name())) {
+        leaderboardItems = realizationStorage.getLeaderboard(identityType, limit);
       } else {
-        result = realizationStorage.findRealizations(identityType, limit);
+        leaderboardItems = realizationStorage.getLeaderboardByDate(fromDate, identityType, limit);
       }
     } else {
-      // Compute date
-      LocalDate now = LocalDate.now();
       // Check the period
-      if (filter.getPeriod().equals(Period.WEEK.name())) {
-        Date fromDate = from(now.with(DayOfWeek.MONDAY)
-                                .atStartOfDay(ZoneId.systemDefault())
-                                .toInstant());
-        result = realizationStorage.findRealizationsByDateByProgramId(fromDate, identityType, filter.getProgramId(), limit);
-      } else if (filter.getPeriod().equals(Period.MONTH.name())) {
-        Date fromDate = from(now.with(TemporalAdjusters.firstDayOfMonth())
-                                .atStartOfDay(ZoneId.systemDefault())
-                                .toInstant());
-        result = realizationStorage.findRealizationsByDateByProgramId(fromDate, identityType, filter.getProgramId(), limit);
+      if (period.equals(Period.ALL.name())) {
+        leaderboardItems = realizationStorage.getLeaderboardByProgramId(programId, identityType, limit);
       } else {
-        result = realizationStorage.findRealizationsByProgramId(filter.getProgramId(), identityType, limit);
+        leaderboardItems = realizationStorage.getLeaderboardByDateByProgramId(fromDate, identityType, programId, limit);
       }
     }
 
     // Filter on spaces switch user identity
-    if (identityType.isSpace() && result != null && !result.isEmpty()) {
-      final String currentUser = filter.getCurrentUser();
-
-      if (StringUtils.isNotBlank(currentUser)) {
-        result = filterAuthorizedSpaces(result, currentUser, filter.getLoadCapacity());
+    if (identityType.isSpace() && leaderboardItems != null && !leaderboardItems.isEmpty()) {
+      if (StringUtils.isBlank(currentUser)) {
+        throw new IllegalAccessException("Anonymous user can't access spaces board");
+      } else {
+        leaderboardItems = filterAuthorizedSpaces(leaderboardItems, currentUser, filter.getLoadCapacity());
       }
     }
 
-    return result;
+    return leaderboardItems;
   }
 
   @Override
-  public List<PiechartLeaderboard> getStatsByIdentityId(String earnerIdentityId, Date startDate, Date endDate) {
-    return realizationStorage.getStatsByIdentityId(earnerIdentityId, startDate, endDate);
+  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId, Date startDate, Date endDate) {
+    return realizationStorage.getLeaderboardStatsByIdentityId(earnerIdentityId, startDate, endDate);
   }
 
   @Override
@@ -481,12 +453,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   @Override
   public Map<Long, Long> getScoresByIdentityIdsAndBetweenDates(List<String> earnersId, Date fromDate, Date toDate) {
-    return realizationStorage.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
-  }
-
-  @Override
-  public List<StandardLeaderboard> getLeaderboardBetweenDate(IdentityType earnedType, Date fromDate, Date toDate) {
-    return realizationStorage.findAllLeaderboardBetweenDate(earnedType, fromDate, toDate);
+    return realizationStorage.getScoresByIdentityIdsAndBetweenDates(earnersId, fromDate, toDate);
   }
 
   @Override
@@ -525,7 +492,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     RealizationDTO realization = realizationStorage.getRealizationById(realizationId);
     if (realization == null) {
       throw new ObjectNotFoundException(String.format(REALIZATION_NOT_EXIST_MESSAGE, realizationId));
-    } else if (programService.isProgramMember(realization.getProgram().getId(), userAclIdentity.getUserId())
+    } else if (programService.canViewProgram(realization.getProgram().getId(), userAclIdentity.getUserId())
         || realization.getEarnerId().equals(userIdentity.getId())) {
       return realization;
     } else {
@@ -582,14 +549,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (realizationFilter == null) {
       throw new IllegalArgumentException("filter is mandatory");
     }
-    if (userAclIdentity == null) {
-      throw new IllegalArgumentException("identity is mandatory");
-    }
     realizationFilter = realizationFilter.clone();
     checkDates(realizationFilter.getFromDate(), realizationFilter.getToDate());
 
-    String username = userAclIdentity.getUserId();
-    if (Utils.isRewardingManager(username)) {
+    String username = userAclIdentity == null ? null : userAclIdentity.getUserId();
+    if (Utils.isRewardingManager(username) || realizationFilter.isAllPrograms()) {
       return realizationFilter;
     }
 
@@ -597,20 +561,20 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     boolean isFilterByPrograms = CollectionUtils.isNotEmpty(filterProgramIds);
 
     if (realizationFilter.isOwned()) {
-      if (isFilterByPrograms && !isProgramsOwner(filterProgramIds, userAclIdentity.getUserId())) {
+      if (isFilterByPrograms && !isProgramsOwner(filterProgramIds, username)) {
         throw new IllegalAccessException("User is not owner of one or several selected programs :" + filterProgramIds);
       } else if (!isFilterByPrograms) {
-        List<Long> ownedProgramIds = programService.getOwnedProgramIds(userAclIdentity.getUserId(), 0, -1);
+        List<Long> ownedProgramIds = programService.getOwnedProgramIds(username, 0, -1);
         if (CollectionUtils.isEmpty(ownedProgramIds)) {
           return null;
         } else {
           realizationFilter.setProgramIds(ownedProgramIds);
         }
       }
-    } else if (isFilterByPrograms && !isProgramsMember(filterProgramIds, userAclIdentity.getUserId())) {
+    } else if (isFilterByPrograms && !canViewPrograms(filterProgramIds, username)) {
       throw new IllegalAccessException("User is not member of one or several selected programs :" + filterProgramIds);
     } else if (!isFilterByPrograms && !isSelfFilter(realizationFilter, username)) {
-      List<Long> memberProgramIds = programService.getMemberProgramIds(userAclIdentity.getUserId(), 0, -1);
+      List<Long> memberProgramIds = programService.getMemberProgramIds(username, 0, -1);
       if (CollectionUtils.isEmpty(memberProgramIds)) {
         return null;
       } else {
@@ -656,9 +620,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                      .allMatch(programId -> programService.isProgramOwner(programId, username));
   }
 
-  private boolean isProgramsMember(List<Long> programIds, String username) {
+  private boolean canViewPrograms(List<Long> programIds, String username) {
     return programIds.stream()
-                     .allMatch(programId -> programService.isProgramMember(programId, username));
+                     .allMatch(programId -> programService.canViewProgram(programId, username));
   }
 
   private List<StandardLeaderboard> filterAuthorizedSpaces(List<StandardLeaderboard> result,
@@ -671,8 +635,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         LOG.debug("Space Identity with id {} was deleted, ignore it", spaceIdentityId);
         return false;
       }
-      String spacePrettyName = identity.getRemoteId();
-      Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
+      Space space = spaceService.getSpaceByPrettyName(identity.getRemoteId());
       return space != null && (!Space.HIDDEN.equals(space.getVisibility()) || spaceService.isMember(space, currentUser));
     }).limit(limit).toList();
     return result;
@@ -810,6 +773,22 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       }
       return temp;
     }
+  }
+
+  private Date getFromDate(String period) {
+    Date fromDate = null;
+    if (Period.WEEK.name().equals(period)) {
+      fromDate = from(LocalDate.now()
+                               .with(DayOfWeek.MONDAY)
+                               .atStartOfDay(ZoneId.systemDefault())
+                               .toInstant());
+    } else if (Period.MONTH.name().equals(period)) {
+      fromDate = from(LocalDate.now()
+                               .with(TemporalAdjusters.firstDayOfMonth())
+                               .atStartOfDay(ZoneId.systemDefault())
+                               .toInstant());
+    }
+    return fromDate;
   }
 
 }

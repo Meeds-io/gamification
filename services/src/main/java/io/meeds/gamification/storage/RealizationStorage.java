@@ -69,67 +69,63 @@ public class RealizationStorage {
     return fromEntities(programStorage, realizationEntities);
   }
 
-  public List<StandardLeaderboard> findRealizationsByDate(IdentityType identityType, Date date) {
-    return gamificationHistoryDAO.findRealizationsByDate(identityType, date);
+  public int getLeaderboardRankByDate(IdentityType identityType, String earnerIdentityId, Date fromDate) {
+    return gamificationHistoryDAO.getLeaderboardRankByDate(identityType, earnerIdentityId, fromDate);
   }
 
-  public List<StandardLeaderboard> findRealizationsByDateAndProgramId(IdentityType identityType, Date date, long programId) {
-    return gamificationHistoryDAO.findRealizationsByDateAndProgramId(identityType, date, programId);
+  public int getLeaderboardRankByDateAndProgramId(IdentityType identityType, String earnerIdentityId, Date fromDate, long programId) {
+    return gamificationHistoryDAO.getLeaderboardRankByDateAndProgramId(identityType, earnerIdentityId, fromDate, programId);
   }
 
-  public List<StandardLeaderboard> findRealizationsAgnostic(IdentityType identityType) {
-    return gamificationHistoryDAO.findRealizationsAgnostic(identityType);
+  public int getLeaderboardRank(IdentityType identityType, String earnerIdentityId) {
+    return gamificationHistoryDAO.getLeaderboardRank(identityType, earnerIdentityId);
   }
 
-  public List<StandardLeaderboard> findRealizationsByProgramId(IdentityType identityType, long programId) {
-    return gamificationHistoryDAO.findRealizationsByProgramId(identityType, programId);
+  public int getLeaderboardRankByProgramId(IdentityType identityType, String earnerIdentityId, long programId) {
+    return gamificationHistoryDAO.getLeaderboardRankByProgramId(identityType, earnerIdentityId, programId);
   }
 
   public List<RealizationDTO> findRealizationsByIdentityIdSortedByDate(String earnerIdentityId, int limit) {
     return fromEntities(programStorage, gamificationHistoryDAO.findRealizationsByIdentityIdSortedByDate(earnerIdentityId, limit));
   }
 
-  public List<StandardLeaderboard> findRealizationsByDate(Date fromDate, IdentityType identityType, int limit) {
-    return gamificationHistoryDAO.findRealizationsByDate(fromDate, identityType, limit);
+  public List<StandardLeaderboard> getLeaderboardByDate(Date fromDate, IdentityType identityType, int limit) {
+    return gamificationHistoryDAO.getLeaderboardByDate(fromDate, identityType, limit);
   }
 
-  public List<StandardLeaderboard> findRealizations(IdentityType identityType, int limit) {
-    return gamificationHistoryDAO.findRealizations(identityType, limit);
+  public List<StandardLeaderboard> getLeaderboard(IdentityType identityType, int limit) {
+    return gamificationHistoryDAO.getLeaderboard(identityType, limit);
   }
 
-  public List<StandardLeaderboard> findRealizationsByDateByProgramId(Date fromDate,
-                                                                     IdentityType identityType,
-                                                                     long programId,
-                                                                     int limit) {
-    return gamificationHistoryDAO.findRealizationsByDateByProgramId(fromDate, identityType, programId, limit);
+  public List<StandardLeaderboard> getLeaderboardByDateByProgramId(Date fromDate,
+                                                                   IdentityType identityType,
+                                                                   long programId,
+                                                                   int limit) {
+    return gamificationHistoryDAO.getLeaderboardByDateAndProgramId(fromDate, identityType, programId, limit);
   }
 
-  public List<StandardLeaderboard> findRealizationsByProgramId(long programId, IdentityType identityType, int limit) {
-    return gamificationHistoryDAO.findRealizationsByProgramId(programId, identityType, limit);
+  public List<StandardLeaderboard> getLeaderboardByProgramId(long programId, IdentityType identityType, int limit) {
+    return gamificationHistoryDAO.getLeaderboardByProgramId(programId, identityType, limit);
   }
 
   public List<ProfileReputation> getScorePerProgramByIdentityId(String earnerIdentityId) {
     return gamificationHistoryDAO.getScorePerProgramByIdentityId(earnerIdentityId);
   }
 
-  public List<PiechartLeaderboard> getStatsByIdentityId(String earnerIdentityId, Date startDate, Date endDate) {
-    return gamificationHistoryDAO.findStatsByUserId(earnerIdentityId, startDate, endDate);
+  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId, Date startDate, Date endDate) {
+    return gamificationHistoryDAO.getLeaderboardStatsByIdentityId(earnerIdentityId, startDate, endDate);
   }
 
   public long getScoreByIdentityIdAndBetweenDates(String earnerIdentityId, Date fromDate, Date toDate) {
-    return gamificationHistoryDAO.findUserReputationScoreBetweenDate(earnerIdentityId, fromDate, toDate);
+    return gamificationHistoryDAO.getScoreByIdentityIdAndBetweenDates(earnerIdentityId, fromDate, toDate);
   }
 
   public long getScoreByIdentityId(String earnerIdentityId) {
     return gamificationHistoryDAO.getScoreByIdentityId(earnerIdentityId);
   }
 
-  public Map<Long, Long> findUsersReputationScoreBetweenDate(List<String> earnersId, Date fromDate, Date toDate) {
-    return gamificationHistoryDAO.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
-  }
-
-  public List<StandardLeaderboard> findAllLeaderboardBetweenDate(IdentityType earnedType, Date fromDate, Date toDate) {
-    return gamificationHistoryDAO.findAllLeaderboardBetweenDate(earnedType, fromDate, toDate);
+  public Map<Long, Long> getScoresByIdentityIdsAndBetweenDates(List<String> earnersId, Date fromDate, Date toDate) {
+    return gamificationHistoryDAO.getScoreByIdentityIdsAndBetweenDates(earnersId, fromDate, toDate);
   }
 
   public RealizationDTO findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(long ruleId,

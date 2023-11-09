@@ -16,14 +16,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-layout
-    :class="isOverviewDisplay && 'mt-n10 mb-5' || ''"
     row
     wrap
     mx-0>
     <v-flex
+      v-if="!isOverviewDisplay"
       d-flex
       xs12
-      my-5>
+      mt-5
+      mb-2>
       <v-layout
         row
         wrap
@@ -31,7 +32,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         align-start
         px12>
         <v-flex
-          v-if="!isOverviewDisplay"
           d-flex
           xs12
           mt-n2
@@ -41,14 +41,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </div>
         </v-flex>
         <v-flex
-          v-if="!isOverviewDisplay"
           d-flex
           xs12
           mt-n6>
           <v-icon
             color="grey darken-2"
             size="20"
-            @click="toProfileStats()">
+            @click="$emit('isProfileStats')">
             {{ $vuetify.rtl && 'mdi-arrow-right' || 'mdi-arrow-left' }}
           </v-icon>
         </v-flex>
@@ -67,86 +66,83 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           d-flex
           justify-center
           align-end>
-          <div v-if="leaderBoardArray[1]" class="transparent mx-1 align-center">
-            <exo-user-avatar
-              :profile-id="leaderBoardArray[1].remoteId"
+          <v-card
+            v-if="podium[1]"
+            class="transparent mx-1 align-center"
+            flat
+            @click.prevent.stop="$refs.profileStatsDrawer.open(podium[1], period)">
+            <user-avatar
+              :profile-id="podium[1].remoteId"
+              :name="podium[1].fullname"
+              :avatar-url="podium[1].avatarUrl"
+              :popover="podium[1].remoteId"
               :size="40"
               extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
               avatar
-              popover
               popover-left-position />
             <v-card-text
               class="top2 grey lighten-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
               style="height: 40px">
-              {{ leaderBoardArray[1].score }}
+              {{ podium[1].score }}
             </v-card-text>
-          </div>
-          <div v-if="leaderBoardArray[0]" class="transparent mx-1 align-center">
-            <exo-user-avatar
-              :profile-id="leaderBoardArray[0].remoteId"
+          </v-card>
+          <v-card
+            v-if="podium[0]"
+            class="transparent mx-1 align-center"
+            flat
+            @click.prevent.stop="$refs.profileStatsDrawer.open(podium[0], period)">
+            <user-avatar
+              :profile-id="podium[0].remoteId"
+              :name="podium[0].fullname"
+              :avatar-url="podium[0].avatarUrl"
+              :popover="podium[0].remoteId"
               :size="40"
               extra-class="ml-2 me-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
               avatar
-              popover
               popover-left-position />
             <v-card-text
               class="top1 yellow darken-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
               style="height: 55px">
-              {{ leaderBoardArray[0].score }}
+              {{ podium[0].score }}
             </v-card-text>
-          </div>
-          <div v-if="leaderBoardArray[2]" class="transparent mx-1 align-center">
-            <exo-user-avatar
-              :profile-id="leaderBoardArray[2].remoteId"
+          </v-card>
+          <v-card
+            v-if="podium[2]"
+            class="transparent mx-1 align-center"
+            flat
+            @click.prevent.stop="$refs.profileStatsDrawer.open(podium[2], period)">
+            <user-avatar
+              :profile-id="podium[2].remoteId"
+              :name="podium[2].fullname"
+              :avatar-url="podium[2].avatarUrl"
+              :popover="podium[2].remoteId"
               :size="40"
               extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
               avatar
-              popover
               popover-left-position />
             <v-card-text
               class="top3 amber darken-1 px-3 pb-1 flex d-flex white--text justify-center font-weight-bold pt-2px"
               style="height: 25px">
-              {{ leaderBoardArray[2].score }}
+              {{ podium[2].score }}
             </v-card-text>
-          </div>
+          </v-card>
         </v-flex>
       </v-layout>
     </v-flex>
-    <v-flex
-      xs12>
-      <v-list height="110">
-        <template v-for="item in listBelowPoduim">
-          <template v-if="item">
-            <v-list-item
-              :key="item.remoteId"
-              class="py-0 px-4 mt-n3">
-              <v-card
-                min-width="16"
-                class="me-2"
-                flat>
-                {{ item.rank }}
-              </v-card>
-              <exo-user-avatar
-                :profile-id="item.remoteId"
-                :size="25"
-                :bold-title="item.socialId === identityId"
-                extra-class="me-0 pa-0 my-0 text-truncate-2"
-                popover-left-position
-                offset-x
-                popover />
-              <v-list-item-action class="ml-auto">
-                <span>{{ item.score }}</span>
-              </v-list-item-action>
-            </v-list-item>
-          </template>
-        </template>
+    <v-flex xs12>
+      <v-list min-height="110">
+        <users-leaderboard-profile
+          v-for="user in listBelowPoduim"
+          :key="user.identityId"
+          :user="user"
+          @open="$refs.profileStatsDrawer.open(user, period)" />
       </v-list>
     </v-flex>
+    <users-leaderboard-profile-achievements-drawer
+      ref="profileStatsDrawer" />
   </v-layout>
 </template>
-
 <script>
-import {getUsersByGamificationRank} from '../profilStatsAPI';
 export default {
   props: {
     isOverviewDisplay: {
@@ -154,49 +150,38 @@ export default {
       default: () => false,
     },
   },
-  data() {
-    return {
-      leaderBoardArray: [],
-      listBelowPoduim: [],
-      identityId: eXo.env.portal.profileOwnerIdentityId,
-    };
+  data: () => ({
+    users: [],
+    limit: 6,
+    identityId: eXo.env.portal.profileOwnerIdentityId,
+  }),
+  computed: {
+    podium() {
+      return this.users.slice(0, 3);
+    },
+    listBelowPoduim() {
+      if (this.users?.length <= 3) {
+        return this.users;
+      } else {
+        return this.users.slice(this.users?.length - 3);
+      }
+    },
   },
   created() {
-    this.getUsersByGamificationRank();
+    this.getLeaderboard();
   },
-
   methods: {
-    getUsersByGamificationRank() {
-      getUsersByGamificationRank('WEEK').then(
-        (data) => {
-          document.dispatchEvent(new CustomEvent('listOfRankedConnections', {detail: data.length}));
-          const currentUser = eXo.env.portal.profileOwner;
-          const index = data.findIndex(item => item.remoteId === currentUser) + 1;
-          for (const element of data) {
-            this.leaderBoardArray.push(element);
-          }
-          if ((data.length === 6) || (data.length > 6 && index < 7)) {
-            for (let i = 3; i < 6; i++) {
-              this.listBelowPoduim.push(data[i]);
-            }
-          } else if (data.length <= 3) {
-            for (const element of data) {
-              this.listBelowPoduim.push(element);
-            }
-          } else if ((data.length > 3 && data.length < 6) || index === data.length) {
-            for (let i = data.length - 3; i < data.length; i++) {
-              this.listBelowPoduim.push(data[i]);
-            }
-          } else {
-            for (let i = index - 2; i < index + 1; i++) {
-              this.listBelowPoduim.push(data[i]);
-            }
-          }
+    getLeaderboard() {
+      return this.$leaderboardService.getLeaderboard({
+        identityId: eXo.env.portal.profileOwnerIdentityId,
+        period: 'WEEK',
+        limit: this.limit,
+      })
+        .then(data => {
+          this.users = data.slice(0, this.limit);
+          document.dispatchEvent(new CustomEvent('listOfRankedConnections', {detail: this.users.length}));
         });
     },
-    toProfileStats() {
-      this.$emit('isProfileStats');
-    }
   }
 };
 </script>

@@ -23,7 +23,8 @@
     id="programDetailDrawer"
     ref="drawer"
     v-model="drawer"
-    :right="!$vuetify.rtl">
+    :right="!$vuetify.rtl"
+    :go-back-button="goBackButton">
     <template #title>
       <span
         :title="$t('rule.detail.letsSeeWhatToDo')"
@@ -31,7 +32,7 @@
         {{ $t('programs.label.programSummary') }}
       </span>
     </template>
-    <template #titleIcons>
+    <template v-if="!$root.isAnonymous" #titleIcons>
       <v-btn
         :href="programLink"
         icon>
@@ -67,7 +68,7 @@
           class="text-color text-wrap text-start text-break rich-editor-content mt-2"
           v-sanitized-html="program.description">
         </div>
-        <div class="d-flex flex-column mt-6">
+        <div v-if="!$root.isAnonymous" class="d-flex flex-column mt-6">
           <div class="d-flex flex-row">
             <div class="subtitle-1 dark-grey-color font-weight-bold flex-start text-start flex-grow-1 flex-shrink-1 text-truncate">
               {{ $t('programs.details.label.audienceSpace') }}
@@ -109,6 +110,7 @@
         :loading="loading"
         :see-all-url="programLink"
         hide-empty-placeholder
+        go-back-button
         class="mt-n4 mb-4 mx-1">
         <template #title>
           <div class="subtitle-1 dark-grey-color font-weight-bold text-truncate">
@@ -126,12 +128,13 @@ export default {
     drawer: false,
     program: null,
     loading: false,
+    goBackButton: false,
     rules: null,
     rulesLimit: 4,
   }),
   computed: {
     programLink() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.program.id}`;
     },
     space() {
       return this.program?.space;
@@ -173,8 +176,9 @@ export default {
     this.$root.$on('rule-deleted', this.retrieveRules);
   },
   methods: {
-    open(program) {
+    open(program, goBackButton) {
       this.program = program;
+      this.goBackButton = goBackButton || false;
       this.rules = null;
       this.$refs.drawer.open();
       this.$nextTick()

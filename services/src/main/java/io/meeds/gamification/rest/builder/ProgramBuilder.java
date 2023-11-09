@@ -66,6 +66,7 @@ public class ProgramBuilder {
     if (program == null) {
       return null;
     }
+    boolean anonymous = StringUtils.isBlank(username);
     translatedLabels(translationService, program, locale);
 
     int activeRulesCount = 0;
@@ -81,9 +82,9 @@ public class ProgramBuilder {
                                  program.getColor(),
                                  program.getSpaceId(),
                                  program.getPriority(),
-                                 program.getCreatedBy(),
+                                 anonymous ? null : program.getCreatedBy(),
                                  program.getCreatedDate(),
-                                 program.getLastModifiedBy(),
+                                 anonymous ? null : program.getLastModifiedBy(),
                                  program.getLastModifiedDate(),
                                  program.isDeleted(),
                                  program.isEnabled(),
@@ -95,13 +96,17 @@ public class ProgramBuilder {
                                  program.getAvatarFileId(),
                                  program.getCoverUrl(),
                                  program.getAvatarUrl(),
-                                 program.getOwnerIds(),
+                                 anonymous ? null : program.getOwnerIds(),
                                  program.getRulesTotalScore(),
                                  program.isOpen(),
-                                 program.getSpaceId() > 0 ? Utils.getSpaceById(String.valueOf(program.getSpaceId())) : null,
+                                 !anonymous && program.getSpaceId() > 0 ?
+                                                                        Utils.getSpaceById(String.valueOf(program.getSpaceId())) :
+                                                                        null,
                                  toUserContext(programService, program, username),
-                                 getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId()),
-                                 activeRulesCount);
+                                 anonymous ? Collections.emptyList() :
+                                           getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId()),
+                                 activeRulesCount,
+                                 program.getVisibility());
   }
 
   public static void translatedLabels(TranslationService translationService, ProgramDTO program, Locale locale) {
@@ -177,29 +182,28 @@ public class ProgramBuilder {
     UserInfoContext userContext = new UserInfoContext();
 
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    Identity identity = identityManager.getOrCreateUserIdentity(username);
+    Identity identity = StringUtils.isBlank(username) ? null : identityManager.getOrCreateUserIdentity(username);
     mapUserInfo(userContext, identity);
     if (program != null) {
-      boolean isOwner = programService.isProgramOwner(program.getId(), username);
+      boolean anonymous = identity == null;
+      boolean canView = programService.canViewProgram(program.getId(), username);
+      boolean isOwner = !anonymous && programService.isProgramOwner(program.getId(), username);
+      boolean isMember = !anonymous && programService.isProgramMember(program.getId(), username);
+      boolean canEdit = !anonymous && isOwner && !program.isDeleted();
+      userContext.setManager(isOwner);
+      userContext.setCanEdit(canEdit);
+      userContext.setMember(isMember);
+      userContext.setCanView(canView);
+      userContext.setProgramOwner(isOwner);
+
       if (program.isOpen()) {
-        boolean isMember = programService.isProgramMember(program.getId(), username);
-        userContext.setManager(isOwner);
-        userContext.setCanEdit(isOwner);
-        userContext.setMember(isMember);
-        userContext.setProgramOwner(isOwner);
         userContext.setRedactor(true);
       } else {
         Space space = Utils.getSpaceById(String.valueOf(program.getSpaceId()));
         if (space != null) {
-          SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-          boolean isSuperManager = spaceService.isSuperManager(username);
-          boolean isManager = isSuperManager || spaceService.isManager(space, username);
-          boolean isMember = isManager || spaceService.isMember(space, username);
-          boolean isRedactor = isManager || spaceService.isRedactor(space, username);
-          userContext.setManager(isManager);
-          userContext.setMember(isMember);
-          userContext.setProgramOwner(isOwner);
-          userContext.setCanEdit(isOwner && !program.isDeleted());
+          boolean isRedactor = !anonymous
+                               && CommonsUtils.getService(SpaceService.class)
+                                              .canRedactOnSpace(space, Utils.getUserAclIdentity(username));
           userContext.setRedactor(isRedactor);
         }
       }
@@ -214,10 +218,12 @@ public class ProgramBuilder {
   }
 
   private static <E extends UserInfo> void mapUserInfo(E userInfo, Identity identity) {
-    userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-    userInfo.setFullName(identity.getProfile().getFullName());
-    userInfo.setRemoteId(identity.getRemoteId());
-    userInfo.setId(identity.getId());
+    if (identity != null) {
+      userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+      userInfo.setFullName(identity.getProfile().getFullName());
+      userInfo.setRemoteId(identity.getRemoteId());
+      userInfo.setId(identity.getId());
+    }
   }
 
 }
