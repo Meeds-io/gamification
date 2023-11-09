@@ -25,8 +25,8 @@
     v-model="drawer"
     :loading="loading"
     :go-back-button="goBackButton"
+    :allow-expand="!relative"
     class="user-achievements-drawer"
-    allow-expand
     fixed
     right>
     <template #title>
@@ -66,6 +66,15 @@
           @has-more="hasMore = $event" />
       </div>
     </template>
+    <template v-else-if="drawer && !loading" #content>
+      <div class="d-flex flex-column full-width full-height align-center justify-center">
+        <v-icon color="secondary" size="54">fa-chart-pie</v-icon>
+        <span v-html="noResultsText" class="subtitle-1 font-weight-bold mt-7"></span>
+      </div>
+      <gamification-rules-overview-list-drawer
+        ref="actionsList"
+        go-back-button />
+    </template>
     <template #footer>
       <div v-if="hasMore" class="d-flex">
         <v-btn
@@ -86,6 +95,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    relative: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     drawer: false,
@@ -97,8 +110,24 @@ export default {
     programId: null,
     pageSize: Math.max(10, parseInt((window.innerHeight - 560) / 62)),
   }),
+  computed: {
+    noResultsText() {
+      return this.$t('gamification.overview.emptyAchievementsMessage', {
+        0: '<a class="primary--text font-weight-bold" onclick="window.dispatchEvent(new CustomEvent(\'rules-list-drawer-open\'))">',
+        1: '</a>',
+      });
+    },
+  },
+  created() {
+    window.addEventListener('rules-list-drawer-open', this.openActionsList);
+  },
   mounted() {
-    document.querySelector('#vuetify-apps').appendChild(this.$el);
+    if (!this.relative) {
+      document.querySelector('#vuetify-apps').appendChild(this.$el);
+    }
+  },
+  beforeDestroy() {
+    window.removeEventListener('rules-list-drawer-open', this.openActionsList);
   },
   methods: {
     openByIdentityId(identityId, period) {
@@ -126,6 +155,9 @@ export default {
       this.loading = true;
       return this.retrievePrograms()
         .finally(() => this.loading = false);
+    },
+    openActionsList() {
+      this.$refs?.actionsList?.open();
     },
     retrievePrograms() {
       if (this.programs) {
