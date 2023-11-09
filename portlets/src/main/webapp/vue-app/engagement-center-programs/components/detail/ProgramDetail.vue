@@ -331,7 +331,7 @@ export default {
     },
     administratorUsernames() {
       return (this.administrators || this.program?.administrators || []).map(admin => ({
-        userName: admin.remoteId
+        userName: admin
       }));
     },
     owners() {
