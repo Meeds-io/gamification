@@ -153,14 +153,13 @@ public class ProgramBuilder {
                    .toList();
   }
 
-  public static List<UserInfo> buildAdministrators(ProgramService programService) {
-    List<Identity> administrators = programService.getAdministrators();
+  public static List<String> buildAdministrators(ProgramService programService) {
+    List<String> administrators = programService.getAdministrators();
     String superUser = ExoContainerContext.getService(UserACL.class).getSuperUser();
-    return CollectionUtils.isEmpty(administrators) ? null :
-                                                   administrators.stream()
-                                                                 .filter(u -> !superUser.equals(u.getRemoteId()))
-                                                                 .map(ProgramBuilder::toUserInfo)
-                                                                 .toList();
+    return administrators == null ? null :
+                                  administrators.stream()
+                                                .filter(u -> !superUser.equals(u))
+                                                .toList();
   }
 
   private static List<UserInfo> getProgramOwnersByIds(Set<Long> ids, long spaceId) {
