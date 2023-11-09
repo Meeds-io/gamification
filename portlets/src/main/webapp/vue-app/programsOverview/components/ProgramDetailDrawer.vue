@@ -61,14 +61,14 @@
             role="presentation"
             alt="">
         </v-avatar>
-        <div class="subtitle-1 dark-grey-color font-weight-bold mt-6">
+        <div class="subtitle-1 dark-grey-color font-weight-bold mt-5">
           {{ $t('programs.details.label.description') }}
         </div>
         <div
           class="text-color text-wrap text-start text-break rich-editor-content mt-2"
           v-sanitized-html="program.description">
         </div>
-        <div v-if="!$root.isAnonymous" class="d-flex flex-column mt-6">
+        <div v-if="!$root.isAnonymous" class="d-flex flex-column mt-5">
           <div class="d-flex flex-row">
             <div class="subtitle-1 dark-grey-color font-weight-bold flex-start text-start flex-grow-1 flex-shrink-1 text-truncate">
               {{ $t('programs.details.label.audienceSpace') }}
@@ -104,19 +104,32 @@
         </div>
       </v-card>
       <gamification-rules-overview-widget
-        v-if="rules"
         :rules="rules"
         :page-size="rulesLimit"
         :loading="loading"
         hide-empty-placeholder
         go-back-button
-        class="mt-n4 mb-4 mx-1">
+        class="mb-4 mx-1">
         <template #title>
           <div class="subtitle-1 dark-grey-color font-weight-bold text-truncate">
             {{ $t('programs.label.programActions') }}
           </div>
         </template>
+        <template v-if="rules.length" #action>
+          <v-btn
+            height="auto"
+            min-width="auto"
+            class="pa-0"
+            text
+            @click="$refs.listDrawer.open()">
+            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+          </v-btn>
+        </template>
       </gamification-rules-overview-widget>
+      <gamification-rules-overview-list-drawer
+        v-if="rules.length"
+        ref="listDrawer"
+        :program-id="programId" />
     </template>
   </exo-drawer>
 </template>
@@ -128,12 +141,16 @@ export default {
     program: null,
     loading: false,
     goBackButton: false,
-    rules: null,
+    rules: [],
     rulesLimit: 4,
+    rulesSize: 0,
   }),
   computed: {
     programLink() {
       return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.program.id}`;
+    },
+    programId() {
+      return this.program?.id;
     },
     space() {
       return this.program?.space;
@@ -178,7 +195,7 @@ export default {
     open(program, goBackButton) {
       this.program = program;
       this.goBackButton = goBackButton || false;
-      this.rules = null;
+      this.rules = [];
       this.$refs.drawer.open();
       this.$nextTick()
         .then(() => {
@@ -205,7 +222,10 @@ export default {
         expand: 'countRealizations',
         lang: eXo.env.portal.language,
       })
-        .then(data => this.rules = data?.rules || [])
+        .then(data => {
+          this.rules = data?.rules || [];
+          this.rulesSize = data?.size || 0;
+        })
         .finally(() => this.loading = false);
     },
     collectProgramVisit() {
