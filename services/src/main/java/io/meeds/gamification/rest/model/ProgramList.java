@@ -19,8 +19,6 @@ package io.meeds.gamification.rest.model;
 
 import java.util.List;
 
-import io.meeds.gamification.model.UserInfo;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,7 +30,7 @@ public class ProgramList {
 
   private List<ProgramRestEntity> programs;
 
-  private List<UserInfo>          administrators;
+  private List<String>            administrators;
 
   private int                     offset;
 
