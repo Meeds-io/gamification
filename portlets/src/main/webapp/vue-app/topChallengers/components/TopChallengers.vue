@@ -22,39 +22,11 @@
 <template>
   <v-app>
     <gamification-overview-widget
-      :title="!displayPlaceholder && $t('gamification.overview.topChallengersTitle')"
+      :title="!displayPlaceholder && !loading && $t('gamification.overview.topChallengersTitle')"
       :loading="loading"
-      :action-url="!displayPlaceholder && !isExternal && peopleURL || ''">
-      <template #content>
-        <gamification-overview-widget-row
-          v-show="displayPlaceholder"
-          disabled
-          class="my-auto">
-          <template #content>
-            <div class="d-flex flex-column align-center justify-center">
-              <v-icon color="secondary" size="54">fa-trophy</v-icon>
-              <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.leaderboard') }}</span>
-            </div>
-          </template>
-        </gamification-overview-widget-row>
-        <gamification-overview-widget-row class="my-auto" v-show="rankDisplayed && !isExternal">
-          <template #content>
-            <gamification-rank :is-overview-display="true" />
-          </template>
-        </gamification-overview-widget-row>
-      </template>
-      <div v-if="displayPlaceholder" class="d-flex flex-column align-center justify-center full-width full-height">
-        <v-icon color="secondary" size="54">fa-trophy</v-icon>
-        <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.weeklyLeaderboard') }}</span>
-      </div>
-      <gamification-overview-widget-row
-        v-show="!displayPlaceholder"
-        class="my-auto"
-        dense>
-        <template #content>
-          <gamification-rank :is-overview-display="true" />
-        </template>
-      </gamification-overview-widget-row>
+      :action-url="!displayPlaceholder && !loading && peopleURL || ''"
+      class="d-flex">
+      <gamification-rank is-overview-display />
     </gamification-overview-widget>
     <gamification-overview-leaderboard-drawer
       ref="detailsDrawer" />
