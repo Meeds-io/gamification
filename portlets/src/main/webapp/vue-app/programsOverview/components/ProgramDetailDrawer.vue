@@ -108,7 +108,6 @@
         :rules="rules"
         :page-size="rulesLimit"
         :loading="loading"
-        :see-all-url="programLink"
         hide-empty-placeholder
         go-back-button
         class="mt-n4 mb-4 mx-1">
