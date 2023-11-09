@@ -355,8 +355,8 @@ public interface ProgramService {
   boolean canViewProgram(long programId, String username);
 
   /**
-   * @return {@link List} user identities, member of rewarding administrators
+   * @return {@link List} user names, member of rewarding administrators
    */
-  List<org.exoplatform.social.core.identity.model.Identity> getAdministrators();
+  List<String> getAdministrators();
 
 }
