@@ -22,35 +22,11 @@
 <template>
   <v-app>
     <gamification-overview-widget
-      :loading="loading">
-      <template #title>
-        <div v-if="!displayPlaceholder && !loading" class="d-flex flex-grow-1 full-width">
-          <div class="widget-text-header text-capitalize-first-letter text-truncate">
-            {{ $t('gamification.overview.topChallengersTitle') }}
-          </div>
-          <div class="spacer"></div>
-          <v-btn
-            height="auto"
-            min-width="auto"
-            class="pa-0"
-            text
-            @click="$refs.detailsDrawer.open()">
-            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
-          </v-btn>
-        </div>
-      </template>
-      <div v-if="displayPlaceholder" class="d-flex flex-column align-center justify-center full-width full-height">
-        <v-icon color="secondary" size="54">fa-trophy</v-icon>
-        <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.weeklyLeaderboard') }}</span>
-      </div>
-      <gamification-overview-widget-row
-        v-show="!displayPlaceholder"
-        class="my-auto"
-        dense>
-        <template #content>
-          <gamification-rank :is-overview-display="true" />
-        </template>
-      </gamification-overview-widget-row>
+      :title="!displayPlaceholder && !loading && $t('gamification.overview.topChallengersTitle')"
+      :loading="loading"
+      :action-url="!displayPlaceholder && !loading && peopleURL || ''"
+      class="d-flex">
+      <gamification-rank is-overview-display />
     </gamification-overview-widget>
     <gamification-overview-leaderboard-drawer
       ref="detailsDrawer" />
