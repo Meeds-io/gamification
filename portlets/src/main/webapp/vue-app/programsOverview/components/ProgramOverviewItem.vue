@@ -27,28 +27,26 @@
         <v-img :src="program.avatarUrl" />
       </v-list-item-avatar>
     </template>
-    <template #content>
-      <v-list-item class="px-0">
-        <v-list-item-content class="py-0 my-auto">
-          <v-list-item-title class="subtitle-2">
-            {{ program.title }}
-          </v-list-item-title>
-          <v-list-item-subtitle class="d-flex flex-nowrap align-center subtitle-2">
-            {{ program.activeRulesCount }} {{ $t('gamification.overview.label.actionsAvailable') }}
-          </v-list-item-subtitle>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-list-item-action-text>
-            <v-chip
-              color="#F57C00"
-              class="content-box-sizing white--text"
-              small>
-              <span class="subtitle-2">+ {{ programTotalScore }}</span>
-            </v-chip>
-          </v-list-item-action-text>
-        </v-list-item-action>
-      </v-list-item>
-    </template>
+    <v-list-item class="px-0">
+      <v-list-item-content class="py-0 my-auto">
+        <v-list-item-title class="subtitle-2">
+          {{ program.title }}
+        </v-list-item-title>
+        <v-list-item-subtitle class="d-flex flex-nowrap align-center subtitle-2">
+          {{ program.activeRulesCount }} {{ $t('gamification.overview.label.actionsAvailable') }}
+        </v-list-item-subtitle>
+      </v-list-item-content>
+      <v-list-item-action>
+        <v-list-item-action-text>
+          <v-chip
+            color="#F57C00"
+            class="content-box-sizing white--text"
+            small>
+            <span class="subtitle-2">+ {{ programTotalScore }}</span>
+          </v-chip>
+        </v-list-item-action-text>
+      </v-list-item-action>
+    </v-list-item>
   </gamification-overview-widget-row>
 </template>
 <script>

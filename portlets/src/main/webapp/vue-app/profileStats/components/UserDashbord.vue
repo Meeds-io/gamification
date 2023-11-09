@@ -128,7 +128,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-card
               align-center
               flat
-              @click="getSpecificCard('gamification-rank')">
+              @click="$emit('flip')">
               <v-card-text class="headline text-color font-weight-bold pa-1">
                 <span>{{ gamificationRank }}</span>
               </v-card-text>
@@ -266,9 +266,6 @@ export default {
           }
         });
     },
-    getSpecificCard(component) {
-      this.$emit('specific-card',component);
-    },
     openAchievementsDrawer() {
       this.$emit('openAchievementsDrawer');
     },
@@ -277,9 +274,6 @@ export default {
     },
     openSpaceDrawer() {
       this.$emit('openSpaceDrawer');
-    },
-    toProfileStats() {
-      this.$emit('isProfileStats');
     },
   }
 };
