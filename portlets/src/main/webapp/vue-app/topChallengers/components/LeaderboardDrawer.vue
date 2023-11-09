@@ -34,6 +34,7 @@
     <template v-if="drawer" #content>
       <users-leaderboard-tabs
         ref="leaderboard"
+        :page-size="pageSize"
         class="px-5 pb-5"
         embedded
         @loading="loading = $event"
@@ -54,6 +55,12 @@
 </template>
 <script>
 export default {
+  props: {
+    pageSize: {
+      type: Number,
+      default: () => 10,
+    },
+  },
   data: () => ({
     drawer: false,
     loading: false,

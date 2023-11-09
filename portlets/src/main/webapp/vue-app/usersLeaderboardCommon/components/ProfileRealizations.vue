@@ -38,10 +38,13 @@ export default {
       type: String,
       default: null,
     },
+    pageSize: {
+      type: Number,
+      default: () => 10,
+    },
   },
   data: () => ({
     loading: false,
-    pageSize: 10,
     totalSize: 0,
     sortBy: 'date',
     sortDescending: true,
@@ -75,6 +78,7 @@ export default {
     },
   },
   created() {
+    this.limit = this.pageSize;
     this.retrieveRealizations();
   },
   methods: {
