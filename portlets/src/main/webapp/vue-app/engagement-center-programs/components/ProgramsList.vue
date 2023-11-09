@@ -44,7 +44,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           lg="4">
           <engagement-center-program-card
             :program="program"
-            :is-administrator="isAdministrator" />
+            :is-administrator="isAdministrator"
+            :administrators="administrators" />
         </v-col>
         <v-col
           v-if="hasMore"
@@ -115,6 +116,7 @@ export default {
   data() {
     return {
       programs: [],
+      administrators: null,
       totalSize: 0,
       pageSize: 9,
       loading: true,
@@ -161,6 +163,9 @@ export default {
     },
   },
   watch: {
+    administrators() {
+      this.$emit('administrators-loaded', this.administrators);
+    },
     loading() {
       if (this.loading) {
         document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
@@ -191,10 +196,11 @@ export default {
         owned: !this.isAdministrator && this.isStatusDisabled,
         sortBy: 'title',
         sortDescending: false,
-        expand: 'countActiveRulesWhenDisabled',
+        expand: 'countActiveRulesWhenDisabled,administrators',
         lang: eXo.env.portal.language,
       })
         .then((data) => {
+          this.administrators = data.administrators;
           this.programs = data.programs;
           this.totalSize = data.size || 0;
         })
