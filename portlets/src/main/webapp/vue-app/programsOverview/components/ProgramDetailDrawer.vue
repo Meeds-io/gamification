@@ -85,6 +85,9 @@
                 :size="32"
                 class="text-truncate mt-2"
                 popover />
+              <div v-else-if="!program.spaceId">
+                {{ $t('programs.details.label.programOpenToParticipate') }}
+              </div>
             </div>
             <div class="flex-end text-end flex-grow-0 flex-shrink-0">
               <div v-if="owners.length">

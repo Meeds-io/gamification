@@ -99,16 +99,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :size="25"
                 class="d-flex justify-sm-end pt-2"
                 @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
-              <template v-if="space">
-                <div class="dark-grey-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
-                  {{ $t('programs.details.label.audienceSpace') }}
-                </div>
-                <exo-space-avatar
-                  :space="space"
-                  :size="32"
-                  class="d-flex justify-sm-end pt-2"
-                  popover />
-              </template>
+              <div class="dark-grey-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
+                {{ $t('programs.details.label.audienceSpace') }}
+              </div>
+              <exo-space-avatar
+                v-if="space"
+                :space="space"
+                :size="32"
+                class="d-flex justify-sm-end pt-2"
+                popover />
+              <div v-else-if="!program.spaceId" class="d-flex justify-sm-end">
+                {{ $t('programs.details.label.programOpenToParticipate') }}
+              </div>
             </div>
             <v-chip v-else class="ms-sm-auto mt-2">
               {{ $t('programs.label.rewardAdmins') }}
