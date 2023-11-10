@@ -28,7 +28,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :program="program"
         :administrators="administrators"
         :newly-created="newlyCreated"
-        :is-administrator="isAdministrator" />
+        :is-administrator="isAdministrator"
+        @updated="program = $event" />
     </main>
     <engagement-center-rule-extensions />
     <engagement-center-program-drawer
@@ -113,7 +114,7 @@ export default {
       if (!this.administrators) {
         this.administrators = program.administrators || administrators;
       }
-      this.program = program;
+      this.program = JSON.parse(JSON.stringify(program));
       this.displayProgramDetail = true;
     },
   }
