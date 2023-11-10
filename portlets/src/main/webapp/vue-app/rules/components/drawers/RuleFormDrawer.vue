@@ -685,7 +685,9 @@ export default {
         title: this.ruleTitle,
         description: description || this.ruleDescription,
         score: rule?.score,
-        program: program && JSON.parse(JSON.stringify(program)),
+        program: {
+          id: program?.id,
+        },
         enabled: rule?.enabled,
         event: rule.type === 'AUTOMATIC' && rule?.event || null,
         startDate: rule?.startDate,

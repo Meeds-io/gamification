@@ -41,7 +41,7 @@
           :go-back-button="goBackButton" />
       </template>
       <template v-if="endingRulesCount">
-        <div class="d-flex align-center">
+        <div class="d-flex align-center pt-5">
           <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.endingActionsTitle') }}</span>
           <v-divider />
         </div>
@@ -241,16 +241,18 @@ export default {
         + (this.upcomingRulesCount && 1 || 0);
     },
     lockedRulesToDisplay() {
-      return this.lockedRules.slice(0, (this.sectionsCount === 1) && 4 || 2);
+      return this.lockedRules.slice(0, (this.sectionsCount === 1) && this.pageSize || 2);
     },
     endingRulesToDisplay() {
-      return this.endingRules.slice(0, (this.sectionsCount === 1) && 4 || 2);
-    },
-    validRulesToDisplay() {
-      return this.validRules.slice(0, (this.sectionsCount < 4) && 4 || 2);
+      return this.endingRules.slice(0, (this.sectionsCount === 1) && this.pageSize || 2);
     },
     upcomingRulesToDisplay() {
-      return this.upcomingRules.slice(0, (this.sectionsCount === 1) && 4 || 2);
+      return this.upcomingRules.slice(0, (this.sectionsCount === 1) && this.pageSize || 2);
+    },
+    validRulesToDisplay() {
+      const sizeToDisplay = this.pageSize <= 4 ? ((this.sectionsCount < 6) && this.pageSize || 2)
+        : (this.pageSize - (this.upcomingRulesToDisplay?.length && 2 || 0) - (this.endingRulesToDisplay?.length && 2 || 0) - (this.lockedRulesToDisplay?.length && 2 || 0));
+      return this.validRules.slice(0, sizeToDisplay);
     },
     hasValidRules() {
       return this.sectionsCount > 0;
@@ -328,6 +330,7 @@ export default {
           && Object.keys(rule.userInfo.context)
             .every(prop => !prop.includes('valid')
                 || prop === 'valid'
+                || !prop.includes('validForIdentity')
                 || prop === 'validForIdentity'
                 || prop === 'validPrerequisites'
                 || rule.userInfo.context[prop]);
@@ -339,6 +342,7 @@ export default {
           && Object.keys(rule.userInfo.context)
             .every(prop => !prop.includes('valid')
                 || prop === 'valid'
+                || !prop.includes('validForIdentity')
                 || prop === 'validForIdentity'
                 || prop === 'validPrerequisites'
                 || prop === 'validDates'

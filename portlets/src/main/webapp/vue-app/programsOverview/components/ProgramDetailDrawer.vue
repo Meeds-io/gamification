@@ -106,7 +106,7 @@
       <gamification-rules-overview-widget
         :rules="rules"
         :page-size="rulesLimit"
-        :loading="loading"
+        :loading="loading > 0"
         hide-empty-placeholder
         go-back-button
         class="mb-4 mx-1">
@@ -115,7 +115,7 @@
             {{ $t('programs.label.programActions') }}
           </div>
         </template>
-        <template v-if="rules.length" #action>
+        <template v-if="hasMore" #action>
           <v-btn
             height="auto"
             min-width="auto"
@@ -145,10 +145,12 @@ export default {
   data: () => ({
     drawer: false,
     program: null,
-    loading: false,
+    loading: 0,
     goBackButton: false,
-    rules: [],
-    rulesLimit: 4,
+    rulesLimit: 10,
+    upcomingRules: [],
+    activeRules: [],
+    endingRules: [],
     rulesSize: 0,
   }),
   computed: {
@@ -189,6 +191,13 @@ export default {
     ownersCount() {
       return this.owners?.length;
     },
+    rules() {
+      return [...this.upcomingRules, ...this.endingRules, ...this.activeRules]
+        .filter((v, i, array) => array.indexOf(v) === i);
+    },
+    hasMore() {
+      return this.rulesSize > this.rules.length;
+    },
   },
   watch: {
     loading() {
@@ -225,25 +234,61 @@ export default {
       if (!this.drawer) {
         return;
       }
-      this.loading = true;
+      this.loading = 3;
+      this.retrieveEndingRules().finally(() => this.loading--);
+      this.retrieveActiveRules().finally(() => this.loading--);
+      this.retrieveUpcomingRules().finally(() => this.loading--);
+    },
+    retrieveEndingRules() {
       return this.$ruleService.getRules({
         status: 'ENABLED',
+        programId: this.programId,
         programStatus: 'ENABLED',
-        dateFilter: 'ACTIVE',
-        programId: this.program.id,
+        dateFilter: 'STARTED_WITH_END',
         offset: 0,
-        limit: 100,
+        limit: 2,
+        sortBy: 'endDate',
+        sortDescending: false,
         expand: 'countRealizations',
         lang: eXo.env.portal.language,
-      })
-        .then(data => {
-          this.rules = data?.rules || [];
-          this.rulesSize = data?.size || 0;
-        })
-        .finally(() => this.loading = false);
+        returnSize: false,
+      }).then(result => this.endingRules = result?.rules || []);
+    },
+    retrieveActiveRules() {
+      return this.$ruleService.getRules({
+        status: 'ENABLED',
+        programId: this.programId,
+        programStatus: 'ENABLED',
+        dateFilter: 'STARTED',
+        offset: 0,
+        limit: this.rulesLimit,
+        sortBy: 'createdDate',
+        sortDescending: true,
+        expand: 'countRealizations,expandPrerequisites',
+        lang: eXo.env.portal.language,
+        returnSize: true,
+      }).then(result => {
+        this.activeRules = result?.rules || [];
+        this.rulesSize = result?.size || 0;
+      });
+    },
+    retrieveUpcomingRules() {
+      return this.$ruleService.getRules({
+        status: 'ENABLED',
+        programId: this.programId,
+        programStatus: 'ENABLED',
+        dateFilter: 'UPCOMING',
+        offset: 0,
+        limit: 2,
+        sortBy: 'startDate',
+        sortDescending: false,
+        expand: 'countRealizations',
+        lang: eXo.env.portal.language,
+        returnSize: false,
+      }).then(result => this.upcomingRules = result?.rules || []);
     },
     collectProgramVisit() {
-      if (this.program?.id) {
+      if (this.programId) {
         document.dispatchEvent(new CustomEvent('exo-statistic-message', {
           detail: {
             module: 'gamification',
