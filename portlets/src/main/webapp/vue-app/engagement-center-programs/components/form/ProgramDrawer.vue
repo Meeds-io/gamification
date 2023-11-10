@@ -479,7 +479,7 @@ export default {
       this.openSpace = null;
       if (this.spaceId) {
         this.$spaceService.getSpaceById(this.spaceId)
-          .then(space => this.openSpace = (space?.subscription === 'open'));
+          .then(space => this.openSpace = (space?.subscription === 'open' && space?.visibility !== 'hidden'));
       }
     },
   },
