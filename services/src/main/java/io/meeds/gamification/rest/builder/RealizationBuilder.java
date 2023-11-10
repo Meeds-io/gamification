@@ -43,7 +43,7 @@ public class RealizationBuilder {
       boolean anonymous = StringUtils.isBlank(currentUsername);
       ProgramDTO program = realization.getProgram();
       boolean canViewProgram = Utils.isRewardingManager(currentUsername)
-                               || (program != null && programService.isProgramMember(program.getId(), currentUsername, false));
+                               || (program != null && programService.canViewProgram(program.getId(), currentUsername));
       boolean canViewTitle = canViewProgram
                              || StringUtils.equals(currentUsername, realization.getEarnerId())
                              || StringUtils.equals(String.valueOf(Utils.getCurrentUserIdentityId()), realization.getEarnerId());
