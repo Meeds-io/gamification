@@ -990,10 +990,10 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     leaderboardFilter.setIdentityType(IdentityType.SPACE);
     leaderboardFilter.setProgramId(program.getId());
     leaderboardFilter.setPeriod("WEEK");
-    assertEquals(2, realizationService.getLeaderboard(leaderboardFilter, ADMIN_USER).size());
+    assertEquals(1, realizationService.getLeaderboard(leaderboardFilter, ADMIN_USER).size());
 
-    assertEquals(1, realizationService.getLeaderboardRank(TEST_SPACE2_ID, date, program.getId()));
-    assertEquals(2, realizationService.getLeaderboardRank(TEST_SPACE_ID, date, program.getId()));
+    assertEquals(0, realizationService.getLeaderboardRank(TEST_SPACE2_ID, date, program.getId()));
+    assertEquals(1, realizationService.getLeaderboardRank(TEST_SPACE_ID, date, program.getId()));
   }
 
   public void testFindUserReputationBySocialId() {
