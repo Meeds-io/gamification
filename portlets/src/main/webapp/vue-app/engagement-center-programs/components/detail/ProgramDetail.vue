@@ -39,7 +39,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <span class="text-header-title d-none d-sm-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
       </div>
       <div class="position-relative">
-        <engagement-center-card-mask v-if="!program.enabled" class="z-index-one rounded">
+        <engagement-center-card-mask v-if="!enabled" class="z-index-one rounded">
           <engagement-center-program-disabled-mask-content
             :is-administrator="isAdministrator"
             :program="program" />
@@ -318,6 +318,9 @@ export default {
     spaceManagers() {
       return this.space?.managers;
     },
+    enabled() {
+      return this.program?.enabled;
+    },
     spaceManagersList() {
       return (this.spaceManagers || []).map(owner => ({
         userName: owner
@@ -420,7 +423,7 @@ export default {
   methods: {
     programUpdated(program) {
       if (program.id === this.program.id) {
-        this.program = program;
+        this.$emit('updated', program);
       }
     },
     updateFilter(status, dateFilter) {

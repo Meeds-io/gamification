@@ -61,13 +61,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="d-flex">
         <v-tooltip bottom>
           <template #activator="{ on }">
-            <a
+            <component
               v-on="on"
-              :href="programUrl"
+              v-bind="programUrl && {
+                href: programUrl
+              }"
+              :is="programUrl && 'a' || 'div'"
               class="width-fit-content">
-              <div class="text-truncate">{{ programTitle }}
-              </div>
-            </a>
+              <div class="text-truncate">{{ programTitle }}</div>
+            </component>
           </template>
           <span>{{ programTitle }}</span>
         </v-tooltip>
@@ -232,12 +234,12 @@ export default {
     },
     actionLabel() {
       if (this.isAutomaticType) {
-        const key = `gamification.event.title.${this.realization.action.title}`;
+        const key = `gamification.event.title.${this.eventName}`;
         if (this.$te(key)) {
           return this.$t(key);
         }
       }
-      return this.realization.action.title;
+      return this.realization?.action?.title || this.realizationActionLabel;
     },
     eventName() {
       return this.realization?.action?.event;
@@ -246,10 +248,10 @@ export default {
       return this.realization?.program;
     },
     programTitle() {
-      return this.program?.title || '-';
+      return this.program?.title || this.programLabel;
     },
     programUrl() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.program?.id}`;
+      return this.program && `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.program?.id}`;
     },
     score() {
       return this.realization?.score || '-';

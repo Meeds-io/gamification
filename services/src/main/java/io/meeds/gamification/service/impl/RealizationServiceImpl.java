@@ -351,7 +351,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
     org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId);
     boolean anonymous = identity == null || identity.isDeleted() || !identity.isEnable();
-    if (anonymous || (identity.isUser() && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId()))) {
+    if (anonymous
+        || (identity.isUser() && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId()))
+        || (identity.isSpace() && !rule.isOpen() && rule.getSpaceId() != getSpaceId(identity.getRemoteId()))) {
       realizationRestriction.setValidIdentity(false);
     }
     if (!isValidProgram(rule.getProgram())) {
@@ -789,6 +791,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                .toInstant());
     }
     return fromDate;
+  }
+
+  private long getSpaceId(String spacePrettyName) {
+    Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
+    return space == null ? 0 : Long.parseLong(space.getId());
   }
 
 }
