@@ -44,18 +44,20 @@
             :key="index"
             class="flex-grow-1" />
         </template>
-        <gamification-program-list-drawer
-          ref="listDrawer" />
       </div>
       <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
         <v-icon color="secondary" size="54">fa-puzzle-piece</v-icon>
         <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.programs') }}</span>
       </div>
     </gamification-overview-widget>
+    <gamification-program-list-drawer
+      v-if="programsDisplayed"
+      ref="listDrawer" />
     <gamification-program-detail-drawer
       v-if="programsDisplayed"
       :administrators="administrators" />
-    <engagement-center-rule-extensions v-if="programsDisplayed" />
+    <engagement-center-rule-extensions
+      v-if="programsDisplayed" />
   </v-app>
 </template>
 <script>
