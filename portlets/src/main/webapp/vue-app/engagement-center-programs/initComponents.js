@@ -27,6 +27,7 @@ import ProgramMenu from './components/card/ProgramMenu.vue';
 import ProgramDisabledMaskContent from './components/card/ProgramDisabledMaskContent.vue';
 
 import ProgramDetail from './components/detail/ProgramDetail.vue';
+import ProgramCreatedPlaceholder from './components/detail/ProgramCreatedPlaceholder.vue';
 
 import ProgramDrawer from './components/form/ProgramDrawer.vue';
 import ProgramOwnerAssignment from './components/form/ProgramOwnerAssignment.vue';
@@ -47,6 +48,7 @@ const components = {
   'engagement-center-program-menu': ProgramMenu,
   'engagement-center-program-drawer': ProgramDrawer,
   'engagement-center-program-detail': ProgramDetail,
+  'engagement-center-program-created-placeholder': ProgramCreatedPlaceholder,
   'engagement-center-program-owner-assignment': ProgramOwnerAssignment,
   'engagement-center-program-image-selector': ProgramImageSelector,
   'engagement-center-program-image-selector-buttons': ProgramImageSelectorButtons,

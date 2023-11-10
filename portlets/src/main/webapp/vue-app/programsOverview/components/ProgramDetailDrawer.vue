@@ -85,6 +85,9 @@
                 :size="32"
                 class="text-truncate mt-2"
                 popover />
+              <div v-else-if="!program.spaceId">
+                {{ $t('programs.details.label.programOpenToParticipate') }}
+              </div>
             </div>
             <div class="flex-end text-end flex-grow-0 flex-shrink-0">
               <div v-if="owners.length">
@@ -183,17 +186,15 @@ export default {
       }));
     },
     owners() {
-      return this.addedOwners
-        .concat(this.spaceManagersList)
-        .concat(this.administratorUsernames)
-        .filter((v, i, array) => array.indexOf(v) === i);
+      return [...this.addedOwners, ...this.spaceManagersList, ...this.administratorUsernames]
+        .filter((v, i, array) => array.findIndex(v2 => v?.userName === v2?.userName) === i);
     },
     ownersCount() {
       return this.owners?.length;
     },
     rules() {
       return [...this.upcomingRules, ...this.endingRules, ...this.activeRules]
-        .filter((v, i, array) => array.indexOf(v) === i);
+        .filter((v, i, array) => array.findIndex(v2 => v?.id === v2?.id) === i);
     },
     hasMore() {
       return this.rulesSize > this.rules.length;

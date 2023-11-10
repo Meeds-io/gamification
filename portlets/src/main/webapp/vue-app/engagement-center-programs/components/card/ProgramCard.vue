@@ -118,7 +118,7 @@ export default {
     programBudget() {
       return this.program?.rulesTotalScore || 0;
     },
-    addedOwnersList() {
+    addedOwners() {
       return (this.program?.owners || []).map(owner => ({
         userName: owner.remoteId
       }));
@@ -137,9 +137,8 @@ export default {
       }));
     },
     owners() {
-      return this.addedOwnersList.concat(this.spaceManagersList)
-        .concat(this.administratorUsernames)
-        .filter((v, i, array) => array.indexOf(v) === i);
+      return [...this.addedOwners, ...this.spaceManagersList, ...this.administratorUsernames]
+        .filter((v, i, array) => array.findIndex(v2 => v?.userName === v2?.userName) === i);
     },
     ownersCount() {
       return this.owners?.length;

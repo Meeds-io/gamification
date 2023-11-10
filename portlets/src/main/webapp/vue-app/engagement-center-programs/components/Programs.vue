@@ -102,14 +102,14 @@ export default {
         .then(program => {
           if (program?.id) {
             this.administrators = program.administrators;
-            this.openProgramDetail(program, newlyCreated);
+            this.openProgramDetail(program, null, newlyCreated);
           }
         });
     },
     openCreatedProgramDetail(program) {
-      this.openProgramDetail(program, true);
+      this.openProgramDetail(program, null, true);
     },
-    openProgramDetail(program, newlyCreated, administrators) {
+    openProgramDetail(program, administrators, newlyCreated) {
       this.newlyCreated = newlyCreated || false;
       if (!this.administrators) {
         this.administrators = program.administrators || administrators;

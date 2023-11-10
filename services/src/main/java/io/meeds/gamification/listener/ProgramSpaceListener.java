@@ -50,6 +50,11 @@ public class ProgramSpaceListener extends SpaceListenerPlugin {
     CompletableFuture.runAsync(() -> updateProgramsVisibility(event));
   }
 
+  @Override
+  public void spaceAccessEdited(SpaceLifeCycleEvent event) {
+    CompletableFuture.runAsync(() -> updateProgramsVisibility(event));
+  }
+
   @ExoTransactional
   public void updateProgramsVisibility(SpaceLifeCycleEvent event) {
     String spaceId = event.getSpace().getId();
