@@ -312,14 +312,4 @@ public interface RealizationService {
    */
   Map<Long, Long> getScoresByIdentityIdsAndBetweenDates(List<String> earnerIdentityIds, Date fromDate, Date toDate);
 
-  /**
-   * Provided as an API from points n list to find gamification history from the
-   * GamificationInformationsPortlet's earner earned points by date
-   * 
-   * @param  earnerIdentityId earner identity Id
-   * @param  limit            limit entries to return
-   * @return                  {@link List} of {@link RealizationDTO}
-   */
-  List<RealizationDTO> findRealizationsByIdentityId(String earnerIdentityId, int limit);
-
 }
