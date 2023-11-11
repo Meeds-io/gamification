@@ -115,14 +115,18 @@ public class LeaderboardRest implements ResourceContainer {
                                          @DefaultValue("USER")
                                          @QueryParam("identityType")
                                          IdentityType identityType,
-                                         @Parameter(description = "Identity technical identifier to filter")
+                                         @Parameter(description = "Identity technical identifier to include in results")
                                          @QueryParam("identityId")
                                          Long identityId,
                                          @Parameter(description = "Current period: WEEK, MONTH or ALL")
                                          @DefaultValue("WEEK")
                                          @QueryParam("period")
                                          String period,
-                                         @Parameter(description = "Current period: WEEK, MONTH or ALL")
+                                         @Parameter(description = "Results offset")
+                                         @DefaultValue("0")
+                                         @QueryParam("offset")
+                                         int offset,
+                                         @Parameter(description = "Results limit")
                                          @DefaultValue("0")
                                          @QueryParam("limit")
                                          int limit) {
@@ -132,24 +136,21 @@ public class LeaderboardRest implements ResourceContainer {
 
     String currentUser = Utils.getCurrentUser();
     boolean isAnonymous = StringUtils.isBlank(currentUser);
-    if (identityType.isSpace() && isAnonymous) {
-      return Response.status(Status.UNAUTHORIZED).build();
-    } else if (identityType.isUser() && (identityId == null || identityId == 0)) {
-      identityId = Utils.getCurrentUserIdentityId();
-    }
 
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
     leaderboardFilter.setIdentityType(identityType);
     leaderboardFilter.setProgramId(programId);
     leaderboardFilter.setIdentityId(identityId);
     leaderboardFilter.setPeriod(StringUtils.isBlank(period) ? Period.WEEK.name() : period.toUpperCase());
-    leaderboardFilter.setLoadCapacity(limit < 0 ? DEFAULT_LOAD_CAPACITY : limit);
+    leaderboardFilter.setOffset(offset);
+    leaderboardFilter.setLimit(limit < 0 ? DEFAULT_LOAD_CAPACITY : limit);
     try {
       List<StandardLeaderboard> standardLeaderboards = limit == 0 ? Collections.emptyList() :
                                                                     realizationService.getLeaderboard(leaderboardFilter, currentUser);
       List<LeaderboardInfo> leaderboardList = buildLeaderboardInfos(realizationService,
                                                                     identityManager,
                                                                     spaceService,
+                                                                    offset,
                                                                     standardLeaderboards,
                                                                     identityType,
                                                                     identityId,

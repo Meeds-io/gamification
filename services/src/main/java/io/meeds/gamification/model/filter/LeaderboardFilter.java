@@ -23,8 +23,6 @@ import lombok.Data;
 @Data
 public class LeaderboardFilter {
 
-  private int          loadCapacity = 10;
-
   private Long         programId    = null;
 
   private Long         identityId   = null;
@@ -32,6 +30,10 @@ public class LeaderboardFilter {
   private IdentityType identityType = IdentityType.USER;
 
   private Period       period       = Period.WEEK;
+
+  private int          offset       = 0;
+
+  private int          limit        = 10;
 
   public String getPeriod() {
     return period.name();
