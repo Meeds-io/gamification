@@ -31,8 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.container.xml.InitParams;
-import org.exoplatform.container.xml.ValueParam;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.security.Identity;
@@ -49,8 +47,8 @@ import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.RulePublication;
+import io.meeds.gamification.model.filter.RealizationFilter;
 import io.meeds.gamification.model.filter.RuleFilter;
-import io.meeds.gamification.plugin.RuleConfigPlugin;
 import io.meeds.gamification.storage.mapper.RuleMapper;
 import io.meeds.gamification.test.AbstractServiceTest;
 
@@ -158,7 +156,9 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertNotNull(realization);
     assertTrue(realization.getId() > 0);
 
-    List<RealizationDTO> realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
+    RealizationFilter identityFilter = new RealizationFilter();
+    identityFilter.setEarnerIds(Collections.singletonList(TEST_USER_EARNER));
+    List<RealizationDTO> realizations = realizationService.getRealizationsByFilter(identityFilter, 0, 1);
     assertNotNull(realizations);
     assertEquals(1, realizations.size());
     RealizationDTO latestRealization = realizations.get(0);
@@ -173,7 +173,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule = ruleService.findRuleById(rule.getId());
     assertNotNull(rule);
 
-    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
+    realizations = realizationService.getRealizationsByFilter(identityFilter, 0, 1);
     assertNotNull(realizations);
     assertEquals(1, realizations.size());
     latestRealization = realizations.get(0);

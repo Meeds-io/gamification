@@ -85,27 +85,24 @@ public class RealizationStorage {
     return gamificationHistoryDAO.getLeaderboardRankByProgramId(identityType, earnerIdentityId, programId);
   }
 
-  public List<RealizationDTO> findRealizationsByIdentityIdSortedByDate(String earnerIdentityId, int limit) {
-    return fromEntities(programStorage, gamificationHistoryDAO.findRealizationsByIdentityIdSortedByDate(earnerIdentityId, limit));
+  public List<StandardLeaderboard> getLeaderboardByDate(Date fromDate, IdentityType identityType, int offset, int limit) {
+    return gamificationHistoryDAO.getLeaderboardByDate(fromDate, identityType, offset, limit);
   }
 
-  public List<StandardLeaderboard> getLeaderboardByDate(Date fromDate, IdentityType identityType, int limit) {
-    return gamificationHistoryDAO.getLeaderboardByDate(fromDate, identityType, limit);
-  }
-
-  public List<StandardLeaderboard> getLeaderboard(IdentityType identityType, int limit) {
-    return gamificationHistoryDAO.getLeaderboard(identityType, limit);
+  public List<StandardLeaderboard> getLeaderboard(IdentityType identityType, int offset, int limit) {
+    return gamificationHistoryDAO.getLeaderboard(identityType, offset, limit);
   }
 
   public List<StandardLeaderboard> getLeaderboardByDateByProgramId(Date fromDate,
                                                                    IdentityType identityType,
                                                                    long programId,
+                                                                   int offset,
                                                                    int limit) {
-    return gamificationHistoryDAO.getLeaderboardByDateAndProgramId(fromDate, identityType, programId, limit);
+    return gamificationHistoryDAO.getLeaderboardByDateAndProgramId(fromDate, identityType, programId, offset, limit);
   }
 
-  public List<StandardLeaderboard> getLeaderboardByProgramId(long programId, IdentityType identityType, int limit) {
-    return gamificationHistoryDAO.getLeaderboardByProgramId(programId, identityType, limit);
+  public List<StandardLeaderboard> getLeaderboardByProgramId(long programId, IdentityType identityType, int offset, int limit) {
+    return gamificationHistoryDAO.getLeaderboardByProgramId(programId, identityType, offset, limit);
   }
 
   public List<ProfileReputation> getScorePerProgramByIdentityId(String earnerIdentityId) {

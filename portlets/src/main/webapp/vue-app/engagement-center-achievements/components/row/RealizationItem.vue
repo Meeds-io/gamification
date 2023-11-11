@@ -230,16 +230,15 @@ export default {
       return this.realization?.link;
     },
     isAutomaticType() {
-      return this.realization?.action?.type === 'AUTOMATIC';
+      return !!this.eventName;
     },
     actionLabel() {
-      if (this.isAutomaticType) {
-        const key = `gamification.event.title.${this.eventName}`;
-        if (this.$te(key)) {
-          return this.$t(key);
-        }
+      const actionLabel = this.realization?.action?.title || this.realizationActionLabel;
+      if (actionLabel) {
+        return actionLabel;
+      } else {
+        return this.eventName && this.$t(`gamification.event.title.${this.eventName}`);
       }
-      return this.realization?.action?.title || this.realizationActionLabel;
     },
     eventName() {
       return this.realization?.action?.event;

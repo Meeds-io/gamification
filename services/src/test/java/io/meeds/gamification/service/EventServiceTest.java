@@ -30,7 +30,6 @@ import org.exoplatform.container.xml.ObjectParameter;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class EventServiceTest extends AbstractServiceTest {
 

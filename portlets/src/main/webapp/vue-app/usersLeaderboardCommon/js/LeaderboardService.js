@@ -71,6 +71,9 @@ export function getLeaderboard(filter) {
   if (filter.identityId) {
     formData.append('identityId', filter.identityId);
   }
+  if (filter.offset) {
+    formData.append('offset', filter.offset);
+  }
   formData.append('period', filter.period || 'WEEK');
   formData.append('limit', filter.limit || 0);
   const params = decodeURIComponent(new URLSearchParams(formData).toString());

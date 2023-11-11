@@ -113,6 +113,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-for="user in listBelowPoduim"
             :key="user.identityId"
             :user="user"
+            :selected-identity-id="identityId"
             @open="$refs.profileStatsDrawer.open(user, period)" />
         </v-list>
       </v-flex>
@@ -131,22 +132,26 @@ export default {
   },
   data: () => ({
     users: [],
-    limit: 6,
+    listBelowPoduimLimit: 3,
+    podiumLimit: 3,
     identityId: eXo.env.portal.profileOwnerIdentityId,
     loading: true,
   }),
   computed: {
     podium() {
-      return this.users.slice(0, 3);
+      return this.users.slice(0, this.podiumLimit);
     },
     displayPlaceholder() {
       return !this.loading && !this.users?.length;
     },
+    limit() {
+      return this.listBelowPoduimLimit + this.podiumLimit;
+    },
     listBelowPoduim() {
-      if (this.users?.length <= 3) {
+      if (this.users?.length <= this.podiumLimit) {
         return this.users;
       } else {
-        return this.users.slice(this.users?.length - 3);
+        return this.users.slice(this.users?.length - this.listBelowPoduimLimit);
       }
     },
   },
@@ -157,14 +162,30 @@ export default {
     getLeaderboard() {
       this.loading = true;
       return this.$leaderboardService.getLeaderboard({
-        identityId: eXo.env.portal.profileOwnerIdentityId,
+        identityId: this.identityId,
         period: 'WEEK',
         limit: this.limit,
       })
-        .then(data => {
-          this.users = data.slice(0, this.limit);
-          document.dispatchEvent(new CustomEvent('listOfRankedConnections', {detail: this.users.length}));
+        .then(users => {
+          const currentUser = this.identityId && users.find(u => u.identityId === Number(this.identityId));
+          if (currentUser?.rank && currentUser.rank > (this.limit - 1)) {
+            const listBelowPoduimOffset = currentUser.rank - this.listBelowPoduimLimit;
+            const listBelowPoduimLimit = parseInt((this.listBelowPoduimLimit - 1) / 2) * 3 + 1;
+            return this.$leaderboardService.getLeaderboard({
+              period: 'WEEK',
+              offset: listBelowPoduimOffset,
+              limit: listBelowPoduimLimit,
+            })
+              .then(otherUsers => {
+                this.users = [...users, ...otherUsers]
+                  .sort((v1, v2) => v1.rank - v2.rank)
+                  .filter((v, i, array) => array.findIndex(v2 => v?.identityId === v2?.identityId) === i);
+              });
+          } else {
+            this.users = users.slice(0, this.limit);
+          }
         })
+        .then(() => document.dispatchEvent(new CustomEvent('listOfRankedConnections', {detail: this.users.length})))
         .finally(() => this.loading = false);
     },
   },

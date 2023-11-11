@@ -424,7 +424,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     LeaderboardFilter filter = new LeaderboardFilter();
     filter.setPeriod(Period.ALL.name());
     filter.setIdentityType(IdentityType.USER);
-    filter.setLoadCapacity(limit);
+    filter.setLimit(limit);
     filter.setProgramId(ruleDTO.getProgram().getId());
     List<StandardLeaderboard> filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(0, filteredLeaderboard.size());
@@ -474,13 +474,16 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
 
-    List<RealizationDTO> realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
+    RealizationFilter identityFilter = new RealizationFilter();
+    identityFilter.setEarnerIds(Collections.singletonList(TEST_USER_EARNER));
+    List<RealizationDTO> realizations = realizationService.getRealizationsByFilter(identityFilter, 0, 1);
     assertNotNull(realizations);
     assertEquals(1, realizations.size());
     RealizationDTO lastRealization = realizations.get(0);
     assertEquals(RealizationStatus.ACCEPTED, lastRealization.getStatus());
 
-    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_RECEIVER, 1);
+    identityFilter.setEarnerIds(Collections.singletonList(TEST_USER_RECEIVER));
+    realizations = realizationService.getRealizationsByFilter(identityFilter, 0, 1);
     assertNotNull(realizations);
     assertEquals(1, realizations.size());
     lastRealization = realizations.get(0);
@@ -488,13 +491,13 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
 
     realizationService.deleteRealizations(ACTIVITY_ID, ACTIVITY_OBJECT_TYPE);
 
-    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_EARNER, 1);
+    realizations = realizationService.getRealizationsByFilter(identityFilter, 0, 1);
     assertNotNull(realizations);
     assertEquals(1, realizations.size());
     lastRealization = realizations.get(0);
     assertEquals(RealizationStatus.DELETED, lastRealization.getStatus());
 
-    realizations = realizationService.findRealizationsByIdentityId(TEST_USER_RECEIVER, 1);
+    realizations = realizationService.getRealizationsByFilter(identityFilter, 0, 1);
     assertNotNull(realizations);
     assertEquals(1, realizations.size());
     lastRealization = realizations.get(0);

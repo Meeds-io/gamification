@@ -620,8 +620,6 @@ public class UserReputationEndpoint implements ResourceContainer {
             id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
         }
 
-        String actorId = id.getId();
-
         if (conversationState != null) {
             if (reputationLis != null && !reputationLis.isEmpty()) {
 

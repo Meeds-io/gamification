@@ -61,6 +61,7 @@ public class LeaderboardBuilder {
   public static List<LeaderboardInfo> buildLeaderboardInfos(RealizationService realizationService, // NOSONAR
                                                             IdentityManager identityManager,
                                                             SpaceService spaceService,
+                                                            int offset,
                                                             List<StandardLeaderboard> standardLeaderboards,
                                                             IdentityType identityType,
                                                             Long identityId,
@@ -68,14 +69,13 @@ public class LeaderboardBuilder {
                                                             String period,
                                                             boolean isAnonymous) {
     List<LeaderboardInfo> leaderboardList = new ArrayList<>();
-    int index = 1;
+    int rank = offset + 1;
     for (StandardLeaderboard element : standardLeaderboards) {
       Identity identity = identityManager.getIdentity(element.getEarnerId());
       if (identity == null) {
         continue;
       }
-      leaderboardList.add(toLeaderboardInfo(spaceService, element, identity, isAnonymous, index));
-      index++;
+      leaderboardList.add(toLeaderboardInfo(spaceService, element, identity, isAnonymous, rank++));
     }
 
     if (identityId != null && identityId > 0 && identityType.isUser()) {
