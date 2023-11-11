@@ -27,7 +27,6 @@ import org.junit.Test;
 
 import org.exoplatform.services.rest.impl.ContainerResponse;
 
-import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.rest.model.LeaderboardInfo;
@@ -42,12 +41,6 @@ public class TestLeaderboardRest extends AbstractServiceTest {// NOSONAR
   private long                programId1;
 
   private long                programId2;
-
-  private long                ruleId1;
-
-  private long                ruleId2;
-
-  private long                ruleId3;
 
   @Before
   @Override
@@ -135,7 +128,7 @@ public class TestLeaderboardRest extends AbstractServiceTest {// NOSONAR
     assertEquals(0, leaderboardInfos.size());
 
     startSessionAs("root1");
-    response = getResponse("GET", getURLResource(BASE_URL + "?period=ALL&limit=0"), null);
+    response = getResponse("GET", getURLResource(BASE_URL + "?period=ALL&identityId=1&limit=0"), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
@@ -143,7 +136,7 @@ public class TestLeaderboardRest extends AbstractServiceTest {// NOSONAR
     assertNotNull(leaderboardInfos);
     assertEquals(1, leaderboardInfos.size());
 
-    response = getResponse("GET", getURLResource(BASE_URL + "?period=ALL&limit=10"), null);
+    response = getResponse("GET", getURLResource(BASE_URL + "?period=ALL&identityId=1&limit=10"), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
@@ -204,7 +197,7 @@ public class TestLeaderboardRest extends AbstractServiceTest {// NOSONAR
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
-    response = getResponse("GET", getURLResource(BASE_URL + "?period=MONTH&identityType=SPACE"), null);
+    response = getResponse("GET", getURLResource(BASE_URL + "?period=MONTH&identityType=SPACE&limit=10"), null);
     assertNotNull(response);
     assertEquals(401, response.getStatus());
 
@@ -259,11 +252,8 @@ public class TestLeaderboardRest extends AbstractServiceTest {// NOSONAR
     programId2 = program2.getId();
 
     RuleEntity rule1 = newRule("rule1", programId1);
-    ruleId1 = rule1.getId();
     RuleEntity rule2 = newRule("rule2", programId1);
-    ruleId2 = rule2.getId();
     RuleEntity rule3 = newRule("rule3", programId2);
-    ruleId3 = rule3.getId();
 
     newRealizationByRuleByEarnerId(rule1, "1");
     newRealizationByRuleByEarnerId(rule1, "2");

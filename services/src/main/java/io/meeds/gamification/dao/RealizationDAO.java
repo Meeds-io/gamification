@@ -131,31 +131,34 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public List<StandardLeaderboard> getLeaderboard(IdentityType earnerType, int limit) {
+  public List<StandardLeaderboard> getLeaderboard(IdentityType earnerType, int offset, int limit) {
     TypedQuery<StandardLeaderboard> query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboard",
                                                                                 StandardLeaderboard.class);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
+    query.setFirstResult(offset);
     query.setMaxResults(limit);
     return query.getResultList();
   }
 
-  public List<StandardLeaderboard> getLeaderboardByProgramId(long domainId, IdentityType earnerType, int limit) {
+  public List<StandardLeaderboard> getLeaderboardByProgramId(long domainId, IdentityType earnerType, int offset, int limit) {
     TypedQuery<StandardLeaderboard> query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardByProgramId",
                                                                                 StandardLeaderboard.class);
     query.setParameter(PROGRAM_ID_PARAM_NAME, domainId)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
+    query.setFirstResult(offset);
     query.setMaxResults(limit);
     return query.getResultList();
   }
 
-  public List<StandardLeaderboard> getLeaderboardByDate(Date fromDate, IdentityType earnerType, int limit) {
+  public List<StandardLeaderboard> getLeaderboardByDate(Date fromDate, IdentityType earnerType, int offset, int limit) {
     TypedQuery<StandardLeaderboard> query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardByDate",
                                                                                 StandardLeaderboard.class);
     query.setParameter(DATE_PARAM_NAME, fromDate)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
+    query.setFirstResult(offset);
     query.setMaxResults(limit);
     return query.getResultList();
   }
@@ -163,6 +166,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   public List<StandardLeaderboard> getLeaderboardByDateAndProgramId(Date fromDate,
                                                                     IdentityType earnerType,
                                                                     long domainId,
+                                                                    int offset,
                                                                     int limit) {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardByDateAndProgramId",
@@ -171,6 +175,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
          .setParameter(PROGRAM_ID_PARAM_NAME, domainId)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
+    query.setFirstResult(offset);
     query.setMaxResults(limit);
     return query.getResultList();
   }
@@ -244,24 +249,6 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     return query.getResultList()
                 .stream()
                 .collect(Collectors.toMap(tuple -> Long.valueOf((String) tuple.get(0)), tuple -> (Long) tuple.get(1)));
-
-  }
-
-  /**
-   * Find {@link RealizationEntity} by data and domain and date and points
-   * 
-   * @param earnerId : earner identity id
-   * @param limit : how many records we should load from DB
-   * @return a list of object of type {@link RealizationEntity}
-   */
-  public List<RealizationEntity> findRealizationsByIdentityIdSortedByDate(String earnerId, int limit) {
-    TypedQuery<RealizationEntity> query =
-                                        getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByEarnerIdSortedByDate",
-                                                                            RealizationEntity.class);
-    query.setParameter(EARNER_ID_PARAM_NAME, earnerId)
-         .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
-    query.setMaxResults(limit);
-    return query.getResultList();
 
   }
 

@@ -35,7 +35,6 @@ import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.mock.SpaceServiceMock;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
-import io.meeds.gamification.model.UserInfo;
 import io.meeds.gamification.model.UserInfoContext;
 import io.meeds.gamification.rest.model.ProgramWithRulesRestEntity;
 import io.meeds.gamification.rest.model.RuleList;
