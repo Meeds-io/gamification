@@ -105,11 +105,12 @@ export default {
         program,
       }}));
     },
-    emitOpenRuleDrawerByIdGlobally(ruleId, openAnnouncement, goBackButton) {
+    emitOpenRuleDrawerByIdGlobally(ruleId, openAnnouncement, goBackButton, updatePath) {
       document.dispatchEvent(new CustomEvent('rule-detail-drawer-by-id-event', {detail: {
         ruleId,
         openAnnouncement,
         goBackButton,
+        updatePath,
       }}));
     },
     emitRuleDeletedGlobally(data) {
