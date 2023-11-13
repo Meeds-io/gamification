@@ -39,7 +39,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-for="realization in realizations"
         :key="realization.id"
         :realization="realization"
-        :rule="rule" />
+        :rule="rule"
+        @open="openUserAchievements(realization)" />
+      <users-leaderboard-profile-achievements-drawer
+        ref="profileStatsDrawer"
+        go-back-button
+        relative />
     </template>
     <template v-if="hasMore" #footer>
       <v-btn
@@ -119,6 +124,11 @@ export default {
       this.limit += this.pageSize;
       this.retrieveRealizations();
     },
+    openUserAchievements(realization) {
+      if (realization?.earner?.id) {
+        this.$refs?.profileStatsDrawer?.openByIdentityId(realization.earner.id, 'ALL');
+      }
+    },
     retrieveRealizations() {
       this.loading = true;
       this.$realizationService.getRealizations({
@@ -135,15 +145,12 @@ export default {
           this.realizationsCount = data.size || 0;
           if (data.realizations?.length) {
             data.realizations
-              .filter(realization => !this.realizations.find(r => r.id === realization.id) && realization?.earner?.remoteId)
+              .filter(realization => realization?.earner?.id && !this.realizations.find(r => r.id === realization.id))
               .forEach(realization => {// Avoid blink effect when loading more, thus add one by one
-                const activityId = realization.activityId || (realization.objectType === 'activity' && realization.objectId);
-                this.realizations.push({
-                  id: realization.id,
-                  user: realization?.earner?.remoteId,
-                  activityId,
-                  createDate: realization.createdDate,
-                });
+                if (!realization.activityId && realization.objectId && realization.objectType === 'activity') {
+                  realization.activityId = realization.objectId;
+                }
+                this.realizations.push(realization);
                 this.realizations = this.realizations.slice();
               });
           } else {

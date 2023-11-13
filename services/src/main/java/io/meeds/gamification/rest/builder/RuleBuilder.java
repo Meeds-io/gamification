@@ -74,7 +74,7 @@ public class RuleBuilder {
     }
     boolean retrieveRealizations = realizationsLimit > 0;
     List<RealizationRestEntity> realizationEntities = null;
-    if (retrieveRealizations && realizationService != null && !anonymous) {
+    if (retrieveRealizations && realizationService != null) {
       List<RealizationDTO> realizations = getRealizations(realizationService,
                                                           rule.getId(),
                                                           periodType,

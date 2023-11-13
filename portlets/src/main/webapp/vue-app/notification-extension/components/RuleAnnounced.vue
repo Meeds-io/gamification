@@ -2,7 +2,7 @@
   <user-notification-template
     :loading="loading"
     :notification="notification"
-    :avatar-url="profileAvatarUrl"
+    :avatar-url="earnerAvatarUrl"
     :message="message"
     :url="activityUrl">
     <template #actions>
@@ -64,15 +64,18 @@ export default {
       return this.activityId && `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.activityId}#comment-reply`
         || '#';
     },
-    profile() {
-      return this.announcement?.earner?.profile;
+    earner() {
+      return this.announcement?.earner;
     },
-    profileAvatarUrl() {
-      return this.profile?.avatar;
+    earnerAvatarUrl() {
+      return this.earner?.avatarUrl;
+    },
+    earnerFullName() {
+      return this.earner?.fullName;
     },
     message() {
-      return this.profile && this.$t('Notification.gamification.webNotif.newAchievement', {
-        0: `<a class="user-name font-weight-bold">${this.profile.fullname}</a>`,
+      return this.earnerFullName && this.$t('Notification.gamification.webNotif.newAchievement', {
+        0: `<a class="user-name font-weight-bold">${this.earnerFullName}</a>`,
       }) || '';
     },
   },

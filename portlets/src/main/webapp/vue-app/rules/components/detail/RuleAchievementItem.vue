@@ -15,14 +15,14 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-list-item>
+  <v-list-item @click="$emit('open')">
     <v-list-item-content class="d-inline">
-      <exo-user-avatar
-        :profile-id="realization.user"
+      <user-avatar
+        :name="earnerFullName"
+        :avatar-url="earnerAvatarUrl"
         :size="44"
         bold-title
-        link-style
-        popover>
+        link-style>
         <template slot="subTitle">
           <a :href="activityUrl">
             <relative-date-format
@@ -30,9 +30,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :value="realization.createDate" />
           </a>
         </template>
-      </exo-user-avatar>
+      </user-avatar>
     </v-list-item-content>
-    <v-list-item-action>
+    <v-list-item-action v-if="!$root.isAnonymous">
       <v-tooltip :disabled="$root.isMobile" bottom>
         <template #activator="{ on }">
           <div v-on="on">
@@ -71,6 +71,15 @@ export default {
     };
   },
   computed: {
+    earnerFullName() {
+      return this.realization?.earner?.fullName;
+    },
+    earnerAvatarUrl() {
+      return this.realization?.earner?.avatarUrl;
+    },
+    earnerRemoteId() {
+      return this.realization?.earner?.remoteId;
+    },
     noActivityLabel() {
       return this.$t(`program.winner.label.${this.automaticRule ? 'noActivity' : 'activityDeleted'}`);
     },
