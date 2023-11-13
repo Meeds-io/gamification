@@ -60,22 +60,21 @@ export default {
       return this.rule?.realizationsCount || 0;
     },
     users() {
-      return this.rule?.realizations?.filter(realization => realization?.earner?.remoteId)
+      return this.rule?.realizations?.filter(realization => realization?.earner?.id)
         .map(realization => ({
           userName: realization?.earner?.remoteId,
+          fullname: realization?.earner?.fullName,
+          avatar: realization?.earner?.avatarUrl,
+          enabled: true,
         })) || [];
     },
   },
   methods: {
     openAchievementsDrawer() {
-      if (this.$root.isAnonymous) {
-        window.location.href = '/portal/login';
-      } else {
-        document.dispatchEvent(new CustomEvent('open-achievements-drawer', {detail: {
-          rule: this.rule,
-          backIcon: true,
-        }}));
-      }
+      document.dispatchEvent(new CustomEvent('open-achievements-drawer', {detail: {
+        rule: this.rule,
+        backIcon: true,
+      }}));
     },
   },
 };
