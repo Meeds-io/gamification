@@ -33,6 +33,13 @@ public class PiechartLeaderboard extends AbstractLeaderboard implements Serializ
 
   private long              value;
 
+  public PiechartLeaderboard() {
+  }
+
+  public PiechartLeaderboard(long programId) {
+    this.programId = programId;
+  }
+
   public PiechartLeaderboard(long programId, long value) {
     this.programId = programId;
     this.value = value;
