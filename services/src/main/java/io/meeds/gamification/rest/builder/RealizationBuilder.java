@@ -11,11 +11,13 @@ import org.apache.commons.lang.StringUtils;
 
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.model.UserInfo;
 import io.meeds.gamification.rest.model.ProgramRestEntity;
 import io.meeds.gamification.rest.model.RealizationRestEntity;
 import io.meeds.gamification.rest.model.RuleRestEntity;
@@ -84,10 +86,9 @@ public class RealizationBuilder {
                                                                                                   programRestEntity.getSpace()
                                                                                                                    .getDisplayName() :
                                                                                                   null;
+      Identity earnerIdentity = identityManager.getIdentity(realization.getEarnerId());
       return new RealizationRestEntity(realization.getId(),
-                                       anonymous ? null :
-                                                 Utils.getIdentityEntity(identityManager,
-                                                                         Long.parseLong(realization.getEarnerId())),
+                                       toUserInfo(earnerIdentity, anonymous),
                                        ruleRestEntity,
                                        programRestEntity,
                                        canViewTitle ? realization.getProgramLabel() : null,
@@ -150,6 +151,26 @@ public class RealizationBuilder {
     return Utils.getUserFullName(realization.getCreator()
         != null ? String.valueOf(realization.getCreator()) :
                 realization.getReceiver());
+  }
+
+  private static UserInfo toUserInfo(Identity identity, boolean anonymous) {
+    if (identity == null) {
+      return null;
+    }
+    UserInfo userInfo = new UserInfo();
+    mapUserInfo(userInfo, identity, anonymous);
+    return userInfo;
+  }
+
+  private static <E extends UserInfo> void mapUserInfo(E userInfo, Identity identity, boolean anonymous) {
+    if (identity != null) {
+      userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+      userInfo.setFullName(identity.getProfile().getFullName());
+      userInfo.setId(identity.getId());
+      if (!anonymous) {
+        userInfo.setRemoteId(identity.getRemoteId());
+      }
+    }
   }
 
 }
