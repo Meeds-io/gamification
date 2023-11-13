@@ -125,7 +125,7 @@
               class="px-0 d-flex rule-not-member">
               <v-btn
                 v-bind="$root.isAnonymous && {
-                  href: '/portal/login'
+                  href: participateUrl
                 }"
                 v-on="!$root.isAnonymous && {
                   click: () => joinAudience()
@@ -208,7 +208,7 @@ export default {
     time: Date.now(),
     interval: null,
     goBackButton: false,
-    objectType: 'activity'
+    objectType: 'activity',
   }),
   computed: {
     now() {
@@ -216,6 +216,9 @@ export default {
     },
     linkBasePath() {
       return eXo.env.portal.portalName === 'public' && '/portal/public/overview/actions' || `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`;
+    },
+    participateUrl() {
+      return this.rule?.id && `/portal/login?initialURI=${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions/${this.rule.id}`;
     },
     isProgramMember() {
       return this.rule?.userInfo?.member;
