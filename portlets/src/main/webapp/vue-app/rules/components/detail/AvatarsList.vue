@@ -29,7 +29,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             @open-detail="$emit('open-avatars-drawer')" />
         </div>
       </template>
-      <span>{{ $root.isAnonymous && $t('engagementCenter.avatarsTooltipLogin') || $t('engagementCenter.avatarsTooltip') }}</span>
+      <span>{{ $t('engagementCenter.avatarsTooltip') }}</span>
     </v-tooltip>
   </div>
 </template>
