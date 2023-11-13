@@ -46,7 +46,7 @@ public class RealizationMapper {
                               realizationEntity.getReceiver(),
                               objectId,
                               realizationEntity.getObjectType(),
-                              realizationEntity.getRuleEntity().getId(),
+                              realizationEntity.getRuleEntity() == null ? null : realizationEntity.getRuleEntity().getId(),
                               realizationEntity.getActivityId(),
                               realizationEntity.getComment(),
                               realizationEntity.getCreator(),
