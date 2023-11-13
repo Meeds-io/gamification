@@ -248,6 +248,24 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
+  public void testFindStatsByUserIdWhenProgramDeleted() {
+    assertTrue(realizationDAO.getLeaderboardStatsByIdentityId(TEST_USER_EARNER, fromDate, toDate).isEmpty());
+    ProgramEntity domainEntity = newDomain();
+    RuleEntity rule = newRule("rule", domainEntity.getId());
+    RealizationEntity realization1 = newRealizationByRuleByEarnerId(rule, TEST_USER_EARNER);
+    RealizationEntity realization2 = newRealizationByRuleByEarnerId(rule, TEST_USER_EARNER);
+    RealizationEntity realization3 = newRealizationByRuleByEarnerId(rule, TEST_USER_EARNER);
+    assertEquals(1, realizationDAO.getLeaderboardStatsByIdentityId(TEST_USER_EARNER, fromDate, toDate).size());
+    realization1.setDomainEntity(null);
+    realizationDAO.update(realization1);
+    realization2.setDomainEntity(null);
+    realizationDAO.update(realization2);
+    realization3.setDomainEntity(null);
+    realizationDAO.update(realization3);
+    assertTrue(realizationDAO.getLeaderboardStatsByIdentityId(TEST_USER_EARNER, fromDate, toDate).isEmpty());
+  }
+
+  @Test
   public void testFindDomainScoreByIdentityId() {
     ProgramEntity domainEntity = newDomain();
     assertEquals(realizationDAO.getScorePerProgramByIdentityId(TEST_USER_EARNER).size(), 0);
