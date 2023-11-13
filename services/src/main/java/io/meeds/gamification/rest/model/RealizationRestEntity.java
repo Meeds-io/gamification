@@ -1,6 +1,6 @@
 package io.meeds.gamification.rest.model;
 
-import org.exoplatform.social.rest.entity.IdentityEntity;
+import io.meeds.gamification.model.UserInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,7 @@ public class RealizationRestEntity implements Cloneable {
 
   private Long              id;
 
-  private IdentityEntity    earner;
+  private UserInfo          earner;
 
   private RuleRestEntity    action;
 
