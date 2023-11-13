@@ -230,8 +230,8 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("RealizationEntity.getScoreByIdentityIdAndBetweenDates",
                                                                  Long.class);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId)
-         .setParameter(FROM_DATE_PARAM_NAME, fromDate)
-         .setParameter(TO_DATE_PARAM_NAME, toDate)
+         .setParameter(FROM_DATE_PARAM_NAME, fromDate == null ? new Date(0l) : fromDate)
+         .setParameter(TO_DATE_PARAM_NAME, toDate == null ? new Date() : toDate)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     Long count = query.getSingleResult();
     return count == null ? 0 : count;

@@ -88,7 +88,7 @@ export default {
   }),
   computed: {
     id() {
-      return this.user && `users-leaderboard-${this.user.identityId}` || '';
+      return this.user && `users-leaderboard-${this.user.identityId || this.user.id}` || '';
     },
     userAvatar() {
       return this.user?.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${this.user.username}/avatar`;
@@ -100,7 +100,7 @@ export default {
       return this.user?.remoteId;
     },
     identityId() {
-      return this.user?.identityId;
+      return this.user?.identityId || this.user?.id;
     },
     selected() {
       return this.identityId === Number(this.selectedIdentityId);

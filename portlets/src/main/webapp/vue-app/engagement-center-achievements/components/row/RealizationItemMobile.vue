@@ -32,11 +32,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <span class="font-weight-bold d-flex"> {{ headers[3].text }}</span>
         </v-col>
         <v-col class="col-sm-8 col-8">
-          <exo-user-avatar
-            :identity="earner"
+          <user-avatar
+            :name="earnerFullName"
+            :avatar-url="earnerAvatarUrl"
+            :profile-id="earnerRemoteId"
+            :popover="earnerRemoteId"
             :size="28"
-            link-style
-            popover />
+            link-style />
         </v-col>
       </v-row>
       <v-row>
@@ -125,8 +127,14 @@ export default {
     menu: false,
   }),
   computed: {
-    earner() {
-      return this.realization?.earner?.profile;
+    earnerFullName() {
+      return this.realization?.earner?.fullName;
+    },
+    earnerAvatarUrl() {
+      return this.realization?.earner?.avatarUrl;
+    },
+    earnerRemoteId() {
+      return this.realization?.earner?.remoteId;
     },
     actionURL() {
       return this.realization?.url;
