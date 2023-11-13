@@ -208,6 +208,8 @@ export default {
     time: Date.now(),
     interval: null,
     goBackButton: false,
+    updatePath: false,
+    isPublicSite: eXo.env.portal.portalName === 'public',
     objectType: 'activity',
   }),
   computed: {
@@ -215,7 +217,7 @@ export default {
       return this.$root.now || this.time;
     },
     linkBasePath() {
-      return eXo.env.portal.portalName === 'public' && '/portal/public/overview/actions' || `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`;
+      return this.isPublicSite && '/portal/public/overview/actions' || `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`;
     },
     participateUrl() {
       return this.rule?.id && `/portal/login?initialURI=${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions/${this.rule.id}`;
@@ -333,14 +335,15 @@ export default {
     document.addEventListener('rule-detail-drawer-by-id-event', event => this.openById(event?.detail?.ruleId, event?.detail?.openAnnouncement));
   },
   methods: {
-    open(ruleToDisplay, displayAnnouncementForm, goBackButton) {
-      this.openById(ruleToDisplay?.id, displayAnnouncementForm, goBackButton);
+    open(ruleToDisplay, displayAnnouncementForm, goBackButton, updatePath) {
+      this.openById(ruleToDisplay?.id, displayAnnouncementForm, goBackButton, updatePath);
     },
-    openById(id, displayAnnouncementForm, goBackButton) {
+    openById(id, displayAnnouncementForm, goBackButton, updatePath) {
       if (!id || !this.$refs.ruleDetailDrawer) {
         return;
       }
       this.goBackButton = goBackButton || false;
+      this.updatePath = updatePath || (!goBackButton && this.isPublicSite);
       this.clear();
       this.checkTime();
       this.rule = {id};
@@ -417,11 +420,15 @@ export default {
       }
     },
     updatePagePath() {
-      if (window.location.pathname.includes('/actions')) {
+      if (window.location.pathname.includes('/actions') || this.updatePath) {
         if (!this.drawer && this.appUrl) {
           this.drawerUrl = this.appUrl;
         } else if (this.drawer && this.rule.id) {
-          this.appUrl = `${window.location.pathname.split('/actions')[0]}/actions${window.location.hash === '#all' || window.location.hash === '#trends' ? window.location.hash : ''}`;
+          if (window.location.pathname.includes('/actions')) {
+            this.appUrl = `${window.location.pathname.split('/actions')[0]}/actions${window.location.hash?.length && window.location.hash || ''}`;
+          } else {
+            this.appUrl = window.location.hash && `${window.location.pathname}${window.location.hash}` || window.location.pathname;
+          }
           this.drawerUrl = `${this.linkBasePath}/${this.rule.id}${this.expanded && '#expanded' || ''}`;
         }
       }
