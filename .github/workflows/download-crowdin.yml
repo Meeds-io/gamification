@@ -63,34 +63,34 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
-#  crowdin-merge-translation-develop:
-#    needs: [crowdin-download-develop]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#        with:
-#          ref: develop
-#          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
-#      - name: Import GPG key
-#        uses: crazy-max/ghaction-import-gpg@v5
-#        with:
-#          gpg_private_key: ${{ secrets.SWF_GPG_PRIVATE_KEY }}
-#          passphrase: ${{ secrets.SWF_GPG_PASSPHRASE }}
-#          git_user_signingkey: true
-#          git_commit_gpgsign: true
-#      - name: Merge translation to develop
-#        run: |
-#          git fetch origin integration/6.5.x-translation
-#          git config --global user.email "exo-swf@exoplatform.com"
-#          git config --global user.name "eXo Software Factory"
-#          changes_to_apply=$(git merge --squash origin/integration/6.5.x-translation 2>&1)
-#          if [[ "$changes_to_apply" == *"up to date"* ]]; then
-#            echo "Nothing to Merge"
-#          else
-#            git commit -m "Merge Translations"
-#            git push origin
-#          fi
+  crowdin-merge-translation-develop:
+    needs: [crowdin-download-develop]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: develop
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.SWF_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SWF_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+      - name: Merge translation to develop
+        run: |
+          git fetch origin integration/6.5.x-translation
+          git config --global user.email "exo-swf@exoplatform.com"
+          git config --global user.name "eXo Software Factory"
+          changes_to_apply=$(git merge --squash origin/integration/6.5.x-translation 2>&1)
+          if [[ "$changes_to_apply" == *"up to date"* ]]; then
+            echo "Nothing to Merge"
+          else
+            git commit -m "Merge Translations"
+            git push origin
+          fi
   # develop-exo workflow
   reset-branch-integration-develop-exo:
     runs-on: ubuntu-latest
@@ -129,34 +129,34 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
-#  crowdin-merge-translation-develop-exo:
-#    needs: [crowdin-download-develop-exo]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#        with:
-#          ref: develop-exo
-#          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
-#      - name: Import GPG key
-#        uses: crazy-max/ghaction-import-gpg@v5
-#        with:
-#          gpg_private_key: ${{ secrets.SWF_GPG_PRIVATE_KEY }}
-#          passphrase: ${{ secrets.SWF_GPG_PASSPHRASE }}
-#          git_user_signingkey: true
-#          git_commit_gpgsign: true
-#      - name: Merge translation to develop-exo
-#        run: |
-#          git fetch origin integration/6.5.x-exo-translation
-#          git config --global user.email "exo-swf@exoplatform.com"
-#          git config --global user.name "eXo Software Factory"
-#          changes_to_apply=$(git merge --squash origin/integration/6.5.x-exo-translation 2>&1)
-#          if [[ "$changes_to_apply" == *"up to date"* ]]; then
-#            echo "Nothing to commit"
-#          else
-#            git commit -m "Merge Translations"
-#            git push origin
-#          fi
+  crowdin-merge-translation-develop-exo:
+    needs: [crowdin-download-develop-exo]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: develop-exo
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.SWF_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SWF_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+      - name: Merge translation to develop-exo
+        run: |
+          git fetch origin integration/6.5.x-exo-translation
+          git config --global user.email "exo-swf@exoplatform.com"
+          git config --global user.name "eXo Software Factory"
+          changes_to_apply=$(git merge --squash origin/integration/6.5.x-exo-translation 2>&1)
+          if [[ "$changes_to_apply" == *"up to date"* ]]; then
+            echo "Nothing to commit"
+          else
+            git commit -m "Merge Translations"
+            git push origin
+          fi
 # develop-meed workflow
   reset-branch-integration-develop-meed:
     runs-on: ubuntu-latest
@@ -195,31 +195,31 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
-#  crowdin-merge-translation-develop-meed:
-#    needs: [crowdin-download-develop-meed]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#        with:
-#          ref: develop-meed
-#          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
-#      - name: Import GPG key
-#        uses: crazy-max/ghaction-import-gpg@v5
-#        with:
-#          gpg_private_key: ${{ secrets.SWF_GPG_PRIVATE_KEY }}
-#          passphrase: ${{ secrets.SWF_GPG_PASSPHRASE }}
-#          git_user_signingkey: true
-#          git_commit_gpgsign: true
-#      - name: Merge translation to develop-meed
-#        run: |
-#          git fetch origin integration/6.5.x-meed-translation
-#          git config --global user.email "exo-swf@exoplatform.com"
-#          git config --global user.name "eXo Software Factory"
-#          changes_to_apply=$(git merge --squash origin/integration/6.5.x-meed-translation 2>&1)
-#          if [[ "$changes_to_apply" == *"up to date"* ]]; then
-#            echo "Nothing to commit"
-#          else
-#            git commit -m "Merge Translations"
-#            git push origin
-#          fi
+  crowdin-merge-translation-develop-meed:
+    needs: [crowdin-download-develop-meed]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: develop-meed
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.SWF_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SWF_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+      - name: Merge translation to develop-meed
+        run: |
+          git fetch origin integration/6.5.x-meed-translation
+          git config --global user.email "exo-swf@exoplatform.com"
+          git config --global user.name "eXo Software Factory"
+          changes_to_apply=$(git merge --squash origin/integration/6.5.x-meed-translation 2>&1)
+          if [[ "$changes_to_apply" == *"up to date"* ]]; then
+            echo "Nothing to commit"
+          else
+            git commit -m "Merge Translations"
+            git push origin
+          fi
