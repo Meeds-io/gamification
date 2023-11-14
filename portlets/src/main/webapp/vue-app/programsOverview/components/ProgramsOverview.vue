@@ -32,7 +32,7 @@
           </v-btn>
         </div>
       </template>
-      <template v-if="programsDisplayed" #content>
+      <div v-if="programsDisplayed">
         <gamification-overview-program-item
           v-for="program in programs" 
           :key="program.id"
@@ -46,17 +46,15 @@
         </template>
         <gamification-program-list-drawer
           ref="listDrawer" />
-      </template>
-      <template v-else-if="!loading" #content>
-        <gamification-overview-widget-row class="my-auto">
-          <template #content>
-            <div class="d-flex flex-column align-center justify-center">
-              <v-icon color="secondary" size="54">fa-puzzle-piece</v-icon>
-              <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.programs') }}</span>
-            </div>
-          </template>
-        </gamification-overview-widget-row>
-      </template>
+      </div>
+      <gamification-overview-widget-row v-else-if="!loading" class="my-auto">
+        <template #content>
+          <div class="d-flex flex-column align-center justify-center">
+            <v-icon color="secondary" size="54">fa-puzzle-piece</v-icon>
+            <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.programs') }}</span>
+          </div>
+        </template>
+      </gamification-overview-widget-row>
     </gamification-overview-widget>
     <gamification-program-detail-drawer v-if="programsDisplayed" />
     <engagement-center-rule-extensions />

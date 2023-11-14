@@ -34,7 +34,7 @@
         </v-btn>
       </div>
     </template>
-    <template v-if="hasValidRules" #content>
+    <template v-if="hasValidRules" #default>
       <template v-if="endingRulesCount">
         <div class="d-flex align-center">
           <span class="me-2 subtitle-1">{{ $t('gamification.overview.endingActionsTitle') }}</span>
@@ -80,18 +80,17 @@
       <gamification-rules-overview-list-drawer
         ref="listDrawer" />
     </template>
-    <template v-else #content>
-      <gamification-overview-widget-row
-        v-show="!loading"
-        class="my-auto">
-        <template #content>
-          <div class="d-flex flex-column align-center justify-center">
-            <v-icon color="secondary" size="48">fa-rocket</v-icon>
-            <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.actions') }}</span>
-          </div>
-        </template>
-      </gamification-overview-widget-row>
-    </template>
+    <gamification-overview-widget-row
+      v-else
+      v-show="!loading"
+      class="my-auto">
+      <template #content>
+        <div class="d-flex flex-column align-center justify-center">
+          <v-icon color="secondary" size="48">fa-rocket</v-icon>
+          <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.actions') }}</span>
+        </div>
+      </template>
+    </gamification-overview-widget-row>
   </gamification-overview-widget>
 </template>
 <script>

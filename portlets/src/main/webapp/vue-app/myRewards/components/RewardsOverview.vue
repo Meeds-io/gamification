@@ -15,95 +15,94 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget :see-all-url="walletURL" :loading="loading">
-      <template #title>
-        {{ $t('gamification.overview.rewardsTitle') }}
-      </template>
-      <template v-if="!loading" #content>
-        <v-card
-          min-height="114"
-          max-height="114"
-          flat>
-          <gamification-overview-widget-row v-if="!hasConfiguredWallet" class="flex-grow-1">
-            <template #title>
-              <div class="mb-6">
-                {{ $t('gamification.overview.rewards.walletTitle') }}
-              </div>
-            </template>
-            <template #icon>
-              <v-icon class="secondary--text" size="55">fas fa-wallet</v-icon>
-            </template>
-            <template #content>
-              <span v-sanitized-html="emptyWalletSummaryText"></span>
-            </template>
-          </gamification-overview-widget-row>
-          <div class="d-flex flex-grow-1" v-else>
-            <gamification-overview-widget-row class="col col-6 px-0" normal-height>
-              <template #title>
-                <div class="d-flex">
-                  {{ $t('gamification.overview.rewards.earningsTitle') }}
-                  <v-tooltip
-                    z-index="4"
-                    max-width="300px"
-                    bottom>
-                    <template #activator="{ on, attrs }">
-                      <v-icon
-                        size="18"
-                        class="primary--text mx-2"
-                        v-bind="attrs"
-                        v-on="on">
-                        fas fa-info-circle
-                      </v-icon>
-                    </template>
-                    <span>{{ $t('gamification.overview.rewards.earningsTooltip') }}</span>
-                  </v-tooltip>
-                </div>
-              </template>
-              <template #content>
-                <extension-registry-components
-                  :params="params"
-                  name="my-rewards-overview"
-                  type="my-rewards-item"
-                  class="d-flex flex-row mt-4" />
-              </template>
-            </gamification-overview-widget-row>
-            <gamification-overview-widget-row class="col col-6 px-0" normal-height>
-              <template #title>
-                {{ $t('gamification.overview.rewards.walletTitle') }}
-              </template>
-              <template #content>
-                <extension-registry-components
-                  :params="params"
-                  name="my-rewards-wallet-overview"
-                  type="my-rewards-wallet-item"
-                  class="d-flex flex-row mt-4" />
-              </template>
-            </gamification-overview-widget-row>
-          </div>
-        </v-card>
-        <gamification-overview-widget-row class="mt-5 fill-height d-flex flex-column flex-grow-1">
+    <gamification-overview-widget
+      :title="$t('gamification.overview.rewardsTitle')"
+      :action-url="walletURL" 
+      :loading="loading">
+      <v-card
+        v-if="!loading"
+        min-height="114"
+        max-height="114"
+        flat>
+        <gamification-overview-widget-row v-if="!hasConfiguredWallet" class="flex-grow-1">
           <template #title>
-            <div class="d-flex mb-n1">
-              {{ $t('gamification.overview.rewardsPerkstoreSubtitle') }}
-              <div v-if="productsLoaded && hasConfiguredWallet" class="ms-auto">
-                <a :href="perkstoreLink">
-                  <span class="text-font-size primary--text my-0">{{ $t('overview.myContributions.seeAll') }}</span>
-                </a>
-              </div>
+            <div class="mb-6">
+              {{ $t('gamification.overview.rewards.walletTitle') }}
             </div>
           </template>
-          <template v-if="displayPerkstorePlaceholder" #icon>
-            <v-icon color="secondary" size="55px">fas fa-shopping-cart</v-icon>
+          <template #icon>
+            <v-icon class="secondary--text" size="55">fas fa-wallet</v-icon>
           </template>
-          <template v-if="!loading" #content>
-            <span v-if="displayPerkstorePlaceholder" v-sanitized-html="emptyPerkstoreSummaryText"></span>
-            <extension-registry-components
-              v-if="hasConfiguredWallet"
-              name="my-rewards-perkstore-overview"
-              type="my-rewards-perkstore-item" />
+          <template #content>
+            <span v-sanitized-html="emptyWalletSummaryText"></span>
           </template>
         </gamification-overview-widget-row>
-      </template>
+        <div class="d-flex flex-grow-1" v-else>
+          <gamification-overview-widget-row class="col col-6 px-0" normal-height>
+            <template #title>
+              <div class="d-flex">
+                {{ $t('gamification.overview.rewards.earningsTitle') }}
+                <v-tooltip
+                  z-index="4"
+                  max-width="300px"
+                  bottom>
+                  <template #activator="{ on, attrs }">
+                    <v-icon
+                      size="18"
+                      class="primary--text mx-2"
+                      v-bind="attrs"
+                      v-on="on">
+                      fas fa-info-circle
+                    </v-icon>
+                  </template>
+                  <span>{{ $t('gamification.overview.rewards.earningsTooltip') }}</span>
+                </v-tooltip>
+              </div>
+            </template>
+            <template #content>
+              <extension-registry-components
+                :params="params"
+                name="my-rewards-overview"
+                type="my-rewards-item"
+                class="d-flex flex-row mt-4" />
+            </template>
+          </gamification-overview-widget-row>
+          <gamification-overview-widget-row class="col col-6 px-0" normal-height>
+            <template #title>
+              {{ $t('gamification.overview.rewards.walletTitle') }}
+            </template>
+            <template #content>
+              <extension-registry-components
+                :params="params"
+                name="my-rewards-wallet-overview"
+                type="my-rewards-wallet-item"
+                class="d-flex flex-row mt-4" />
+            </template>
+          </gamification-overview-widget-row>
+        </div>
+      </v-card>
+      <gamification-overview-widget-row class="mt-5 fill-height d-flex flex-column flex-grow-1">
+        <template #title>
+          <div v-if="!loading" class="d-flex mb-n1">
+            {{ $t('gamification.overview.rewardsPerkstoreSubtitle') }}
+            <div v-if="productsLoaded && hasConfiguredWallet" class="ms-auto">
+              <a :href="perkstoreLink">
+                <span class="text-font-size primary--text my-0">{{ $t('overview.myContributions.seeAll') }}</span>
+              </a>
+            </div>
+          </div>
+        </template>
+        <template v-if="displayPerkstorePlaceholder" #icon>
+          <v-icon color="secondary" size="55px">fas fa-shopping-cart</v-icon>
+        </template>
+        <template v-if="!loading" #content>
+          <span v-if="displayPerkstorePlaceholder" v-sanitized-html="emptyPerkstoreSummaryText"></span>
+          <extension-registry-components
+            v-if="hasConfiguredWallet"
+            name="my-rewards-perkstore-overview"
+            type="my-rewards-perkstore-item" />
+        </template>
+      </gamification-overview-widget-row>
     </gamification-overview-widget>
     <div id="WalletAPIApp"></div>
   </v-app>
