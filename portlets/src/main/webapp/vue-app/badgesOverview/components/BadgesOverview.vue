@@ -16,6 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app
+    v-if="displayWidget"
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
     class="white"
     id="badgesOverview">
@@ -79,10 +80,14 @@ export default {
     emptyBadgesActionName: 'gamification-bagdes-check-actions',
     badges: [],
     loading: true,
+    isCurrentUserProfile: eXo.env.portal.userName === eXo.env.portal.profileOwner,
   }),
   computed: {
     hasBadges() {
       return this.badges?.length;
+    },
+    displayWidget() {
+      return this.isOverviewDisplay || this.isCurrentUserProfile || (!this.loading && this.badges?.length);
     },
     emptyBadgesSummaryText() {
       return this.$t('gamification.overview.emptyBadgesMessage', {
