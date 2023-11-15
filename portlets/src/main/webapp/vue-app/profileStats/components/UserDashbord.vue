@@ -97,8 +97,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex 
-        d-flex 
+      <v-flex
+        v-if="loadingWidgets || userPoints"
+        d-flex
         xs12 
         align-center>
         <v-layout row mx-0>
@@ -112,7 +113,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               flat
               @click="openAchievementsDrawer()">
               <v-card-text class="headline text-color font-weight-bold pa-1">
-                <span>{{ userPoints }}</span>
+                <span v-show="!loadingWidgets">{{ userPoints || '-' }}</span>
               </v-card-text>
               <v-card-text class="pa-1 subtitle-1 text-color">
                 <span>{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
@@ -130,7 +131,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               flat
               @click="$emit('flip')">
               <v-card-text class="headline text-color font-weight-bold pa-1">
-                <span>{{ gamificationRank }}</span>
+                <span v-show="!loadingWidgets">{{ gamificationRank || '-' }}</span>
               </v-card-text>
               <v-card-text class="pa-1 subtitle-1 text-color">
                 <span>{{ $t('homepage.profileStatus.weeklyRank') }}</span>
@@ -138,6 +139,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-card>
           </v-flex>
         </v-layout>
+      </v-flex>
+      <v-flex
+        v-else
+        d-flex
+        xs12
+        align-center
+        justify-center>
+        <div class="d-flex flex-column align-center justify-center">
+          <v-icon color="secondary" size="54">fa-chart-pie</v-icon>
+          <span class="subtitle-1 mt-3 text-wrap">{{ $t('gamification.overview.noWeeklyAchievements') }}</span>
+        </div>
       </v-flex>
     </v-layout>
   </v-flex>
@@ -170,7 +182,7 @@ export default {
       connectionsRequestsSize: '',
       gamificationRank: '',
       userPoints: '',
-      loadingWidgets: false,
+      loadingWidgets: 5,
       profileUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.defaultPortal}/profile`,
       spacesUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.defaultPortal}/spaces`,
       connexionsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.defaultPortal}/connexions/network`,
@@ -203,16 +215,13 @@ export default {
 
     this.profileUrl = this.profileUrl + (this.isCurrentUserProfile ? '' : `/${ eXo.env.portal.profileOwner}`);
 
-    this.loadingWidgets = true;
-    Promise.all([
-      this.retrieveUserData(),
-      this.getSpacesRequestsSize(),
-      this.getConnectionsRequestsSize(),
-      this.getGamificationRank(),
-      this.getGamificationPoints(),
-    ]).finally(() => this.loadingWidgets = false);
+    this.loadingWidgets = 5;
+    this.retrieveUserData().finally(() => this.loadingWidgets--);
+    this.getSpacesRequestsSize().finally(() => this.loadingWidgets--);
+    this.getConnectionsRequestsSize().finally(() => this.loadingWidgets--);
+    this.getGamificationRank().finally(() => this.loadingWidgets--);
+    this.getGamificationPoints().finally(() => this.loadingWidgets--);
   },
-    
   methods: {
     retrieveUserData() {
       return getUserInformations().then(data => {
