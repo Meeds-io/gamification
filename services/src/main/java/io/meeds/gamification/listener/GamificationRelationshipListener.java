@@ -34,44 +34,23 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
 
   @Override
   public void confirmed(RelationshipEvent event) {
-
     // Get the request sender
     Identity sender = event.getPayload().getSender();
     // Get the request receiver
     Identity receiver = event.getPayload().getReceiver();
 
+    // Reward user who sent a relationship request
     realizationService.createRealizationsAsync(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
                                                sender.getId(),
                                                receiver.getId(),
-                                               sender.getId(),
+                                               receiver.getId(),
                                                IDENTITY_OBJECT_TYPE);
-
     // Reward user who receive a relationship request
     realizationService.createRealizationsAsync(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
                                                receiver.getId(),
                                                sender.getId(),
-                                               receiver.getId(),
+                                               sender.getId(),
                                                IDENTITY_OBJECT_TYPE);
 
-  }
-
-  @Override
-  public void ignored(RelationshipEvent event) {
-    // Nothing to gamify
-  }
-
-  @Override
-  public void removed(RelationshipEvent event) {
-    // Nothing to gamify
-  }
-
-  @Override
-  public void requested(RelationshipEvent event) {
-    // Nothing to gamify
-  }
-
-  @Override
-  public void denied(RelationshipEvent event) {
-    // Nothing to gamify
   }
 }

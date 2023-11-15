@@ -21,7 +21,8 @@
     ref="drawer"
     v-model="drawer"
     :loading="loading > 0"
-    :right="!$vuetify.rtl">
+    :right="!$vuetify.rtl"
+    :go-back-button="goBackButton">
     <template #title>
       {{ $t('gamification.overview.actionsList') }}
     </template>
@@ -43,6 +44,7 @@
             v-for="rule in endingRulesToDisplay"
             :key="rule.id"
             :rule="rule"
+            :update-url="!goBackButton"
             go-back-button
             dense />
         </template>
@@ -59,6 +61,7 @@
             :key="rule.id"
             :rule="rule"
             :dense="!hasAvailableRulesOnly"
+            :update-url="!goBackButton"
             go-back-button />
         </template>
         <template v-if="upcomingRulesCount">
@@ -70,6 +73,7 @@
             v-for="rule in upcomingRulesToDisplay"
             :key="rule.id"
             :rule="rule"
+            :update-url="!goBackButton"
             go-back-button
             dense />
         </template>
@@ -97,6 +101,10 @@ export default {
     programId: {
       type: String,
       default: null,
+    },
+    goBackButton: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
