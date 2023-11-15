@@ -18,15 +18,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-tooltip bottom>
     <template #activator="{ on }">
       <div v-on="on">
-        <a
-          :class="!actionURL && 'not-clickable'"
-          class="flex-nowrap flex-grow-1 d-flex text-truncate container--fluid text-truncate"
-          :href="actionURL">
+        <component
+          v-bind="actionURL && {
+            href : actionURL
+          }"
+          :is="actionURL && 'a' || 'div'"
+          class="flex-nowrap flex-grow-1 d-flex text-truncate container--fluid text-truncate">
           <rule-icon :rule-event="eventName" :size="20" />
           <v-icon size="15" class="primary--text">{{ actionIcon }}</v-icon>
-          <div class="ps-2 text-truncate">{{ actionLabel }}
-          </div>
-        </a>
+          <div class="ps-2 text-truncate">{{ actionLabel }}</div>
+        </component>
       </div>
     </template>
     <span>{{ actionLabel }}</span>
