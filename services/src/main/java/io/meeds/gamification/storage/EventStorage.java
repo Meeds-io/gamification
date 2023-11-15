@@ -23,6 +23,7 @@ import io.meeds.gamification.entity.EventEntity;
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
 import io.meeds.gamification.storage.mapper.EventMapper;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public class EventStorage {
 
@@ -110,5 +111,20 @@ public class EventStorage {
    */
   public EventDTO getEventById(long eventId) {
     return EventMapper.fromEntity(eventDAO.find(eventId));
+  }
+
+  /**
+   * Deletes event by id
+   *
+   * @param eventId Event Identifier
+   * @return {@link EventDTO}
+   */
+  public EventDTO deleteEventById(long eventId) throws ObjectNotFoundException {
+    EventEntity eventEntity = eventDAO.find(eventId);
+    if (eventEntity == null) {
+      throw new ObjectNotFoundException("Event with id " + eventId + " does not exist");
+    }
+    eventDAO.delete(eventEntity);
+    return EventMapper.fromEntity(eventEntity);
   }
 }
