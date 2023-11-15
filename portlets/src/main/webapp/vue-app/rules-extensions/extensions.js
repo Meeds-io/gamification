@@ -26,6 +26,7 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     match: (actionLabel) => [
       'postActivity',
       'postActivityComment',
+      'pinActivityOnSpace',
       'likeActivity',
       'likeActivityComment',
       'receiveActivity',
@@ -55,10 +56,20 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
       'receiveRelationshipRequest',
       'sendRelationshipRequest'
     ].includes(actionLabel),
-    getLink: (realization) => {
-      if (realization?.objectId && !realization.link) {
-        Vue.prototype.$identityService.getIdentityById(realization?.objectId)
-          .then(identity => Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/profile/${identity.remoteId}`));
+    getLink: realization => {
+      if (realization?.objectType === 'identity'
+          && realization?.action?.event !== 'addUserProfileNotificationSetting'
+          && realization?.action?.event !== 'userLogin') {
+        if (realization?.objectId === eXo.env.portal.profileOwnerIdentityId) {
+          realization.link = `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/profile/${eXo.env.portal.profileOwner}`;
+          return realization.link;
+        } else {
+          return window?.eXo?.env?.portal?.userName?.length && Vue.prototype.$identityService.getIdentityById(realization?.objectId)
+            .then(identity => {
+              realization.link = `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/profile/${identity.remoteId}`;
+              return realization.link;
+            }) || null;
+        }
       }
     },
   },
@@ -77,8 +88,40 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
       'updateSpaceApplications',
       'becomeSpaceManager',
       'inviteUserToSpace',
-      'pinActivityOnSpace',
       'joinSpace'
     ].includes(actionLabel),
+    getLink: realization => {
+      if (realization.objectType === 'identity') {
+        return window?.eXo?.env?.portal?.userName?.length && Vue.prototype.$identityService.getIdentityById(realization.objectId)
+          .then(identity => identity?.remoteId && identity?.providerId === 'space' && Vue.prototype.$spaceService.getSpaceByPrettyName(identity.remoteId))
+          .then(space => {
+            if (space.groupId) {
+              const uri = space.groupId.replace(/\//g, ':');
+              realization.link = `${eXo.env.portal.context}/g/${uri}/`;
+              return realization.link;
+            }
+          }) || null;
+      } else if (realization.objectType === 'spaceMembership') {
+        return window?.eXo?.env?.portal?.userName?.length && realization.objectId.includes('-') && Vue.prototype.$spaceService.getSpaceById(realization.objectId.split('-')[0])
+          .then(space => {
+            if (space.groupId) {
+              const uri = space.groupId.replace(/\//g, ':');
+              realization.link = `${eXo.env.portal.context}/g/${uri}/`;
+              return realization.link;
+            }
+          }) || null;
+      } else if (realization.space) {
+        return window?.eXo?.env?.portal?.userName?.length && Vue.prototype.$spaceService.getSpaceByDisplayName(realization.space)
+          .then(space => {
+            if (space.groupId) {
+              const uri = space.groupId.replace(/\//g, ':');
+              realization.link = `${eXo.env.portal.context}/g/${uri}/`;
+              return realization.link;
+            }
+          }) || null;
+      } else {
+        return null;
+      }
+    }
   },
 });

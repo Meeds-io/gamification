@@ -92,11 +92,12 @@ export default {
     emitProgramOwnersDrawerInternaly(event) {
       this.$root.$emit('open-owners-drawer-event', event?.detail?.avatars, event?.detail?.backIcon);
     },
-    emitOpenRuleDrawerGlobally(rule, openAnnouncement, goBackButton) {
+    emitOpenRuleDrawerGlobally(rule, openAnnouncement, goBackButton, updatePath) {
       document.dispatchEvent(new CustomEvent('rule-detail-drawer-event', {detail: {
         rule,
         openAnnouncement,
         goBackButton,
+        updatePath,
       }}));
     },
     emitOpenRuleFormDrawerGlobally(rule, program) {
