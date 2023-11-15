@@ -20,7 +20,7 @@
     :dense="dense"
     class="flex"
     clickable
-    @open="$root.$emit('rule-detail-drawer', rule, false, goBackButton)">
+    @open="$root.$emit('rule-detail-drawer', rule, false, goBackButton, updateUrl)">
     <template #icon>
       <v-card
         min-width="35"
@@ -70,6 +70,10 @@ export default {
       default: null,
     },
     dense: {
+      type: Boolean,
+      default: false,
+    },
+    updateUrl: {
       type: Boolean,
       default: false,
     },
