@@ -18,19 +18,25 @@
 package io.meeds.gamification.service.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import io.meeds.gamification.model.EventDTO;
+import io.meeds.gamification.model.filter.EventFilter;
 import io.meeds.gamification.plugin.EventConfigPlugin;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
 import io.meeds.gamification.service.EventRegistry;
 import io.meeds.gamification.service.EventService;
 
 public class EventRegistryImpl implements Startable, EventRegistry {
+
+  private static final Log                     LOG                  = ExoLogger.getLogger(EventRegistryImpl.class);
 
   private final Map<String, EventConfigPlugin> eventConfigPluginMap = new HashMap<>();
 
@@ -78,6 +84,26 @@ public class EventRegistryImpl implements Startable, EventRegistry {
         }
       }
     }
+    List<EventDTO> eventDAOList = eventService.getEvents(new EventFilter(), 0, -1);
+    eventDAOList.forEach(eventDTO -> {
+      EventConfigPlugin eventConfigPlugin = eventConfigPluginMap.values()
+                                                                .stream()
+                                                                .filter(eventConfig -> eventConfig.getEvent()
+                                                                                                  .getType()
+                                                                                                  .equals(eventDTO.getType())
+                                                                    && eventConfig.getEvent()
+                                                                                  .getTitle()
+                                                                                  .equals(eventDTO.getTitle()))
+                                                                .findFirst()
+                                                                .orElse(null);
+      if (eventConfigPlugin == null) {
+        try {
+          eventService.deleteEventById(eventDTO.getId());
+        } catch (ObjectNotFoundException e) {
+          LOG.warn("Error while clean gamification event {}", eventDTO.getId(), e);
+        }
+      }
+    });
   }
 
   @Override
