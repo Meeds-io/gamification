@@ -28,7 +28,7 @@
     <template #action>
       <slot name="action"></slot>
     </template>
-    <div :class="$slots.title && 'mt-n5'">
+    <div v-if="!loading || hasValidRules" :class="$slots.title && 'mt-n5'">
       <template v-if="lockedRulesCount">
         <div class="d-flex align-center">
           <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
@@ -206,7 +206,7 @@ export default {
       const lockedRulesToDisplay = this.lockedRules.slice(0, 2);
       const endingRulesToDisplay = this.endingRules.slice(0, 2);
       const validRules = this.rules
-        .filter(r => r?.userInfo?.context?.valid
+        .filter(r => (r?.userInfo?.context?.valid || this.isRuleValidButLocked(r))
             && !lockedRulesToDisplay.find(lr => lr.id === r.id)
             && !endingRulesToDisplay.find(er => er.id === r.id));
       validRules.sort((r1, r2) => r2.score - r1.score);

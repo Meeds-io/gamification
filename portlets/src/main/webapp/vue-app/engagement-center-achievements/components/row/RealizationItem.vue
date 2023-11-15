@@ -216,6 +216,7 @@ export default {
   },
   data: () => ({
     menu: false,
+    realizationLink: null,
     tooltipDateFormat: {
       year: 'numeric',
       month: 'short',
@@ -233,9 +234,6 @@ export default {
     },
     earnerRemoteId() {
       return this.realization?.earner?.remoteId;
-    },
-    realizationLink() {
-      return this.realization?.link;
     },
     isAutomaticType() {
       return !!this.eventName;
@@ -335,7 +333,12 @@ export default {
         }, 200);
       }
     });
-    this.retrieveRealizationLink();
+    Promise.resolve(this.retrieveRealizationLink())
+      .finally(() => {
+        if (!this.realizationLink) {
+          this.realizationLink = this.realization?.link || this.realization?.url;
+        }
+      });
   },
   methods: {
     updateRealizationStatus(status) {
@@ -352,7 +355,7 @@ export default {
         this.$set(this.realization, 'link', null);
       } else if (!this.isAutomaticType) {
         this.$set(this.realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.realization?.objectId}`);
-      } else if (!this.objectType && this.objectId) {
+      } else if (this.objectId?.startsWith?.('http')) {
         this.$set(this.realization, 'link', this.objectId);
       } else if (this.getLink) {
         const linkPromise = this.getLink(this.realization);
