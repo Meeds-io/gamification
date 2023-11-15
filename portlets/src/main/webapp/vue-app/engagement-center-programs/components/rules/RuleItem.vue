@@ -22,7 +22,7 @@
     <tr>
       <td class="no-border-bottom ps-0">
         <div @click="openRule(false)" class="clickable d-flex flex-row ma-auto">
-          <div class="d-flex flex-column col-2 col-sm-1 pa-0">
+          <div class="d-flex flex-column align-center justify-center col-2 col-sm-1 pa-0">
             <rule-icon
               :rule-event="rule.event"
               size="22"

@@ -396,6 +396,9 @@ export default {
       this.retrieveProgramRules();
     },
     retrieveProgramRules() {
+      if (this.loadingRules) {
+        return;
+      }
       const page = this.options?.page || 0;
       const itemsPerPage = this.options?.itemsPerPage || 10;
       const offset = (page - 1) * itemsPerPage;
@@ -404,6 +407,8 @@ export default {
         term: this.keyword,
         programId: this.programId,
         status: this.status,
+        sortBy: 'title',
+        sortDescending: false,
         programStatus: 'ALL',
         dateFilter: this.dateFilter,
         offset,

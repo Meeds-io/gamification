@@ -58,12 +58,12 @@ public class GamificationRelationshipListenerTest {
     verify(realizationService, times(1)).createRealizationsAsync(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
                                                                  sender.getId(),
                                                                  receiver.getId(),
-                                                                 sender.getId(),
+                                                                 receiver.getId(),
                                                                  IDENTITY_OBJECT_TYPE);
     verify(realizationService, times(1)).createRealizationsAsync(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
                                                                  receiver.getId(),
                                                                  sender.getId(),
-                                                                 receiver.getId(),
+                                                                 sender.getId(),
                                                                  IDENTITY_OBJECT_TYPE);
   }
 }
