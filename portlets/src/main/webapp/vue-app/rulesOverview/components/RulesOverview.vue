@@ -46,7 +46,9 @@ export default {
     }
   },
   mounted() {
-    this.$el.closest('.PORTLET-FRAGMENT').classList.add('hidden');
+    if (this.hidden) {
+      this.$el.closest('.PORTLET-FRAGMENT').classList.add('hidden');
+    }
   }
 };
 </script>
