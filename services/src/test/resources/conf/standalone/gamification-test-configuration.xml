@@ -570,14 +570,24 @@
   <external-component-plugins>
     <target-component>org.exoplatform.services.listener.ListenerService</target-component>
     <component-plugin>
-      <name>rule.updated</name>
+      <name>program.deleted</name>
       <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
+      <type>io.meeds.gamification.listener.ProgramDeletedBadgeListener</type>
     </component-plugin>
     <component-plugin>
-      <name>rule.deleted</name>
+      <name>program.deleted</name>
       <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
+      <type>io.meeds.gamification.listener.ProgramDeletedRuleListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>program.audience.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramAudienceUpdatedListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.created</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.RuleIndexingListener</type>
     </component-plugin>
     <component-plugin>
       <name>rule.created</name>
@@ -587,12 +597,94 @@
     <component-plugin>
       <name>rule.updated</name>
       <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.RuleIndexingListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.updated</name>
+      <set-method>addListener</set-method>
       <type>io.meeds.gamification.listener.ProgramModifiedDateUpdaterListener</type>
     </component-plugin>
     <component-plugin>
       <name>rule.deleted</name>
       <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.RuleDeletedListener</type>
+      <type>io.meeds.gamification.listener.RuleIndexingListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.RuleDeletedActivityListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>exo.gamification.generic.action</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.GamificationGenericListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>gamification.cancel.event.action</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.GamificationGenericListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>gamification.delete.event.action</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.GamificationGenericListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>exo.core.security.ConversationRegistry.register</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.GamificationUserLoginListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>notifications.userSettingModified</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.GamificationNotificationListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>social.metadataItem.created</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.MetadataItemAdded</type>
+    </component-plugin>
+    <component-plugin>
+      <name>social.metadataItem.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.MetadataItemDeleted</type>
+    </component-plugin>
+    <component-plugin>
+      <name>social.metadataItem.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.MetadataItemModified</type>
+    </component-plugin>
+    <component-plugin>
+      <name>attachment.created</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.analytics.RuleAttachmentAnalyticsListener</type>
+      <init-params>
+        <values-param>
+          <name>supported-type</name>
+          <value>rule</value>
+        </values-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>attachment.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.analytics.RuleAttachmentAnalyticsListener</type>
+      <init-params>
+        <values-param>
+          <name>supported-type</name>
+          <value>rule</value>
+        </values-param>
+      </init-params>
     </component-plugin>
   </external-component-plugins>
 

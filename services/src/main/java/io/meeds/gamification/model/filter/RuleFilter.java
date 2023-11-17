@@ -49,6 +49,8 @@ public class RuleFilter implements Serializable {
 
   private boolean           excludeNoSpace;
 
+  private boolean           includeDeleted;
+
   private List<Long>        ruleIds;
 
   private DateFilterType    dateFilterType;
@@ -85,6 +87,7 @@ public class RuleFilter implements Serializable {
                           programId,
                           spaceIds == null ? null : new ArrayList<>(spaceIds),
                           excludeNoSpace,
+                          includeDeleted,
                           ruleIds == null ? null : new ArrayList<>(ruleIds),
                           dateFilterType,
                           type,

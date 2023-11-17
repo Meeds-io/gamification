@@ -73,6 +73,8 @@ public class RuleActivityTypePluginTest {
 
   private long                ruleId = 25l;
 
+  private long                activityId = 35l;
+
   @Test
   public void testActivityTypePlugin() {
     // prepare activity
@@ -81,6 +83,7 @@ public class RuleActivityTypePluginTest {
     when(activity.getType()).thenReturn(RULE_ACTIVITY_TYPE);
     when(activity.getPosterId()).thenReturn("1");
     when(activity.getMetadataObjectId()).thenReturn(String.valueOf(ruleId));
+    when(activity.getId()).thenReturn(String.valueOf(activityId));
 
     // prepare viewer
     org.exoplatform.services.security.Identity owner = mock(org.exoplatform.services.security.Identity.class);
@@ -91,6 +94,7 @@ public class RuleActivityTypePluginTest {
     when(identityManager.getOrCreateUserIdentity("mary")).thenReturn(new Identity("2"));
     when(ruleService.findRuleById(ruleId)).thenReturn(rule);
     when(rule.getProgramId()).thenReturn(2l);
+    when(rule.getActivityId()).thenReturn(activityId);
 
     // no configuration
     // by default: edit activity/comment are all enabled

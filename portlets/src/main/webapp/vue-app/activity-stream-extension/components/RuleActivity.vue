@@ -19,9 +19,11 @@
 -->
 <template>
   <v-card
+    v-on="isActivityOfRule && {
+      click: () => openRule()
+    }"
     class="d-flex my-4"
-    flat
-    @click="openRule">
+    flat>
     <v-card
       class="d-flex flex-column flex-grow-0 me-4 flex-shrink-0 border-box-sizing"
       min-width="90"
@@ -44,6 +46,7 @@
           <v-img :src="programAvatarUrl" />
         </v-avatar>
         <v-btn
+          :disabled="!isActivityOfRule"
           :width="ruleIconSize"
           :max-width="ruleIconSize"
           :height="ruleIconSize"
@@ -51,7 +54,7 @@
           :class="$vuetify.rtl && 'l-0' || 'r-0'"
           class="rule-icon border-color grey lighten-2 elevation-2 ms-auto mt-auto position-absolute b-0"
           icon>
-          <rule-icon :rule-event="rule.event" :size="ruleIconSize - 20" />
+          <rule-icon :rule-event="ruleEvent" :size="ruleIconSize - 20" />
         </v-btn>
       </v-card>
     </v-card>
@@ -106,14 +109,20 @@ export default {
     rule() {
       return this.activity.rule;
     },
+    isActivityOfRule() {
+      return parseInt(this.activity.id) === this.rule?.activityId && !this.rule?.deleted && this.rule?.enabled;
+    },
     ruleTitle() {
-      return this.$utils.htmlToText(this.rule.title);
+      return this.$utils.htmlToText(this.rule?.title || this.activity.templateParams.ruleTitle);
     },
     ruleDescription() {
-      return this.$utils.htmlToText(this.rule.description);
+      return this.rule?.description && this.$utils.htmlToText(this.rule.description);
     },
     ruleScore() {
-      return this.rule?.score;
+      return this.rule?.score || this.activity.templateParams.ruleScore;
+    },
+    ruleEvent() {
+      return this.rule?.event;
     },
     program() {
       return this.rule?.program;
@@ -122,7 +131,7 @@ export default {
       return this.program?.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs/default-avatar/avatar?lastModified=1687151006488`;
     },
     programStyle() {
-      return this.program?.color && `border: 1px solid ${this.rule.program.color} !important;` || '';
+      return this.program?.color && `border: 1px solid ${this.rule?.program.color} !important;` || '';
     },
   },
   created() {

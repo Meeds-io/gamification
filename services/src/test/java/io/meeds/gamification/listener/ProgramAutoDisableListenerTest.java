@@ -35,7 +35,7 @@ public class ProgramAutoDisableListenerTest extends AbstractServiceTest {
     assertTrue(program.isEnabled());
 
     rule.setEndDate(Utils.toSimpleDateFormat(Date.from(LocalDate.now().minusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC))));
-    rule = ruleService.updateRule(rule);
+    ruleService.updateRule(rule);
 
     assertEquals(0, ruleService.countActiveRules(program.getId()));
     program = programService.getProgramById(program.getId());

@@ -504,10 +504,10 @@ public class ProgramServiceTest extends AbstractServiceTest {
     assertThrows(IllegalAccessException.class, () -> programService.getProgramById(programId, "demo"));
 
     program.setEnabled(false);
-    program = programService.updateProgram(program, adminAclIdentity);
+    programService.updateProgram(program, adminAclIdentity);
 
     assertNotNull(programService.getProgramById(programId, ADMIN_USER));
-    assertThrows(IllegalAccessException.class, () -> programService.getProgramById(programId, SPACE_MEMBER_USER));
+    assertNotNull(programService.getProgramById(programId, SPACE_MEMBER_USER));
     assertThrows(IllegalAccessException.class, () -> programService.getProgramById(programId, "demo"));
 
     programService.deleteProgramById(programId, adminAclIdentity);

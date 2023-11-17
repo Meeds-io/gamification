@@ -27,8 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.IdentityConstants;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -47,8 +45,6 @@ import io.meeds.gamification.utils.Utils;
 
 @SuppressWarnings("deprecation")
 public class ProgramServiceImpl implements ProgramService {
-
-  private static final Log        LOG                   = ExoLogger.getLogger(ProgramServiceImpl.class);
 
   private static final String     PROGRAM_DOESN_T_EXIST = "Program doesn't exist";
 
@@ -187,14 +183,14 @@ public class ProgramServiceImpl implements ProgramService {
       throw new IllegalAccessException("The user is not authorized to create a program");
     }
     ProgramDTO createdProgram = createProgram(program, aclIdentity.getUserId());
-    broadcast(GAMIFICATION_DOMAIN_CREATE_LISTENER, createdProgram, aclIdentity.getUserId());
+    Utils.broadcastEvent(listenerService, PROGRAM_CREATED_LISTENER, createdProgram, aclIdentity.getUserId());
     return createdProgram;
   }
 
   @Override
   public ProgramDTO createProgram(ProgramDTO program) {
     ProgramDTO createdProgram = createProgram(program, IdentityConstants.SYSTEM);
-    broadcast(GAMIFICATION_DOMAIN_CREATE_LISTENER, createdProgram, null);
+    Utils.broadcastEvent(listenerService, PROGRAM_CREATED_LISTENER, createdProgram, null);
     return createdProgram;
   }
 
@@ -276,7 +272,7 @@ public class ProgramServiceImpl implements ProgramService {
     program.setDeleted(true);
     program.setVisibility(EntityVisibility.RESTRICTED);
     program = programStorage.saveProgram(program);
-    broadcast(GAMIFICATION_DOMAIN_DELETE_LISTENER, program, aclIdentity.getUserId());
+    Utils.broadcastEvent(listenerService, PROGRAM_DELETED_LISTENER, program, aclIdentity.getUserId());
     return program;
   }
 
@@ -297,7 +293,7 @@ public class ProgramServiceImpl implements ProgramService {
     programStorage.deleteImage(coverFileId);
     program.setCoverFileId(0);
     program = programStorage.saveProgram(program);
-    broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, program, aclIdentity.getUserId());
+    Utils.broadcastEvent(listenerService, PROGRAM_UPDATED_LISTENER, program, aclIdentity.getUserId());
   }
 
   @Override
@@ -317,7 +313,7 @@ public class ProgramServiceImpl implements ProgramService {
     programStorage.deleteImage(avatarFileId);
     program.setAvatarFileId(0);
     program = programStorage.saveProgram(program);
-    broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, program, aclIdentity.getUserId());
+    Utils.broadcastEvent(listenerService, PROGRAM_UPDATED_LISTENER, program, aclIdentity.getUserId());
   }
 
   @Override
@@ -327,9 +323,10 @@ public class ProgramServiceImpl implements ProgramService {
       throw new ObjectNotFoundException(PROGRAM_DOESN_T_EXIST);
     }
     if (program.isDeleted()) {
+      Utils.broadcastEvent(listenerService, PROGRAM_DELETED_LISTENER, program, username);
       throw new ObjectNotFoundException("Program has been deleted");
     }
-    if (!canViewProgram(program, username, true)) {
+    if (!canViewProgram(program, username)) {
       throw new IllegalAccessException("Program isn't accessible");
     }
     return program;
@@ -427,7 +424,7 @@ public class ProgramServiceImpl implements ProgramService {
   @Override
   public boolean canViewProgram(long programId, String username) {
     ProgramDTO program = getProgramById(programId);
-    return canViewProgram(program, username, false);
+    return canViewProgram(program, username);
   }
 
   @Override
@@ -435,12 +432,10 @@ public class ProgramServiceImpl implements ProgramService {
     return programStorage.getAdministrators();
   }
 
-  private boolean canViewProgram(ProgramDTO program, String username, boolean checkEnabled) {
+  private boolean canViewProgram(ProgramDTO program, String username) {
     return program != null
            && (isProgramOwner(program.getId(), username)
-               || ((!checkEnabled
-                    || (program.isEnabled() && !program.isDeleted()))
-                   && (program.getVisibility() == EntityVisibility.OPEN || isProgramMember(program.getId(), username, checkEnabled))));
+               || (program.getVisibility() == EntityVisibility.OPEN || isProgramMember(program.getId(), username, false)));
   }
 
   @SuppressWarnings("unchecked")
@@ -474,17 +469,6 @@ public class ProgramServiceImpl implements ProgramService {
       programFilter.setSpacesIds(memberSpacesIds);
     }
     return programFilter;
-  }
-
-  private void broadcast(String eventName, ProgramDTO program, String userName) {
-    try {
-      listenerService.broadcast(eventName, program, userName);
-    } catch (Exception e) {
-      LOG.warn("Error while broadcasting operation '{}' on program {}. The operation '{}' isn't interrupted.",
-               eventName,
-               program,
-               e);
-    }
   }
 
   private ProgramDTO createProgram(ProgramDTO program, String username) {
@@ -593,14 +577,14 @@ public class ProgramServiceImpl implements ProgramService {
     program.setVisibility(isSpaceOpen(program.getSpaceId()) ? EntityVisibility.OPEN : EntityVisibility.RESTRICTED);
     program = programStorage.saveProgram(program);
     if (storedProgram.isEnabled() && !program.isEnabled()) {
-      broadcast(GAMIFICATION_DOMAIN_DISABLE_LISTENER, program, username);
+      Utils.broadcastEvent(listenerService, PROGRAM_DISABLED_LISTENER, program, username);
     } else if (!storedProgram.isEnabled() && program.isEnabled()) {
-      broadcast(GAMIFICATION_DOMAIN_ENABLE_LISTENER, program, username);
+      Utils.broadcastEvent(listenerService, PROGRAM_ENABLED_LISTENER, program, username);
     }
     if (storedProgram.getSpaceId() != program.getSpaceId()) {
-      broadcast(PROGRAM_AUDIENCE_UPDATED_EVENT, program, username);
+      Utils.broadcastEvent(listenerService, PROGRAM_AUDIENCE_UPDATED_EVENT, program, storedProgram);
     }
-    broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, program, username);
+    Utils.broadcastEvent(listenerService, PROGRAM_UPDATED_LISTENER, program, username);
     return getProgramById(program.getId());
   }
 
