@@ -55,6 +55,32 @@ public class EventServiceTest extends AbstractServiceTest {
     assertEquals(1, eventService.countEvents(eventFilter));
   }
 
+  public void testDeleteEvent() throws Exception {
+    EventFilter eventFilter = new EventFilter();
+    assertEquals(Collections.emptyList(), eventService.getEvents(eventFilter, OFFSET, LIMIT));
+    EventEntity eventEntity = new EventEntity();
+    eventEntity.setType("connectorName");
+    eventEntity.setTitle("event1");
+    eventEntity.setTrigger("trigger1");
+    EventDTO eventDTO = eventService.createEvent(EventMapper.fromEntity(eventEntity));
+    assertNotNull(eventService.getEvents(eventFilter, OFFSET, LIMIT));
+    eventService.deleteEventById(eventDTO.getId());
+    assertEquals(Collections.emptyList(), eventService.getEvents(eventFilter, OFFSET, LIMIT));
+  }
+
+  public void testUpdateEvent() throws Exception {
+    EventEntity eventEntity = new EventEntity();
+    eventEntity.setType("connectorName");
+    eventEntity.setTitle("event1");
+    eventEntity.setTrigger("trigger1");
+    EventDTO eventDTO = eventService.createEvent(EventMapper.fromEntity(eventEntity));
+    assertNotNull(eventService.getEventByTitleAndTrigger("event1", "trigger1"));
+    assertEquals("trigger1", eventService.getEvent(eventDTO.getId()).getTrigger());
+    eventDTO.setTrigger("trigger2");
+    eventService.updateEvent(eventDTO);
+    assertEquals("trigger2", eventService.getEvent(eventDTO.getId()).getTrigger());
+  }
+
   public void testGetEvents() {
     EventFilter eventFilter = new EventFilter();
 
