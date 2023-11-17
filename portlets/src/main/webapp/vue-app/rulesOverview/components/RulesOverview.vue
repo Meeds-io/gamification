@@ -36,5 +36,19 @@ export default {
     spaceId: eXo.env.portal.spaceId,
     hidden: false,
   }),
+  watch: {
+    hidden() {
+      if (this.hidden) {
+        this.$el.closest('.PORTLET-FRAGMENT').classList.add('hidden');
+      } else {
+        this.$el.closest('.PORTLET-FRAGMENT').classList.remove('hidden');
+      }
+    }
+  },
+  mounted() {
+    if (this.hidden) {
+      this.$el.closest('.PORTLET-FRAGMENT').classList.add('hidden');
+    }
+  }
 };
 </script>
