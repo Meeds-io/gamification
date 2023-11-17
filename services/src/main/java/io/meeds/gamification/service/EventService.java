@@ -85,4 +85,12 @@ public interface EventService {
    * @return {@link EventDTO}
    */
   EventDTO getEvent(long eventId);
+
+  /**
+   * Deletes an existing event
+   *
+   * @param eventId Event technical identifier to delete
+   * @return deleted {@link EventDTO}
+   */
+  EventDTO deleteEventById(long eventId) throws ObjectNotFoundException;
 }
