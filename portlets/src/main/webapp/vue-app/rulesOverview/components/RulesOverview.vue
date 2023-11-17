@@ -36,5 +36,17 @@ export default {
     spaceId: eXo.env.portal.spaceId,
     hidden: false,
   }),
+  watch: {
+    hidden() {
+      if (this.hidden) {
+        this.$el.parentElement.parentElement.classList.remove('hidden');
+      } else {
+        this.$el.parentElement.parentElement.classList.add('hidden');
+      }
+    }
+  },
+  mounted() {
+    this.$el.parentElement.parentElement.classList.add('hidden');
+  }
 };
 </script>
