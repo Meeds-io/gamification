@@ -17,11 +17,11 @@
  */
 package io.meeds.gamification.analytics;
 
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_CREATE_LISTENER;
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_DELETE_LISTENER;
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_DISABLE_LISTENER;
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_ENABLE_LISTENER;
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_UPDATE_LISTENER;
+import static io.meeds.gamification.service.ProgramService.PROGRAM_CREATED_LISTENER;
+import static io.meeds.gamification.service.ProgramService.PROGRAM_DELETED_LISTENER;
+import static io.meeds.gamification.service.ProgramService.PROGRAM_DISABLED_LISTENER;
+import static io.meeds.gamification.service.ProgramService.PROGRAM_ENABLED_LISTENER;
+import static io.meeds.gamification.service.ProgramService.PROGRAM_UPDATED_LISTENER;
 import static io.meeds.gamification.utils.Utils.STATISTICS_CREATE_PROGRAM_OPERATION;
 import static io.meeds.gamification.utils.Utils.STATISTICS_DELETE_PROGRAM_OPERATION;
 import static io.meeds.gamification.utils.Utils.STATISTICS_DISABLE_PROGRAM_OPERATION;
@@ -129,27 +129,27 @@ public class AnalyticsProgramListenerTest {
 
   @Test
   public void testHandleCreateRuleEvent() throws Exception {
-    assertCollectedOperation(GAMIFICATION_DOMAIN_CREATE_LISTENER, STATISTICS_CREATE_PROGRAM_OPERATION);
+    assertCollectedOperation(PROGRAM_CREATED_LISTENER, STATISTICS_CREATE_PROGRAM_OPERATION);
   }
 
   @Test
   public void testHandleUpdateRuleEvent() throws Exception {
-    assertCollectedOperation(GAMIFICATION_DOMAIN_UPDATE_LISTENER, STATISTICS_UPDATE_PROGRAM_OPERATION);
+    assertCollectedOperation(PROGRAM_UPDATED_LISTENER, STATISTICS_UPDATE_PROGRAM_OPERATION);
   }
 
   @Test
   public void testHandleDeleteRuleEvent() throws Exception {
-    assertCollectedOperation(GAMIFICATION_DOMAIN_DELETE_LISTENER, STATISTICS_DELETE_PROGRAM_OPERATION);
+    assertCollectedOperation(PROGRAM_DELETED_LISTENER, STATISTICS_DELETE_PROGRAM_OPERATION);
   }
 
   @Test
   public void testHandleEnableRuleEvent() throws Exception {
-    assertCollectedOperation(GAMIFICATION_DOMAIN_ENABLE_LISTENER, STATISTICS_ENABLE_PROGRAM_OPERATION);
+    assertCollectedOperation(PROGRAM_ENABLED_LISTENER, STATISTICS_ENABLE_PROGRAM_OPERATION);
   }
 
   @Test
   public void testHandleDisableRuleEvent() throws Exception {
-    assertCollectedOperation(GAMIFICATION_DOMAIN_DISABLE_LISTENER, STATISTICS_DISABLE_PROGRAM_OPERATION);
+    assertCollectedOperation(PROGRAM_DISABLED_LISTENER, STATISTICS_DISABLE_PROGRAM_OPERATION);
   }
 
   private void assertCollectedOperation(String eventName, String expectedOperation) throws Exception {

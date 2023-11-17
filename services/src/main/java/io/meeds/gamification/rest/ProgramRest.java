@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.IOUtil;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -114,6 +115,8 @@ public class ProgramRest implements ResourceContainer {
 
   protected SecuritySettingService securitySettingService;
 
+  protected UserACL                userAcl;
+
   public byte[]                    defaultProgramCover  = null; // NOSONAR
 
   public byte[]                    defaultProgramAvatar = null; // NOSONAR
@@ -123,13 +126,15 @@ public class ProgramRest implements ResourceContainer {
                      RuleService ruleService,
                      TranslationService translationService,
                      IdentityManager identityManager,
-                     SecuritySettingService securitySettingService) {
+                     SecuritySettingService securitySettingService,
+                     UserACL userAcl) {
     this.portalContainer = portalContainer;
     this.programService = programService;
     this.ruleService = ruleService;
     this.translationService = translationService;
     this.identityManager = identityManager;
     this.securitySettingService = securitySettingService;
+    this.userAcl = userAcl;
   }
 
   @GET
@@ -223,7 +228,7 @@ public class ProgramRest implements ResourceContainer {
                                                                          currentUser);
       boolean anonymous = StringUtils.isBlank(currentUser);
       if (expandFields.contains("administrators") && !anonymous) {
-        programList.setAdministrators(ProgramBuilder.buildAdministrators(programService));
+        programList.setAdministrators(ProgramBuilder.buildAdministrators(programService, userAcl));
       }
       if (returnSize) {
         int programsSize = programService.countPrograms(programFilter, currentUser);
@@ -265,6 +270,7 @@ public class ProgramRest implements ResourceContainer {
       return Response.ok(ProgramBuilder.toRestEntity(programService,
                                                      ruleService,
                                                      translationService,
+                                                     userAcl,
                                                      program,
                                                      getLocale(request),
                                                      getCurrentUser(),
@@ -311,6 +317,7 @@ public class ProgramRest implements ResourceContainer {
       return Response.ok(ProgramBuilder.toRestEntity(programService,
                                                      ruleService,
                                                      translationService,
+                                                     userAcl,
                                                      program,
                                                      getLocale(request),
                                                      getCurrentUser(),
@@ -586,6 +593,7 @@ public class ProgramRest implements ResourceContainer {
       return Response.ok(ProgramBuilder.toRestEntity(programService,
                                                      ruleService,
                                                      translationService,
+                                                     userAcl,
                                                      program,
                                                      getLocale(lang),
                                                      currentUser,
@@ -619,6 +627,7 @@ public class ProgramRest implements ResourceContainer {
     return ProgramBuilder.toRestEntities(programService,
                                          ruleService,
                                          translationService,
+                                         userAcl,
                                          locale,
                                          programs,
                                          expandFields,

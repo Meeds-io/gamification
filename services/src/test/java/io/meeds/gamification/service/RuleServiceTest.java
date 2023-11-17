@@ -108,9 +108,48 @@ public class RuleServiceTest extends AbstractServiceTest {
 
     ruleService.deleteRuleById(ruleId, ADMIN_USER);
     activity = activityManager.getActivity(String.valueOf(activityId));
+    assertNull(activity);
+  }
+
+  @Test
+  public void testSwitchRuleAudience() throws IllegalAccessException, ObjectNotFoundException {
+    assertEquals(ruleDAO.findAll().size(), 0);
+    RuleDTO rule = newRuleDTO();
+    assertNotNull(rule);
+
+    Long ruleId = rule.getId();
+    RuleDTO foundRule = ruleService.findRuleById(ruleId, ADMIN_USER);
+    assertNotNull(foundRule);
+    long activityId = foundRule.getActivityId();
+    assertTrue(activityId > 0);
+    ExoSocialActivity activity = activityManager.getActivity(String.valueOf(activityId));
     assertNotNull(activity);
     assertTrue(activity.isHidden());
-    assertThrows(ObjectNotFoundException.class, () -> ruleService.findRuleById(ruleId, ADMIN_USER));
+    activity.isHidden(false);
+    activityManager.updateActivity(activity);
+    activity = activityManager.getActivity(String.valueOf(activityId));
+    assertNotNull(activity);
+    assertFalse(activity.isHidden());
+
+    long programId = rule.getProgram().getId();
+    ProgramDTO program = programService.getProgramById(programId);
+    program.setSpaceId(Long.parseLong(TEST_SPACE2_ID));
+    programService.updateProgram(program);
+
+    foundRule = ruleService.findRuleById(ruleId, ADMIN_USER);
+    assertNotNull(foundRule);
+    assertTrue(foundRule.isEnabled());
+    assertFalse(foundRule.isDeleted());
+    assertNotEquals(0, foundRule.getActivityId());
+    assertNotEquals(activityId, foundRule.getActivityId());
+
+    activity = activityManager.getActivity(String.valueOf(activityId));
+    assertNotNull(activity);
+    assertTrue(activity.isHidden());
+
+    activity = activityManager.getActivity(String.valueOf(foundRule.getActivityId()));
+    assertNotNull(activity);
+    assertTrue(activity.isHidden());
   }
 
   @Test

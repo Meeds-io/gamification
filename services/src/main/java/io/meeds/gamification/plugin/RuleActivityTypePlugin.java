@@ -42,7 +42,8 @@ public class RuleActivityTypePlugin extends ActivityTypePlugin {
   public boolean isActivityViewable(ExoSocialActivity activity, Identity userAclIdentity) {
     long ruleId = Long.parseLong(activity.getMetadataObjectId());
     RuleDTO rule = ruleService.findRuleById(ruleId);
-    if (rule == null) {
+    if (rule == null || rule.getActivityId() != Long.parseLong(activity.getId())) {
+      // No ACL check here, thus let the activity displayed as is
       throw new UnsupportedOperationException();
     } else {
       return programService.canViewProgram(rule.getProgramId(), userAclIdentity.getUserId());

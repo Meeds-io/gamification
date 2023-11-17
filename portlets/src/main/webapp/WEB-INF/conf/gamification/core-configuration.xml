@@ -144,50 +144,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </external-component-plugins>
 
   <external-component-plugins>
-    <target-component>org.exoplatform.services.listener.ListenerService</target-component>
-    <component-plugin>
-      <name>rule.created</name>
-      <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.RuleIndexingListener</type>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.created</name>
-      <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.ProgramModifiedDateUpdaterListener</type>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.updated</name>
-      <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.RuleIndexingListener</type>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.updated</name>
-      <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.ProgramModifiedDateUpdaterListener</type>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.deleted</name>
-      <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.RuleIndexingListener</type>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.updated</name>
-      <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.deleted</name>
-      <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
-    </component-plugin>
-    <component-plugin>
-      <name>rule.deleted</name>
-      <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.RuleDeletedListener</type>
-    </component-plugin>
-  </external-component-plugins>
-
-  <external-component-plugins>
     <target-component>io.meeds.social.translation.service.TranslationService</target-component>
     <component-plugin>
       <name>rule</name>
