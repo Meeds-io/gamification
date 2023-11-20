@@ -52,7 +52,10 @@ public class ProgramAutoDisableListener extends Listener<Object, String> {
       RuleDTO rule = ruleDeleted ? (RuleDTO) object : ruleService.findRuleById((Long) object);
       if (rule != null) {
         ProgramDTO program = programService.getProgramById(rule.getProgramId());
-        if (program != null && program.isEnabled() && ruleService.countActiveRules(rule.getProgramId()) == 0) {
+        if (program != null
+            && !program.isDeleted()
+            && program.isEnabled()
+            && ruleService.countActiveRules(program.getId()) == 0) {
           program.setEnabled(false);
           programService.updateProgram(program);
         }

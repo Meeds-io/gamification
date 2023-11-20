@@ -22,32 +22,87 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <external-component-plugins>
     <target-component>org.exoplatform.services.listener.ListenerService</target-component>
     <component-plugin>
-      <name>exo.gamification.domain.delete</name>
+      <name>program.deleted</name>
       <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.ProgramDeletedListener</type>
+      <type>io.meeds.gamification.listener.ProgramDeletedBadgeListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>program.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramDeletedRuleListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>program.audience.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramAudienceUpdatedListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.created</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.RuleIndexingListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.created</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramModifiedDateUpdaterListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.RuleIndexingListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramModifiedDateUpdaterListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.RuleIndexingListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.RuleDeletedActivityListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.ProgramAutoDisableListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.RuleDeletedWebNotificationListener</type>
     </component-plugin>
     <component-plugin profiles="analytics">
-      <name>exo.gamification.domain.delete</name>
+      <name>program.deleted</name>
       <set-method>addListener</set-method>
       <type>io.meeds.gamification.analytics.AnalyticsProgramListener</type>
     </component-plugin>
     <component-plugin profiles="analytics">
-      <name>gamification.domain.create</name>
+      <name>program.created</name>
       <set-method>addListener</set-method>
       <type>io.meeds.gamification.analytics.AnalyticsProgramListener</type>
     </component-plugin>
     <component-plugin profiles="analytics">
-      <name>gamification.domain.update</name>
+      <name>program.updated</name>
       <set-method>addListener</set-method>
       <type>io.meeds.gamification.analytics.AnalyticsProgramListener</type>
     </component-plugin>
     <component-plugin profiles="analytics">
-      <name>exo.gamification.domain.enable</name>
+      <name>program.enabled</name>
       <set-method>addListener</set-method>
       <type>io.meeds.gamification.analytics.AnalyticsProgramListener</type>
     </component-plugin>
     <component-plugin profiles="analytics">
-      <name>exo.gamification.domain.disable</name>
+      <name>program.disabled</name>
       <set-method>addListener</set-method>
       <type>io.meeds.gamification.analytics.AnalyticsProgramListener</type>
     </component-plugin>

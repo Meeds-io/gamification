@@ -27,17 +27,17 @@ import io.meeds.gamification.model.filter.ProgramFilter;
 
 public interface ProgramService {
 
-  public static final String GAMIFICATION_DOMAIN_UPDATE_LISTENER  = "gamification.domain.update";
+  public static final String PROGRAM_UPDATED_LISTENER       = "program.updated";
 
-  public static final String GAMIFICATION_DOMAIN_CREATE_LISTENER  = "gamification.domain.create";
+  public static final String PROGRAM_CREATED_LISTENER       = "program.created";
 
-  public static final String GAMIFICATION_DOMAIN_DELETE_LISTENER  = "exo.gamification.domain.delete";
+  public static final String PROGRAM_DELETED_LISTENER       = "program.deleted";
 
-  public static final String GAMIFICATION_DOMAIN_DISABLE_LISTENER = "exo.gamification.domain.disable";
+  public static final String PROGRAM_DISABLED_LISTENER      = "program.disabled";
 
-  public static final String GAMIFICATION_DOMAIN_ENABLE_LISTENER  = "exo.gamification.domain.enable";
+  public static final String PROGRAM_ENABLED_LISTENER       = "program.enabled";
 
-  public static final String PROGRAM_AUDIENCE_UPDATED_EVENT       = "gamification.program.audience.updated";
+  public static final String PROGRAM_AUDIENCE_UPDATED_EVENT = "program.audience.updated";
 
   /**
    * Gets programs by filter.

@@ -148,6 +148,12 @@ public class Utils {
 
   public static final String                        POST_UPDATE_ANNOUNCEMENT_EVENT          = "announcement.updated";
 
+  public static final String                        POST_REALIZATION_CREATE_EVENT           = "realization.created";
+
+  public static final String                        POST_REALIZATION_UPDATE_EVENT           = "realization.updated";
+
+  public static final String                        POST_REALIZATION_CANCELED_EVENT         = "realization.canceled";
+
   public static final String                        RULE_ACTIVITY_PARAM_RULE_ID             = "ruleId";
 
   public static final String                        RULE_ACTIVITY_PARAM_RULE_TITLE          = "ruleTitle";
