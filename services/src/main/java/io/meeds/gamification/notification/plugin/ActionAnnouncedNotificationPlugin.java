@@ -18,9 +18,10 @@
  */
 package io.meeds.gamification.notification.plugin;
 
-import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_NOTIFICATION_PARAMETER;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ID_NOTIFICATION_PARAM;
+import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_NOTIFICATION_PARAMETER;
 import static io.meeds.gamification.utils.Utils.RULE_ANNOUNCED_NOTIFICATION_ID;
+import static io.meeds.gamification.utils.Utils.RULE_ID_NOTIFICATION_PARAM;
 import static io.meeds.gamification.utils.Utils.getUserRemoteId;
 
 import java.util.Arrays;
@@ -96,6 +97,7 @@ public class ActionAnnouncedNotificationPlugin extends BaseNotificationPlugin {
     return NotificationInfo.instance()
                            .to(receivers.stream().toList())
                            .setSpaceId(rule.getSpaceId())
+                           .with(RULE_ID_NOTIFICATION_PARAM, String.valueOf(announcement.getChallengeId()))
                            .with(ANNOUNCEMENT_ID_NOTIFICATION_PARAM, String.valueOf(announcement.getId()))
                            .with(SocialNotificationUtils.ACTIVITY_ID.getKey(), String.valueOf(announcement.getActivityId()))
                            .key(getId())

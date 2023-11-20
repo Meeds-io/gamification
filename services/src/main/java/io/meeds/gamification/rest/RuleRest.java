@@ -47,7 +47,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.social.common.xmlprocessor.XMLProcessor;
+import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.metadata.favorite.FavoriteService;
 
@@ -98,13 +101,22 @@ public class RuleRest implements ResourceContainer {
 
   protected SecuritySettingService securitySettingService;
 
-  public RuleRest(ProgramService programService,
+  protected ActivityManager        activityManager;
+
+  protected XMLProcessor           xmlProcessor;
+
+  protected UserACL                userAcl;
+
+  public RuleRest(ProgramService programService, // NOSONAR
                   RuleService ruleService,
                   RealizationService realizationService,
                   TranslationService translationService,
                   FavoriteService favoriteService,
                   IdentityManager identityManager,
-                  SecuritySettingService securitySettingService) {
+                  SecuritySettingService securitySettingService,
+                  ActivityManager activityManager,
+                  XMLProcessor xmlProcessor,
+                  UserACL userAcl) {
     cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
     cacheControl.setNoStore(true);
@@ -115,6 +127,9 @@ public class RuleRest implements ResourceContainer {
     this.favoriteService = favoriteService;
     this.identityManager = identityManager;
     this.securitySettingService = securitySettingService;
+    this.activityManager = activityManager;
+    this.userAcl = userAcl;
+    this.xmlProcessor = xmlProcessor;
   }
 
   @GET
@@ -331,6 +346,10 @@ public class RuleRest implements ResourceContainer {
                                                            realizationService,
                                                            translationService,
                                                            favoriteService,
+                                                           identityManager,
+                                                           activityManager,
+                                                           xmlProcessor,
+                                                           userAcl,
                                                            rule,
                                                            getLocale(lang),
                                                            expandFields,
@@ -473,6 +492,10 @@ public class RuleRest implements ResourceContainer {
                                                       realizationService,
                                                       translationService,
                                                       favoriteService,
+                                                      identityManager,
+                                                      activityManager,
+                                                      xmlProcessor,
+                                                      userAcl,
                                                       rule,
                                                       locale,
                                                       expandFields,
@@ -489,6 +512,10 @@ public class RuleRest implements ResourceContainer {
                                     realizationService,
                                     translationService,
                                     favoriteService,
+                                    identityManager,
+                                    activityManager,
+                                    xmlProcessor,
+                                    userAcl,
                                     rule,
                                     locale,
                                     null,

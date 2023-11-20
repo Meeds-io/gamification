@@ -1,5 +1,8 @@
 package io.meeds.gamification.service.impl;
 
+import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CANCELED_EVENT;
+import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CREATE_EVENT;
+import static io.meeds.gamification.utils.Utils.POST_REALIZATION_UPDATE_EVENT;
 import static io.meeds.gamification.utils.Utils.escapeIllegalCharacterInMessage;
 import static java.util.Date.from;
 
@@ -45,6 +48,7 @@ import org.picocontainer.Startable;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.resources.ResourceBundleService;
@@ -108,18 +112,21 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   private ResourceBundleService resourceBundleService;
 
+  private ListenerService       listenerService;
+
   private RealizationStorage    realizationStorage;
 
   private String                blacklistMembershipExpression = Utils.BLACK_LIST_GROUP;
 
   private MembershipEntry       blacklistMembership;
 
-  public RealizationServiceImpl(ProgramService programService,
+  public RealizationServiceImpl(ProgramService programService, // NOSONAR
                                 RuleService ruleService,
                                 ResourceBundleService resourceBundleService,
                                 IdentityManager identityManager,
                                 SpaceService spaceService,
                                 RealizationStorage realizationStorage,
+                                ListenerService listenerService,
                                 InitParams initParams) {
     this.programService = programService;
     this.ruleService = ruleService;
@@ -127,6 +134,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     this.spaceService = spaceService;
     this.realizationStorage = realizationStorage;
     this.identityManager = identityManager;
+    this.listenerService = listenerService;
 
     if (initParams != null && initParams.containsKey("blacklist.group")) {
       this.blacklistMembershipExpression = initParams.getValueParam("blacklist.group").getValue();
@@ -253,7 +261,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                            objectId,
                                            objectType))
                 .filter(Objects::nonNull)
-                .map(realizationStorage::createRealization)
+                .map(r -> {
+                  r = realizationStorage.createRealization(r);
+                  Utils.broadcastEvent(listenerService, POST_REALIZATION_CREATE_EVENT, r, null);
+                  return r;
+                })
                 .toList();
   }
 
@@ -318,8 +330,16 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                   realization.setStatus(RealizationStatus.CANCELED.name());
                   realization.setActivityId(null);
                   realization.setObjectId(null);
-                  return realizationStorage.updateRealization(realization);
+                  try {
+                    return realizationStorage.updateRealization(realization);
+                  } catch (Exception e) {
+                    LOG.warn("Error canceling realization with id {}", realization.getId(), e);
+                    return null;
+                  } finally {
+                    Utils.broadcastEvent(listenerService, POST_REALIZATION_CANCELED_EVENT, realization, null);
+                  }
                 })
+                .filter(Objects::nonNull)
                 .toList();
   }
 
@@ -333,7 +353,13 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         realization.setStatus(RealizationStatus.DELETED.name());
         realization.setActivityId(null);
         realization.setObjectId(null);
-        realizationStorage.updateRealization(realization);
+        try {
+          realizationStorage.updateRealization(realization);
+        } catch (Exception e) {
+          LOG.warn("Error deleting realization with id {}", realization.getId(), e);
+        } finally {
+          Utils.broadcastEvent(listenerService, POST_REALIZATION_CANCELED_EVENT, realization, null);
+        }
       }
     });
     return realizations;
@@ -722,7 +748,20 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   private void updateRealizationStatus(RealizationDTO realization, RealizationStatus status) {
     realization.setStatus(status.name());
-    realizationStorage.updateRealization(realization);
+    try {
+      realizationStorage.updateRealization(realization);
+    } catch (Exception e) {
+      LOG.warn("Error deleting realization with id {}", realization.getId(), e);
+    } finally {
+      String eventName = switch (status) {
+      case CANCELED, DELETED, REJECTED: {
+        yield POST_REALIZATION_CANCELED_EVENT;
+      }
+      default:
+        yield POST_REALIZATION_UPDATE_EVENT;
+      };
+      Utils.broadcastEvent(listenerService, eventName, realization, null);
+    }
   }
 
   private void appendRealizationHeaderRow(Sheet sheet, int rowIndex, CreationHelper helper, Locale locale) {

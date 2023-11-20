@@ -18,9 +18,11 @@
 package io.meeds.gamification.service;
 
 import static io.meeds.gamification.constant.GamificationConstant.ACTIVITY_OBJECT_TYPE;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.mock;
+import static io.meeds.gamification.utils.Utils.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.DayOfWeek;
@@ -45,6 +47,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
@@ -104,6 +107,9 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
   IdentityRegistry                                 identityRegistry;
 
   @Mock
+  ListenerService                                  listenerService;
+
+  @Mock
   ResourceBundleService                            resourceBundleService;
 
   RealizationService                               realizationService;
@@ -126,6 +132,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
                                                     identityManager,
                                                     spaceService,
                                                     realizationsStorage,
+                                                    listenerService,
                                                     null);
   }
 
@@ -218,7 +225,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
   }
 
   @Test
-  public void updateRealizationStatus() throws ObjectNotFoundException, IllegalAccessException {
+  public void updateRealizationStatus() throws Exception {
     // Given
     RealizationDTO gHistory1 = newRealizationDTO();
     RealizationDTO gHistory2 = newRealizationDTO();
@@ -245,18 +252,22 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
 
     realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.REJECTED);
     assertEquals(RealizationStatus.REJECTED.name(), realizationService.getRealizationById(gHistory1.getId()).getStatus());
+    verify(listenerService, times(1)).broadcast(eq(POST_REALIZATION_CANCELED_EVENT), any(), any());;
 
     realizationService.updateRealizationStatus(gHistory2.getId(), RealizationStatus.ACCEPTED);
     assertEquals(RealizationStatus.ACCEPTED.name(), realizationService.getRealizationById(gHistory2.getId()).getStatus());
+    verify(listenerService, times(1)).broadcast(eq(POST_REALIZATION_UPDATE_EVENT), any(), any());;
 
     realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.REJECTED, "root1");
     assertEquals(RealizationStatus.REJECTED.name(), realizationService.getRealizationById(gHistory1.getId()).getStatus());
+    verify(listenerService, times(2)).broadcast(eq(POST_REALIZATION_CANCELED_EVENT), any(), any());;
 
     realizationService.updateRealizationStatus(gHistory2.getId(), RealizationStatus.ACCEPTED, "root1");
     assertEquals(RealizationStatus.ACCEPTED.name(), realizationService.getRealizationById(gHistory2.getId()).getStatus());
+    verify(listenerService, times(2)).broadcast(eq(POST_REALIZATION_UPDATE_EVENT), any(), any());;
   }
 
-  public void testBuildHistory() {
+  public void testBuildHistory() throws Exception {
     // root11 is not a member of domain audience
     RuleDTO ruleDTO = newRuleDTO();
     List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent(),
@@ -284,6 +295,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
                                                          ACTIVITY_ID,
                                                          ACTIVITY_OBJECT_TYPE);
     assertTrue(CollectionUtils.isNotEmpty(realizations));
+    verify(listenerService, times(1)).broadcast(eq(POST_REALIZATION_CREATE_EVENT), any(), any());;
   }
 
   public void testCreateRealizations() {

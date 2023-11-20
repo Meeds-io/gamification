@@ -28,10 +28,12 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.rest.http.PATCH;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
+import org.exoplatform.social.common.xmlprocessor.XMLProcessor;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.rest.api.RestUtils;
@@ -72,18 +74,26 @@ public class RealizationRest implements ResourceContainer {
 
   private SecuritySettingService securitySettingService;
 
-  public RealizationRest(ProgramService programService,
+  private XMLProcessor           xmlProcessor;
+
+  private UserACL                userAcl;
+
+  public RealizationRest(ProgramService programService, // NOSONAR
                          RuleService ruleService,
                          TranslationService translationService,
                          RealizationService realizationService,
                          IdentityManager identityManager,
-                         SecuritySettingService securitySettingService) {
+                         SecuritySettingService securitySettingService,
+                         XMLProcessor xmlProcessor,
+                         UserACL userAcl) {
     this.programService = programService;
     this.ruleService = ruleService;
     this.translationService = translationService;
     this.realizationService = realizationService;
     this.identityManager = identityManager;
     this.securitySettingService = securitySettingService;
+    this.xmlProcessor = xmlProcessor;
+    this.userAcl = userAcl;
   }
 
   @GET
@@ -211,6 +221,8 @@ public class RealizationRest implements ResourceContainer {
                                                                                                 ruleService,
                                                                                                 translationService,
                                                                                                 identityManager,
+                                                                                                xmlProcessor,
+                                                                                                userAcl,
                                                                                                 realizations,
                                                                                                 Utils.getCurrentUser(),
                                                                                                 getLocale(request));
@@ -296,6 +308,8 @@ public class RealizationRest implements ResourceContainer {
                                                                                     ruleService,
                                                                                     translationService,
                                                                                     identityManager,
+                                                                                    xmlProcessor,
+                                                                                    userAcl,
                                                                                     realization,
                                                                                     Utils.getCurrentUser(),
                                                                                     getLocale(request));

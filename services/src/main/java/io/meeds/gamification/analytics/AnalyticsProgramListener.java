@@ -15,11 +15,11 @@
  */
 package io.meeds.gamification.analytics;
 
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_CREATE_LISTENER;
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_DELETE_LISTENER;
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_DISABLE_LISTENER;
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_ENABLE_LISTENER;
-import static io.meeds.gamification.service.ProgramService.GAMIFICATION_DOMAIN_UPDATE_LISTENER;
+import static io.meeds.gamification.service.ProgramService.PROGRAM_CREATED_LISTENER;
+import static io.meeds.gamification.service.ProgramService.PROGRAM_DELETED_LISTENER;
+import static io.meeds.gamification.service.ProgramService.PROGRAM_DISABLED_LISTENER;
+import static io.meeds.gamification.service.ProgramService.PROGRAM_ENABLED_LISTENER;
+import static io.meeds.gamification.service.ProgramService.PROGRAM_UPDATED_LISTENER;
 import static io.meeds.gamification.utils.Utils.STATISTICS_CREATE_PROGRAM_OPERATION;
 import static io.meeds.gamification.utils.Utils.STATISTICS_DELETE_PROGRAM_OPERATION;
 import static io.meeds.gamification.utils.Utils.STATISTICS_DISABLE_PROGRAM_OPERATION;
@@ -65,23 +65,23 @@ public class AnalyticsProgramListener extends Listener<ProgramDTO, String> {
     statisticData.setModule(STATISTICS_GAMIFICATION_MODULE);
     statisticData.setSubModule(STATISTICS_PROGRAM_SUBMODULE);
     switch (event.getEventName()) {
-    case GAMIFICATION_DOMAIN_CREATE_LISTENER: {
+    case PROGRAM_CREATED_LISTENER: {
       statisticData.setOperation(STATISTICS_CREATE_PROGRAM_OPERATION);
       break;
     }
-    case GAMIFICATION_DOMAIN_UPDATE_LISTENER: {
+    case PROGRAM_UPDATED_LISTENER: {
       statisticData.setOperation(STATISTICS_UPDATE_PROGRAM_OPERATION);
       break;
     }
-    case GAMIFICATION_DOMAIN_DELETE_LISTENER: {
+    case PROGRAM_DELETED_LISTENER: {
       statisticData.setOperation(STATISTICS_DELETE_PROGRAM_OPERATION);
       break;
     }
-    case GAMIFICATION_DOMAIN_ENABLE_LISTENER: {
+    case PROGRAM_ENABLED_LISTENER: {
       statisticData.setOperation(STATISTICS_ENABLE_PROGRAM_OPERATION);
       break;
     }
-    case GAMIFICATION_DOMAIN_DISABLE_LISTENER: {
+    case PROGRAM_DISABLED_LISTENER: {
       statisticData.setOperation(STATISTICS_DISABLE_PROGRAM_OPERATION);
       break;
     }

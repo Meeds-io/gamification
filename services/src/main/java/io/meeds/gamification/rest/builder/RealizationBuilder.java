@@ -9,8 +9,10 @@ import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.common.xmlprocessor.XMLProcessor;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 
@@ -38,6 +40,8 @@ public class RealizationBuilder {
                                                    RuleService ruleService,
                                                    TranslationService translationService,
                                                    IdentityManager identityManager,
+                                                   XMLProcessor xmlProcessor,
+                                                   UserACL userAcl,
                                                    RealizationDTO realization,
                                                    String currentUsername,
                                                    Locale locale) {
@@ -55,6 +59,7 @@ public class RealizationBuilder {
         programRestEntity = ProgramBuilder.toRestEntity(programService,
                                                         ruleService,
                                                         translationService,
+                                                        userAcl,
                                                         program,
                                                         locale,
                                                         currentUsername,
@@ -71,6 +76,10 @@ public class RealizationBuilder {
                                                   null,
                                                   translationService,
                                                   null,
+                                                  identityManager,
+                                                  null,
+                                                  xmlProcessor,
+                                                  userAcl,
                                                   rule,
                                                   locale,
                                                   null,
@@ -125,10 +134,12 @@ public class RealizationBuilder {
     }
   }
 
-  public static List<RealizationRestEntity> toRestEntities(ProgramService programService,
+  public static List<RealizationRestEntity> toRestEntities(ProgramService programService, // NOSONAR
                                                            RuleService ruleService,
                                                            TranslationService translationService,
                                                            IdentityManager identityManager,
+                                                           XMLProcessor xmlProcessor,
+                                                           UserACL userAcl,
                                                            List<RealizationDTO> realizations,
                                                            String currentUsername,
                                                            Locale locale) {
@@ -140,6 +151,8 @@ public class RealizationBuilder {
                                                           ruleService,
                                                           translationService,
                                                           identityManager,
+                                                          xmlProcessor,
+                                                          userAcl,
                                                           realization,
                                                           currentUsername,
                                                           locale))
