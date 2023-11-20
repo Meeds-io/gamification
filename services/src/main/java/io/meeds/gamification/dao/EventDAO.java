@@ -82,6 +82,22 @@ public class EventDAO extends GenericDAOJPAImpl<EventEntity, Long> {
     }
   }
 
+  public List<EventEntity> getEventsByTitle(String title, int offset, int limit) {
+    TypedQuery<EventEntity> query = getEntityManager().createNamedQuery("EventEntity.getEventsByTitle", EventEntity.class);
+    query.setParameter(TITLE, title);
+    if (offset > 0) {
+      query.setFirstResult(offset);
+    }
+    if (limit > 0) {
+      query.setMaxResults(limit);
+    }
+    try {
+      return query.getResultList();
+    } catch (NoResultException e) {
+      return Collections.emptyList();
+    }
+  }
+
   /**
    * Get all gamification events by filter
    *
@@ -178,4 +194,5 @@ public class EventDAO extends GenericDAOJPAImpl<EventEntity, Long> {
       predicates.add("event.trigger IN :triggers");
     }
   }
+
 }

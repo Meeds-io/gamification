@@ -37,6 +37,14 @@ public interface EventService {
   List<EventDTO> getEvents(EventFilter eventFilter, int offset, int limit);
 
   /**
+   * @param title {@link EventDTO} title
+   * @param offset Offset of result
+   * @param limit Limit of result
+   * @return {@link List} of {@link EventDTO}
+   */
+  List<EventDTO> getEventsByTitle(String title, int offset, int limit);
+
+  /**
    * @param eventFilter {@link EventFilter} used to count associated events
    * @return count events by filter
    */
@@ -93,4 +101,5 @@ public interface EventService {
    * @return deleted {@link EventDTO}
    */
   EventDTO deleteEventById(long eventId) throws ObjectNotFoundException;
+
 }
