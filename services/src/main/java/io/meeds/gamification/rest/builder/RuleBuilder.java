@@ -26,7 +26,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.social.common.xmlprocessor.XMLProcessor;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
@@ -62,6 +62,10 @@ public class RuleBuilder {
                                             RealizationService realizationService,
                                             TranslationService translationService,
                                             FavoriteService favoriteService,
+                                            IdentityManager identityManager,
+                                            ActivityManager activityManager,
+                                            XMLProcessor xmlProcessor,
+                                            UserACL userAcl,
                                             RuleDTO rule,
                                             Locale locale,
                                             List<String> expandFields,
@@ -82,7 +86,9 @@ public class RuleBuilder {
       realizationEntities = RealizationBuilder.toRestEntities(programService,
                                                               ruleService,
                                                               translationService,
-                                                              ExoContainerContext.getService(IdentityManager.class),
+                                                              identityManager,
+                                                              xmlProcessor,
+                                                              userAcl,
                                                               realizations,
                                                               Utils.getCurrentUser(),
                                                               null);
@@ -112,6 +118,10 @@ public class RuleBuilder {
                                                                          realizationService,
                                                                          translationService,
                                                                          favoriteService,
+                                                                         identityManager,
+                                                                         activityManager,
+                                                                         xmlProcessor,
+                                                                         userAcl,
                                                                          r,
                                                                          locale,
                                                                          expandFields,
@@ -127,18 +137,22 @@ public class RuleBuilder {
                                                  })
                                                  .toList();
     ProgramDTO program = noProgram ? null : rule.getProgram();
+    if (anonymous && program != null) {
+      program.setLastModifiedBy(null);
+      program.setCreatedBy(null);
+      program.setOwnerIds(null);
+    }
     UserInfoContext userContext = realizationService == null ? null :
                                                              toUserContext(programService,
                                                                            realizationService,
                                                                            rule,
                                                                            Utils.getCurrentUser());
     translatedLabels(translationService, rule, locale);
-    boolean published = isPublished(rule);
 
     String description = rule.getDescription();
     return new RuleRestEntity(rule.getId(),
                               rule.getTitle(),
-                              processRichEditorContent(description),
+                              processRichEditorContent(xmlProcessor, description),
                               rule.getScore(),
                               program,
                               rule.isEnabled(),
@@ -152,7 +166,7 @@ public class RuleBuilder {
                               rule.getEndDate(),
                               rule.getActivityId(),
                               rule.getCacheTime(),
-                              published,
+                              !anonymous && activityManager != null && isPublished(activityManager, rule),
                               isFavorite,
                               rule.getPrerequisiteRuleIds(),
                               rule.getType(),
@@ -198,9 +212,8 @@ public class RuleBuilder {
     return userContext;
   }
 
-  public static String processRichEditorContent(String content) {
-    XMLProcessor xmlProcessor = ExoContainerContext.getService(XMLProcessor.class);
-    return (String) xmlProcessor.process(content);
+  public static String processRichEditorContent(XMLProcessor xmlProcessor, String content) {
+    return xmlProcessor == null ? content : (String) xmlProcessor.process(content);
   }
 
   private static List<RealizationDTO> getRealizations(RealizationService realizationService,
@@ -233,12 +246,11 @@ public class RuleBuilder {
                                  Collections.singletonList(ruleId));
   }
 
-  private static boolean isPublished(RuleDTO rule) {
+  private static boolean isPublished(ActivityManager activityManager, RuleDTO rule) {
     long activityId = rule.getActivityId();
     if (activityId <= 0) {
       return false;
     }
-    ActivityManager activityManager = ExoContainerContext.getService(ActivityManager.class);
     ExoSocialActivity activity = activityManager.getActivity(String.valueOf(activityId));
     return activity != null && !activity.isHidden();
   }

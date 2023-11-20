@@ -138,7 +138,7 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     }
   }
 
-  private void buildPredicates(ProgramFilter filter, List<String> suffixes, List<String> predicates) {
+  private void buildPredicates(ProgramFilter filter, List<String> suffixes, List<String> predicates) { // NOSONAR
     if (filter.getType() != null && filter.getType() != EntityFilterType.ALL) {
       suffixes.add("Type");
       predicates.add("d.type = :type");

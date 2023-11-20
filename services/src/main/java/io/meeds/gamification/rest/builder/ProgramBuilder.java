@@ -31,7 +31,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -61,6 +60,7 @@ public class ProgramBuilder {
   public static ProgramRestEntity toRestEntity(ProgramService programService, // NOSONAR
                                                RuleService ruleService,
                                                TranslationService translationService,
+                                               UserACL userAcl,
                                                ProgramDTO program,
                                                Locale locale,
                                                String username,
@@ -109,7 +109,7 @@ public class ProgramBuilder {
                                  anonymous ? Collections.emptyList() :
                                    getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId()),
                                  anonymous || !expandAdministrators ? null :
-                                                                    buildAdministrators(programService),
+                                                                    buildAdministrators(programService, userAcl),
                                  activeRulesCount,
                                  program.getVisibility());
   }
@@ -134,9 +134,10 @@ public class ProgramBuilder {
     }
   }
 
-  public static List<ProgramRestEntity> toRestEntities(ProgramService programService,
+  public static List<ProgramRestEntity> toRestEntities(ProgramService programService, // NOSONAR
                                                        RuleService ruleService,
                                                        TranslationService translationService,
+                                                       UserACL userAcl,
                                                        Locale locale,
                                                        List<ProgramDTO> programs,
                                                        List<String> expandFields,
@@ -145,6 +146,7 @@ public class ProgramBuilder {
                    .map(program -> toRestEntity(programService,
                                                 ruleService,
                                                 translationService,
+                                                userAcl,
                                                 program,
                                                 locale,
                                                 username,
@@ -153,13 +155,17 @@ public class ProgramBuilder {
                    .toList();
   }
 
-  public static List<String> buildAdministrators(ProgramService programService) {
-    List<String> administrators = programService.getAdministrators();
-    String superUser = ExoContainerContext.getService(UserACL.class).getSuperUser();
-    return administrators == null ? null :
-                                  administrators.stream()
-                                                .filter(u -> !superUser.equals(u))
-                                                .toList();
+  public static List<String> buildAdministrators(ProgramService programService, UserACL userAcl) {
+    if (userAcl == null || programService == null) {
+      return Collections.emptyList();
+    } else {
+      List<String> administrators = programService.getAdministrators();
+      String superUser = userAcl.getSuperUser();
+      return administrators == null ? null :
+                                    administrators.stream()
+                                                  .filter(u -> !superUser.equals(u))
+                                                  .toList();
+    }
   }
 
   private static List<UserInfo> getProgramOwnersByIds(Set<Long> ids, long spaceId) {

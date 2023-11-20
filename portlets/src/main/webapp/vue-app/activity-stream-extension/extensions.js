@@ -124,7 +124,10 @@ extensionRegistry.registerExtension('activity', 'comment-action', {
 extensionRegistry.registerComponent('ActivityFooter', 'activity-footer-action', {
   id: 'announce',
   init: initRuleActivity,
-  isEnabled: params => params?.activity?.type === 'gamificationRuleActivity' && params.activity.rule && !params.activity.originalActivity,
+  isEnabled: params => params?.activity?.type === 'gamificationRuleActivity'
+    && params.activity.rule
+    && params.activity.rule?.activityId === parseInt(params.activity.id)
+    && !params.activity.originalActivity,
   vueComponent: Vue.options.components['rule-activity-announce-action'],
   rank: 100,
 });
@@ -156,16 +159,18 @@ export function initRuleActivity(params) {
   const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
   if (activity.rule) {
     return Promise.resolve(activity.rule);
-  } else if (!activity.rule && !activity.ruleFetch) {
-    activity.ruleFetch = exoi18n.loadLanguageAsync(lang, url)
-      .then(() => Vue.prototype.$ruleService.getRuleById(activity.templateParams.ruleId, {
-        lang: eXo.env.portal.language,
-      }))
-      .then(rule => {
-        activity.rule = rule;
-        delete activity.ruleFetch;
-      })
-      .catch(() => activity.ruleNotFound = true);
+  } else {
+    if (!activity.ruleFetch) {
+      activity.ruleFetch = exoi18n.loadLanguageAsync(lang, url)
+        .then(() => Vue.prototype.$ruleService.getRuleById(activity.templateParams.ruleId, {
+          lang: eXo.env.portal.language,
+        }))
+        .then(rule => {
+          activity.ruleFetch = Promise.resolve(rule);
+          activity.rule = rule;
+        })
+        .catch(() => activity.ruleNotFound = true);
+    }
+    return activity.ruleFetch;
   }
-  return Promise.resolve(activity.ruleFetch || activity.rule);
 }

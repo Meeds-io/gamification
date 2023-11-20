@@ -290,9 +290,11 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   }
 
   private void buildPredicates(RuleFilter filter, List<String> suffixes, List<String> predicates) { // NOSONAR
-    suffixes.add("ExcludeDeleted");
-    predicates.add("r.isDeleted = false");
-    predicates.add("r.domainEntity.isDeleted = false");
+    if (!filter.isIncludeDeleted()) {
+      suffixes.add("ExcludeDeleted");
+      predicates.add("r.isDeleted = false");
+      predicates.add("r.domainEntity.isDeleted = false");
+    }
 
     if (CollectionUtils.isNotEmpty(filter.getRuleIds())) {
       suffixes.add("RuleIds");
