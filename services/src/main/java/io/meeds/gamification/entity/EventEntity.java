@@ -34,8 +34,11 @@ import lombok.Data;
             query = "SELECT event FROM EventEntity event"
                  + " WHERE event.title =: title" + " AND event.trigger =: trigger")
 @NamedQuery(name = "EventEntity.getEventByTypeAndTitle",
+query = "SELECT event FROM EventEntity event"
+    + " WHERE event.type =: type" + " AND event.title =: title")
+@NamedQuery(name = "EventEntity.getEventsByTitle",
             query = "SELECT event FROM EventEntity event"
-                 + " WHERE event.type =: type" + " AND event.title =: title")
+                 + " WHERE event.title =: title ORDER BY event.type ASC")
 @Data
 public class EventEntity implements Serializable {
 
