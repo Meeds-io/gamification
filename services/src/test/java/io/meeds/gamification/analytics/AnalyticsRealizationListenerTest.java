@@ -17,11 +17,11 @@
  */
 package io.meeds.gamification.analytics;
 
-import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
-import static io.meeds.gamification.utils.Utils.STATISTICS_CREATE_RULE_OPERATION;
-import static io.meeds.gamification.utils.Utils.STATISTICS_DELETE_RULE_OPERATION;
+import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CANCEL_EVENT;
+import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CREATE_EVENT;
+import static io.meeds.gamification.utils.Utils.POST_REALIZATION_UPDATE_EVENT;
+import static io.meeds.gamification.utils.Utils.STATISTICS_CANCEL_REALIZATION_OPERATION;
+import static io.meeds.gamification.utils.Utils.STATISTICS_CREATE_REALIZATION_OPERATION;
 import static io.meeds.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_BUDGET_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_COVER_FILEID_PARAM;
@@ -29,14 +29,14 @@ import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_ID_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_OWNERS_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_TITLE_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_TYPE_PARAM;
+import static io.meeds.gamification.utils.Utils.STATISTICS_REALIZATION_SUBMODULE;
 import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_DESCRIPTION_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_EVENT_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_ID_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_SCORE_PARAM;
-import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_SUBMODULE;
 import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_TITLE_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_TYPE_PARAM;
-import static io.meeds.gamification.utils.Utils.STATISTICS_UPDATE_RULE_OPERATION;
+import static io.meeds.gamification.utils.Utils.STATISTICS_UPDATE_REALIZATION_OPERATION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -64,18 +64,24 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.model.ProgramDTO;
+import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.service.EventService;
+import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 
 @SuppressWarnings("deprecation")
 @RunWith(MockitoJUnitRunner.class)
-public class AnalyticsRuleListenerTest {
+public class AnalyticsRealizationListenerTest {
 
   private static final long                   AUDIENCE_ID           = 1L;
 
-  private static final String                 USER_NAME             = "userName";
+  private static final long                   ACTIVITY_ID           = 5L;
+
+  private static final String                 RECEIVER              = "receiver";
 
   private static final long                   USER_IDENTITY_ID      = 2l;
 
@@ -108,7 +114,10 @@ public class AnalyticsRuleListenerTest {
   private EventService                        eventService;
 
   @Mock
-  private Event<Object, String>               event;
+  private RealizationService                  realizationService;
+
+  @Mock
+  private Event<Object, Object>               event;
 
   @Mock
   private Identity                            userIdentity;
@@ -118,7 +127,9 @@ public class AnalyticsRuleListenerTest {
 
   private RuleDTO                             ruleDTO;
 
-  private AnalyticsRuleListener               ruleListener;
+  private RealizationDTO                      realization;
+
+  private AnalyticsRealizationListener        realizationListener;
 
   @BeforeClass
   public static void initClassContext() {
@@ -133,51 +144,46 @@ public class AnalyticsRuleListenerTest {
   @Before
   public void setup() {
     ruleDTO = newRule();
+    realization = newRealization();
     ANALYTICS_UTILS.reset();
     ANALYTICS_UTILS.when(() -> AnalyticsUtils.addSpaceStatistics(any(), any())).thenCallRealMethod();
-    when(event.getSource()).thenReturn(ruleDTO);
-    when(event.getData()).thenReturn(USER_NAME);
-    ruleListener = new AnalyticsRuleListener(identityManager,
-                                             spaceService,
-                                             ruleService,
-                                             eventService);
+    when(event.getSource()).thenReturn(realization);
+    when(ruleService.findRuleById(CHALLENGE_ID)).thenReturn(ruleDTO);
+    realizationListener = new AnalyticsRealizationListener(ruleService, eventService, null, identityManager, spaceService);
   }
 
   @Test
   public void testThrowExceptionWhenUnhandledEvent() {
     when(event.getEventName()).thenReturn("UNHANDLED");
-    assertThrows(IllegalArgumentException.class, () -> ruleListener.onEvent(event));
+    assertThrows(IllegalArgumentException.class, () -> realizationListener.onEvent(event));
   }
 
   @Test
   public void testHandleCreateRuleEvent() throws Exception {
-    assertCollectedOperation(POST_CREATE_RULE_EVENT, STATISTICS_CREATE_RULE_OPERATION);
+    assertCollectedOperation(POST_REALIZATION_CREATE_EVENT, STATISTICS_CREATE_REALIZATION_OPERATION);
   }
 
   @Test
   public void testHandleUpdateRuleEvent() throws Exception {
-    assertCollectedOperation(POST_UPDATE_RULE_EVENT, STATISTICS_UPDATE_RULE_OPERATION);
+    assertCollectedOperation(POST_REALIZATION_UPDATE_EVENT, STATISTICS_UPDATE_REALIZATION_OPERATION);
   }
 
   @Test
   public void testHandleDeleteRuleEvent() throws Exception {
-    assertCollectedOperation(POST_DELETE_RULE_EVENT, STATISTICS_DELETE_RULE_OPERATION);
+    assertCollectedOperation(POST_REALIZATION_CANCEL_EVENT, STATISTICS_CANCEL_REALIZATION_OPERATION);
   }
 
   private void assertCollectedOperation(String eventName, String expectedOperation) throws Exception {
     when(event.getEventName()).thenReturn(eventName);
-    String identityId = String.valueOf(USER_IDENTITY_ID);
-    when(identityManager.getOrCreateUserIdentity(USER_NAME)).thenReturn(userIdentity);
-    when(userIdentity.getId()).thenReturn(identityId);
     String spaceId = String.valueOf(AUDIENCE_ID);
     when(spaceService.getSpaceById(spaceId)).thenReturn(space);
     when(space.getId()).thenReturn(spaceId);
 
-    ruleListener.onEvent(event);
+    realizationListener.onEvent(event);
 
     ANALYTICS_UTILS.verify(() -> AnalyticsUtils.addStatisticData(argThat(statisticData -> {
       assertEquals(STATISTICS_GAMIFICATION_MODULE, statisticData.getModule());
-      assertEquals(STATISTICS_RULE_SUBMODULE, statisticData.getSubModule());
+      assertEquals(STATISTICS_REALIZATION_SUBMODULE, statisticData.getSubModule());
       assertEquals(expectedOperation, statisticData.getOperation());
       assertEquals(USER_IDENTITY_ID, statisticData.getUserId());
       assertEquals(AUDIENCE_ID, statisticData.getSpaceId());
@@ -209,8 +215,20 @@ public class AnalyticsRuleListenerTest {
     })), times(1));
   }
 
+  private RealizationDTO newRealization() {
+    realization = new RealizationDTO();
+    realization.setRuleId(CHALLENGE_ID);
+    realization.setEarnerId(String.valueOf(USER_IDENTITY_ID));
+    realization.setEarnerType(IdentityType.USER.name());
+    realization.setType(EntityType.MANUAL);
+    realization.setStatus(RealizationStatus.ACCEPTED.name());
+    realization.setActivityId(ACTIVITY_ID);
+    realization.setReceiver(RECEIVER);
+    return realization;
+  }
+
   private RuleDTO newRule() {
-    RuleDTO ruleDTO = new RuleDTO();
+    ruleDTO = new RuleDTO();
     ruleDTO.setId(CHALLENGE_ID);
     ruleDTO.setScore(SCORE);
     ruleDTO.setTitle(CHALLENGE_TITLE);
@@ -231,7 +249,7 @@ public class AnalyticsRuleListenerTest {
     program.setEnabled(true);
     program.setType(EntityType.AUTOMATIC.name());
     program.setSpaceId(AUDIENCE_ID);
-    HashSet<Long> owners = new HashSet<Long>();
+    HashSet<Long> owners = new HashSet<>();
     owners.add(1L);
     program.setOwnerIds(owners);
     return program;

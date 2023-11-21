@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,8 +41,11 @@ import org.exoplatform.social.rest.entity.IdentityEntity;
 import org.exoplatform.web.security.codec.CodecInitializer;
 import org.exoplatform.web.security.security.TokenServiceInitializationException;
 
+import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.model.Announcement;
+import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.ProgramDTO;
+import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.portal.security.constant.UserRegistrationType;
 import io.meeds.portal.security.service.SecuritySettingService;
@@ -81,6 +85,12 @@ public class Utils {
   public static final String                        STATISTICS_UPDATE_RULE_OPERATION        = "updateRule";
 
   public static final String                        STATISTICS_DELETE_RULE_OPERATION        = "deleteRule";
+
+  public static final String                        STATISTICS_CREATE_REALIZATION_OPERATION = "createRealization";
+
+  public static final String                        STATISTICS_UPDATE_REALIZATION_OPERATION = "updateRealization";
+
+  public static final String                        STATISTICS_CANCEL_REALIZATION_OPERATION = "cancelRealization";
 
   public static final String                        STATISTICS_ENABLE_PROGRAM_OPERATION     = "enableProgram";
 
@@ -122,6 +132,8 @@ public class Utils {
 
   public static final String                        STATISTICS_RULE_SUBMODULE               = "rule";
 
+  public static final String                        STATISTICS_REALIZATION_SUBMODULE        = "realization";
+
   public static final String                        STATISTICS_ANNOUNCEMENT_SUBMODULE       = "announcement";
 
   public static final String                        STATISTICS_ANNOUNCE_ID_PARAM            = "announcementId";
@@ -132,9 +144,27 @@ public class Utils {
 
   public static final String                        STATISTICS_ANNOUNCE_COMMENT_PARAM       = "announcementComment";
 
+  public static final String                        STATISTICS_EARNER_TYPE                  = "realizationEarnerType";
+
+  public static final String                        STATISTICS_EARNER_ID_PARAM              = "realizationEarnerId";
+
+  public static final String                        STATISTICS_ACTIVITY_PARAM               = "realizationActivityId";
+
+  public static final String                        STATISTICS_RECEIVED_ID                  = "realizationSenderId";
+
+  public static final String                        STATISTICS_STATUS                       = "realizationStatus";
+
   public static final String                        STATISTICS_PROGRAM_SUBMODULE            = "program";
 
   public static final String                        STATISTICS_GAMIFICATION_MODULE          = "gamification";
+
+  public static final String                        STATISTICS_EVENT_ID_PARAM               = "gamificationEventId";
+
+  public static final String                        STATISTICS_EVENT_TYPE_PARAM             = "gamificationEventType";
+
+  public static final String                        STATISTICS_EVENT_TRIGGER_PARAM          = "gamificationEventTrigger";
+
+  public static final String                        STATISTICS_EVENT_TITLE_PARAM            = "gamificationEventTitle";
 
   public static final String                        POST_CREATE_RULE_EVENT                  = "rule.created";
 
@@ -148,11 +178,13 @@ public class Utils {
 
   public static final String                        POST_UPDATE_ANNOUNCEMENT_EVENT          = "announcement.updated";
 
+  public static final String                        POST_CANCEL_ANNOUNCEMENT_EVENT          = "announcement.canceled";
+
   public static final String                        POST_REALIZATION_CREATE_EVENT           = "realization.created";
 
   public static final String                        POST_REALIZATION_UPDATE_EVENT           = "realization.updated";
 
-  public static final String                        POST_REALIZATION_CANCELED_EVENT         = "realization.canceled";
+  public static final String                        POST_REALIZATION_CANCEL_EVENT           = "realization.canceled";
 
   public static final String                        RULE_ACTIVITY_PARAM_RULE_ID             = "ruleId";
 
@@ -486,6 +518,7 @@ public class Utils {
   public static void addRuleStatisticParameters(IdentityManager identityManager,
                                                 SpaceService spaceService,
                                                 RuleDTO rule,
+                                                EventDTO event,
                                                 StatisticData statisticData,
                                                 String username) {
     if (rule == null) {
@@ -498,6 +531,21 @@ public class Utils {
     statisticData.addParameter(STATISTICS_RULE_EVENT_PARAM, rule.getEvent());
     statisticData.addParameter(STATISTICS_RULE_SCORE_PARAM, rule.getScore());
     statisticData.addParameter(STATISTICS_RULE_TYPE_PARAM, rule.getType());
+
+    if (event != null) {
+      statisticData.addParameter(STATISTICS_EVENT_ID_PARAM, event.getId());
+      statisticData.addParameter(STATISTICS_EVENT_TYPE_PARAM, event.getType());
+      statisticData.addParameter(STATISTICS_EVENT_TRIGGER_PARAM, event.getTrigger());
+      statisticData.addParameter(STATISTICS_EVENT_TITLE_PARAM, event.getTitle());
+      Map<String, String> properties = event.getProperties();
+      if (properties != null) {
+        properties.forEach((k, v) -> {
+          if (!statisticData.getParameters().containsKey(k)) {
+            statisticData.addParameter(k, v);
+          }
+        });
+      }
+    }
 
     addProgramStatisticParameters(identityManager, spaceService, rule.getProgram(), statisticData, username);
   }
@@ -516,7 +564,36 @@ public class Utils {
     statisticData.addParameter(STATISTICS_ANNOUNCE_ASSIGNEE_PARAM, announcement.getAssignee());
     statisticData.addParameter(STATISTICS_ANNOUNCE_COMMENT_PARAM, announcement.getComment());
 
-    addRuleStatisticParameters(identityManager, spaceService, rule, statisticData, username);
+    addRuleStatisticParameters(identityManager, spaceService, rule, null, statisticData, username);
+  }
+
+  public static void addRealizationStatisticParameters(IdentityManager identityManager,
+                                                       SpaceService spaceService,
+                                                       RuleDTO rule,
+                                                       EventDTO ruleEvent,
+                                                       RealizationDTO realization,
+                                                       StatisticData statisticData) {
+    addRuleStatisticParameters(identityManager,
+                               spaceService,
+                               rule,
+                               ruleEvent,
+                               statisticData,
+                               null);
+
+    if (StringUtils.isNotBlank(realization.getEarnerId())) {
+      if ((realization.getEarnerType() == null || IdentityType.USER.name().equalsIgnoreCase(realization.getEarnerType()))
+          && StringUtils.isNumeric(realization.getEarnerId())) {
+        statisticData.setUserId(Long.parseLong(realization.getEarnerId()));
+      }
+      statisticData.addParameter(STATISTICS_EARNER_TYPE, realization.getEarnerType());
+      statisticData.addParameter(STATISTICS_EARNER_ID_PARAM, realization.getEarnerId());
+      statisticData.addParameter(STATISTICS_ACTIVITY_PARAM, realization.getActivityId());
+      statisticData.addParameter(STATISTICS_RECEIVED_ID, realization.getReceiver());
+      statisticData.addParameter(STATISTICS_STATUS, realization.getStatus());
+    }
+    if (StringUtils.isNotBlank(realization.getEarnerType())) {
+      statisticData.setUserId(Long.parseLong(realization.getEarnerId()));
+    }
   }
 
   public static String removeSpecialCharacters(String content) {

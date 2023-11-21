@@ -26,6 +26,10 @@ import static io.meeds.gamification.utils.Utils.STATISTICS_UPDATE_RULE_OPERATION
 import static io.meeds.gamification.utils.Utils.addRuleStatisticParameters;
 import static org.exoplatform.analytics.utils.AnalyticsUtils.addStatisticData;
 
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+
 import org.exoplatform.analytics.model.StatisticData;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.services.listener.Asynchronous;
@@ -34,7 +38,10 @@ import org.exoplatform.services.listener.Listener;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.service.EventService;
 import io.meeds.gamification.service.RuleService;
 
 @Asynchronous
@@ -46,12 +53,16 @@ public class AnalyticsRuleListener extends Listener<Object, String> {
 
   private RuleService     ruleService;
 
+  private EventService    eventService;
+
   public AnalyticsRuleListener(IdentityManager identityManager,
                                SpaceService spaceService,
-                               RuleService ruleService) {
+                               RuleService ruleService,
+                               EventService eventService) {
     this.identityManager = identityManager;
     this.spaceService = spaceService;
     this.ruleService = ruleService;
+    this.eventService = eventService;
   }
 
   @Override
@@ -61,6 +72,9 @@ public class AnalyticsRuleListener extends Listener<Object, String> {
     String username = event.getData();
 
     RuleDTO rule = getRule(object);
+    if (rule == null) {
+      return;
+    }
 
     StatisticData statisticData = new StatisticData();
     statisticData.setModule(STATISTICS_GAMIFICATION_MODULE);
@@ -81,9 +95,17 @@ public class AnalyticsRuleListener extends Listener<Object, String> {
     default:
       throw new IllegalArgumentException("Unexpected listener event name: " + event.getEventName());
     }
+    EventDTO ruleEvent = null;
+    if (rule.getType() == EntityType.AUTOMATIC) {
+      List<EventDTO> events = eventService.getEventsByTitle(rule.getEvent(), 0, 1);
+      if (CollectionUtils.isNotEmpty(events)) {
+        ruleEvent = events.get(0);
+      }
+    }
     addRuleStatisticParameters(identityManager,
                                spaceService,
                                rule,
+                               ruleEvent,
                                statisticData,
                                username);
     addStatisticData(statisticData);

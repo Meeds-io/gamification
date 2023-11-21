@@ -3,6 +3,7 @@ package io.meeds.gamification.service.impl;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_COMMENT_TYPE;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ID_TEMPLATE_PARAM;
+import static io.meeds.gamification.utils.Utils.POST_CANCEL_ANNOUNCEMENT_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_CREATE_ANNOUNCEMENT_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_UPDATE_ANNOUNCEMENT_EVENT;
 import static io.meeds.gamification.utils.Utils.broadcastEvent;
@@ -127,6 +128,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
           + announcement.getId());
     }
     deleteActivity(announcement);
+    broadcastEvent(listenerService, POST_CANCEL_ANNOUNCEMENT_EVENT, announcement, Long.parseLong(identity.getId()));
     return announcementStorage.deleteAnnouncement(announcementId);
   }
 

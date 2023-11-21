@@ -27,6 +27,7 @@ import org.exoplatform.commons.testing.ConfigTestCase;
 
 import io.meeds.gamification.analytics.AnalyticsAnnouncementListenerTest;
 import io.meeds.gamification.analytics.AnalyticsProgramListenerTest;
+import io.meeds.gamification.analytics.AnalyticsRealizationListenerTest;
 import io.meeds.gamification.analytics.AnalyticsRuleListenerTest;
 import io.meeds.gamification.connector.RuleIndexingServiceConnectorTest;
 import io.meeds.gamification.dao.BadgeDAOTest;
@@ -122,6 +123,7 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     AnalyticsAnnouncementListenerTest.class,
     AnalyticsProgramListenerTest.class,
     AnalyticsRuleListenerTest.class,
+    AnalyticsRealizationListenerTest.class,
     GamificationSpaceListenerTest.class,
     GamificationActivityListenerTest.class,
     ProgramSpaceListenerTest.class,
