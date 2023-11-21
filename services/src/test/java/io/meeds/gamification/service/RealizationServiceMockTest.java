@@ -252,7 +252,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
 
     realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.REJECTED);
     assertEquals(RealizationStatus.REJECTED.name(), realizationService.getRealizationById(gHistory1.getId()).getStatus());
-    verify(listenerService, times(1)).broadcast(eq(POST_REALIZATION_CANCELED_EVENT), any(), any());;
+    verify(listenerService, times(1)).broadcast(eq(POST_REALIZATION_CANCEL_EVENT), any(), any());;
 
     realizationService.updateRealizationStatus(gHistory2.getId(), RealizationStatus.ACCEPTED);
     assertEquals(RealizationStatus.ACCEPTED.name(), realizationService.getRealizationById(gHistory2.getId()).getStatus());
@@ -260,7 +260,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
 
     realizationService.updateRealizationStatus(gHistory1.getId(), RealizationStatus.REJECTED, "root1");
     assertEquals(RealizationStatus.REJECTED.name(), realizationService.getRealizationById(gHistory1.getId()).getStatus());
-    verify(listenerService, times(2)).broadcast(eq(POST_REALIZATION_CANCELED_EVENT), any(), any());;
+    verify(listenerService, times(2)).broadcast(eq(POST_REALIZATION_CANCEL_EVENT), any(), any());;
 
     realizationService.updateRealizationStatus(gHistory2.getId(), RealizationStatus.ACCEPTED, "root1");
     assertEquals(RealizationStatus.ACCEPTED.name(), realizationService.getRealizationById(gHistory2.getId()).getStatus());

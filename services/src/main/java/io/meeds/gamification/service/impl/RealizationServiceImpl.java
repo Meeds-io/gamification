@@ -1,6 +1,6 @@
 package io.meeds.gamification.service.impl;
 
-import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CANCELED_EVENT;
+import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CANCEL_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CREATE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_REALIZATION_UPDATE_EVENT;
 import static io.meeds.gamification.utils.Utils.escapeIllegalCharacterInMessage;
@@ -336,7 +336,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                     LOG.warn("Error canceling realization with id {}", realization.getId(), e);
                     return null;
                   } finally {
-                    Utils.broadcastEvent(listenerService, POST_REALIZATION_CANCELED_EVENT, realization, null);
+                    Utils.broadcastEvent(listenerService, POST_REALIZATION_CANCEL_EVENT, realization, null);
                   }
                 })
                 .filter(Objects::nonNull)
@@ -358,7 +358,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         } catch (Exception e) {
           LOG.warn("Error deleting realization with id {}", realization.getId(), e);
         } finally {
-          Utils.broadcastEvent(listenerService, POST_REALIZATION_CANCELED_EVENT, realization, null);
+          Utils.broadcastEvent(listenerService, POST_REALIZATION_CANCEL_EVENT, realization, null);
         }
       }
     });
@@ -755,7 +755,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     } finally {
       String eventName = switch (status) {
       case CANCELED, DELETED, REJECTED: {
-        yield POST_REALIZATION_CANCELED_EVENT;
+        yield POST_REALIZATION_CANCEL_EVENT;
       }
       default:
         yield POST_REALIZATION_UPDATE_EVENT;
