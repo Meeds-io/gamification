@@ -22,7 +22,8 @@
 <template>
   <v-app>
     <gamification-overview-widget
-      :loading="loading">
+      :loading="loading"
+      class="d-flex">
       <template #title>
         <div v-if="!displayPlaceholder && !loading" class="d-flex flex-grow-1 full-width">
           <div class="widget-text-header text-capitalize-first-letter text-truncate">
@@ -39,28 +40,11 @@
           </v-btn>
         </div>
       </template>
-      <gamification-overview-widget-row
-        v-if="displayPlaceholder"
-        disabled
-        class="my-auto">
-        <template #content>
-          <div class="d-flex flex-column align-center justify-center">
-            <v-icon color="secondary" size="54">fa-trophy</v-icon>
-            <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.weeklyLeaderboard') }}</span>
-          </div>
-        </template>
-      </gamification-overview-widget-row>
-      <gamification-overview-widget-row
-        v-show="!displayPlaceholder"
-        class="my-auto"
-        dense>
-        <template #content>
-          <gamification-rank :is-overview-display="true" />
-        </template>
-      </gamification-overview-widget-row>
+      <gamification-rank is-overview-display />
     </gamification-overview-widget>
     <gamification-overview-leaderboard-drawer
-      ref="detailsDrawer" />
+      ref="detailsDrawer"
+      :page-size="pageSize" />
     <engagement-center-rule-extensions />
   </v-app>
 </template>
@@ -69,11 +53,12 @@ export default {
   data: () => ({
     rankDisplayed: false,
     loading: true,
+    pageSize: Math.max(10, parseInt((window.innerHeight - 122) / 45)),
   }),
   computed: {
     displayPlaceholder() {
       return !this.rankDisplayed && !this.loading;
-    }
+    },
   },
   created() {
     document.addEventListener('listOfRankedConnections', (event) => {

@@ -61,13 +61,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="d-flex">
         <v-tooltip bottom>
           <template #activator="{ on }">
-            <a
+            <component
               v-on="on"
-              :href="programUrl"
+              v-bind="programUrl && {
+                href: programUrl
+              }"
+              :is="programUrl && 'a' || 'div'"
               class="width-fit-content">
-              <div class="text-truncate">{{ programTitle }}
-              </div>
-            </a>
+              <div class="text-truncate">{{ programTitle }}</div>
+            </component>
           </template>
           <span>{{ programTitle }}</span>
         </v-tooltip>
@@ -108,12 +110,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-tooltip>
     </td>
     <td v-if="isAdministrator" class="text-truncate align-center">
-      <exo-user-avatar
-        :identity="earner"
+      <user-avatar
+        :name="earnerFullName"
+        :avatar-url="earnerAvatarUrl"
+        :profile-id="earnerRemoteId"
+        :popover="earnerRemoteId"
         :size="28"
         extra-class="d-inline-block"
         link-style
-        popover
         avatar />
     </td>
     <td class="text-truncate align-center">
@@ -212,6 +216,7 @@ export default {
   },
   data: () => ({
     menu: false,
+    realizationLink: null,
     tooltipDateFormat: {
       year: 'numeric',
       month: 'short',
@@ -221,23 +226,25 @@ export default {
     },
   }),
   computed: {
-    earner() {
-      return this.realization?.earner?.profile;
+    earnerFullName() {
+      return this.realization?.earner?.fullName;
     },
-    realizationLink() {
-      return this.realization?.link;
+    earnerAvatarUrl() {
+      return this.realization?.earner?.avatarUrl;
+    },
+    earnerRemoteId() {
+      return this.realization?.earner?.remoteId;
     },
     isAutomaticType() {
-      return this.realization?.action?.type === 'AUTOMATIC';
+      return !!this.eventName;
     },
     actionLabel() {
-      if (this.isAutomaticType) {
-        const key = `gamification.event.title.${this.realization.action.title}`;
-        if (this.$te(key)) {
-          return this.$t(key);
-        }
+      const actionLabel = this.realization?.action?.title || this.realizationActionLabel;
+      if (actionLabel) {
+        return actionLabel;
+      } else {
+        return this.eventName && this.$t(`gamification.event.title.${this.eventName}`);
       }
-      return this.realization.action.title;
     },
     eventName() {
       return this.realization?.action?.event;
@@ -246,10 +253,10 @@ export default {
       return this.realization?.program;
     },
     programTitle() {
-      return this.program?.title || '-';
+      return this.program?.title || this.programLabel;
     },
     programUrl() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.program?.id}`;
+      return this.program && `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.program?.id}`;
     },
     score() {
       return this.realization?.score || '-';
@@ -326,7 +333,12 @@ export default {
         }, 200);
       }
     });
-    this.retrieveRealizationLink();
+    Promise.resolve(this.retrieveRealizationLink())
+      .finally(() => {
+        if (!this.realizationLink) {
+          this.realizationLink = this.realization?.link || this.realization?.url;
+        }
+      });
   },
   methods: {
     updateRealizationStatus(status) {
@@ -343,7 +355,7 @@ export default {
         this.$set(this.realization, 'link', null);
       } else if (!this.isAutomaticType) {
         this.$set(this.realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.realization?.objectId}`);
-      } else if (!this.objectType && this.objectId) {
+      } else if (this.objectId?.startsWith?.('http')) {
         this.$set(this.realization, 'link', this.objectId);
       } else if (this.getLink) {
         const linkPromise = this.getLink(this.realization);

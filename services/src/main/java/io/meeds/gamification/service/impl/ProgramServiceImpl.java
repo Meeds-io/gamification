@@ -430,6 +430,11 @@ public class ProgramServiceImpl implements ProgramService {
     return canViewProgram(program, username, false);
   }
 
+  @Override
+  public List<String> getAdministrators() {
+    return programStorage.getAdministrators();
+  }
+
   private boolean canViewProgram(ProgramDTO program, String username, boolean checkEnabled) {
     return program != null
            && (isProgramOwner(program.getId(), username)
@@ -547,7 +552,7 @@ public class ProgramServiceImpl implements ProgramService {
 
   private boolean isSpaceOpen(long spaceId) {
     Space space = spaceId > 0 ? spaceService.getSpaceById(String.valueOf(spaceId)) : null;
-    return space == null || Space.OPEN.equals(space.getRegistration());
+    return space == null || (Space.OPEN.equals(space.getRegistration()) && !Space.HIDDEN.equals(space.getVisibility()));
   }
 
   private ProgramFilter computeOwnedProgramsFilter(String username, long userIdentityId) {

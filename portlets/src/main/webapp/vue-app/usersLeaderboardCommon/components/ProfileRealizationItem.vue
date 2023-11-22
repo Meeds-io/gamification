@@ -21,8 +21,8 @@
 -->
 <template>
   <v-list-item
-    :href="realizationLink"
-    :target="realizationLinkTarget"
+    :href="hasAccess && realizationLink"
+    :target="hasAccess && realizationLinkTarget"
     class="pa-0 rounded">
     <v-list-item-icon class="me-2 my-auto">
       <rule-icon :rule-event="actionEventName" :size="28" />
@@ -70,6 +70,9 @@ export default {
   computed: {
     isManualType() {
       return this.realization?.action?.type === 'MANUAL';
+    },
+    hasAccess() {
+      return !!this.actionLabel;
     },
     actionLabel() {
       return this.realization?.action?.title || this.realization?.actionLabel;
@@ -120,8 +123,8 @@ export default {
         this.realizationLink = `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.objectId}`;
       } else if (this.linkExtensionMethod) {
         return this.linkExtensionMethod(this.realization);
-      } else {
-        this.realizationLink = this.realization?.link || this.realization?.url;
+      } else if (this.realization?.objectId?.startsWith?.('http')) {
+        this.realizationLink = this.realization.objectId;
       }
     },
   }

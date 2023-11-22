@@ -1,7 +1,7 @@
 <template>
   <exo-drawer
     ref="connectionsDrawer"
-    v-model="connectionsDrawer"
+    v-model="drawer"
     class="connectionsDrawer"
     body-classes="hide-scroll decrease-z-index-more"
     right
@@ -33,7 +33,7 @@
         <v-icon size="20">mdi-filter-remove</v-icon>
       </v-btn>
     </template>
-    <template #content>
+    <template v-if="drawer" #content>
       <div class="overflow-hidden">
         <div v-if="isCurrentUserProfile">
           <div v-if="showConnectionRequests && !showSearch">
@@ -171,7 +171,7 @@ export default {
     return {
       connections: [],
       showSearch: false,
-      connectionsDrawer: false,
+      drawer: false,
       search: null,
       PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/profile/`,
       receivedInvitationsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.defaultPortal }/connexions/receivedInvitations`,

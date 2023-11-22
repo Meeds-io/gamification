@@ -76,6 +76,16 @@
         max-width="250"
         class="usersLeaderboardChartParent absolute-horizontal-center align-center justify-center"
         flat></div>
+      <v-card
+        v-if="centralPoints"
+        class="absolute-horizontal-center d-flex flex-column align-center justify-center transparent"
+        flat
+        @click="$emit('open')">
+        <h4 class="text-color my-0">{{ $t('overview.myContributions.Total') }}</h4>
+        <h4 class="subtitle-1 primary--text my-0">
+          {{ totalScore }}
+        </h4>
+      </v-card>
     </v-card>
   </v-card>
 </template>
@@ -83,6 +93,10 @@
 export default {
   props: {
     identityId: {
+      type: String,
+      default: null,
+    },
+    score: {
       type: String,
       default: null,
     },
@@ -104,9 +118,11 @@ export default {
     },
     programs: {
       type: Array,
-      default: function() {
-        return [];
-      },
+      default: () => [],
+    },
+    centralPoints: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
@@ -126,6 +142,15 @@ export default {
       '#a47e1b', '#ff4d6d', '#62b0de', '#FF97D0', '#92e03a', '#f44336', '#3d6d8a', '#E0A5FF', '#FF9DB8', '#808080'
     ],
   }),
+  computed: {
+    totalScore() {
+      return this.score && new Intl.NumberFormat(eXo.env.portal.language, {
+        style: 'decimal',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(this.score);
+    },
+  },
   watch: {
     hoverProgramId() {
       if (this.hoverProgramId) {
@@ -211,12 +236,6 @@ export default {
         this.chart.setOption({
           tooltip: {
             trigger: false,
-          },
-          grid: {
-            left: '0px',
-            top: '0px',
-            right: '0px',
-            bottom: '0px'
           },
           color: this.colors,
           series: [{

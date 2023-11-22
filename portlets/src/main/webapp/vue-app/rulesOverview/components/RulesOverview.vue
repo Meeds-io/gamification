@@ -23,7 +23,10 @@
     <gamification-rules-overview-full-list
       v-else-if="$root.showLocked" />
     <gamification-rules-overview-reduced-list
-      v-else />
+      v-else
+      @open-list="$refs.listDrawer.open()" />
+    <gamification-rules-overview-list-drawer
+      ref="listDrawer" />
     <engagement-center-rule-extensions />
   </v-app>
 </template>

@@ -460,7 +460,7 @@ export default {
         startDate: this.originalRule.startDate,
         endDate: this.originalRule.endDate,
         recurrence: this.originalRule.recurrence,
-        prerequisiteRuleIds: this.originalRule.prerequisiteRules?.map?.(r => r.id)?.filter?.(id => id),
+        prerequisiteRuleIds: this.originalRule.prerequisiteRuleIds?.filter?.(id => id),
         publish: this.originalRule.publish,
         message: this.originalRule.message,
         templateParams: this.originalRule.templateParams
@@ -474,7 +474,7 @@ export default {
         startDate: this.ruleToSave.startDate,
         endDate: this.ruleToSave.endDate,
         recurrence: this.ruleToSave.recurrence,
-        prerequisiteRuleIds: this.ruleToSave.prerequisiteRules?.map?.(r => r.id)?.filter?.(id => id),
+        prerequisiteRuleIds: this.ruleToSave.prerequisiteRuleIds?.filter?.(id => id),
         publish: this.ruleToSave.publish,
         message: this.ruleToSave.message,
         templateParams: this.ruleToSave.templateParams
@@ -685,7 +685,9 @@ export default {
         title: this.ruleTitle,
         description: description || this.ruleDescription,
         score: rule?.score,
-        program: program && JSON.parse(JSON.stringify(program)),
+        program: {
+          id: program?.id,
+        },
         enabled: rule?.enabled,
         event: rule.type === 'AUTOMATIC' && rule?.event || null,
         startDate: rule?.startDate,

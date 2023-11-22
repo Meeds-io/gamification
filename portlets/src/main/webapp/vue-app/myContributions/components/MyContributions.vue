@@ -15,33 +15,78 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <gamification-overview-widget 
-    :action-url="achievementsURL" 
-    :loading="loading"
-    :title="$t('overview.myContributions.title')">
-    <user-points-widget
-      v-show="!loading"
-      overview-display
-      @seeAll="updateDisplaySeeAll($event)"
-      @loaded="loading = false" />
-  </gamification-overview-widget>
+  <v-app>
+    <gamification-overview-widget :loading="loading > 0">
+      <template #title>
+        <div v-if="!hasZeroPoints && !loading" class="d-flex flex-grow-1 full-width">
+          <div class="widget-text-header text-truncate">
+            {{ $t('overview.myContributions.title') }}
+          </div>
+          <div class="spacer"></div>
+          <v-btn
+            height="auto"
+            min-width="auto"
+            class="pa-0"
+            text
+            @click="$refs.detailsDrawer.open(user, period)">
+            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+          </v-btn>
+        </div>
+      </template>
+      <template #default>
+        <div v-if="!loading && hasZeroPoints" class="d-flex flex-column full-width full-height align-center justify-center">
+          <v-icon color="secondary" size="54">fa-chart-pie</v-icon>
+          <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.weeklyAchievements') }}</span>
+        </div>
+        <users-leaderboard-profile-stats
+          v-else-if="!loading && user && programs"
+          :user="user"
+          :programs="programs"
+          :period="period"
+          :program-id="programId"
+          central-points
+          @open="$refs.detailsDrawer.open(user, period)" />
+        <users-leaderboard-profile-achievements-drawer
+          ref="detailsDrawer" />
+        <engagement-center-rule-extensions />
+      </template>
+    </gamification-overview-widget>
+  </v-app>
 </template>
 <script>
 export default {
-  data() {
-    return {
-      seeAllDisplay: false,
-      loading: true,
-    };
-  },
+  data: () => ({
+    loading: 2,
+    programs: null,
+    user: null,
+    period: 'WEEK',
+  }),
   computed: {
-    achievementsURL() {
-      return this.seeAllDisplay && !this.loading ? `${eXo.env.portal.context}/${eXo.env.portal.myCraftSiteName}/contributions/achievements` : '';
-    }
+    hasZeroPoints() {
+      return !this.user?.score;
+    },
+  },
+  created() {
+    this.init();    
   },
   methods: {
-    updateDisplaySeeAll(value) {
-      this.seeAllDisplay = value;
+    init() {
+      this.retrieveUserStats();
+      this.retrievePrograms();
+    },
+    retrieveUserStats() {
+      return this.$leaderboardService.getLeaderboard({
+        identityId: eXo.env.portal.profileOwnerIdentityId,
+        period: this.period,
+        limit: 0,
+      })
+        .then(data => this.user = data?.[0] || null)
+        .finally(() => this.loading--);
+    },
+    retrievePrograms() {
+      return this.$leaderboardService.getPrograms()
+        .then(data => this.programs = data?.programs || [])
+        .finally(() => this.loading--);
     },
   }
 };

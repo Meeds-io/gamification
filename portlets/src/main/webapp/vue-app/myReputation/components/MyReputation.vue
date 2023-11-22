@@ -16,73 +16,56 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <gamification-overview-widget 
-    :title="$t('gamification.myReputation.title')"
+    :title="!loading && !empty && $t('gamification.myReputation.title')"
     :loading="loading">
-    <v-card flat height="94">
-      <gamification-overview-widget-row v-show="kudosDisplayed && !loading">
+    <v-card
+      :class="!kudosDisplayed && 'align-center justify-center'"
+      class="d-flex flex-grow-1 fill-height"
+      flat>
+      <gamification-overview-widget-row
+        v-show="!loading"
+        :class="!loading && 'd-flex flex-column'">
         <template #title>
-          {{ $t('gamification.myReputation.KudosTitle') }}
-        </template>
-        <template #content>
-          <extension-registry-components
-            :params="params"
-            name="my-reputation-overview-kudos"
-            type="my-reputation-item"
-            class="d-flex flex-column mx-n4" />
-        </template>
-      </gamification-overview-widget-row>
-      <gamification-overview-widget-row v-if="!kudosDisplayed && !loading" :disabled="isExternal">
-        <template #title>
-          <div class="mb-6">
-            {{ $t('gamification.myReputation.KudosTitleNoData') }}
+          <div v-if="kudosDisplayed" class="subtitle-1 d-flex">
+            <span>{{ $t('gamification.myReputation.KudosTitle') }}</span>
+            <v-spacer />
+            <v-btn
+              height="auto"
+              min-width="auto"
+              class="pa-0"
+              text
+              @click="clickOnKudosEmptyActionLink">
+              <span class="primary--text text-none">{{ $t('gamification.overview.send') }}</span>
+            </v-btn>
           </div>
         </template>
-        <template #icon>
-          <v-icon color="secondary" size="55px">fas fa-award</v-icon>
-        </template>
-        <template #content>
-          <span v-html="emptyKudosSummaryText"></span>
-        </template>
-      </gamification-overview-widget-row>
-    </v-card>
-    <gamification-overview-widget-row
-      class="my-0"
-      v-show="badgesDisplayed && !loading">
-      <template #title>
-        <div class="subtitle-2 align-self-start mt-10 mb-2 position-relative">
-          {{ $t('gamification.myReputation.badgesTitle') }}
-        </div>
-      </template>
-      <template #content>
         <extension-registry-components
           :params="params"
-          name="my-reputation-overview-badges"
+          name="my-reputation-overview-kudos"
           type="my-reputation-item"
           class="d-flex flex-column mx-n4" />
-      </template>
-    </gamification-overview-widget-row>
-    <gamification-overview-widget-row
-      v-show="!badgesDisplayed && !loading"
-      class="my-auto"
-      disabled>
-      <template #title>
-        <div class="mb-6 mt-3 position-relative">
-          {{ $t('gamification.myReputation.badgesTitle') }}
+      </gamification-overview-widget-row>
+    </v-card>
+    <v-card
+      class="d-flex flex-grow-1 fill-height full-width"
+      flat>
+      <v-card
+        class="full-height full-width"
+        flat>
+        <div class="d-flex flex-column full-height">
+          <extension-registry-components
+            :params="params"
+            name="my-reputation-overview-badges"
+            type="my-reputation-item"
+            class="d-flex flex-column" />
         </div>
-      </template>
-      <template #icon>
-        <v-icon color="secondary" size="55px">fas fa-graduation-cap</v-icon>
-      </template>
-      <template #content>
-        <span v-html="emptyBadgesSummaryText"></span>
-      </template>
-    </gamification-overview-widget-row>
+      </v-card>
+    </v-card>
   </gamification-overview-widget>
 </template>
 <script>
 export default {
   data: () => ({
-    emptyKudosActionName: 'gamification-myReputation-kudos-check-actions',
     receivedKudosCount: 0,
     kudosDisplayed: true,
     badgesDisplayed: true,
@@ -95,27 +78,27 @@ export default {
         isOverviewDisplay: true,
       };
     },
+    empty() {
+      return !this.kudosDisplayed && !this.badgesDisplayed;
+    },
     loading() {
       return this.loadingBadges || this.loadingKudos;
     },
     isExternal() {
       return eXo.env.portal.isExternal === 'true';
     },
-    emptyKudosSummaryText() {
-      return !this.isExternal && this.$t('gamification.overview.reputationKudosSummary', {
-        0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyKudosActionName}'))">`,
-        1: '</a>',
-      }) || this.$t('gamification.overview.reputationKudosSummaryForExternal');
-    },
-    emptyBadgesSummaryText() {
-      return this.$t('gamification.overview.reputationBadgesSummary');
-    },
     kudosData() {
       return (this.sentKudosSize + this.receivedKudosSize) > 0;
     }
   },
+  watch: {
+    loading() {
+      if (!this.loading) {
+        this.$root.$applicationLoaded();
+      }
+    },
+  },
   created() {
-    document.addEventListener(this.emptyKudosActionName, this.clickOnKudosEmptyActionLink);
     document.addEventListener('kudosCount', (event) => {
       if (event) {
         this.kudosDisplayed = event.detail > 0;
@@ -128,10 +111,6 @@ export default {
         this.$nextTick().then(() => this.loadingBadges = false);
       }
     });
-    this.$root.$applicationLoaded();
-  },
-  beforeDestroy() {
-    document.removeEventListener(this.emptyKudosActionName, this.clickOnKudosEmptyActionLink);
   },
   methods: {
     clickOnKudosEmptyActionLink() {

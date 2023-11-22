@@ -354,4 +354,9 @@ public interface ProgramService {
    */
   boolean canViewProgram(long programId, String username);
 
+  /**
+   * @return {@link List} user names, member of rewarding administrators
+   */
+  List<String> getAdministrators();
+
 }

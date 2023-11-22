@@ -17,11 +17,9 @@
  */
 
 import RulesOverviewWidget from './components/RulesOverviewWidget.vue';
-import RulesOverviewItem from './components/RulesOverviewItem.vue';
 
 const components = {
   'gamification-rules-overview-widget': RulesOverviewWidget,
-  'gamification-rules-overview-item': RulesOverviewItem,
 };
 
 for (const key in components) {

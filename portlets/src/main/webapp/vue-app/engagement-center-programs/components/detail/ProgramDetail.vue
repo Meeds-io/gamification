@@ -39,7 +39,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <span class="text-header-title d-none d-sm-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
       </div>
       <div class="position-relative">
-        <engagement-center-card-mask v-if="!program.enabled" class="z-index-one rounded">
+        <engagement-center-card-mask v-if="!enabled" class="z-index-one rounded">
           <engagement-center-program-disabled-mask-content
             :is-administrator="isAdministrator"
             :program="program" />
@@ -99,16 +99,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :size="25"
                 class="d-flex justify-sm-end pt-2"
                 @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
-              <template v-if="space">
-                <div class="dark-grey-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
-                  {{ $t('programs.details.label.audienceSpace') }}
-                </div>
-                <exo-space-avatar
-                  :space="space"
-                  :size="32"
-                  class="d-flex justify-sm-end pt-2"
-                  popover />
-              </template>
+              <div class="dark-grey-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
+                {{ $t('programs.details.label.audienceSpace') }}
+              </div>
+              <exo-space-avatar
+                v-if="space"
+                :space="space"
+                :size="32"
+                class="d-flex justify-sm-end pt-2"
+                popover />
+              <div v-else-if="!program.spaceId" class="d-flex justify-sm-end">
+                {{ $t('programs.details.label.programOpenToParticipate') }}
+              </div>
             </div>
             <v-chip v-else class="ms-sm-auto mt-2">
               {{ $t('programs.label.rewardAdmins') }}
@@ -123,45 +125,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-list-item-title class="dark-grey-color font-weight-bold">
               {{ $t('programs.details.label.rulesOfProgram') }}
             </v-list-item-title>
-            <div v-if="newlyCreated" class="d-flex flex-column align-center justify-center">
-              <span class="subtitle-1 pt-14">
-                {{ $t('programs.details.label.newProgramIntroduction') }}
-              </span>
-              <span class="py-10">
-                <v-btn
-                  color="primary"
-                  depressed
-                  large
-                  @click="$root.$emit('rule-form-drawer', null, program)">
-                  <v-icon class="font-weight-bold" dark>
-                    mdi-plus
-                  </v-icon>
-                  <span class="ms-2 d-none d-lg-inline title font-weight-bold">
-                    {{ $t('programs.details.rule.button.addIncentive') }}
-                  </span>
-                </v-btn>
-              </span>
-              <div class="pb-12 subtitle-1 text-wrap">
-                <div class="d-flex align-center">
-                  <v-card
-                    class="d-flex justify-center me-3"
-                    min-width="50"
-                    flat>
-                    <v-icon color="primary" size="30">fa-trophy</v-icon>
-                  </v-card>
-                  {{ $t('programs.details.label.manualActionIntroduction') }}
-                </div>
-                <div class="d-flex align-center pt-4">
-                  <v-card
-                    class="d-flex justify-center me-3"
-                    min-width="50"
-                    flat>
-                    <v-icon color="primary" size="30">fa-award</v-icon>
-                  </v-card>
-                  {{ $t('programs.details.label.automaticActionIntroduction') }}
-                </div>
-              </div>
-            </div>
+            <engagement-center-program-created-placeholder
+              v-if="newlyCreated"
+              @add="$root.$emit('rule-form-drawer', null, program)" />
             <template v-else>
               <engagement-center-program-rules-toolbar
                 :can-manage-rule="canManageRule"
@@ -225,6 +191,10 @@ export default {
   props: {
     program: {
       type: Object,
+      default: null
+    },
+    administrators: {
+      type: Array,
       default: null
     },
     tab: {
@@ -314,19 +284,28 @@ export default {
     spaceManagers() {
       return this.space?.managers;
     },
+    enabled() {
+      return this.program?.enabled;
+    },
     spaceManagersList() {
       return (this.spaceManagers || []).map(owner => ({
         userName: owner
       }));
     },
     addedOwners() {
-      return (this.program?.owners || []).filter(owner => !this.program?.space || !this.program?.space?.managers.includes(owner.remoteId))
+      return (this.program?.owners || [])
         .map(owner => ({
           userName: owner.remoteId
         }));
     },
+    administratorUsernames() {
+      return (this.administrators || this.program?.administrators || []).map(admin => ({
+        userName: admin
+      }));
+    },
     owners() {
-      return this.addedOwners.concat(this.spaceManagersList);
+      return [...this.addedOwners, ...this.spaceManagersList, ...this.administratorUsernames]
+        .filter((v, i, array) => array.findIndex(v2 => v?.userName === v2?.userName) === i);
     },
     ownersCount() {
       return this.owners?.length;
@@ -408,7 +387,7 @@ export default {
   methods: {
     programUpdated(program) {
       if (program.id === this.program.id) {
-        this.program = program;
+        this.$emit('updated', program);
       }
     },
     updateFilter(status, dateFilter) {
@@ -417,6 +396,9 @@ export default {
       this.retrieveProgramRules();
     },
     retrieveProgramRules() {
+      if (this.loadingRules) {
+        return;
+      }
       const page = this.options?.page || 0;
       const itemsPerPage = this.options?.itemsPerPage || 10;
       const offset = (page - 1) * itemsPerPage;
@@ -425,6 +407,8 @@ export default {
         term: this.keyword,
         programId: this.programId,
         status: this.status,
+        sortBy: 'title',
+        sortDescending: false,
         programStatus: 'ALL',
         dateFilter: this.dateFilter,
         offset,

@@ -30,6 +30,8 @@ public class ProgramList {
 
   private List<ProgramRestEntity> programs;
 
+  private List<String>            administrators;
+
   private int                     offset;
 
   private int                     limit;

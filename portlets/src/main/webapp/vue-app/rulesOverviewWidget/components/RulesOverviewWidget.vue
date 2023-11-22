@@ -25,50 +25,55 @@
     <template #title>
       <slot name="title"></slot>
     </template>
-    <template v-if="lockedRulesCount">
-      <div class="d-flex align-center">
-        <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
-        <v-divider />
-      </div>
-      <gamification-rules-overview-item
-        v-for="rule in lockedRulesToDisplay"
-        :key="rule.id"
-        :rule="rule"
-        :go-back-button="goBackButton" />
+    <template #action>
+      <slot name="action"></slot>
     </template>
-    <template v-if="endingRulesCount">
-      <div class="d-flex align-center">
-        <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.endingActionsTitle') }}</span>
-        <v-divider />
-      </div>
-      <gamification-rules-overview-item
-        v-for="rule in endingRulesToDisplay"
-        :key="rule.id"
-        :rule="rule"
-        :go-back-button="goBackButton" />
-    </template>
-    <template v-if="validRulesCount">
-      <div v-if="sectionsCount > 1" class="d-flex align-center pt-5">
-        <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.availableActionsTitle') }}</span>
-        <v-divider />
-      </div>
-      <gamification-rules-overview-item
-        v-for="rule in validRulesToDisplay"
-        :key="rule.id"
-        :rule="rule"
-        :go-back-button="goBackButton" />
-    </template>
-    <template v-if="upcomingRulesCount">
-      <div class="d-flex align-center pt-5">
-        <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
-        <v-divider />
-      </div>
-      <gamification-rules-overview-item
-        v-for="rule in upcomingRulesToDisplay"
-        :key="rule.id"
-        :rule="rule"
-        :go-back-button="goBackButton" />
-    </template>
+    <div v-if="!loading || hasValidRules" :class="$slots.title && 'mt-n5'">
+      <template v-if="lockedRulesCount">
+        <div class="d-flex align-center">
+          <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
+          <v-divider />
+        </div>
+        <gamification-rules-overview-item
+          v-for="rule in lockedRulesToDisplay"
+          :key="rule.id"
+          :rule="rule"
+          :go-back-button="goBackButton" />
+      </template>
+      <template v-if="endingRulesCount">
+        <div class="d-flex align-center pt-5">
+          <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.endingActionsTitle') }}</span>
+          <v-divider />
+        </div>
+        <gamification-rules-overview-item
+          v-for="rule in endingRulesToDisplay"
+          :key="rule.id"
+          :rule="rule"
+          :go-back-button="goBackButton" />
+      </template>
+      <template v-if="validRulesCount">
+        <div v-if="sectionsCount > 1" class="d-flex align-center pt-5">
+          <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.availableActionsTitle') }}</span>
+          <v-divider />
+        </div>
+        <gamification-rules-overview-item
+          v-for="rule in validRulesToDisplay"
+          :key="rule.id"
+          :rule="rule"
+          :go-back-button="goBackButton" />
+      </template>
+      <template v-if="upcomingRulesCount">
+        <div class="d-flex align-center pt-5">
+          <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
+          <v-divider />
+        </div>
+        <gamification-rules-overview-item
+          v-for="rule in upcomingRulesToDisplay"
+          :key="rule.id"
+          :rule="rule"
+          :go-back-button="goBackButton" />
+      </template>
+    </div>
   </gamification-overview-widget>
   <gamification-overview-widget
     v-else-if="hasRules && !isHiddenWhenEmpty"
@@ -83,31 +88,29 @@
       </v-btn>
     </template>
     <gamification-overview-widget-row v-show="!loading" class="my-auto">
-      <template #content>
-        <div class="d-flex mx-auto align-center justify-center overflow-hidden">
-          <v-card
-            class="d-flex flex-column flex-grow-0 me-2 ms-n11 flex-shrink-0 border-box-sizing"
-            min-width="45"
-            max-width="45"
-            min-height="45"
-            max-height="45"
-            color="transparent"
-            flat>
-            <v-avatar
-              size="45"
-              class="rule-program-cover border-color primary--text no-border"
-              rounded>
-              <v-img :src="completedRulesImageUrl" eager />
-            </v-avatar>
-          </v-card>
-          <div class="flex-shrink-1 text-start text-truncate text-sub-title body-1">
-            {{ $t('gamification.overview.rulesOverviewCompletedTitle') }}
-          </div>
+      <div class="d-flex mx-auto align-center justify-center overflow-hidden">
+        <v-card
+          class="d-flex flex-column flex-grow-0 me-2 ms-n11 flex-shrink-0 border-box-sizing"
+          min-width="45"
+          max-width="45"
+          min-height="45"
+          max-height="45"
+          color="transparent"
+          flat>
+          <v-avatar
+            size="45"
+            class="rule-program-cover border-color primary--text no-border"
+            rounded>
+            <v-img :src="completedRulesImageUrl" eager />
+          </v-avatar>
+        </v-card>
+        <div class="flex-shrink-1 text-start text-truncate text-sub-title body-1">
+          {{ $t('gamification.overview.rulesOverviewCompletedTitle') }}
         </div>
-        <div class="d-flex mx-auto align-center justify-center text-sub-title body-2 my-4">
-          {{ $t('gamification.overview.rulesOverviewCompletedSubtitle') }}
-        </div>
-      </template>
+      </div>
+      <div class="d-flex mx-auto align-center justify-center text-sub-title body-2 my-4">
+        {{ $t('gamification.overview.rulesOverviewCompletedSubtitle') }}
+      </div>
     </gamification-overview-widget-row>
   </gamification-overview-widget>
 </template>
@@ -140,11 +143,11 @@ export default {
     },
     seeAllUrl: {
       type: String,
-      default: () => '',
+      default: null,
     },
     title: {
       type: String,
-      default: () => '',
+      default: null,
     },
   },
   data: () => ({
@@ -203,7 +206,7 @@ export default {
       const lockedRulesToDisplay = this.lockedRules.slice(0, 2);
       const endingRulesToDisplay = this.endingRules.slice(0, 2);
       const validRules = this.rules
-        .filter(r => r?.userInfo?.context?.valid
+        .filter(r => (r?.userInfo?.context?.valid || this.isRuleValidButLocked(r))
             && !lockedRulesToDisplay.find(lr => lr.id === r.id)
             && !endingRulesToDisplay.find(er => er.id === r.id));
       validRules.sort((r1, r2) => r2.score - r1.score);
@@ -238,16 +241,18 @@ export default {
         + (this.upcomingRulesCount && 1 || 0);
     },
     lockedRulesToDisplay() {
-      return this.lockedRules.slice(0, (this.sectionsCount === 1) && 4 || 2);
+      return this.lockedRules.slice(0, (this.sectionsCount === 1) && this.pageSize || 2);
     },
     endingRulesToDisplay() {
-      return this.endingRules.slice(0, (this.sectionsCount === 1) && 4 || 2);
-    },
-    validRulesToDisplay() {
-      return this.validRules.slice(0, (this.sectionsCount < 4) && 4 || 2);
+      return this.endingRules.slice(0, (this.sectionsCount === 1) && this.pageSize || 2);
     },
     upcomingRulesToDisplay() {
-      return this.upcomingRules.slice(0, (this.sectionsCount === 1) && 4 || 2);
+      return this.upcomingRules.slice(0, (this.sectionsCount === 1) && this.pageSize || 2);
+    },
+    validRulesToDisplay() {
+      const sizeToDisplay = this.pageSize <= 4 ? ((this.sectionsCount < 6) && this.pageSize || 2)
+        : (this.pageSize - (this.upcomingRulesToDisplay?.length && 2 || 0) - (this.endingRulesToDisplay?.length && 2 || 0) - (this.lockedRulesToDisplay?.length && 2 || 0));
+      return this.validRules.slice(0, sizeToDisplay);
     },
     hasValidRules() {
       return this.sectionsCount > 0;
@@ -325,6 +330,8 @@ export default {
           && Object.keys(rule.userInfo.context)
             .every(prop => !prop.includes('valid')
                 || prop === 'valid'
+                || !prop.includes('validForIdentity')
+                || prop === 'validForIdentity'
                 || prop === 'validPrerequisites'
                 || rule.userInfo.context[prop]);
     },
@@ -335,6 +342,8 @@ export default {
           && Object.keys(rule.userInfo.context)
             .every(prop => !prop.includes('valid')
                 || prop === 'valid'
+                || !prop.includes('validForIdentity')
+                || prop === 'validForIdentity'
                 || prop === 'validPrerequisites'
                 || prop === 'validDates'
                 || rule.userInfo.context[prop]);

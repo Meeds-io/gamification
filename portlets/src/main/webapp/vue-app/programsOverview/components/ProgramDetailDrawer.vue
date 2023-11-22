@@ -61,14 +61,14 @@
             role="presentation"
             alt="">
         </v-avatar>
-        <div class="subtitle-1 dark-grey-color font-weight-bold mt-6">
+        <div class="subtitle-1 dark-grey-color font-weight-bold mt-5">
           {{ $t('programs.details.label.description') }}
         </div>
         <div
           class="text-color text-wrap text-start text-break rich-editor-content mt-2"
           v-sanitized-html="program.description">
         </div>
-        <div v-if="!$root.isAnonymous" class="d-flex flex-column mt-6">
+        <div v-if="!$root.isAnonymous" class="d-flex flex-column mt-5">
           <div class="d-flex flex-row">
             <div class="subtitle-1 dark-grey-color font-weight-bold flex-start text-start flex-grow-1 flex-shrink-1 text-truncate">
               {{ $t('programs.details.label.audienceSpace') }}
@@ -85,6 +85,9 @@
                 :size="32"
                 class="text-truncate mt-2"
                 popover />
+              <div v-else-if="!program.spaceId">
+                {{ $t('programs.details.label.programOpenToParticipate') }}
+              </div>
             </div>
             <div class="flex-end text-end flex-grow-0 flex-shrink-0">
               <div v-if="owners.length">
@@ -104,37 +107,61 @@
         </div>
       </v-card>
       <gamification-rules-overview-widget
-        v-if="rules"
         :rules="rules"
         :page-size="rulesLimit"
-        :loading="loading"
-        :see-all-url="programLink"
+        :loading="loading > 0"
         hide-empty-placeholder
         go-back-button
-        class="mt-n4 mb-4 mx-1">
+        class="mb-4 mx-1">
         <template #title>
           <div class="subtitle-1 dark-grey-color font-weight-bold text-truncate">
             {{ $t('programs.label.programActions') }}
           </div>
         </template>
+        <template v-if="hasMore" #action>
+          <v-btn
+            height="auto"
+            min-width="auto"
+            class="pa-0"
+            text
+            @click="$refs.listDrawer.open()">
+            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+          </v-btn>
+        </template>
       </gamification-rules-overview-widget>
+      <gamification-rules-overview-list-drawer
+        v-if="rules.length"
+        ref="listDrawer"
+        :program-id="programId" />
     </template>
   </exo-drawer>
 </template>
 
 <script>
 export default {
+  props: {
+    administrators: {
+      type: Array,
+      default: null
+    },
+  },
   data: () => ({
     drawer: false,
     program: null,
-    loading: false,
+    loading: 0,
     goBackButton: false,
-    rules: null,
-    rulesLimit: 4,
+    rulesLimit: 10,
+    upcomingRules: [],
+    activeRules: [],
+    endingRules: [],
+    rulesSize: 0,
   }),
   computed: {
     programLink() {
       return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.program.id}`;
+    },
+    programId() {
+      return this.program?.id;
     },
     space() {
       return this.program?.space;
@@ -148,16 +175,29 @@ export default {
       }));
     },
     addedOwners() {
-      return (this.program?.owners || []).filter(owner => !this.program?.space || !this.program?.space?.managers.includes(owner.remoteId))
+      return (this.program?.owners || [])
         .map(owner => ({
           userName: owner.remoteId
         }));
     },
+    administratorUsernames() {
+      return (this.administrators || this.program?.administrators || []).map(admin => ({
+        userName: admin
+      }));
+    },
     owners() {
-      return this.addedOwners.concat(this.spaceManagersList);
+      return [...this.addedOwners, ...this.spaceManagersList, ...this.administratorUsernames]
+        .filter((v, i, array) => array.findIndex(v2 => v?.userName === v2?.userName) === i);
     },
     ownersCount() {
       return this.owners?.length;
+    },
+    rules() {
+      return [...this.upcomingRules, ...this.endingRules, ...this.activeRules]
+        .filter((v, i, array) => array.findIndex(v2 => v?.id === v2?.id) === i);
+    },
+    hasMore() {
+      return this.rulesSize > this.rules.length;
     },
   },
   watch: {
@@ -179,7 +219,7 @@ export default {
     open(program, goBackButton) {
       this.program = program;
       this.goBackButton = goBackButton || false;
-      this.rules = null;
+      this.rules = [];
       this.$refs.drawer.open();
       this.$nextTick()
         .then(() => {
@@ -195,22 +235,61 @@ export default {
       if (!this.drawer) {
         return;
       }
-      this.loading = true;
+      this.loading = 3;
+      this.retrieveEndingRules().finally(() => this.loading--);
+      this.retrieveActiveRules().finally(() => this.loading--);
+      this.retrieveUpcomingRules().finally(() => this.loading--);
+    },
+    retrieveEndingRules() {
       return this.$ruleService.getRules({
         status: 'ENABLED',
+        programId: this.programId,
         programStatus: 'ENABLED',
-        dateFilter: 'ACTIVE',
-        programId: this.program.id,
+        dateFilter: 'STARTED_WITH_END',
         offset: 0,
-        limit: 100,
+        limit: 2,
+        sortBy: 'endDate',
+        sortDescending: false,
         expand: 'countRealizations',
         lang: eXo.env.portal.language,
-      })
-        .then(data => this.rules = data?.rules || [])
-        .finally(() => this.loading = false);
+        returnSize: false,
+      }).then(result => this.endingRules = result?.rules || []);
+    },
+    retrieveActiveRules() {
+      return this.$ruleService.getRules({
+        status: 'ENABLED',
+        programId: this.programId,
+        programStatus: 'ENABLED',
+        dateFilter: 'STARTED',
+        offset: 0,
+        limit: this.rulesLimit,
+        sortBy: 'createdDate',
+        sortDescending: true,
+        expand: 'countRealizations,expandPrerequisites',
+        lang: eXo.env.portal.language,
+        returnSize: true,
+      }).then(result => {
+        this.activeRules = result?.rules || [];
+        this.rulesSize = result?.size || 0;
+      });
+    },
+    retrieveUpcomingRules() {
+      return this.$ruleService.getRules({
+        status: 'ENABLED',
+        programId: this.programId,
+        programStatus: 'ENABLED',
+        dateFilter: 'UPCOMING',
+        offset: 0,
+        limit: 2,
+        sortBy: 'startDate',
+        sortDescending: false,
+        expand: 'countRealizations',
+        lang: eXo.env.portal.language,
+        returnSize: false,
+      }).then(result => this.upcomingRules = result?.rules || []);
     },
     collectProgramVisit() {
-      if (this.program?.id) {
+      if (this.programId) {
         document.dispatchEvent(new CustomEvent('exo-statistic-message', {
           detail: {
             module: 'gamification',

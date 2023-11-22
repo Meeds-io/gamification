@@ -69,7 +69,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </init-param>
     <init-param>
       <name>preload.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/realizations/points?userId={username}&period=WEEK,/portal/rest/gamification/leaderboard/stats/{userId}?period=WEEK]]></value>
+      <value><![CDATA[/portal/rest/gamification/leaderboard?identityId={userId}&period=WEEK&limit=0]]></value>
     </init-param>
     <expiration-cache>-1</expiration-cache>
     <cache-scope>PUBLIC</cache-scope>
@@ -125,8 +125,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <value>PORTLET/gamification-portlets/UsersLeaderboard</value>
     </init-param>
     <init-param>
-      <name>prefetch.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/programs?type=ALL|/portal/rest/gamification/leaderboard?period=WEEK&limit=6]]></value>
+      <name>preload.resource.rest</name>
+      <value><![CDATA[/portal/rest/gamification/programs?type=ALL|/portal/rest/gamification/leaderboard?identityId={userId}&period=WEEK&limit=6]]></value>
     </init-param>
     <supports>
       <mime-type>text/html</mime-type>
@@ -144,7 +144,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <value>/WEB-INF/jsp/badgesOverview/index.jsp</value>
     </init-param>
     <init-param>
-      <name>prefetch.resource.rest</name>
+      <name>preload.resource.rest</name>
       <value><![CDATA[/portal/rest/gamification/reputation/badges/{userId}]]></value>
     </init-param>
     <supports>
@@ -261,8 +261,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <value>/WEB-INF/jsp/topChallengers.jsp</value>
     </init-param>
     <init-param>
-      <name>prefetch.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/leaderboard?period=WEEK&limit=6]]></value>
+      <name>preload.resource.rest</name>
+      <value><![CDATA[/portal/rest/gamification/leaderboard?identityId={userId}&period=WEEK&limit=6]]></value>
     </init-param>
     <supports>
       <mime-type>text/html</mime-type>

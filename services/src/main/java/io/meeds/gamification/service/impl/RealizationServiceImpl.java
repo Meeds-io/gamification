@@ -351,7 +351,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
     org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId);
     boolean anonymous = identity == null || identity.isDeleted() || !identity.isEnable();
-    if (anonymous || (identity.isUser() && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId()))) {
+    if (anonymous
+        || (identity.isUser() && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId()))
+        || (identity.isSpace() && !rule.isOpen() && rule.getSpaceId() != getSpaceId(identity.getRemoteId()))) {
       realizationRestriction.setValidIdentity(false);
     }
     if (!isValidProgram(rule.getProgram())) {
@@ -400,12 +402,16 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   @Override
   public List<StandardLeaderboard> getLeaderboard(LeaderboardFilter filter, String currentUser) throws IllegalAccessException { // NOSONAR
-    int limit = filter.getLoadCapacity();
+    int limit = filter.getLimit();
     IdentityType identityType = filter.getIdentityType();
     if (identityType.isSpace()) {
-      // Try to get more elements when searching, to be able to retrieve at
-      // least 'limit' elements after filtering on authorized spaces
-      limit = limit * 3;
+      if (StringUtils.isBlank(currentUser)) {
+        throw new IllegalAccessException("Anonymous user can't access spaces board");
+      } else {
+        // Try to get more elements when searching, to be able to retrieve at
+        // least 'limit' elements after filtering on authorized spaces
+        limit = limit * 3;
+      }
     }
 
     String period = filter.getPeriod();
@@ -416,26 +422,22 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (programId <= 0) {
       // Compute date
       if (period.equals(Period.ALL.name())) {
-        leaderboardItems = realizationStorage.getLeaderboard(identityType, limit);
+        leaderboardItems = realizationStorage.getLeaderboard(identityType, filter.getOffset(), limit);
       } else {
-        leaderboardItems = realizationStorage.getLeaderboardByDate(fromDate, identityType, limit);
+        leaderboardItems = realizationStorage.getLeaderboardByDate(fromDate, identityType, filter.getOffset(), limit);
       }
     } else {
       // Check the period
       if (period.equals(Period.ALL.name())) {
-        leaderboardItems = realizationStorage.getLeaderboardByProgramId(programId, identityType, limit);
+        leaderboardItems = realizationStorage.getLeaderboardByProgramId(programId, identityType, filter.getOffset(), limit);
       } else {
-        leaderboardItems = realizationStorage.getLeaderboardByDateByProgramId(fromDate, identityType, programId, limit);
+        leaderboardItems = realizationStorage.getLeaderboardByDateByProgramId(fromDate, identityType, programId, filter.getOffset(), limit);
       }
     }
 
     // Filter on spaces switch user identity
     if (identityType.isSpace() && leaderboardItems != null && !leaderboardItems.isEmpty()) {
-      if (StringUtils.isBlank(currentUser)) {
-        throw new IllegalAccessException("Anonymous user can't access spaces board");
-      } else {
-        leaderboardItems = filterAuthorizedSpaces(leaderboardItems, currentUser, filter.getLoadCapacity());
-      }
+      leaderboardItems = filterAuthorizedSpaces(leaderboardItems, currentUser, filter.getLimit());
     }
 
     return leaderboardItems;
@@ -454,11 +456,6 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   @Override
   public Map<Long, Long> getScoresByIdentityIdsAndBetweenDates(List<String> earnersId, Date fromDate, Date toDate) {
     return realizationStorage.getScoresByIdentityIdsAndBetweenDates(earnersId, fromDate, toDate);
-  }
-
-  @Override
-  public List<RealizationDTO> findRealizationsByIdentityId(String earnerIdentityId, int limit) {
-    return realizationStorage.findRealizationsByIdentityIdSortedByDate(earnerIdentityId, limit);
   }
 
   @Override
@@ -789,6 +786,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                .toInstant());
     }
     return fromDate;
+  }
+
+  private long getSpaceId(String spacePrettyName) {
+    Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
+    return space == null ? 0 : Long.parseLong(space.getId());
   }
 
 }

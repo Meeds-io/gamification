@@ -15,31 +15,30 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-list-item>
+  <v-list-item @click="$emit('open')">
     <v-list-item-content class="d-inline">
-      <exo-user-avatar
-        :profile-id="realization.user"
+      <user-avatar
+        :name="earnerFullName"
+        :avatar-url="earnerAvatarUrl"
         :size="44"
         bold-title
-        link-style
-        popover>
+        link-style>
         <template slot="subTitle">
-          <a :href="activityUrl">
-            <relative-date-format
-              class="text-capitalize-first-letter text-light-color text-truncate"
-              :value="realization.createDate" />
-          </a>
+          <relative-date-format
+            :value="realization.createdDate"
+            class="text-none text-light-color text-truncate" />
         </template>
-      </exo-user-avatar>
+      </user-avatar>
     </v-list-item-content>
-    <v-list-item-action>
+    <v-list-item-action v-if="!$root.isAnonymous">
       <v-tooltip :disabled="$root.isMobile" bottom>
         <template #activator="{ on }">
           <div v-on="on">
             <v-btn
-              :href="activityUrl"
-              :disabled="!realization.activityId"
-              icon>
+              :href="realizationLink"
+              :disabled="!canAccess || !realizationLink"
+              icon
+              @click.stop="0">
               <v-icon
                 size="16"
                 class="icon-default-color">
@@ -48,7 +47,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-btn>
           </div>
         </template>
-        <span>{{ realization.activityId && $t('program.winner.label.checkActivity') || noActivityLabel }}</span>
+        <span>{{ tooltip }}</span>
       </v-tooltip>
     </v-list-item-action>
   </v-list-item>
@@ -65,20 +64,86 @@ export default {
       default: null,
     },
   },
-  data() {
-    return {
-      basePath: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}`,
-    };
-  },
+  data: () => ({
+    realizationLink: null,
+    basePath: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}`,
+  }),
   computed: {
-    noActivityLabel() {
-      return this.$t(`program.winner.label.${this.automaticRule ? 'noActivity' : 'activityDeleted'}`);
+    earnerFullName() {
+      return this.realization?.earner?.fullName;
     },
-    automaticRule() {
-      return this.rule?.type === 'AUTOMATIC';
+    earnerAvatarUrl() {
+      return this.realization?.earner?.avatarUrl;
     },
-    activityUrl() {
-      return this.realization.activityId && `${this.basePath}/activity?id=${this.realization.activityId}`;
+    earnerRemoteId() {
+      return this.realization?.earner?.remoteId;
+    },
+    tooltip() {
+      if (this.realizationLink && this.canAccess) {
+        return this.$t('program.winner.label.checkActivity');
+      } else if (!this.canAccess) {
+        return this.$t('gamification.hiddenActionTooltip');
+      } else {
+        return this.$t('program.winner.label.activityNotAccessible');
+      }
+    },
+    canAccess() {
+      return this.realization?.program?.userInfo?.canView;
+    },
+    isManualType() {
+      return this.rule?.type === 'MANUAL';
+    },
+    score() {
+      return this.realization?.score || '-';
+    },
+    objectId() {
+      return this.realization?.objectId;
+    },
+    objectType() {
+      return this.realization?.objectType;
+    },
+    actionEventName() {
+      return this.realization?.action?.event;
+    },
+    actionValueExtension() {
+      return this.actionEventName
+        && Object.values(this.$root.actionValueExtensions)
+          .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
+          .find(extension => extension?.match?.(this.actionEventName))
+        || null;
+    },
+    linkExtensionMethod() {
+      return this.actionValueExtension?.getLink;
+    },
+    realizationLinkTarget() {
+      if (!this.realizationLink) {
+        return null;
+      } else if (this.realizationLink.indexOf('/') === 0 || this.realizationLink.indexOf(window.location.origin) === 0) {
+        return '_self';
+      } else {
+        return '_blank';
+      }
+    },
+  },
+  created() {
+    Promise.resolve(this.retrieveRealizationLink())
+      .finally(() => {
+        if (!this.realizationLink) {
+          this.realizationLink = this.realization?.link || this.realization?.url;
+        }
+      });
+  },
+  methods: {
+    retrieveRealizationLink() {
+      if (this.isManualType) {
+        this.realizationLink = this.realization.activityId && `${this.basePath}/activity?id=${this.realization.activityId}`;
+      } else if (this.linkExtensionMethod) {
+        return this.linkExtensionMethod(this.realization);
+      } else if (this.realization?.objectId?.startsWith?.('http')) {
+        this.realizationLink = this.realization.objectId;
+      } else {
+        this.realizationLink = this.realization?.link || this.realization?.url;
+      }
     },
   },
 };

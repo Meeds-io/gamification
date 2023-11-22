@@ -60,6 +60,11 @@ export function init(isAdministrator, isProgramManager) {
         document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
         window.setInterval(() => this.now = Date.now(), 1000);
       },
+      beforeDestroy() {
+        if (this.interval) {
+          window.clearInterval(this.interval);
+        }
+      },
       template: `<engagement-center-rules id="${appId}" :is-administrator="${isAdministrator}" :is-program-manager="${isProgramManager}" />`,
       vuetify,
       i18n

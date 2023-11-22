@@ -29,8 +29,8 @@
     dense>
     <div class="me-3">
       <v-avatar
-        :color="currentUser && 'tertiary' || ''"
-        :class="!currentUser && 'border-color'"
+        :color="selected && 'tertiary' || ''"
+        :class="!selected && 'border-color'"
         class="my-auto"
         size="32">
         {{ user.rank }}
@@ -73,6 +73,10 @@ export default {
       type: Object,
       default: () => null,
     },
+    selectedIdentityId: {
+      type: String,
+      default: () => eXo.env.portal.profileOwnerIdentityId,
+    },
     noAction: {
       type: Boolean,
       default: false,
@@ -84,7 +88,7 @@ export default {
   }),
   computed: {
     id() {
-      return this.user && `users-leaderboard-${this.user.identityId}` || '';
+      return this.user && `users-leaderboard-${this.user.identityId || this.user.id}` || '';
     },
     userAvatar() {
       return this.user?.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${this.user.username}/avatar`;
@@ -95,8 +99,11 @@ export default {
     username() {
       return this.user?.remoteId;
     },
-    currentUser() {
-      return this.username === eXo.env.portal.userName;
+    identityId() {
+      return this.user?.identityId || this.user?.id;
+    },
+    selected() {
+      return this.identityId === Number(this.selectedIdentityId);
     },
   },
 };

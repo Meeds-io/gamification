@@ -990,10 +990,10 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     leaderboardFilter.setIdentityType(IdentityType.SPACE);
     leaderboardFilter.setProgramId(program.getId());
     leaderboardFilter.setPeriod("WEEK");
-    assertEquals(2, realizationService.getLeaderboard(leaderboardFilter, ADMIN_USER).size());
+    assertEquals(1, realizationService.getLeaderboard(leaderboardFilter, ADMIN_USER).size());
 
-    assertEquals(1, realizationService.getLeaderboardRank(TEST_SPACE2_ID, date, program.getId()));
-    assertEquals(2, realizationService.getLeaderboardRank(TEST_SPACE_ID, date, program.getId()));
+    assertEquals(0, realizationService.getLeaderboardRank(TEST_SPACE2_ID, date, program.getId()));
+    assertEquals(1, realizationService.getLeaderboardRank(TEST_SPACE_ID, date, program.getId()));
   }
 
   public void testFindUserReputationBySocialId() {
@@ -1029,7 +1029,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     LeaderboardFilter filter = new LeaderboardFilter();
     filter.setPeriod(Period.ALL.name());
     filter.setIdentityType(IdentityType.USER);
-    filter.setLoadCapacity(LIMIT);
+    filter.setLimit(LIMIT);
     filter.setProgramId(ruleDTO.getProgram().getId());
     List<StandardLeaderboard> filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(0, filteredLeaderboard.size());
@@ -1061,7 +1061,8 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
 
     filter.setIdentityType(IdentityType.SPACE);
-    filteredLeaderboard = realizationService.getLeaderboard(filter, null);
+    assertThrows(IllegalAccessException.class, () -> realizationService.getLeaderboard(filter, null));
+    filteredLeaderboard = realizationService.getLeaderboard(filter, TEST_USER_EARNER);
     assertEquals(0, filteredLeaderboard.size());
   }
 
@@ -1079,13 +1080,15 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
 
-    List<RealizationDTO> realizations = realizationService.findRealizationsByIdentityId(adminIdentityId, 1);
+    RealizationFilter identityFilter = new RealizationFilter();
+    identityFilter.setEarnerIds(Collections.singletonList(adminIdentityId));
+    List<RealizationDTO> realizations = realizationService.getRealizationsByFilter(identityFilter, 0, 1);
     assertNotNull(realizations);
     assertEquals(1, realizations.size());
     RealizationDTO lastRealization = realizations.get(0);
     assertEquals(RealizationStatus.ACCEPTED.name(), lastRealization.getStatus());
 
-    realizations = realizationService.findRealizationsByIdentityId(adminIdentityId, 1);
+    realizations = realizationService.getRealizationsByFilter(identityFilter, 0, 1);
     assertNotNull(realizations);
     assertEquals(1, realizations.size());
     lastRealization = realizations.get(0);
@@ -1093,11 +1096,14 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
 
     realizationService.deleteRealizations(ACTIVITY_ID, ACTIVITY_OBJECT_TYPE);
 
-    realizations = realizationService.findRealizationsByIdentityId(adminIdentityId, 1);
+    realizations = realizationService.getRealizationsByFilter(identityFilter, 0, 1);
     assertNotNull(realizations);
-    assertEquals(0, realizations.size());
+    assertEquals(1, realizations.size());
+    lastRealization = realizations.get(0);
+    assertEquals(RealizationStatus.DELETED.name(), lastRealization.getStatus());
 
-    realizations = realizationService.findRealizationsByIdentityId(adminIdentityId, 1);
+    identityFilter.setStatus(RealizationStatus.ACCEPTED);
+    realizations = realizationService.getRealizationsByFilter(identityFilter, 0, 1);
     assertNotNull(realizations);
     assertEquals(0, realizations.size());
   }
