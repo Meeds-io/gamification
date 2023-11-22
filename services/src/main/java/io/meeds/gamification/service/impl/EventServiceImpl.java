@@ -81,4 +81,15 @@ public class EventServiceImpl implements EventService {
   public EventDTO getEvent(long eventId) {
     return eventStorage.getEventById(eventId);
   }
+
+  @Override
+  public EventDTO deleteEventById(long eventId) throws ObjectNotFoundException {
+    EventDTO eventDTO;
+    try {
+      eventDTO = eventStorage.deleteEventById(eventId);
+    } catch (ObjectNotFoundException e) {
+      throw new ObjectNotFoundException("Event with id " + eventId + " is not found");
+    }
+    return eventDTO;
+  }
 }
