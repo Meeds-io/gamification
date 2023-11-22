@@ -77,6 +77,10 @@ public class EventStorage {
     return EventMapper.fromEntity(eventDAO.getEventByTypeAndTitle(type, title));
   }
 
+  public List<EventDTO> getEventsByTitle(String title, int offset, int limit) {
+    return EventMapper.fromEntities(eventDAO.getEventsByTitle(title, offset, limit));
+  }
+
   /**
    * save Event
    *
@@ -117,4 +121,5 @@ public class EventStorage {
     eventDAO.delete(eventEntity);
     return EventMapper.fromEntity(eventEntity);
   }
+
 }

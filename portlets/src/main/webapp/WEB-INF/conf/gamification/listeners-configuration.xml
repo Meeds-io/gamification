@@ -131,6 +131,36 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <set-method>addListener</set-method>
       <type>io.meeds.gamification.analytics.AnalyticsAnnouncementListener</type>
     </component-plugin>
+    <component-plugin profiles="analytics">
+      <name>realization.created</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.analytics.AnalyticsRealizationListener</type>
+    </component-plugin>
+    <component-plugin profiles="analytics">
+      <name>realization.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.analytics.AnalyticsRealizationListener</type>
+    </component-plugin>
+    <component-plugin profiles="analytics">
+      <name>realization.canceled</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.analytics.AnalyticsRealizationListener</type>
+    </component-plugin>
+    <component-plugin profiles="analytics">
+      <name>announcement.created</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.analytics.AnalyticsRealizationListener</type>
+    </component-plugin>
+    <component-plugin profiles="analytics">
+      <name>announcement.canceled</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.analytics.AnalyticsRealizationListener</type>
+    </component-plugin>
+    <component-plugin profiles="analytics">
+      <name>announcement.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.analytics.AnalyticsRealizationListener</type>
+    </component-plugin>
     <component-plugin>
       <name>exo.gamification.generic.action</name>
       <set-method>addListener</set-method>
