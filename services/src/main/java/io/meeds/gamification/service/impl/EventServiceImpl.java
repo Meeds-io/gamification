@@ -40,6 +40,11 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  public List<EventDTO> getEventsByTitle(String title, int offset, int limit) {
+    return eventStorage.getEventsByTitle(title, offset, limit);
+  }
+
+  @Override
   public int countEvents(EventFilter eventFilter) {
     return eventStorage.countEventsByFilter(eventFilter);
   }
