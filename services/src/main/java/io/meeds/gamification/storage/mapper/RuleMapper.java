@@ -23,6 +23,7 @@ import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.storage.EventStorage;
 import io.meeds.gamification.storage.ProgramStorage;
 import io.meeds.gamification.utils.Utils;
 
@@ -44,7 +45,6 @@ public class RuleMapper {
     ruleEntity.setDescription(rule.getDescription());
     ruleEntity.setEnabled(rule.isEnabled());
     ruleEntity.setDeleted(rule.isDeleted());
-    ruleEntity.setEvent(rule.getEvent());
     ruleEntity.setCreatedBy(rule.getCreatedBy());
     ruleEntity.setPrerequisiteRules(rule.getPrerequisiteRuleIds());
     if (rule.getStartDate() != null) {
@@ -66,12 +66,12 @@ public class RuleMapper {
     }
     ruleEntity.setLastModifiedBy(rule.getLastModifiedBy());
     ruleEntity.setDomainEntity(ProgramMapper.toEntity(rule.getProgram()));
+    ruleEntity.setEventEntity(EventMapper.toEntity(rule.getEvent()));
     ruleEntity.setRecurrence(rule.getRecurrence() == null ? RecurrenceType.NONE : rule.getRecurrence());
     return ruleEntity;
   }
 
-  public static RuleDTO fromEntity(ProgramStorage programStorage,
-                                   RuleEntity ruleEntity) {
+  public static RuleDTO fromEntity(ProgramStorage programStorage, EventStorage eventStorage, RuleEntity ruleEntity) {
     if (ruleEntity == null) {
       return null;
     } else {
@@ -83,7 +83,6 @@ public class RuleMapper {
       rule.setActivityId(ruleEntity.getActivityId());
       rule.setEnabled(ruleEntity.isEnabled());
       rule.setDeleted(ruleEntity.isDeleted());
-      rule.setEvent(ruleEntity.getEvent());
       rule.setCreatedBy(ruleEntity.getCreatedBy());
       rule.setPrerequisiteRuleIds(ruleEntity.getPrerequisiteRules());
       if (ruleEntity.getStartDate() != null) {
@@ -102,6 +101,7 @@ public class RuleMapper {
       rule.setLastModifiedBy(ruleEntity.getLastModifiedBy());
       rule.setProgram(ruleEntity.getDomainEntity() == null ? null
                                                            : programStorage.getProgramById(ruleEntity.getDomainEntity().getId()));
+      rule.setEvent(ruleEntity.getEventEntity() == null ? null : eventStorage.getEventById(ruleEntity.getEventEntity().getId()));
       rule.setRecurrence(ruleEntity.getRecurrence());
       if (ruleEntity.getRecurrence() == RecurrenceType.NONE) {
         rule.setRecurrence(null);
@@ -110,12 +110,8 @@ public class RuleMapper {
     }
   }
 
-  public static List<RuleDTO> fromEntities(ProgramStorage programStorage,
-                                           List<RuleEntity> rules) {
-    return rules.stream()
-                .filter(Objects::nonNull)
-                .map(entity -> fromEntity(programStorage, entity))
-                .toList();
+  public static List<RuleDTO> fromEntities(ProgramStorage programStorage, EventStorage eventStorage, List<RuleEntity> rules) {
+    return rules.stream().filter(Objects::nonNull).map(entity -> fromEntity(programStorage, eventStorage, entity)).toList();
   }
 
 }
