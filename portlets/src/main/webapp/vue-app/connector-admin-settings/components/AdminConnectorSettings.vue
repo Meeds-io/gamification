@@ -116,10 +116,9 @@ export default {
           this.connectors.push(...connectors);
           const promises = [];
           this.connectors.forEach(connector => {
-            const promise = this.$gamificationConnectorService.getEvents(connector.name)
-              .then(data => {
-                this.$set(connector, 'events', data.entities);
-                this.$set(connector, 'eventsSize', data.size);
+            const promise = this.$gamificationConnectorService.getTriggers(connector.name)
+              .then(triggers => {
+                this.$set(connector, 'triggers', triggers);
               });
             promises.push(promise);
           });

@@ -55,7 +55,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   private static final String  DOMAIN_ID_PARAM_NAME      = "domainId";
 
-  private Map<String, Boolean> filterNamedQueries        = new HashMap<>();
+  private final Map<String, Boolean> filterNamedQueries        = new HashMap<>();
 
   public List<Long> findHighestBudgetProgramIds(int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIds", Tuple.class);
@@ -306,7 +306,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
     if (StringUtils.isNotBlank(filter.getEventName())) {
       suffixes.add("Event");
-      predicates.add("r.event = :event");
+      predicates.add("r.eventEntity.title = :event");
     }
     if (filter.getProgramId() > 0) {
       suffixes.add("Domain");
@@ -367,8 +367,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       break;
     case STARTED:
       suffixes.add("StartDateAndEndDate");
-      predicates.add("((r.startDate IS NULL OR r.startDate <= :date)" +
-          " AND (r.endDate IS NULL OR r.endDate > :date))");
+      predicates.add("((r.startDate IS NULL OR r.startDate <= :date)" + " AND (r.endDate IS NULL OR r.endDate > :date))");
       break;
     case STARTED_WITH_END:
       suffixes.add("StartDateAndEndDateNotNull");

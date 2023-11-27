@@ -46,7 +46,7 @@ import lombok.EqualsAndHashCode;
 @NamedQuery(
   name = "Rule.findActiveRuleByEventAndDomain",
   query = "SELECT rule FROM Rule rule" +
-    " WHERE LOWER(rule.event) = LOWER(:event)" +
+    " WHERE LOWER(rule.eventEntity.title) = LOWER(:event)" +
     " AND rule.domainEntity.id = :domainId" +
     " AND rule.isEnabled = true" +
     " AND rule.isDeleted = false" +
@@ -137,12 +137,13 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
   @Column(name = "ACTIVITY_ID")
   protected long            activityId;
 
-  @Column(name = "EVENT")
-  protected String          event;
+  @ManyToOne
+  @JoinColumn(name = "EVENT_ID")
+  private EventEntity       eventEntity;
 
   @ManyToOne
   @JoinColumn(name = "DOMAIN_ID")
-  private ProgramEntity      domainEntity;
+  private ProgramEntity     domainEntity;
 
   @Column(name = "ENABLED", nullable = false)
   protected boolean         isEnabled;
