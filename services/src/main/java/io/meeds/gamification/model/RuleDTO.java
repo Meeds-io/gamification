@@ -54,7 +54,7 @@ public class RuleDTO implements Serializable {
 
   protected String          lastModifiedBy;
 
-  protected String          event;
+  protected EventDTO        event;
 
   protected String          lastModifiedDate;
 
@@ -73,8 +73,9 @@ public class RuleDTO implements Serializable {
   protected RecurrenceType  recurrence;
 
   /**
-   * Deprecated should be renamed to spaceId knowing that audienceId
-   * should reference an identity id instead
+   * Deprecated should be renamed to spaceId knowing that audienceId should
+   * reference an identity id instead
+   * 
    * @return Space Id attached to program
    * @deprecated user spaceId instead
    */
