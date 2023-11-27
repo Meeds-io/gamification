@@ -97,7 +97,7 @@ public class AnalyticsRuleListener extends Listener<Object, String> {
     }
     EventDTO ruleEvent = null;
     if (rule.getType() == EntityType.AUTOMATIC) {
-      List<EventDTO> events = eventService.getEventsByTitle(rule.getEvent(), 0, 1);
+      List<EventDTO> events = eventService.getEventsByTitle(rule.getEvent().getTitle(), 0, 1);
       if (CollectionUtils.isNotEmpty(events)) {
         ruleEvent = events.get(0);
       }
