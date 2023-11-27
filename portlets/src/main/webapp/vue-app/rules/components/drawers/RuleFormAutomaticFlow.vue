@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-card-text class="px-0 dark-grey-color font-weight-bold">
-      Application
+      {{ $t('rule.form.label.application') }}
     </v-card-text>
     <v-combobox
       v-model="selectedConnector"
@@ -67,7 +67,7 @@
     </v-combobox>
     <template v-if="selectedConnector">
       <v-card-text class="px-0 dark-grey-color font-weight-bold">
-        Event
+        {{ $t('rule.form.label.event') }}
       </v-card-text>
       <v-combobox
         v-model="trigger"

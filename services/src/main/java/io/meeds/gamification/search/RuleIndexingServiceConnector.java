@@ -121,7 +121,7 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
 
     fields.put("score", String.valueOf(rule.getScore()));
     EventDTO event = rule.getEvent();
-    if (event == null) {
+    if (event != null) {
       fields.put("event", event.getTitle());
     }
     fields.put("startDate", toMilliSecondsString(rule.getStartDate()));
