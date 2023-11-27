@@ -78,7 +78,7 @@
         flat>
         <v-card-title class="rule-card-title d-flex flex-nowrap pb-4 text-break">
           <div :title="title" class="d-flex align-center flex-grow-1 text-truncate">
-            <rule-icon :rule-event="rule.event" class="me-2" />
+            <rule-icon :rule-event="ruleEvent" class="me-2" />
             <span class="text-truncate subtitle-1 pt-2px">
               {{ title }}
             </span>
@@ -146,6 +146,9 @@ export default {
   computed: {
     ruleProgram() {
       return this.rule?.program || this.program;
+    },
+    ruleEvent() {
+      return this.rule?.event?.title;
     },
     ruleWithProgram() {
       return this.rule?.program && this.rule || Object.assign(this.rule, {

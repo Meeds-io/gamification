@@ -322,12 +322,12 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, EntityType.MANUAL);
 
     List<RealizationEntity> histories = new ArrayList<>();
-    histories.add(newRealizationEntityWithRuleId(rule1Automatic.getEvent(), rule1Automatic.getId()));
+    histories.add(newRealizationEntityWithRuleId(rule1Automatic.getEventEntity().getTitle(), rule1Automatic.getId()));
     histories.add(newRealizationEntityWithRuleId("", rule3Manual.getId()));
     histories.add(newRealizationEntityWithRuleId("", rule1Automatic.getId()));
-    histories.add(newRealizationEntityWithRuleId(rule3Manual.getEvent(), rule3Manual.getId()));
+    histories.add(newRealizationEntityWithRuleId(rule3Manual.getEventEntity().getTitle(), rule3Manual.getId()));
     histories.add(newRealizationEntityWithRuleId("", rule2Automatic.getId()));
-    histories.add(newRealizationEntityWithRuleId(rule2Automatic.getEvent(), rule2Automatic.getId()));
+    histories.add(newRealizationEntityWithRuleId(rule2Automatic.getEventEntity().getTitle(), rule2Automatic.getId()));
     histories.add(newRealizationEntityWithRuleId("", rule3Manual.getId()));
 
     RealizationFilter dateFilter = new RealizationFilter();
@@ -450,19 +450,19 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
 
     List<RealizationEntity> histories = new ArrayList<>();
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(fromDate,
-                                                                  rule1Automatic.getEvent(),
+                                                                  rule1Automatic.getEventEntity().getTitle(),
                                                                   rule1Automatic.getId()));
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(fromDate, "", rule3Manual.getId()));
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(fromDate, "", rule1Automatic.getId()));
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(fromDate,
-                                                                  rule3Manual.getEvent(),
+                                                                  rule3Manual.getEventEntity().getTitle(),
                                                                   rule3Manual.getId()));
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(fromDate, "", rule2Automatic.getId()));
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(fromDate,
-                                                                  rule2Automatic.getEvent(),
+                                                                  rule2Automatic.getEventEntity().getTitle(),
                                                                   rule2Automatic.getId()));
     histories.add(newRealizationToBeSortedByActionTypeInDateRange(outOfRangeDate,
-                                                                  rule3Manual.getEvent(),
+                                                                  rule3Manual.getEventEntity().getTitle(),
                                                                   rule3Manual.getId()));
 
     RealizationFilter dateFilter = new RealizationFilter();
