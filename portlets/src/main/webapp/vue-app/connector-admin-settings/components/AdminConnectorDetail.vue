@@ -61,7 +61,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-list dense>
         <v-subheader class="pb-4 ps-0">
           <v-icon size="20" class="primary--text">fas fa-bolt</v-icon>
-          <div class="text-subtitle-1 text-color ps-3">{{ eventsSize }} {{ $t('gamification.label.events') }}</div>
+          <div class="text-subtitle-1 text-color ps-3">{{ triggersSize }} {{ $t('gamification.label.events') }}</div>
           <v-spacer />
           <v-card
             width="220"
@@ -77,14 +77,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               hide-details />
           </v-card>
         </v-subheader>
-        <gamification-admin-connector-event
-          v-for="event in eventToDisplay"
+        <gamification-admin-connector-trigger
+          v-for="event in triggersToDisplay"
           :key="event.title"
-          :event="event"
+          :trigger="event"
           class="py-2" />
       </v-list>
     </v-card>
-    <div v-if="hasMoreEvents" class="d-flex justify-center py-4">
+    <div v-if="hasMoreTriggers" class="d-flex justify-center py-4">
       <v-btn
         min-width="95%"
         class="btn"
@@ -130,26 +130,26 @@ export default {
     connectorStatusLabel() {
       return this.connectorActivated ? this.$t('gamification.connectors.label.activated') : this.$t('gamification.connectors.label.deactivated');
     },
-    events() {
-      return this.connector?.events;
+    triggers() {
+      return this.connector?.triggers;
     },
-    eventsSize() {
-      return this.connector?.eventsSize;
+    triggersSize() {
+      return this.connector?.triggers?.length;
     },
-    hasMoreEvents() {
-      return this.keyword ? this.sortedEvent.length > this.pageSize : this.eventsSize > this.pageSize;
+    hasMoreTriggers() {
+      return this.keyword ? this.sortedTriggers.length > this.pageSize : this.triggersSize > this.pageSize;
     },
-    sortedEvent() {
-      let filteredEvent = this.events;
+    sortedTriggers() {
+      let filteredTriggers = this.triggers;
       if (this.keyword) {
-        filteredEvent = this.events?.filter(item =>
-          this.getEventLabel(item).toLowerCase().includes(this.keyword.toLowerCase())
+        filteredTriggers = this.triggers?.filter(item =>
+          this.getTriggerLabel(item).toLowerCase().includes(this.keyword.toLowerCase())
         );
       }
-      return filteredEvent?.sort((a, b) => this.getEventLabel(a).localeCompare(this.getEventLabel(b)));
+      return filteredTriggers?.sort((a, b) => this.getTriggerLabel(a).localeCompare(this.getTriggerLabel(b)));
     },
-    eventToDisplay() {
-      return this.sortedEvent?.slice(0, this.pageSize);
+    triggersToDisplay() {
+      return this.sortedTriggers?.slice(0, this.pageSize);
     },
     idDefaultConnector() {
       return this.connectorExtension?.componentOptions?.defaultConnector;
@@ -165,7 +165,7 @@ export default {
     loadMore() {
       this.pageSize += this.pageSize;
     },
-    getEventLabel(event) {
+    getTriggerLabel(event) {
       return this.$t(`gamification.event.title.${event.title}`);
     }
   }

@@ -51,9 +51,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-icon size="20" class="primary--text">fas fa-bolt</v-icon>
         <div class="text-subtitle-2 font-weight-bold dark-grey-color ps-3">{{ $t('challenges.label.comingSoon') }}</div>
       </div>
-      <div v-if="eventsSize" class="d-flex flex-row pa-4">
+      <div v-if="triggersSize" class="d-flex flex-row pa-4">
         <v-icon size="20" class="primary--text">fas fa-bolt</v-icon>
-        <div class="text-subtitle-2 font-weight-bold dark-grey-color ps-3">{{ eventsSize }} {{ $t('gamification.label.events') }}</div>
+        <div class="text-subtitle-2 font-weight-bold dark-grey-color ps-3">{{ triggersSize }} {{ $t('gamification.label.events') }}</div>
       </div>
     </v-card>
   </v-app>
@@ -96,8 +96,8 @@ export default {
     description() {
       return this.$t(`${this.connectorExtension?.componentOptions?.description}`);
     },
-    eventsSize() {
-      return this.connector?.eventsSize;
+    triggersSize() {
+      return this.connector?.triggers?.length;
     },
     comingSoon() {
       return this.connectorExtension?.componentOptions?.comingSoon;

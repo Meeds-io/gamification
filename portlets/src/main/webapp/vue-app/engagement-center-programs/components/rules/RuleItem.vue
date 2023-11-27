@@ -24,13 +24,13 @@
         <div @click="openRule(false)" class="clickable d-flex flex-row ma-auto">
           <div class="d-flex flex-column align-center justify-center col-2 col-sm-1 pa-0">
             <rule-icon
-              :rule-event="rule.event"
+              :rule-event="eventTitle"
               size="22"
               class="my-auto" />
           </div>
           <div class="d-flex flex-column col-10 col-sm-11 pa-0 text-truncate">
             <engagement-center-program-rule-title :rule="rule" />
-            <span class="d-sm-none text-caption text-sub-title">{{ rule.score }} {{ $t('challenges.label.points') }}</span>
+            <span class="d-sm-none text-caption text-sub-title">{{ ruleScore }} {{ $t('challenges.label.points') }}</span>
           </div>
         </div>
       </td>
@@ -54,7 +54,7 @@
       </td>
       <td class="no-border-bottom d-none d-sm-inline">
         <div class="align-center">
-          {{ rule.score }}
+          {{ ruleScore }}
         </div>
       </td>
       <td class="no-border-bottom  d-none d-sm-table-cell">
@@ -97,8 +97,11 @@ export default {
     };
   },
   computed: {
-    automaticRule() {
-      return this.rule?.type === 'AUTOMATIC';
+    ruleScore() {
+      return this.rule?.score;
+    },
+    eventTitle() {
+      return this.rule?.event?.title;
     },
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;
@@ -117,9 +120,6 @@ export default {
     },
     hasParticipants() {
       return this.realizationsCount !== 0;
-    },
-    enabledRule() {
-      return this.rule?.enabled;
     },
     canAnnounce() {
       return this.rule?.type === 'MANUAL' && this.rule?.userInfo?.allowedToRealize;
