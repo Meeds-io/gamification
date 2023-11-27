@@ -22,6 +22,7 @@ import java.util.Set;
 
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.RecurrenceType;
+import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.UserInfo;
@@ -64,7 +65,7 @@ public class RuleRestEntity extends RuleDTO {
                         String createdBy,
                         String createdDate,
                         String lastModifiedBy,
-                        String event,
+                        EventDTO event,
                         String lastModifiedDate,
                         String startDate,
                         String endDate,
