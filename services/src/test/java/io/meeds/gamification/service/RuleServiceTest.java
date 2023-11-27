@@ -187,7 +187,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     RuleEntity ruleEntity = newRule();
     assertFalse(ruleEntity.isDeleted());
 
-    RealizationDTO realization = realizationService.createRealizations(ruleEntity.getEvent(),
+    RealizationDTO realization = realizationService.createRealizations(ruleEntity.getEventEntity().getTitle(),
                                                                        TEST_USER_EARNER,
                                                                        TEST_USER_RECEIVER,
                                                                        ACTIVITY_ID,
@@ -231,7 +231,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setDescription("Description");
     rule.setEnabled(true);
     rule.setDeleted(false);
-    rule.setEvent(RULE_NAME);
+    rule.setEventEntity(newEvent(RULE_NAME));
     rule.setCreatedBy(TEST_USER_EARNER);
     rule.setCreatedDate(new Date());
     rule.setLastModifiedBy(TEST_USER_EARNER);
@@ -239,7 +239,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setDomainEntity(newDomain(GAMIFICATION_DOMAIN));
     rule.setType(EntityType.AUTOMATIC);
     rule.setRecurrence(RecurrenceType.NONE);
-    ruleService.createRule(RuleMapper.fromEntity(domainStorage, rule), ADMIN_USER);
+    ruleService.createRule(RuleMapper.fromEntity(domainStorage, eventStorage, rule), ADMIN_USER);
     assertEquals(ruleDAO.findAll().size(), 1);
     assertThrows(ObjectAlreadyExistsException.class, () -> ruleService.createRule(RuleMapper.fromEntity(domainStorage, rule), ADMIN_USER));
     assertEquals(ruleDAO.findAll().size(), 1);
@@ -332,7 +332,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setDescription("Description");
     rule.setEnabled(true);
     rule.setDeleted(false);
-    rule.setEvent(RULE_NAME);
+    rule.setEvent(newEventDTO(RULE_NAME));
     rule.setProgram(program);
     rule.setType(EntityType.AUTOMATIC);
     rule.setRecurrence(RecurrenceType.NONE);
@@ -375,7 +375,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setDescription("Description");
     rule.setEnabled(true);
     rule.setDeleted(false);
-    rule.setEvent(RULE_NAME);
+    rule.setEvent(newEventDTO(RULE_NAME));
     rule.setProgram(program);
     rule.setType(EntityType.AUTOMATIC);
     rule.setRecurrence(RecurrenceType.NONE);

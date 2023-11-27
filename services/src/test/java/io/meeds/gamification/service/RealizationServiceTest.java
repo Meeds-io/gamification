@@ -101,7 +101,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(realizations.size(), 0);
     RuleDTO rule = newRuleDTO();
 
-    RealizationDTO realization = realizationService.createRealizations(rule.getEvent(),
+    RealizationDTO realization = realizationService.createRealizations(rule.getEvent().getTitle(),
                                                                        adminIdentityId,
                                                                        adminIdentityId,
                                                                        ACTIVITY_ID,
@@ -118,7 +118,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
 
-    realization = realizationService.createRealizations(rule.getEvent(),
+    realization = realizationService.createRealizations(rule.getEvent().getTitle(),
                                                         TEST_SPACE_ID,
                                                         adminIdentityId,
                                                         ACTIVITY_ID,
@@ -142,7 +142,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(realizations.size(), 0);
     RuleDTO ruleDTO = newRuleDTO();
 
-    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
+    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                                        spaceHostIdentityId,
                                                                        spaceMemberIdentityId,
                                                                        ACTIVITY_ID,
@@ -159,7 +159,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
 
-    realization = realizationService.createRealizations(ruleDTO.getEvent(),
+    realization = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                         TEST_SPACE_ID,
                                                         spaceHostIdentityId,
                                                         ACTIVITY_ID,
@@ -217,7 +217,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(realizations.size(), 0);
     RuleDTO ruleDTO = newRuleDTO();
 
-    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
+    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                                        spaceMemberIdentityId,
                                                                        spaceHostIdentityId,
                                                                        ACTIVITY_ID,
@@ -234,7 +234,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
 
-    realization = realizationService.createRealizations(ruleDTO.getEvent(),
+    realization = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                         TEST_SPACE_ID,
                                                         spaceMemberIdentityId,
                                                         ACTIVITY_ID,
@@ -258,7 +258,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(realizations.size(), 0);
     RuleDTO ruleDTO = newRuleDTO();
 
-    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
+    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                                        spaceHostIdentityId,
                                                                        spaceMemberIdentityId,
                                                                        ACTIVITY_ID,
@@ -275,7 +275,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
 
-    realization = realizationService.createRealizations(ruleDTO.getEvent(),
+    realization = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                         TEST_SPACE_ID,
                                                         spaceHostIdentityId,
                                                         ACTIVITY_ID,
@@ -295,7 +295,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
   public void testCreateRealizationsByInternalUserInSpaceRule() {
     RuleDTO ruleDTO = newRuleDTO();
 
-    List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent(),
+    List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                                               internalUserIdentityId,
                                                                               spaceHostIdentityId,
                                                                               ACTIVITY_ID,
@@ -303,7 +303,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertTrue(realizations.isEmpty());
     assertEquals(realizations.size(), realizationDAO.count().intValue());
 
-    realizations = realizationService.createRealizations(ruleDTO.getEvent(),
+    realizations = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                          TEST_SPACE_ID,
                                                          internalUserIdentityId,
                                                          ACTIVITY_ID,
@@ -325,7 +325,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     ProgramEntity openProgram = newOpenProgram("testProgram");
     RuleDTO ruleDTO = newRuleDTO("testRule", openProgram.getId());
 
-    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
+    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                                        internalUserIdentityId,
                                                                        spaceHostIdentityId,
                                                                        ACTIVITY_ID,
@@ -342,7 +342,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
 
-    realization = realizationService.createRealizations(ruleDTO.getEvent(),
+    realization = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                         TEST_SPACE_ID,
                                                         internalUserIdentityId,
                                                         ACTIVITY_ID,
@@ -366,7 +366,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(realizations.size(), 0);
     RuleDTO ruleDTO = newRuleDTO();
 
-    List<RealizationDTO> createdRealizations = realizationService.createRealizations(ruleDTO.getEvent(),
+    List<RealizationDTO> createdRealizations = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                                                      adminIdentityId,
                                                                                      spaceMemberIdentityId,
                                                                                      ACTIVITY_ID,
@@ -377,7 +377,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     realizations = realizationDAO.findAll();
     assertEquals(realizations.size(), 1);
 
-    List<RealizationDTO> canceledRealizations = realizationService.cancelRealizations(ruleDTO.getEvent(),
+    List<RealizationDTO> canceledRealizations = realizationService.cancelRealizations(ruleDTO.getEvent().getTitle(),
                                                                                       adminIdentityId,
                                                                                       spaceMemberIdentityId,
                                                                                       ACTIVITY_ID,
@@ -417,7 +417,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     rule.setEndDate(Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() - MILLIS_IN_A_DAY)));
     ruleService.updateRule(rule);
 
-    List<RealizationDTO> realizations = realizationService.createRealizations(rule.getEvent(),
+    List<RealizationDTO> realizations = realizationService.createRealizations(rule.getEvent().getTitle(),
                                                                               adminIdentityId,
                                                                               spaceMemberIdentityId,
                                                                               ACTIVITY_ID,
@@ -429,7 +429,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     rule.setEndDate(null);
     rule.setStartDate(Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + MILLIS_IN_A_DAY)));
     ruleService.updateRule(rule);
-    realizations = realizationService.createRealizations(rule.getEvent(),
+    realizations = realizationService.createRealizations(rule.getEvent().getTitle(),
                                                          adminIdentityId,
                                                          spaceMemberIdentityId,
                                                          ACTIVITY_ID,
@@ -441,7 +441,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     rule.setStartDate(Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() - 2 * MILLIS_IN_A_DAY)));
     rule.setEndDate(Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() - MILLIS_IN_A_DAY)));
     ruleService.updateRule(rule);
-    realizations = realizationService.createRealizations(rule.getEvent(),
+    realizations = realizationService.createRealizations(rule.getEvent().getTitle(),
                                                          adminIdentityId,
                                                          spaceMemberIdentityId,
                                                          ACTIVITY_ID,
@@ -457,7 +457,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     program.setEnabled(true); // Program was disabled automatically
     programService.updateProgram(program);
 
-    realizations = realizationService.createRealizations(rule.getEvent(),
+    realizations = realizationService.createRealizations(rule.getEvent().getTitle(),
                                                          adminIdentityId,
                                                          spaceMemberIdentityId,
                                                          ACTIVITY_ID,
@@ -502,7 +502,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(0, realizationEntities.size());
     RuleDTO ruleDTO = newRuleDTO();
 
-    List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent(),
+    List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                                               spaceMemberIdentityId,
                                                                               adminIdentityId,
                                                                               ACTIVITY_ID,
@@ -513,7 +513,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
                                                         new MembershipEntry(Utils.BLACK_LIST_GROUP)));
     identityRegistry.register(spaceMemberAclIdentity);
 
-    realizations = realizationService.createRealizations(ruleDTO.getEvent(),
+    realizations = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                          spaceMemberIdentityId,
                                                          adminIdentityId,
                                                          ACTIVITY_ID,
@@ -527,45 +527,45 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     RuleDTO rule = newRuleDTO();
 
     RuleDTO prerequisiteRule1 = newRuleDTO();
-    prerequisiteRule1.setEvent("prerequisiteEvent1");
+    prerequisiteRule1.setEvent(newEventDTO("prerequisiteEvent1"));
     prerequisiteRule1 = ruleService.updateRule(prerequisiteRule1);
 
     RuleDTO prerequisiteRule2 = newRuleDTO();
-    prerequisiteRule2.setEvent("prerequisiteEvent2");
+    prerequisiteRule2.setEvent(newEventDTO("prerequisiteEvent2"));
     prerequisiteRule2 = ruleService.updateRule(prerequisiteRule2);
 
     rule.setPrerequisiteRuleIds(new HashSet<>(Arrays.asList(prerequisiteRule1.getId(), prerequisiteRule2.getId())));
     rule = ruleService.updateRule(rule);
 
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           adminIdentityId,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     assertEquals(0, realizationDAO.count().intValue());
 
-    realizationService.createRealizations(prerequisiteRule1.getEvent(),
+    realizationService.createRealizations(prerequisiteRule1.getEvent().getTitle(),
                                           adminIdentityId,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     assertEquals(1, realizationDAO.count().intValue());
 
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           adminIdentityId,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     assertEquals(1, realizationDAO.count().intValue());
 
-    realizationService.createRealizations(prerequisiteRule2.getEvent(),
+    realizationService.createRealizations(prerequisiteRule2.getEvent().getTitle(),
                                           adminIdentityId,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     assertEquals(2, realizationDAO.count().intValue());
 
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           adminIdentityId,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
@@ -573,7 +573,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(3, realizationDAO.count().intValue());
 
     ruleService.deleteRuleById(prerequisiteRule2.getId(), ADMIN_USER);
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           adminIdentityId,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
@@ -581,7 +581,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(4, realizationDAO.count().intValue());
 
     ruleService.deleteRuleById(prerequisiteRule1.getId(), ADMIN_USER);
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           adminIdentityId,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
@@ -594,7 +594,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(realizations.size(), 0);
     RuleDTO rule = newRuleDTO();
 
-    RealizationDTO realization = realizationService.createRealizations(rule.getEvent(),
+    RealizationDTO realization = realizationService.createRealizations(rule.getEvent().getTitle(),
                                                                        adminIdentityId,
                                                                        adminIdentityId,
                                                                        ACTIVITY_ID,
@@ -611,7 +611,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
 
-    realization = realizationService.createRealizations(rule.getEvent(),
+    realization = realizationService.createRealizations(rule.getEvent().getTitle(),
                                                         TEST_SPACE_ID,
                                                         adminIdentityId,
                                                         ACTIVITY_ID,
@@ -736,7 +736,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     rule.setTitle("Rule Title, with comma");
     ruleService.updateRule(rule);
 
-    RealizationDTO realization1 = realizationService.createRealizations(rule.getEvent(),
+    RealizationDTO realization1 = realizationService.createRealizations(rule.getEvent().getTitle(),
                                                                         adminIdentityId,
                                                                         adminIdentityId,
                                                                         ACTIVITY_ID,
@@ -744,7 +744,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
                                                     .get(0);
     realization1 = realizationService.getRealizationById(realization1.getId(), adminAclIdentity);
 
-    RealizationDTO realization2 = realizationService.createRealizations(rule.getEvent(),
+    RealizationDTO realization2 = realizationService.createRealizations(rule.getEvent().getTitle(),
                                                                         TEST_SPACE_ID,
                                                                         adminIdentityId,
                                                                         ACTIVITY_ID,
@@ -809,7 +809,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
 
     RuleDTO rule = newRuleDTO("testRule", openProgram.getId());
 
-    RealizationDTO realization = realizationService.createRealizations(rule.getEvent(),
+    RealizationDTO realization = realizationService.createRealizations(rule.getEvent().getTitle(),
                                                                        internalUserIdentityId,
                                                                        spaceMemberIdentityId,
                                                                        ACTIVITY_ID,
@@ -826,7 +826,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(ACTIVITY_ID, realizationEntity.getObjectId());
     assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
 
-    realization = realizationService.createRealizations(rule.getEvent(),
+    realization = realizationService.createRealizations(rule.getEvent().getTitle(),
                                                         TEST_SPACE_ID,
                                                         spaceMemberIdentityId,
                                                         ACTIVITY_ID,
@@ -959,52 +959,52 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
   public void testLeaderboardRank() throws IllegalAccessException {
     ProgramDTO program = newProgram();
     RuleDTO rule = newRuleDTO(RULE_NAME, program.getId());
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           adminIdentityId,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           adminIdentityId,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           spaceMemberIdentityId,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           TEST_SPACE_ID,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           TEST_SPACE_ID,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           TEST_SPACE_ID,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           TEST_SPACE2_ID,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           TEST_SPACE2_ID,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           TEST_SPACE2_ID,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(rule.getEvent(),
+    realizationService.createRealizations(rule.getEvent().getTitle(),
                                           TEST_SPACE2_ID,
                                           spaceMemberIdentityId,
                                           ACTIVITY_ID,
@@ -1034,12 +1034,12 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
   public void testFindUserReputationBySocialId() {
     RuleDTO ruleDTO = newRuleDTO();
     assertEquals(realizationService.getScoreByIdentityId(adminIdentityId), 0);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                           adminIdentityId,
                                           adminIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                           TEST_SPACE_ID,
                                           adminIdentityId,
                                           ACTIVITY_ID,
@@ -1051,7 +1051,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
   public void testBuildDomainScoreByUserId() {
     RuleDTO ruleDTO = newRuleDTO();
     assertEquals(0, realizationService.getScorePerProgramByIdentityId(adminIdentityId).size());
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                           adminIdentityId,
                                           adminIdentityId,
                                           ACTIVITY_ID,
@@ -1069,7 +1069,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     List<StandardLeaderboard> filteredLeaderboard = realizationService.getLeaderboard(filter, null);
     assertEquals(0, filteredLeaderboard.size());
 
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                           adminIdentityId,
                                           adminIdentityId,
                                           ACTIVITY_ID,
@@ -1104,12 +1104,12 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
   public void testDeleteHistory() {
     ProgramDTO program = newProgram();
     RuleDTO ruleDTO = newRuleDTO(RULE_NAME, program.getId());
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                           adminIdentityId,
                                           adminIdentityId,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent(),
+    realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                           adminIdentityId,
                                           adminIdentityId,
                                           ACTIVITY_ID,
@@ -1150,7 +1150,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     ruleDTO.setRecurrence(recurrenceType);
     ruleDTO = ruleService.updateRule(ruleDTO);
 
-    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent(),
+    RealizationDTO realization = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                                        adminIdentityId,
                                                                        adminIdentityId,
                                                                        ACTIVITY_ID,
@@ -1161,7 +1161,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     realizationEntities = realizationDAO.findAll();
     assertEquals(1, realizationEntities.size());
 
-    List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent(),
+    List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                                               adminIdentityId,
                                                                               adminIdentityId,
                                                                               ACTIVITY_ID,
@@ -1177,7 +1177,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
 
     realizationDAO.update(realizationEntity);
 
-    realizations = realizationService.createRealizations(ruleDTO.getEvent(),
+    realizations = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
                                                          TEST_SPACE_ID,
                                                          adminIdentityId,
                                                          ACTIVITY_ID,

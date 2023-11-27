@@ -124,6 +124,11 @@
   </component>
 
   <component>
+    <key>io.meeds.gamification.service.TriggerService</key>
+    <type>io.meeds.gamification.service.impl.TriggerServiceImpl</type>
+  </component>
+
+  <component>
     <type>io.meeds.gamification.storage.EventStorage</type>
   </component>
 
