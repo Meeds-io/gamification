@@ -107,31 +107,78 @@ export function deleteConnectorSetting(connectorName) {
   });
 }
 
-export function getEvents(type, triggers, offset, limit) {
+export function createEvent(event) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(event),
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.json();
+    } else {
+      throw new Error(resp.status);
+    }
+  });
+}
+
+export function updateEvent(event) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(event),
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.json();
+    } else {
+      throw new Error(resp.status);
+    }
+  });
+}
+
+export function getTriggers(type, expand) {
   const formData = new FormData();
   if (type) {
     formData.append('type', type);
   }
-  if (triggers?.length) {
-    triggers.forEach(trigger => formData.append('trigger', trigger));
+  if (expand) {
+    formData.append('expand', expand);
   }
-  if (offset) {
-    formData.append('offset', offset);
-  }
-  if (limit) {
-    formData.append('limit', limit);
-  }
-  formData.append('returnSize', 'true');
   const params = new URLSearchParams(formData).toString();
 
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events?${params}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/triggers?${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
     if (resp?.ok) {
       return resp.json();
     } else {
-      throw new Error('Error when getting events');
+      throw new Error('Error when getting triggers');
+    }
+  });
+}
+
+export function saveTriggerStatus(trigger, accountId, enabled) {
+  const formData = new FormData();
+  formData.append('trigger', trigger);
+  formData.append('accountId', accountId);
+  formData.append('enabled', enabled);
+
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/triggers/status`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(formData).toString(),
+  }).then(resp => {
+    if (!resp?.ok) {
+      throw new Error('Response code indicates a server error', resp);
     }
   });
 }
