@@ -135,3 +135,56 @@ export function getEvents(type, triggers, offset, limit) {
     }
   });
 }
+
+export function createEvent(event) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(event),
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.json();
+    } else {
+      throw new Error(resp.status);
+    }
+  });
+}
+
+export function updateEvent(event) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(event),
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.json();
+    } else {
+      throw new Error(resp.status);
+    }
+  });
+}
+
+export function getTriggers(type) {
+  const formData = new FormData();
+  if (type) {
+    formData.append('type', type);
+  }
+  const params = new URLSearchParams(formData).toString();
+
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/triggers?${params}`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.json();
+    } else {
+      throw new Error('Error when getting triggers');
+    }
+  });
+}
