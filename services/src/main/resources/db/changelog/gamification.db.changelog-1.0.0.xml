@@ -765,4 +765,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </addColumn>
     </changeSet>
 
+    <changeSet  author="exo-gamification" id="1.0.0-70">
+        <addColumn tableName="GAMIFICATION_RULE">
+            <column name="EVENT_ID" type="BIGINT">
+                <constraints foreignKeyName="FK_GAMIFICATION_RULES_EVENT" references="GAMIFICATION_EVENTS(ID)" />
+            </column>
+        </addColumn>
+        <sql>UPDATE GAMIFICATION_RULE
+            SET EVENT_ID=(SELECT ID FROM GAMIFICATION_EVENTS WHERE GAMIFICATION_EVENTS.TITLE = GAMIFICATION_RULE.EVENT)
+            WHERE EVENT IS NOT NULL
+        </sql>
+        <dropColumn tableName="GAMIFICATION_RULE" columnName="EVENT" />
+    </changeSet>
+
 </databaseChangeLog>

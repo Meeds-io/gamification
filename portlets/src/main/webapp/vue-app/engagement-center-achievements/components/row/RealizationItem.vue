@@ -247,7 +247,7 @@ export default {
       }
     },
     eventName() {
-      return this.realization?.action?.event;
+      return this.realization?.action?.event?.title;
     },
     program() {
       return this.realization?.program;

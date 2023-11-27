@@ -82,7 +82,7 @@ public class RulePublication extends RuleDTO {
                          String createdBy,
                          String createdDate,
                          String lastModifiedBy,
-                         String event,
+                         EventDTO event,
                          String lastModifiedDate,
                          String startDate,
                          String endDate,

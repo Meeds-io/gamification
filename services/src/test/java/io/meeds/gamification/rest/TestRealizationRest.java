@@ -249,10 +249,10 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     // add new realization
     List<RealizationEntity> createdActionHistories = new ArrayList<>();
     for (int i = 0; i < LIMIT; i++) {
-      createdActionHistories.add(0, newRealizationEntityWithRuleId(rule2Manual.getEvent(), rule2Manual.getId()));
+      createdActionHistories.add(0, newRealizationEntityWithRuleId(rule2Manual.getEventEntity().getTitle(), rule2Manual.getId()));
     }
     for (int i = 0; i < LIMIT; i++) {
-      createdActionHistories.add(0, newRealizationEntityWithRuleId(rule1Automatic.getEvent(), rule1Automatic.getId()));
+      createdActionHistories.add(0, newRealizationEntityWithRuleId(rule1Automatic.getEventEntity().getTitle(), rule1Automatic.getId()));
     }
 
     String restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
@@ -294,10 +294,10 @@ public class TestRealizationRest extends AbstractServiceTest { // NOSONAR
     // add new realization
     List<RealizationEntity> createdActionHistories = new ArrayList<>();
     for (int i = 0; i < LIMIT; i++) {
-      createdActionHistories.add(0, newRealizationEntityWithRuleId(rule1Automatic.getEvent(), rule1Automatic.getId()));
+      createdActionHistories.add(0, newRealizationEntityWithRuleId(rule1Automatic.getEventEntity().getTitle(), rule1Automatic.getId()));
     }
     for (int i = 0; i < LIMIT; i++) {
-      createdActionHistories.add(0, newRealizationEntityWithRuleId(rule2Manual.getEvent(), rule2Manual.getId()));
+      createdActionHistories.add(0, newRealizationEntityWithRuleId(rule2Manual.getEventEntity().getTitle(), rule2Manual.getId()));
     }
 
     String restPath = "realizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"

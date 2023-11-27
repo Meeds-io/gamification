@@ -18,10 +18,28 @@
 package io.meeds.gamification.service;
 
 import io.meeds.gamification.plugin.EventConfigPlugin;
+import java.util.List;
 
 public interface EventRegistry {
 
-    void addPlugin(EventConfigPlugin event);
+    /**
+     * Add a new {@link EventConfigPlugin} for a given trigger name
+     *
+     * @param eventConfigPlugin {@link EventConfigPlugin}
+     */
+    void addPlugin(EventConfigPlugin eventConfigPlugin);
 
-    boolean remove(EventConfigPlugin event);
+    /**
+     * Removes a {@link EventConfigPlugin}
+     *
+     * @param eventConfigPlugin {@link EventConfigPlugin}
+     */
+    boolean remove(EventConfigPlugin eventConfigPlugin);
+
+    /**
+     * Gets a all configured triggers by type
+     *
+     * @param connectorName
+     */
+    List<String> getTriggers(String connectorName);
 }

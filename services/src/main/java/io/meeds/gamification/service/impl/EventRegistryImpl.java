@@ -20,31 +20,19 @@ package io.meeds.gamification.service.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-import io.meeds.gamification.model.EventDTO;
-import io.meeds.gamification.model.filter.EventFilter;
 import io.meeds.gamification.plugin.EventConfigPlugin;
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
-import org.exoplatform.commons.ObjectAlreadyExistsException;
 import io.meeds.gamification.service.EventRegistry;
-import io.meeds.gamification.service.EventService;
 
 public class EventRegistryImpl implements Startable, EventRegistry {
 
   private static final Log                     LOG                  = ExoLogger.getLogger(EventRegistryImpl.class);
 
   private final Map<String, EventConfigPlugin> eventConfigPluginMap = new HashMap<>();
-
-  private final EventService                   eventService;
-
-  public EventRegistryImpl(EventService eventService) {
-    this.eventService = eventService;
-  }
 
   @Override
   public void addPlugin(EventConfigPlugin eventConfigPlugin) {
@@ -60,50 +48,21 @@ public class EventRegistryImpl implements Startable, EventRegistry {
   }
 
   @Override
-  public void start() {
-    for (EventConfigPlugin eventConfigPlugin : eventConfigPluginMap.values()) {
-      EventDTO eventConfig = eventConfigPlugin.getEvent();
-      EventDTO eventDTO = eventService.getEventByTypeAndTitle(eventConfig.getType(), eventConfig.getTitle());
-      if (eventDTO == null) {
-        eventDTO = new EventDTO();
-        eventDTO.setTitle(eventConfig.getTitle());
-        eventDTO.setType(eventConfig.getType());
-        eventDTO.setTrigger(eventConfig.getTrigger());
-        eventDTO.setCancellerEvents(eventConfig.getCancellerEvents());
-        try {
-          eventService.createEvent(eventDTO);
-        } catch (ObjectAlreadyExistsException e) {
-          throw new IllegalStateException(String.format("Event '%s' seems already exists", eventConfig.getTitle()), e);
-        }
-      } else if (!Objects.equals(eventDTO.getCancellerEvents(), eventConfig.getCancellerEvents())) {
-        eventDTO.setCancellerEvents(eventConfig.getCancellerEvents());
-        try {
-          eventService.updateEvent(eventDTO);
-        } catch (ObjectNotFoundException e) {
-          throw new IllegalStateException(String.format("Event '%s' not found", eventConfig.getTitle()), e);
-        }
-      }
+  public List<String> getTriggers(String connectorName) {
+    if (StringUtils.isNotBlank(connectorName)) {
+      return eventConfigPluginMap.values()
+                                 .stream()
+                                 .filter(eventConfigPlugin -> eventConfigPlugin.getEvent().getType().equals(connectorName))
+                                 .map(eventConfigPlugin -> eventConfigPlugin.getEvent().getTrigger())
+                                 .toList();
     }
-    List<EventDTO> eventDAOList = eventService.getEvents(new EventFilter(), 0, -1);
-    eventDAOList.forEach(eventDTO -> {
-      EventConfigPlugin eventConfigPlugin = eventConfigPluginMap.values()
-                                                                .stream()
-                                                                .filter(eventConfig -> eventConfig.getEvent()
-                                                                                                  .getType()
-                                                                                                  .equals(eventDTO.getType())
-                                                                    && eventConfig.getEvent()
-                                                                                  .getTitle()
-                                                                                  .equals(eventDTO.getTitle()))
-                                                                .findFirst()
-                                                                .orElse(null);
-      if (eventConfigPlugin == null) {
-        try {
-          eventService.deleteEventById(eventDTO.getId());
-        } catch (ObjectNotFoundException e) {
-          LOG.warn("Error while clean gamification event {}", eventDTO.getId(), e);
-        }
-      }
-    });
+    return eventConfigPluginMap.values().stream().map(eventConfigPlugin -> eventConfigPlugin.getEvent().getTitle()).toList();
+
+  }
+
+  @Override
+  public void start() {
+    // Nothing to start
   }
 
   @Override

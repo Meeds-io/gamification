@@ -64,10 +64,6 @@ public class EventServiceImpl implements EventService {
     if (eventDTO == null) {
       throw new IllegalArgumentException("event object is mandatory");
     }
-    EventDTO similarEvent = eventStorage.getEventByTitleAndTrigger(eventDTO.getTitle(), eventDTO.getTrigger());
-    if (similarEvent != null) {
-      throw new ObjectAlreadyExistsException("Event with same title and trigger already exist");
-    }
     return eventStorage.saveEvent(eventDTO);
   }
 
