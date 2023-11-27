@@ -19,6 +19,7 @@ package io.meeds.gamification.storage.cached;
 
 import java.io.Serializable;
 
+import io.meeds.gamification.storage.EventStorage;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -46,10 +47,11 @@ public class RuleCachedStorage extends RuleStorage {
   private FutureExoCache<Serializable, Object, CacheKey> ruleFutureCache;
 
   public RuleCachedStorage(ProgramStorage programStorage,
+                           EventStorage eventStorage,
                            ProgramDAO programDAO,
                            RuleDAO ruleDAO,
                            CacheService cacheService) {
-    super(programStorage, programDAO, ruleDAO);
+    super(programStorage, eventStorage, programDAO, ruleDAO);
     ExoCache<Serializable, Object> ruleCache = cacheService.getCacheInstance(RULE_CACHE_NAME);
     Loader<Serializable, Object, CacheKey> ruleLoader = new Loader<Serializable, Object, CacheKey>() {
       @Override

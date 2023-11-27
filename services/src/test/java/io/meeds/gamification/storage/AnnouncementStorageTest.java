@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
+import io.meeds.gamification.model.*;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -42,10 +43,6 @@ import org.exoplatform.social.core.identity.model.Identity;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RuleEntity;
-import io.meeds.gamification.model.Announcement;
-import io.meeds.gamification.model.ProgramDTO;
-import io.meeds.gamification.model.RealizationDTO;
-import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.storage.mapper.ProgramMapper;
 import io.meeds.gamification.utils.Utils;
 
@@ -97,7 +94,11 @@ public class AnnouncementStorageTest {
     rule.setStartDate(Utils.toSimpleDateFormat(startDate));
     rule.setEndDate(Utils.toSimpleDateFormat(endDate));
     rule.setScore(10);
-    rule.setEvent("gamification");
+    EventDTO event = new EventDTO();
+    event.setTitle("gamification");
+    event.setTrigger("gamification");
+    event.setType("gamification");
+    rule.setEvent(event);
     rule.setEnabled(true);
 
     Date createDate = new Date(System.currentTimeMillis() + 1);
