@@ -20,14 +20,15 @@ public class RuleStorage {
 
   private ProgramStorage programStorage;
 
+  private EventStorage   eventStorage;
+
   private ProgramDAO     programDAO;
 
   private RuleDAO        ruleDAO;
 
-  public RuleStorage(ProgramStorage programStorage,
-                     ProgramDAO programDAO,
-                     RuleDAO ruleDAO) {
+  public RuleStorage(ProgramStorage programStorage, EventStorage eventStorage, ProgramDAO programDAO, RuleDAO ruleDAO) {
     this.programStorage = programStorage;
+    this.eventStorage = eventStorage;
     this.ruleDAO = ruleDAO;
     this.programDAO = programDAO;
   }
@@ -46,19 +47,19 @@ public class RuleStorage {
     } else {
       ruleEntity = ruleDAO.update(ruleEntity);
     }
-    return RuleMapper.fromEntity(programStorage, ruleEntity);
+    return RuleMapper.fromEntity(programStorage, eventStorage, ruleEntity);
   }
 
   public RuleDTO findRuleById(Long id) {
-    return RuleMapper.fromEntity(programStorage, ruleDAO.find(id));
+    return RuleMapper.fromEntity(programStorage, eventStorage, ruleDAO.find(id));
   }
 
   public RuleDTO findRuleByTitle(String ruleTitle) {
-    return RuleMapper.fromEntity(programStorage, ruleDAO.findRuleByTitle(ruleTitle));
+    return RuleMapper.fromEntity(programStorage, eventStorage, ruleDAO.findRuleByTitle(ruleTitle));
   }
 
   public RuleDTO findActiveRuleByEventAndProgramId(String event, long programId) {
-    return RuleMapper.fromEntity(programStorage, ruleDAO.findActiveRuleByEventAndProgramId(event, programId));
+    return RuleMapper.fromEntity(programStorage, eventStorage, ruleDAO.findActiveRuleByEventAndProgramId(event, programId));
   }
 
   public List<Long> findRuleIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {
@@ -88,7 +89,7 @@ public class RuleStorage {
     }
     ruleEntity.setDeleted(true);
     ruleDAO.update(ruleEntity);
-    return RuleMapper.fromEntity(programStorage, ruleEntity);
+    return RuleMapper.fromEntity(programStorage, eventStorage, ruleEntity);
   }
 
   public void clearCache() { // NOSONAR

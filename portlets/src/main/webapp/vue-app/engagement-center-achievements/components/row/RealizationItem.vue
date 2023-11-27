@@ -362,7 +362,7 @@ export default {
       }
     },
     eventName() {
-      return this.realization?.action?.event;
+      return this.realization?.action?.event?.title;
     },
     programTitle() {
       return this.program?.title || this.programLabel;
