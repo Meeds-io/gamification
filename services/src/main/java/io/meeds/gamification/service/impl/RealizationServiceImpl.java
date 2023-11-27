@@ -779,7 +779,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
           && realization.getRuleId() != 0 ? ruleService.findRuleById(realization.getRuleId())
                                           : ruleService.findRuleByTitle(realization.getActionTitle());
 
-      String ruleTitle = rule == null ? null : rule.getEvent();
+      String ruleTitle = rule == null ? null : rule.getEvent().getTitle();
       String actionLabel = realization.getActionTitle() != null ? realization.getActionTitle() : ruleTitle;
       String programTitle = escapeIllegalCharacterInMessage(realization.getProgramLabel());
       int cellIndex = 0;
