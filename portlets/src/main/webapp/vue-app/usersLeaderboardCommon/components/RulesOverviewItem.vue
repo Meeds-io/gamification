@@ -26,27 +26,27 @@
         min-width="35"
         class="d-flex align-center justify-center transparent"
         flat>
-        <rule-icon :rule-event="rule.event" size="30" />
+        <rule-icon :rule-event="eventTitle" size="30" />
       </v-card>
     </template>
     <v-list-item class="px-0">
       <v-list-item-content class="py-0 my-auto">
         <v-list-item-title class="subtitle-2">
-          {{ rule.title }}
+          {{ ruleTitle }}
         </v-list-item-title>
         <v-list-item-subtitle v-if="upcoming || ending" class="d-flex flex-nowrap align-center subtitle-2">
           <engagement-center-rule-date-info-chip
             :rule="rule"
             size="18" />
         </v-list-item-subtitle>
-        <v-list-item-subtitle v-else-if="rule.realizationsCount === 0" class="subtitle-2">
+        <v-list-item-subtitle v-else-if="realizationsCount === 0" class="subtitle-2">
           {{ $t('gamification.overview.label.firstAnnounecement') }}
         </v-list-item-subtitle>
-        <v-list-item-subtitle v-else-if="rule.realizationsCount === 1" class="subtitle-2">
+        <v-list-item-subtitle v-else-if="realizationsCount === 1" class="subtitle-2">
           1 {{ $t('gamification.overview.label.participation') }}
         </v-list-item-subtitle>
         <v-list-item-subtitle v-else class="subtitle-2">
-          {{ rule.realizationsCount }} {{ $t('gamification.overview.label.participations') }}
+          {{ realizationsCount }} {{ $t('gamification.overview.label.participations') }}
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action>
@@ -92,6 +92,15 @@ export default {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       }).format(this.rule.score);
+    },
+    ruleTitle() {
+      return this.rule?.title;
+    },
+    eventTitle() {
+      return this.rule?.event?.title;
+    },
+    realizationsCount() {
+      return this.rule?.realizationsCount;
     },
     upcoming() {
       const startDate = this.rule?.startDate && new Date(this.rule?.startDate).getTime();
