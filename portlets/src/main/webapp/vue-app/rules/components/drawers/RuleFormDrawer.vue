@@ -160,40 +160,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     {{ $t('rule.form.label.type.declarative') }}
                   </v-btn>
                 </div>
-                <div v-if="automaticType">
-                  <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
-                    {{ $t('rule.form.label.selectEvent') }}
-                  </v-card-text>
-                  <v-card-text v-if="eventNames.length" class="pa-0">
-                    <v-autocomplete
-                      id="EventSelectAutoComplete"
-                      ref="EventSelectAutoComplete"
-                      v-model="value"
-                      :placeholder="$t('rule.form.label.selectEvent.placeholder')"
-                      :items="eventNames"
-                      item-text="label"
-                      class="pa-0"
-                      filled
-                      persistent-hint
-                      dense>
-                      <template #selection="data">
-                        <v-chip
-                          v-bind="data.attrs"
-                          :input-value="data.selected"
-                          :title="data.item && data.item.label || data.item"
-                          @click="data.select">
-                          {{ data.item && data.item.label || data.item }}
-                        </v-chip>
-                      </template>
-                      <template #item="data">
-                        <v-list-item-content v-text="data.item.label" />
-                      </template>
-                    </v-autocomplete>
-                  </v-card-text>
-                  <v-card-text v-if="eventExist" class="error--text pa-0">
-                    {{ $t('rule.form.error.sameEventExistsInProgram') }}
-                  </v-card-text>
-                </div>
                 <div v-if="ruleId">
                   <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
                     {{ $t('rule.form.label.status') }}
@@ -210,15 +176,35 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </div>
             </v-slide-y-transition>
           </div>
-          <div :class="expanded && 'col-6'" class="flex-grow-1 flex-shrink-0">
+
+          <div
+            v-if="automaticType"
+            :class="expanded && 'col-6'"
+            class="flex-grow-1 flex-shrink-0">
             <v-stepper-step
               :complete="stepper > 2"
               step="2"
               class="ma-0">
+              <span class="font-weight-bold dark-grey-color text-subtitle-1">Create the automatic flow</span>
+            </v-stepper-step>
+            <v-slide-y-transition>
+              <div v-show="expanded || stepper === 2" class="px-6">
+                <engagement-center-rule-form-automatic-flow
+                  :selected-trigger="selectedTrigger"
+                  :trigger-type="triggerType"
+                  @triggerUpdated="selectTrigger" />
+              </div>
+            </v-slide-y-transition>
+          </div>
+          <div :class="expanded && 'col-6'" class="flex-grow-1 flex-shrink-0">
+            <v-stepper-step
+              :complete="stepper > finaleStep"
+              :step="finaleStep"
+              class="ma-0">
               <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepTwo') }}</span>
             </v-stepper-step>
             <v-slide-y-transition>
-              <div v-show="expanded || stepper > 1" class="px-6">
+              <div v-show="expanded || stepper > finaleStep - 1" class="px-6">
                 <engagement-center-rule-publish-editor
                   v-if="enablePublication"
                   ref="rulePublishInput"
@@ -292,7 +278,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="d-flex">
         <v-spacer />
         <v-btn
-          v-if="stepper === 2 && !expanded"
+          v-if="(stepper === 2 || stepper === 3) && !expanded"
           class="btn me-2"
           @click="previousStep">
           {{ $t('rule.form.label.button.back') }}
@@ -304,7 +290,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           {{ $t('rule.form.label.button.cancel') }}
         </v-btn>
         <v-btn
-          v-if="stepper === 1"
+          v-if="stepper === 1 || (automaticType && stepper === 2)"
           :disabled="disableNextButton"
           class="btn btn-primary"
           @click="nextStep">
@@ -339,6 +325,8 @@ export default {
     eventExist: false,
     validDescription: false,
     validEvent: false,
+    selectedTrigger: '',
+    triggerType: '',
     stepper: 0,
     programAvatarSize: 40,
     isValidForm: true,
@@ -351,8 +339,6 @@ export default {
     prerequisiteRuleCondition: false,
     validDatesInput: false,
     validMessage: false,
-    events: [],
-    programEvents: [],
     metadataObjectId: null,
     attachmentsEdited: false,
     defaultTemplateParams: {
@@ -373,17 +359,6 @@ export default {
         v => v && v > 0 || this.$t('rules.actionScoreMandatory'),
       ];
     },
-    eventNames() {
-      this.events.filter(event => event != null).forEach(event => {
-        const eventObject = {};
-        const eventTitle = event.title;
-        eventObject.name = eventTitle;
-        const fieldLabelI18NKey = `gamification.event.title.${eventTitle}`;
-        eventObject.label = this.$te(fieldLabelI18NKey) ? this.$t(fieldLabelI18NKey) : eventTitle;
-        this.eventMapping.push(eventObject);
-      });
-      return this.eventMapping;
-    },
     programAvatar() {
       return this.program?.avatarUrl || '';
     },
@@ -403,7 +378,7 @@ export default {
       return this.ruleTitle?.length > 0;
     },
     ruleTypeValid() {
-      return this.manualType || (this.automaticType && this.validEvent);
+      return this.manualType || this.automaticType;
     },
     ruleStartDate() {
       return this.rule?.startDate;
@@ -421,7 +396,7 @@ export default {
       return !this.prerequisiteRuleCondition || this.rule.prerequisiteRules?.length;
     },
     disableNextButton() {
-      return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.isValidForm;
+      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.isValidForm || !this.ruleTypeValid || (this.automaticType && this.stepper === 2 && !this.value);
     },
     disableSaveButton() {
       return !this.ruleChanged || this.disableNextButton || !this.durationValid || !this.recurrenceValid || !this.prerequisiteRuleValid || (this.enablePublication && !this.validMessage);
@@ -493,6 +468,9 @@ export default {
         cancel: this.$t('confirm.no'),
       };
     },
+    finaleStep() {
+      return this.automaticType ? 3 : 2;
+    },
     programStyle() {
       return this.program?.color && `border: 1px solid ${this.program.color} !important;` || '';
     },
@@ -501,7 +479,6 @@ export default {
     value: {
       immediate: true,
       handler() {
-        this.emitSelectedValue(this.value);
         this.validEvent = this.value && this.value !== '';
       }
     },
@@ -530,47 +507,51 @@ export default {
   },
   methods: {
     open(rule, program) {
-      this.retrieveEvents()
-        .then(() => {
-          this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
-            score: 20,
-            enabled: true,
-            publish: true,
-            area: this.programTitle
-          };
-          if (!this.rule.templateParams) {
-            this.rule.templateParams = Object.assign({}, this.defaultTemplateParams);
-          }
-
-          this.program = this.rule?.program || program;
-          this.ruleTitle = this.rule?.title || '';
-          this.ruleTitleTranslations = {};
-          this.ruleDescription = this.rule?.description || '';
-          this.validDescription = !!this.ruleDescription;
-          this.ruleDescriptionTranslations = {};
-          this.durationCondition = this.rule.startDate || this.rule.endDate;
-          this.recurrenceCondition = !!this.rule.recurrence;
-          this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
-          this.eventExist = false;
-          this.metadataObjectId = rule?.id;
-          this.attachmentsEdited = false;
-          if (this.$refs.ruleFormDrawer) {
-            this.$refs.ruleFormDrawer.open();
-          }
-          this.$nextTick().then(() => {
-            this.$root.$emit('rule-form-drawer-opened', this.rule);
-            this.value = this.eventMapping.find(event => event.name === rule?.event) || '';
-          });
-          return this.retrieveProgramRules();
-        });
-    },
-    retrieveEvents() {
-      if (!this.events?.length) {
-        return this.$gamificationConnectorService.getEvents()
-          .then(data => this.events = data.entities || []);
-      } else {
-        return Promise.resolve(null);
+      this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
+        score: 20,
+        enabled: true,
+        publish: true,
+        area: this.programTitle
+      };
+      if (!this.rule.templateParams) {
+        this.rule.templateParams = Object.assign({}, this.defaultTemplateParams);
       }
+
+      this.program = this.rule?.program || program;
+      this.ruleTitle = this.rule?.title || '';
+      this.ruleTitleTranslations = {};
+      this.ruleDescription = this.rule?.description || '';
+      this.validDescription = !!this.ruleDescription;
+      this.ruleDescriptionTranslations = {};
+      this.durationCondition = this.rule.startDate || this.rule.endDate;
+      this.recurrenceCondition = !!this.rule.recurrence;
+      this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
+      this.eventExist = false;
+      this.metadataObjectId = rule?.id;
+      this.attachmentsEdited = false;
+      this.value = this.rule?.event?.title;
+      this.selectedTrigger = this.rule?.event?.title;
+      this.triggerType = this.rule?.event?.type;
+      if (this.$refs.ruleFormDrawer) {
+        this.$refs.ruleFormDrawer.open();
+      }
+      this.$nextTick().then(() => {
+        this.$root.$emit('rule-form-drawer-opened', this.rule);
+      });
+    },
+    selectTrigger(trigger, triggerType) {
+      this.value = trigger || null;
+      this.triggerType = triggerType || null;
+      if (this.rule.id && this.automaticType) {
+        const event = {
+          id: this.rule?.event?.id,
+          title: trigger,
+          trigger: trigger,
+          type: triggerType
+        };
+        this.$set(this.rule, 'event', event);
+      }
+
     },
     close() {
       this.$refs.ruleFormDrawer.close();
@@ -586,35 +567,17 @@ export default {
       this.rule.description = '';
       this.value = {};
     },
-    retrieveProgramRules() {
-      return this.$ruleService.getRules({
-        programId: this.programId,
-        status: 'ENABLED',
-        programStatus: 'ALL',
-        type: 'AUTOMATIC',
-        offset: 0,
-        limit: this.events?.length || 10,
-        returnSize: false,
-        lang: eXo.env.portal.language,
-      })
-        .then(data => this.programEvents = data && data.rules.map(rule => ({
-          ruleId: rule.id,
-          event: rule.event,
-        })) || []);
-    },
-    emitSelectedValue(value) {
-      const eventObject = this.eventMapping.find(event => event.label === value);
-      if (eventObject) {
-        this.$set(this.rule,'event', eventObject.name);
-        this.eventExist = this.programEvents.find(programEvent => eventObject.name === programEvent.event && programEvent.ruleId !== this.rule?.id);
-      }
-    },
     saveRule() {
       this.saving = true;
       if (this.rule.id) {
         this.$translationService.saveTranslations('rule', this.rule.id, 'title', this.ruleTitleTranslations)
           .then(() => this.$translationService.saveTranslations('rule', this.rule.id, 'description', this.ruleDescriptionTranslations))
           .then(() => this.$refs?.rulePublishInput?.saveAttachments())
+          .then(() => {
+            if (this.automaticType) {
+              this.$gamificationConnectorService.updateEvent(this.rule?.event);
+            }
+          })
           .then(() => this.$ruleService.updateRule(this.ruleToSave))
           .then(rule => {
             this.$root.$emit('rule-updated-event', rule);
@@ -644,45 +607,62 @@ export default {
           })
           .finally(() => this.saving = false);
       } else {
-        this.$ruleService.createRule(this.ruleToSave)
-          .then(rule => {
-            this.originalRule = rule;
-            this.$root.$emit('rule-created-event', rule);
-            return this.$translationService.saveTranslations('rule', this.originalRule.id, 'title', this.ruleTitleTranslations);
-          })
-          .then(() => this.$translationService.saveTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
-          .then(() => {
-            this.metadataObjectId = String(this.originalRule.id);
-            return this.$nextTick();
-          })
-          .then(() => this.$refs?.rulePublishInput?.saveAttachments())
-          .then(() => {
-            if (this.ruleToSave.publish && this.originalRule.activityId) {
-              document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
-                alertType: 'success',
-                alertMessage: this.$t('programs.details.ruleCreationAndPublishSuccess'),
-                alertLink: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.originalRule.activityId}`,
-                alertLinkText: this.$t('rule.alert.see'),
-                alertLinkTarget: '_self',
-              }}));
-            } else {
-              this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationSuccess'), 'success');
-            }
-            this.saving = false; // To Keep to be able to close drawer
-            this.originalRule = null;
-            this.attachmentsEdited = false;
-            this.originalRuleTitleTranslations = null;
-            this.originalRuleDescriptionTranslations = null;
-            this.attachmentsEdited = false;
-            return this.$nextTick();
-          })
-          .then(() => this.close())
-          .catch(e => {
-            console.error(e);
-            this.eventExist = e.message === '409';
-          })
-          .finally(() => this.saving = false);
+        if (this.automaticType) {
+          const eventToSave = {
+            title: this.value,
+            trigger: this.value,
+            type: this.triggerType,
+          };
+          this.$gamificationConnectorService.createEvent(eventToSave)
+            .then(event => {
+              this.ruleToSave.event = event;
+              this.createRule();
+            });
+        } else {
+          this.createRule();
+        }
       }
+    },
+
+    createRule() {
+      return this.$ruleService.createRule(this.ruleToSave)
+        .then(rule => {
+          this.originalRule = rule;
+          this.$root.$emit('rule-created-event', rule);
+          return this.$translationService.saveTranslations('rule', this.originalRule.id, 'title', this.ruleTitleTranslations);
+        })
+        .then(() => this.$translationService.saveTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
+        .then(() => {
+          this.metadataObjectId = String(this.originalRule.id);
+          return this.$nextTick();
+        })
+        .then(() => this.$refs?.rulePublishInput?.saveAttachments())
+        .then(() => {
+          if (this.ruleToSave.publish && this.originalRule.activityId) {
+            document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
+              alertType: 'success',
+              alertMessage: this.$t('programs.details.ruleCreationAndPublishSuccess'),
+              alertLink: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.originalRule.activityId}`,
+              alertLinkText: this.$t('rule.alert.see'),
+              alertLinkTarget: '_self',
+            }}));
+          } else {
+            this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationSuccess'), 'success');
+          }
+          this.saving = false; // To Keep to be able to close drawer
+          this.originalRule = null;
+          this.attachmentsEdited = false;
+          this.originalRuleTitleTranslations = null;
+          this.originalRuleDescriptionTranslations = null;
+          this.attachmentsEdited = false;
+          return this.$nextTick();
+        })
+        .then(() => this.close())
+        .catch(e => {
+          console.error(e);
+          this.eventExist = e.message === '409';
+        })
+        .finally(() => this.saving = false);
     },
     computeRuleModel(rule, program, description) {
       const ruleModel = {

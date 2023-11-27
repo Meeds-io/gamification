@@ -778,6 +778,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <module>
     <name>ruleComponents</name>
+    <load-group>gamification-admin-connectors</load-group>
     <script>
       <minify>false</minify>
       <path>/js/ruleComponents.bundle.js</path>
