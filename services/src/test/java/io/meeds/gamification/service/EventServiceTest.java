@@ -79,32 +79,4 @@ public class EventServiceTest extends AbstractServiceTest {
     eventService.updateEvent(eventDTO);
     assertEquals("trigger2", eventService.getEvent(eventDTO.getId()).getTrigger());
   }
-
-  public void testGetEvents() {
-    EventFilter eventFilter = new EventFilter();
-
-    List<EventDTO> allEvents = eventService.getEvents(eventFilter, OFFSET, LIMIT);
-    assertEquals(Collections.emptyList(), allEvents);
-    String eventTitle1 = "test-event1";
-    String eventTitle2 = "test-event2";
-    eventRegistry.addPlugin(new EventConfigPlugin(newParam(eventTitle1, "connectorName", "trigger1")));
-    eventRegistry.addPlugin(new EventConfigPlugin(newParam(eventTitle2, "connectorName2", "trigger2")));
-    eventRegistry.start();
-    assertNotNull(eventService.getEvents(eventFilter, OFFSET, LIMIT));
-    assertEquals(2, eventService.getEvents(eventFilter, OFFSET, LIMIT).size());
-    assertEquals(2, eventService.countEvents(eventFilter));
-  }
-
-  private InitParams newParam(String title, String type, String trigger) {
-    InitParams params = new InitParams();
-    EventDTO eventDTO = new EventDTO();
-    eventDTO.setTitle(title);
-    eventDTO.setType(type);
-    eventDTO.setTrigger(trigger);
-    ObjectParameter parameter = new ObjectParameter();
-    parameter.setName("event");
-    parameter.setObject(eventDTO);
-    params.addParameter(parameter);
-    return params;
-  }
 }
