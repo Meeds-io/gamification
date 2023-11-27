@@ -364,6 +364,9 @@ export default {
     eventName() {
       return this.realization?.action?.event?.title;
     },
+    program() {
+      return this.realization?.program;
+    },
     programTitle() {
       return this.program?.title || this.programLabel;
     },

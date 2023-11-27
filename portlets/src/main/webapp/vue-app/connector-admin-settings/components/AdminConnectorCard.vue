@@ -91,7 +91,10 @@ export default {
       return this.connectorExtension?.title || '';
     },
     description() {
-      return this.$t(`${this.connectorExtension?.description}`);
+      return this.$t(`${this.connectorExtension?.componentOptions?.description}`);
+    },
+    triggersSize() {
+      return this.connector?.triggers?.length;
     },
     comingSoon() {
       return this.connectorExtension?.comingSoon;
