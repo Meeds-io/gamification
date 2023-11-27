@@ -45,7 +45,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule.setDescription("Description");
     rule.setEnabled(true);
     rule.setDeleted(false);
-    rule.setEvent(RULE_NAME);
+    rule.setEvent(newEventDTO(RULE_NAME));
     rule.setCreatedBy(TEST_USER_EARNER);
     rule.setCreatedDate(Utils.toRFC3339Date(new Date()));
     rule.setLastModifiedBy(TEST_USER_EARNER);
@@ -68,7 +68,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule = newRuleDTO();
     long domainId = rule.getProgram().getId();
-    assertEquals(ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent(), domainId).getTitle(), rule.getTitle());
+    assertEquals(ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent().getTitle(), domainId).getTitle(), rule.getTitle());
   }
 
   @Test
@@ -84,7 +84,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     manualRule.setDescription("Description");
     manualRule.setEnabled(true);
     manualRule.setDeleted(false);
-    manualRule.setEvent(RULE_NAME);
+    manualRule.setEvent(newEventDTO(RULE_NAME));
     manualRule.setCreatedBy(TEST_USER_EARNER);
     manualRule.setCreatedDate(Utils.toRFC3339Date(new Date()));
     manualRule.setLastModifiedBy(TEST_USER_EARNER);
@@ -130,7 +130,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule1.setDescription("Description");
     rule1.setEnabled(true);
     rule1.setDeleted(false);
-    rule1.setEvent(RULE_NAME);
+    rule1.setEvent(newEventDTO(RULE_NAME));
     rule1.setCreatedBy(TEST_USER_EARNER);
     rule1.setCreatedDate(Utils.toRFC3339Date(new Date()));
     rule1.setLastModifiedBy(TEST_USER_EARNER);
@@ -144,7 +144,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule2.setDescription("Description");
     rule2.setEnabled(true);
     rule2.setDeleted(false);
-    rule2.setEvent(RULE_NAME);
+    rule2.setEvent(newEventDTO(RULE_NAME));
     rule2.setCreatedBy(TEST_USER_EARNER);
     rule2.setCreatedDate(Utils.toRFC3339Date(new Date()));
     rule2.setLastModifiedBy(TEST_USER_EARNER);
@@ -158,7 +158,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule3.setDescription("Description");
     rule3.setEnabled(true);
     rule3.setDeleted(false);
-    rule3.setEvent(RULE_NAME);
+    rule3.setEvent(newEventDTO(RULE_NAME));
     rule3.setCreatedBy(TEST_USER_EARNER);
     rule3.setCreatedDate(Utils.toRFC3339Date(new Date()));
     rule3.setLastModifiedBy(TEST_USER_EARNER);
@@ -216,7 +216,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule1.setDescription("Description");
     rule1.setEnabled(true);
     rule1.setDeleted(false);
-    rule1.setEvent(RULE_NAME);
+    rule1.setEvent(newEventDTO(RULE_NAME));
     rule1.setCreatedBy(TEST_USER_EARNER);
     rule1.setCreatedDate(Utils.toRFC3339Date(new Date()));
     rule1.setLastModifiedBy(TEST_USER_EARNER);
@@ -230,7 +230,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule2.setDescription("Description");
     rule2.setEnabled(true);
     rule2.setDeleted(false);
-    rule2.setEvent(RULE_NAME);
+    rule2.setEvent(newEventDTO(RULE_NAME));
     rule2.setCreatedBy(TEST_USER_EARNER);
     rule2.setCreatedDate(Utils.toRFC3339Date(new Date()));
     rule2.setLastModifiedBy(TEST_USER_EARNER);
@@ -244,7 +244,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule3.setDescription("Description");
     rule3.setEnabled(true);
     rule3.setDeleted(false);
-    rule3.setEvent(RULE_NAME);
+    rule3.setEvent(newEventDTO(RULE_NAME));
     rule3.setCreatedBy(TEST_USER_EARNER);
     rule3.setCreatedDate(Utils.toRFC3339Date(new Date()));
     rule3.setLastModifiedBy(TEST_USER_EARNER);
