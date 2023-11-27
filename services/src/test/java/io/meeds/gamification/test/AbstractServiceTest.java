@@ -28,9 +28,12 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
 import io.meeds.gamification.dao.*;
+import io.meeds.gamification.entity.*;
+import io.meeds.gamification.model.*;
 import io.meeds.gamification.service.*;
 import io.meeds.gamification.service.impl.EventRegistryImpl;
 import io.meeds.gamification.storage.EventStorage;
+import io.meeds.gamification.storage.mapper.*;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.web.security.codec.CodecInitializer;
@@ -67,35 +70,20 @@ import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.RecurrenceType;
-import io.meeds.gamification.entity.BadgeEntity;
-import io.meeds.gamification.entity.ProgramEntity;
-import io.meeds.gamification.entity.RealizationEntity;
-import io.meeds.gamification.entity.RuleEntity;
-import io.meeds.gamification.model.BadgeDTO;
-import io.meeds.gamification.model.ProgramDTO;
-import io.meeds.gamification.model.RealizationDTO;
-import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.rest.BadgeRest;
 import io.meeds.gamification.rest.ProgramRest;
 import io.meeds.gamification.search.RuleIndexingServiceConnector;
 import io.meeds.gamification.storage.ProgramStorage;
 import io.meeds.gamification.storage.RealizationStorage;
 import io.meeds.gamification.storage.RuleStorage;
-import io.meeds.gamification.storage.mapper.BadgeMapper;
-import io.meeds.gamification.storage.mapper.ProgramMapper;
-import io.meeds.gamification.storage.mapper.RealizationMapper;
-import io.meeds.gamification.storage.mapper.RuleMapper;
 import io.meeds.gamification.utils.Utils;
 import io.meeds.portal.security.constant.UserRegistrationType;
 import io.meeds.portal.security.service.SecuritySettingService;
 
-@ConfiguredBy({
-    @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
+@ConfiguredBy({ @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/configuration.xml"),
-    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/gamification-test-configuration.xml"),
-})
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/gamification-test-configuration.xml"), })
 public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
-
 
   public static final String             GAMIFICATION_DOMAIN = "TeamWork";
 
@@ -120,7 +108,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
 
   public static final String             TEST_GLOBAL_SCORE   = "245590";
 
-  public static final String             TEST_SCORE         = "50";
+  public static final String             TEST_SCORE          = "50";
 
   public static final long               MILLIS_IN_A_DAY     = 1000 * 60 * 60 * 24;           // NOSONAR
 
@@ -187,15 +175,15 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
   protected RuleDAO                      ruleDAO;
 
   protected RealizationDAO               realizationDAO;
-  
+
   protected ConnectorAccountDAO          connectorAccountDAO;
 
   protected RealizationStorage           realizationsStorage;
 
   protected RuleIndexingServiceConnector ruleIndexingServiceConnector;
-  
+
   protected ConnectorService             connectorService;
-  
+
   protected ConnectorSettingService      connectorSettingService;
 
   protected EventDAO                     eventDAO;
@@ -204,13 +192,15 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
 
   protected EventService                 eventService;
 
+  protected TriggerService               triggerService;
+
   protected EventRegistryImpl            eventRegistry;
 
   protected SpaceService                 spaceService;
-  
+
   protected SettingService               settingService;
 
-  protected CodecInitializer               codecInitializer;
+  protected CodecInitializer             codecInitializer;
 
   protected IdentityRegistry             identityRegistry;
 
@@ -259,6 +249,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     eventDAO = ExoContainerContext.getService(EventDAO.class);
     eventStorage = ExoContainerContext.getService(EventStorage.class);
     eventService = ExoContainerContext.getService(EventService.class);
+    triggerService = ExoContainerContext.getService(TriggerService.class);
     eventRegistry = ExoContainerContext.getService(EventRegistryImpl.class);
     spaceService = ExoContainerContext.getService(SpaceService.class);
     settingService = ExoContainerContext.getService(SettingService.class);
@@ -343,15 +334,17 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
   }
 
   protected org.exoplatform.services.security.Identity registerExternalUser(String username) {
-    org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity(username,
-                                                                                                         Arrays.asList(new MembershipEntry("/platform/externals")));
+    org.exoplatform.services.security.Identity identity =
+                                                        new org.exoplatform.services.security.Identity(username,
+                                                                                                       Arrays.asList(new MembershipEntry("/platform/externals")));
     identityRegistry.register(identity);
     return identity;
   }
 
   protected org.exoplatform.services.security.Identity registerInternalUser(String username) {
-    org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity(username,
-                                                                                                         Arrays.asList(new MembershipEntry("/platform/users")));
+    org.exoplatform.services.security.Identity identity =
+                                                        new org.exoplatform.services.security.Identity(username,
+                                                                                                       Arrays.asList(new MembershipEntry("/platform/users")));
     identityRegistry.register(identity);
     return identity;
   }
@@ -365,7 +358,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
       rule.setDescription(DESCRIPTION);
       rule.setEnabled(true);
       rule.setDeleted(false);
-      rule.setEvent(RULE_NAME);
+      rule.setEventEntity(newEvent(RULE_NAME));
       rule.setCreatedBy(TEST_USER_EARNER);
       rule.setCreatedDate(new Date());
       rule.setLastModifiedBy(TEST_USER_EARNER);
@@ -388,7 +381,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
       rule.setDescription(DESCRIPTION);
       rule.setEnabled(true);
       rule.setDeleted(false);
-      rule.setEvent(name);
+      rule.setEventEntity(newEvent(name));
       rule.setCreatedBy(TEST_USER_EARNER);
       rule.setCreatedDate(new Date());
       rule.setLastModifiedBy(TEST_USER_EARNER);
@@ -411,7 +404,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
       rule.setDescription(DESCRIPTION);
       rule.setEnabled(true);
       rule.setDeleted(false);
-      rule.setEvent(name);
+      rule.setEventEntity(newEvent(name));
       rule.setCreatedBy(TEST_USER_EARNER);
       rule.setCreatedDate(new Date());
       rule.setLastModifiedBy(TEST_USER_EARNER);
@@ -419,10 +412,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
       rule.setDomainEntity(domainEntity);
       rule.setType(EntityType.MANUAL);
       rule.setRecurrence(RecurrenceType.NONE);
-      rule.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
-          + 2 * MILLIS_IN_A_DAY))));
-      rule.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
-          - 2 * MILLIS_IN_A_DAY))));
+      rule.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis() + 2 * MILLIS_IN_A_DAY))));
+      rule.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 2 * MILLIS_IN_A_DAY))));
       rule = ruleDAO.create(rule);
       restartTransaction();
     }
@@ -442,7 +433,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
       rule.setDescription(DESCRIPTION);
       rule.setEnabled(isEnabled);
       rule.setDeleted(false);
-      rule.setEvent(name);
+      rule.setEventEntity(newEvent(name));
       rule.setCreatedBy(TEST_USER_EARNER);
       rule.setCreatedDate(new Date());
       rule.setLastModifiedBy(TEST_USER_EARNER);
@@ -450,10 +441,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
       rule.setDomainEntity(newDomain(domain));
       rule.setType(ruleType);
       rule.setRecurrence(RecurrenceType.NONE);
-      rule.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
-          + 2 * MILLIS_IN_A_DAY))));
-      rule.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
-          - 2 * MILLIS_IN_A_DAY))));
+      rule.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis() + 2 * MILLIS_IN_A_DAY))));
+      rule.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 2 * MILLIS_IN_A_DAY))));
       rule = ruleDAO.create(rule);
     }
     return rule;
@@ -477,6 +466,15 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     domain = programDAO.create(domain);
     domainStorage.clearCache();
     return domain;
+  }
+
+  protected EventEntity newEvent(String name) {
+    EventEntity event = new EventEntity();
+    event.setTitle(name);
+    event.setTrigger(name);
+    event.setType("eventType");
+    event = eventDAO.create(event);
+    return event;
   }
 
   protected ProgramEntity newDomain(EntityType entityType, String name, boolean status, Set<Long> owners) {
@@ -711,9 +709,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     return gHistory;
   }
 
-  protected RealizationEntity newRealizationToBeSortedByActionTypeInDateRange(Date createdDate,
-                                                                              String actionTitle,
-                                                                              Long ruleId) {
+  protected RealizationEntity newRealizationToBeSortedByActionTypeInDateRange(Date createdDate, String actionTitle, Long ruleId) {
     RuleEntity rule = ruleDAO.find(ruleId);
     RealizationEntity gHistory = new RealizationEntity();
     gHistory.setStatus(RealizationStatus.ACCEPTED);
@@ -742,15 +738,19 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
   }
 
   protected RuleDTO newRuleDTO() {
-    return RuleMapper.fromEntity(domainStorage, newRule());
+    return RuleMapper.fromEntity(domainStorage, eventStorage, newRule());
   }
 
   protected RuleDTO newRuleDTO(String name, long domainId) {
-    return RuleMapper.fromEntity(domainStorage, newRule(name, domainId));
+    return RuleMapper.fromEntity(domainStorage, eventStorage, newRule(name, domainId));
   }
 
   protected ProgramDTO newProgram() {
     return ProgramMapper.fromEntity(ruleDAO, newDomain());
+  }
+
+  protected EventDTO newEventDTO(String event) {
+    return EventMapper.fromEntity(newEvent(event));
   }
 
   protected ProgramDTO newProgram(String name) {

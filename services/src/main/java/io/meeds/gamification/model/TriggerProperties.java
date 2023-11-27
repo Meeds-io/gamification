@@ -15,35 +15,25 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.gamification.service;
+package io.meeds.gamification.model;
 
-import io.meeds.gamification.model.Trigger;
-import io.meeds.gamification.plugin.EventConfigPlugin;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
-public interface EventRegistry {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class TriggerProperties {
 
-  /**
-   * Add a new {@link EventConfigPlugin} for a given trigger name
-   *
-   * @param eventConfigPlugin {@link EventConfigPlugin}
-   */
-  void addPlugin(EventConfigPlugin eventConfigPlugin);
+  private List<Long> disabledAccounts;
 
-  /**
-   * Removes a {@link EventConfigPlugin}
-   *
-   * @param eventConfigPlugin {@link EventConfigPlugin}
-   */
-  boolean remove(EventConfigPlugin eventConfigPlugin);
+  private List<String> permissions;
 
-  /**
-   * Gets a all configured triggers by type
-   *
-   * @param connectorName connector name
-   * @return {@link List} of {@link Trigger}
-   */
-  List<Trigger> getTriggers(String connectorName);
-
-
+  @Override
+  public TriggerProperties clone() { // NOSONAR
+    return new TriggerProperties(disabledAccounts, permissions);
+  }
 }
