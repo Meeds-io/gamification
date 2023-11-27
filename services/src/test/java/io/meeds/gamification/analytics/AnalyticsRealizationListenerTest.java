@@ -47,6 +47,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
 
+import io.meeds.gamification.model.EventDTO;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -235,7 +236,7 @@ public class AnalyticsRealizationListenerTest {
     ruleDTO.setDescription(CHALLENGE_DESCRIPTION);
     ruleDTO.setEnabled(true);
     ruleDTO.setDeleted(false);
-    ruleDTO.setEvent(EVENT_NAME);
+    ruleDTO.setEvent(newEvent());
     ruleDTO.setProgram(newProgram());
     ruleDTO.setType(EntityType.MANUAL);
     return ruleDTO;
@@ -253,6 +254,14 @@ public class AnalyticsRealizationListenerTest {
     owners.add(1L);
     program.setOwnerIds(owners);
     return program;
+  }
+
+  private EventDTO newEvent() {
+    EventDTO event = new EventDTO();
+    event.setTitle(EVENT_NAME);
+    event.setTrigger(EVENT_NAME);
+    event.setType("eventType");
+    return event;
   }
 
 }
