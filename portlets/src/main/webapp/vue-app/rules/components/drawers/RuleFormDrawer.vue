@@ -128,18 +128,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </v-card-text>
                 <v-card
                   flat
-                  width="120"
+                  width="180"
                   class="d-flex flex-grow-1">
                   <v-text-field
                     v-model="rule.score"
                     :rules="scoreRules"
                     class="mt-0 pt-0 me-2"
                     type="number"
-                    hide-details
                     outlined
                     dense
-                    required />
-                  <label class="my-auto">{{ $t('rule.form.label.points') }}</label>
+                    required>
+                    <template #append-outer>
+                      <label class="mt-1">{{ $t('rule.form.label.points') }}</label>
+                    </template>
+                  </v-text-field>
                 </v-card>
                 <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
                   {{ $t('rule.form.label.type') }}
@@ -344,9 +346,6 @@ export default {
     maxDescriptionLength: 1300,
     drawer: false,
     expanded: false,
-    scoreRules: [
-      v => ( v && v <= 10000 ),
-    ],
     durationCondition: false,
     recurrenceCondition: false,
     prerequisiteRuleCondition: false,
@@ -368,6 +367,12 @@ export default {
     },
   }),
   computed: {
+    scoreRules() {
+      return [
+        v => v && v <= 10000 || this.$t('rules.actionScoreExceedsMax'),
+        v => v && v > 0 || this.$t('rules.actionScoreMandatory'),
+      ];
+    },
     eventNames() {
       this.events.filter(event => event != null).forEach(event => {
         const eventObject = {};
