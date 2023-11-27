@@ -16,6 +16,7 @@
  */
 package io.meeds.gamification.test;
 
+import io.meeds.gamification.service.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -60,16 +61,6 @@ import io.meeds.gamification.rest.TestRuleRest;
 import io.meeds.gamification.rest.TestUserReputationEndpoint;
 import io.meeds.gamification.scheduled.ProgramAutoDisableJobTest;
 import io.meeds.gamification.search.RuleSearchConnectorTest;
-import io.meeds.gamification.service.AnnouncementServiceTest;
-import io.meeds.gamification.service.BadgeRegistryTest;
-import io.meeds.gamification.service.BadgeServiceTest;
-import io.meeds.gamification.service.ConnectorServiceTest;
-import io.meeds.gamification.service.ConnectorSettingServiceTest;
-import io.meeds.gamification.service.EventServiceTest;
-import io.meeds.gamification.service.ProgramServiceTest;
-import io.meeds.gamification.service.RealizationServiceMockTest;
-import io.meeds.gamification.service.RealizationServiceTest;
-import io.meeds.gamification.service.RuleServiceTest;
 import io.meeds.gamification.storage.AnnouncementStorageTest;
 import io.meeds.gamification.storage.ConnectorAccountStorageTest;
 import io.meeds.gamification.storage.ProgramStorageTest;
@@ -133,6 +124,7 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     ActionPublishedNotificationPluginTest.class,
     RuleActivityTypePluginTest.class,
     EventServiceTest.class,
+    TriggerServiceTest.class,
     ProgramVisibilityUpgradePluginTest.class,
 })
 @ConfigTestCase(AbstractServiceTest.class)

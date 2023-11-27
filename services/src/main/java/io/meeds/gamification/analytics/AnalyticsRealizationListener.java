@@ -32,9 +32,6 @@ import static io.meeds.gamification.utils.Utils.STATISTICS_UPDATE_REALIZATION_OP
 import static io.meeds.gamification.utils.Utils.addRealizationStatisticParameters;
 import static org.exoplatform.analytics.utils.AnalyticsUtils.addStatisticData;
 
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
 
 import org.exoplatform.analytics.model.StatisticData;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
@@ -44,9 +41,7 @@ import org.exoplatform.services.listener.Listener;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.Announcement;
-import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.service.EventService;
@@ -105,19 +100,8 @@ public class AnalyticsRealizationListener extends Listener<Object, Object> {
     default:
       throw new IllegalArgumentException("Unexpected listener event name: " + event.getEventName());
     }
-    EventDTO ruleEvent = getRuleEvent(rule);
-    addRealizationStatisticParameters(identityManager, spaceService, rule, ruleEvent, realization, statisticData);
+    addRealizationStatisticParameters(identityManager, spaceService, rule, rule.getEvent(), realization, statisticData);
     addStatisticData(statisticData);
-  }
-
-  private EventDTO getRuleEvent(RuleDTO rule) {
-    if (rule.getType() == EntityType.AUTOMATIC) {
-      List<EventDTO> events = eventService.getEventsByTitle(rule.getEvent(), 0, 1);
-      if (CollectionUtils.isNotEmpty(events)) {
-        return events.get(0);
-      }
-    }
-    return null;
   }
 
   private RealizationDTO getRealization(Object object) {
