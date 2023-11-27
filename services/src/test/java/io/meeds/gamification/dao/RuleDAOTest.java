@@ -50,7 +50,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertEquals(ruleDAO.findAll().size(), 0);
     RuleEntity ruleEntity = newRule();
     long domainId = ruleEntity.getDomainEntity().getId();
-    assertNotNull(ruleDAO.findActiveRuleByEventAndProgramId(ruleEntity.getEvent(), domainId));
+    assertNotNull(ruleDAO.findActiveRuleByEventAndProgramId(ruleEntity.getEventEntity().getTitle(), domainId));
   }
 
   @Test
@@ -208,7 +208,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleEntityNotStarted.setDescription("ruleEntityNotStarted Description");
     ruleEntityNotStarted.setEnabled(true);
     ruleEntityNotStarted.setDeleted(false);
-    ruleEntityNotStarted.setEvent("ruleEntityNotStarted");
+    ruleEntityNotStarted.setEventEntity(newEvent("ruleEntityNotStarted"));
     ruleEntityNotStarted.setCreatedBy(TEST_USER_EARNER);
     ruleEntityNotStarted.setLastModifiedBy(TEST_USER_EARNER);
     ruleEntityNotStarted.setLastModifiedDate(new Date());
@@ -232,7 +232,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleEntityEnded.setDescription("ruleEntityEnded Description");
     ruleEntityEnded.setEnabled(true);
     ruleEntityEnded.setDeleted(false);
-    ruleEntityEnded.setEvent("ruleEntityEnded");
+    ruleEntityEnded.setEventEntity(newEvent("ruleEntityEnded"));
     ruleEntityEnded.setCreatedBy(TEST_USER_EARNER);
     ruleEntityEnded.setLastModifiedBy(TEST_USER_EARNER);
     ruleEntityEnded.setLastModifiedDate(new Date());
