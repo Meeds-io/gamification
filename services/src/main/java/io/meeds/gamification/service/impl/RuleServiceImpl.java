@@ -272,9 +272,11 @@ public class RuleServiceImpl implements RuleService {
     rule.setLastModifiedBy(username);
     rule.setDeleted(false);
     rule.setActivityId(0);
-    RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent(), programId);
-    if (similarRule != null && !similarRule.isDeleted()) {
-      throw new ObjectAlreadyExistsException("Rule with same event and program already exist");
+    if (rule.getEvent() != null) {
+      RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent().getTitle(), programId);
+      if (similarRule != null && !similarRule.isDeleted() && rule.getEvent().getProperties() == similarRule.getEvent().getProperties()) {
+        throw new ObjectAlreadyExistsException("Rule with same event and program already exist");
+      }
     }
     return createRuleAndBroadcast(rule, username);
   }
@@ -394,7 +396,7 @@ public class RuleServiceImpl implements RuleService {
     ProgramDTO program = rule.getProgram();
     if (program != null) {
       long programId = rule.getProgram().getId();
-      RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent(), programId);
+      RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent().getTitle(), programId);
       if (similarRule != null && !similarRule.getId().equals(rule.getId()) && !similarRule.isDeleted()) {
         throw new IllegalStateException("Rule with same event and program already exist");
       }

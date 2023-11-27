@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import io.meeds.gamification.model.EventDTO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -119,7 +120,10 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     addTranslationLabels(ruleId, RuleTranslationPlugin.RULE_DESCRIPTION_FIELD_NAME, fields, rule.getDescription());
 
     fields.put("score", String.valueOf(rule.getScore()));
-    fields.put("event", rule.getEvent());
+    EventDTO event = rule.getEvent();
+    if (event == null) {
+      fields.put("event", event.getTitle());
+    }
     fields.put("startDate", toMilliSecondsString(rule.getStartDate()));
     // To add end of the day
     fields.put("endDate", toMilliSecondsString(rule.getEndDate()));
