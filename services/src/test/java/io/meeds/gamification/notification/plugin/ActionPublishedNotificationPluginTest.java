@@ -21,6 +21,7 @@ import static io.meeds.gamification.utils.Utils.RULE_PUBLISHED_NOTIFICATION_ID;
 
 import java.util.List;
 
+import io.meeds.gamification.model.EventDTO;
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.channel.template.AbstractTemplateBuilder;
 import org.exoplatform.commons.api.notification.model.MessageInfo;
@@ -68,7 +69,14 @@ public class ActionPublishedNotificationPluginTest extends AbstractPluginTest { 
     rule.setDescription("Description");
     rule.setEnabled(true);
     rule.setDeleted(false);
-    rule.setEvent(RULE_NAME);
+
+    EventDTO event = new EventDTO();
+    event.setTitle(RULE_NAME);
+    event.setTrigger(RULE_NAME);
+    event.setType("eventType");
+    event = eventService.createEvent(event);
+    rule.setEvent(event);
+
     rule.setProgram(program);
     rule.setType(EntityType.AUTOMATIC);
     rule.setRecurrence(RecurrenceType.NONE);

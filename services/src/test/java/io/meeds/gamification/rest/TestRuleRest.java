@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
 
+import io.meeds.gamification.model.EventDTO;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.junit.Before;
@@ -109,6 +110,7 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
   public void testUpdateRule() throws Exception {
     startSessionAs("root1");
     ProgramDTO domain = newProgram();
+    EventDTO event = newEventDTO("eventName");
     StringWriter writer = new StringWriter();
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
@@ -130,6 +132,11 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
               .object()
               .key("id")
               .value(domain.getId())
+              .endObject()
+              .key("event")
+              .object()
+              .key("id")
+              .value(event.getId())
               .endObject()
               .endObject();
 
@@ -160,6 +167,11 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
               .object()
               .key("id")
               .value(domain.getId())
+              .endObject()
+              .key("event")
+              .object()
+              .key("id")
+              .value(event.getId())
               .endObject()
               .endObject();
 
@@ -192,6 +204,11 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
               .key("id")
               .value(domain.getId())
               .endObject()
+              .key("event")
+              .object()
+              .key("id")
+              .value(event.getId())
+              .endObject()
               .endObject();
 
     // update with root 2
@@ -222,6 +239,11 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
               .object()
               .key("id")
               .value(domain.getId())
+              .endObject()
+              .key("event")
+              .object()
+              .key("id")
+              .value(event.getId())
               .endObject()
               .endObject();
 
@@ -258,6 +280,11 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
               .object()
               .key("id")
               .value(domain.getId())
+              .endObject()
+              .key("event")
+              .object()
+              .key("id")
+              .value(event.getId())
               .endObject()
               .endObject();
 
@@ -609,10 +636,15 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     domainData.put("id", program.getId());
     domainData.put("title", program.getTitle());
 
+    EventDTO event = newEventDTO("event");
+    JSONObject eventData = new JSONObject();
+    eventData.put("id", event.getId());
+    eventData.put("title", event.getTitle());
+
     JSONObject data = new JSONObject();
     data.put("title", "foo");
     data.put("description", "description");
-    data.put("event", "eventName");
+    data.put("event", eventData);
     data.put("area", program.getTitle());
     data.put("type", "AUTOMATIC");
     data.put("program", domainData);
@@ -673,11 +705,16 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     response = getResponse("PUT", getURLResource("rules"), data.toString());
     assertEquals(404, response.getStatus());
 
+    EventDTO event = newEventDTO("event");
+    JSONObject eventData = new JSONObject();
+    eventData.put("id", event.getId());
+    eventData.put("title", event.getTitle());
+
     data = new JSONObject();
     data.put("id", ruleDTO.getId());
     data.put("title", ruleDTO.getTitle());
     data.put("description", ruleDTO.getDescription() + "_test");
-    data.put("event", ruleDTO.getEvent());
+    data.put("event", eventData);
     data.put("area", ruleDTO.getProgram().getTitle());
     data.put("type", ruleDTO.getType());
     data.put("program", domainData);
