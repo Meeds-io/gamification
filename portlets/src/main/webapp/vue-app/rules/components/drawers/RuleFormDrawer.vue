@@ -355,26 +355,12 @@ export default {
     },
   }),
   computed: {
-<<<<<<< Updated upstream
     scoreRules() {
       return [
         v => v && v <= 10000 || this.$t('rules.actionScoreExceedsMax'),
         v => v && v > 0 || this.$t('rules.actionScoreMandatory'),
       ];
     },
-    eventNames() {
-      this.events.filter(event => event != null).forEach(event => {
-        const eventObject = {};
-        const eventTitle = event.title;
-        eventObject.name = eventTitle;
-        const fieldLabelI18NKey = `gamification.event.title.${eventTitle}`;
-        eventObject.label = this.$te(fieldLabelI18NKey) ? this.$t(fieldLabelI18NKey) : eventTitle;
-        this.eventMapping.push(eventObject);
-      });
-      return this.eventMapping;
-    },
-=======
->>>>>>> Stashed changes
     programAvatar() {
       return this.program?.avatarUrl || '';
     },
