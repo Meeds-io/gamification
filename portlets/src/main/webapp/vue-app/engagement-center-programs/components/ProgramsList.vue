@@ -129,7 +129,7 @@ export default {
       users: [],
       limitToFetch: 0,
       originalLimitToFetch: 0,
-      spacesURL: `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/spaces/`,
+      spacesURL: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/spaces/`,
       isExternal: eXo.env.portal.isExternal === 'true',
     };
   },
@@ -151,7 +151,7 @@ export default {
     },
     welcomeMessage() {
       return this.$t('programs.label.welcomeMessage', {
-        0: `<a class="primary--text font-weight-bold" href="${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/spaces/">`,
+        0: `<a class="primary--text font-weight-bold" href="${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/spaces/">`,
         1: '</a>',
       });
     },

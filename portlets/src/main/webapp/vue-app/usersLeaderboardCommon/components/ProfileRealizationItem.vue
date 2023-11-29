@@ -120,7 +120,7 @@ export default {
   methods: {
     retrieveRealizationLink() {
       if (this.isManualType) {
-        this.realizationLink = `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.objectId}`;
+        this.realizationLink = `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.objectId}`;
       } else if (this.linkExtensionMethod) {
         return this.linkExtensionMethod(this.realization);
       } else if (this.realization?.objectId?.startsWith?.('http')) {
