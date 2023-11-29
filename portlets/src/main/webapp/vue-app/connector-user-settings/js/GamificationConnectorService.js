@@ -170,10 +170,13 @@ export function updateEvent(event) {
   });
 }
 
-export function getTriggers(type) {
+export function getTriggers(type, expand) {
   const formData = new FormData();
   if (type) {
     formData.append('type', type);
+  }
+  if (expand) {
+    formData.append('expand', expand);
   }
   const params = new URLSearchParams(formData).toString();
 
@@ -185,6 +188,26 @@ export function getTriggers(type) {
       return resp.json();
     } else {
       throw new Error('Error when getting triggers');
+    }
+  });
+}
+
+export function saveTriggerStatus(trigger, accountId, enabled) {
+  const formData = new FormData();
+  formData.append('trigger', trigger);
+  formData.append('accountId', accountId);
+  formData.append('enabled', enabled);
+
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/triggers/status`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(formData).toString(),
+  }).then(resp => {
+    if (!resp?.ok) {
+      throw new Error('Response code indicates a server error', resp);
     }
   });
 }
