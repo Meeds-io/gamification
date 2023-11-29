@@ -8,14 +8,13 @@
       :items="connectors"
       :filter="filterConnectors"
       :menu-props="{ closeOnContentClick: true }"
-      placeholder="Select your application"
+      :placeholder="$t('rule.form.label.application.Placeholder')"
       class="py-0"
       background-color="white"
       dense
       flat
       outlined
       solo
-      clearable
       hide-no-data
       open-on-clear>
       <template #item="{ item }">
@@ -74,14 +73,13 @@
         :items="triggers"
         :filter="filterTriggers"
         :menu-props="{ closeOnContentClick: true }"
-        placeholder="Select which event will trigger action"
+        :placeholder="$t('rule.form.label.event.placeholder')"
         class="py-0"
         background-color="white"
         dense
         flat
         outlined
         solo
-        clearable
         hide-no-data
         hide-selected
         open-on-clear>
@@ -194,7 +192,7 @@ export default {
     retrieveTriggers() {
       return this.$gamificationConnectorService.getTriggers(this.selectedConnector.name)
         .then(triggers => {
-          this.triggers = triggers;
+          this.triggers = triggers.map(trigger => trigger.title);
         });
     },
   }
