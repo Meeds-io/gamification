@@ -33,7 +33,7 @@ public class TriggerProperties {
   private List<String> permissions;
 
   @Override
-  public TriggerProperties clone() {
+  public TriggerProperties clone() { // NOSONAR
     return new TriggerProperties(disabledAccounts, permissions);
   }
 }

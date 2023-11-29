@@ -339,8 +339,6 @@ export default {
     prerequisiteRuleCondition: false,
     validDatesInput: false,
     validMessage: false,
-    events: [],
-    programEvents: [],
     metadataObjectId: null,
     attachmentsEdited: false,
     defaultTemplateParams: {
@@ -481,7 +479,6 @@ export default {
     value: {
       immediate: true,
       handler() {
-        this.emitSelectedValue(this.value);
         this.validEvent = this.value && this.value !== '';
       }
     },
@@ -510,49 +507,37 @@ export default {
   },
   methods: {
     open(rule, program) {
-      this.retrieveEvents()
-        .then(() => {
-          this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
-            score: 20,
-            enabled: true,
-            publish: true,
-            area: this.programTitle
-          };
-          if (!this.rule.templateParams) {
-            this.rule.templateParams = Object.assign({}, this.defaultTemplateParams);
-          }
-
-          this.program = this.rule?.program || program;
-          this.ruleTitle = this.rule?.title || '';
-          this.ruleTitleTranslations = {};
-          this.ruleDescription = this.rule?.description || '';
-          this.validDescription = !!this.ruleDescription;
-          this.ruleDescriptionTranslations = {};
-          this.durationCondition = this.rule.startDate || this.rule.endDate;
-          this.recurrenceCondition = !!this.rule.recurrence;
-          this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
-          this.eventExist = false;
-          this.metadataObjectId = rule?.id;
-          this.attachmentsEdited = false;
-          this.value = this.rule?.event?.title;
-          this.selectedTrigger = this.rule?.event?.title;
-          this.triggerType = this.rule?.event?.type;
-          if (this.$refs.ruleFormDrawer) {
-            this.$refs.ruleFormDrawer.open();
-          }
-          this.$nextTick().then(() => {
-            this.$root.$emit('rule-form-drawer-opened', this.rule);
-          });
-          return this.retrieveProgramRules();
-        });
-    },
-    retrieveEvents() {
-      if (!this.events?.length) {
-        return this.$gamificationConnectorService.getEvents()
-          .then(data => this.events = data.entities || []);
-      } else {
-        return Promise.resolve(null);
+      this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
+        score: 20,
+        enabled: true,
+        publish: true,
+        area: this.programTitle
+      };
+      if (!this.rule.templateParams) {
+        this.rule.templateParams = Object.assign({}, this.defaultTemplateParams);
       }
+
+      this.program = this.rule?.program || program;
+      this.ruleTitle = this.rule?.title || '';
+      this.ruleTitleTranslations = {};
+      this.ruleDescription = this.rule?.description || '';
+      this.validDescription = !!this.ruleDescription;
+      this.ruleDescriptionTranslations = {};
+      this.durationCondition = this.rule.startDate || this.rule.endDate;
+      this.recurrenceCondition = !!this.rule.recurrence;
+      this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
+      this.eventExist = false;
+      this.metadataObjectId = rule?.id;
+      this.attachmentsEdited = false;
+      this.value = this.rule?.event?.title;
+      this.selectedTrigger = this.rule?.event?.title;
+      this.triggerType = this.rule?.event?.type;
+      if (this.$refs.ruleFormDrawer) {
+        this.$refs.ruleFormDrawer.open();
+      }
+      this.$nextTick().then(() => {
+        this.$root.$emit('rule-form-drawer-opened', this.rule);
+      });
     },
     selectTrigger(trigger, triggerType) {
       this.value = trigger || null;
@@ -581,29 +566,6 @@ export default {
       this.$set(this.rule,'title','');
       this.rule.description = '';
       this.value = {};
-    },
-    retrieveProgramRules() {
-      return this.$ruleService.getRules({
-        programId: this.programId,
-        status: 'ENABLED',
-        programStatus: 'ALL',
-        type: 'AUTOMATIC',
-        offset: 0,
-        limit: this.events?.length || 10,
-        returnSize: false,
-        lang: eXo.env.portal.language,
-      })
-        .then(data => this.programEvents = data && data.rules.map(rule => ({
-          ruleId: rule.id,
-          event: rule.event,
-        })) || []);
-    },
-    emitSelectedValue(value) {
-      const eventObject = this.eventMapping.find(event => event.label === value);
-      if (eventObject) {
-        this.$set(this.rule,'event', eventObject.name);
-        this.eventExist = this.programEvents.find(programEvent => eventObject.name === programEvent.event && programEvent.ruleId !== this.rule?.id);
-      }
     },
     saveRule() {
       this.saving = true;

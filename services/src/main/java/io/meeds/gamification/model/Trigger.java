@@ -35,7 +35,7 @@ public class Trigger {
   private List<String>        canceller;
 
   @Override
-  public Trigger clone() {
+  public Trigger clone() { // NOSONAR
     return new Trigger(title, type, canceller);
   }
 }

@@ -15,7 +15,6 @@
       flat
       outlined
       solo
-      clearable
       hide-no-data
       open-on-clear>
       <template #item="{ item }">
@@ -81,7 +80,6 @@
         flat
         outlined
         solo
-        clearable
         hide-no-data
         hide-selected
         open-on-clear>
