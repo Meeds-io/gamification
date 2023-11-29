@@ -354,7 +354,7 @@ export default {
       if (this.status === 'DELETED' || this.status === 'CANCELED') {
         this.$set(this.realization, 'link', null);
       } else if (!this.isAutomaticType) {
-        this.$set(this.realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.realization?.objectId}`);
+        this.$set(this.realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.realization?.objectId}`);
       } else if (this.objectId?.startsWith?.('http')) {
         this.$set(this.realization, 'link', this.objectId);
       } else if (this.getLink) {
