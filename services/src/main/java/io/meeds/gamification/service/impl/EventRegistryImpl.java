@@ -21,16 +21,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.meeds.gamification.model.Trigger;
 import io.meeds.gamification.plugin.EventConfigPlugin;
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.commons.api.settings.SettingValue;
+import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
 import io.meeds.gamification.service.EventRegistry;
 
 public class EventRegistryImpl implements Startable, EventRegistry {
-
-  private static final Log                     LOG                  = ExoLogger.getLogger(EventRegistryImpl.class);
 
   private final Map<String, EventConfigPlugin> eventConfigPluginMap = new HashMap<>();
 
@@ -48,15 +49,22 @@ public class EventRegistryImpl implements Startable, EventRegistry {
   }
 
   @Override
-  public List<String> getTriggers(String connectorName) {
+  public List<Trigger> getTriggers(String connectorName) {
     if (StringUtils.isNotBlank(connectorName)) {
       return eventConfigPluginMap.values()
                                  .stream()
                                  .filter(eventConfigPlugin -> eventConfigPlugin.getEvent().getType().equals(connectorName))
-                                 .map(eventConfigPlugin -> eventConfigPlugin.getEvent().getTrigger())
+                                 .map(eventConfigPlugin -> new Trigger(eventConfigPlugin.getEvent().getTrigger(),
+                                                                       eventConfigPlugin.getEvent().getType(),
+                                                                       eventConfigPlugin.getEvent().getCancellerEvents()))
                                  .toList();
     }
-    return eventConfigPluginMap.values().stream().map(eventConfigPlugin -> eventConfigPlugin.getEvent().getTitle()).toList();
+    return eventConfigPluginMap.values()
+                               .stream()
+                               .map(eventConfigPlugin -> new Trigger(eventConfigPlugin.getEvent().getTrigger(),
+                                                                     eventConfigPlugin.getEvent().getType(),
+                                                                     eventConfigPlugin.getEvent().getCancellerEvents()))
+                               .toList();
 
   }
 

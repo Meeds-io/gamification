@@ -22,14 +22,10 @@ import static org.junit.Assert.assertThrows;
 import io.meeds.gamification.entity.EventEntity;
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
-import io.meeds.gamification.plugin.EventConfigPlugin;
 import io.meeds.gamification.storage.mapper.EventMapper;
 import io.meeds.gamification.test.AbstractServiceTest;
-import org.exoplatform.container.xml.InitParams;
-import org.exoplatform.container.xml.ObjectParameter;
 
 import java.util.Collections;
-import java.util.List;
 
 public class EventServiceTest extends AbstractServiceTest {
 
