@@ -107,35 +107,6 @@ export function deleteConnectorSetting(connectorName) {
   });
 }
 
-export function getEvents(type, triggers, offset, limit) {
-  const formData = new FormData();
-  if (type) {
-    formData.append('type', type);
-  }
-  if (triggers?.length) {
-    triggers.forEach(trigger => formData.append('trigger', trigger));
-  }
-  if (offset) {
-    formData.append('offset', offset);
-  }
-  if (limit) {
-    formData.append('limit', limit);
-  }
-  formData.append('returnSize', 'true');
-  const params = new URLSearchParams(formData).toString();
-
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events?${params}`, {
-    method: 'GET',
-    credentials: 'include',
-  }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } else {
-      throw new Error('Error when getting events');
-    }
-  });
-}
-
 export function createEvent(event) {
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events`, {
     method: 'POST',
@@ -170,10 +141,13 @@ export function updateEvent(event) {
   });
 }
 
-export function getTriggers(type) {
+export function getTriggers(type, expand) {
   const formData = new FormData();
   if (type) {
     formData.append('type', type);
+  }
+  if (expand) {
+    formData.append('expand', expand);
   }
   const params = new URLSearchParams(formData).toString();
 
@@ -185,6 +159,26 @@ export function getTriggers(type) {
       return resp.json();
     } else {
       throw new Error('Error when getting triggers');
+    }
+  });
+}
+
+export function saveTriggerStatus(trigger, accountId, enabled) {
+  const formData = new FormData();
+  formData.append('trigger', trigger);
+  formData.append('accountId', accountId);
+  formData.append('enabled', enabled);
+
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/triggers/status`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(formData).toString(),
+  }).then(resp => {
+    if (!resp?.ok) {
+      throw new Error('Response code indicates a server error', resp);
     }
   });
 }
