@@ -622,7 +622,7 @@ export default {
               document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
                 alertType: 'success',
                 alertMessage: this.$t('programs.details.ruleUpdateAndPublishSuccess'),
-                alertLink: `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${rule.activityId}`,
+                alertLink: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${rule.activityId}`,
                 alertLinkText: this.$t('rule.alert.see'),
                 alertLinkTarget: '_self',
               }}));
@@ -683,6 +683,47 @@ export default {
           })
           .finally(() => this.saving = false);
       }
+    },
+
+    createRule() {
+      return this.$ruleService.createRule(this.ruleToSave)
+        .then(rule => {
+          this.originalRule = rule;
+          this.$root.$emit('rule-created-event', rule);
+          return this.$translationService.saveTranslations('rule', this.originalRule.id, 'title', this.ruleTitleTranslations);
+        })
+        .then(() => this.$translationService.saveTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
+        .then(() => {
+          this.metadataObjectId = String(this.originalRule.id);
+          return this.$nextTick();
+        })
+        .then(() => this.$refs?.rulePublishInput?.saveAttachments())
+        .then(() => {
+          if (this.ruleToSave.publish && this.originalRule.activityId) {
+            document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
+              alertType: 'success',
+              alertMessage: this.$t('programs.details.ruleCreationAndPublishSuccess'),
+              alertLink: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.originalRule.activityId}`,
+              alertLinkText: this.$t('rule.alert.see'),
+              alertLinkTarget: '_self',
+            }}));
+          } else {
+            this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationSuccess'), 'success');
+          }
+          this.saving = false; // To Keep to be able to close drawer
+          this.originalRule = null;
+          this.attachmentsEdited = false;
+          this.originalRuleTitleTranslations = null;
+          this.originalRuleDescriptionTranslations = null;
+          this.attachmentsEdited = false;
+          return this.$nextTick();
+        })
+        .then(() => this.close())
+        .catch(e => {
+          console.error(e);
+          this.eventExist = e.message === '409';
+        })
+        .finally(() => this.saving = false);
     },
     computeRuleModel(rule, program, description) {
       const ruleModel = {
