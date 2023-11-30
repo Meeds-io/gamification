@@ -9,7 +9,7 @@
       :filter="filterConnectors"
       :menu-props="{ closeOnContentClick: true }"
       :placeholder="$t('rule.form.label.application.Placeholder')"
-      class="py-0"
+      class="pt-0 pb-2"
       background-color="white"
       dense
       flat
@@ -70,11 +70,11 @@
       </v-card-text>
       <v-combobox
         v-model="trigger"
-        :items="triggers"
+        :items="sortedTriggers"
         :filter="filterTriggers"
         :menu-props="{ closeOnContentClick: true }"
         :placeholder="$t('rule.form.label.event.placeholder')"
-        class="py-0"
+        class="pt-0 pb-4"
         background-color="white"
         dense
         flat
@@ -130,11 +130,11 @@ export default {
     triggers: [],
     adminConnectorsExtensions: [],
   }),
-  created() {
-    if (this.selectedTrigger) {
-      this.trigger = this.selectedTrigger;
-    }
-    this.init();
+  computed: {
+    sortedTriggers() {
+      const filteredTriggers = this.triggers?.length && this.triggers.slice() || [];
+      return filteredTriggers.sort((a, b) => this.getTriggerLabel(a).localeCompare(this.getTriggerLabel(b)));
+    },
   },
   watch: {
     selectedConnector() {
@@ -147,6 +147,12 @@ export default {
     trigger() {
       this.$emit('triggerUpdated', this.trigger, this.selectedConnector.name);
     }
+  },
+  created() {
+    if (this.selectedTrigger) {
+      this.trigger = this.selectedTrigger;
+    }
+    this.init();
   },
   methods: {
     init() {
