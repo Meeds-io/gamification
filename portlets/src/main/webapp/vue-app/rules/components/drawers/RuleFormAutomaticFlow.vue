@@ -9,7 +9,7 @@
       :filter="filterConnectors"
       :menu-props="{ closeOnContentClick: true }"
       :placeholder="$t('rule.form.label.application.Placeholder')"
-      class="py-0"
+      class="pt-0 pb-2"
       background-color="white"
       dense
       flat
@@ -74,7 +74,7 @@
         :filter="filterTriggers"
         :menu-props="{ closeOnContentClick: true }"
         :placeholder="$t('rule.form.label.event.placeholder')"
-        class="py-0"
+        class="pt-0 pb-4"
         background-color="white"
         dense
         flat
