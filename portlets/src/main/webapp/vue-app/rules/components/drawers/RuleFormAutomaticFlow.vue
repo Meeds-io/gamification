@@ -70,7 +70,7 @@
       </v-card-text>
       <v-combobox
         v-model="trigger"
-        :items="triggers"
+        :items="sortedTriggers"
         :filter="filterTriggers"
         :menu-props="{ closeOnContentClick: true }"
         :placeholder="$t('rule.form.label.event.placeholder')"
@@ -130,11 +130,11 @@ export default {
     triggers: [],
     adminConnectorsExtensions: [],
   }),
-  created() {
-    if (this.selectedTrigger) {
-      this.trigger = this.selectedTrigger;
-    }
-    this.init();
+  computed: {
+    sortedTriggers() {
+      const filteredTriggers = this.triggers?.length && this.triggers.slice() || [];
+      return filteredTriggers.sort((a, b) => this.getTriggerLabel(a).localeCompare(this.getTriggerLabel(b)));
+    },
   },
   watch: {
     selectedConnector() {
@@ -147,6 +147,12 @@ export default {
     trigger() {
       this.$emit('triggerUpdated', this.trigger, this.selectedConnector.name);
     }
+  },
+  created() {
+    if (this.selectedTrigger) {
+      this.trigger = this.selectedTrigger;
+    }
+    this.init();
   },
   methods: {
     init() {
