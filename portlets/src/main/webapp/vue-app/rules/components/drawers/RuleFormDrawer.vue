@@ -176,16 +176,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </div>
             </v-slide-y-transition>
           </div>
-
           <div
             v-if="automaticType"
             :class="expanded && 'col-6'"
             class="flex-grow-1 flex-shrink-0">
             <v-stepper-step
-              :complete="stepper > 2"
-              step="2"
-              class="ma-0">
-              <span class="font-weight-bold dark-grey-color text-subtitle-1">Create the automatic flow</span>
+              :step="2"
+              class="ma-0"
+              editable>
+              <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.application.createAutomaticFlow') }}</span>
             </v-stepper-step>
             <v-slide-y-transition>
               <div v-show="expanded || stepper === 2" class="px-6">
