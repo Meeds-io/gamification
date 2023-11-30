@@ -393,14 +393,6 @@ public class RuleServiceImpl implements RuleService {
     if (rule.getId() == null || rule.getId() == 0 || ruleStorage.findRuleById(rule.getId()) == null) {
       throw new ObjectNotFoundException("Rule id is mandatory");
     }
-    ProgramDTO program = rule.getProgram();
-    if (program != null) {
-      long programId = rule.getProgram().getId();
-      RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent().getTitle(), programId);
-      if (similarRule != null && !similarRule.getId().equals(rule.getId()) && !similarRule.isDeleted()) {
-        throw new IllegalStateException("Rule with same event and program already exist");
-      }
-    }
     rule.setLastModifiedBy(username);
     rule.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     if (rule instanceof RulePublication rulePublication) {
