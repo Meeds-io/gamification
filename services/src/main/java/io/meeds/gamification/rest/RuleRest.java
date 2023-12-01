@@ -399,8 +399,6 @@ public class RuleRest implements ResourceContainer {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
-    } catch (ObjectAlreadyExistsException e) {
-      return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
     }
   }
 

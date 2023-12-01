@@ -18,7 +18,6 @@ package io.meeds.gamification.service;
 
 import java.util.List;
 
-import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 import io.meeds.gamification.model.RuleDTO;
@@ -127,10 +126,9 @@ public interface RuleService {
    * @return                              created {@link RuleDTO}
    * @throws IllegalAccessException       when user is not authorized to create
    *                                        a rule
-   * @throws ObjectAlreadyExistsException when rule already exists
    * @throws ObjectNotFoundException      when program doesn't exists
    */
-  RuleDTO createRule(RuleDTO ruleDTO, String username) throws IllegalAccessException, ObjectAlreadyExistsException,
+  RuleDTO createRule(RuleDTO ruleDTO, String username) throws IllegalAccessException,
                                                        ObjectNotFoundException;
 
   /**

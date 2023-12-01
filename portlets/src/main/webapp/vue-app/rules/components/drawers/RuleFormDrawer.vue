@@ -180,7 +180,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-stepper-items>
           </div>
           <div :class="expanded && 'col-6'" class="flex-grow-1 flex-shrink-0">
-            <div v-if="automaticType">
+            <div v-if="automaticType" :class="!expanded && 'pt-5'">
               <v-stepper-step
                 :step="2"
                 :editable="ruleTitleValid && !expanded"
@@ -198,81 +198,83 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </v-slide-y-transition>
               </v-stepper-items>
             </div>
-            <v-stepper-step
-              :step="finalStep"
-              class="ma-0 px-0 py-1"
-              :editable="ruleTitleValid && secondStepValid && !expanded">
-              <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepTwo') }}</span>
-            </v-stepper-step>
-            <v-stepper-items class="py-1">
-              <v-slide-y-transition>
-                <div v-show="expanded || (stepper > finalStep - 1)" class="px-6">
-                  <engagement-center-rule-publish-editor
-                    v-if="enablePublication"
-                    ref="rulePublishInput"
-                    :enabled="!rule.id"
-                    :rule="rule"
-                    :metadata-object-id="metadataObjectId"
-                    :program="program"
-                    :publish.sync="rule.publish"
-                    :space-id.sync="rule.spaceId"
-                    :message.sync="rule.message"
-                    :template-params="rule.templateParams"
-                    :valid-message.sync="validMessage"
-                    @attachments-edited="attachmentsEdited = true" />
-                  <div class="pt-4 text-subtitle-1">{{ $t('rule.form.ruleConditionsLabel') }}</div>
-                  <div class="ps-7">
-                    <v-chip
-                      class="ma-2"
-                      :color="durationCondition && 'primary' || ''"
-                      :outlined="!durationCondition"
-                      :dark="durationCondition"
-                      @click="updateDateCondition">
-                      {{ $t('rule.form.label.duration') }}
-                    </v-chip>
-                    <v-chip
-                      class="ma-2"
-                      :color="recurrenceCondition && 'primary' || ''"
-                      :outlined="!recurrenceCondition"
-                      :dark="recurrenceCondition"
-                      @click="updateRecurrenceCondition">
-                      {{ $t('rule.form.label.recurrence') }}
-                    </v-chip>
-                    <v-tooltip :disabled="$root.isMobile" bottom>
-                      <template #activator="{ on, attrs }">
-                        <v-chip
-                          class="ma-2"
-                          :color="prerequisiteRuleCondition && 'primary' || ''"
-                          :outlined="!prerequisiteRuleCondition"
-                          :dark="prerequisiteRuleCondition"
-                          v-bind="attrs"
-                          v-on="on"
-                          @click="updatePrerequisiteRuleCondition">
-                          {{ $t('rule.form.label.action') }}
-                        </v-chip>
-                      </template>
-                      <span>{{ $t('rule.form.label.actionTooltip') }}</span>
-                    </v-tooltip>
+            <div :class="!expanded && 'pt-5'">
+              <v-stepper-step
+                :step="finalStep"
+                class="ma-0 px-0 py-1"
+                :editable="ruleTitleValid && secondStepValid && !expanded">
+                <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepTwo') }}</span>
+              </v-stepper-step>
+              <v-stepper-items class="py-1">
+                <v-slide-y-transition>
+                  <div v-show="expanded || (stepper > finalStep - 1)" class="px-6">
+                    <engagement-center-rule-publish-editor
+                      v-if="enablePublication"
+                      ref="rulePublishInput"
+                      :enabled="!rule.id"
+                      :rule="rule"
+                      :metadata-object-id="metadataObjectId"
+                      :program="program"
+                      :publish.sync="rule.publish"
+                      :space-id.sync="rule.spaceId"
+                      :message.sync="rule.message"
+                      :template-params="rule.templateParams"
+                      :valid-message.sync="validMessage"
+                      @attachments-edited="attachmentsEdited = true" />
+                    <div class="pt-4 text-subtitle-1">{{ $t('rule.form.ruleConditionsLabel') }}</div>
+                    <div class="ps-7">
+                      <v-chip
+                        class="ma-2"
+                        :color="durationCondition && 'primary' || ''"
+                        :outlined="!durationCondition"
+                        :dark="durationCondition"
+                        @click="updateDateCondition">
+                        {{ $t('rule.form.label.duration') }}
+                      </v-chip>
+                      <v-chip
+                        class="ma-2"
+                        :color="recurrenceCondition && 'primary' || ''"
+                        :outlined="!recurrenceCondition"
+                        :dark="recurrenceCondition"
+                        @click="updateRecurrenceCondition">
+                        {{ $t('rule.form.label.recurrence') }}
+                      </v-chip>
+                      <v-tooltip :disabled="$root.isMobile" bottom>
+                        <template #activator="{ on, attrs }">
+                          <v-chip
+                            class="ma-2"
+                            :color="prerequisiteRuleCondition && 'primary' || ''"
+                            :outlined="!prerequisiteRuleCondition"
+                            :dark="prerequisiteRuleCondition"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="updatePrerequisiteRuleCondition">
+                            {{ $t('rule.form.label.action') }}
+                          </v-chip>
+                        </template>
+                        <span>{{ $t('rule.form.label.actionTooltip') }}</span>
+                      </v-tooltip>
+                    </div>
+                    <div v-if="durationCondition">
+                      <engagement-center-rule-dates-input
+                        v-model="validDatesInput"
+                        :start-date.sync="rule.startDate"
+                        :end-date.sync="rule.endDate" />
+                    </div>
+                    <div v-if="recurrenceCondition">
+                      <engagement-center-rule-recurrence-input
+                        v-model="rule.recurrence" />
+                    </div>
+                    <div v-if="prerequisiteRuleCondition">
+                      <engagement-center-rule-lock-input
+                        v-model="rule.prerequisiteRules"
+                        :program-id="programId"
+                        :excluded-ids="excludedRuleIds" />
+                    </div>
                   </div>
-                  <div v-if="durationCondition">
-                    <engagement-center-rule-dates-input
-                      v-model="validDatesInput"
-                      :start-date.sync="rule.startDate"
-                      :end-date.sync="rule.endDate" />
-                  </div>
-                  <div v-if="recurrenceCondition">
-                    <engagement-center-rule-recurrence-input
-                      v-model="rule.recurrence" />
-                  </div>
-                  <div v-if="prerequisiteRuleCondition">
-                    <engagement-center-rule-lock-input
-                      v-model="rule.prerequisiteRules"
-                      :program-id="programId"
-                      :excluded-ids="excludedRuleIds" />
-                  </div>
-                </div>
-              </v-slide-y-transition>
-            </v-stepper-items>
+                </v-slide-y-transition>
+              </v-stepper-items>
+            </div>
           </div>
         </v-stepper>
       </v-form>
@@ -580,22 +582,19 @@ export default {
         this.$translationService.saveTranslations('rule', this.rule.id, 'title', this.ruleTitleTranslations)
           .then(() => this.$translationService.saveTranslations('rule', this.rule.id, 'description', this.ruleDescriptionTranslations))
           .then(() => this.$refs?.rulePublishInput?.saveAttachments())
-          .then(() => {
-            if (this.automaticType) {
-              this.$gamificationConnectorService.updateEvent(this.rule?.event);
-            }
-          })
           .then(() => this.$ruleService.updateRule(this.ruleToSave))
           .then(rule => {
             this.$root.$emit('rule-updated-event', rule);
             if (this.ruleToSave.publish && rule.activityId) {
-              document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
-                alertType: 'success',
-                alertMessage: this.$t('programs.details.ruleUpdateAndPublishSuccess'),
-                alertLink: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${rule.activityId}`,
-                alertLinkText: this.$t('rule.alert.see'),
-                alertLinkTarget: '_self',
-              }}));
+              document.dispatchEvent(new CustomEvent('alert-message-html', {
+                detail: {
+                  alertType: 'success',
+                  alertMessage: this.$t('programs.details.ruleUpdateAndPublishSuccess'),
+                  alertLink: `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${rule.activityId}`,
+                  alertLinkText: this.$t('rule.alert.see'),
+                  alertLinkTarget: '_self',
+                }
+              }));
             } else {
               this.$root.$emit('alert-message', this.$t('programs.details.ruleUpdateSuccess'), 'success');
             }
@@ -614,62 +613,47 @@ export default {
           })
           .finally(() => this.saving = false);
       } else {
-        if (this.automaticType) {
-          const eventToSave = {
-            title: this.value,
-            trigger: this.value,
-            type: this.triggerType,
-          };
-          this.$gamificationConnectorService.createEvent(eventToSave)
-            .then(event => {
-              this.ruleToSave.event = event;
-              this.createRule();
-            });
-        } else {
-          this.createRule();
-        }
+        this.$ruleService.createRule(this.ruleToSave)
+          .then(rule => {
+            this.originalRule = rule;
+            this.$root.$emit('rule-created-event', rule);
+            return this.$translationService.saveTranslations('rule', this.originalRule.id, 'title', this.ruleTitleTranslations);
+          })
+          .then(() => this.$translationService.saveTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
+          .then(() => {
+            this.metadataObjectId = String(this.originalRule.id);
+            return this.$nextTick();
+          })
+          .then(() => this.$refs?.rulePublishInput?.saveAttachments())
+          .then(() => {
+            if (this.ruleToSave.publish && this.originalRule.activityId) {
+              document.dispatchEvent(new CustomEvent('alert-message-html', {
+                detail: {
+                  alertType: 'success',
+                  alertMessage: this.$t('programs.details.ruleCreationAndPublishSuccess'),
+                  alertLink: `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.originalRule.activityId}`,
+                  alertLinkText: this.$t('rule.alert.see'),
+                  alertLinkTarget: '_self',
+                }
+              }));
+            } else {
+              this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationSuccess'), 'success');
+            }
+            this.saving = false; // To Keep to be able to close drawer
+            this.originalRule = null;
+            this.attachmentsEdited = false;
+            this.originalRuleTitleTranslations = null;
+            this.originalRuleDescriptionTranslations = null;
+            this.attachmentsEdited = false;
+            return this.$nextTick();
+          })
+          .then(() => this.close())
+          .catch(e => {
+            console.error(e);
+            this.eventExist = e.message === '409';
+          })
+          .finally(() => this.saving = false);
       }
-    },
-
-    createRule() {
-      return this.$ruleService.createRule(this.ruleToSave)
-        .then(rule => {
-          this.originalRule = rule;
-          this.$root.$emit('rule-created-event', rule);
-          return this.$translationService.saveTranslations('rule', this.originalRule.id, 'title', this.ruleTitleTranslations);
-        })
-        .then(() => this.$translationService.saveTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
-        .then(() => {
-          this.metadataObjectId = String(this.originalRule.id);
-          return this.$nextTick();
-        })
-        .then(() => this.$refs?.rulePublishInput?.saveAttachments())
-        .then(() => {
-          if (this.ruleToSave.publish && this.originalRule.activityId) {
-            document.dispatchEvent(new CustomEvent('alert-message-html', {detail: {
-              alertType: 'success',
-              alertMessage: this.$t('programs.details.ruleCreationAndPublishSuccess'),
-              alertLink: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.originalRule.activityId}`,
-              alertLinkText: this.$t('rule.alert.see'),
-              alertLinkTarget: '_self',
-            }}));
-          } else {
-            this.$root.$emit('alert-message', this.$t('programs.details.ruleCreationSuccess'), 'success');
-          }
-          this.saving = false; // To Keep to be able to close drawer
-          this.originalRule = null;
-          this.attachmentsEdited = false;
-          this.originalRuleTitleTranslations = null;
-          this.originalRuleDescriptionTranslations = null;
-          this.attachmentsEdited = false;
-          return this.$nextTick();
-        })
-        .then(() => this.close())
-        .catch(e => {
-          console.error(e);
-          this.eventExist = e.message === '409';
-        })
-        .finally(() => this.saving = false);
     },
     computeRuleModel(rule, program, description) {
       const ruleModel = {
