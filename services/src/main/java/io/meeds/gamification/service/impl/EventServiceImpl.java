@@ -21,7 +21,6 @@ import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
 import io.meeds.gamification.service.EventService;
 import io.meeds.gamification.storage.EventStorage;
-import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 import java.util.*;

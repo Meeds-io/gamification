@@ -18,7 +18,6 @@ package io.meeds.gamification.service;
 
 import java.util.List;
 
-import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 import io.meeds.gamification.model.RuleDTO;
