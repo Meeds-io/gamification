@@ -60,7 +60,7 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
-  public EventDTO createEvent(EventDTO eventDTO) throws ObjectAlreadyExistsException {
+  public EventDTO createEvent(EventDTO eventDTO) {
     if (eventDTO == null) {
       throw new IllegalArgumentException("event object is mandatory");
     }

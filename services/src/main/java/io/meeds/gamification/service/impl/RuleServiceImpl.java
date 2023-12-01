@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import io.meeds.gamification.model.EventDTO;
+import io.meeds.gamification.service.EventService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -76,6 +78,8 @@ public class RuleServiceImpl implements RuleService {
   private static final String       USERNAME_IS_MANDATORY_MESSAGE = "Username is mandatory";
 
   private final ProgramService      programService;
+  
+  private final EventService        eventService;
 
   private final RuleStorage         ruleStorage;
 
@@ -90,13 +94,14 @@ public class RuleServiceImpl implements RuleService {
   private final ListenerService     listenerService;
 
   public RuleServiceImpl(ProgramService programService,
-                         RuleStorage ruleStorage,
+                         EventService eventService, RuleStorage ruleStorage,
                          RuleSearchConnector ruleSearchConnector,
                          SpaceService spaceService,
                          ActivityManager activityManager,
                          IdentityManager identityManager,
                          ListenerService listenerService) {
     this.programService = programService;
+    this.eventService = eventService;
     this.listenerService = listenerService;
     this.spaceService = spaceService;
     this.activityManager = activityManager;
@@ -252,7 +257,6 @@ public class RuleServiceImpl implements RuleService {
 
   @Override
   public RuleDTO createRule(RuleDTO rule, String username) throws IllegalAccessException,
-                                                           ObjectAlreadyExistsException,
                                                            ObjectNotFoundException {
     if (rule == null) {
       throw new IllegalArgumentException("rule object is mandatory");
@@ -273,10 +277,8 @@ public class RuleServiceImpl implements RuleService {
     rule.setDeleted(false);
     rule.setActivityId(0);
     if (rule.getEvent() != null) {
-      RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent().getTitle(), programId);
-      if (similarRule != null && !similarRule.isDeleted() && rule.getEvent().getProperties() == similarRule.getEvent().getProperties()) {
-        throw new ObjectAlreadyExistsException("Rule with same event and program already exist");
-      }
+      EventDTO event = eventService.createEvent(rule.getEvent());
+      rule.setEvent(event);
     }
     return createRuleAndBroadcast(rule, username);
   }
@@ -310,7 +312,7 @@ public class RuleServiceImpl implements RuleService {
     ProgramDTO program = programService.getProgramById(rule.getProgram().getId());
     rule.setProgram(program);
     if (rule.getProgram() == null) {
-      throw new IllegalArgumentException("Program with id " + rule.getProgram().getId() + " wasn't found");
+      throw new IllegalArgumentException("Program for rule with id " + rule.getId() + " wasn't found");
     }
     if (!isRuleManager(storedRule, username)) {
       throw new IllegalAccessException("The user is not authorized to update a rule");
@@ -318,6 +320,15 @@ public class RuleServiceImpl implements RuleService {
     checkPermissionAndDates(storedRule, username); // Test if user was manager
     checkPermissionAndDates(rule, username); // Test if user is remaining
                                              // manager
+    if (rule.getEvent() != null) {
+      EventDTO event;
+      if (rule.getEvent().getId() <= 0) {
+        event = eventService.createEvent(rule.getEvent());
+      } else {
+        event = eventService.updateEvent(rule.getEvent());
+      }
+      rule.setEvent(event);
+    }
     rule.setCreatedDate(storedRule.getCreatedDate());
     rule.setCreatedBy(storedRule.getCreatedBy());
     rule.setActivityId(storedRule.getActivityId());

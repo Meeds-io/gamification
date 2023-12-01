@@ -73,9 +73,8 @@ public interface EventService {
    *
    * @param eventDTO {@link EventDTO} to create
    * @return {@link EventDTO}
-   * @throws ObjectAlreadyExistsException when event already exists
    */
-  EventDTO createEvent(EventDTO eventDTO) throws ObjectAlreadyExistsException;
+  EventDTO createEvent(EventDTO eventDTO);
 
   /**
    * Update event
