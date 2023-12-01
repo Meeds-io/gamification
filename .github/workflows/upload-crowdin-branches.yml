@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - develop-exo
-      - develop-meed
+      #- develop-meed
 
 jobs:
   check-translation-change:
