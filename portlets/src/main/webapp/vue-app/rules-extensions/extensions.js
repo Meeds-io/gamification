@@ -35,7 +35,7 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
       'receiveLikeOnActivityComment',
     ].includes(actionLabel),
     getLink: (realization) => {
-      Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${realization?.objectId}`);
+      Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${realization?.objectId}`);
     }
   },
 });
@@ -61,12 +61,12 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
           && realization?.action?.event !== 'addUserProfileNotificationSetting'
           && realization?.action?.event !== 'userLogin') {
         if (realization?.objectId === eXo.env.portal.profileOwnerIdentityId) {
-          realization.link = `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/profile/${eXo.env.portal.profileOwner}`;
+          realization.link = `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/profile/${eXo.env.portal.profileOwner}`;
           return realization.link;
         } else {
           return window?.eXo?.env?.portal?.userName?.length && Vue.prototype.$identityService.getIdentityById(realization?.objectId)
             .then(identity => {
-              realization.link = `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/profile/${identity.remoteId}`;
+              realization.link = `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/profile/${identity.remoteId}`;
               return realization.link;
             }) || null;
         }
