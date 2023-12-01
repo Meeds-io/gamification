@@ -21,7 +21,6 @@ import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
 import io.meeds.gamification.service.EventService;
 import io.meeds.gamification.storage.EventStorage;
-import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 import java.util.*;
@@ -60,7 +59,7 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
-  public EventDTO createEvent(EventDTO eventDTO) throws ObjectAlreadyExistsException {
+  public EventDTO createEvent(EventDTO eventDTO) {
     if (eventDTO == null) {
       throw new IllegalArgumentException("event object is mandatory");
     }

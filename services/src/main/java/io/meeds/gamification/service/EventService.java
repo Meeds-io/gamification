@@ -21,7 +21,6 @@ import java.util.List;
 
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
-import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public interface EventService {
@@ -73,9 +72,8 @@ public interface EventService {
    *
    * @param eventDTO {@link EventDTO} to create
    * @return {@link EventDTO}
-   * @throws ObjectAlreadyExistsException when event already exists
    */
-  EventDTO createEvent(EventDTO eventDTO) throws ObjectAlreadyExistsException;
+  EventDTO createEvent(EventDTO eventDTO);
 
   /**
    * Update event
