@@ -136,7 +136,7 @@ export default {
   methods: {
     retrieveRealizationLink() {
       if (this.isManualType) {
-        this.realizationLink = this.realization.activityId && `${this.basePath}/activity?id=${this.realization.activityId}`;
+        this.realizationLink = this.realization.activityId && `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.realization.activityId}`;
       } else if (this.linkExtensionMethod) {
         return this.linkExtensionMethod(this.realization);
       } else if (this.realization?.objectId?.startsWith?.('http')) {
