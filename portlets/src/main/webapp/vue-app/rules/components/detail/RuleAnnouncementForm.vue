@@ -185,7 +185,7 @@ export default {
           document.dispatchEvent(new CustomEvent('alert-message-html-confeti', {detail: {
             alertType: 'success',
             alertMessage: this.$t('challenges.announcementCreateSuccess'),
-            alertLink: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/activity?id=${this.announcement.activityId}`,
+            alertLink: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.announcement.activityId}`,
             alertLinkText: this.$t('announcement.alert.see'),
             alertLinkTarget: '_self',
           }}));
