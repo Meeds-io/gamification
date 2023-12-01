@@ -107,40 +107,6 @@ export function deleteConnectorSetting(connectorName) {
   });
 }
 
-export function createEvent(event) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(event),
-  }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } else {
-      throw new Error(resp.status);
-    }
-  });
-}
-
-export function updateEvent(event) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/events`, {
-    method: 'PUT',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(event),
-  }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } else {
-      throw new Error(resp.status);
-    }
-  });
-}
-
 export function getTriggers(type, expand) {
   const formData = new FormData();
   if (type) {
