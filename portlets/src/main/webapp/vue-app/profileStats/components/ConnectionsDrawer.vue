@@ -174,7 +174,7 @@ export default {
       drawer: false,
       search: null,
       PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/profile/`,
-      receivedInvitationsUrl: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/people`,
+      receivedInvitationsUrl: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/people/receivedInvitations`,
       connexionsSize: 0,
       limit: 10,
       peopleSuggestionsList: [],
