@@ -52,6 +52,3 @@ if (!document.getElementById(appId)) {
       }, `#${appId}`, 'Engagement Center Drawers');
     });
 }
-
-Vue.prototype.$utils.includeExtensions('gamificationAdminConnectorsExtensions');
-
