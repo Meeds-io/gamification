@@ -115,7 +115,7 @@ export default {
     return {
       spacesRequests: [],
       spacesRequestsSize: '',
-      invitationSpaceUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.defaultPortal}/invitationSpace`
+      invitationSpaceUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.defaultPortal}/spaces`
     };
   },
   created(){
