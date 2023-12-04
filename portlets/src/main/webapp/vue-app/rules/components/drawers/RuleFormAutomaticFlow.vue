@@ -1,24 +1,47 @@
+<!--
+
+ This file is part of the Meeds project (https://meeds.io/).
+
+ Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 3 of the License, or (at your option) any later version.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+-->
 <template>
   <v-app>
     <v-card-text class="px-0 dark-grey-color font-weight-bold">
       {{ $t('rule.form.label.application') }}
     </v-card-text>
-    <v-combobox
+    <v-autocomplete
+      id="applicationAutoComplete"
+      ref="applicationAutoComplete"
       v-model="selectedConnector"
       :items="connectors"
-      :filter="filterConnectors"
-      :menu-props="{ closeOnContentClick: true }"
       :placeholder="$t('rule.form.label.application.Placeholder')"
-      class="pt-0 pb-2"
+      :filter="filterConnectors"
+      class="pa-0"
       background-color="white"
+      item-value="name"
       dense
       flat
-      outlined
+      cache-items
       solo
-      hide-no-data
-      open-on-clear>
-      <template #item="{ item }">
-        <v-list-item @click="selectedConnector = item">
+      outlined>
+      <template #selection="{item, selected}">
+        <v-chip
+          :input-value="selected"
+          color="white">
           <v-icon
             v-if="item.icon"
             :class="item.iconColorClass"
@@ -31,87 +54,71 @@
             :src="item.image"
             :alt="item.name"
             class="pe-2"
-            width="20">
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ item.title }}
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </template>
-      <template #selection="data">
-        <v-chip
-          :key="JSON.stringify(data.item)"
-          v-bind="data.attrs"
-          color="white"
-          :input-value="data.selected"
-          :disabled="data.disabled"
-          @click:close="data.parent.selectItem(data.item)">
-          <v-icon
-            v-if="data.item.icon"
-            :class="data.item.iconColorClass"
-            size="20"
-            class="pe-2">
-            {{ data.item.icon }}
-          </v-icon>
-          <img
-            v-else
-            :src="data.item.image"
-            :alt="data.item.name"
-            class="pe-2"
             width="28">
-          {{ data.item.title }}
+          {{ item.title }}
         </v-chip>
       </template>
-    </v-combobox>
+      <template #item="{item}">
+        <v-icon
+          v-if="item.icon"
+          :class="item.iconColorClass"
+          size="20"
+          class="pe-2">
+          {{ item.icon }}
+        </v-icon>
+        <img
+          v-else
+          :src="item.image"
+          :alt="item.name"
+          class="pe-2"
+          width="20">
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ item.title }}
+          </v-list-item-title>
+        </v-list-item-content>
+      </template>
+    </v-autocomplete>
     <template v-if="selectedConnector">
       <v-card-text class="px-0 dark-grey-color font-weight-bold">
         {{ $t('rule.form.label.event') }}
       </v-card-text>
-      <v-combobox
+      <v-autocomplete
+        id="triggerAutoComplete"
+        ref="triggerAutoComplete"
         v-model="trigger"
         :items="sortedTriggers"
-        :filter="filterTriggers"
-        :menu-props="{ closeOnContentClick: true }"
         :placeholder="$t('rule.form.label.event.placeholder')"
-        class="pt-0 pb-4"
+        :filter="filterTriggers"
+        class="pa-0"
         background-color="white"
         dense
         flat
-        outlined
         solo
-        hide-no-data
-        hide-selected
-        open-on-clear>
-        <template #item="{ item }">
-          <v-list-item @click="trigger = item">
-            <rule-icon :rule-event="item" class="me-2" />
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ getTriggerLabel(item) }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-        <template #selection="data">
+        outlined>
+        <template #selection="{item, selected}">
           <v-chip
-            :key="JSON.stringify(data.item)"
-            v-bind="data.attrs"
-            color="white"
-            :input-value="data.selected"
-            :disabled="data.disabled"
-            @click:close="data.parent.selectItem(data.item)">
-            <rule-icon :rule-event="data.item" class="me-2" />
+            :input-value="selected"
+            color="white">
+            <rule-icon :rule-event="item" class="me-2" />
             <v-tooltip bottom>
               <template #activator="{ on }">
-                <span v-on="on" class="text-truncate">{{ getTriggerLabel(data.item) }}
+                <span v-on="on" class="text-truncate">{{ getTriggerLabel(item) }}
                 </span>
               </template>
-              <span>{{ getTriggerLabel(data.item) }}</span>
+              <span>{{ getTriggerLabel(item) }}</span>
             </v-tooltip>
           </v-chip>
         </template>
-      </v-combobox>
+        <template #item="{item}">
+          <rule-icon :rule-event="item" class="me-2" />
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ getTriggerLabel(item) }}
+            </v-list-item-title>
+          </v-list-item-content>
+        </template>
+      </v-autocomplete>
     </template>
   </v-app>
 </template>
@@ -145,14 +152,14 @@ export default {
   watch: {
     selectedConnector() {
       if (this.selectedConnector) {
-        this.retrieveTriggers();
         this.trigger = null;
         this.triggers = [];
+        this.retrieveTriggers();
       }
     },
     trigger() {
       if (this.selectedConnector) {
-        this.$emit('triggerUpdated', this.trigger, this.selectedConnector.name);
+        this.$emit('triggerUpdated', this.trigger, this.selectedConnector);
       }
     }
   },
@@ -180,7 +187,7 @@ export default {
           this.connectors.push(...connectorsToDisplay);
         }).then(() => {
           if (this.triggerType) {
-            this.selectedConnector = this.connectors.find(connector => connector.name === this.triggerType);
+            this.selectedConnector = this.connectors.find(connector => connector.name === this.triggerType)?.name;
             this.$nextTick().then(() => {
               this.trigger = this.selectedTrigger;
             });
@@ -204,7 +211,7 @@ export default {
       return this.$t(`gamification.event.title.${trigger}`);
     },
     retrieveTriggers() {
-      return this.$gamificationConnectorService.getTriggers(this.selectedConnector.name)
+      return this.$gamificationConnectorService.getTriggers(this.selectedConnector)
         .then(triggers => {
           this.triggers = triggers.map(trigger => trigger.title);
         });
