@@ -58,10 +58,10 @@ export default {
       return this.notification?.parameters?.activityId;
     },
     activityUrl() {
-      return this.activityId && `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.activityId}`;
+      return this.activityId && `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.activityId}`;
     },
     replyUrl() {
-      return this.activityId && `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.activityId}#comment-reply`
+      return this.activityId && `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.activityId}#comment-reply`
         || '#';
     },
     earner() {
