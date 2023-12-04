@@ -80,7 +80,7 @@ export default {
       commonsSpaceDefaultSize: 0,
       isCurrentUserProfile: false,
       commonConnections: [],
-      PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/profile/`,
+      PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/profile/`,
     };
   },
   watch: {
