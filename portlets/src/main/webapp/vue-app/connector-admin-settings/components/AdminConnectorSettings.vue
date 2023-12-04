@@ -103,11 +103,7 @@ export default {
       this.loading = true;
       this.$gamificationConnectorService.getConnectors(eXo.env.portal.userName, 'secretKey')
         .then(connectors => {
-          const filteredList = this.adminConnectorsExtensions.filter(connectorExtension => !connectors.some(item => item.name === connectorExtension.componentOptions.name)).map(item => ({
-            name: item?.componentOptions?.name,
-            title: item?.componentOptions?.title,
-            comingSoon: item?.componentOptions?.comingSoon,
-          })) || [];
+          const filteredList = this.adminConnectorsExtensions.map(item => item?.componentOptions).filter(connectorExtension => !connectors.some(item => item.name === connectorExtension.name)) || [];
           this.connectors.push(...filteredList);
           this.connectors.push(...connectors);
           const promises = [];
