@@ -551,16 +551,13 @@ export default {
     selectTrigger(trigger, triggerType) {
       this.value = trigger || null;
       this.triggerType = triggerType || null;
-      if (this.rule.id && this.automaticType) {
-        const event = {
-          id: this.rule?.event?.id,
-          title: trigger,
-          trigger: trigger,
-          type: triggerType
-        };
-        this.$set(this.rule, 'event', event);
-      }
-
+      const event = {
+        id: this.rule?.event?.id,
+        title: trigger,
+        trigger: trigger,
+        type: triggerType
+      };
+      this.$set(this.ruleToSave, 'event', event);
     },
     close() {
       this.$refs.ruleFormDrawer.close();
