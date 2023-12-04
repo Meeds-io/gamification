@@ -101,6 +101,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>ruleComponents</module>
       </depends>
       <depends>
+        <module>gamificationAdminConnectors</module>
+      </depends>
+      <depends>
         <module>usersLeaderboardCommon</module>
       </depends>
       <depends>
@@ -140,6 +143,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>ruleComponents</module>
+      </depends>
+      <depends>
+        <module>gamificationAdminConnectors</module>
       </depends>
       <depends>
         <module>usersLeaderboardCommon</module>
@@ -778,7 +784,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <module>
     <name>ruleComponents</name>
-    <load-group>gamification-admin-connectors</load-group>
     <script>
       <minify>false</minify>
       <path>/js/ruleComponents.bundle.js</path>
@@ -862,6 +867,30 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <script>
       <minify>false</minify>
       <path>/js/gamificationCommon.bundle.js</path>
+    </script>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>vuetify</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+  </module>
+
+  <module>
+    <name>gamificationAdminConnectors</name>
+    <load-group>gamification-admin-connectors</load-group>
+    <script>
+      <minify>false</minify>
+      <path>/js/connectorAdminSettings.bundle.js</path>
     </script>
     <depends>
       <module>vue</module>
