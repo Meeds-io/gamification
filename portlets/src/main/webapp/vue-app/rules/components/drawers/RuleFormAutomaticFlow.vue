@@ -102,7 +102,13 @@
             :disabled="data.disabled"
             @click:close="data.parent.selectItem(data.item)">
             <rule-icon :rule-event="data.item" class="me-2" />
-            {{ getTriggerLabel(data.item) }}
+            <v-tooltip bottom>
+              <template #activator="{ on }">
+                <span v-on="on" class="text-truncate">{{ getTriggerLabel(data.item) }}
+                </span>
+              </template>
+              <span>{{ getTriggerLabel(data.item) }}</span>
+            </v-tooltip>
           </v-chip>
         </template>
       </v-combobox>
@@ -145,7 +151,9 @@ export default {
       }
     },
     trigger() {
-      this.$emit('triggerUpdated', this.trigger, this.selectedConnector.name);
+      if (this.selectedConnector) {
+        this.$emit('triggerUpdated', this.trigger, this.selectedConnector.name);
+      }
     }
   },
   created() {
