@@ -272,9 +272,11 @@ public class RuleServiceImpl implements RuleService {
     rule.setLastModifiedBy(username);
     rule.setDeleted(false);
     rule.setActivityId(0);
-    RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent(), programId);
-    if (similarRule != null && !similarRule.isDeleted()) {
-      throw new ObjectAlreadyExistsException("Rule with same event and program already exist");
+    if (rule.getEvent()!=null) {
+      RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndProgramId(rule.getEvent(), programId);
+      if (similarRule != null && !similarRule.isDeleted()) {
+        throw new ObjectAlreadyExistsException("Rule with same event and program already exist");
+      }
     }
     return createRuleAndBroadcast(rule, username);
   }
