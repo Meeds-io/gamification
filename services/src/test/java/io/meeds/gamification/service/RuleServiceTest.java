@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.security.Identity;
@@ -240,6 +241,31 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setRecurrence(RecurrenceType.NONE);
     ruleService.createRule(RuleMapper.fromEntity(domainStorage, rule), ADMIN_USER);
     assertEquals(ruleDAO.findAll().size(), 1);
+    assertThrows(ObjectAlreadyExistsException.class, () -> ruleService.createRule(RuleMapper.fromEntity(domainStorage, rule), ADMIN_USER));
+    assertEquals(ruleDAO.findAll().size(), 1);
+  }
+
+  @Test
+  public void testCreateRuleWithNoEvent() throws Exception {
+    assertEquals(ruleDAO.findAll().size(), 0);
+    assertThrows(IllegalArgumentException.class, () -> ruleService.createRule(null, SPACE_MEMBER_USER));
+    RuleEntity rule = new RuleEntity();
+    rule.setScore(Integer.parseInt(TEST_SCORE));
+    rule.setTitle(RULE_NAME);
+    rule.setDescription("Description");
+    rule.setEnabled(true);
+    rule.setDeleted(false);
+    rule.setCreatedBy(TEST_USER_EARNER);
+    rule.setCreatedDate(new Date());
+    rule.setLastModifiedBy(TEST_USER_EARNER);
+    rule.setLastModifiedDate(new Date());
+    rule.setDomainEntity(newDomain(GAMIFICATION_DOMAIN));
+    rule.setType(EntityType.AUTOMATIC);
+    rule.setRecurrence(RecurrenceType.NONE);
+    ruleService.createRule(RuleMapper.fromEntity(domainStorage, rule), ADMIN_USER);
+    assertEquals(ruleDAO.findAll().size(), 1);
+    ruleService.createRule(RuleMapper.fromEntity(domainStorage, rule), ADMIN_USER);
+    assertEquals(ruleDAO.findAll().size(), 2);
   }
 
   @Test
