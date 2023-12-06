@@ -4,7 +4,8 @@
       {{ $t('rule.form.label.application') }}
     </v-card-text>
     <v-autocomplete
-      ref="connectorAutoComplete"
+      id="applicationAutoComplete"
+      ref="applicationAutoComplete"
       v-model="selectedConnector"
       :items="connectors"
       :placeholder="$t('rule.form.label.application.Placeholder')"
@@ -63,10 +64,12 @@
         {{ $t('rule.form.label.event') }}
       </v-card-text>
       <v-autocomplete
+        id="triggerAutoComplete"
         ref="triggerAutoComplete"
         v-model="trigger"
         :items="sortedTriggers"
         :placeholder="$t('rule.form.label.event.placeholder')"
+        :filter="filterTriggers"
         class="pa-0"
         background-color="white"
         dense
@@ -180,6 +183,9 @@ export default {
     },
     filterConnectors(item, queryText) {
       return item.title.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1;
+    },
+    filterTriggers(item, queryText) {
+      return this.getTriggerLabel(item).toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1;
     },
     getTriggerLabel(trigger) {
       return this.$t(`gamification.event.title.${trigger}`);
