@@ -20,4 +20,4 @@
 import './initComponents.js';
 import './services.js';
 
-Vue.prototype.$utils?.includeExtensions('engagementCenterActions');
+Vue.prototype.$utils?.includeExtensions?.('engagementCenterActions');

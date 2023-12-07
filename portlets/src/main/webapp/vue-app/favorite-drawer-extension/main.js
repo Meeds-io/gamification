@@ -24,4 +24,4 @@ export function init() {
   initExtensions();
 }
 
-Vue.prototype.$utils?.includeExtensions('engagementCenterActions');
+Vue.prototype.$utils?.includeExtensions?.('engagementCenterActions');
