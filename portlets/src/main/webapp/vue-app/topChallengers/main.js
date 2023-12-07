@@ -36,5 +36,5 @@ export function init() {
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'Top Challengers');
     })
-    .finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
+    .finally(() => Vue.prototype.$utils?.includeExtensions?.('engagementCenterActions'));
 }

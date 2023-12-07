@@ -40,5 +40,5 @@ export function init() {
         vuetify,
       }, `#${appId}`, 'Users Leaderboard');
     })
-    .finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
+    .finally(() => Vue.prototype.$utils?.includeExtensions?.('engagementCenterActions'));
 }
