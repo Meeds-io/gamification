@@ -4,7 +4,7 @@
       <v-list-item-avatar class="align-self-start position-static" tile>
         <rule-icon
           :size="40"
-          :rule-event="eventTitle"
+          :rule-event="triggerTitle"
           class="position-absolute" />
       </v-list-item-avatar>
       <v-list-item-content>
