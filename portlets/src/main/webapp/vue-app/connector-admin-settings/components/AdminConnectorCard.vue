@@ -73,31 +73,31 @@ export default {
   },
   computed: {
     connectorExtension() {
-      return this.connectorExtensions.find(c => c?.componentOptions?.name === this.connector?.name);
+      return this.connectorExtensions.find(extension => extension?.name === this.connector?.name);
     },
     icon() {
-      return this.connectorExtension?.componentOptions?.icon;
+      return this.connectorExtension?.icon;
     },
     image() {
-      return this.connectorExtension?.componentOptions?.image;
+      return this.connectorExtension?.image;
     },
     iconColorClass() {
-      return this.connectorExtension?.componentOptions?.iconColorClass;
+      return this.connectorExtension?.iconColorClass;
     },
     name() {
-      return this.connectorExtension?.componentOptions?.name || '';
+      return this.connectorExtension?.name || '';
     },
     title() {
-      return this.connectorExtension?.componentOptions?.title || '';
+      return this.connectorExtension?.title || '';
     },
     description() {
-      return this.$t(`${this.connectorExtension?.componentOptions?.description}`);
+      return this.$t(`${this.connectorExtension?.description}`);
+    },
+    comingSoon() {
+      return this.connectorExtension?.comingSoon;
     },
     triggersSize() {
       return this.connector?.triggers?.length;
-    },
-    comingSoon() {
-      return this.connectorExtension?.componentOptions?.comingSoon;
     },
   },
   methods: {

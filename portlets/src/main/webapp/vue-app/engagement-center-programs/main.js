@@ -69,5 +69,8 @@ export function init(isAdministrator, isProgramManager) {
       vuetify,
       i18n
     }, `#${appId}`, 'EngagementCenter');
-  }).finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
+  }).finally(() => {
+    Vue.prototype.$utils?.includeExtensions('engagementCenterActions');
+    Vue.prototype.$utils.includeExtensions('engagementCenterConnectors');
+  });
 }

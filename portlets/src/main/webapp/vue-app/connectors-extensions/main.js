@@ -1,5 +1,4 @@
 /*
- *
  * This file is part of the Meeds project (https://meeds.io/).
  *
  * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
@@ -12,15 +11,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
  */
-import * as gamificationConnectorService from '../connector-user-settings/js/GamificationConnectorService';
+import './services.js';
+import './extensions.js';
 
-if (!Vue.prototype.$gamificationConnectorService) {
-  window.Object.defineProperty(Vue.prototype, '$gamificationConnectorService', {
-    value: gamificationConnectorService,
-  });
-}
+Vue.prototype.$utils?.includeExtensions('engagementCenterConnectors');
+

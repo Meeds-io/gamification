@@ -101,7 +101,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>ruleComponents</module>
       </depends>
       <depends>
-        <module>gamificationAdminConnectors</module>
+        <module>connectorExtensions</module>
       </depends>
       <depends>
         <module>usersLeaderboardCommon</module>
@@ -145,7 +145,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>ruleComponents</module>
       </depends>
       <depends>
-        <module>gamificationAdminConnectors</module>
+        <module>connectorExtensions</module>
       </depends>
       <depends>
         <module>usersLeaderboardCommon</module>
@@ -346,6 +346,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>connectorExtensions</module>
       </depends>
       <depends>
         <module>jquery</module>
@@ -584,10 +587,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>eXoVueI18n</module>
       </depends>
       <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
         <module>commonVueComponents</module>
       </depends>
       <depends>
-        <module>extensionRegistry</module>
+        <module>connectorExtensions</module>
       </depends>
       <depends>
         <module>commons-cometd3</module>
@@ -605,7 +611,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <path>/js/connectorAdminSettings.bundle.js</path>
       </script>
       <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
         <module>ruleComponents</module>
+      </depends>
+      <depends>
+        <module>connectorExtensions</module>
       </depends>
       <depends>
         <module>vue</module>
@@ -615,9 +627,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>eXoVueI18n</module>
-      </depends>
-      <depends>
-        <module>commonVueComponents</module>
       </depends>
       <depends>
         <module>extensionRegistry</module>
@@ -863,6 +872,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </module>
 
   <module>
+    <name>connectorExtensions</name>
+    <load-group>engagement-center-connector-extensions</load-group>
+    <script>
+      <minify>false</minify>
+      <path>/js/connectorExtensions.bundle.js</path>
+    </script>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>vue</module>
+    </depends>
+  </module>
+
+  <module>
     <name>gamificationCommon</name>
     <script>
       <minify>false</minify>
@@ -906,6 +933,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>connectorExtensions</module>
     </depends>
   </module>
 
@@ -991,26 +1021,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>ruleExtensions</module>
-    </depends>
-  </module>
-
-  <module>
-    <name>gamificationAdminConnectorsExtensionsMeeds</name>
-    <load-group>gamification-admin-connectors</load-group>
-    <script>
-      <path>/js/meedsConnectorsExtension.bundle.js</path>
-    </script>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>vuetify</module>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-    <depends>
-      <module>extensionRegistry</module>
     </depends>
   </module>
 

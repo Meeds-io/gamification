@@ -18,7 +18,7 @@
  *
  */
 
-import * as gamificationConnectorService from '../connector-user-settings/js/GamificationConnectorService';
+import * as gamificationConnectorService from './js/GamificationConnectorService';
 
 if (!Vue.prototype.$gamificationConnectorService) {
   window.Object.defineProperty(Vue.prototype, '$gamificationConnectorService', {
