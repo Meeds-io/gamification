@@ -57,5 +57,5 @@ export function init() {
         vuetify,
       }, appElement, 'Profile Stats');
     })
-    .finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
+    .finally(() => Vue.prototype.$utils?.includeExtensions?.('engagementCenterActions'));
 }
