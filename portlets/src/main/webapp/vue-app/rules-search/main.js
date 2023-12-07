@@ -16,4 +16,4 @@ export function formatSearchResult(result, term) {
   }
 }
 
-Vue.prototype.$utils?.includeExtensions('engagementCenterActions');
+Vue.prototype.$utils?.includeExtensions?.('engagementCenterActions');

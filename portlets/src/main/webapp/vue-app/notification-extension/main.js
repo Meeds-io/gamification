@@ -33,5 +33,5 @@ export function init() {
         i18n: exoi18n.i18n,
       });
     })
-    .finally(() => Vue.prototype.$utils?.includeExtensions('engagementCenterActions'));
+    .finally(() => Vue.prototype.$utils?.includeExtensions?.('engagementCenterActions'));
 }
