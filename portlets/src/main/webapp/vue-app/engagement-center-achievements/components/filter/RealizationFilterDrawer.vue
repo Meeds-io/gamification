@@ -16,15 +16,16 @@
 -->
 <template>
   <exo-drawer
-    ref="RealizationsFilterDrawer"
-    class="RealizationsFilterDrawer"
+    ref="drawer"
+    v-model="drawer"
     :right="!$vuetify.rtl"
+    class="RealizationsFilterDrawer"
     eager
     @closed="close">
     <template slot="title">
       <span class="pb-2"> {{ $t('realization.label.search.filtersAchievements') }} </span>
     </template>
-    <template slot="content">
+    <template v-if="drawer" slot="content">
       <form
         ref="realizationFilter"
         id="realizationFilter">
@@ -34,8 +35,8 @@
             ref="programAutoComplete"
             v-model="program"
             :labels="programSuggesterLabels"
-            :include-deleted="IncludeDisabledPrograms"
-            :include-disabled="IncludeDisabledPrograms"
+            :include-deleted="includeDisabledPrograms"
+            :include-disabled="includeDisabledPrograms"
             :only-owned="administrationMode"
             :excluded-ids="programIds" />
           <div v-if="programs && programs.length" class="identitySuggester no-border mt-0">
@@ -46,7 +47,7 @@
               @remove-attendee="removeProgram" />
           </div>
           <v-checkbox
-            v-model="IncludeDisabledPrograms"
+            v-model="includeDisabledPrograms"
             hide-details
             @click="changeSelection">
             <template #label>
@@ -62,7 +63,8 @@
             ref="ruleAutoComplete"
             v-model="rule"
             :labels="ruleSuggesterLabels"
-            :excluded-ids="ruleIds" />
+            :excluded-ids="ruleIds"
+            :include-deleted="includeDisabledRules" />
           <div v-if="rules && rules.length" class="identitySuggester no-border mt-0">
             <engagement-center-realizations-rule-item
               v-for="(rule, index) in rules"
@@ -70,6 +72,17 @@
               :rule="rule"
               @remove="rules.splice(index, 1)" />
           </div>
+          <v-checkbox
+            v-model="includeDisabledRules"
+            :disabled="includeDisabledPrograms"
+            hide-details
+            @click="changeSelection">
+            <template #label>
+              <span class="text--color subtitle-2 font-weight-normal">
+                {{ $t('realization.label.filter.program.includeDisabledOrRemovedActions') }}
+              </span>
+            </template>
+          </v-checkbox>
         </v-card-text>
         <v-card-text v-if="isAdministrator">
           <span class="subtitle-1">{{ $t('realization.label.filter.grantee') }}</span>
@@ -124,7 +137,6 @@
     </template>
   </exo-drawer>
 </template>
-
 <script>
 export default {
   props: {
@@ -140,6 +152,7 @@ export default {
   data() {
     return {
       tab: null,
+      drawer: false,
       disabled: false,
       granteeAttendee: null,
       grantees: [],
@@ -151,7 +164,8 @@ export default {
       searchOptions: {
         currentUser: '',
       },
-      IncludeDisabledPrograms: false
+      includeDisabledPrograms: false,
+      includeDisabledRules: false,
     };
   },
   computed: {
@@ -183,17 +197,6 @@ export default {
       return this.programs.map(r => r.id);
     },
   },
-  created() {    
-    this.$root.$on('realization-open-filter-drawer', this.open);
-    this.$root.$on('program-load-more', this.loadMore);
-    this.$root.$on('reset-filter-values', this.reset);
-    this.$root.$on('realization-filter-program-add', this.programAdd);
-    this.$root.$on('realization-filter-program-remove', this.programRemove);
-    this.$root.$on('realization-filter-action-add', this.ruleAdd);
-    this.$root.$on('realization-filter-action-remove', this.ruleRemove);
-    this.$root.$on('realization-filter-earner-add', this.earnerAdd);
-    this.$root.$on('realization-filter-earner-remove', this.earnerRemove);
-  },
   watch: {
     granteeAttendee() {
       this.addSelectedGrantee(this.granteeAttendee);
@@ -204,23 +207,41 @@ export default {
     program() {
       this.addSelectedProgram(this.program);
     },
+    includeDisabledPrograms() {
+      if (this.includeDisabledPrograms) {
+        this.includeDisabledRules = true;
+      } else {
+        this.includeDisabledRules = false;
+      }
+    },
+  },
+  created() {
+    this.$root.$on('realization-open-filter-drawer', this.open);
+    this.$root.$on('program-load-more', this.loadMore);
+    this.$root.$on('reset-filter-values', this.resetAndApply);
+    this.$root.$on('realization-filter-program-add', this.programAdd);
+    this.$root.$on('realization-filter-program-remove', this.programRemove);
+    this.$root.$on('realization-filter-action-add', this.ruleAdd);
+    this.$root.$on('realization-filter-action-remove', this.ruleRemove);
+    this.$root.$on('realization-filter-earner-add', this.earnerAdd);
+    this.$root.$on('realization-filter-earner-remove', this.earnerRemove);
   },
   methods: {
     open() {
-      this.$refs.RealizationsFilterDrawer.open();
+      this.$refs.drawer.open();
     },
     clear() {
-      this.$refs.programAutoComplete.clear();
+      this.$refs?.programAutoComplete?.clear?.();
       this.programs = [];
     },
     cancel() {
-      this.$refs.RealizationsFilterDrawer.close();
+      this.$refs.drawer.close();
       this.reset();
     },
     confirm(differ) {
       window.setTimeout(() => {
         this.$emit('selectionConfirmed', this.programs, this.rules, this.grantees);
-        this.$refs.RealizationsFilterDrawer.close();
+        this.$refs.drawer.close();
       }, differ && 200 || 10);
     },
     reset() {
@@ -230,11 +251,11 @@ export default {
       this.program = null;
       this.rule = null;
       this.granteeAttendee = null;
-      this.IncludeDisabledPrograms = false;
+      this.includeDisabledPrograms = false;
     },
     resetAndApply() {
       this.reset();
-      this.confirm();
+      this.$nextTick().then(() => this.confirm());
     },
     removeGranteeAttendee(attendee) {
       const index = this.grantees.findIndex(addedAttendee => {
@@ -254,7 +275,9 @@ export default {
     },
     addSelectedProgram(program) {
       if (!program) {
-        this.$nextTick(this.$refs.programAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
+        if (this.$refs?.programAutoComplete) {
+          this.$nextTick(this.$refs.programAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
+        }
         return;
       } else if (!this.programs?.length) {
         this.programs = [program];
@@ -265,7 +288,9 @@ export default {
     },
     addSelectedRule(rule) {
       if (!rule) {
-        this.$nextTick(this.$refs.ruleAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
+        if (this.$refs?.ruleAutoComplete) {
+          this.$nextTick(this.$refs.ruleAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
+        }
         return;
       } else if (!this.rules?.length) {
         this.rules = [rule];
@@ -276,7 +301,9 @@ export default {
     },
     addSelectedGrantee(grantee) {
       if (!grantee) {
-        this.$nextTick(this.$refs.granteeAttendeeAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
+        if (this.$refs?.granteeAttendeeAutoComplete) {
+          this.$nextTick(this.$refs.granteeAttendeeAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
+        }
         return;
       }
       if (!this.grantees) {
