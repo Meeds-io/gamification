@@ -78,9 +78,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-card>
         </v-subheader>
         <gamification-admin-connector-trigger
-          v-for="event in triggersToDisplay"
-          :key="event.title"
-          :trigger="event"
+          v-for="trigger in triggersToDisplay"
+          :key="trigger.title"
+          :trigger="trigger"
           class="py-2" />
       </v-list>
     </v-card>
@@ -116,13 +116,13 @@ export default {
   },
   computed: {
     title() {
-      return this.connectorExtension?.componentOptions?.title || '';
+      return this.connectorExtension?.title || '';
     },
     name() {
-      return this.connectorExtension?.componentOptions?.name || '';
+      return this.connectorExtension?.name || '';
     },
     description() {
-      return this.$t(`${this.connectorExtension?.componentOptions?.description}`);
+      return this.$t(`${this.connectorExtension?.description}`);
     },
     connectorActivated() {
       return this.connector?.apiKey && this.connector?.secretKey && this.connector?.redirectUrl && this.connector?.enabled;
@@ -152,7 +152,7 @@ export default {
       return this.sortedTriggers?.slice(0, this.pageSize);
     },
     idDefaultConnector() {
-      return this.connectorExtension?.componentOptions?.defaultConnector;
+      return this.connectorExtension?.defaultConnector;
     },
   },
   methods: {
@@ -160,7 +160,7 @@ export default {
       this.$root.$emit('close-connector-detail');
     },
     openConnectorSettings() {
-      this.$root.$emit('open-connector-settings', this.connector, this.connectorExtension);
+      this.$root.$emit('open-connector-settings', this.connector);
     },
     loadMore() {
       this.pageSize += this.pageSize;
