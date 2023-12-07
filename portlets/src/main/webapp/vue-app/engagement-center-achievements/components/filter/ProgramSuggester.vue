@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       v-model="program"
       :label="labels.label"
       :placeholder="labels.placeholder"
-      :items="programs"
+      :items="programItems"
       :loading="loadingSuggestions"
       :multiple="multiple"
       hide-no-data
@@ -37,7 +37,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       persistent-hint
       hide-selected
       chips
-      cache-items
       dense
       flat
       required
@@ -89,6 +88,10 @@ export default {
       type: Object,
       default: null,
     },
+    excludedIds: {
+      type: Array,
+      default: null,
+    },
     labels: {
       type: Object,
       default: () => ({
@@ -124,6 +127,11 @@ export default {
       startTypingKeywordTimeout: 0,
       typing: false,
     };
+  },
+  computed: {
+    programItems() {
+      return this.programs && this.excludedIds?.length && this.programs.filter(r => !this.excludedIds.find(id => id === r.id)) || this.programs || [];
+    },
   },
   watch: {
     searchTerm() {
@@ -180,7 +188,7 @@ export default {
       if (this.searchTerm?.length) {
         this.focus();
         if (!this.previousSearchTerm || this.previousSearchTerm !== this.searchTerm) {
-          this.loadingSuggestions = 0;
+          this.loadingSuggestions = true;
           this.programs = [];
           this.$programService.getPrograms({
             limit: 10,
@@ -191,7 +199,8 @@ export default {
             owned: this.onlyOwned,
             lang: eXo.env.portal.language,
           })
-            .then(data => this.programs = data.programs);
+            .then(data => this.programs = data.programs)
+            .finally(() => this.loadingSuggestions = false);
         }
         this.previousSearchTerm = this.searchTerm;
       } else {
@@ -201,7 +210,7 @@ export default {
     clear() {
       this.programs = [];
       this.value = null;
-      this.loadingSuggestions = 0;
+      this.loadingSuggestions = false;
       this.$refs.selectAutoComplete.cachedItems = [];
     },
   },
