@@ -68,18 +68,18 @@ export default {
   },
   computed: {
     enabledConnectors() {
-      return this.connectors.filter(connector => this.connectorExtensions.some(item => connector.name === item.componentOptions.name && !item.componentOptions.comingSoon)).sort((connector1, connector2) => {
+      return this.connectors.filter(connector => this.connectorExtensions.some(item => connector.name === item.name && !item.comingSoon)).sort((connector1, connector2) => {
         return this.getConnectorRank(connector1) - this.getConnectorRank(connector2);
       });
     },
     upcomingConnectors() {
-      return this.connectors.filter(connector => this.connectorExtensions.some(item => connector.name === item.componentOptions.name && item.componentOptions.comingSoon)).sort((a, b) => a.title.localeCompare(b.title));
+      return this.connectors.filter(connector => this.connectorExtensions.some(item => connector.name === item.name && item.comingSoon)).sort((a, b) => a.title.localeCompare(b.title));
     }
   },
   methods: {
     getConnectorRank(connector) {
-      const extension = this.connectorExtensions.find(item => connector.name === item.componentOptions.name);
-      return extension ? extension.componentOptions.rank : 0;
+      const extension = this.connectorExtensions.find(item => connector.name === item.name);
+      return extension ? extension.rank : 0;
     },
   },
 };
