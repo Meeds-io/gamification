@@ -74,9 +74,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-card>
         </v-subheader>
         <gamification-admin-connector-trigger
-          v-for="event in triggersToDisplay"
-          :key="event.title"
-          :trigger="event"
+          v-for="trigger in triggersToDisplay"
+          :key="trigger.title"
+          :trigger="trigger"
           class="py-2" />
       </v-list>
     </v-card>
