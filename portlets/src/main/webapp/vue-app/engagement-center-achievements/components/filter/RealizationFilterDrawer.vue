@@ -28,40 +28,22 @@
       <form
         ref="realizationFilter"
         id="realizationFilter">
-        <v-card-text v-if="isAdministrator">
-          <span class="subtitle-1">{{ $t('realization.label.filter.grantee') }}</span>
-          <v-flex class="user-suggester text-truncate">
-            <exo-identity-suggester
-              ref="granteeAttendeeAutoComplete"
-              name="granteeAttendee"
-              v-model="granteeAttendee"
-              :search-options="searchOptions"
-              :labels="granteeSuggesterLabels"
-              include-users />
-            <div v-if="grantees" class="identitySuggester no-border mt-0">
-              <engagement-center-realizations-grantee-attendee-item
-                v-for="grantee in grantees"
-                :key="grantee.identity.id"
-                :attendee="grantee"
-                @remove-attendee="removeGranteeAttendee" />
-            </div>
-          </v-flex>
-        </v-card-text>
         <v-card-text>
           <span class="subtitle-1">{{ $t('realization.label.filter.program') }}</span>
           <engagement-center-realizations-program-suggester
-            ref="programAttendeeAutoComplete"
-            v-model="programAttendee"
+            ref="programAutoComplete"
+            v-model="program"
             :labels="programSuggesterLabels"
             :include-deleted="IncludeDisabledPrograms"
             :include-disabled="IncludeDisabledPrograms"
-            :only-owned="administrationMode" />
-          <div v-if="programs" class="identitySuggester no-border mt-0">
-            <engagement-center-realizations-program-attendee-item
+            :only-owned="administrationMode"
+            :excluded-ids="programIds" />
+          <div v-if="programs && programs.length" class="identitySuggester no-border mt-0">
+            <engagement-center-realizations-program-item
               v-for="program in programs"
               :key="program.id"
               :program="program"
-              @remove-attendee="removeProgramAttendee" />
+              @remove-attendee="removeProgram" />
           </div>
           <v-checkbox
             v-model="IncludeDisabledPrograms"
@@ -73,6 +55,40 @@
               </span>
             </template>
           </v-checkbox>
+        </v-card-text>
+        <v-card-text>
+          <span class="subtitle-1">{{ $t('realization.label.filter.action') }}</span>
+          <rule-suggester
+            ref="ruleAutoComplete"
+            v-model="rule"
+            :labels="ruleSuggesterLabels"
+            :excluded-ids="ruleIds" />
+          <div v-if="rules && rules.length" class="identitySuggester no-border mt-0">
+            <engagement-center-realizations-rule-item
+              v-for="(rule, index) in rules"
+              :key="rule.id"
+              :rule="rule"
+              @remove="rules.splice(index, 1)" />
+          </div>
+        </v-card-text>
+        <v-card-text v-if="isAdministrator">
+          <span class="subtitle-1">{{ $t('realization.label.filter.grantee') }}</span>
+          <v-flex class="user-suggester text-truncate">
+            <exo-identity-suggester
+              ref="granteeAttendeeAutoComplete"
+              name="granteeAttendee"
+              v-model="granteeAttendee"
+              :search-options="searchOptions"
+              :labels="granteeSuggesterLabels"
+              include-users />
+            <div v-if="grantees && grantees.length" class="identitySuggester no-border mt-0">
+              <engagement-center-realizations-grantee-attendee-item
+                v-for="grantee in grantees"
+                :key="grantee.identity.id"
+                :attendee="grantee"
+                @remove-attendee="removeGranteeAttendee" />
+            </div>
+          </v-flex>
         </v-card-text>
       </form>
     </template>
@@ -98,7 +114,7 @@
           <v-btn
             :disabled="disabled"
             class="btn btn-primary"
-            @click="confirm">
+            @click="confirm()">
             <template>
               {{ $t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
             </template>
@@ -128,8 +144,10 @@ export default {
       granteeAttendee: null,
       grantees: [],
       granteesIds: [],
-      programAttendee: null,
+      program: null,
       programs: [],
+      rule: null,
+      rules: [],
       searchOptions: {
         currentUser: '',
       },
@@ -144,6 +162,13 @@ export default {
         noDataLabel: this.$t('realization.label.filter.grantee.noDataLabel'),
       };
     },
+    ruleSuggesterLabels() {
+      return {
+        searchPlaceholder: this.$t('realization.label.filter.action.searchPlaceholder'),
+        placeholder: this.$t('realization.label.filter.action.placeholder'),
+        noDataLabel: this.$t('realization.label.filter.action.noDataLabel'),
+      };
+    },
     programSuggesterLabels() {
       return {
         searchPlaceholder: this.$t('realization.label.filter.program.searchPlaceholder'),
@@ -151,49 +176,33 @@ export default {
         noDataLabel: this.$t('realization.label.filter.program.noDataLabel'),
       };
     },
+    ruleIds() {
+      return this.rules.map(r => r.id);
+    },
+    programIds() {
+      return this.programs.map(r => r.id);
+    },
   },
   created() {    
     this.$root.$on('realization-open-filter-drawer', this.open);
     this.$root.$on('program-load-more', this.loadMore);
     this.$root.$on('reset-filter-values', this.reset);
+    this.$root.$on('realization-filter-program-add', this.programAdd);
+    this.$root.$on('realization-filter-program-remove', this.programRemove);
+    this.$root.$on('realization-filter-action-add', this.ruleAdd);
+    this.$root.$on('realization-filter-action-remove', this.ruleRemove);
+    this.$root.$on('realization-filter-earner-add', this.earnerAdd);
+    this.$root.$on('realization-filter-earner-remove', this.earnerRemove);
   },
   watch: {
     granteeAttendee() {
-      if (!this.granteeAttendee) {
-        this.$nextTick(this.$refs.granteeAttendeeAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
-        return;
-      }
-      if (!this.grantees) {
-        this.grantees = [];
-      }
-
-      const found = this.grantees?.find(grantee => {
-        return grantee.identity.remoteId === this.granteeAttendee.remoteId
-            && grantee.identity.providerId === this.granteeAttendee.providerId;
-      });
-      if (!found) {
-        this.grantees.push({
-          identity: this.granteeAttendee,
-        });
-      }
-      this.granteeAttendee = null;
+      this.addSelectedGrantee(this.granteeAttendee);
     },
-    programAttendee() {
-      if (!this.programAttendee) {
-        this.$nextTick(this.$refs.programAttendeeAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
-        return;
-      }
-      if (!this.programs) {
-        this.programs = [];
-      }
-
-      const found = this.programs?.find(program => {
-        return program.id === this.programAttendee.id;
-      });
-      if (!found) {
-        this.programs.push(this.programAttendee);
-      }
-      this.programAttendee = null;
+    rule() {
+      this.addSelectedRule(this.rule);
+    },
+    program() {
+      this.addSelectedProgram(this.program);
     },
   },
   methods: {
@@ -201,20 +210,26 @@ export default {
       this.$refs.RealizationsFilterDrawer.open();
     },
     clear() {
-      this.$refs.programAttendeeAutoComplete.clear();
+      this.$refs.programAutoComplete.clear();
       this.programs = [];
     },
     cancel() {
       this.$refs.RealizationsFilterDrawer.close();
       this.reset();
     },
-    confirm() {
-      this.$emit('selectionConfirmed', this.programs, this.grantees);
-      this.$refs.RealizationsFilterDrawer.close();
+    confirm(differ) {
+      window.setTimeout(() => {
+        this.$emit('selectionConfirmed', this.programs, this.rules, this.grantees);
+        this.$refs.RealizationsFilterDrawer.close();
+      }, differ && 200 || 10);
     },
     reset() {
       this.programs = [];
+      this.rules = [];
       this.grantees = [];
+      this.program = null;
+      this.rule = null;
+      this.granteeAttendee = null;
       this.IncludeDisabledPrograms = false;
     },
     resetAndApply() {
@@ -231,13 +246,95 @@ export default {
         this.granteesIds.splice(index, 1);
       }
     },
-    removeProgramAttendee(attendee) {
-      const index = this.programs.findIndex(addedAttendee => {
-        return attendee.id === addedAttendee.id;
-      });
+    removeProgram(program) {
+      const index = this.programs.findIndex(p => program.id === p.id);
       if (index >= 0) {
         this.programs.splice(index, 1);
       }
+    },
+    addSelectedProgram(program) {
+      if (!program) {
+        this.$nextTick(this.$refs.programAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
+        return;
+      } else if (!this.programs?.length) {
+        this.programs = [program];
+      } else if (!this.programs?.find(p => p.id === program.id)) {
+        this.programs.push(program);
+      }
+      this.program = null;
+    },
+    addSelectedRule(rule) {
+      if (!rule) {
+        this.$nextTick(this.$refs.ruleAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
+        return;
+      } else if (!this.rules?.length) {
+        this.rules = [rule];
+      } else if (!this.rules?.find(r => r.id === rule.id)) {
+        this.rules.push(rule);
+      }
+      this.rule = null;
+    },
+    addSelectedGrantee(grantee) {
+      if (!grantee) {
+        this.$nextTick(this.$refs.granteeAttendeeAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
+        return;
+      }
+      if (!this.grantees) {
+        this.grantees = [];
+      }
+
+      const found = this.grantees?.find(g => {
+        return g.identity.remoteId === grantee.remoteId
+            && g.identity.providerId === grantee.providerId;
+      });
+      if (!found) {
+        this.grantees.push({
+          identity: grantee,
+        });
+      }
+      this.granteeAttendee = null;
+    },
+    programAdd(program) {
+      this.addSelectedProgram(program);
+      this.$nextTick(this.confirm);
+    },
+    programRemove(programId) {
+      const index = this.programs.findIndex(p => programId === p.id);
+      if (index >= 0) {
+        this.programs.splice(index, 1);
+      }
+      this.$nextTick(this.confirm);
+    },
+    ruleAdd(rule) {
+      this.addSelectedRule(rule);
+      this.$nextTick(this.confirm);
+    },
+    ruleRemove(ruleId) {
+      const index = this.rules.findIndex(r => ruleId === r.id);
+      if (index >= 0) {
+        this.rules.splice(index, 1);
+      }
+      this.$nextTick(this.confirm);
+    },
+    earnerAdd(earner) {
+      this.addSelectedGrantee({
+        id: `organization:${earner.remoteId}`,
+        providerId: 'organization',
+        remoteId: earner.remoteId,
+        identityId: earner.id,
+        profile: {
+          avatarUrl: earner.avatarUrl,
+          fullName: earner.fullName,
+        },
+      });
+      this.$nextTick(this.confirm);
+    },
+    earnerRemove(earnerId) {
+      const index = this.grantees.findIndex(e => earnerId === e?.identity?.identityId);
+      if (index >= 0) {
+        this.grantees.splice(index, 1);
+      }
+      this.$nextTick(this.confirm);
     },
     changeSelection() {
       this.programs = [];
