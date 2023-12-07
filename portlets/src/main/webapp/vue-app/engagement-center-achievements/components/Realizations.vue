@@ -63,7 +63,7 @@
         color="primary" />
       <div v-else-if="!displaySearchResult">
         <engagement-center-result-not-found
-          v-if="filterActivated"
+          v-if="filterActivated || filtersCount"
           :display-back-arrow="false"
           :message-info-one="$t('challenge.realization.noFilterResult.messageOne')"
           :message-info-two="$t('challenge.realization.noFilterResult.messageTwo')"
@@ -93,6 +93,9 @@
             :realization="props.item"
             :date-format="dateFormat"
             :is-administrator="administrationMode"
+            :filtered-rule-ids="ruleIds"
+            :filtered-program-ids="searchList"
+            :filtered-earner-ids="earnerIds"
             @updated="realizationUpdated" />
         </template>
       </v-data-table>
@@ -136,7 +139,7 @@
         ref="filterRealizationDrawer"
         :is-administrator="administrationMode"
         :administration-mode="administrationMode"
-        @selectionConfirmed="filterByPrograms" />
+        @selectionConfirmed="filter" />
     </main>
     <engagement-center-rule-extensions />
   </v-app>
@@ -160,6 +163,7 @@ export default {
     searchList: [],
     ownedPrograms: [],
     earnerIds: [],
+    ruleIds: [],
     offset: 0,
     limit: 25,
     pageSize: 25,
@@ -196,6 +200,7 @@ export default {
     },
     filtersCount() {
       return (this.searchList?.length && 1 || 0)
+        + (this.ruleIds?.length && 1 || 0)
         + (this.earnerIds?.length && 1 || 0);
     },
     hasMore() {
@@ -215,6 +220,7 @@ export default {
         sortBy: this.sortBy,
         sortDescending: this.sortDescending,
         programIds: this.searchList,
+        ruleIds: this.ruleIds,
         owned: this.administrationMode,
       };
     },
@@ -414,11 +420,12 @@ export default {
       this.realizations[index] = updatedRealization;
       this.$set(this.realizations,index,updatedRealization);
     },
-    filterByPrograms(programs, grantees) {
+    filter(programs, rules, grantees) {
       this.filterActivated = true;
       this.initialized = false;
       this.realizations = [];
       this.searchList = programs.map(program => program.id);
+      this.ruleIds = rules.map(rule => rule.id);
       this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
       this.loadRealizations();
     },
@@ -427,6 +434,7 @@ export default {
     },
     reset() {
       this.searchList = [];
+      this.ruleIds = [];
       this.earnerIds = [];
       this.realizations = [];
       this.loadRealizations();

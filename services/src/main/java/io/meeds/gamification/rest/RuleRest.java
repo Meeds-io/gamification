@@ -193,6 +193,10 @@ public class RuleRest implements ResourceContainer {
                            @QueryParam("sortDescending")
                            @DefaultValue("true")
                            boolean sortDescending,
+                           @Parameter(description = "If true, this will return the filtered rules including deleted ones. Possible values = true or false. Default value = false.", required = false)
+                           @QueryParam("includeDeleted")
+                           @DefaultValue("false")
+                           boolean includeDeleted,
                            @Parameter(description = "Accepted users realizations count")
                            @Schema(defaultValue = "0")
                            @QueryParam("realizationsLimit")
@@ -254,6 +258,7 @@ public class RuleRest implements ResourceContainer {
     ruleFilter.setExcludeNoSpace(CollectionUtils.isNotEmpty(spaceIds));
     ruleFilter.setSortBy(sortField);
     ruleFilter.setSortDescending(sortDescending);
+    ruleFilter.setIncludeDeleted(includeDeleted);
     List<String> expandFields = getExpandOptions(expand);
 
     try {
