@@ -94,6 +94,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    includeDeleted: {
+      type: Boolean,
+      default: function() {
+        return false;
+      },
+    },
     labels: {
       type: Object,
       default: () => ({
@@ -200,6 +206,7 @@ export default {
         term: this.searchTerm || null,
         programId: this.programId,
         excludedRuleIds: this.excludedIds || [],
+        includeDeleted: this.includeDeleted,
         dateFilter: 'ACTIVE',
         status: 'ENABLED',
         programStatus: 'ENABLED',

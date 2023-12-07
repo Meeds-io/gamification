@@ -63,7 +63,7 @@
         color="primary" />
       <div v-else-if="!displaySearchResult">
         <engagement-center-result-not-found
-          v-if="filterActivated"
+          v-if="filterActivated || filtersCount"
           :display-back-arrow="false"
           :message-info-one="$t('challenge.realization.noFilterResult.messageOne')"
           :message-info-two="$t('challenge.realization.noFilterResult.messageTwo')"
@@ -434,6 +434,7 @@ export default {
     },
     reset() {
       this.searchList = [];
+      this.ruleIds = [];
       this.earnerIds = [];
       this.realizations = [];
       this.loadRealizations();
