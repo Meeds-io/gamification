@@ -24,7 +24,7 @@
       v-model="selection"
       :label="labels.label"
       :placeholder="labels.placeholder"
-      :items="rules"
+      :items="ruleItems"
       :loading="!!loadingSuggestions"
       :multiple="multiple"
       :hide-no-data="!noDataLabel"
@@ -40,7 +40,6 @@
       persistent-hint
       hide-selected
       chips
-      cache-items
       dense
       flat
       required
@@ -95,6 +94,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    includeDeleted: {
+      type: Boolean,
+      default: function() {
+        return false;
+      },
+    },
     labels: {
       type: Object,
       default: () => ({
@@ -119,6 +124,14 @@ export default {
       typing: false,
     };
   },
+  computed: {
+    noDataLabel() {
+      return this.searchTerm?.length ? this.labels?.searchPlaceholder : this.labels?.noDataLabel;
+    },
+    ruleItems() {
+      return this.rules && this.excludedIds?.length && this.rules.filter(r => !this.excludedIds.find(id => id === r.id)) || this.rules || [];
+    },
+  },
   watch: {
     searchTerm() {
       this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
@@ -134,11 +147,6 @@ export default {
       if (!this.rules.length && this.value) {
         this.rules.push(this.value);
       }
-    },
-  },
-  computed: {
-    noDataLabel() {
-      return this.searchTerm?.length ? this.labels?.searchPlaceholder : this.labels?.noDataLabel;
     },
   },
   created() {
@@ -198,9 +206,10 @@ export default {
         term: this.searchTerm || null,
         programId: this.programId,
         excludedRuleIds: this.excludedIds || [],
-        dateFilter: 'ACTIVE',
-        status: 'ENABLED',
-        programStatus: 'ENABLED',
+        includeDeleted: this.includeDeleted,
+        dateFilter: this.includeDeleted && 'ALL' || 'ACTIVE',
+        status: this.includeDeleted && 'ALL' || 'ENABLED',
+        programStatus: this.includeDeleted && 'ALL' || 'ENABLED',
         offset: 0,
         limit: limit || 20,
         returnSize: false,

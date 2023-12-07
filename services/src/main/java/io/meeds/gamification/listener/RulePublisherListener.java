@@ -26,10 +26,10 @@ import org.exoplatform.services.log.Log;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.search.RuleIndexingServiceConnector;
 import io.meeds.gamification.service.RuleService;
-import io.meeds.gamification.utils.Utils;
 
 @Asynchronous
 public class RulePublisherListener extends Listener<Object, String> {
+
   private static final Log LOG = ExoLogger.getLogger(RulePublisherListener.class);
 
   private IndexingService  indexingService;
@@ -47,14 +47,12 @@ public class RulePublisherListener extends Listener<Object, String> {
   public void onEvent(Event<Object, String> event) throws Exception {
     Object object = event.getSource();
     Long ruleId = getRuleId(object);
-    boolean ruleDeleted = ruleId == null || Utils.POST_DELETE_RULE_EVENT.equals(event.getEventName());
-
-    RuleDTO rule = ruleDeleted ? null : ruleService.findRuleById(ruleId);
-    if (ruleDeleted || rule == null || rule.isDeleted() || !rule.isEnabled()) {
-      LOG.debug("Notifying unindexing service for rule with id={}", ruleId);
+    RuleDTO rule = ruleService.findRuleById(ruleId);
+    if (rule == null) {
+      LOG.debug("Notifying remove index of rule with id={}", ruleId);
       indexingService.unindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
     } else {
-      LOG.debug("Notifying indexing service for rule with id={}", ruleId);
+      LOG.debug("Notifying reindex rule with id={}", ruleId);
       indexingService.reindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
     }
   }
@@ -67,4 +65,5 @@ public class RulePublisherListener extends Listener<Object, String> {
     }
     return null;
   }
+
 }
