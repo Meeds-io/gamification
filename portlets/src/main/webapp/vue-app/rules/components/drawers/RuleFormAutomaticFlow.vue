@@ -141,7 +141,9 @@ export default {
     trigger: '',
     connectors: [],
     triggers: [],
-    adminConnectorsExtensions: [],
+    extensionApp: 'engagementCenterConnectors',
+    connectorExtensionType: 'connector-extensions',
+    connectorsExtensions: [],
   }),
   computed: {
     sortedTriggers() {
@@ -177,13 +179,7 @@ export default {
       return this.$gamificationConnectorService.getConnectors(eXo.env.portal.userName)
         .then(connectors => {
           const enabledConnectors = connectors?.filter(connector => connector.enabled) || [];
-          const connectorsToDisplay = this.adminConnectorsExtensions.filter(connectorExtension => enabledConnectors.some(item => item.name === connectorExtension.componentOptions.name) || connectorExtension.componentOptions.defaultConnector).map(item => ({
-            name: item?.componentOptions?.name,
-            title: item?.componentOptions?.title,
-            icon: item?.componentOptions?.icon || null,
-            iconColorClass: item?.componentOptions?.iconColorClass || null,
-            image: item?.componentOptions?.image || null,
-          })) || [];
+          const connectorsToDisplay = this.connectorsExtensions.filter(connectorExtension => enabledConnectors.some(item => item.name === connectorExtension.name) || connectorExtension.defaultConnector) || [];
           this.connectors.push(...connectorsToDisplay);
         }).then(() => {
           if (this.triggerType) {
@@ -199,7 +195,7 @@ export default {
     },
     refreshUserConnectorList() {
       // Get list of connectors from extensionRegistry
-      this.adminConnectorsExtensions = extensionRegistry.loadComponents('gamification-admin-connector') || [];
+      this.connectorsExtensions = extensionRegistry.loadExtensions(this.extensionApp, this.connectorExtensionType) || [];
     },
     filterConnectors(item, queryText) {
       return item.title.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1;
