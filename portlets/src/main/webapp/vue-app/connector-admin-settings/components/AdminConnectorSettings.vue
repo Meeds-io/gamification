@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <extension-registry-component
           v-if="editSettings"
           :params="selectedConnector"
-          :component="connectorExtension" />
+          :component="connectorComponentExtension" />
         <gamification-admin-connector-detail
           v-else
           class="px-4"
@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <gamification-admin-connector-card-list
                 v-if="connectors.length"
                 :connectors="connectors"
-                :connector-extensions="adminConnectorsExtensions" />
+                :connector-extensions="connectorsExtensions" />
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -50,12 +50,16 @@ export default {
   data() {
     return {
       connectors: [],
-      adminConnectorsExtensions: [],
+      connectorsComponentsExtensions: [],
+      extensionApp: 'engagementCenterConnectors',
+      connectorExtensionType: 'connector-extensions',
+      connectorsExtensions: [],
       editSettings: false,
       connectorProjectId: null,
+      connectorComponentExtension: null,
       connectorExtension: null,
       selectedConnector: null,
-      connectorsLinkBasePath: '/portal/g/:platform:rewarding/gamificationConnectorsAdministration',
+      connectorsLinkBasePath: '/portal/administration/home/recognition/connectors',
     };
   },
   watch: {
@@ -91,9 +95,9 @@ export default {
   methods: {
     init() {
       this.refreshUserConnectorList();
-      this.adminConnectorsExtensions.forEach(extension => {
-        if (extension?.componentOptions?.init) {
-          const initPromise = extension.componentOptions.init();
+      this.connectorsExtensions.forEach(extension => {
+        if (extension?.init) {
+          const initPromise = extension.init();
           if (initPromise?.then) {
             return initPromise
               .then(() => this.$nextTick());
@@ -104,7 +108,7 @@ export default {
       this.loading = true;
       this.$gamificationConnectorService.getConnectors(eXo.env.portal.userName, 'secretKey')
         .then(connectors => {
-          const filteredList = this.adminConnectorsExtensions.map(item => item?.componentOptions).filter(connectorExtension => !connectors.some(item => item.name === connectorExtension.name)) || [];
+          const filteredList = this.connectorsExtensions.filter(connectorExtension => !connectors.some(item => item.name === connectorExtension.name)) || [];
           this.connectors.push(...filteredList);
           this.connectors.push(...connectors);
           const promises = [];
@@ -132,8 +136,8 @@ export default {
               }
               const connectorSetting = this.connectors.find(c => c.name === connectorName);
               if (connectorSetting) {
-                const connectorExtension = this.adminConnectorsExtensions.find(c => c?.componentOptions?.name === connectorSetting.name);
-                this.openConnectorSettings(connectorSetting, connectorExtension);
+                const connectorComponentExtension = this.connectorsComponentsExtensions.find(c => c?.componentOptions?.name === connectorSetting.name);
+                this.openConnectorSettings(connectorSetting, connectorComponentExtension);
               }
             }
           }
@@ -143,20 +147,21 @@ export default {
         });
     },
     openConnector(connector) {
-      const connectorExtension = this.adminConnectorsExtensions.find(c => c?.componentOptions?.name === connector.name);
+      const connectorExtension = this.connectorsExtensions.find(c => c?.name === connector.name);
       this.openConnectorDetail(connector, connectorExtension);
     },
     refreshUserConnectorList() {
       // Get list of connectors from extensionRegistry
-      this.adminConnectorsExtensions = extensionRegistry.loadComponents('gamification-admin-connector') || [];
+      this.connectorsComponentsExtensions = extensionRegistry.loadComponents('gamification-admin-connector') || [];
+      this.connectorsExtensions = extensionRegistry.loadExtensions(this.extensionApp, this.connectorExtensionType) || [];
     },
     openConnectorDetail(connector, connectorExtension) {
       this.connectorExtension = connectorExtension;
       this.selectedConnector = connector;
       this.selectedConnector = Object.assign({}, this.selectedConnector);
     },
-    openConnectorSettings(connector, connectorExtension) {
-      this.connectorExtension = connectorExtension;
+    openConnectorSettings(connector) {
+      this.connectorComponentExtension = this.connectorsComponentsExtensions.find(component => component?.componentOptions?.name === connector?.name);
       this.selectedConnector= connector;
       this.selectedConnector = Object.assign({}, this.selectedConnector);
       this.editSettings = true;
