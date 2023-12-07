@@ -24,7 +24,7 @@
       v-model="selection"
       :label="labels.label"
       :placeholder="labels.placeholder"
-      :items="rules"
+      :items="ruleItems"
       :loading="!!loadingSuggestions"
       :multiple="multiple"
       :hide-no-data="!noDataLabel"
@@ -40,7 +40,6 @@
       persistent-hint
       hide-selected
       chips
-      cache-items
       dense
       flat
       required
@@ -119,6 +118,14 @@ export default {
       typing: false,
     };
   },
+  computed: {
+    noDataLabel() {
+      return this.searchTerm?.length ? this.labels?.searchPlaceholder : this.labels?.noDataLabel;
+    },
+    ruleItems() {
+      return this.rules && this.excludedIds?.length && this.rules.filter(r => !this.excludedIds.find(id => id === r.id)) || this.rules || [];
+    },
+  },
   watch: {
     searchTerm() {
       this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
@@ -134,11 +141,6 @@ export default {
       if (!this.rules.length && this.value) {
         this.rules.push(this.value);
       }
-    },
-  },
-  computed: {
-    noDataLabel() {
-      return this.searchTerm?.length ? this.labels?.searchPlaceholder : this.labels?.noDataLabel;
     },
   },
   created() {
