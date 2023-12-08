@@ -51,7 +51,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-stepper-step>
             <v-stepper-items class="py-1">
               <v-slide-y-transition>
-                <div v-show="expanded || (stepper === 1)" class="px-6">
+                <div v-show="expanded || (stepper === 1)">
                   <v-card-text class="d-flex flex-grow-1 text-left text-subtitle-1 px-0 py-2">
                     {{ $t('rule.form.label.program') }}
                   </v-card-text>
@@ -189,7 +189,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </v-stepper-step>
               <v-stepper-items class="py-1">
                 <v-slide-y-transition>
-                  <div v-show="expanded || stepper === 2" class="px-6">
+                  <div v-show="expanded || stepper === 2">
                     <engagement-center-rule-form-automatic-flow
                       :selected-trigger="selectedTrigger"
                       :trigger-type="triggerType"
@@ -207,7 +207,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </v-stepper-step>
               <v-stepper-items class="py-1">
                 <v-slide-y-transition>
-                  <div v-show="expanded || (stepper > finalStep - 1)" class="px-6">
+                  <div v-show="expanded || (stepper > finalStep - 1)">
                     <engagement-center-rule-publish-editor
                       v-if="enablePublication"
                       ref="rulePublishInput"
