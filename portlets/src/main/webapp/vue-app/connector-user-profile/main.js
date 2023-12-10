@@ -42,7 +42,6 @@ export function init() {
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'Gamified Profiles App');
-    });
+    })
+    .finally(() => Vue.prototype.$utils.includeExtensions('gamificationUserConnectorsExtensions'));
 }
-
-Vue.prototype.$utils.includeExtensions('gamificationUserConnectorsExtensions');
