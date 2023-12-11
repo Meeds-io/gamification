@@ -85,6 +85,7 @@ export default {
     document.addEventListener('close-connector-settings', this.closeConnectorSettings);
     document.addEventListener('save-connector-settings', this.saveConnectorSetting);
     document.addEventListener('delete-connector-settings', this.deleteConnectorSetting);
+    document.addEventListener(`extension-${this.extensionApp}-${this.connectorExtensionType}-updated`, this.refreshUserConnectorList);
     this.init();
   },
   methods: {
