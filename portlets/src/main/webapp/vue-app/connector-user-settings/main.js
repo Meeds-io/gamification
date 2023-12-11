@@ -33,7 +33,6 @@ export function init() {
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'Connectors Settings App');
-    });
+    })
+    .finally(() => Vue.prototype.$utils.includeExtensions('gamificationUserConnectorsExtensions'));
 }
-
-Vue.prototype.$utils.includeExtensions('gamificationUserConnectorsExtensions');
