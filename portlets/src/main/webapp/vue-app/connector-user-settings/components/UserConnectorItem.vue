@@ -17,6 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-app class="full-width">
     <v-card
+      v-show="initialized"
       flat>
       <div class="d-flex flex-row">
         <div class="d-flex text-truncate">
@@ -92,6 +93,7 @@ export default {
   },
   data: () => ({
     loading: false,
+    initialized: false,
     popup: null,
   }),
   computed: {
@@ -118,6 +120,20 @@ export default {
     },
     description() {
       return this.$t(`${this.connectorExtension?.description}`);
+    },
+  },
+  watch: {
+    connectorExtension: {
+      immediate: true,
+      handler(extension) {
+        if (extension) {
+          const result = extension?.init?.();
+          if (result?.then) {
+            return result.finally(() => this.initialized = true);
+          }
+          this.initialized = true;
+        }
+      },
     },
   },
   methods: {

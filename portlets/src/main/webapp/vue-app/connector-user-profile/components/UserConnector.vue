@@ -20,7 +20,7 @@
 -->
 <template>
   <div class="d-flex">
-    <v-list class="full-width">
+    <v-list v-show="initialized" class="full-width">
       <v-list-item
         :href="connectorRemoteIdentifierLink"
         target="_blank"
@@ -56,6 +56,9 @@ export default {
       default: () => [],
     },
   },
+  data: () => ({
+    initialized: false,
+  }),
   computed: {
     connectorRemoteIdentifier() {
       return this.connector?.identifier;
@@ -77,6 +80,20 @@ export default {
     },
     image() {
       return this.connectorExtension?.image;
+    },
+  },
+  watch: {
+    connectorExtension: {
+      immediate: true,
+      handler(extension) {
+        if (extension) {
+          const result = extension?.init?.();
+          if (result?.then) {
+            return result.finally(() => this.initialized = true);
+          }
+          this.initialized = true;
+        }
+      },
     },
   },
 };
