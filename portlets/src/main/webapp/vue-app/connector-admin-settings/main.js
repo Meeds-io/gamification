@@ -33,7 +33,9 @@ export function init() {
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'Admin Connectors Settings App');
+    })
+    .finally(() => {
+      Vue.prototype.$utils.includeExtensions('gamificationAdminConnectorsExtensions');
+      Vue.prototype.$utils.includeExtensions('engagementCenterConnectors');
     });
 }
-Vue.prototype.$utils.includeExtensions('gamificationAdminConnectorsExtensions');
-
