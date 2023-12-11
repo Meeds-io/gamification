@@ -71,6 +71,9 @@ export default {
       default: () => [],
     },
   },
+  data: () => ({
+    initialized: false,
+  }),
   computed: {
     connectorExtension() {
       return this.connectorExtensions.find(c => c?.componentOptions?.name === this.connector?.name);
@@ -98,6 +101,20 @@ export default {
     },
     comingSoon() {
       return this.connectorExtension?.componentOptions?.comingSoon;
+    },
+  },
+  watch: {
+    connectorExtension: {
+      immediate: true,
+      handler(extension) {
+        if (extension) {
+          const result = extension?.init?.();
+          if (result?.then) {
+            return result.finally(() => this.initialized = true);
+          }
+          this.initialized = true;
+        }
+      },
     },
   },
   methods: {
