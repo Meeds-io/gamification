@@ -16,7 +16,6 @@
  */
 import './initComponents.js';
 import '../engagement-center/initComponents.js';
-import '../engagement-center/services.js';
 
 // get overridden components if exists
 if (extensionRegistry) {

@@ -18,16 +18,9 @@
  *
  */
 import * as leaderboardService from './js/LeaderboardService.js';
-import * as realizationService from '../engagement-center/js/RealizationService.js';
 
 if (!Vue.prototype.$leaderboardService) {
   window.Object.defineProperty(Vue.prototype, '$leaderboardService', {
     value: leaderboardService,
-  });
-}
-
-if (!Vue.prototype.$realizationService) {
-  window.Object.defineProperty(Vue.prototype, '$realizationService', {
-    value: realizationService,
   });
 }

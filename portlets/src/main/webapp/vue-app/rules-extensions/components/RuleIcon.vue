@@ -47,6 +47,8 @@ export default {
   },
   data: () => ({
     actionValueExtensions: {},
+    extensionApp: 'engagementCenterActions',
+    actionValueExtensionType: 'user-actions',
   }),
   computed: {
     extension() {
@@ -68,15 +70,25 @@ export default {
     },
   },
   created() {
-    this.actionValueExtensions = this.$root.actionValueExtensions || {};
     this.$root.$on('rule-actions-updated', this.refreshExtensions);
+    this.refreshExtensions();
   },
   beforeDestroy() {
     this.$root.$off('rule-actions-updated', this.refreshExtensions);
   },
   methods: {
     refreshExtensions() {
-      this.actionValueExtensions = this.$root.actionValueExtensions || {};
+      if (this.$root.actionValueExtensions && Object.keys(this.$root.actionValueExtensions).length) {
+        this.actionValueExtensions = this.$root.actionValueExtensions;
+      } else {
+        this.$utils.includeExtensions('engagementCenterActions');
+        const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
+        extensions.forEach(extension => {
+          if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
+            this.$set(this.actionValueExtensions, extension.type, extension.options);
+          }
+        });
+      }
     },
   },
 };
