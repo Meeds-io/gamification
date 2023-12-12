@@ -20,6 +20,7 @@
 
 import './initComponents.js';
 import './extensions.js';
+import '../engagement-center/services.js';
 
 // get overridden components if exists
 if (extensionRegistry) {

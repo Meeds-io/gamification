@@ -17,7 +17,6 @@
  */
 import './initComponents.js';
 import './extensions.js';
-import '../engagement-center/services.js';
 
 const lang = window.eXo && eXo.env?.portal?.language || 'en';
 const urls = [
