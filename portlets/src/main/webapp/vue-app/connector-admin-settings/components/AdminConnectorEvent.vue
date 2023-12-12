@@ -1,10 +1,11 @@
 <template>
   <div>
     <v-list-item class="ps-0 align-start">
-      <v-list-item-avatar class="align-self-start" tile>
+      <v-list-item-avatar class="align-self-start position-static" tile>
         <rule-icon
           :size="40"
-          :rule-event="eventTitle" />
+          :rule-event="eventTitle"
+          class="position-absolute" />
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title class="text-subtitle-2 text-color mb-2">{{ eventTitleLabel }}</v-list-item-title>
