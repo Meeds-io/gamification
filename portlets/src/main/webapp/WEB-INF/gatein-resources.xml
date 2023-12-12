@@ -98,6 +98,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>commonVueComponents</module>
       </depends>
       <depends>
+        <module>applicationToolbarComponent</module>
+      </depends>
+      <depends>
         <module>ruleComponents</module>
       </depends>
       <depends>
@@ -142,6 +145,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>commonVueComponents</module>
       </depends>
       <depends>
+        <module>applicationToolbarComponent</module>
+      </depends>
+      <depends>
         <module>ruleComponents</module>
       </depends>
       <depends>
@@ -184,6 +190,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </script>
       <depends>
         <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>applicationToolbarComponent</module>
       </depends>
       <depends>
         <module>ruleComponents</module>
@@ -432,6 +441,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>gamificationCommon</module>
+      </depends>
+      <depends>
+        <module>ruleExtensions</module>
       </depends>
     </module>
   </portlet>
@@ -819,9 +831,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <module>translationField</module>
     </depends>
     <depends>
-      <module>applicationToolbarComponent</module>
-    </depends>
-    <depends>
       <module>jquery</module>
       <as>$</as>
     </depends>
@@ -849,7 +858,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <module>gamificationCommon</module>
     </depends>
     <depends>
-      <module>ruleExtensions</module>
+      <module>ruleComponents</module>
     </depends>
   </module>
 
@@ -868,6 +877,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>vue</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
     </depends>
   </module>
 
@@ -940,6 +952,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <depends>
       <module>connectorExtensions</module>
     </depends>
+    <depends>
+      <module>ruleExtensions</module>
+    </depends>
   </module>
 
   <module>
@@ -963,6 +978,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>ruleExtensions</module>
     </depends>
   </module>
 
