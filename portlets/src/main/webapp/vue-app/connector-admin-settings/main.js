@@ -38,5 +38,6 @@ export function init() {
     .finally(() => {
       Vue.prototype.$utils.includeExtensions('gamificationAdminConnectorsExtensions');
       Vue.prototype.$utils.includeExtensions('engagementCenterConnectors');
+      Vue.prototype.$utils.includeExtensions('engagementCenterActions');
     });
 }
