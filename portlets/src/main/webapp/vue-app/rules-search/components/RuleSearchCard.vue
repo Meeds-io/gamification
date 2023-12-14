@@ -24,7 +24,7 @@
       <div class="d-flex flex-nowrap align-center overflow-hidden">
         <rule-icon
           :size="36"
-          :rule-event="rule.event"
+          :rule-event="eventName"
           class="align-start me-3 flex-grow-0 flex-shrink-0" />
         <div
           v-sanitized-html="ruleTitle"
@@ -113,6 +113,9 @@ export default {
     },
     ruleTitle() {
       return this.rule.titleExcerpt || this.rule.title || '';
+    },
+    eventName() {
+      return this.rule.event?.title;
     },
     ruleDescription() {
       return this.rule.descriptionExcerpt || this.rule.description || '';

@@ -58,8 +58,8 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     ].includes(actionLabel),
     getLink: realization => {
       if (realization?.objectType === 'identity'
-          && realization?.action?.event !== 'addUserProfileNotificationSetting'
-          && realization?.action?.event !== 'userLogin') {
+          && realization?.action?.event?.title !== 'addUserProfileNotificationSetting'
+          && realization?.action?.event?.title !== 'userLogin') {
         if (realization?.objectId === eXo.env.portal.profileOwnerIdentityId) {
           realization.link = `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/profile/${eXo.env.portal.profileOwner}`;
           return realization.link;
