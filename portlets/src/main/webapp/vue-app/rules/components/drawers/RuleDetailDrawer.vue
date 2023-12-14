@@ -450,7 +450,7 @@ export default {
               ruleDescription: this.rule.description,
               ruleBudget: this.rule.score || 0,
               ruleType: this.rule.type,
-              ruleEvent: this.rule.event,
+              ruleEvent: this.rule.event?.title,
               programId: this.rule.program?.id,
               programTitle: this.rule.program?.title,
               programType: this.rule.program?.type,
