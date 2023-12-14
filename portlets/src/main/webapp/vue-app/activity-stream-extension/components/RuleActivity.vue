@@ -122,7 +122,7 @@ export default {
       return this.rule?.score || this.activity.templateParams.ruleScore;
     },
     ruleEvent() {
-      return this.rule?.event;
+      return this.rule?.event?.title;
     },
     program() {
       return this.rule?.program;
