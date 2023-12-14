@@ -103,7 +103,7 @@ export default {
       return this.realization?.objectType;
     },
     actionEventName() {
-      return this.realization?.action?.event;
+      return this.realization?.action?.event?.title;
     },
     actionValueExtension() {
       return this.actionEventName
