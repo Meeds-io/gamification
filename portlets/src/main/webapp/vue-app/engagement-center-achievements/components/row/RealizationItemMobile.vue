@@ -179,7 +179,7 @@ export default {
       return !this.realization.url && 'defaultCursor' || '';
     },
     eventName() {
-      return this.realization?.action?.event;
+      return this.realization?.action?.event?.title;
     },
     actionValueExtensions() {
       return this.$root.actionValueExtensions;
