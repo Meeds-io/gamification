@@ -78,7 +78,7 @@ export default {
       return this.realization?.action?.title || this.realization?.actionLabel;
     },
     actionEventName() {
-      return this.realization?.action?.event;
+      return this.realization?.action?.event?.title;
     },
     score() {
       return this.realization?.score || '-';
