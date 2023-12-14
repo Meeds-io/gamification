@@ -52,7 +52,9 @@ export default {
       connectors: [],
       connectorsComponentsExtensions: [],
       extensionApp: 'engagementCenterConnectors',
+      extensionAdminApp: 'gamification-admin-connector',
       connectorExtensionType: 'connector-extensions',
+      connectorAdminExtensionType: 'admin-connector-item',
       connectorsExtensions: [],
       editSettings: false,
       connectorProjectId: null,
@@ -89,12 +91,13 @@ export default {
     document.addEventListener('close-connector-settings', this.closeConnectorSettings);
     document.addEventListener('save-connector-settings', this.saveConnectorSetting);
     document.addEventListener('delete-connector-settings', this.deleteConnectorSetting);
-    document.addEventListener(`extension-${this.extensionApp}-${this.connectorExtensionType}-updated`, this.refreshUserConnectorList);
+    document.addEventListener(`extension-${this.extensionApp}-${this.connectorExtensionType}-updated`, this.refreshConnectorExtensions);
+    document.addEventListener(`component-${this.extensionAdminApp}-${this.connectorAdminExtensionType}-updated`, this.refreshConnectorExtensions);
     this.init();
   },
   methods: {
     init() {
-      this.refreshUserConnectorList();
+      this.refreshConnectorExtensions();
       this.connectorsExtensions.forEach(extension => {
         if (extension?.init) {
           const initPromise = extension.init();
@@ -150,9 +153,9 @@ export default {
       const connectorExtension = this.connectorsExtensions.find(c => c?.name === connector.name);
       this.openConnectorDetail(connector, connectorExtension);
     },
-    refreshUserConnectorList() {
+    refreshConnectorExtensions() {
       // Get list of connectors from extensionRegistry
-      this.connectorsComponentsExtensions = extensionRegistry.loadComponents('gamification-admin-connector') || [];
+      this.connectorsComponentsExtensions = extensionRegistry.loadComponents(this.extensionAdminApp) || [];
       this.connectorsExtensions = extensionRegistry.loadExtensions(this.extensionApp, this.connectorExtensionType) || [];
     },
     openConnectorDetail(connector, connectorExtension) {
