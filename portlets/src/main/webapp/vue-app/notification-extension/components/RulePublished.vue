@@ -50,7 +50,7 @@ export default {
       return this.rule?.title;
     },
     ruleEvent() {
-      return this.rule?.event;
+      return this.rule?.event?.title;
     },
     programAvatarUrl() {
       return this.rule?.program?.avatarUrl;
