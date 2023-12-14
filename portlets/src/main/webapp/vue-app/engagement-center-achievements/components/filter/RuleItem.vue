@@ -49,7 +49,7 @@ export default {
       return this.rule?.title;
     },
     ruleEvent() {
-      return this.rule?.event?.title || this.rule?.event;
+      return this.rule?.event?.title;
     },
     program() {
       return this.rule?.program;

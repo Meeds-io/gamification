@@ -23,7 +23,7 @@
     <rule-icon
       v-if="reduced || expanded"
       :size="reduced && 60 || 45"
-      :rule-event="rule.event"
+      :rule-event="eventName"
       class="align-start mb-1" />
     <div v-else class="d-flex flex-column pe-4">
       <v-avatar
@@ -37,7 +37,7 @@
         :size="programCoverSize"
         class="rule-icon border-color grey lighten-2 mt-n4 ms-auto me-n4">
         <rule-icon
-          :rule-event="rule.event"
+          :rule-event="eventName"
           size="24" />
       </v-avatar>
     </div>
@@ -73,6 +73,9 @@ export default {
   computed: {
     ruleTitle() {
       return this.rule.title;
+    },
+    eventName() {
+      return this.rule.event?.title;
     },
     programAvatarUrl() {
       return this.rule?.program?.avatarUrl;

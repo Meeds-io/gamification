@@ -50,7 +50,7 @@ export default {
       return this.rule?.title || '';
     },
     ruleEvent() {
-      return this.rule?.event;
+      return this.rule?.event?.title;
     },
     ruleUrl() {
       return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions/${this.ruleId}`;
