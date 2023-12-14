@@ -52,7 +52,7 @@ export default {
       return this.rule?.title;
     },
     ruleEvent() {
-      return this.rule?.event;
+      return this.rule?.event?.title;
     },
     activityId() {
       return this.notification?.parameters?.activityId;
