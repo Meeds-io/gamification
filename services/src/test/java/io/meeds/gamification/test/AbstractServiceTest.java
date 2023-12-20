@@ -404,7 +404,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
       rule.setDescription(DESCRIPTION);
       rule.setEnabled(true);
       rule.setDeleted(false);
-      rule.setEventEntity(newEvent(name));
       rule.setCreatedBy(TEST_USER_EARNER);
       rule.setCreatedDate(new Date());
       rule.setLastModifiedBy(TEST_USER_EARNER);
@@ -596,7 +595,11 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
   }
 
   protected RealizationEntity newRealizationEntity(String ruleName, long domainId) {
-    RuleEntity rule = newRule(ruleName, domainId);
+    return newRealizationEntity(ruleName, domainId, false);
+  }
+
+  protected RealizationEntity newRealizationEntity(String ruleName, long domainId, boolean manual) {
+    RuleEntity rule = manual ? newManualRule(ruleName, domainId) : newRule(ruleName, domainId);
     RealizationEntity gHistory = new RealizationEntity();
     gHistory.setStatus(RealizationStatus.ACCEPTED);
     gHistory.setDomain(rule.getDomainEntity().getTitle());
