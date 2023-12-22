@@ -82,7 +82,8 @@ import io.meeds.portal.security.service.SecuritySettingService;
 
 @ConfiguredBy({ @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/configuration.xml"),
-    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/gamification-test-configuration.xml"), })
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/gamification-test-configuration.xml"),
+})
 public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
 
   public static final String             GAMIFICATION_DOMAIN = "TeamWork";
