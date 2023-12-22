@@ -19,7 +19,7 @@ package io.meeds.gamification.listener;
 
 import static io.meeds.gamification.utils.Utils.*;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.PluginKey;
