@@ -19,7 +19,7 @@ package io.meeds.gamification.listener;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_COMMENT_TYPE;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
