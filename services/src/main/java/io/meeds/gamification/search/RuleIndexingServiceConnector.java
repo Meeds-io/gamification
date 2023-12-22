@@ -26,7 +26,7 @@ import java.util.Map;
 
 import io.meeds.gamification.model.EventDTO;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.search.domain.Document;

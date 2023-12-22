@@ -41,7 +41,7 @@ import java.util.Objects;
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.service.EventService;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
