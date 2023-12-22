@@ -19,16 +19,16 @@ package io.meeds.gamification.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
@@ -42,7 +42,6 @@ import lombok.EqualsAndHashCode;
 @NamedQuery(name = "GamificationBadge.findBadgeByDomain", query = "SELECT badge FROM GamificationBadge badge WHERE badge.domainEntity.id = :domainId  ORDER BY badge.neededScore ASC")
 @NamedQuery(name = "GamificationBadge.findEnabledBadgeByDomain", query = "SELECT badge FROM GamificationBadge badge WHERE (badge.domainEntity.id = :domainId) AND (badge.enabled = true) AND badge.isDeleted = false ORDER BY badge.neededScore ASC")
 @NamedQuery(name = "GamificationBadge.getEnabledBadges", query = "SELECT badge FROM GamificationBadge badge where badge.enabled = :isEnabled AND badge.isDeleted = false")
-@NamedQuery(name = "GamificationBadge.getValidBadges", query = "SELECT badge FROM GamificationBadge badge where (badge.startValidityDate BETWEEN :stDate AND :edDate) AND (badge.endValidityDate BETWEEN :stDate AND :edDate) AND badge.isDeleted = 0")
 @NamedQuery(name = "GamificationBadge.findBadgeByNeededScore", query = "SELECT badge FROM GamificationBadge badge where badge.neededScore = :neededScore  AND badge.isDeleted = false")
 @NamedQuery(name = "GamificationBadge.findBadgeByTitle", query = "SELECT badge FROM GamificationBadge badge where badge.title = :badgeTitle")
 @NamedQuery(name = "GamificationBadge.findBadgeByTitleAndDomain", query = "SELECT badge FROM GamificationBadge badge where badge.title = :badgeTitle and badge.domainEntity.id = :domainId")

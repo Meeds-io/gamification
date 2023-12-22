@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.log.ExoLogger;

@@ -20,9 +20,9 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 import io.meeds.gamification.entity.BadgeEntity;
 
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TypedQuery;
 
 import java.util.Collections;
 import java.util.List;

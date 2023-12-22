@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.analytics.model.StatisticData;
@@ -381,7 +381,7 @@ public class Utils {
       return null;
     }
     message = message.replaceAll("<[^>]+>", "");
-    message = StringEscapeUtils.unescapeHtml(message);
+    message = StringEscapeUtils.unescapeHtml4(message);
     for (char c : ILLEGAL_MESSAGE_CHARACTERS) {
       message = message.replace(c, ' ');
     }
@@ -403,12 +403,12 @@ public class Utils {
     }
 
     String token = generateAttachmentToken(programId, type, lastModifiedDate);
-    if (org.apache.commons.lang.StringUtils.isNotBlank(token)) {
+    if (org.apache.commons.lang3.StringUtils.isNotBlank(token)) {
       try {
         token = URLEncoder.encode(token, "UTF8");
       } catch (UnsupportedEncodingException e) {
         LOG.warn("Error encoding token", e);
-        token = org.apache.commons.lang.StringUtils.EMPTY;
+        token = org.apache.commons.lang3.StringUtils.EMPTY;
       }
     }
 
@@ -429,14 +429,14 @@ public class Utils {
     CodecInitializer codecInitializer = ExoContainerContext.getService(CodecInitializer.class);
     if (codecInitializer == null) {
       LOG.debug("Can't find an instance of CodecInitializer, an empty token will be generated");
-      token = org.apache.commons.lang.StringUtils.EMPTY;
+      token = org.apache.commons.lang3.StringUtils.EMPTY;
     } else {
       try {
         String tokenPlain = attachmentType + ":" + programId + ":" + lastModifiedDate;
         token = codecInitializer.getCodec().encode(tokenPlain);
       } catch (TokenServiceInitializationException e) {
         LOG.warn("Error generating token of {} for program {}. An empty token will be used", attachmentType, programId, e);
-        token = org.apache.commons.lang.StringUtils.EMPTY;
+        token = org.apache.commons.lang3.StringUtils.EMPTY;
       }
     }
     return token;
@@ -597,7 +597,7 @@ public class Utils {
   }
 
   public static String removeSpecialCharacters(String content) {
-    return Normalizer.normalize(StringEscapeUtils.unescapeHtml(content), Normalizer.Form.NFD)
+    return Normalizer.normalize(StringEscapeUtils.unescapeHtml4(content), Normalizer.Form.NFD)
                      .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
                      .replace("'", "");
   }
