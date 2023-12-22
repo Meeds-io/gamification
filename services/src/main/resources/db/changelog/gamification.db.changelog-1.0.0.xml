@@ -778,4 +778,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <dropColumn tableName="GAMIFICATION_RULE" columnName="EVENT" />
     </changeSet>
 
+    <changeSet author="exo-gamification" id="1.0.0-71" dbms="hsqldb">
+      <createSequence sequenceName="SEQ_GAMIFICATION_EVENTS_ID" startValue="1"/>
+      <createSequence sequenceName="SEQ_GAMIFICATION_CONNECTOR_ACCOUNTS_ID" startValue="1"/>
+    </changeSet>
+
 </databaseChangeLog>

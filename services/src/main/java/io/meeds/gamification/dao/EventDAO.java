@@ -19,14 +19,14 @@ package io.meeds.gamification.dao;
 
 import java.util.*;
 
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 
 import io.meeds.gamification.entity.EventEntity;
 
 import io.meeds.gamification.model.filter.EventFilter;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 public class EventDAO extends GenericDAOJPAImpl<EventEntity, Long> {
