@@ -40,6 +40,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <groupId>${project.groupId}</groupId>
             <artifactId>gamification-services</artifactId>
             <type>jar</type>
+            <exclusions>
+              <exclusion>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+              </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
