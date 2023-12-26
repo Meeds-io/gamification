@@ -19,18 +19,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <div class="py-2 py-sm-5 d-flex align-center">
       <v-tooltip :disabled="$root.isMobile" bottom>
         <template #activator="{ on }">
-          <v-card
-            class="d-flex align-center"
-            flat
+          <v-btn
+            class="ps-0"
+            outlined
             v-on="on"
             @click="backToConnectorList">
-            <v-btn
-              class="width-auto ms-n3"
-              icon>
-              <v-icon size="18" class="icon-default-color mx-2">fa-arrow-left</v-icon>
-            </v-btn>
-            <div class="text-color text-header-title">{{ $t('gamification.connectors.label.connectors') }}</div>
-          </v-card>
+            <v-icon size="18" class="text-color mx-2">fa-arrow-left</v-icon>
+            <span class="text-color font-weight-bold icon-default-size">{{ $t('gamification.connectors.label.connectors') }}</span>
+          </v-btn>
         </template>
         <span>{{ $t('gamification.connectors.details.BackToList') }}</span>
       </v-tooltip>
