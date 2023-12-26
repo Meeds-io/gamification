@@ -16,7 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-card v-if="enabledConnectors && enabledConnectors.length" flat>
-    <div class="dark-grey-color font-weight-bold icon-default-size py-2 py-sm-5 d-flex align-center">{{ $t('gamification.connectors.label.connectors') }}</div>
+    <div class="text-color font-weight-bold icon-default-size py-2 py-sm-5 d-flex align-center">{{ $t('gamification.connectors.label.connectors') }}</div>
     <v-card-text class="text-font-size pb-2 pt-0 pb-sm-5 px-0 d-flex align-center">{{ $t('gamification.connectors.label.valueContributions') }}</v-card-text>
     <v-card-text class="pa-0">
       <v-item-group>
@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-container>
       </v-item-group>
     </v-card-text>
-    <div class="font-weight-bold dark-grey-color text-subtitle-1 py-2 py-sm-5 d-flex align-center">{{ $t('gamification.connectors.label.comingSoon') }}</div>
+    <div class="text-color font-weight-bold text-subtitle-1 py-2 py-sm-5 d-flex align-center">{{ $t('gamification.connectors.label.comingSoon') }}</div>
     <v-card-text class="pa-0">
       <v-item-group>
         <v-container class="pa-0">
