@@ -410,9 +410,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </createIndex>
     </changeSet>
     <changeSet id="1.0.0-35" author="exo-gamification">
-        <addAutoIncrement columnDataType="BIGINT" columnName="ID" incrementBy="1" startWith="1"
+        <validCheckSum>ANY</validCheckSum>
+        <addAutoIncrement columnDataType="BIGINT" columnName="ID" startWith="1"
                           tableName="GAMIFICATION_RULE"/>
-        <addAutoIncrement columnDataType="BIGINT" columnName="ID" incrementBy="1" startWith="1"
+        <addAutoIncrement columnDataType="BIGINT" columnName="ID" startWith="1"
                           tableName="GAMIFICATION_DOMAIN"/>
     </changeSet>
     <changeSet id="1.0.0-36" author="exo-gamification" dbms="postgresql">
@@ -452,13 +453,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-40">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="GAMIFICATION_DOMAIN_OWNERS"/>
             </not>
         </preConditions>
       <createTable tableName="GAMIFICATION_DOMAIN_OWNERS">
-        <column name="DOMAIN_OWNER_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1" incrementBy="1">
+        <column name="DOMAIN_OWNER_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
           <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_DOMAIN_OWNER_ID" />
         </column>
         <column name="DOMAIN_ID" type="BIGINT">
@@ -499,15 +501,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <dropColumn tableName="GAMIFICATION_ACTIONS_HISTORY" columnName="ACTION_DATE" />
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-46" dbms="mysql" runOnChange="false">
-        <validCheckSum>8:838df4aed9ef150c3019a013ea51b8ae</validCheckSum>
-        <validCheckSum>8:ebc37f633e51a0094174dff9c9d568f7</validCheckSum>
+        <validCheckSum>ANY</validCheckSum>
         <customChange class="io.meeds.gamification.liquibase.ResetMySQLAutoIncrement">
             <param name="tableName">GAMIFICATION_RULE</param>
         </customChange>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-47" dbms="mysql" runOnChange="false">
-        <validCheckSum>8:0be65207d849e2287a7e448142c2d597</validCheckSum>
-        <validCheckSum>8:eed8881e8a2ea40970be122e0ec40b70</validCheckSum>
+        <validCheckSum>ANY</validCheckSum>
         <customChange class="io.meeds.gamification.liquibase.ResetMySQLAutoIncrement">
             <param name="tableName">GAMIFICATION_DOMAIN</param>
         </customChange>
@@ -658,8 +658,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </addColumn>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-58">
+      <validCheckSum>ANY</validCheckSum>
       <createTable tableName="GAMIFICATION_PREREQUISITE_RULES">
-        <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1" incrementBy="1">
+        <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
           <constraints nullable="false" primaryKey="true" primaryKeyName="PK_PREREQUISITE_RULES_ID" />
         </column>
         <column name="RULE_ID" type="BIGINT">
