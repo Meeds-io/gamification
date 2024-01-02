@@ -435,7 +435,7 @@ export default {
       return this.computeRuleModel(this.rule, this.program, this.ruleDescription);
     },
     ruleChanged() {
-      if (!this.originalRule || ! this.originalRuleTitleTranslations || !this.originalRuleDescriptionTranslations) {
+      if (!this.originalRule || !this.originalRuleTitleTranslations || !this.originalRuleDescriptionTranslations) {
         return false;
       }
       return this.attachmentsEdited || JSON.stringify({
@@ -557,7 +557,7 @@ export default {
         trigger: trigger,
         type: triggerType
       };
-      this.$set(this.ruleToSave, 'event', event);
+      this.$set(this.rule, 'event', event);
     },
     close() {
       this.$refs.ruleFormDrawer.close();
@@ -662,7 +662,11 @@ export default {
           id: program?.id,
         },
         enabled: rule?.enabled,
-        event: rule.type === 'AUTOMATIC' && rule?.event || null,
+        event: rule.type === 'AUTOMATIC' ? {
+          title: rule?.event?.title,
+          trigger: rule?.event?.trigger,
+          type: rule?.event?.type,
+        } : null,
         startDate: rule?.startDate,
         endDate: rule?.endDate,
         publish: rule?.publish,
