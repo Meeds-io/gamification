@@ -66,17 +66,6 @@ public class EventStorage {
     return EventMapper.fromEntity(eventDAO.getEventByTitleAndTrigger(title, trigger));
   }
 
-  /**
-   * Get gamification event by event title and trigger name
-   *
-   * @param type event type
-   * @param title event title
-   * @return {@link EventDTO}
-   */
-  public EventDTO getEventByTypeAndTitle(String type, String title) {
-    return EventMapper.fromEntity(eventDAO.getEventByTypeAndTitle(type, title));
-  }
-
   public List<EventDTO> getEventsByTitle(String title, int offset, int limit) {
     return EventMapper.fromEntities(eventDAO.getEventsByTitle(title, offset, limit));
   }

@@ -59,15 +59,6 @@ public interface EventService {
   EventDTO getEventByTitleAndTrigger(String title, String trigger);
 
   /**
-   * Get gamification event by event type and title
-   *
-   * @param type event type
-   * @param title event title
-   * @return {@link EventDTO}
-   */
-  EventDTO getEventByTypeAndTitle(String type, String title);
-
-  /**
    * Add Event to DB
    *
    * @param eventDTO {@link EventDTO} to create

@@ -64,24 +64,6 @@ public class EventDAO extends GenericDAOJPAImpl<EventEntity, Long> {
     }
   }
 
-  /**
-   * Get gamification event by event title and trigger name
-   *
-   * @param type event type
-   * @param title event title
-   * @return list of type EventEntity
-   */
-  public EventEntity getEventByTypeAndTitle(String type, String title) {
-    TypedQuery<EventEntity> query = getEntityManager().createNamedQuery("EventEntity.getEventByTypeAndTitle", EventEntity.class);
-    query.setParameter(TYPE, type);
-    query.setParameter(TITLE, title);
-    try {
-      return query.getSingleResult();
-    } catch (NoResultException e) {
-      return null;
-    }
-  }
-
   public List<EventEntity> getEventsByTitle(String title, int offset, int limit) {
     TypedQuery<EventEntity> query = getEntityManager().createNamedQuery("EventEntity.getEventsByTitle", EventEntity.class);
     query.setParameter(TITLE, title);
