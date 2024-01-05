@@ -54,11 +54,6 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
-  public EventDTO getEventByTypeAndTitle(String type, String title) {
-    return eventStorage.getEventByTypeAndTitle(type, title);
-  }
-
-  @Override
   public EventDTO createEvent(EventDTO eventDTO) {
     if (eventDTO == null) {
       throw new IllegalArgumentException("event object is mandatory");

@@ -31,9 +31,6 @@ import lombok.Data;
 @NamedQuery(name = "EventEntity.getEventByTitleAndTrigger",
             query = "SELECT event FROM EventEntity event"
                  + " WHERE event.title =: title" + " AND event.trigger =: trigger")
-@NamedQuery(name = "EventEntity.getEventByTypeAndTitle",
-query = "SELECT event FROM EventEntity event"
-    + " WHERE event.type =: type" + " AND event.title =: title")
 @NamedQuery(name = "EventEntity.getEventsByTitle",
             query = "SELECT event FROM EventEntity event"
                  + " WHERE event.title =: title ORDER BY event.type ASC")
