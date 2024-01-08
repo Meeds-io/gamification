@@ -57,7 +57,7 @@ public class ProgramSpaceListener extends SpaceListenerPlugin {
 
   @ExoTransactional
   public void updateProgramsVisibility(SpaceLifeCycleEvent event) {
-    String spaceId = event.getSpace().getId();
+    long spaceId = Long.parseLong(event.getSpace().getId());
     List<Long> programIds = getSpaceProgramIds(spaceId);
     programIds.forEach(programId -> {
       try {
@@ -75,13 +75,15 @@ public class ProgramSpaceListener extends SpaceListenerPlugin {
 
   @ExoTransactional
   public void removePrograms(SpaceLifeCycleEvent event) {
-    String spaceId = event.getSpace().getId();
+    long spaceId = Long.parseLong(event.getSpace().getId());
     List<Long> programIds = getSpaceProgramIds(spaceId);
     programIds.forEach(programId -> {
       try {
         ProgramDTO program = programService.getProgramById(programId);
-        program.setEnabled(false);
-        programService.updateProgram(program);
+        if (program.getSpaceId() == spaceId) {
+          program.setEnabled(false);
+          programService.updateProgram(program);
+        }
       } catch (Exception e) {
         LOG.warn("Error disabling program with id {} while its space with id {} has been deleted",
                  programId,
@@ -91,9 +93,10 @@ public class ProgramSpaceListener extends SpaceListenerPlugin {
     });
   }
 
-  private List<Long> getSpaceProgramIds(String spaceId) {
+  private List<Long> getSpaceProgramIds(long spaceId) {
     ProgramFilter spaceProgramsFilter = new ProgramFilter(true);
-    spaceProgramsFilter.setSpacesIds(Collections.singletonList(Long.parseLong(spaceId)));
+    spaceProgramsFilter.setSpacesIds(Collections.singletonList(spaceId));
+    spaceProgramsFilter.setExcludeOpen(true);
     return programService.getProgramIds(spaceProgramsFilter, 0, -1);
   }
 
