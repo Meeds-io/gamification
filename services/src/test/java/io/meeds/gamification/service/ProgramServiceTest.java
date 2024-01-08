@@ -19,6 +19,7 @@ package io.meeds.gamification.service;
 import static org.junit.Assert.assertThrows;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
@@ -210,7 +211,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetDomainsByOwner() throws IllegalAccessException {
+  public void testGetProgramsByOwner() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
     filter.setType(EntityFilterType.ALL);
     filter.setStatus(EntityStatusType.ENABLED);
@@ -230,7 +231,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetDomainsByAnonym() throws IllegalAccessException, ObjectNotFoundException {
+  public void testGetProgramsByAnonym() throws IllegalAccessException, ObjectNotFoundException {
     ProgramFilter filter = new ProgramFilter();
     filter.setType(EntityFilterType.ALL);
     filter.setStatus(EntityStatusType.ENABLED);
@@ -250,7 +251,38 @@ public class ProgramServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCountDomainsByOwner() throws IllegalAccessException {
+  public void testGetProgramsBySpaceExcludeOpen() throws IllegalAccessException {
+    ProgramFilter filter = new ProgramFilter();
+    filter.setType(EntityFilterType.ALL);
+    filter.setStatus(EntityStatusType.ENABLED);
+    filter.setAllSpaces(true);
+    assertEquals(0, programService.getProgramIds(filter, 0, 10).size());
+    ProgramEntity program1 = newDomain(EntityType.MANUAL, "program1", true, new HashSet<>());
+    program1.setAudienceId(null);
+    programDAO.update(program1);
+
+    ProgramEntity program2 = newDomain(EntityType.MANUAL, "program2", true, new HashSet<>());
+    program2.setAudienceId(2l);
+    programDAO.update(program2);
+
+    ProgramEntity program3 = newDomain(EntityType.AUTOMATIC, "program3", true, new HashSet<>());
+    program3.setAudienceId(3l);
+    programDAO.update(program3);
+
+    ProgramEntity program4 = newDomain(EntityType.AUTOMATIC, "program4", true, new HashSet<>());
+    assertEquals(1l, program4.getAudienceId().longValue());
+
+    assertEquals(4, programService.getProgramIds(filter, 0, 10).size());
+
+    filter.setSpacesIds(Collections.singletonList(1l));
+    assertEquals(Arrays.asList(program4.getId(), program1.getId()), programService.getProgramIds(filter, 0, 10));
+
+    filter.setExcludeOpen(true);
+    assertEquals(Arrays.asList(program4.getId()), programService.getProgramIds(filter, 0, 10));
+  }
+
+  @Test
+  public void testCountProgramsByOwner() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
     filter.setType(EntityFilterType.ALL);
     filter.setStatus(EntityStatusType.ENABLED);
@@ -266,7 +298,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCountDomains() throws IllegalAccessException {
+  public void testCountPrograms() throws IllegalAccessException {
     ProgramFilter filter = new ProgramFilter();
     filter.setType(EntityFilterType.ALL);
     filter.setStatus(EntityStatusType.ENABLED);
@@ -299,7 +331,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCreateDomain() throws IllegalAccessException { // NOSONAR
+  public void testCreateProgram() throws IllegalAccessException { // NOSONAR
     assertEquals(0, programDAO.count().longValue());
     ProgramDTO program = new ProgramDTO();
     program.setTitle(GAMIFICATION_DOMAIN);
@@ -359,7 +391,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testUpdateDomain() throws Exception {
+  public void testUpdateProgram() throws Exception {
     ProgramDTO programWithColor = new ProgramDTO();
     programWithColor.setTitle(GAMIFICATION_DOMAIN);
     programWithColor.setDescription("Description");
@@ -443,7 +475,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testDeleteDomain() throws Exception {
+  public void testDeleteProgram() throws Exception {
     ProgramDTO domain = newProgram(EntityType.MANUAL, "domain1", true, Collections.singleton(1L));
     assertFalse(domain.isDeleted());
     domain.setDeleted(true);
@@ -595,14 +627,14 @@ public class ProgramServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCanAddDomain() {
+  public void testCanAddProgram() {
     assertFalse(programService.canAddProgram(null));
     assertFalse(programService.canAddProgram(spaceMemberAclIdentity));
     assertTrue(programService.canAddProgram(adminAclIdentity));
   }
 
   @Test
-  public void testCanUpdateDomain() throws IllegalAccessException, ObjectNotFoundException {
+  public void testCanUpdateProgram() throws IllegalAccessException, ObjectNotFoundException {
     ProgramDTO domain = newProgram();
     assertFalse(programService.isProgramOwner(domain.getId(), spaceMemberAclIdentity.getUserId()));
     assertTrue(programService.isProgramOwner(domain.getId(), adminAclIdentity.getUserId()));
