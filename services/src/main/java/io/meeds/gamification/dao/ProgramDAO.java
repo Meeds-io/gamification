@@ -120,7 +120,9 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
       query.setParameter("spacesIds", filter.getSpacesIds());
     }
-    if (filter.getOwnerId() == 0 && (CollectionUtils.isNotEmpty(filter.getSpacesIds()) || !filter.isAllSpaces())) {
+    if (filter.getOwnerId() == 0
+        && !filter.isExcludeOpen()
+        && (CollectionUtils.isNotEmpty(filter.getSpacesIds()) || !filter.isAllSpaces())) {
       query.setParameter("openVisibility", EntityVisibility.OPEN);
     }
     EntityFilterType type = filter.getType();
@@ -176,8 +178,13 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
         predicates.add("(:ownerId member of d.owners OR d.audienceId in (:spacesIds))");
       }
     } else if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
-      suffixes.add("Audience");
-      predicates.add("(d.audienceId IS NULL OR d.visibility = :openVisibility OR d.audienceId in (:spacesIds))");
+      if (filter.isExcludeOpen()) {
+        suffixes.add("AudienceExcludeOpen");
+        predicates.add("d.audienceId in (:spacesIds)");
+      } else {
+        suffixes.add("Audience");
+        predicates.add("(d.audienceId IS NULL OR d.visibility = :openVisibility OR d.audienceId in (:spacesIds))");
+      }
     } else if (!filter.isAllSpaces()) {
       suffixes.add("OpenAudience");
       predicates.add("(d.audienceId IS NULL OR d.visibility = :openVisibility)");

@@ -62,11 +62,13 @@ public class ProgramSpaceListenerTest {
     when(event.getSpace()).thenReturn(space);
     when(space.getId()).thenReturn(String.valueOf(SPACE_ID));
     when(programService.getProgramIds(argThat(filter -> filter.getSpacesIds()
-                                                              .equals(Collections.singletonList(SPACE_ID))),
+                                                              .equals(Collections.singletonList(SPACE_ID))
+                                                        && filter.isExcludeOpen()),
                                       anyInt(),
                                       anyInt())).thenReturn(Collections.singletonList(PROGRAM_ID));
 
     when(programService.getProgramById(PROGRAM_ID)).thenReturn(program);
+    when(program.getSpaceId()).thenReturn(SPACE_ID);
     programSpaceListener.removePrograms(event);
     verify(program, times(1)).setEnabled(false);
     verify(programService, times(1)).updateProgram(program);
