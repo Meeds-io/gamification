@@ -73,6 +73,11 @@ public class ProgramCachedStorage extends ProgramStorage {
   }
 
   @Override
+  public void stop() {
+
+  }
+
+  @Override
   public ProgramDTO saveProgram(ProgramDTO program) {
     try {
       program = super.saveProgram(program);
