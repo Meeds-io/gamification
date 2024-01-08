@@ -1,0 +1,6 @@
+io.meeds.gamification.entity.RuleEntity
+io.meeds.gamification.entity.EventEntity
+io.meeds.gamification.entity.BadgeEntity
+io.meeds.gamification.entity.ProgramEntity
+io.meeds.gamification.entity.ConnectorAccountEntity
+io.meeds.gamification.entity.RealizationEntity
