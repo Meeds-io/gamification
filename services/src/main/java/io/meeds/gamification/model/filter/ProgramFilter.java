@@ -56,6 +56,8 @@ public class ProgramFilter implements Serializable {
 
   private boolean           allSpaces;
 
+  private boolean           excludeOpen;
+
   private String            sortBy;
 
   private boolean           sortDescending   = true;
@@ -73,6 +75,7 @@ public class ProgramFilter implements Serializable {
                              spacesIds == null ? null : new ArrayList<>(spacesIds),
                              ownerId,
                              allSpaces,
+                             excludeOpen,
                              sortBy,
                              sortDescending);
   }
