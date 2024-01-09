@@ -41,12 +41,14 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
 
     // Reward user who sent a relationship request
     realizationService.createRealizationsAsync(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
+                                               null,
                                                sender.getId(),
                                                receiver.getId(),
                                                receiver.getId(),
                                                IDENTITY_OBJECT_TYPE);
     // Reward user who receive a relationship request
     realizationService.createRealizationsAsync(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
+                                               null,
                                                receiver.getId(),
                                                sender.getId(),
                                                sender.getId(),
