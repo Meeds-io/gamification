@@ -187,7 +187,8 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertFalse(ruleEntity.isDeleted());
 
     RealizationDTO realization = realizationService.createRealizations(ruleEntity.getEventEntity().getTitle(),
-            null, TEST_USER_EARNER,
+                                                                       null,
+                                                                       TEST_USER_EARNER,
                                                                        TEST_USER_RECEIVER,
                                                                        ACTIVITY_ID,
                                                                        ACTIVITY_OBJECT_TYPE)
@@ -288,11 +289,7 @@ public class RuleServiceTest extends AbstractServiceTest {
 
     String paramName = "testParam";
     String paramValue = "testValue";
-    RuleDTO rule = new RulePublication(createdRule,
-                                       0,
-                                       message,
-                                       Collections.singletonMap(paramName, paramValue),
-                                       true);
+    RuleDTO rule = new RulePublication(createdRule, 0, message, Collections.singletonMap(paramName, paramValue), true);
     rule.setDescription(description);
     ruleService.updateRule(rule, ADMIN_USER);
     RuleDTO updatedRule = ruleService.findRuleById(createdRule.getId());
