@@ -53,7 +53,7 @@ public class GamificationUserLoginListener extends Listener<ConversationRegistry
   public void onEvent(Event<ConversationRegistry, ConversationState> event) {
     String username = event.getData().getIdentity().getUserId();
     String sender = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, username).getId();
-    realizationService.createRealizationsAsync(GAMIFICATION_ATTENDANCE_USER_LOGIN, sender, sender, null, null);
+    realizationService.createRealizationsAsync(GAMIFICATION_ATTENDANCE_USER_LOGIN, null, sender, sender, null, null);
     LOG.debug("User Login Gamification for {}", username);
   }
 
