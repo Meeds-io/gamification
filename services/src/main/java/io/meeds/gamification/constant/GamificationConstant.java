@@ -114,6 +114,8 @@ public interface GamificationConstant { // NOSONAR
 
     String OBJECT_TYPE_PARAM                                          = "objectType";
 
+    String EVENT_DETAILS_PARAM                                         = "eventDetails";
+
     /**
      * @deprecated this constant name is ambiguous since its name reflect to
      *             Rule's title but its real reference is to Event name.

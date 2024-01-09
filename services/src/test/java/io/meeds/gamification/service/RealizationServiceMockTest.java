@@ -98,6 +98,9 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
   RuleService                                      ruleService;
 
   @Mock
+  EventService                                     eventService;
+
+  @Mock
   SpaceService                                     spaceService;
 
   @Mock
@@ -129,6 +132,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     realizationService = new RealizationServiceImpl(programService,
                                                     ruleService,
                                                     resourceBundleService,
+                                                    eventService,
                                                     identityManager,
                                                     spaceService,
                                                     realizationsStorage,
@@ -271,7 +275,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     // root11 is not a member of domain audience
     RuleDTO ruleDTO = newRuleDTO();
     List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                                                              "11",
+            null, "11",
                                                                               TEST_USER_RECEIVER,
                                                                               ACTIVITY_ID,
                                                                               ACTIVITY_OBJECT_TYPE);
@@ -282,7 +286,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     program.setDeleted(true);
     ruleDTO.setProgram(program);
     realizations = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                                         TEST_USER_EARNER,
+            null, TEST_USER_EARNER,
                                                          TEST_USER_RECEIVER,
                                                          ACTIVITY_ID,
                                                          ACTIVITY_OBJECT_TYPE);
@@ -290,7 +294,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
 
     ruleDTO = newRuleDTO();
     realizations = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                                         TEST_USER_EARNER,
+            null, TEST_USER_EARNER,
                                                          TEST_USER_RECEIVER,
                                                          ACTIVITY_ID,
                                                          ACTIVITY_OBJECT_TYPE);
@@ -304,7 +308,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     RuleDTO ruleDTO = newRuleDTO();
 
     List<RealizationDTO> realizations = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                                                              TEST_USER_EARNER,
+            null, TEST_USER_EARNER,
                                                                               TEST_USER_RECEIVER,
                                                                               ACTIVITY_ID,
                                                                               ACTIVITY_OBJECT_TYPE);
@@ -320,7 +324,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     assertEquals(IdentityType.USER, realizationEntity.getEarnerType());
 
     realizations = realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                                         TEST_SPACE_ID,
+            null, TEST_SPACE_ID,
                                                          TEST_USER_RECEIVER,
                                                          ACTIVITY_ID,
                                                          ACTIVITY_OBJECT_TYPE);
@@ -340,52 +344,52 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     ProgramDTO program = newProgram();
     RuleDTO ruleDTO = newRuleDTO(RULE_NAME, program.getId());
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_USER_EARNER,
+            null, TEST_USER_EARNER,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_USER_EARNER,
+            null, TEST_USER_EARNER,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_USER_RECEIVER,
-                                          TEST_USER_RECEIVER,
-                                          ACTIVITY_ID,
-                                          ACTIVITY_OBJECT_TYPE);
-    realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_SPACE_ID,
+            null, TEST_USER_RECEIVER,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_SPACE_ID,
+            null, TEST_SPACE_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_SPACE_ID,
+            null, TEST_SPACE_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_SPACE2_ID,
+            null, TEST_SPACE_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_SPACE2_ID,
+            null, TEST_SPACE2_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_SPACE2_ID,
+            null, TEST_SPACE2_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_SPACE2_ID,
+            null, TEST_SPACE2_ID,
+                                          TEST_USER_RECEIVER,
+                                          ACTIVITY_ID,
+                                          ACTIVITY_OBJECT_TYPE);
+    realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
+            null, TEST_SPACE2_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
@@ -406,12 +410,12 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     RuleDTO ruleDTO = newRuleDTO();
     assertEquals(realizationService.getScoreByIdentityId(TEST_USER_EARNER), 0);
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_USER_EARNER,
+            null, TEST_USER_EARNER,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_SPACE_ID,
+            null, TEST_SPACE_ID,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
@@ -424,7 +428,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     RuleDTO ruleDTO = newRuleDTO();
     assertEquals(0, realizationService.getScorePerProgramByIdentityId(TEST_USER_EARNER).size());
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_USER_EARNER,
+            null, TEST_USER_EARNER,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
@@ -442,7 +446,7 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     assertEquals(0, filteredLeaderboard.size());
 
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_USER_EARNER,
+            null, TEST_USER_EARNER,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
@@ -476,12 +480,12 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
     ProgramDTO program = newProgram();
     RuleDTO ruleDTO = newRuleDTO(RULE_NAME, program.getId());
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_USER_EARNER,
+            null, TEST_USER_EARNER,
                                           TEST_USER_RECEIVER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);
     realizationService.createRealizations(ruleDTO.getEvent().getTitle(),
-                                          TEST_USER_RECEIVER,
+            null, TEST_USER_RECEIVER,
                                           TEST_USER_EARNER,
                                           ACTIVITY_ID,
                                           ACTIVITY_OBJECT_TYPE);

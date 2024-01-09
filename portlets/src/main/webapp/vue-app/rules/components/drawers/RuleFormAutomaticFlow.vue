@@ -121,12 +121,12 @@
       </v-autocomplete>
       <v-card v-if="trigger" flat>
         <extension-registry-components
-            :params="params"
-            name="engagementCenterEvent"
-            type="connector-event-extensions"
-            parent-element="div"
-            element="div"
-            class="d-flex flex-column" />
+          :params="params"
+          name="engagementCenterEvent"
+          type="connector-event-extensions"
+          parent-element="div"
+          element="div"
+          class="d-flex flex-column" />
       </v-card>
     </template>
   </v-app>
@@ -169,9 +169,13 @@ export default {
     },
     params() {
       return {
+        trigger: this.trigger,
         type: this.triggerType,
         properties: this.eventProperties,
       };
+    },
+    isExtensibleEvent() {
+      return this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name).includes(this.selectedConnector);
     },
   },
   watch: {
@@ -182,9 +186,14 @@ export default {
         this.retrieveTriggers();
       }
     },
+    trigger() {
+      if (this.selectedConnector && !this.isExtensibleEvent) {
+        this.$emit('triggerUpdated', this.trigger, this.selectedConnector);
+      }
+    },
     eventProperties() {
       if (this.selectedConnector) {
-        this.$emit('triggerUpdated', this.trigger, this.eventProperties, this.selectedConnector);
+        this.$emit('triggerUpdated', this.trigger, this.selectedConnector, this.eventProperties);
       }
     }
   },
@@ -230,6 +239,7 @@ export default {
     refreshConnectorExtensions() {
       // Get list of connectors from extensionRegistry
       this.connectorsEventComponentsExtensions = extensionRegistry.loadComponents(this.extensionEventApp) || [];
+      this.$emit('event-extension-initialized', this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name));
       this.connectorsExtensions = extensionRegistry.loadExtensions(this.extensionApp, this.connectorExtensionType) || [];
     },
     filterConnectors(item, queryText) {

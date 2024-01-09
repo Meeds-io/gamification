@@ -31,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.security.Identity;
@@ -188,7 +187,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertFalse(ruleEntity.isDeleted());
 
     RealizationDTO realization = realizationService.createRealizations(ruleEntity.getEventEntity().getTitle(),
-                                                                       TEST_USER_EARNER,
+            null, TEST_USER_EARNER,
                                                                        TEST_USER_RECEIVER,
                                                                        ACTIVITY_ID,
                                                                        ACTIVITY_OBJECT_TYPE)

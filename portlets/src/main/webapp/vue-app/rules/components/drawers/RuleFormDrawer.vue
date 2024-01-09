@@ -195,7 +195,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       :trigger-type="triggerType"
                       :event-properties="eventProperties"
                       @triggerUpdated="selectTrigger"
-                      @unfilled="eventProperties = {}"/>
+                      @unfilled="eventProperties = {}"
+                      @event-extension-initialized="eventExtensionInitialized" />
                   </div>
                 </v-slide-y-transition>
               </v-stepper-items>
@@ -359,6 +360,7 @@ export default {
       'default_title': '-',
       'html': '-',
     },
+    extensibleEventTypes: []
   }),
   computed: {
     scoreRules() {
@@ -403,11 +405,14 @@ export default {
     prerequisiteRuleValid() {
       return !this.prerequisiteRuleCondition || this.rule.prerequisiteRules?.length;
     },
+    isExtensibleEvent() {
+      return this.extensibleEventTypes.includes(this.triggerType);
+    },
     secondStepValid() {
-      return (this.automaticType && this.eventProperties) || this.manualType;
+      return (this.automaticType && ((this.isExtensibleEvent && this.eventProperties) || (!this.isExtensibleEvent && this.value))) || this.manualType;
     },
     disableNextButton() {
-      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.isValidForm || !this.ruleTypeValid || (this.automaticType && this.stepper === 2 && !this.eventProperties);
+      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.isValidForm || !this.ruleTypeValid || (this.automaticType && this.stepper === 2 && ((this.isExtensibleEvent && !this.eventProperties) || (!this.isExtensibleEvent && !this.value)));
     },
     disableSaveButton() {
       return !this.ruleChanged || this.disableNextButton || !this.durationValid || !this.recurrenceValid || !this.prerequisiteRuleValid || (this.enablePublication && !this.validMessage);
@@ -447,7 +452,8 @@ export default {
         type: this.originalRule.type,
         score: this.originalRule.score,
         enabled: this.originalRule.enabled,
-        event: this.originalRule.type === 'AUTOMATIC' && this.originalRule.event || null,
+        event: this.originalRule.type === 'AUTOMATIC' && this.originalRule.event?.title || null,
+        eventProperties: this.originalRule.type === 'AUTOMATIC' && JSON.stringify(this.originalRule.event?.properties) || null,
         startDate: this.originalRule.startDate,
         endDate: this.originalRule.endDate,
         recurrence: this.originalRule.recurrence,
@@ -461,7 +467,8 @@ export default {
         type: this.ruleToSave.type,
         score: this.ruleToSave.score,
         enabled: this.ruleToSave.enabled,
-        event: this.ruleToSave.type === 'AUTOMATIC' && this.ruleToSave.event || null,
+        event: this.ruleToSave.type === 'AUTOMATIC' && this.ruleToSave.event?.title || null,
+        eventProperties: this.ruleToSave.type === 'AUTOMATIC' && JSON.stringify(this.ruleToSave.event?.properties) || null,
         startDate: this.ruleToSave.startDate,
         endDate: this.ruleToSave.endDate,
         recurrence: this.ruleToSave.recurrence,
@@ -552,7 +559,7 @@ export default {
         this.$root.$emit('rule-form-drawer-opened', this.rule);
       });
     },
-    selectTrigger(trigger, eventProperties, triggerType) {
+    selectTrigger(trigger, triggerType, eventProperties) {
       this.eventProperties = eventProperties;
       this.value = trigger || null;
       this.triggerType = triggerType || null;
@@ -565,6 +572,9 @@ export default {
         properties: eventProperties
       };
       this.$set(this.rule, 'event', event);
+    },
+    eventExtensionInitialized(types) {
+      this.extensibleEventTypes = types;
     },
     close() {
       this.$refs.ruleFormDrawer.close();
