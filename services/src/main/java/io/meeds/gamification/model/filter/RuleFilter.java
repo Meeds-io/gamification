@@ -43,6 +43,8 @@ public class RuleFilter implements Serializable {
 
   private String            eventName;
 
+  private String            eventType;
+
   private long              programId;
 
   private List<Long>        spaceIds;
@@ -84,6 +86,7 @@ public class RuleFilter implements Serializable {
                           favorites,
                           locale,
                           eventName,
+                          eventType,
                           programId,
                           spaceIds == null ? null : new ArrayList<>(spaceIds),
                           excludeNoSpace,
