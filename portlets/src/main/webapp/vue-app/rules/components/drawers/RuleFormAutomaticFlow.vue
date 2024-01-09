@@ -119,6 +119,15 @@
           </v-list-item-content>
         </template>
       </v-autocomplete>
+      <v-card v-if="trigger" flat>
+        <extension-registry-components
+          :params="params"
+          name="engagementCenterEvent"
+          type="connector-event-extensions"
+          parent-element="div"
+          element="div"
+          class="d-flex flex-column" />
+      </v-card>
     </template>
   </v-app>
 </template>
@@ -135,6 +144,10 @@ export default {
       type: String,
       default: null
     },
+    eventProperties: {
+      type: Object,
+      default: null
+    }
   },
   data: () => ({
     selectedConnector: null,
@@ -142,13 +155,27 @@ export default {
     connectors: [],
     triggers: [],
     extensionApp: 'engagementCenterConnectors',
+    extensionEventApp: 'engagementCenterEvent',
     connectorExtensionType: 'connector-extensions',
+    connectorEventExtensionType: 'connector-event-extensions',
     connectorsExtensions: [],
+    connectorsEventComponentsExtensions: [],
+    connectorComponentExtension: null,
   }),
   computed: {
     sortedTriggers() {
       const filteredTriggers = this.triggers?.length && this.triggers.slice() || [];
       return filteredTriggers.sort((a, b) => this.getTriggerLabel(a).localeCompare(this.getTriggerLabel(b)));
+    },
+    params() {
+      return {
+        trigger: this.trigger,
+        type: this.triggerType,
+        properties: this.eventProperties,
+      };
+    },
+    isExtensibleEvent() {
+      return this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name).includes(this.selectedConnector);
     },
   },
   watch: {
@@ -160,12 +187,28 @@ export default {
       }
     },
     trigger() {
-      if (this.selectedConnector) {
+      if (this.selectedConnector && !this.isExtensibleEvent) {
         this.$emit('triggerUpdated', this.trigger, this.selectedConnector);
+      }
+    },
+    eventProperties() {
+      if (this.selectedConnector) {
+        this.$emit('triggerUpdated', this.trigger, this.selectedConnector, this.eventProperties);
       }
     }
   },
   created() {
+    document.addEventListener(`extension-${this.extensionApp}-${this.connectorExtensionType}-updated`, this.refreshConnectorExtensions);
+    document.addEventListener(`component-${this.extensionEventApp}-${this.connectorEventExtensionType}-updated`, this.refreshConnectorExtensions);
+    document.addEventListener('event-form-filled', (event) => {
+      if (event.detail) {
+        this.eventProperties = event.detail;
+      }
+    });
+    document.addEventListener('event-form-unfilled', () => {
+      this.eventProperties = null;
+    });
+
     if (this.selectedTrigger) {
       this.trigger = this.selectedTrigger;
     }
@@ -173,7 +216,7 @@ export default {
   },
   methods: {
     init() {
-      this.refreshUserConnectorList();
+      this.refreshConnectorExtensions();
       // Check connectors status from store
       this.loading = true;
       return this.$gamificationConnectorService.getConnectors(eXo.env.portal.userName)
@@ -193,8 +236,10 @@ export default {
           this.loading = false;
         });
     },
-    refreshUserConnectorList() {
+    refreshConnectorExtensions() {
       // Get list of connectors from extensionRegistry
+      this.connectorsEventComponentsExtensions = extensionRegistry.loadComponents(this.extensionEventApp) || [];
+      this.$emit('event-extension-initialized', this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name));
       this.connectorsExtensions = extensionRegistry.loadExtensions(this.extensionApp, this.connectorExtensionType) || [];
     },
     filterConnectors(item, queryText) {
