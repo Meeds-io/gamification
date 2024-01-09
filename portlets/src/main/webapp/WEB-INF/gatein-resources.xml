@@ -107,6 +107,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>connectorExtensions</module>
       </depends>
       <depends>
+        <module>gamificationConnectorEvents</module>
+      </depends>
+      <depends>
         <module>usersLeaderboardCommon</module>
       </depends>
       <depends>
@@ -152,6 +155,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>connectorExtensions</module>
+      </depends>
+      <depends>
+        <module>gamificationConnectorEvents</module>
       </depends>
       <depends>
         <module>usersLeaderboardCommon</module>
@@ -672,6 +678,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <module>connectorExtensions</module>
     </depends>
     <depends>
+      <module>gamificationConnectorEvents</module>
+    </depends>
+    <depends>
       <module>jquery</module>
       <as>$</as>
     </depends>
@@ -957,6 +966,30 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>ruleExtensions</module>
+    </depends>
+  </module>
+
+  <module>
+    <name>gamificationConnectorEvents</name>
+    <load-group>engagement-center-connector-event-extensions</load-group>
+    <script>
+      <minify>false</minify>
+      <path>/js/connectorEvents.bundle.js</path>
+    </script>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>vuetify</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>extensionRegistry</module>
     </depends>
   </module>
 
