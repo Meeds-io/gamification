@@ -35,6 +35,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import io.meeds.gamification.plugin.EventPlugin;
+import io.meeds.gamification.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -75,9 +77,6 @@ import io.meeds.gamification.model.filter.LeaderboardFilter;
 import io.meeds.gamification.model.filter.RealizationFilter;
 import io.meeds.gamification.model.filter.RuleFilter;
 import io.meeds.gamification.rest.model.RealizationValidityContext;
-import io.meeds.gamification.service.ProgramService;
-import io.meeds.gamification.service.RealizationService;
-import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.RealizationStorage;
 import io.meeds.gamification.utils.Utils;
 
@@ -88,15 +87,8 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   private static final Log      LOG                           = ExoLogger.getLogger(RealizationServiceImpl.class);
 
   // File header
-  private static final String[] COLUMNS                       = new String[] {
-      "date",
-      "grantee",
-      "actionType",
-      "programLabel",
-      "actionLabel",
-      "points",
-      "status"
-  };
+  private static final String[] COLUMNS                       = new String[] { "date", "grantee", "actionType", "programLabel",
+      "actionLabel", "points", "status" };
 
   private static final String   SHEETNAME                     = "Achivements Report";
 
@@ -105,6 +97,8 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   private ProgramService        programService;
 
   private RuleService           ruleService;
+
+  private EventService eventService;
 
   private IdentityManager       identityManager;
 
@@ -123,6 +117,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   public RealizationServiceImpl(ProgramService programService, // NOSONAR
                                 RuleService ruleService,
                                 ResourceBundleService resourceBundleService,
+                                EventService eventService,
                                 IdentityManager identityManager,
                                 SpaceService spaceService,
                                 RealizationStorage realizationStorage,
@@ -131,6 +126,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     this.programService = programService;
     this.ruleService = ruleService;
     this.resourceBundleService = resourceBundleService;
+    this.eventService = eventService;
     this.spaceService = spaceService;
     this.realizationStorage = realizationStorage;
     this.identityManager = identityManager;
@@ -171,9 +167,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public List<RealizationDTO> getRealizationsByFilter(RealizationFilter realizationFilter,
-                                                      int offset,
-                                                      int limit) {
+  public List<RealizationDTO> getRealizationsByFilter(RealizationFilter realizationFilter, int offset, int limit) {
     return realizationStorage.getRealizationsByFilter(realizationFilter, offset, limit);
   }
 
@@ -224,11 +218,13 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   @Override
   public void createRealizationsAsync(String event,
+                                      String eventDetails,
                                       String earnerIdentityId,
                                       String receiverIdentityId,
                                       String objectId,
                                       String objectType) {
     executorService.execute(() -> createRealizationsAsyncInternal(event,
+                                                                  eventDetails,
                                                                   earnerIdentityId,
                                                                   receiverIdentityId,
                                                                   objectId,
@@ -237,14 +233,13 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   @Override
   public List<RealizationDTO> createRealizations(String event,
+                                                 String eventDetails, 
                                                  String earnerIdentityId,
                                                  String receiverIdentityId,
                                                  String objectId,
                                                  String objectType) {
     org.exoplatform.social.core.identity.model.Identity earnerIdentity = identityManager.getIdentity(earnerIdentityId);
-    if (earnerIdentity == null
-        || earnerIdentity.isDeleted()
-        || !earnerIdentity.isEnable()) {
+    if (earnerIdentity == null || earnerIdentity.isDeleted() || !earnerIdentity.isEnable()) {
       return Collections.emptyList();
     }
 
@@ -252,15 +247,14 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (CollectionUtils.isEmpty(rules)) {
       return Collections.emptyList();
     }
+    EventPlugin eventPlugin = eventService.getEventPlugin(event);
+    if (eventPlugin != null) {
+      rules = rules.stream().filter(ruleDTO -> eventPlugin.isValidEvent(ruleDTO.getEvent(), eventDetails)).toList();
+    }
     return rules.stream()
                 .distinct()
                 .filter(rule -> getRealizationValidityContext(rule, earnerIdentity.getId()).isValidForIdentity())
-                .map(rule -> toRealization(rule,
-                                           earnerIdentity,
-                                           receiverIdentityId,
-                                           objectId,
-                                           objectType))
-                .filter(Objects::nonNull)
+                .map(rule -> toRealization(rule, earnerIdentity, receiverIdentityId, objectId, objectType))
                 .map(r -> {
                   r = realizationStorage.createRealization(r);
                   Utils.broadcastEvent(listenerService, POST_REALIZATION_CREATE_EVENT, r, null);
@@ -300,8 +294,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       throw new ObjectNotFoundException(String.format(REALIZATION_NOT_EXIST_MESSAGE, realizationId));
     }
 
-    if (!Utils.isRewardingManager(username)
-        && !programService.isProgramOwner(realization.getProgram().getId(), username)) {
+    if (!Utils.isRewardingManager(username) && !programService.isProgramOwner(realization.getProgram().getId(), username)) {
       throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user"
           + realization.getEarnerId());
     }
@@ -345,8 +338,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   @Override
   public List<RealizationDTO> deleteRealizations(String objectId, String objectType) {
-    List<RealizationDTO> realizations = findRealizationsByObjectIdAndObjectType(objectId,
-                                                                                objectType);
+    List<RealizationDTO> realizations = findRealizationsByObjectIdAndObjectType(objectId, objectType);
     realizations.forEach(realization -> {
       if (!RealizationStatus.DELETED.name().equals(realization.getStatus())
           && !RealizationStatus.CANCELED.name().equals(realization.getStatus())) {
@@ -368,17 +360,14 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   @Override
   public RealizationValidityContext getRealizationValidityContext(RuleDTO rule, String earnerIdentityId) { // NOSONAR
     RealizationValidityContext realizationRestriction = new RealizationValidityContext();
-    if (rule == null
-        || rule.isDeleted()
-        || !rule.isEnabled()) {
+    if (rule == null || rule.isDeleted() || !rule.isEnabled()) {
       realizationRestriction.setValidRule(false);
       return realizationRestriction;
     }
 
     org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId);
     boolean anonymous = identity == null || identity.isDeleted() || !identity.isEnable();
-    if (anonymous
-        || (identity.isUser() && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId()))
+    if (anonymous || (identity.isUser() && !programService.isProgramMember(rule.getProgram().getId(), identity.getRemoteId()))
         || (identity.isSpace() && !rule.isOpen() && rule.getSpaceId() != getSpaceId(identity.getRemoteId()))) {
       realizationRestriction.setValidIdentity(false);
     }
@@ -457,7 +446,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       if (period.equals(Period.ALL.name())) {
         leaderboardItems = realizationStorage.getLeaderboardByProgramId(programId, identityType, filter.getOffset(), limit);
       } else {
-        leaderboardItems = realizationStorage.getLeaderboardByDateByProgramId(fromDate, identityType, programId, filter.getOffset(), limit);
+        leaderboardItems = realizationStorage.getLeaderboardByDateByProgramId(fromDate,
+                                                                              identityType,
+                                                                              programId,
+                                                                              filter.getOffset(),
+                                                                              limit);
       }
     }
 
@@ -560,11 +553,12 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   @ExoTransactional
   public void createRealizationsAsyncInternal(String event,
+                                              String eventDetails,
                                               String earnerIdentityId,
                                               String receiverIdentityId,
                                               String objectId,
                                               String objectType) {
-    createRealizations(event, earnerIdentityId, receiverIdentityId, objectId, objectType);
+    createRealizations(event, eventDetails, earnerIdentityId, receiverIdentityId, objectId, objectType);
   }
 
   private RealizationFilter computeProgramFilter(RealizationFilter realizationFilter, // NOSONAR
@@ -610,9 +604,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   private boolean isSelfFilter(RealizationFilter realizationFilter, String username) {
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     boolean filterByEarner = CollectionUtils.isNotEmpty(realizationFilter.getEarnerIds());
-    return filterByEarner
-        && realizationFilter.getEarnerIds().size() == 1
-        && userIdentity != null
+    return filterByEarner && realizationFilter.getEarnerIds().size() == 1 && userIdentity != null
         && realizationFilter.getEarnerIds().get(0).equals(userIdentity.getId());
   }
 
@@ -624,28 +616,22 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       Set<Long> programIds = ruleIds.stream().map(ruleId -> {
         RuleDTO rule = ruleService.findRuleById(ruleId);
         return rule == null || rule.getProgramId() == 0 ? null : rule.getProgramId();
-      })
-                                    .filter(Objects::nonNull)
-                                    .collect(Collectors.toSet());
+      }).filter(Objects::nonNull).collect(Collectors.toSet());
       if (CollectionUtils.isEmpty(filterProgramIds)) {
         return programIds.stream().toList();
       } else {
-        return CollectionUtils.intersection(filterProgramIds, programIds)
-                              .stream()
-                              .toList();
+        return CollectionUtils.intersection(filterProgramIds, programIds).stream().toList();
       }
     }
     return filterProgramIds;
   }
 
   private boolean isProgramsOwner(List<Long> programIds, String username) {
-    return programIds.stream()
-                     .allMatch(programId -> programService.isProgramOwner(programId, username));
+    return programIds.stream().allMatch(programId -> programService.isProgramOwner(programId, username));
   }
 
   private boolean canViewPrograms(List<Long> programIds, String username) {
-    return programIds.stream()
-                     .allMatch(programId -> programService.canViewProgram(programId, username));
+    return programIds.stream().allMatch(programId -> programService.canViewProgram(programId, username));
   }
 
   private List<StandardLeaderboard> filterAuthorizedSpaces(List<StandardLeaderboard> result,
@@ -671,8 +657,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   private boolean isRecurrenceValid(RuleDTO rule, String earnerIdentityId) {
-    return rule.getRecurrence() == null
-        || rule.getRecurrence() == RecurrenceType.NONE
+    return rule.getRecurrence() == null || rule.getRecurrence() == RecurrenceType.NONE
         || hasNoRealizationInPeriod(earnerIdentityId, rule.getId(), rule.getRecurrence().getPeriodStartDate());
   }
 
@@ -709,10 +694,8 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   private boolean isValidDates(RuleDTO rule) {
     Date startDate = Utils.parseSimpleDate(rule.getStartDate());
     Date endDate = Utils.parseSimpleDate(rule.getEndDate());
-    return (startDate == null
-        || startDate.getTime() < System.currentTimeMillis())
-        && (endDate == null
-            || endDate.getTime() > System.currentTimeMillis());
+    return (startDate == null || startDate.getTime() < System.currentTimeMillis())
+        && (endDate == null || endDate.getTime() > System.currentTimeMillis());
   }
 
   private List<RuleDTO> findActiveRulesByEvent(String eventName) {
@@ -814,15 +797,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   private Date getFromDate(String period) {
     Date fromDate = null;
     if (Period.WEEK.name().equals(period)) {
-      fromDate = from(LocalDate.now()
-                               .with(DayOfWeek.MONDAY)
-                               .atStartOfDay(ZoneId.systemDefault())
-                               .toInstant());
+      fromDate = from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
     } else if (Period.MONTH.name().equals(period)) {
-      fromDate = from(LocalDate.now()
-                               .with(TemporalAdjusters.firstDayOfMonth())
-                               .atStartOfDay(ZoneId.systemDefault())
-                               .toInstant());
+      fromDate = from(LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
     return fromDate;
   }
