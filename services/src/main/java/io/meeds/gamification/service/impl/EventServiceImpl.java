@@ -19,6 +19,8 @@ package io.meeds.gamification.service.impl;
 
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
+import io.meeds.gamification.plugin.ConnectorPlugin;
+import io.meeds.gamification.plugin.EventPlugin;
 import io.meeds.gamification.service.EventService;
 import io.meeds.gamification.storage.EventStorage;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -29,8 +31,25 @@ public class EventServiceImpl implements EventService {
 
   private final EventStorage eventStorage;
 
+  private final Map<String, EventPlugin> eventPlugins              = new HashMap<>();
+
   public EventServiceImpl(EventStorage eventStorage) {
     this.eventStorage = eventStorage;
+  }
+
+  @Override
+  public void addPlugin(EventPlugin eventPlugin) {
+    eventPlugins.put(eventPlugin.getEventType(), eventPlugin);
+  }
+
+  @Override
+  public void removePlugin(String eventType) {
+    eventPlugins.remove(eventType);
+  }
+
+  @Override
+  public EventPlugin getEventPlugin(String eventName) {
+    return eventPlugins.values().stream().filter(eventPlugin -> eventPlugin.getTriggers().contains(eventName)).findFirst().orElse(null);
   }
 
   @Override
