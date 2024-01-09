@@ -16,15 +16,6 @@
  */
 package io.meeds.gamification.listener;
 
-import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
-import static io.meeds.gamification.constant.GamificationConstant.OBJECT_ID_PARAM;
-import static io.meeds.gamification.constant.GamificationConstant.OBJECT_TYPE_PARAM;
-import static io.meeds.gamification.constant.GamificationConstant.RECEIVER_ID;
-import static io.meeds.gamification.constant.GamificationConstant.RECEIVER_TYPE;
-import static io.meeds.gamification.constant.GamificationConstant.RULE_TITLE;
-import static io.meeds.gamification.constant.GamificationConstant.SENDER_ID;
-import static io.meeds.gamification.constant.GamificationConstant.SENDER_TYPE;
-
 import java.util.Map;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -44,6 +35,8 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
+
+import static io.meeds.gamification.constant.GamificationConstant.*;
 
 @Asynchronous
 public class GamificationGenericListener extends Listener<Map<String, String>, String> {
@@ -90,12 +83,14 @@ public class GamificationGenericListener extends Listener<Map<String, String>, S
       String receiverType = event.getSource().get(RECEIVER_TYPE);
       String objectId = event.getSource().get(OBJECT_ID_PARAM);
       String objectType = event.getSource().get(OBJECT_TYPE_PARAM);
+      String eventDetails = event.getSource().get(EVENT_DETAILS_PARAM);
 
       Identity senderIdentity = getIdentity(senderType, senderId);
       Identity receiverIdentity = getIdentity(receiverType, receiverId);
 
       switch (event.getEventName()) {
       case GENERIC_EVENT_NAME -> realizationService.createRealizationsAsync(gamificationEventId,
+                                                                            eventDetails,
                                                                             senderIdentity != null ? senderIdentity.getId()
                                                                                                    : null,
                                                                             receiverIdentity != null ? receiverIdentity.getId()

@@ -21,9 +21,32 @@ import java.util.List;
 
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
+import io.meeds.gamification.plugin.ConnectorPlugin;
+import io.meeds.gamification.plugin.EventPlugin;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public interface EventService {
+
+  /**
+   * Add a new {@link EventPlugin} for a given Event Type
+   *
+   * @param eventPlugin {@link EventPlugin}
+   */
+  void addPlugin(EventPlugin eventPlugin);
+
+  /**
+   * Removes a {@link EventPlugin} identified by its eventType
+   *
+   * @param eventType Event type
+   */
+  void removePlugin(String eventType);
+
+  /**
+   * Gets a {@link EventPlugin} identified by its eventType
+   *
+   * @return eventPlugin {@link EventPlugin}
+   */
+  public EventPlugin getEventPlugin(String eventType);
 
   /**
    * Get events by filter using offset and limit.
