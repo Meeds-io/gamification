@@ -56,11 +56,13 @@ public class GamificationRelationshipListenerTest {
     gamificationRelationshipListener.confirmed(event);
 
     verify(realizationService, times(1)).createRealizationsAsync(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
+                                                                 null,
                                                                  sender.getId(),
                                                                  receiver.getId(),
                                                                  receiver.getId(),
                                                                  IDENTITY_OBJECT_TYPE);
     verify(realizationService, times(1)).createRealizationsAsync(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
+                                                                 null,
                                                                  receiver.getId(),
                                                                  sender.getId(),
                                                                  sender.getId(),
