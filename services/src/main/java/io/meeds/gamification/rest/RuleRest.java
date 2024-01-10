@@ -158,6 +158,9 @@ public class RuleRest implements ResourceContainer {
                            @Parameter(description = "Used to filter rules by space audience", required = false)
                            @QueryParam("spaceId")
                            List<Long> spaceIds,
+                           @Parameter(description = "Used to filter rules by event name")
+                           @QueryParam("eventName")
+                           String eventName,
                            @Parameter(description = "Rules type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = ALL.", required = false)
                            @QueryParam("type")
                            @DefaultValue("ALL")
@@ -254,6 +257,7 @@ public class RuleRest implements ResourceContainer {
     ruleFilter.setExcludedRuleIds(excludedRuleIds);
     ruleFilter.setProgramId(programId);
     ruleFilter.setSpaceIds(spaceIds);
+    ruleFilter.setEventName(eventName);
     ruleFilter.setIdentityId(getCurrentUserIdentityId());
     ruleFilter.setExcludeNoSpace(CollectionUtils.isNotEmpty(spaceIds));
     ruleFilter.setSortBy(sortField);
