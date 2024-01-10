@@ -19,7 +19,6 @@ package io.meeds.gamification.service.impl;
 
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
-import io.meeds.gamification.plugin.ConnectorPlugin;
 import io.meeds.gamification.plugin.EventPlugin;
 import io.meeds.gamification.service.EventService;
 import io.meeds.gamification.storage.EventStorage;
