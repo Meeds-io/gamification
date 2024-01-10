@@ -197,7 +197,7 @@ export default {
         this.$emit('triggerUpdated', this.trigger, this.selectedConnector, this.eventProperties);
         const index = this.programEventsWithSameTrigger.findIndex(event => JSON.stringify(event.properties) === JSON.stringify(this.eventProperties));
         if (index >= 0) {
-          this.$root.$emit('alert-message', this.$t('rule.form.error.sameEventExistsInProgram'), 'error');
+          this.$root.$emit('alert-message', this.$t('rule.form.error.sameEventExistsInProgram'), 'warning');
         }
       }
     }
@@ -285,7 +285,7 @@ export default {
           if (this.selectedConnector && !this.isExtensibleEvent) {
             const index = this.programEventsWithSameTrigger.findIndex(event => event.trigger === this.trigger);
             if (index >= 0) {
-              this.$root.$emit('alert-message', this.$t('rule.form.error.sameEventExistsInProgram'), 'error');
+              this.$root.$emit('alert-message', this.$t('rule.form.error.sameEventExistsInProgram'), 'warning');
             }
             this.$emit('triggerUpdated', this.trigger, this.selectedConnector);
           }
