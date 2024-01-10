@@ -27,6 +27,9 @@ export function getRules(filter) {
   if (filter?.status) {
     formData.append('status', filter.status.toUpperCase());
   }
+  if (filter?.eventName) {
+    formData.append('eventName', filter.eventName);
+  }
   if (filter?.programStatus) {
     formData.append('programStatus', filter.programStatus.toUpperCase());
   }
