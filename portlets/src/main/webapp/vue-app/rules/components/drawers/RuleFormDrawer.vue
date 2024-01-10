@@ -194,6 +194,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       :selected-trigger="selectedTrigger"
                       :trigger-type="triggerType"
                       :event-properties="eventProperties"
+                      :program-id="programId"
                       @triggerUpdated="selectTrigger"
                       @unfilled="eventProperties = {}"
                       @event-extension-initialized="eventExtensionInitialized" />
