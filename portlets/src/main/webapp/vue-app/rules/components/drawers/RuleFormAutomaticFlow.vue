@@ -95,7 +95,8 @@
         dense
         flat
         solo
-        outlined>
+        outlined
+        @change="triggerChanged">
         <template #selection="{item, selected}">
           <v-chip
             :input-value="selected"
@@ -147,6 +148,10 @@ export default {
     eventProperties: {
       type: Object,
       default: null
+    },
+    programId: {
+      type: Number,
+      default: null,
     }
   },
   data: () => ({
@@ -161,6 +166,7 @@ export default {
     connectorsExtensions: [],
     connectorsEventComponentsExtensions: [],
     connectorComponentExtension: null,
+    programEventsWithSameTrigger: [],
   }),
   computed: {
     sortedTriggers() {
@@ -186,14 +192,13 @@ export default {
         this.retrieveTriggers();
       }
     },
-    trigger() {
-      if (this.selectedConnector && !this.isExtensibleEvent) {
-        this.$emit('triggerUpdated', this.trigger, this.selectedConnector);
-      }
-    },
     eventProperties() {
       if (this.selectedConnector) {
         this.$emit('triggerUpdated', this.trigger, this.selectedConnector, this.eventProperties);
+        const index = this.programEventsWithSameTrigger.findIndex(event => JSON.stringify(event.properties) === JSON.stringify(this.eventProperties));
+        if (index >= 0) {
+          this.$root.$emit('alert-message', this.$t('rule.form.error.sameEventExistsInProgram'), 'error');
+        }
       }
     }
   },
@@ -211,6 +216,16 @@ export default {
 
     if (this.selectedTrigger) {
       this.trigger = this.selectedTrigger;
+
+      this.$ruleService.getRules({
+        status: 'ENABLED',
+        programId: this.programId,
+        programStatus: 'ENABLED',
+        dateFilter: 'ACTIVE',
+        eventName: this.trigger,
+      }).then(result => {
+        this.programEventsWithSameTrigger = result?.rules.map(rule => rule.event);
+      });
     }
     this.init();
   },
@@ -256,6 +271,26 @@ export default {
         .then(triggers => {
           this.triggers = triggers.map(trigger => trigger.title);
         });
+    },
+    triggerChanged() {
+      if (this.trigger) {
+        this.$ruleService.getRules({
+          status: 'ENABLED',
+          programId: this.programId,
+          programStatus: 'ENABLED',
+          dateFilter: 'ACTIVE',
+          eventName: this.trigger,
+        }).then(result => {
+          this.programEventsWithSameTrigger = result?.rules.map(rule => rule.event);
+          if (this.selectedConnector && !this.isExtensibleEvent) {
+            const index = this.programEventsWithSameTrigger.findIndex(event => event.trigger === this.trigger);
+            if (index >= 0) {
+              this.$root.$emit('alert-message', this.$t('rule.form.error.sameEventExistsInProgram'), 'error');
+            }
+            this.$emit('triggerUpdated', this.trigger, this.selectedConnector);
+          }
+        });
+      }
     },
   }
 };
