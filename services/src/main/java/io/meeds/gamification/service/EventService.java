@@ -21,7 +21,6 @@ import java.util.List;
 
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
-import io.meeds.gamification.plugin.ConnectorPlugin;
 import io.meeds.gamification.plugin.EventPlugin;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
