@@ -36,6 +36,7 @@
       :template-params="templateParams"
       :placeholder="$t('rule.form.rulePublicationPlaceholder')"
       :object-id="metadataObjectId"
+      :suggester-space-id="spaceId"
       object-type="rule"
       ck-editor-type="activityContent_rule"
       class="flex my-3"
