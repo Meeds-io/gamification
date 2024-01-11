@@ -20,7 +20,7 @@ package io.meeds.gamification.entity;
 import java.io.Serializable;
 import java.util.Set;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.exoplatform.commons.api.persistence.ExoEntity;
 

@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.exoplatform.commons.utils.StringListConverter;
 import org.exoplatform.commons.api.persistence.ExoEntity;
