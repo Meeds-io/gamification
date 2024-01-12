@@ -67,6 +67,7 @@
         :placeholder="$t('rule.detail.announceEditor.placeholder')"
         :tag-enabled="false"
         :object-id="metadataObjectId"
+        :suggester-space-id="spaceId"
         object-type="activity"
         ck-editor-type="activityComment"
         class="flex my-3"
