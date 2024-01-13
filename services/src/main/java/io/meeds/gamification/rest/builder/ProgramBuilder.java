@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -79,6 +80,8 @@ public class ProgramBuilder {
       activeRulesCount = ruleService.countActiveRules(program.getId());
     }
 
+    List<UserInfo> owners = anonymous ? Collections.emptyList() :
+                                      getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId());
     return new ProgramRestEntity(program.getId(), // NOSONAR
                                  program.getTitle(),
                                  program.getDescription(),
@@ -99,15 +102,15 @@ public class ProgramBuilder {
                                  program.getAvatarFileId(),
                                  program.getCoverUrl(),
                                  program.getAvatarUrl(),
-                                 anonymous ? null : program.getOwnerIds(),
+                                 anonymous ? null :
+                                           owners.stream().map(o -> o.getId()).map(Long::parseLong).collect(Collectors.toSet()),
                                  program.getRulesTotalScore(),
                                  program.isOpen(),
                                  !anonymous && program.getSpaceId() > 0 ?
                                                                         Utils.getSpaceById(String.valueOf(program.getSpaceId())) :
                                                                         null,
                                  toUserContext(programService, program, username),
-                                 anonymous ? Collections.emptyList() :
-                                   getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId()),
+                                 owners,
                                  anonymous || !expandAdministrators ? null :
                                                                     buildAdministrators(programService, userAcl),
                                  activeRulesCount,
@@ -182,6 +185,8 @@ public class ProgramBuilder {
                   Identity identity = identityManager.getIdentity(String.valueOf(id));
                   if (identity != null
                       && identity.isUser()
+                      && identity.isEnable()
+                      && !identity.isDeleted()
                       && (spaceId == 0
                           || (space != null
                               && !spaceService.isManager(space, identity.getRemoteId())

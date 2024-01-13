@@ -114,6 +114,8 @@ public class IdentityManagerMock implements IdentityManager {
   }
 
   public Identity updateIdentity(Identity identity) {
+    identities.replaceAll(existingIdentity -> StringUtils.equals(identity.getId(), existingIdentity.getId()) ? identity :
+                                                                                                             existingIdentity);
     return identity;
   }
 

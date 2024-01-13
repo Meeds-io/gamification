@@ -18,7 +18,9 @@ package io.meeds.gamification.rest;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 import org.json.JSONObject;
 import org.junit.Before;
@@ -26,6 +28,7 @@ import org.junit.Test;
 
 import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.identity.model.Identity;
 
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
@@ -275,6 +278,44 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     ProgramRestEntity savedDomain = (ProgramRestEntity) response.getEntity();
     assertNotNull(savedDomain);
     assertEquals(autoDomain.getId(), savedDomain.getId());
+  }
+
+  @Test
+  public void testGetDisabledProgramOwners() throws Exception {
+    ProgramEntity programEntity = newOpenProgram("openProgram");
+    Identity owner1 = identityManager.getOrCreateUserIdentity("root53");
+    Identity owner2 = identityManager.getOrCreateUserIdentity("root54");
+    HashSet<Long> ownerIds = new HashSet<>(Arrays.asList(Long.parseLong(owner1.getId()),
+                                                         Long.parseLong(owner2.getId())));
+    programEntity.setOwners(ownerIds);
+    programDAO.update(programEntity);
+    restartTransaction();
+
+    startSessionAsAdministrator("root1");
+    ContainerResponse response = getResponse("GET", getURLResource("programs/" + programEntity.getId()), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    ProgramRestEntity savedProgram = (ProgramRestEntity) response.getEntity();
+    assertNotNull(savedProgram);
+    assertEquals(programEntity.getId().longValue(), savedProgram.getId());
+    assertNotNull(savedProgram.getOwners());
+    assertEquals(2, savedProgram.getOwners().size());
+    assertEquals(ownerIds, savedProgram.getOwnerIds());
+
+    owner2.setEnable(false);
+    identityManager.updateIdentity(owner2);
+    owner2 = identityManager.getOrCreateUserIdentity("root54");
+    assertFalse(owner2.isEnable());
+
+    response = getResponse("GET", getURLResource("programs/" + programEntity.getId()), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    savedProgram = (ProgramRestEntity) response.getEntity();
+    assertNotNull(savedProgram);
+    assertEquals(programEntity.getId().longValue(), savedProgram.getId());
+    assertNotNull(savedProgram.getOwners());
+    assertEquals(1, savedProgram.getOwners().size());
+    assertEquals(Collections.singleton(Long.parseLong(owner1.getId())), savedProgram.getOwnerIds());
   }
 
   @Test
