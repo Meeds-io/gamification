@@ -37,6 +37,8 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.Group;
 import org.exoplatform.services.organization.Membership;
 import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
+import org.exoplatform.services.organization.UserStatus;
 import org.exoplatform.services.security.IdentityConstants;
 import org.exoplatform.upload.UploadResource;
 import org.exoplatform.upload.UploadService;
@@ -49,21 +51,23 @@ import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.storage.mapper.ProgramMapper;
 import io.meeds.gamification.utils.Utils;
 
+import lombok.SneakyThrows;
+
 public class ProgramStorage {
 
   private static final Log    LOG                 = ExoLogger.getLogger(ProgramStorage.class);
 
   private static final String FILE_API_NAME_SPACE = "gamification";
 
-  private final ProgramDAO          programDAO;
+  protected final OrganizationService organizationService;
 
-  private final RuleDAO             ruleDAO;
+  private final ProgramDAO            programDAO;
 
-  private final FileService         fileService;
+  private final RuleDAO               ruleDAO;
 
-  private final UploadService       uploadService;
+  private final FileService           fileService;
 
-  private final OrganizationService organizationService;
+  private final UploadService         uploadService;
 
   public ProgramStorage(FileService fileService,
                         UploadService uploadService,
@@ -165,26 +169,25 @@ public class ProgramStorage {
     }
   }
 
+  @SneakyThrows
   public List<String> getAdministrators() {
-    try {
-      Group rewardingGroup = organizationService.getGroupHandler().findGroupById(Utils.REWARDING_GROUP);
-      if (rewardingGroup != null) {
-        ListAccess<Membership> membershipsListAccess = organizationService.getMembershipHandler()
-                                                                          .findAllMembershipsByGroup(rewardingGroup);
-        int membershipSize = membershipsListAccess.getSize();
-        if (membershipSize > 0) {
-          Membership[] memberships = membershipsListAccess.load(0, membershipSize);
-          return Arrays.stream(memberships)
-                       .filter(Objects::nonNull)
-                       .map(Membership::getUserName)
-                       .distinct()
-                       .toList();
-        }
+    Group rewardingGroup = organizationService.getGroupHandler().findGroupById(Utils.REWARDING_GROUP);
+    if (rewardingGroup != null) {
+      ListAccess<Membership> membershipsListAccess = organizationService.getMembershipHandler()
+                                                                        .findAllMembershipsByGroup(rewardingGroup);
+      int membershipSize = membershipsListAccess.getSize();
+      if (membershipSize > 0) {
+        Membership[] memberships = membershipsListAccess.load(0, membershipSize);
+        return Arrays.stream(memberships)
+                     .filter(Objects::nonNull)
+                     .map(Membership::getUserName)
+                     .filter(u -> findUserByName(u) != null)
+                     .filter(Objects::nonNull)
+                     .distinct()
+                     .toList();
       }
-      return Collections.emptyList();
-    } catch (Exception e) {
-      throw new IllegalStateException("Error retrieving rewarding administrators group members", e);
     }
+    return Collections.emptyList();
   }
 
   public void clearCache() {// NOSONAR
@@ -217,6 +220,11 @@ public class ProgramStorage {
     } finally {
       uploadService.removeUploadResource(uploadResource.getUploadId());
     }
+  }
+
+  @SneakyThrows
+  private User findUserByName(String u) {
+    return organizationService.getUserHandler().findUserByName(u, UserStatus.ENABLED);
   }
 
 }

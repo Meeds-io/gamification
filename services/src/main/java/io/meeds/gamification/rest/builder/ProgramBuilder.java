@@ -21,13 +21,16 @@ import static io.meeds.gamification.plugin.ProgramTranslationPlugin.PROGRAM_DESC
 import static io.meeds.gamification.plugin.ProgramTranslationPlugin.PROGRAM_OBJECT_TYPE;
 import static io.meeds.gamification.plugin.ProgramTranslationPlugin.PROGRAM_TITLE_FIELD_NAME;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -79,6 +82,8 @@ public class ProgramBuilder {
       activeRulesCount = ruleService.countActiveRules(program.getId());
     }
 
+    List<UserInfo> owners = anonymous ? Collections.emptyList() :
+                                      getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId());
     return new ProgramRestEntity(program.getId(), // NOSONAR
                                  program.getTitle(),
                                  program.getDescription(),
@@ -99,15 +104,13 @@ public class ProgramBuilder {
                                  program.getAvatarFileId(),
                                  program.getCoverUrl(),
                                  program.getAvatarUrl(),
-                                 anonymous ? null : program.getOwnerIds(),
+                                 anonymous ? null :
+                                           owners.stream().map(o -> o.getId()).map(Long::parseLong).collect(Collectors.toSet()),
                                  program.getRulesTotalScore(),
                                  program.isOpen(),
-                                 !anonymous && program.getSpaceId() > 0 ?
-                                                                        Utils.getSpaceById(String.valueOf(program.getSpaceId())) :
-                                                                        null,
+                                 buildSpace(program, anonymous),
                                  toUserContext(programService, program, username),
-                                 anonymous ? Collections.emptyList() :
-                                   getProgramOwnersByIds(program.getOwnerIds(), program.getSpaceId()),
+                                 owners,
                                  anonymous || !expandAdministrators ? null :
                                                                     buildAdministrators(programService, userAcl),
                                  activeRulesCount,
@@ -182,6 +185,8 @@ public class ProgramBuilder {
                   Identity identity = identityManager.getIdentity(String.valueOf(id));
                   if (identity != null
                       && identity.isUser()
+                      && identity.isEnable()
+                      && !identity.isDeleted()
                       && (spaceId == 0
                           || (space != null
                               && !spaceService.isManager(space, identity.getRemoteId())
@@ -245,6 +250,32 @@ public class ProgramBuilder {
       userInfo.setRemoteId(identity.getRemoteId());
       userInfo.setId(identity.getId());
     }
+  }
+
+  private static Space buildSpace(ProgramDTO program, boolean anonymous) {
+    if (anonymous || program.getSpaceId() <= 0) {
+      return null;
+    }
+    Space space = Utils.getSpaceById(String.valueOf(program.getSpaceId()));
+    String[] spaceManagers = space.getManagers();
+    if (ArrayUtils.isNotEmpty(spaceManagers)) {
+      IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+      spaceManagers = Arrays.stream(spaceManagers).map(u -> {
+        Identity identity = identityManager.getOrCreateUserIdentity(u);
+        if (identity != null
+            && identity.isUser()
+            && identity.isEnable()
+            && !identity.isDeleted()) {
+          return u;
+        } else {
+          return null;
+        }
+      })
+                            .filter(Objects::nonNull)
+                            .toArray(String[]::new);
+      space.setManagers(spaceManagers);
+    }
+    return space;
   }
 
 }
