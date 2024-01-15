@@ -22,7 +22,13 @@ import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
+import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.picocontainer.Startable;
+
+import org.exoplatform.commons.cache.future.FutureCache;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.commons.file.services.FileService;
@@ -34,21 +40,28 @@ import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.organization.Membership;
 import org.exoplatform.services.organization.MembershipEventListener;
 import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
+import org.exoplatform.services.organization.UserEventListener;
 import org.exoplatform.upload.UploadService;
 
+import io.meeds.common.ContainerTransactional;
 import io.meeds.gamification.dao.ProgramDAO;
 import io.meeds.gamification.dao.RuleDAO;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.storage.ProgramStorage;
 import io.meeds.gamification.utils.Utils;
 
-public class ProgramCachedStorage extends ProgramStorage {
+import lombok.SneakyThrows;
 
-  private static final String                      PROGRAM_CACHE_NAME = "gamification.domain";
+public class ProgramCachedStorage extends ProgramStorage implements Startable {
 
-  private FutureExoCache<Long, ProgramDTO, Object> programFutureCache;
+  private static final String                       PROGRAM_CACHE_NAME = "gamification.domain";
 
-  private List<String>                             administrators;
+  private FutureExoCache<Long, ProgramDTO, Object>  programFutureCache;
+
+  private FutureCache<Object, List<String>, Object> administratorsRetrivalTask;
+
+  private List<String>                              administrators;
 
   public ProgramCachedStorage(FileService fileService,
                               UploadService uploadService,
@@ -66,10 +79,35 @@ public class ProgramCachedStorage extends ProgramStorage {
       }
     };
     this.programFutureCache = new FutureExoCache<>(programLoader, programCache);
+    this.administratorsRetrivalTask = new FutureCache<Object, List<String>, Object>((c, k) -> getAdministratorsConcurrently()) {
+      @Override
+      protected List<String> get(Object key) {
+        return administrators;
+      }
+
+      @Override
+      protected void put(Object key, List<String> value) {
+        administrators = value;
+      }
+
+      @Override
+      protected void putOnly(Object key, List<String> value) {
+        administrators = value;
+      }
+    };
+
     listenerService.addListener(POST_CREATE_RULE_EVENT, new RuleUpdatedListener());
     listenerService.addListener(POST_DELETE_RULE_EVENT, new RuleUpdatedListener());
     listenerService.addListener(POST_UPDATE_RULE_EVENT, new RuleUpdatedListener());
     organizationService.getMembershipHandler().addMembershipEventListener(new RewardingAdministratorMembershipListener());
+    organizationService.getUserHandler().addUserEventListener(new RewardingAdministratorUserListener());
+  }
+
+  @Override
+  public void start() {
+    // Retrieve list of administrators
+    // In startup phase to populate Cache
+    CompletableFuture.runAsync(this::getAdministrators);
   }
 
   @Override
@@ -107,16 +145,23 @@ public class ProgramCachedStorage extends ProgramStorage {
   }
 
   @Override
+  @SneakyThrows
   public List<String> getAdministrators() {
     if (this.administrators == null) {
-      this.administrators = super.getAdministrators();
+      return administratorsRetrivalTask.get(null, "administrators");
+    } else {
+      return administrators;
     }
-    return administrators;
   }
 
   @Override
   public void clearCache() {
     programFutureCache.clear();
+  }
+
+  @ContainerTransactional
+  public List<String> getAdministratorsConcurrently() {
+    return super.getAdministrators();
   }
 
   public class RuleUpdatedListener extends Listener<Object, String> {
@@ -129,19 +174,45 @@ public class ProgramCachedStorage extends ProgramStorage {
   public class RewardingAdministratorMembershipListener extends MembershipEventListener {
     @Override
     public void postSave(Membership m, boolean isNew) throws Exception {
-      clearCachedAdministrators(m);
+      CompletableFuture.runAsync(() -> clearCachedAdministrators(m));
     }
 
     @Override
     public void postDelete(Membership m) throws Exception {
-      clearCachedAdministrators(m);
+      CompletableFuture.runAsync(() -> clearCachedAdministrators(m));
     }
 
     private void clearCachedAdministrators(Membership m) {
       if (m != null && Utils.REWARDING_GROUP.equals(m.getGroupId())) {
-        ProgramCachedStorage.this.administrators = null;
+        administrators = null;
       }
     }
+  }
+
+  public class RewardingAdministratorUserListener extends UserEventListener {
+
+    @Override
+    public void postSetEnabled(User user) throws Exception {
+      CompletableFuture.runAsync(() -> clearCachedAdministrator(user));
+    }
+
+    @Override
+    public void postDelete(User user) throws Exception {
+      CompletableFuture.runAsync(() -> clearCachedAdministrator(user));
+    }
+
+    @SneakyThrows
+    @ContainerTransactional
+    public void clearCachedAdministrator(User user) {
+      if (administrators != null
+          && (administrators.stream().anyMatch(u -> StringUtils.equals(u, user.getUserName()))
+              || CollectionUtils.isNotEmpty(organizationService.getMembershipHandler()
+                                                               .findMembershipsByUserAndGroup(user.getUserName(),
+                                                                                              Utils.REWARDING_GROUP)))) {
+        administrators = null;
+      }
+    }
+
   }
 
 }
