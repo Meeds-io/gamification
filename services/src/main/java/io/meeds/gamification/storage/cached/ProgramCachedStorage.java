@@ -185,8 +185,6 @@ public class ProgramCachedStorage extends ProgramStorage implements Startable {
     private void clearCachedAdministrators(Membership m) {
       if (m != null && Utils.REWARDING_GROUP.equals(m.getGroupId())) {
         administrators = null;
-        // Refresh Value again, asynchronously
-        getAdministrators();
       }
     }
   }
@@ -195,6 +193,11 @@ public class ProgramCachedStorage extends ProgramStorage implements Startable {
 
     @Override
     public void postSetEnabled(User user) throws Exception {
+      CompletableFuture.runAsync(() -> clearCachedAdministrator(user));
+    }
+
+    @Override
+    public void postDelete(User user) throws Exception {
       CompletableFuture.runAsync(() -> clearCachedAdministrator(user));
     }
 
@@ -207,8 +210,6 @@ public class ProgramCachedStorage extends ProgramStorage implements Startable {
                                                                .findMembershipsByUserAndGroup(user.getUserName(),
                                                                                               Utils.REWARDING_GROUP)))) {
         administrators = null;
-        // Refresh Value again, asynchronously
-        getAdministrators();
       }
     }
 
