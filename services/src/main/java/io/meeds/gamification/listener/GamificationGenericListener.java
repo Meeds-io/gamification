@@ -95,7 +95,7 @@ public class GamificationGenericListener extends Listener<Map<String, String>, S
       Identity receiverIdentity = getIdentity(receiverType, receiverId);
 
       switch (event.getEventName()) {
-      case GENERIC_EVENT_NAME -> realizationService.createRealizationsAsync(gamificationEventId,
+      case GENERIC_EVENT_NAME -> realizationService.createRealizations(gamificationEventId,
                                                                             senderIdentity != null ? senderIdentity.getId()
                                                                                                    : null,
                                                                             receiverIdentity != null ? receiverIdentity.getId()
