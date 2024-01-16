@@ -89,14 +89,12 @@ public class GamificationGenericListener extends Listener<Map<String, String>, S
       Identity receiverIdentity = getIdentity(receiverType, receiverId);
 
       switch (event.getEventName()) {
-      case GENERIC_EVENT_NAME -> realizationService.createRealizationsAsync(gamificationEventId,
-                                                                            eventDetails,
-                                                                            senderIdentity != null ? senderIdentity.getId()
-                                                                                                   : null,
-                                                                            receiverIdentity != null ? receiverIdentity.getId()
-                                                                                                     : null,
-                                                                            objectId,
-                                                                            objectType);
+      case GENERIC_EVENT_NAME -> realizationService.createRealizations(gamificationEventId,
+                                                                       eventDetails,
+                                                                       senderIdentity != null ? senderIdentity.getId() : null,
+                                                                       receiverIdentity != null ? receiverIdentity.getId() : null,
+                                                                       objectId,
+                                                                       objectType);
       case DELETE_EVENT_NAME -> realizationService.deleteRealizations(objectId, objectType);
       case CANCEL_EVENT_NAME -> realizationService.cancelRealizations(gamificationEventId,
                                                                       senderIdentity != null ? senderIdentity.getId() : null,
