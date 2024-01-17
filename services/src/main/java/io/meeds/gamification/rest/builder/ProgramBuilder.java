@@ -257,6 +257,9 @@ public class ProgramBuilder {
       return null;
     }
     Space space = Utils.getSpaceById(String.valueOf(program.getSpaceId()));
+    if (space == null) {
+      return null;
+    }
     String[] spaceManagers = space.getManagers();
     if (ArrayUtils.isNotEmpty(spaceManagers)) {
       IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
