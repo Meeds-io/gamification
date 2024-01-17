@@ -20,3 +20,4 @@ import './initComponents.js';
 import './extensions.js';
 
 Vue.prototype.$utils?.includeExtensions?.('engagementCenterActions');
+Vue.prototype.$utils?.includeExtensions?.('engagementCenterConnectors');
