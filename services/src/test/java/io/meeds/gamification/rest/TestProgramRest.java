@@ -81,6 +81,24 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
+  public void testGetProgramsWithoutSpace() throws Exception {
+    ProgramEntity programEntity = programDAO.find(autoDomain.getId());
+    programEntity.setAudienceId(25564l);
+    programDAO.update(programEntity);
+
+    startSessionAsAdministrator("root1");
+
+    ContainerResponse response = getResponse("GET", getURLResource("programs/" + autoDomain.getId()), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    ProgramRestEntity program = (ProgramRestEntity) response.getEntity();
+    assertNotNull(program);
+    assertNull(program.getSpace());
+    assertEquals(programEntity.getAudienceId().longValue(), program.getSpaceId());
+  }
+
+  @Test
   public void testGetProgramAdministrators() throws Exception {
     startSessionAs("root1");
 
