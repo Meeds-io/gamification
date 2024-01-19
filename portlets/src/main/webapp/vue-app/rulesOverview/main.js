@@ -45,5 +45,9 @@ export function init(showLocked) {
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'Rules Overview');
+    }).finally(() => {
+      Vue.prototype.$utils?.includeExtensions?.('engagementCenterActions');
+      Vue.prototype.$utils?.includeExtensions?.('engagementCenterConnectors');
+      Vue.prototype.$utils?.includeExtensions?.('engagementCenterConnectorEvents');
     });
 }
