@@ -26,6 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :default-length="avatarsCount"
             clickable
             avatar-overlay-position
+            retrieve-extra-information
             @open-detail="$emit('open-avatars-drawer')" />
         </div>
       </template>
