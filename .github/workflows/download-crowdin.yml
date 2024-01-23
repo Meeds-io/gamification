@@ -17,7 +17,7 @@ jobs:
           token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
       - name: reset translation branch to develop's
         run: |
-          git push origin origin/develop-exo:refs/heads/integration/6.5.x-exo-translation -f
+          git push origin origin/develop-exo:refs/heads/integration/${{vars.CROWDIN_DEVELOP_VERSION}}-exo-translation -f
   crowdin-download-develop-exo:
     needs: [reset-branch-integration-develop-exo]
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
-          ref: integration/6.5.x-exo-translation
+          ref: integration/${{vars.CROWDIN_DEVELOP_VERSION}}-exo-translation
       - name: Crowdin pull
         uses: crowdin/github-action@v1
         with:
@@ -34,7 +34,7 @@ jobs:
           upload_translations: false
           download_translations: true
           crowdin_branch_name: develop-exo
-          localization_branch_name: integration/6.5.x-exo-translation
+          localization_branch_name: integration/${{vars.CROWDIN_DEVELOP_VERSION}}-exo-translation
           create_pull_request: false
           skip_ref_checkout: true
           download_translations_args: '-l ar -l aro -l az -l ca -l ceb -l co -l cs -l de -l el -l en -l es-ES -l eu -l fa -l fi
@@ -62,10 +62,10 @@ jobs:
           git_commit_gpgsign: true
       - name: Merge translation to develop-exo
         run: |
-          git fetch origin integration/6.5.x-exo-translation
+          git fetch origin integration/${{vars.CROWDIN_DEVELOP_VERSION}}-exo-translation
           git config --global user.email "exo-swf@exoplatform.com"
           git config --global user.name "eXo Software Factory"
-          changes_to_apply=$(git merge --squash origin/integration/6.5.x-exo-translation 2>&1)
+          changes_to_apply=$(git merge --squash origin/integration/${{vars.CROWDIN_DEVELOP_VERSION}}-exo-translation 2>&1)
           if [[ "$changes_to_apply" == *"up to date"* ]]; then
             echo "Nothing to commit"
           else
@@ -83,7 +83,7 @@ jobs:
           token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
       - name: reset translation branch to develop's
         run: |
-          git push origin origin/develop-meed:refs/heads/integration/6.5.x-meed-translation -f
+          git push origin origin/develop-meed:refs/heads/integration/${{vars.CROWDIN_DEVELOP_VERSION}}-meed-translation -f
   crowdin-download-develop-meed:
     needs: [reset-branch-integration-develop-meed]
     runs-on: ubuntu-latest
@@ -92,7 +92,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
-          ref: integration/6.5.x-meed-translation
+          ref: integration/${{vars.CROWDIN_DEVELOP_VERSION}}-meed-translation
       - name: Crowdin push
         uses: crowdin/github-action@v1
         with:
@@ -100,7 +100,7 @@ jobs:
           upload_translations: false
           download_translations: true
           crowdin_branch_name: develop-meed
-          localization_branch_name: integration/6.5.x-meed-translation
+          localization_branch_name: integration/${{vars.CROWDIN_DEVELOP_VERSION}}-meed-translation
           create_pull_request: false
           skip_ref_checkout: true
           download_translations_args: '-l ar -l aro -l az -l ca -l ceb -l co -l cs -l de -l el -l en -l es-ES -l eu -l fa -l fi
@@ -128,10 +128,10 @@ jobs:
           git_commit_gpgsign: true
       - name: Merge translation to develop-meed
         run: |
-          git fetch origin integration/6.5.x-meed-translation
+          git fetch origin integration/${{vars.CROWDIN_DEVELOP_VERSION}}-meed-translation
           git config --global user.email "exo-swf@exoplatform.com"
           git config --global user.name "eXo Software Factory"
-          changes_to_apply=$(git merge --squash origin/integration/6.5.x-meed-translation 2>&1)
+          changes_to_apply=$(git merge --squash origin/integration/${{vars.CROWDIN_DEVELOP_VERSION}}-meed-translation 2>&1)
           if [[ "$changes_to_apply" == *"up to date"* ]]; then
             echo "Nothing to commit"
           else
