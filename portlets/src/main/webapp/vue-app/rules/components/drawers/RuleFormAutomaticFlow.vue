@@ -178,6 +178,7 @@ export default {
         trigger: this.trigger,
         type: this.triggerType,
         properties: this.eventProperties,
+        isEditing: true,
       };
     },
     isExtensibleEvent() {
