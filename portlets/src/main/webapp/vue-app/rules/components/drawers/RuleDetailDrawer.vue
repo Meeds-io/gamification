@@ -171,6 +171,17 @@
             :rule="rule" />
         </v-col>
       </v-row>
+      <v-card
+        v-if="isExtensibleEvent"
+        class="px-10 py-3"
+        flat>
+        <extension-registry-components
+          :params="eventParams"
+          name="engagementCenterEvent"
+          type="connector-event-extensions"
+          parent-element="div"
+          element="div" />
+      </v-card>
     </template>
     <template v-if="announcementFormOpened && rule && !loading && drawer" #footer>
       <div class="d-flex mr-2">
@@ -211,6 +222,9 @@ export default {
     updatePath: false,
     isPublicSite: eXo.env.portal.portalName === 'public',
     objectType: 'activity',
+    connectorsEventComponentsExtensions: [],
+    extensionEventApp: 'engagementCenterEvent',
+    connectorEventExtensionType: 'connector-event-extensions',
   }),
   computed: {
     now() {
@@ -295,6 +309,17 @@ export default {
     spaceId() {
       return this.rule?.program?.spaceId;
     },
+    isExtensibleEvent() {
+      return this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name).includes(this.rule?.event?.type);
+    },
+    eventParams() {
+      return {
+        trigger: this.rule?.event?.trigger,
+        type: this.rule?.event?.type,
+        properties: this.rule?.event?.properties,
+        isEditing: false,
+      };
+    },
   },
   watch: {
     sending() {
@@ -333,6 +358,8 @@ export default {
     this.$root.$on('rule-deleted', this.close);
     document.addEventListener('rule-detail-drawer-event', event => this.open(event?.detail?.rule, event?.detail?.openAnnouncement, event?.detail?.goBackButton, event?.detail?.updatePath));
     document.addEventListener('rule-detail-drawer-by-id-event', event => this.openById(event?.detail?.ruleId, event?.detail?.openAnnouncement));
+    document.addEventListener(`component-${this.extensionEventApp}-${this.connectorEventExtensionType}-updated`, this.refreshConnectorExtensions);
+    this.refreshConnectorExtensions();
   },
   methods: {
     open(ruleToDisplay, displayAnnouncementForm, goBackButton, updatePath) {
@@ -473,6 +500,11 @@ export default {
         .catch(() => this.$root.$emit('alert-message', this.$t('rule.detail.errorJoining'), 'error'))
         .then(() => this.openById(this.rule.id))
         .finally(() => this.joining = false);
+    },
+    refreshConnectorExtensions() {
+      // Get list of connectors from extensionRegistry
+      this.connectorsEventComponentsExtensions = extensionRegistry.loadComponents(this.extensionEventApp) || [];
+      this.$emit('event-extension-initialized', this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name));
     },
   }
 };
