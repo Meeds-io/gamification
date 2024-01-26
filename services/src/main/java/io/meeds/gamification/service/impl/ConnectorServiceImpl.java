@@ -40,6 +40,8 @@ import io.meeds.gamification.plugin.ConnectorPlugin;
 import io.meeds.gamification.service.ConnectorService;
 import io.meeds.gamification.service.ConnectorSettingService;
 import io.meeds.gamification.storage.ConnectorAccountStorage;
+import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
+import static io.meeds.gamification.utils.Utils.capitalizeFirstLetter;
 
 public class ConnectorServiceImpl implements ConnectorService {
 
@@ -127,6 +129,8 @@ public class ConnectorServiceImpl implements ConnectorService {
       connectorAccountStorage.saveConnectorAccount(new ConnectorAccount(connectorName,
                                                                         connectorUserId,
                                                                         Long.parseLong(userIdentityId)));
+
+      createGamificationRealization(connectorName, userIdentityId);
     } catch (ObjectAlreadyExistsException e) {
 
       try {
@@ -199,4 +203,19 @@ public class ConnectorServiceImpl implements ConnectorService {
     return connectorPlugins.get(connectorName);
   }
 
+  private void createGamificationRealization(String connectorName, String userIdentityId) {
+    try {
+      connectorName = capitalizeFirstLetter(connectorName);
+      Map<String, String> gam = new HashMap<>();
+      gam.put("senderId", userIdentityId);
+      gam.put("receiverId", userIdentityId);
+      gam.put("objectId", userIdentityId);
+      gam.put("ruleTitle", "connectorConnect" + connectorName);
+      listenerService.broadcast(GENERIC_EVENT_NAME, gam, "");
+      LOG.info("{} Connect action broadcasted for user {}", connectorName, userIdentityId);
+
+    } catch (Exception e) {
+      LOG.warn("An error occurred while broadcasting connect {} event", connectorName, e);
+    }
+  }
 }

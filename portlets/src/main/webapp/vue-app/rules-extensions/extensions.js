@@ -125,3 +125,24 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     }
   },
 });
+
+extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
+  type: 'connector-connect',
+  options: {
+    rank: 80,
+    icon: 'fa-solid fa-plug',
+    match: (actionLabel) => actionLabel.startsWith('connectorConnect'),
+    getLink: realization => {
+      if (realization?.objectId === eXo.env.portal.profileOwnerIdentityId) {
+        realization.link = `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/profile/${eXo.env.portal.profileOwner}`;
+        return realization.link;
+      } else {
+        return window?.eXo?.env?.portal?.userName?.length && Vue.prototype.$identityService.getIdentityById(realization?.objectId)
+          .then(identity => {
+            realization.link = `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/profile/${identity.remoteId}`;
+            return realization.link;
+          }) || null;
+      }
+    },
+  }
+});
