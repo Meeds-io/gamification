@@ -12,7 +12,7 @@ jobs:
       translation_change: ${{ steps.are_translations_changes.outputs.run_jobs }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - uses: lots0logs/gh-action-get-changed-files@2.2.2
         id: files_impacted
         with:
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Crowdin push
         uses: crowdin/github-action@v1.13.1
         with:
