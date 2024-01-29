@@ -131,7 +131,7 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
   options: {
     rank: 80,
     icon: 'fa-solid fa-plug',
-    match: (actionLabel) => actionLabel.startsWith('connectorConnect'),
+    match: (actionLabel) => actionLabel?.startsWith('connectorConnect'),
     getLink: realization => {
       if (realization?.objectId === eXo.env.portal.profileOwnerIdentityId) {
         realization.link = `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/profile/${eXo.env.portal.profileOwner}`;
