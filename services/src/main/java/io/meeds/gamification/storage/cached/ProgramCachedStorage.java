@@ -26,12 +26,13 @@ import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.collections4.CollectionUtils;
-import org.picocontainer.Startable;
 
 import org.exoplatform.commons.cache.future.FutureCache;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.commons.file.services.FileService;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.container.RootContainer.PortalContainerPostCreateTask;
 import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.cache.ExoCache;
 import org.exoplatform.services.listener.Event;
@@ -51,9 +52,10 @@ import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.storage.ProgramStorage;
 import io.meeds.gamification.utils.Utils;
 
+import javax.servlet.ServletContext;
 import lombok.SneakyThrows;
 
-public class ProgramCachedStorage extends ProgramStorage implements Startable {
+public class ProgramCachedStorage extends ProgramStorage {
 
   private static final String                       PROGRAM_CACHE_NAME = "gamification.domain";
 
@@ -63,13 +65,14 @@ public class ProgramCachedStorage extends ProgramStorage implements Startable {
 
   private List<String>                              administrators;
 
-  public ProgramCachedStorage(FileService fileService,
+  public ProgramCachedStorage(FileService fileService, // NOSONAR
                               UploadService uploadService,
                               ProgramDAO programDAO,
                               RuleDAO ruleDAO,
                               CacheService cacheService,
                               ListenerService listenerService,
-                              OrganizationService organizationService) {
+                              OrganizationService organizationService,
+                              PortalContainer container) {
     super(fileService, uploadService, programDAO, ruleDAO, organizationService);
     ExoCache<Long, ProgramDTO> programCache = cacheService.getCacheInstance(PROGRAM_CACHE_NAME);
     Loader<Long, ProgramDTO, Object> programLoader = new Loader<>() {
@@ -101,13 +104,13 @@ public class ProgramCachedStorage extends ProgramStorage implements Startable {
     listenerService.addListener(POST_UPDATE_RULE_EVENT, new RuleUpdatedListener());
     organizationService.getMembershipHandler().addMembershipEventListener(new RewardingAdministratorMembershipListener());
     organizationService.getUserHandler().addUserEventListener(new RewardingAdministratorUserListener());
-  }
-
-  @Override
-  public void start() {
-    // Retrieve list of administrators
-    // In startup phase to populate Cache
-    CompletableFuture.runAsync(this::getAdministrators);
+    PortalContainer.addInitTask(container.getPortalContext(), new PortalContainerPostCreateTask() {
+      @Override
+      public void execute(ServletContext context, PortalContainer portalContainer) {
+        // Populate cache on startup
+        getAdministrators();
+      }
+    });
   }
 
   @Override
