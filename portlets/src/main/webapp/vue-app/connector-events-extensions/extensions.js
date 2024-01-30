@@ -1,8 +1,7 @@
 /*
- *
  * This file is part of the Meeds project (https://meeds.io/).
  *
- * Copyright (C) 2023 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,18 +16,18 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
-import './initComponents.js';
-import './extensions.js';
-
-// get overridden components if exists
-if (extensionRegistry) {
-  const components = extensionRegistry.loadComponents('engagementCenterEvent');
-  if (components?.length) {
-    components.forEach(cmp => {
-      Vue.component(cmp.componentName, cmp.componentOptions);
-    });
-  }
-}
-
-Vue.prototype.$utils?.includeExtensions?.('engagementCenterConnectorEvents');
+import '../connector-events-extensions/initComponents';
+extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-extensions', {
+  id: 'stream-event',
+  name: 'stream',
+  vueComponent: Vue.options.components['meeds-stream-event-form'],
+  isEnabled: (params) => [
+    'postActivity',
+    'postActivityComment',
+    'likeActivity',
+    'likeActivityComment',
+    'receiveCommentOnActivity',
+    'receiveLikeOnActivity',
+    'receiveLikeOnActivityComment',
+  ].includes(params?.trigger),
+});
