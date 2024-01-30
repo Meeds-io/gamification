@@ -331,6 +331,7 @@ export default {
     saving: false,
     eventMapping: [],
     eventProperties: null,
+    validEventProperties: false,
     value: '',
     eventExist: false,
     validDescription: false,
@@ -361,7 +362,7 @@ export default {
       'default_title': '-',
       'html': '-',
     },
-    extensibleEventTypes: []
+    isExtensibleEvent: false
   }),
   computed: {
     scoreRules() {
@@ -406,14 +407,11 @@ export default {
     prerequisiteRuleValid() {
       return !this.prerequisiteRuleCondition || this.rule.prerequisiteRules?.length;
     },
-    isExtensibleEvent() {
-      return this.extensibleEventTypes.includes(this.triggerType);
-    },
     secondStepValid() {
-      return (this.automaticType && ((this.isExtensibleEvent && this.eventProperties) || (!this.isExtensibleEvent && this.value))) || this.manualType;
+      return (this.automaticType && ((this.isExtensibleEvent && this.validEventProperties) || (!this.isExtensibleEvent && this.value))) || this.manualType;
     },
     disableNextButton() {
-      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.isValidForm || !this.ruleTypeValid || (this.automaticType && this.stepper === 2 && ((this.isExtensibleEvent && !this.eventProperties) || (!this.isExtensibleEvent && !this.value)));
+      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.isValidForm || !this.ruleTypeValid || (this.automaticType && this.stepper === 2 && ((this.isExtensibleEvent && !this.validEventProperties) || (!this.isExtensibleEvent && !this.value)));
     },
     disableSaveButton() {
       return !this.ruleChanged || this.disableNextButton || !this.durationValid || !this.recurrenceValid || !this.prerequisiteRuleValid || (this.enablePublication && !this.validMessage);
@@ -560,8 +558,9 @@ export default {
         this.$root.$emit('rule-form-drawer-opened', this.rule);
       });
     },
-    selectTrigger(trigger, triggerType, eventProperties) {
+    selectTrigger(trigger, triggerType, eventProperties, validEventProperties) {
       this.eventProperties = eventProperties;
+      this.validEventProperties = validEventProperties;
       this.value = trigger || null;
       this.triggerType = triggerType || null;
       const event = {
@@ -574,8 +573,8 @@ export default {
       };
       this.$set(this.rule, 'event', event);
     },
-    eventExtensionInitialized(types) {
-      this.extensibleEventTypes = types;
+    eventExtensionInitialized(extensible) {
+      this.isExtensibleEvent = extensible;
     },
     close() {
       this.$refs.ruleFormDrawer.close();
@@ -590,6 +589,7 @@ export default {
       this.$set(this.rule,'title','');
       this.rule.description = '';
       this.value = {};
+      this.validEventProperties = false;
     },
     saveRule() {
       this.saving = true;
