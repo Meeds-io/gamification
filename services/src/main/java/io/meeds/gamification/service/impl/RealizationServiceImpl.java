@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import io.meeds.gamification.plugin.EventPlugin;
 import io.meeds.gamification.service.*;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -98,7 +99,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   private RuleService           ruleService;
 
-  private EventService eventService;
+  private EventService          eventService;
 
   private IdentityManager       identityManager;
 
@@ -233,7 +234,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   @Override
   public List<RealizationDTO> createRealizations(String event,
-                                                 String eventDetails, 
+                                                 String eventDetails,
                                                  String earnerIdentityId,
                                                  String receiverIdentityId,
                                                  String objectId,
@@ -249,7 +250,10 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
     EventPlugin eventPlugin = eventService.getEventPlugin(event);
     if (eventPlugin != null) {
-      rules = rules.stream().filter(ruleDTO -> eventPlugin.isValidEvent(ruleDTO.getEvent(), eventDetails)).toList();
+      rules = rules.stream()
+                   .filter(ruleDTO -> MapUtils.isEmpty(ruleDTO.getEvent().getProperties())
+                       || eventPlugin.isValidEvent(ruleDTO.getEvent().getProperties(), eventDetails))
+                   .toList();
     }
     return rules.stream()
                 .distinct()
