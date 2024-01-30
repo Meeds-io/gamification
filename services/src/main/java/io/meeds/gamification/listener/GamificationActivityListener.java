@@ -18,23 +18,7 @@
  */
 package io.meeds.gamification.listener;
 
-import static io.meeds.gamification.constant.GamificationConstant.ACTIVITY_OBJECT_TYPE;
-import static io.meeds.gamification.constant.GamificationConstant.BROADCAST_GAMIFICATION_EVENT_ERROR;
-import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_LIKE_ACTIVITY;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_PIN_ACTIVITY_SPACE;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_POST_ACTIVITY;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY_COMMENT;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY_COMMENT;
-import static io.meeds.gamification.constant.GamificationConstant.OBJECT_ID_PARAM;
-import static io.meeds.gamification.constant.GamificationConstant.OBJECT_TYPE_PARAM;
-import static io.meeds.gamification.constant.GamificationConstant.RECEIVER_ID;
-import static io.meeds.gamification.constant.GamificationConstant.SENDER_ID;
-import static io.meeds.gamification.constant.GamificationConstant.SENDER_TYPE;
+import static io.meeds.gamification.constant.GamificationConstant.*;
 import static io.meeds.gamification.listener.GamificationGenericListener.CANCEL_EVENT_NAME;
 import static io.meeds.gamification.listener.GamificationGenericListener.DELETE_EVENT_NAME;
 import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
@@ -97,7 +81,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     createActivityGamificationHistoryEntry(activity.getPosterId(),
                                            activity.getStreamId(),
                                            GAMIFICATION_SOCIAL_POST_ACTIVITY,
-                                           activity.getId());
+                                           activity.getId(),
+                                           buildEventDetails(activity));
 
     // Add activity on Space Stream : Compute actor reward
     Space space = getSpaceOfActivity(activity);
@@ -106,23 +91,23 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
         createActivityGamificationHistoryEntry(activity.getStreamId(),
                                                activity.getPosterId(),
                                                GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY,
-                                               activity.getId());
+                                               activity.getId(),
+                                               buildEventDetails(activity));
       }
     } else {
       if (space.getManagers() != null && space.getManagers().length > 0) {
         String[] spaceManagers = space.getManagers();
         for (String spaceManager : spaceManagers) {
           Identity spaceManagerIdentity = identityManager.getOrCreateUserIdentity(spaceManager);
-          if (spaceManagerIdentity == null
-              || spaceManagerIdentity.isDeleted()
-              || !spaceManagerIdentity.isEnable()
+          if (spaceManagerIdentity == null || spaceManagerIdentity.isDeleted() || !spaceManagerIdentity.isEnable()
               || StringUtils.equals(spaceManagerIdentity.getId(), activity.getPosterId())) {
             continue;
           }
           createActivityGamificationHistoryEntry(spaceManagerIdentity.getId(),
                                                  activity.getPosterId(),
                                                  GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY,
-                                                 activity.getId());
+                                                 activity.getId(),
+                                                 buildEventDetails(activity));
         }
       }
     }
@@ -136,7 +121,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     createActivityGamificationHistoryEntry(userIdentityId,
                                            userIdentityId,
                                            GAMIFICATION_SOCIAL_PIN_ACTIVITY_SPACE,
-                                           activity.getId());
+                                           activity.getId(),
+                                           buildEventDetails(activity));
   }
 
   @Override
@@ -157,17 +143,20 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     createActivityGamificationHistoryEntry(activity.getPosterId(),
                                            parent.getPosterId(),
                                            GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT,
-                                           activity.getId());
+                                           activity.getId(),
+                                           buildEventDetails(parent));
     createActivityGamificationHistoryEntry(parent.getPosterId(),
                                            activity.getPosterId(),
                                            GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY_COMMENT,
-                                           activity.getId());
+                                           activity.getId(),
+                                           buildEventDetails(parent));
     Space space = getSpaceOfActivity(parent);
     if (space != null) {
       createSpaceGamificationHistoryEntry(space.getPrettyName(),
                                           activity.getPosterId(),
                                           GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT,
-                                          activity.getId());
+                                          activity.getId(),
+                                          buildEventDetails(parent));
     }
   }
 
@@ -188,18 +177,21 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     createActivityGamificationHistoryEntry(likerIdentityId,
                                            activity.getPosterId(),
                                            GAMIFICATION_SOCIAL_LIKE_ACTIVITY,
-                                           activity.getId());
+                                           activity.getId(),
+                                           buildEventDetails(activity));
     createActivityGamificationHistoryEntry(activity.getPosterId(),
                                            likerIdentityId,
                                            GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY,
-                                           activity.getId());
+                                           activity.getId(),
+                                           buildEventDetails(activity));
 
     Space space = getSpaceOfActivity(activity);
     if (space != null) {
       createSpaceGamificationHistoryEntry(space.getPrettyName(),
                                           likerIdentityId,
                                           GAMIFICATION_SOCIAL_LIKE_ACTIVITY,
-                                          activity.getId());
+                                          activity.getId(),
+                                          buildEventDetails(activity));
     }
   }
 
@@ -233,6 +225,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   @Override
   public void likeComment(ActivityLifeCycleEvent event) {
     ExoSocialActivity activity = event.getSource();
+    ExoSocialActivity parent = activityManager.getParentActivity(activity);
     String likerIdentityId = event.getUserId();
     if (StringUtils.equalsIgnoreCase(activity.getPosterId(), likerIdentityId)) {
       return;
@@ -241,19 +234,22 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     createActivityGamificationHistoryEntry(likerIdentityId,
                                            activity.getPosterId(),
                                            GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT,
-                                           activity.getId());
+                                           activity.getId(),
+                                           buildEventDetails(parent));
 
     createActivityGamificationHistoryEntry(activity.getPosterId(),
                                            likerIdentityId,
                                            GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY_COMMENT,
-                                           activity.getId());
+                                           activity.getId(),
+                                           buildEventDetails(parent));
 
     Space space = getSpaceOfActivity(activity);
     if (space != null) {
       createSpaceGamificationHistoryEntry(space.getPrettyName(),
                                           likerIdentityId,
                                           GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT,
-                                          activity.getId());
+                                          activity.getId(),
+                                          buildEventDetails(parent));
     }
   }
 
@@ -298,7 +294,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   private void createActivityGamificationHistoryEntry(String earnerIdentityId,
                                                       String receiverId,
                                                       String gamificationEventName,
-                                                      String activityId) {
+                                                      String activityId,
+                                                      String eventDetails) {
     Map<String, String> gam = new HashMap<>();
     try {
       gam.put(EVENT_NAME, gamificationEventName);
@@ -306,6 +303,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put(OBJECT_TYPE_PARAM, ACTIVITY_OBJECT_TYPE);
       gam.put(SENDER_ID, earnerIdentityId);
       gam.put(RECEIVER_ID, receiverId);
+      gam.put(EVENT_DETAILS_PARAM, eventDetails);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.warn(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
@@ -352,7 +350,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   private void createSpaceGamificationHistoryEntry(String spacePrettyName,
                                                    String receiverId,
                                                    String gamificationEventName,
-                                                   String activityId) {
+                                                   String activityId,
+                                                   String eventDetails) {
     Map<String, String> gam = new HashMap<>();
     try {
       gam.put(EVENT_NAME, gamificationEventName);
@@ -361,6 +360,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put(SENDER_ID, spacePrettyName);
       gam.put(SENDER_TYPE, SpaceIdentityProvider.NAME);
       gam.put(RECEIVER_ID, receiverId);
+      gam.put(EVENT_DETAILS_PARAM, eventDetails);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.warn(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
@@ -378,4 +378,16 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     }
   }
 
+  private String buildEventDetails(ExoSocialActivity activity) {
+    String eventDetails;
+
+    Space space = getSpaceOfActivity(activity);
+    if (space != null) {
+      String spaceId = space.getId();
+      eventDetails = "{spaceId: " + spaceId + ", activityId: " + activity.getId() + "}";
+    } else {
+      eventDetails = "{activityId: " + activity.getId() + "}";
+    }
+    return eventDetails;
+  }
 }
