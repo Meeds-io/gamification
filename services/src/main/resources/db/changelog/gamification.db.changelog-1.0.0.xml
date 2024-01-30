@@ -355,7 +355,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </modifySql>
     </changeSet>
 
-    <changeSet author="exo-gamification" id="1.0.0-25">
+    <changeSet author="exo-gamification" id="1.0.0-25" onValidationFail="MARK_RAN">
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="GAMIFICATION_ACTIONS_HISTORY" columnName="RULE_ID" />
@@ -452,7 +452,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </addColumn>
     </changeSet>
 
-    <changeSet author="exo-gamification" id="1.0.0-40">
+    <changeSet author="exo-gamification" id="1.0.0-40" onValidationFail="MARK_RAN">
         <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
