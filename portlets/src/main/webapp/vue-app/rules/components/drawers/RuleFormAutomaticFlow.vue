@@ -120,7 +120,7 @@
           </v-list-item-content>
         </template>
       </v-autocomplete>
-      <v-card v-if="trigger" flat>
+      <v-card v-if="trigger && isExtensibleEvent" flat>
         <extension-registry-components
           :params="params"
           name="engagementCenterEvent"
@@ -149,6 +149,10 @@ export default {
       type: Object,
       default: null
     },
+    validEventProperties: {
+      type: Boolean,
+      default: false
+    },
     programId: {
       type: Number,
       default: null,
@@ -160,15 +164,23 @@ export default {
     connectors: [],
     triggers: [],
     extensionApp: 'engagementCenterConnectors',
-    extensionEventApp: 'engagementCenterEvent',
     connectorExtensionType: 'connector-extensions',
-    connectorEventExtensionType: 'connector-event-extensions',
     connectorsExtensions: [],
-    connectorsEventComponentsExtensions: [],
     connectorComponentExtension: null,
+    actionValueExtensions: {},
+    extensionActionApp: 'engagementCenterActions',
+    actionValueExtensionType: 'user-actions',
     programEventsWithSameTrigger: [],
   }),
   computed: {
+    extensionAction() {
+      if (this.actionValueExtensions) {
+        return Object.values(this.actionValueExtensions)
+          .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
+          .find(extension => extension.match && extension.match(this.trigger)) || null;
+      }
+      return null;
+    },
     sortedTriggers() {
       const filteredTriggers = this.triggers?.length && this.triggers.slice() || [];
       return filteredTriggers.sort((a, b) => this.getTriggerLabel(a).localeCompare(this.getTriggerLabel(b)));
@@ -182,7 +194,7 @@ export default {
       };
     },
     isExtensibleEvent() {
-      return this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name).includes(this.selectedConnector);
+      return this.extensionAction?.isExtensible;
     },
   },
   watch: {
@@ -190,12 +202,13 @@ export default {
       if (this.selectedConnector) {
         this.trigger = null;
         this.triggers = [];
+        this.validEventProperties = false;
         this.retrieveTriggers();
       }
     },
-    eventProperties() {
+    validEventProperties() {
       if (this.selectedConnector) {
-        this.$emit('triggerUpdated', this.trigger, this.selectedConnector, this.eventProperties);
+        this.$emit('triggerUpdated', this.trigger, this.selectedConnector, this.eventProperties, this.validEventProperties);
         const index = this.programEventsWithSameTrigger.findIndex(event => JSON.stringify(event.properties) === JSON.stringify(this.eventProperties));
         if (index >= 0) {
           this.$root.$emit('alert-message', this.$t('rule.form.error.sameEventExistsInProgram'), 'warning');
@@ -205,14 +218,13 @@ export default {
   },
   created() {
     document.addEventListener(`extension-${this.extensionApp}-${this.connectorExtensionType}-updated`, this.refreshConnectorExtensions);
-    document.addEventListener(`component-${this.extensionEventApp}-${this.connectorEventExtensionType}-updated`, this.refreshConnectorExtensions);
     document.addEventListener('event-form-filled', (event) => {
-      if (event.detail) {
-        this.eventProperties = event.detail;
-      }
+      this.eventProperties = event?.detail ? event?.detail : null;
+      this.validEventProperties = true;
     });
     document.addEventListener('event-form-unfilled', () => {
       this.eventProperties = null;
+      this.validEventProperties = false;
     });
 
     if (this.selectedTrigger) {
@@ -228,10 +240,12 @@ export default {
         this.programEventsWithSameTrigger = result?.rules.map(rule => rule.event);
       });
     }
+    this.$root.$on('rule-actions-updated', this.refreshExtensions);
     this.init();
   },
   methods: {
     init() {
+      this.refreshExtensions();
       this.refreshConnectorExtensions();
       // Check connectors status from store
       this.loading = true;
@@ -253,9 +267,6 @@ export default {
         });
     },
     refreshConnectorExtensions() {
-      // Get list of connectors from extensionRegistry
-      this.connectorsEventComponentsExtensions = extensionRegistry.loadComponents(this.extensionEventApp) || [];
-      this.$emit('event-extension-initialized', this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name));
       this.connectorsExtensions = extensionRegistry.loadExtensions(this.extensionApp, this.connectorExtensionType) || [];
     },
     filterConnectors(item, queryText) {
@@ -289,6 +300,20 @@ export default {
               this.$root.$emit('alert-message', this.$t('rule.form.error.sameEventExistsInProgram'), 'warning');
             }
             this.$emit('triggerUpdated', this.trigger, this.selectedConnector);
+          }
+          this.$emit('event-extension-initialized', this.isExtensibleEvent);
+        });
+      }
+    },
+    refreshExtensions() {
+      if (this.$root.actionValueExtensions && Object.keys(this.$root.actionValueExtensions).length) {
+        this.actionValueExtensions = this.$root.actionValueExtensions;
+      } else {
+        this.$utils.includeExtensions('engagementCenterActions');
+        const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
+        extensions.forEach(extension => {
+          if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
+            this.$set(this.actionValueExtensions, extension.type, extension.options);
           }
         });
       }
