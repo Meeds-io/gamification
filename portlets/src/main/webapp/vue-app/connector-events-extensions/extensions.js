@@ -24,10 +24,8 @@ extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-ex
   isEnabled: (params) => [
     'postActivity',
     'postActivityComment',
-    'pinActivityOnSpace',
     'likeActivity',
     'likeActivityComment',
-    'receiveActivity',
     'receiveCommentOnActivity',
     'receiveLikeOnActivity',
     'receiveLikeOnActivityComment',
