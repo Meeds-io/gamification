@@ -194,7 +194,7 @@ export default {
       };
     },
     isExtensibleEvent() {
-      return this.extensionAction?.isExtensible && !this.extensionAction?.notExtensible.includes(this.trigger);
+      return this.extensionAction?.isExtensible && !this.extensionAction?.notExtensible?.includes(this.trigger);
     },
   },
   watch: {
