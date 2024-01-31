@@ -309,8 +309,8 @@ export default {
             if (index >= 0) {
               this.$root.$emit('alert-message', this.$t('rule.form.error.sameEventExistsInProgram'), 'warning');
             }
-            this.$emit('triggerUpdated', this.trigger, this.selectedConnector);
           }
+          this.$emit('triggerUpdated', this.trigger, this.selectedConnector, this.eventProperties, true);
         });
       }
     },
