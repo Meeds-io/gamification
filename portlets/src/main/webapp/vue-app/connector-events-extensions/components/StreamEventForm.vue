@@ -91,7 +91,7 @@ export default {
       return this.trigger !== 'postActivity';
     },
     inSpaceLabel() {
-      return this.canSpecifyActivity ? this.$t('gamification.event.detail.activityInSpace.label') : this.$t('gamification.event.detail.onlyCneSpace.label');
+      return this.canSpecifyActivity ? this.$t('gamification.event.detail.activityInSpace.label') : this.$t('gamification.event.detail.onlyOneSpace.label');
     },
     anyLabel() {
       return this.canSpecifyActivity ? this.$t('gamification.event.detail.anyActivity.label') : this.$t('gamification.event.detail.anySpace.label');

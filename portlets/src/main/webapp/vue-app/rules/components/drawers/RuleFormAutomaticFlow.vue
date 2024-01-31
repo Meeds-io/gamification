@@ -156,6 +156,10 @@ export default {
     programId: {
       type: Number,
       default: null,
+    },
+    ruleId: {
+      type: Number,
+      default: null,
     }
   },
   data: () => ({
@@ -213,7 +217,11 @@ export default {
           this.$root.$emit('alert-message', this.$t('rule.form.error.sameEventExistsInProgram'), 'warning');
         }
       }
+    },
+    extensionAction() {
+      this.$emit('event-extension-initialized', this.isExtensibleEvent);
     }
+
   },
   created() {
     document.addEventListener(`extension-${this.extensionApp}-${this.connectorExtensionType}-updated`, this.refreshConnectorExtensions);
@@ -239,7 +247,7 @@ export default {
         dateFilter: 'ACTIVE',
         eventName: this.trigger,
       }).then(result => {
-        this.programEventsWithSameTrigger = result?.rules.map(rule => rule.event);
+        this.programEventsWithSameTrigger = result?.rules.filter(rule => this.ruleId !== rule.id).map(rule => rule.event);
       });
     }
     this.$root.$on('rule-actions-updated', this.refreshExtensions);
@@ -303,7 +311,6 @@ export default {
             }
             this.$emit('triggerUpdated', this.trigger, this.selectedConnector);
           }
-          this.$emit('event-extension-initialized', this.isExtensibleEvent);
         });
       }
     },
