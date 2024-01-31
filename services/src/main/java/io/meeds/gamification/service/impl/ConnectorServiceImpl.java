@@ -41,7 +41,6 @@ import io.meeds.gamification.service.ConnectorService;
 import io.meeds.gamification.service.ConnectorSettingService;
 import io.meeds.gamification.storage.ConnectorAccountStorage;
 import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
-import static io.meeds.gamification.utils.Utils.capitalizeFirstLetter;
 
 public class ConnectorServiceImpl implements ConnectorService {
 
@@ -205,7 +204,7 @@ public class ConnectorServiceImpl implements ConnectorService {
 
   private void createGamificationRealization(String connectorName, String userIdentityId) {
     try {
-      connectorName = capitalizeFirstLetter(connectorName);
+      connectorName = StringUtils.capitalize(connectorName);
       Map<String, String> gam = new HashMap<>();
       gam.put("senderId", userIdentityId);
       gam.put("receiverId", userIdentityId);
