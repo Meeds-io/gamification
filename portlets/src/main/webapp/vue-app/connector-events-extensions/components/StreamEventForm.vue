@@ -24,8 +24,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-radio-group v-model="activity" @change="changeSelection">
       <v-radio
         value="ANY"
-        :label="$t('gamification.event.detail.anyActivity.label')" />
-      <v-radio value="ANY_IN_SPACE" :label="$t('gamification.event.detail.activityInSpace.label')" />
+        :label="anyLabel" />
+      <v-radio value="ANY_IN_SPACE" :label="inSpaceLabel" />
       <exo-identity-suggester
         v-if="activity === 'ANY_IN_SPACE'"
         ref="spacesSuggester"
@@ -90,6 +90,12 @@ export default {
     canSpecifyActivity() {
       return this.trigger !== 'postActivity';
     },
+    inSpaceLabel() {
+      return this.canSpecifyActivity ? this.$t('gamification.event.detail.activityInSpace.label') : this.$t('gamification.event.detail.onlyCneSpace.label');
+    },
+    anyLabel() {
+      return this.canSpecifyActivity ? this.$t('gamification.event.detail.anyActivity.label') : this.$t('gamification.event.detail.anySpace.label');
+    },
     spaceSuggesterLabels() {
       return {
         placeholder: this.$t('activity.composer.audience.placeholder'),
@@ -132,12 +138,8 @@ export default {
     } else if (this.properties?.activityId) {
       this.activity = 'ONE_ACTIVITY';
       this.activityLink = `${window.location.origin}/${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.properties?.activityId}`;
-    } else if (this.properties?.activity === 'any')
-    {
+    } else if (this.properties?.activity === 'any') {
       this.activity = 'ANY';
-    }
-    if (!this.properties) {
-      document.dispatchEvent(new CustomEvent('event-form-filled'));
     }
   },
   methods: {
