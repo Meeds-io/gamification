@@ -194,7 +194,7 @@ export default {
       };
     },
     isExtensibleEvent() {
-      return this.extensionAction?.isExtensible;
+      return this.extensionAction?.isExtensible && !this.extensionAction?.notExtensible.includes(this.trigger);
     },
   },
   watch: {
@@ -207,8 +207,7 @@ export default {
       }
     },
     validEventProperties() {
-      if (this.selectedConnector) {
-        this.$emit('triggerUpdated', this.trigger, this.selectedConnector, this.eventProperties, this.validEventProperties);
+      if (this.validEventProperties) {
         const index = this.programEventsWithSameTrigger.findIndex(event => JSON.stringify(event.properties) === JSON.stringify(this.eventProperties));
         if (index >= 0) {
           this.$root.$emit('alert-message', this.$t('rule.form.error.sameEventExistsInProgram'), 'warning');
@@ -221,10 +220,13 @@ export default {
     document.addEventListener('event-form-filled', (event) => {
       this.eventProperties = event?.detail ? event?.detail : null;
       this.validEventProperties = true;
+      this.$emit('triggerUpdated', this.trigger, this.selectedConnector, this.eventProperties, true);
+
     });
     document.addEventListener('event-form-unfilled', () => {
       this.eventProperties = null;
       this.validEventProperties = false;
+      this.$emit('triggerUpdated', this.trigger, this.selectedConnector, this.eventProperties, false);
     });
 
     if (this.selectedTrigger) {

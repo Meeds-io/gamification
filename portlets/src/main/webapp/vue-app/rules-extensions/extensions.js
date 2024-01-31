@@ -37,7 +37,8 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     getLink: (realization) => {
       Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${realization?.objectId}`);
     },
-    isExtensible: true
+    isExtensible: true,
+    notExtensible: ['pinActivityOnSpace', 'receiveActivity']
   },
 });
 

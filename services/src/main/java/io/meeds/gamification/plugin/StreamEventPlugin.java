@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.meeds.gamification.model.EventDTO;
 
 public class StreamEventPlugin extends EventPlugin {
 
@@ -38,27 +37,20 @@ public class StreamEventPlugin extends EventPlugin {
   public List<String> getTriggers() {
     return List.of(GAMIFICATION_SOCIAL_POST_ACTIVITY,
                    GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT,
-                   GAMIFICATION_SOCIAL_PIN_ACTIVITY_SPACE,
                    GAMIFICATION_SOCIAL_LIKE_ACTIVITY,
                    GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT,
-                   GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY,
                    GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY_COMMENT,
                    GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY,
                    GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY_COMMENT);
   }
 
   @Override
-  public boolean isValidEvent(EventDTO eventDTO, String triggerDetails) {
-    Map<String, String> properties = eventDTO.getProperties();
-    if (properties.isEmpty()) {
-      return true;
-    } else {
-      String desiredActivityId = eventDTO.getProperties().get("activityId");
-      String desiredSpaceId = eventDTO.getProperties().get("spaceId");
-      Map<String, String> triggerDetailsMop = stringToMap(triggerDetails);
-      return (desiredActivityId != null && desiredActivityId.equals(triggerDetailsMop.get("activityId")))
-          || (desiredSpaceId != null && desiredSpaceId.equals(triggerDetailsMop.get("spaceId")));
-    }
+  public boolean isValidEvent(Map<String, String> eventProperties, String triggerDetails) {
+    String desiredActivityId = eventProperties.get("activityId");
+    String desiredSpaceId = eventProperties.get("spaceId");
+    Map<String, String> triggerDetailsMop = stringToMap(triggerDetails);
+    return (desiredActivityId != null && desiredActivityId.equals(triggerDetailsMop.get("activityId")))
+        || (desiredSpaceId != null && desiredSpaceId.equals(triggerDetailsMop.get("spaceId")));
   }
 
   private static Map<String, String> stringToMap(String mapAsString) {

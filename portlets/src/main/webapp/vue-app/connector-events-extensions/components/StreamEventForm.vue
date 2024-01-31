@@ -17,7 +17,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app>
+  <v-app v-if="isEditing">
     <v-card-text class="px-0 pb-0 dark-grey-color font-weight-bold">
       {{ $t('gamification.event.detail.activity.label') }}
     </v-card-text>
@@ -68,6 +68,10 @@ export default {
     trigger: {
       type: String,
       default: null
+    },
+    isEditing: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -84,12 +88,12 @@ export default {
   },
   computed: {
     canSpecifyActivity() {
-      return !['postActivity', 'receiveActivity'].includes(this.trigger);
+      return this.trigger !== 'postActivity';
     },
     spaceSuggesterLabels() {
       return {
-        placeholder: this.$t('gamification.event.detail.audience.placeholder'),
-        noDataLabel: this.$t('gamification.event.detail.audience.noDataLabel'),
+        placeholder: this.$t('activity.composer.audience.placeholder'),
+        noDataLabel: this.$t('activity.composer.audience.noDataLabel'),
       };
     },
   },

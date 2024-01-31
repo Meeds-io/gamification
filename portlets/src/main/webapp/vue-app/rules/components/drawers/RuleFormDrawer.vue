@@ -551,6 +551,7 @@ export default {
       this.selectedTrigger = this.rule?.event?.title;
       this.triggerType = this.rule?.event?.type;
       this.eventProperties = this.rule?.event?.properties;
+      this.validEventProperties = true;
       if (this.$refs.ruleFormDrawer) {
         this.$refs.ruleFormDrawer.open();
       }
