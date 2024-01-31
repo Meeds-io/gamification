@@ -144,19 +144,19 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
                                            parent.getPosterId(),
                                            GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT,
                                            activity.getId(),
-                                           buildEventDetails(activity));
+                                           buildEventDetails(parent));
     createActivityGamificationHistoryEntry(parent.getPosterId(),
                                            activity.getPosterId(),
                                            GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY_COMMENT,
                                            activity.getId(),
-                                           buildEventDetails(activity));
+                                           buildEventDetails(parent));
     Space space = getSpaceOfActivity(parent);
     if (space != null) {
       createSpaceGamificationHistoryEntry(space.getPrettyName(),
                                           activity.getPosterId(),
                                           GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT,
                                           activity.getId(),
-                                          buildEventDetails(activity));
+                                          buildEventDetails(parent));
     }
   }
 
@@ -225,6 +225,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   @Override
   public void likeComment(ActivityLifeCycleEvent event) {
     ExoSocialActivity activity = event.getSource();
+    ExoSocialActivity parent = activityManager.getParentActivity(activity);
     String likerIdentityId = event.getUserId();
     if (StringUtils.equalsIgnoreCase(activity.getPosterId(), likerIdentityId)) {
       return;
@@ -234,13 +235,13 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
                                            activity.getPosterId(),
                                            GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT,
                                            activity.getId(),
-                                           buildEventDetails(activity));
+                                           buildEventDetails(parent));
 
     createActivityGamificationHistoryEntry(activity.getPosterId(),
                                            likerIdentityId,
                                            GAMIFICATION_SOCIAL_RECEIVE_LIKE_ACTIVITY_COMMENT,
                                            activity.getId(),
-                                           buildEventDetails(activity));
+                                           buildEventDetails(parent));
 
     Space space = getSpaceOfActivity(activity);
     if (space != null) {
@@ -248,7 +249,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
                                           likerIdentityId,
                                           GAMIFICATION_SOCIAL_LIKE_ACTIVITY_COMMENT,
                                           activity.getId(),
-                                          buildEventDetails(activity));
+                                          buildEventDetails(parent));
     }
   }
 
