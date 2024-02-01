@@ -30,5 +30,4 @@ extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-ex
     'receiveLikeOnActivity',
     'receiveLikeOnActivityComment',
   ].includes(params?.trigger),
-  rank: 1,
 });

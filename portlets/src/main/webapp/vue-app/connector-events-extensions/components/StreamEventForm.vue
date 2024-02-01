@@ -88,7 +88,7 @@ export default {
   },
   computed: {
     canSpecifyActivity() {
-      return this.trigger !== 'postActivity';
+      return ['postActivityComment', 'likeActivity'].includes(this.trigger);
     },
     inSpaceLabel() {
       return this.canSpecifyActivity ? this.$t('gamification.event.detail.activityInSpace.label') : this.$t('gamification.event.detail.onlyOneSpace.label');
@@ -115,7 +115,12 @@ export default {
       } else if (this.activity === 'ANY_IN_SPACE'){
         document.dispatchEvent(new CustomEvent('event-form-unfilled'));
       }
-    }
+    },
+    trigger() {
+      this.activity = 'ANY';
+      this.isValidLink = true;
+      document.dispatchEvent(new CustomEvent('event-form-filled'));
+    },
   },
   created() {
     if (this.properties?.spaceId) {
@@ -140,6 +145,8 @@ export default {
       this.activityLink = `${window.location.origin}/${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.properties?.activityId}`;
     } else if (this.properties?.activity === 'any') {
       this.activity = 'ANY';
+    } else {
+      document.dispatchEvent(new CustomEvent('event-form-filled'));
     }
   },
   methods: {
