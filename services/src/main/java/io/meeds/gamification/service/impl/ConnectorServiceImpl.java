@@ -112,7 +112,7 @@ public class ConnectorServiceImpl implements ConnectorService {
       if (remoteConnectorSettings != null) {
         remoteConnector.setApiKey(remoteConnectorSettings.getApiKey());
         remoteConnector.setRedirectUrl(remoteConnectorSettings.getRedirectUrl());
-        if (featureService.isFeatureActiveForUser(StringUtils.upperCase(connectorName)+"Connector", username)) {
+        if (featureService.isFeatureActiveForUser(StringUtils.upperCase(connectorName) + "Connector", username)) {
           remoteConnector.setEnabled(true);
         } else {
           remoteConnector.setEnabled(remoteConnectorSettings.isEnabled());
