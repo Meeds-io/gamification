@@ -261,7 +261,7 @@ export default {
       this.loading = true;
       return this.$gamificationConnectorService.getConnectors(eXo.env.portal.userName)
         .then(connectors => {
-          const enabledConnectors = connectors?.filter(connector => connector.enabled || (eXo.env.portal.EvmConnectorEnabled && connector.name === 'evm')) || [];
+          const enabledConnectors = connectors?.filter(connector => connector.enabled) || [];
           const connectorsToDisplay = this.connectorsExtensions.filter(connectorExtension => enabledConnectors.some(item => item.name === connectorExtension.name) || connectorExtension.defaultConnector) || [];
           this.connectors.push(...connectorsToDisplay);
         }).then(() => {
