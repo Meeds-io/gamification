@@ -592,6 +592,7 @@ export default {
       this.rule.description = '';
       this.value = {};
       this.validEventProperties = false;
+      this.isExtensibleEvent = false;
     },
     saveRule() {
       this.saving = true;
