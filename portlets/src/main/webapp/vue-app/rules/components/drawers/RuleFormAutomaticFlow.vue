@@ -225,7 +225,7 @@ export default {
     },
     trigger() {
       if (!this.isExtensibleEvent) {
-        this.$emit('triggerUpdated', this.trigger, this.triggerType, this.eventProperties, true);
+        this.$emit('triggerUpdated', this.trigger, this.selectedConnector ? this.selectedConnector : this.triggerType, this.eventProperties, true);
       }
     }
   },
