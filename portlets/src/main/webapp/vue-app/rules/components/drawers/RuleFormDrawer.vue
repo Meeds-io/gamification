@@ -576,7 +576,9 @@ export default {
       this.$set(this.rule, 'event', event);
     },
     eventExtensionInitialized(extensible) {
-      this.isExtensibleEvent = extensible;
+      if (extensible) {
+        this.isExtensibleEvent = extensible;
+      }
     },
     close() {
       this.$refs.ruleFormDrawer.close();
