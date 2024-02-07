@@ -15,6 +15,7 @@ import RuleRecurrence from './components/detail/RuleRecurrence.vue';
 import RuleRecurrenceValidity from './components/detail/RuleRecurrenceValidity.vue';
 import RulePrerequisites from './components/detail/RulePrerequisites.vue';
 import RulePrerequisiteItem from './components/detail/RulePrerequisiteItem.vue';
+import RuleConnectorPrerequisiteItem from './components/detail/RuleConnectorPrerequisiteItem.vue';
 import RuleAnnouncementForm from './components/detail/RuleAnnouncementForm.vue';
 import RulePoints from './components/detail/RulePoints.vue';
 import RuleDateStart from './components/detail/RuleDateStart.vue';
@@ -64,6 +65,7 @@ const components = {
   'engagement-center-rule-announcement-form': RuleAnnouncementForm,
   'engagement-center-rule-prerequisites': RulePrerequisites,
   'engagement-center-rule-prerequisite-item': RulePrerequisiteItem,
+  'engagement-center-rule-connector-prerequisite-item': RuleConnectorPrerequisiteItem,
 
   'engagement-center-rule-extensions': RuleExtensions,
 
