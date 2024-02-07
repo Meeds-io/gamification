@@ -39,7 +39,10 @@ export default {
         .then(connectors => {
           this.connectors = connectors;
           extensions.forEach(extension => {
-            extension.identifier = this.connectors.find(connector => connector.name === extension.name)?.identifier;
+            const connector = this.connectors.find(item => item.name === extension.name);
+            extension.identifier = connector?.identifier;
+            extension.redirectUrl = connector?.redirectUrl;
+            extension.apiKey = connector?.apiKey;
           });
           this.$root.connectorValueExtensions = Object.assign({}, extensions);
         });
