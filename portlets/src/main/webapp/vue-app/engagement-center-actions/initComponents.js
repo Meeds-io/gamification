@@ -22,6 +22,7 @@ import Rules from './components/Rules.vue';
 
 import RuleCard from './components/card/RuleCard.vue';
 import RuleCardMaskContent from './components/card/RuleCardMaskContent.vue';
+import RuleCardMaskConnector from './components/card/RuleCardMaskConnector.vue';
 import RuleCardMaskPrequisiteRules from './components/card/RuleCardMaskPrequisiteRules.vue';
 import RuleCardMaskRemainingDates from './components/card/RuleCardMaskRemainingDates.vue';
 import RuleCardMaskRecurrence from './components/card/RuleCardMaskRecurrence.vue';
@@ -48,6 +49,7 @@ const components = {
   'engagement-center-rules-filter-drawer': RulesFilterDrawer,
   'engagement-center-rule-card': RuleCard,
   'engagement-center-rule-card-mask-content': RuleCardMaskContent,
+  'engagement-center-rule-card-mask-connector': RuleCardMaskConnector,
   'engagement-center-rule-card-mask-prequisite-rules': RuleCardMaskPrequisiteRules,
   'engagement-center-rule-card-mask-remaining-dates': RuleCardMaskRemainingDates,
   'engagement-center-rule-card-mask-recurrence': RuleCardMaskRecurrence,
