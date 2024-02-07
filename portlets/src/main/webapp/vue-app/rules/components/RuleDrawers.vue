@@ -31,6 +31,7 @@
       :cancel-label="$t('programs.details.cancel.button')"
       @ok="deleteRule" />
     <engagement-center-rule-extensions />
+    <engagement-center-user-connectors-extensions />
   </div>
 </template>
 <script>

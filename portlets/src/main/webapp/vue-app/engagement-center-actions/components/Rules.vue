@@ -19,6 +19,8 @@
 -->
 <template>
   <v-app class="card-border-radius overflow-hidden">
+    <engagement-center-user-connectors-extensions />
+    <engagement-center-rule-extensions />
     <main
       id="rulesList"
       :class="classWelcomeMessage"
@@ -87,7 +89,6 @@
         :is-administrator="isAdministrator"
         @apply="applyFilter" />
     </main>
-    <engagement-center-rule-extensions />
   </v-app>
 </template>
 <script>
