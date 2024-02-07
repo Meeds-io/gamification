@@ -223,11 +223,6 @@ export default {
     extensionAction() {
       this.$emit('event-extension-initialized', this.isExtensibleEvent);
     },
-    trigger() {
-      if (!this.isExtensibleEvent) {
-        this.$emit('triggerUpdated', this.trigger, this.selectedConnector ? this.selectedConnector : this.triggerType, this.eventProperties, true);
-      }
-    }
   },
   created() {
     document.addEventListener(`extension-${this.extensionApp}-${this.connectorExtensionType}-updated`, this.refreshConnectorExtensions);
@@ -318,6 +313,9 @@ export default {
             }
           }
         }).finally(window.setTimeout(() => this.initialized = true, 10));
+        if (!this.isExtensibleEvent) {
+          this.$emit('triggerUpdated', this.trigger, this.selectedConnector ? this.selectedConnector : this.triggerType, this.eventProperties, true);
+        }
       }
     },
     refreshExtensions() {
