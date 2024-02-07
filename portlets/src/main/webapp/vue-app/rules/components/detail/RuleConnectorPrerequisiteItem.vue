@@ -28,7 +28,7 @@
         v-if="image"
         :src="image"
         alt=""
-        width="50">
+        width="30">
       <v-icon
         v-else
         class="white--text mb-4"
@@ -83,7 +83,7 @@ export default {
       return this.iconColorClass || this.extension?.iconColorClass || 'white';
     },
     image() {
-      return this.extension?.image;
+      return this.extension?.imageCard || this.extension?.image;
     },
     connectorName() {
       return  this.extension?.name.charAt(0).toUpperCase() +  this.extension?.name.slice(1);
