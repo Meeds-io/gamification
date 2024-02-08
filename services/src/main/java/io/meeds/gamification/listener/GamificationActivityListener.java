@@ -24,11 +24,15 @@ import static io.meeds.gamification.listener.GamificationGenericListener.DELETE_
 import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -47,7 +51,9 @@ import io.meeds.gamification.service.RuleService;
 
 public class GamificationActivityListener extends ActivityListenerPlugin {
 
-  private static final Log        LOG = ExoLogger.getLogger(GamificationActivityListener.class);
+  protected static final String   EXCLUDE_COMMENT_TYPES_PARAM = "exclude.commentTypes";
+
+  private static final Log        LOG                         = ExoLogger.getLogger(GamificationActivityListener.class);
 
   protected final RuleService     ruleService;
 
@@ -59,16 +65,26 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   protected final ListenerService listenerService;
 
+  protected final List<String>    excludedCommentTypes;
+
   public GamificationActivityListener(RuleService ruleService,
                                       IdentityManager identityManager,
                                       ActivityManager activityManager,
                                       SpaceService spaceService,
-                                      ListenerService listenerService) {
+                                      ListenerService listenerService,
+                                      InitParams params) {
     this.ruleService = ruleService;
     this.identityManager = identityManager;
     this.spaceService = spaceService;
     this.activityManager = activityManager;
     this.listenerService = listenerService;
+    if (params != null
+        && params.containsKey(EXCLUDE_COMMENT_TYPES_PARAM)
+        && CollectionUtils.isNotEmpty(params.getValuesParam(EXCLUDE_COMMENT_TYPES_PARAM).getValues())) {
+      excludedCommentTypes = params.getValuesParam(EXCLUDE_COMMENT_TYPES_PARAM).getValues();
+    } else {
+      excludedCommentTypes = Collections.emptyList();
+    }
   }
 
   @Override
@@ -136,7 +152,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   public void saveComment(ActivityLifeCycleEvent event) {
     ExoSocialActivity activity = event.getSource();
     ExoSocialActivity parent = activityManager.getParentActivity(activity);
-    if (parent == null) {
+    if (parent == null
+        || (StringUtils.isNotBlank(activity.getType()) && excludedCommentTypes.contains(activity.getType()))) {
       return;
     }
 
