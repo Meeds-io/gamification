@@ -145,6 +145,7 @@
               class="px-0 py-6 rule-has-validity-message">
               <engagement-center-rule-disabled
                 v-if="isDisabled" />
+              <engagement-center-rule-connector-prerequisite-item v-else-if="isRequireConnectorConnection" :extension="connectorValueExtension" />
               <engagement-center-rule-invalid-audience
                 v-else-if="!isValidAudience" />
               <engagement-center-rule-invalid-whitelist
@@ -258,6 +259,7 @@ export default {
         || !this.isValidAudience
         || !this.isValidWhitelist
         || this.isDisabled
+        || this.isRequireConnectorConnection
         || false;
     },
     hasRecurrence() {
@@ -271,6 +273,9 @@ export default {
           || this.rule?.deleted
           || !this.rule?.program?.enabled
           || this.rule?.program?.deleted;
+    },
+    isRequireConnectorConnection() {
+      return this.connectorValueExtension?.identifier === null;
     },
     isValidWhitelist() {
       return this.rule?.userInfo?.context?.validWhitelist;
@@ -308,6 +313,18 @@ export default {
     },
     spaceId() {
       return this.rule?.program?.spaceId;
+    },
+    eventType() {
+      return this.rule?.event?.type;
+    },
+    connectorValueExtensions() {
+      return this.$root.connectorValueExtensions;
+    },
+    connectorValueExtension() {
+      return this.rule?.event?.type
+          && Object.values(this.connectorValueExtensions)
+            .find(extension => extension?.name === this.eventType)
+          || null;
     },
     isExtensibleEvent() {
       return this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name).includes(this.rule?.event?.type);
@@ -360,6 +377,7 @@ export default {
     document.addEventListener('rule-detail-drawer-by-id-event', event => this.openById(event?.detail?.ruleId, event?.detail?.openAnnouncement));
     document.addEventListener(`component-${this.extensionEventApp}-${this.connectorEventExtensionType}-updated`, this.refreshConnectorExtensions);
     this.refreshConnectorExtensions();
+    this.$connectorWebSocket.initCometd(this.handleConnectorIdentifierUpdates);
   },
   methods: {
     open(ruleToDisplay, displayAnnouncementForm, goBackButton, updatePath) {
@@ -506,6 +524,9 @@ export default {
       this.connectorsEventComponentsExtensions = extensionRegistry.loadComponents(this.extensionEventApp) || [];
       this.$emit('event-extension-initialized', this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name));
     },
+    handleConnectorIdentifierUpdates(updateParams) {
+      this.$root.$emit('gamification-connector-identifier-updated', updateParams);
+    }
   }
 };
 </script>

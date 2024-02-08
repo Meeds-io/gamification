@@ -110,6 +110,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>gamificationConnectorEvents</module>
       </depends>
       <depends>
+        <module>gamificationUserConnectors</module>
+      </depends>
+      <depends>
         <module>usersLeaderboardCommon</module>
       </depends>
       <depends>
@@ -158,6 +161,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>gamificationConnectorEvents</module>
+      </depends>
+      <depends>
+        <module>gamificationUserConnectors</module>
       </depends>
       <depends>
         <module>usersLeaderboardCommon</module>
@@ -348,7 +354,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <portlet>
     <name>ConnectorUserProfile</name>
     <module>
-      <load-group>gamification-user-connectors</load-group>
       <script>
         <minify>false</minify>
         <path>/js/connectorUserProfile.bundle.js</path>
@@ -363,7 +368,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>commonVueComponents</module>
       </depends>
       <depends>
-        <module>connectorExtensions</module>
+        <module>gamificationUserConnectors</module>
       </depends>
       <depends>
         <module>jquery</module>
@@ -590,7 +595,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <portlet>
     <name>ConnectorUserSettings</name>
     <module>
-      <load-group>gamification-user-connectors</load-group>
       <script>
         <minify>false</minify>
         <path>/js/connectorUserSettings.bundle.js</path>
@@ -611,11 +615,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>commonVueComponents</module>
       </depends>
       <depends>
-        <module>connectorExtensions</module>
-      </depends>
-      <depends>
-        <module>commons-cometd3</module>
-        <as>cCometd</as>
+        <module>gamificationUserConnectors</module>
       </depends>
     </module>
   </portlet>
@@ -940,6 +940,40 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </module>
 
   <module>
+    <name>gamificationUserConnectors</name>
+    <load-group>gamification-user-connectors</load-group>
+    <script>
+      <minify>false</minify>
+      <path>/js/connectorUserExtensions.bundle.js</path>
+    </script>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>vuetify</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>connectorExtensions</module>
+    </depends>
+    <depends>
+      <module>ruleExtensions</module>
+    </depends>
+    <depends>
+      <module>commons-cometd3</module>
+      <as>cCometd</as>
+    </depends>
+  </module>
+
+  <module>
     <name>gamificationAdminConnectors</name>
     <load-group>gamification-admin-connectors</load-group>
     <script>
@@ -1034,6 +1068,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>gamificationConnectorEvents</module>
+    </depends>
+    <depends>
+      <module>gamificationUserConnectors</module>
     </depends>
     <depends>
       <module>translationField</module>
