@@ -70,6 +70,10 @@
           <engagement-center-rule-card-mask-prequisite-rules
             v-else-if="!isValidPrerequities"
             :rule="ruleWithProgram" />
+          <engagement-center-rule-card-mask-connector
+            v-else-if="isRequireConnectorConnection"
+            :extension="connectorValueExtension"
+            :title="rule.title" />
         </engagement-center-card-mask>
       </div>
       <v-card
@@ -142,6 +146,7 @@ export default {
   },
   data: () => ({
     showMenu: false,
+    connectorValueExtensions: []
   }),
   computed: {
     ruleProgram() {
@@ -168,7 +173,7 @@ export default {
       return this.rule?.description;
     },
     isValid() {
-      return this.noValidation || this.rule?.userInfo?.context?.valid;
+      return (this.noValidation || this.rule?.userInfo?.context?.valid) && !this.isRequireConnectorConnection;
     },
     isValidDates() {
       return this.rule?.userInfo?.context?.validDates;
@@ -189,6 +194,18 @@ export default {
     isValidWhitelist() {
       return this.rule?.userInfo?.context?.validWhitelist;
     },
+    eventType() {
+      return this.rule?.event?.type;
+    },
+    connectorValueExtension() {
+      return this.rule?.event?.type
+          && Object.values(this.connectorValueExtensions)
+            .find(extension => extension?.name === this.eventType)
+          || null;
+    },
+    isRequireConnectorConnection() {
+      return this.ruleEvent && this.connectorValueExtension?.identifier === null;
+    },
     programStyle() {
       return this.ruleProgram?.color && `border: 1px solid ${this.ruleProgram.color} !important;` || '';
     },
@@ -205,6 +222,10 @@ export default {
         }, 200);
       }
     });
+    this.$root.$on('connector-value-extensions-updated', (connectorValueExtensions) => {
+      this.connectorValueExtensions = connectorValueExtensions;
+    });
+    this.connectorValueExtensions = this.$root.connectorValueExtensions;
   },
 };
 </script>
