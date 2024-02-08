@@ -18,22 +18,27 @@ package io.meeds.gamification.listener;
 
 import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_PIN_ACTIVITY_SPACE;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY_COMMENT;
+import static io.meeds.gamification.listener.GamificationActivityListener.EXCLUDE_COMMENT_TYPES_PARAM;
 import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.container.xml.ValuesParam;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -63,27 +68,90 @@ public class GamificationActivityListenerTest {
 
   @Test
   public void testActivityPin() throws Exception {
-    testEventTrigger(GAMIFICATION_SOCIAL_PIN_ACTIVITY_SPACE, (listener, event) -> listener.pinActivity(event));
-  }
-
-  private void testEventTrigger(String expectedGamifiedEvent,
-                                BiConsumer<GamificationActivityListener, ActivityLifeCycleEvent> consumer) throws Exception {
     GamificationActivityListener gamificationActivityListener = new GamificationActivityListener(ruleService,
                                                                                                  identityManager,
                                                                                                  activityManager,
                                                                                                  spaceService,
-                                                                                                 listenerService);
+                                                                                                 listenerService,
+                                                                                                 null);
 
     ExoSocialActivity activity = mock(ExoSocialActivity.class);
     when(activity.getId()).thenReturn("5");
 
-    ActivityLifeCycleEvent activityLifeCycleEvent = new ActivityLifeCycleEvent(null, activity, "1");
-    consumer.accept(gamificationActivityListener, activityLifeCycleEvent);
+    ActivityLifeCycleEvent event = new ActivityLifeCycleEvent(null, activity, "1");
+    gamificationActivityListener.pinActivity(event);
+
+    verify(listenerService).broadcast(eq(GENERIC_EVENT_NAME),
+                                      argThat((Map<String, String> source) -> source.get(EVENT_NAME)
+                                                                                    .equals(GAMIFICATION_SOCIAL_PIN_ACTIVITY_SPACE)),
+                                      eq(null));
+
+  }
+
+  @Test
+  public void testActivityComment() throws Exception {
+    GamificationActivityListener gamificationActivityListener = new GamificationActivityListener(ruleService,
+                                                                                                 identityManager,
+                                                                                                 activityManager,
+                                                                                                 spaceService,
+                                                                                                 listenerService,
+                                                                                                 null);
+
+    ExoSocialActivity activity = mock(ExoSocialActivity.class);
+    ExoSocialActivity parent = mock(ExoSocialActivity.class);
+    when(activity.getId()).thenReturn("5");
+    when(activityManager.getParentActivity(activity)).thenReturn(parent);
+
+    ActivityLifeCycleEvent event = new ActivityLifeCycleEvent(null, activity, "1");
+    gamificationActivityListener.saveComment(event);
+
+    verify(listenerService).broadcast(eq(GENERIC_EVENT_NAME),
+                                      argThat((Map<String, String> source) -> source.get(EVENT_NAME)
+                                                                                    .equals(GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY_COMMENT)),
+                                      eq(null));
+    verify(listenerService).broadcast(eq(GENERIC_EVENT_NAME),
+                                      argThat((Map<String, String> source) -> source.get(EVENT_NAME)
+                                                                                    .equals(GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT)),
+                                      eq(null));
+
+  }
+
+  @Test
+  public void testActivityCommentWithExcludedType() throws Exception {
+    InitParams params = mock(InitParams.class);
+    ValuesParam values = mock(ValuesParam.class);
+    when(params.containsKey(EXCLUDE_COMMENT_TYPES_PARAM)).thenReturn(true);
+    when(params.getValuesParam(EXCLUDE_COMMENT_TYPES_PARAM)).thenReturn(values);
+    String excludedCommentType = "testCommentType";
+    when(values.getValues()).thenReturn(Collections.singletonList(excludedCommentType));
+
+    GamificationActivityListener gamificationActivityListener = new GamificationActivityListener(ruleService,
+                                                                                                 identityManager,
+                                                                                                 activityManager,
+                                                                                                 spaceService,
+                                                                                                 listenerService,
+                                                                                                 params);
+
+    ExoSocialActivity activity = mock(ExoSocialActivity.class);
+    ExoSocialActivity parent = mock(ExoSocialActivity.class);
+    when(activity.getId()).thenReturn("5");
+    when(activity.getType()).thenReturn(excludedCommentType);
+    when(activityManager.getParentActivity(activity)).thenReturn(parent);
+
+    ActivityLifeCycleEvent event = new ActivityLifeCycleEvent(null, activity, "1");
+    gamificationActivityListener.saveComment(event);
 
     verify(listenerService,
-           times(1)).broadcast(eq(GENERIC_EVENT_NAME),
-                               argThat((Map<String, String> source) -> source.get(EVENT_NAME).equals(expectedGamifiedEvent)),
-                               eq(null));
+           never()).broadcast(eq(GENERIC_EVENT_NAME),
+                              argThat((Map<String, String> source) -> source.get(EVENT_NAME)
+                                                                            .equals(GAMIFICATION_SOCIAL_RECEIVE_ACTIVITY_COMMENT)),
+                              eq(null));
+    verify(listenerService,
+           never()).broadcast(eq(GENERIC_EVENT_NAME),
+                              argThat((Map<String, String> source) -> source.get(EVENT_NAME)
+                                                                            .equals(GAMIFICATION_SOCIAL_POST_ACTIVITY_COMMENT)),
+                              eq(null));
+
   }
 
 }
