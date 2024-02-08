@@ -243,6 +243,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <name>GamificationActivityTracker</name>
       <set-method>addActivityEventListener</set-method>
       <type>io.meeds.gamification.listener.GamificationActivityListener</type>
+      <init-params>
+        <values-param>
+          <name>exclude.commentTypes</name>
+          <value>gamificationActionAnnouncement</value>
+        </values-param>
+      </init-params>
     </component-plugin>
   </external-component-plugins>
     <!-- Spaces -->
