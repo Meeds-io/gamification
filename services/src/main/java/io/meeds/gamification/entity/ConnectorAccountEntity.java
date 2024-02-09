@@ -21,10 +21,8 @@ import java.io.Serializable;
 import jakarta.persistence.*;
 
 import lombok.Data;
-import org.exoplatform.commons.api.persistence.ExoEntity;
 
 @Entity(name = "GamificationConnectorAccount")
-@ExoEntity
 @Table(name = "GAMIFICATION_CONNECTOR_ACCOUNTS")
 @NamedQuery(
   name = "GamificationConnectorAccount.getConnectorAccountByNameAndUserId",
