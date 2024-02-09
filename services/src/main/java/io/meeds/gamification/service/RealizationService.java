@@ -312,4 +312,11 @@ public interface RealizationService {
    */
   Map<Long, Long> getScoresByIdentityIdsAndBetweenDates(List<String> earnerIdentityIds, Date fromDate, Date toDate);
 
+  /**
+   * @param  fromDate start of period
+   * @param  toDate   end of period
+   * @return          Count participant users in a period of time
+   */
+  long countParticipantsBetweenDates(Date fromDate, Date toDate);
+
 }

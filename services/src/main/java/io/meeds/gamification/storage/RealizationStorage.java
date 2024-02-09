@@ -146,4 +146,8 @@ public class RealizationStorage {
     return gamificationHistoryDAO.countRealizationsByRuleIdAndEarnerIdSinceDate(earnerIdentityId, ruleId, sinceDate);
   }
 
+  public long countParticipantsBetweenDates(Date fromDate, Date toDate) {
+    return gamificationHistoryDAO.countParticipantsBetweenDates(fromDate, toDate);
+  }
+
 }

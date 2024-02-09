@@ -30,13 +30,10 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
-import org.exoplatform.commons.api.persistence.ExoEntity;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity(name = "GamificationBadge")
-@ExoEntity
 @Table(name = "GAMIFICATION_BADGES")
 @NamedQuery(name = "GamificationBadge.getAllBadges", query = "SELECT badge FROM GamificationBadge badge   WHERE badge.isDeleted = false ORDER BY badge.iconFileId ASC ")
 @NamedQuery(name = "GamificationBadge.findBadgeByDomain", query = "SELECT badge FROM GamificationBadge badge WHERE badge.domainEntity.id = :domainId  ORDER BY badge.neededScore ASC")

@@ -24,10 +24,8 @@ import java.util.Map;
 import jakarta.persistence.*;
 
 import org.exoplatform.commons.utils.StringListConverter;
-import org.exoplatform.commons.api.persistence.ExoEntity;
 import lombok.Data;
 
-@ExoEntity
 @Entity(name = "EventEntity")
 @Table(name = "GAMIFICATION_EVENTS")
 @NamedQuery(name = "EventEntity.getEventByTitleAndTrigger",

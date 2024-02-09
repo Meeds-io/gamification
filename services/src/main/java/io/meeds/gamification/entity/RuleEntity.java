@@ -36,15 +36,12 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
-import org.exoplatform.commons.api.persistence.ExoEntity;
-
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.RecurrenceType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity(name = "Rule")
-@ExoEntity
 @Table(name = "GAMIFICATION_RULE")
 @NamedQuery(
   name = "Rule.findActiveRuleByEventAndDomain",
