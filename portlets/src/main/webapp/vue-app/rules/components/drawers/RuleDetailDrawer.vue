@@ -327,7 +327,7 @@ export default {
           || null;
     },
     isExtensibleEvent() {
-      return this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name).includes(this.rule?.event?.type);
+      return this.connectorsEventComponentsExtensions.map(extension => extension?.componentOptions?.isEnabled(this.eventParams));
     },
     eventParams() {
       return {

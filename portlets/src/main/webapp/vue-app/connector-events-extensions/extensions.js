@@ -20,7 +20,7 @@ import '../connector-events-extensions/initComponents';
 extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-extensions', {
   id: 'stream-event',
   name: 'stream',
-  vueComponent: Vue.options.components['meeds-stream-event-form'],
+  vueComponent: Vue.options.components['meeds-stream-event'],
   isEnabled: (params) => [
     'postActivity',
     'postActivityComment',
@@ -29,5 +29,30 @@ extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-ex
     'receiveCommentOnActivity',
     'receiveLikeOnActivity',
     'receiveLikeOnActivityComment',
+  ].includes(params?.trigger),
+});
+
+extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-extensions', {
+  id: 'profile-event',
+  name: 'profile',
+  vueComponent: Vue.options.components['meeds-profile-event'],
+  isEnabled: (params) => [
+    'addUserProfileContactInformation',
+    'addUserProfileWorkExperience',
+    'addUserProfileAboutMe',
+    'addUserProfileAvatar',
+    'addUserProfileBanner',
+    'addUserProfileNotificationSetting',
+    'receiveRelationshipRequest',
+    'sendRelationshipRequest'
+  ].includes(params?.trigger),
+});
+
+extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-extensions', {
+  id: 'space-event',
+  name: 'space',
+  vueComponent: Vue.options.components['meeds-space-event'],
+  isEnabled: (params) => [
+    'joinSpace'
   ].includes(params?.trigger),
 });
