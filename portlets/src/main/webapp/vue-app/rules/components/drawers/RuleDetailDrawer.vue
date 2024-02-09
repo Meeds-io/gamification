@@ -372,6 +372,7 @@ export default {
     this.$root.$on('rule-detail-drawer', this.open);
     this.$root.$on('rule-detail-drawer-by-id', this.openById);
     this.$root.$on('rule-form-drawer-opened', this.close);
+    this.$root.$on('rule-detail-drawer-close', this.close);
     this.$root.$on('rule-deleted', this.close);
     document.addEventListener('rule-detail-drawer-event', event => this.open(event?.detail?.rule, event?.detail?.openAnnouncement, event?.detail?.goBackButton, event?.detail?.updatePath));
     document.addEventListener('rule-detail-drawer-by-id-event', event => this.openById(event?.detail?.ruleId, event?.detail?.openAnnouncement));
