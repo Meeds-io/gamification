@@ -24,7 +24,23 @@
       </div>
       <v-list-item class="clickable" :href="activityUrl">
         <v-list-item-icon class="me-3 my-auto">
-          <v-icon class="primary--text">fas fa-stream</v-icon>
+          <v-img
+            v-if="activityImg"
+            :src="activityImg"
+            max-height="28"
+            max-width="25" />
+          <v-icon
+            v-else-if="activityIcon"
+            size="24"
+            :class="activityIconClass">
+            {{ activityIcon }}
+          </v-icon>
+          <v-icon
+            v-else
+            size="24"
+            class="primary--text">
+            fas fa-stream
+          </v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title class="text-color body-2">
@@ -61,6 +77,7 @@
       </div>
       <div class="d-flex justify-center">
         <v-btn
+          :href="streamLink"
           max-width="250"
           class="ignore-vuetify-classes text-capitalize btn btn-primary">
           {{ $t('gamification.event.display.browseActivities') }}
@@ -86,6 +103,9 @@ export default {
     return {
       activity: null,
       space: null,
+      extensionApp: 'engagementCenterActions',
+      activityIconExtension: 'activity-icon',
+      activityExtensions: []
     };
   },
   computed: {
@@ -102,19 +122,43 @@ export default {
       return this.properties?.activityId;
     },
     activityTitle() {
-      return this.activity?.title;
+      return this.activity?.body || (this.activityTypeExtension?.title && this.activityTypeExtension?.title(this.activity)) || this.activity?.title;
     },
     activityUrl() {
       return this.activityId && `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.activityId}`;
     },
+    streamLink() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/stream`;
+    },
+    activityTypeExtension() {
+      if (this.activity?.type) {
+        return this.activityExtensions.find(extension => extension.type === this.activity.type);
+      }
+      return null;
+    },
+    activityIcon() {
+      return this.activityTypeExtension?.icon;
+    },
+    activityIconClass() {
+      return this.activityTypeExtension?.class;
+    },
+    activityImg() {
+      return this.activityTypeExtension?.img;
+    }
+
   },
   created() {
     if (this.activityId) {
+      document.addEventListener(`extension-${this.extensionApp}-${this.activityIconExtension}-updated`, this.refreshActivityIcon);
+      this.refreshActivityIcon();
       this.loadActivity();
     } else if (this.spaceId) {
       this.$spaceService.getSpaceById(this.spaceId)
         .then(space => this.space = space);
     }
+  },
+  beforeDestroy() {
+    document.removeEventListener(`extension-${this.extensionApp}-${this.activityIconExtension}-updated`, this.refreshActivityIcon);
   },
   methods: {
     loadActivity() {
@@ -122,6 +166,14 @@ export default {
         .then(fullActivity => {
           this.activity = fullActivity;
         });
+    },
+    refreshActivityIcon() {
+      const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.activityIconExtension);
+      extensions.forEach(extension => {
+        if (extension.id) {
+          this.activityExtensions.push(extension);
+        }
+      });
     },
   }
 };
