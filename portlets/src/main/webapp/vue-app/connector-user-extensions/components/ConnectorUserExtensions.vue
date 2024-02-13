@@ -35,17 +35,19 @@ export default {
   methods: {
     refreshConnectorValueExtensions() {
       const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.connectorValueExtensionType);
-      this.$gamificationConnectorService.getConnectors(this.profileOwner, 'userIdentifier')
-        .then(connectors => {
-          this.connectors = connectors;
-          extensions.forEach(extension => {
-            const connector = this.connectors.find(item => item.name === extension.name);
-            extension.identifier = connector?.identifier;
-            extension.redirectUrl = connector?.redirectUrl;
-            extension.apiKey = connector?.apiKey;
+      if (this.profileOwner) {
+        this.$gamificationConnectorService.getConnectors(this.profileOwner, 'userIdentifier')
+          .then(connectors => {
+            this.connectors = connectors;
+            extensions.forEach(extension => {
+              const connector = this.connectors.find(item => item.name === extension.name);
+              extension.identifier = connector?.identifier;
+              extension.redirectUrl = connector?.redirectUrl;
+              extension.apiKey = connector?.apiKey;
+            });
+            this.$root.connectorValueExtensions = Object.assign({}, extensions);
           });
-          this.$root.connectorValueExtensions = Object.assign({}, extensions);
-        });
+      }
     },
   },
 };
