@@ -198,10 +198,12 @@ export default {
       return this.rule?.event?.type;
     },
     connectorValueExtension() {
-      return this.rule?.event?.type
-          && Object.values(this.connectorValueExtensions)
-            .find(extension => extension?.name === this.eventType)
-          || null;
+      if (this.connectorValueExtensions) {
+        return this.rule?.event?.type
+            && Object.values(this.connectorValueExtensions)
+              .find(extension => extension?.name === this.eventType);
+      }
+      return null;
     },
     isRequireConnectorConnection() {
       return this.ruleEvent && this.connectorValueExtension?.identifier === null;
