@@ -173,7 +173,7 @@
         </v-col>
       </v-row>
       <v-card
-        v-if="isExtensibleEvent"
+        v-if="isExtensibleEvent && !isPublicSite"
         class="px-10 py-3"
         flat>
         <extension-registry-components
@@ -321,10 +321,13 @@ export default {
       return this.$root.connectorValueExtensions;
     },
     connectorValueExtension() {
-      return this.rule?.event?.type
-          && Object.values(this.connectorValueExtensions)
-            .find(extension => extension?.name === this.eventType)
-          || null;
+      if (this.connectorValueExtensions) {
+        return this.rule?.event?.type
+            && Object.values(this.connectorValueExtensions)
+              .find(extension => extension?.name === this.eventType);
+
+      }
+      return null;
     },
     isExtensibleEvent() {
       return this.connectorsEventComponentsExtensions.map(extension => extension?.componentOptions?.isEnabled(this.eventParams));
@@ -378,7 +381,9 @@ export default {
     document.addEventListener('rule-detail-drawer-by-id-event', event => this.openById(event?.detail?.ruleId, event?.detail?.openAnnouncement));
     document.addEventListener(`component-${this.extensionEventApp}-${this.connectorEventExtensionType}-updated`, this.refreshConnectorExtensions);
     this.refreshConnectorExtensions();
-    this.$connectorWebSocket.initCometd(this.handleConnectorIdentifierUpdates);
+    if (!this.isPublicSite) {
+      this.$connectorWebSocket.initCometd(this.handleConnectorIdentifierUpdates);
+    }
   },
   methods: {
     open(ruleToDisplay, displayAnnouncementForm, goBackButton, updatePath) {
