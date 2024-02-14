@@ -100,6 +100,9 @@ public interface GamificationConstant { // NOSONAR
     /** USER LOGIN CONTEXT */
     String GAMIFICATION_ATTENDANCE_USER_LOGIN                                           = "userLogin";
 
+    /*************************************************** CONSTANTS TO MANAGE CONTRIBUTIONS GAMIFICATION PROCESS **********************************************/
+    String GAMIFICATION_CONTRIBUTIONS_CREATE_RULE                                       = "createRule";
+
     //Achievement object types
     
     String IDENTITY_OBJECT_TYPE                                       = "identity";

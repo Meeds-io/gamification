@@ -22,6 +22,7 @@ import static io.meeds.gamification.constant.GamificationConstant.*;
 import static io.meeds.gamification.listener.GamificationGenericListener.CANCEL_EVENT_NAME;
 import static io.meeds.gamification.listener.GamificationGenericListener.DELETE_EVENT_NAME;
 import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
+import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_TYPE;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -90,7 +91,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   @Override
   public void saveActivity(ActivityLifeCycleEvent event) { // NOSONAR
     ExoSocialActivity activity = event.getSource();
-    if (activity == null || StringUtils.equals(activity.getType(), "SPACE_ACTIVITY")) {
+    if (activity == null || StringUtils.equals(activity.getType(), "SPACE_ACTIVITY") || (StringUtils.equals(activity.getType(), RULE_ACTIVITY_TYPE) && activity.isHidden())) {
       return;
     }
 

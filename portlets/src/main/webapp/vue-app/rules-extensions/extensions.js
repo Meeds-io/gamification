@@ -148,3 +148,14 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     },
   }
 });
+
+extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
+  type: 'Contributions',
+  options: {
+    rank: 10,
+    icon: 'fas fa-plus-square',
+    match: (actionLabel) => [
+      'createRule'
+    ].includes(actionLabel)
+  },
+});
