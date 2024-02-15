@@ -18,6 +18,7 @@
 import StreamEvent from './components/stream/StreamEvent.vue';
 import StreamEventForm from './components/stream/StreamEventForm.vue';
 import StreamEventDisplay from './components/stream/StreamEventDisplay.vue';
+import StreamEventSpaceItem from './components/stream/StreamEventSpaceItem.vue';
 import ProfileEvent from './components/profile/ProfileEvent.vue';
 import SpaceEvent from './components/space/SpaceEvent.vue';
 
@@ -25,6 +26,7 @@ const components = {
   'meeds-stream-event': StreamEvent,
   'meeds-stream-event-form': StreamEventForm,
   'meeds-stream-event-display': StreamEventDisplay,
+  'meeds-stream-event-space-item': StreamEventSpaceItem,
   'meeds-profile-event': ProfileEvent,
   'meeds-space-event': SpaceEvent,
 };
