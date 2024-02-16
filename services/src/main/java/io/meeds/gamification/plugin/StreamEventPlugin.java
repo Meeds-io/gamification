@@ -18,12 +18,11 @@
  */
 package io.meeds.gamification.plugin;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import static io.meeds.gamification.constant.GamificationConstant.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 public class StreamEventPlugin extends EventPlugin {
 
@@ -47,10 +46,13 @@ public class StreamEventPlugin extends EventPlugin {
   @Override
   public boolean isValidEvent(Map<String, String> eventProperties, String triggerDetails) {
     String desiredActivityId = eventProperties.get("activityId");
-    String desiredSpaceId = eventProperties.get("spaceId");
+    List<String> desiredSpaceIds = eventProperties.get("spaceIds") != null
+                                                                           ? Arrays.asList(eventProperties.get("spaceIds")
+                                                                                                          .split(","))
+                                                                           : Collections.emptyList();
     Map<String, String> triggerDetailsMop = stringToMap(triggerDetails);
     return (desiredActivityId != null && desiredActivityId.equals(triggerDetailsMop.get("activityId")))
-        || (desiredSpaceId != null && desiredSpaceId.equals(triggerDetailsMop.get("spaceId")));
+        || (CollectionUtils.isNotEmpty(desiredSpaceIds) && desiredSpaceIds.contains(triggerDetailsMop.get("spaceId")));
   }
 
   private static Map<String, String> stringToMap(String mapAsString) {
