@@ -29,13 +29,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <exo-identity-suggester
         v-if="activity === 'ANY_IN_SPACE'"
         ref="spacesSuggester"
-        v-model="space"
+        v-model="selected"
         :labels="spaceSuggesterLabels"
         :include-users="false"
         :width="220"
         name="spacesSuggester"
         class="user-suggester mt-n2"
-        include-spaces />
+        include-spaces
+        multiple />
       <v-radio
         v-if="canSpecifyActivity"
         value="ONE_ACTIVITY"
@@ -73,7 +74,7 @@ export default {
   data() {
     return {
       anySpace: true,
-      space: null,
+      selected: [],
       activity: 'ANY',
       activityLink: null,
       isValidLink: true,
@@ -100,14 +101,12 @@ export default {
     },
   },
   watch: {
-    space() {
-      if (this.space) {
-        if (!this.space.notToChange) {
-          const eventProperties = {
-            spaceId: this.space?.spaceId.toString(),
-          };
-          document.dispatchEvent(new CustomEvent('event-form-filled', {detail: eventProperties}));
-        }
+    selected() {
+      if (this.selected?.length) {
+        const eventProperties = {
+          spaceIds: this.selected.map(space => space.spaceId).toString(),
+        };
+        document.dispatchEvent(new CustomEvent('event-form-filled', {detail: eventProperties}));
       } else if (this.activity === 'ANY_IN_SPACE'){
         document.dispatchEvent(new CustomEvent('event-form-unfilled'));
       }
@@ -119,23 +118,25 @@ export default {
     },
   },
   created() {
-    if (this.properties?.spaceId) {
+    if (this.properties?.spaceIds) {
       this.activity = 'ANY_IN_SPACE';
-      this.$spaceService.getSpaceById(this.properties?.spaceId)
-        .then(spaceData=> {
-          this.space = {
-            id: `space:${spaceData.prettyName}`,
-            profile: {
-              avatarUrl: spaceData.avatarUrl,
-              fullName: spaceData.displayName,
-            },
-            providerId: 'space',
-            remoteId: spaceData.prettyName,
-            spaceId: spaceData.id,
-            displayName: spaceData.displayName,
-            notToChange: true,
-          };
-        });
+      this.properties?.spaceIds.split(',').forEach(spaceId => {
+        this.$spaceService.getSpaceById(spaceId)
+          .then(spaceData=> {
+            const space = {
+              id: `space:${spaceData.prettyName}`,
+              profile: {
+                avatarUrl: spaceData.avatarUrl,
+                fullName: spaceData.displayName,
+              },
+              providerId: 'space',
+              remoteId: spaceData.prettyName,
+              spaceId: spaceData.id,
+              displayName: spaceData.displayName,
+            };
+            this.selected.push(space);
+          });
+      });
     } else if (this.properties?.activityId) {
       this.activity = 'ONE_ACTIVITY';
       this.activityLink = `${window.location.origin}/${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${this.properties?.activityId}`;
@@ -147,7 +148,7 @@ export default {
   },
   methods: {
     changeSelection() {
-      this.space = null;
+      this.selected = null;
       this.activityLink = null;
       if (this.activity === 'ANY') {
         document.dispatchEvent(new CustomEvent('event-form-filled'));
