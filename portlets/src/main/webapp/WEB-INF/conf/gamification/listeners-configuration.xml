@@ -47,6 +47,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <type>io.meeds.gamification.listener.ProgramModifiedDateUpdaterListener</type>
     </component-plugin>
     <component-plugin>
+      <name>rule.created</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.GamificationRuleListener</type>
+    </component-plugin>
+    <component-plugin>
       <name>rule.updated</name>
       <set-method>addListener</set-method>
       <type>io.meeds.gamification.listener.RuleIndexingListener</type>
@@ -80,6 +85,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <name>rule.deleted</name>
       <set-method>addListener</set-method>
       <type>io.meeds.gamification.listener.RuleDeletedWebNotificationListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.deleted</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.GamificationRuleListener</type>
     </component-plugin>
     <component-plugin profiles="analytics">
       <name>program.deleted</name>
