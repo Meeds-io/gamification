@@ -276,7 +276,7 @@ export default {
       return this.isMobile ? 70 : 173;
     },
     isMobile() {
-      return this.$vuetify.breakpoint.xsOnly;
+      return this.$vuetify.breakpoint.smAndDown;
     },
     space() {
       return this.program?.space;
