@@ -27,7 +27,7 @@
       id="applicationAutoComplete"
       ref="applicationAutoComplete"
       v-model="selectedConnector"
-      :items="connectors"
+      :items="sortedConnectors"
       :placeholder="$t('rule.form.label.application.Placeholder')"
       :filter="filterConnectors"
       class="pa-0"
@@ -190,6 +190,9 @@ export default {
     sortedTriggers() {
       const filteredTriggers = this.triggers?.length && this.triggers.slice() || [];
       return filteredTriggers.sort((a, b) => this.getTriggerLabel(a).localeCompare(this.getTriggerLabel(b)));
+    },
+    sortedConnectors() {
+      return this.connectors.slice().sort((a, b) => a.title.localeCompare(b.title));
     },
     params() {
       return {
