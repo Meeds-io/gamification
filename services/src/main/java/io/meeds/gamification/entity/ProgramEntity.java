@@ -22,8 +22,6 @@ import java.util.Set;
 
 import jakarta.persistence.*;
 
-import org.exoplatform.commons.api.persistence.ExoEntity;
-
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.EntityVisibility;
 
@@ -31,7 +29,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity(name = "GamificationDomain")
-@ExoEntity
 @Table(name = "GAMIFICATION_DOMAIN")
 @NamedQuery(name = "GamificationDomain.getAllDomains", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.isDeleted = false")
 @NamedQuery(name = "GamificationDomain.findByIdWithOwners", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.id = :id")

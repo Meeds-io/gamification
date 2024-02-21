@@ -485,6 +485,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
+  public long countParticipantsBetweenDates(Date fromDate, Date toDate) {
+    return realizationStorage.countParticipantsBetweenDates(fromDate, toDate);
+  }
+
+  @Override
   public RealizationDTO getRealizationById(long realizationId) {
     if (realizationId <= 0) {
       throw new IllegalArgumentException("realization id is mandatory");

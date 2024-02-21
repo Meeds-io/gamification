@@ -32,15 +32,12 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
-import org.exoplatform.commons.api.persistence.ExoEntity;
-
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.RealizationStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@ExoEntity
 @Entity(name = "RealizationEntity")
 @Table(name = "GAMIFICATION_ACTIONS_HISTORY")
 @NamedNativeQuery(
@@ -207,6 +204,15 @@ import lombok.EqualsAndHashCode;
     " WHERE g.objectId = :objectId" +
     " AND g.objectType = :objectType"
 )
+@NamedQuery(
+  name = "RealizationEntity.countParticipantsBetweenDates",
+  query = "SELECT COUNT(DISTINCT g.earnerId) FROM RealizationEntity g" +
+      " WHERE g.createdDate >= :fromDate" +
+      " AND g.createdDate < :toDate" +
+      " AND g.earnerType = :earnerType" +
+      " AND g.status = :status"
+)
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class RealizationEntity extends AbstractAuditingEntity implements Serializable {
