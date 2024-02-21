@@ -22,15 +22,12 @@ import static io.meeds.gamification.constant.GamificationConstant.*;
 import static io.meeds.gamification.listener.GamificationGenericListener.CANCEL_EVENT_NAME;
 import static io.meeds.gamification.listener.GamificationGenericListener.DELETE_EVENT_NAME;
 import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
-import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_TYPE;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.container.xml.InitParams;
@@ -52,9 +49,11 @@ import io.meeds.gamification.service.RuleService;
 
 public class GamificationActivityListener extends ActivityListenerPlugin {
 
-  protected static final String   EXCLUDE_COMMENT_TYPES_PARAM = "exclude.commentTypes";
+  protected static final String   EXCLUDE_ACTIVITY_TYPES_PARAM = "exclude.activityTypes";
 
-  private static final Log        LOG                         = ExoLogger.getLogger(GamificationActivityListener.class);
+  protected static final String   EXCLUDE_COMMENT_TYPES_PARAM  = "exclude.commentTypes";
+
+  private static final Log        LOG                          = ExoLogger.getLogger(GamificationActivityListener.class);
 
   protected final RuleService     ruleService;
 
@@ -68,6 +67,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   protected final List<String>    excludedCommentTypes;
 
+  protected final List<String>    excludedActivityTypes;
+
   public GamificationActivityListener(RuleService ruleService,
                                       IdentityManager identityManager,
                                       ActivityManager activityManager,
@@ -79,19 +80,18 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     this.spaceService = spaceService;
     this.activityManager = activityManager;
     this.listenerService = listenerService;
-    if (params != null
-        && params.containsKey(EXCLUDE_COMMENT_TYPES_PARAM)
-        && CollectionUtils.isNotEmpty(params.getValuesParam(EXCLUDE_COMMENT_TYPES_PARAM).getValues())) {
-      excludedCommentTypes = params.getValuesParam(EXCLUDE_COMMENT_TYPES_PARAM).getValues();
-    } else {
-      excludedCommentTypes = Collections.emptyList();
-    }
+    this.excludedActivityTypes = params.getValuesParam(EXCLUDE_ACTIVITY_TYPES_PARAM).getValues();
+    this.excludedCommentTypes = params.getValuesParam(EXCLUDE_COMMENT_TYPES_PARAM).getValues();
   }
 
   @Override
   public void saveActivity(ActivityLifeCycleEvent event) { // NOSONAR
     ExoSocialActivity activity = event.getSource();
-    if (activity == null || StringUtils.equals(activity.getType(), "SPACE_ACTIVITY") || (StringUtils.equals(activity.getType(), RULE_ACTIVITY_TYPE) && activity.isHidden())) {
+    if (activity == null
+        || activity.isHidden()
+        || activity.isComment()
+        || StringUtils.equals(activity.getType(), "SPACE_ACTIVITY")
+        || (StringUtils.isNotBlank(activity.getType()) && excludedActivityTypes.contains(activity.getType()))) {
       return;
     }
 
@@ -116,7 +116,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
         String[] spaceManagers = space.getManagers();
         for (String spaceManager : spaceManagers) {
           Identity spaceManagerIdentity = identityManager.getOrCreateUserIdentity(spaceManager);
-          if (spaceManagerIdentity == null || spaceManagerIdentity.isDeleted() || !spaceManagerIdentity.isEnable()
+          if (spaceManagerIdentity == null
+              || spaceManagerIdentity.isDeleted()
+              || !spaceManagerIdentity.isEnable()
               || StringUtils.equals(spaceManagerIdentity.getId(), activity.getPosterId())) {
             continue;
           }

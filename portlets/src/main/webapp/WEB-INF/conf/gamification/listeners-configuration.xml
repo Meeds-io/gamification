@@ -255,8 +255,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <type>io.meeds.gamification.listener.GamificationActivityListener</type>
       <init-params>
         <values-param>
+          <name>exclude.activityTypes</name>
+          <value>exokudos:activity</value>
+        </values-param>
+        <values-param>
           <name>exclude.commentTypes</name>
           <value>gamificationActionAnnouncement</value>
+          <value>exokudos:activity</value>
         </values-param>
       </init-params>
     </component-plugin>
