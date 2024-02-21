@@ -116,7 +116,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
         String[] spaceManagers = space.getManagers();
         for (String spaceManager : spaceManagers) {
           Identity spaceManagerIdentity = identityManager.getOrCreateUserIdentity(spaceManager);
-          if (spaceManagerIdentity == null || spaceManagerIdentity.isDeleted() || !spaceManagerIdentity.isEnable()
+          if (spaceManagerIdentity == null
+              || spaceManagerIdentity.isDeleted()
+              || !spaceManagerIdentity.isEnable()
               || StringUtils.equals(spaceManagerIdentity.getId(), activity.getPosterId())) {
             continue;
           }
