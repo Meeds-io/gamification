@@ -43,7 +43,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <developerConnection>scm:git:git@github.com:meeds-io/gamification.git</developerConnection>
         <tag>HEAD</tag>
         <url>https://github.com/meeds-io/gamification</url>
-        
+
     </scm>
 
     <properties>
@@ -104,6 +104,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <artifactId>gamification-packaging</artifactId>
                 <version>${project.version}</version>
                 <type>zip</type>
+            </dependency>
+          <!-- Test JARs -->
+            <dependency>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>gamification-services</artifactId>
+              <version>${project.version}</version>
+              <type>test-jar</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
