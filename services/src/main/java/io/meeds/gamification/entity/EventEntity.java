@@ -18,12 +18,10 @@
 package io.meeds.gamification.entity;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import jakarta.persistence.*;
 
-import org.exoplatform.commons.utils.StringListConverter;
 import lombok.Data;
 
 @Entity(name = "EventEntity")
@@ -53,10 +51,6 @@ public class EventEntity implements Serializable {
 
   @Column(name = "EVENT_TRIGGER", nullable = false)
   private String          trigger;
-
-  @Convert(converter = StringListConverter.class)
-  @Column(name = "CANCELLER_EVENTS")
-  private List<String> cancellerEvents;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @MapKeyColumn(name = "NAME")
