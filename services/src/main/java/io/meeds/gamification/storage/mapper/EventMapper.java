@@ -50,7 +50,6 @@ public class EventMapper {
     if (eventDTO.getProperties() != null) {
       eventEntity.setProperties(eventDTO.getProperties());
     }
-    eventEntity.setCancellerEvents(eventDTO.getCancellerEvents());
     return eventEntity;
   }
 
@@ -62,7 +61,7 @@ public class EventMapper {
                         eventEntity.getTitle(),
                         eventEntity.getType(),
                         eventEntity.getTrigger(),
-                        eventEntity.getCancellerEvents(),
+                        null,
                         eventEntity.getProperties());
   }
 
