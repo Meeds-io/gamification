@@ -128,8 +128,6 @@ public class Utils {
 
   public static final String                        STATISTICS_RULE_COVERFILEID_PARAM       = "ruleCoverFileId";
 
-  public static final String                        STATISTICS_RULE_EVENT_PARAM             = "ruleEvent";
-
   public static final String                        STATISTICS_RULE_SUBMODULE               = "rule";
 
   public static final String                        STATISTICS_REALIZATION_SUBMODULE        = "realization";
@@ -528,10 +526,8 @@ public class Utils {
     statisticData.addParameter(STATISTICS_RULE_ECTIVITY_ID_PARAM, rule.getActivityId());
     statisticData.addParameter(STATISTICS_RULE_TITLE_PARAM, rule.getTitle());
     statisticData.addParameter(STATISTICS_RULE_DESCRIPTION_PARAM, rule.getDescription());
-    statisticData.addParameter(STATISTICS_RULE_EVENT_PARAM, rule.getEvent());
     statisticData.addParameter(STATISTICS_RULE_SCORE_PARAM, rule.getScore());
     statisticData.addParameter(STATISTICS_RULE_TYPE_PARAM, rule.getType());
-
     if (event != null) {
       statisticData.addParameter(STATISTICS_EVENT_ID_PARAM, event.getId());
       statisticData.addParameter(STATISTICS_EVENT_TYPE_PARAM, event.getType());
@@ -541,7 +537,8 @@ public class Utils {
       if (properties != null) {
         properties.forEach((k, v) -> {
           if (!statisticData.getParameters().containsKey(k)) {
-            statisticData.addParameter(k, v);
+            String[] values = StringUtils.split(v, ",");
+            statisticData.addParameter(k, Arrays.asList(values));
           }
         });
       }
