@@ -80,23 +80,16 @@ public class AnalyticsRuleListener extends Listener<Object, String> {
     statisticData.setModule(STATISTICS_GAMIFICATION_MODULE);
     statisticData.setSubModule(STATISTICS_RULE_SUBMODULE);
     switch (event.getEventName()) {
-    case POST_CREATE_RULE_EVENT: {
-      statisticData.setOperation(STATISTICS_CREATE_RULE_OPERATION);
-      break;
-    }
-    case POST_UPDATE_RULE_EVENT: {
-      statisticData.setOperation(STATISTICS_UPDATE_RULE_OPERATION);
-      break;
-    }
-    case POST_DELETE_RULE_EVENT: {
-      statisticData.setOperation(STATISTICS_DELETE_RULE_OPERATION);
-      break;
-    }
-    default:
-      throw new IllegalArgumentException("Unexpected listener event name: " + event.getEventName());
+      case POST_CREATE_RULE_EVENT ->
+        statisticData.setOperation(STATISTICS_CREATE_RULE_OPERATION);
+      case POST_UPDATE_RULE_EVENT ->
+        statisticData.setOperation(STATISTICS_UPDATE_RULE_OPERATION);
+      case POST_DELETE_RULE_EVENT ->
+        statisticData.setOperation(STATISTICS_DELETE_RULE_OPERATION);
+      default -> throw new IllegalArgumentException("Unexpected listener event name: " + event.getEventName());
     }
     EventDTO ruleEvent = null;
-    if (rule.getType() == EntityType.AUTOMATIC) {
+    if (rule.getEvent() != null) {
       List<EventDTO> events = eventService.getEventsByTitle(rule.getEvent().getTitle(), 0, 1);
       if (CollectionUtils.isNotEmpty(events)) {
         ruleEvent = events.get(0);
