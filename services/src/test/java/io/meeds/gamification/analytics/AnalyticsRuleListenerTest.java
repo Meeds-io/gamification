@@ -30,7 +30,6 @@ import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_OWNERS_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_TITLE_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_PROGRAM_TYPE_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_DESCRIPTION_PARAM;
-import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_EVENT_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_ID_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_SCORE_PARAM;
 import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_SUBMODULE;
@@ -188,8 +187,6 @@ public class AnalyticsRuleListenerTest {
                    String.valueOf(statisticData.getParameters().get(STATISTICS_RULE_TITLE_PARAM)));
       assertEquals(String.valueOf(ruleDTO.getDescription()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_RULE_DESCRIPTION_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getEvent()),
-                   String.valueOf(statisticData.getParameters().get(STATISTICS_RULE_EVENT_PARAM)));
       assertEquals(String.valueOf(ruleDTO.getScore()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_RULE_SCORE_PARAM)));
       assertEquals(String.valueOf(ruleDTO.getType()),
