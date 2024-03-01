@@ -38,15 +38,6 @@ extensionRegistry.registerExtension('engagementCenterConnectors', 'connector-ext
 });
 
 extensionRegistry.registerExtension('engagementCenterConnectors', 'connector-extensions', {
-  id: 'evm',
-  name: 'evm',
-  image: '/gamification-portlets/images/connector/EVM.png',
-  title: 'EVM Blockhain',
-  description: 'gamification.admin.evm.label.description',
-  comingSoon: true,
-});
-
-extensionRegistry.registerExtension('engagementCenterConnectors', 'connector-extensions', {
   id: 'linkedIn',
   name: 'linkedIn',
   icon: 'fab fa-linkedin',
