@@ -29,6 +29,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               v-else
               :href="realization.url"
               :class="actionLabelClass"
+              target="_blank"
               class="text-color">
               <span class="actionDescription">
                 {{ actionLabel }}
@@ -196,80 +197,61 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-card>
       </td>
       <td class="text-truncate align-center">
-        <v-tooltip bottom>
-          <template #activator="{ on, attrs }">
-            <v-icon
-              :class="statusIconClass"
-              class="me-1"
-              size="16"
-              v-bind="attrs"
-              v-on="on">
-              {{ actionTypeIcon }}
-            </v-icon>
-          </template>
-          <span>{{ isAutomaticTypeLabel }}</span>
-        </v-tooltip>
-      </td>
-      <td class="text-truncate align-center">
         {{ score }}
       </td>
       <td class="text-truncate align-center">
-        <v-tooltip bottom>
+        <div v-if="isAdministrator" class="text-center">
+          <v-btn
+            class="mx-2"
+            height="16px"
+            width="16px"
+            fab
+            dark
+            depressed
+            :class="statusValue === 'ACCEPTED' && 'success-color-background' || 'light-black-background'"
+            @click="updateRealizationStatus('ACCEPTED')">
+            <v-icon size="10" dark>fas fa-check</v-icon>
+          </v-btn>
+          <v-btn
+            class="mx-2"
+            height="16px"
+            width="16px"
+            fab
+            dark
+            depressed
+            :class="statusValue === 'PENDING' && 'orange darken-2' || 'light-black-background'"
+            @click="updateRealizationStatus('PENDING')">
+            <v-icon size="10" dark>fas fa-question</v-icon>
+          </v-btn>
+          <v-btn
+            class="mx-2"
+            height="16px"
+            width="16px"
+            fab
+            dark
+            depressed
+            :class="statusValue === 'REJECTED' && 'error-color-background' || 'light-black-background'"
+            @click="updateRealizationStatus('REJECTED')">
+            <v-icon size="10" dark>fas fa-times</v-icon>
+          </v-btn>
+        </div>
+        <v-tooltip v-else bottom>
           <template #activator="{ on, attrs }">
-            <v-icon
+            <v-btn
+              class="mx-2 not-clickable"
+              height="16px"
+              width="16px"
+              fab
+              dark
+              depressed
               :class="statusIconClass"
-              class="me-1"
-              size="16"
               v-bind="attrs"
               v-on="on">
-              {{ statusIcon }}
-            </v-icon>
+              <v-icon size="10" dark>{{ statusIcon }}</v-icon>
+            </v-btn>
           </template>
           <span>{{ statusLabel }}</span>
         </v-tooltip>
-      </td>
-      <td v-if="isAdministrator" class="text-truncate actions align-center">
-        <v-menu
-          v-if="hasActions"
-          v-model="menu"
-          :left="!$vuetify.rtl"
-          :right="$vuetify.rtl"
-          bottom
-          offset-y
-          attach>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              icon
-              small
-              class="me-2"
-              v-bind="attrs"
-              v-on="on">
-              <v-icon size="16" class="icon-default-color">fas fa-ellipsis-v</v-icon>
-            </v-btn>
-          </template>
-          <v-list dense class="pa-0">
-            <template>
-              <v-list-item
-                v-if="canAccept"
-                dense
-                @click="updateRealizationStatus('ACCEPTED')">
-                <v-icon size="13" class="icon-default-color">fas fa-check</v-icon>
-                <v-list-item-title class="text-justify ps-3">
-                  {{ $t('realization.label.accept') }}
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                v-if="canReject"
-                dense
-                @click="updateRealizationStatus('REJECTED')">
-                <v-icon size="13" class="icon-default-color">fas fa-ban</v-icon>
-                <v-list-item-title class="text-justify ps-3">
-                  {{ $t('realization.label.reject') }}
-                </v-list-item-title>
-              </v-list-item>
-            </template>
-          </v-list>
-        </v-menu>
       </td>
     </tr>
   </v-hover>
@@ -312,6 +294,7 @@ export default {
       hour: 'numeric',
       minute: 'numeric',
     },
+    statusValue: null
   }),
   computed: {
     earnerFullName() {
@@ -377,10 +360,24 @@ export default {
       return this.realization.status;
     },
     statusIcon() {
-      return this.status === 'ACCEPTED' ? 'fas fa-check-circle' : 'fas fa-times-circle';
+      switch (this.status) {
+      case 'ACCEPTED':
+        return 'fas fa-check';
+      case 'PENDING':
+        return 'fas fa-question';
+      default:
+        return 'fas fa-times';
+      }
     },
     statusIconClass() {
-      return this.status === 'ACCEPTED' ? 'primary--text' : 'secondary--text';
+      switch (this.status) {
+      case 'ACCEPTED':
+        return 'success-color-background';
+      case 'PENDING':
+        return 'orange darken-2';
+      default:
+        return 'error-color-background';
+      }
     },
     actionTypeIcon() {
       return this.isAutomaticType ? 'fas fa-cogs' : 'fas fa-hand-pointer';
@@ -388,14 +385,8 @@ export default {
     actionLabelClass() {
       return !this.realization.url && 'defaultCursor' || '';
     },
-    canReject() {
-      return this.status === 'ACCEPTED';
-    },
     canAccept() {
       return this.status === 'REJECTED';
-    },
-    hasActions() {
-      return this.canReject || this.canAccept;
     },
     objectId() {
       return this.realization?.objectId;
@@ -416,9 +407,6 @@ export default {
           .find(extension => extension.match && extension.match(this.eventName)) || null;
       }
       return null;
-    },
-    isAutomaticTypeLabel() {
-      return this.isAutomaticType ? this.$t('gamification.label.automatic') : this.$t('realization.label.manual');
     },
     statusLabel() {
       return this.$t(`realization.label.${this.status.toLowerCase()}`);
@@ -451,11 +439,13 @@ export default {
           this.realizationLink = this.realization?.link || this.realization?.url;
         }
       });
+    this.statusValue = this.status === 'DELETED' || this.status === 'CANCELED' ? 'REJECTED' : this.status;
   },
   methods: {
     updateRealizationStatus(status) {
-      this.$realizationService.updateRealizationStatus(this.realization.id, status)
+      return this.$realizationService.updateRealizationStatus(this.realization.id, status)
         .then(() => {
+          this.statusValue = status;
           const updatedRealization = Object.assign(this.realization, {
             status,
           });
