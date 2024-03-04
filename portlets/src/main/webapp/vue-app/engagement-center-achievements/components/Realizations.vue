@@ -90,6 +90,7 @@
         class="realizationsTable px-3 pt-2">
         <template slot="item" slot-scope="props">
           <engagement-center-realization-item
+            :key="props.item.id"
             :realization="props.item"
             :date-format="dateFormat"
             :is-administrator="administrationMode"
@@ -163,6 +164,7 @@ export default {
     searchList: [],
     ownedPrograms: [],
     earnerIds: [],
+    status: null,
     ruleIds: [],
     offset: 0,
     limit: 25,
@@ -201,7 +203,8 @@ export default {
     filtersCount() {
       return (this.searchList?.length && 1 || 0)
         + (this.ruleIds?.length && 1 || 0)
-        + (this.earnerIds?.length && 1 || 0);
+        + (this.earnerIds?.length && 1 || 0)
+        + (this.status !== null && this.status !== 'ALL'? 1 : 0)  ;
     },
     hasMore() {
       return this.limit < this.totalSize;
@@ -222,6 +225,7 @@ export default {
         programIds: this.searchList,
         ruleIds: this.ruleIds,
         owned: this.administrationMode,
+        status: this.status,
       };
     },
     exportFileLink() {
@@ -251,14 +255,6 @@ export default {
           width: '120'
         },
         {
-          text: this.$t('realization.label.actionType'),
-          value: 'type',
-          sortable: true,
-          align: 'center',
-          class: 'actionHeader',
-          width: '85',
-        },
-        {
           text: this.$t('realization.label.points'),
           sortable: false,
           align: 'center',
@@ -272,16 +268,10 @@ export default {
           sortable: true,
           align: 'center',
           class: 'actionHeader',
-          width: '95',
+          width: '100',
         },
       ];
       if (this.administrationMode) {
-        realizationsHeaders.push({
-          text: this.$t('realization.label.actions'),
-          sortable: false,
-          class: 'actionHeader',
-          width: '80',
-        });
         realizationsHeaders.splice(3, 0,         
           {
             value: 'grantee',
@@ -415,18 +405,23 @@ export default {
           this.displaySearchResult = this.searchList?.length >= 0 && this.realizations.length > 0;
         });
     },
-    realizationUpdated(updatedRealization){
-      const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
-      this.realizations[index] = updatedRealization;
-      this.$set(this.realizations,index,updatedRealization);
+    realizationUpdated(updatedRealization) {
+      const index = this.realizations && this.realizations.findIndex((realization) => {
+        return realization.id === updatedRealization.id;
+      });
+      this.$set(this.realizations, index, updatedRealization);
+      if (this.status !== null && this.status !== 'ALL' && this.status !== updatedRealization.status) {
+        this.realizations.splice(index, 1);
+      }
     },
-    filter(programs, rules, grantees) {
+    filter(programs, rules, grantees, status) {
       this.filterActivated = true;
       this.initialized = false;
       this.realizations = [];
       this.searchList = programs.map(program => program.id);
       this.ruleIds = rules.map(rule => rule.id);
       this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
+      this.status = status !== null && status !== 'ALL' ? status : null;
       this.loadRealizations();
     },
     onResize () {

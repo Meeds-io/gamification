@@ -21,6 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         class="d-flex text-truncate"
         :class="!actionURL && 'not-clickable'"
         :href="actionURL"
+        target="_blank"
         v-on="on">
         <v-icon size="15" class="primary--text">fas fa-trophy</v-icon>
         <div class="ps-2 text-truncate">{{ actionLabel }}

@@ -99,7 +99,7 @@ public class AnnouncementStorage {
     announcementRealization.setCreatedDate(announcement.getCreatedDate() == null ? Utils.toRFC3339Date(new Date())
                                                                                  : announcement.getCreatedDate());
     announcementRealization.setReceiver(String.valueOf(announcement.getCreator()));
-    announcementRealization.setStatus(RealizationStatus.ACCEPTED.name());
+    announcementRealization.setStatus(RealizationStatus.PENDING.name());
     announcementRealization.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     announcementRealization.setCreatedBy(creator != null ? creator : "Gamification Inner Process");
     announcementRealization.setLastModifiedBy(creator != null ? creator : "Gamification Inner Process");

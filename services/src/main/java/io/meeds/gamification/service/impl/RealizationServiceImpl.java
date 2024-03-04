@@ -1,5 +1,6 @@
 package io.meeds.gamification.service.impl;
 
+import static io.meeds.gamification.constant.EntityType.MANUAL;
 import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CANCEL_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CREATE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_REALIZATION_UPDATE_EVENT;
@@ -35,6 +36,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import io.meeds.gamification.constant.*;
 import io.meeds.gamification.plugin.EventPlugin;
 import io.meeds.gamification.service.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -61,13 +63,6 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-import io.meeds.gamification.constant.DateFilterType;
-import io.meeds.gamification.constant.EntityFilterType;
-import io.meeds.gamification.constant.EntityStatusType;
-import io.meeds.gamification.constant.IdentityType;
-import io.meeds.gamification.constant.Period;
-import io.meeds.gamification.constant.RealizationStatus;
-import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.ProfileReputation;
 import io.meeds.gamification.model.ProgramDTO;
@@ -290,7 +285,10 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (status == null) {
       throw new IllegalArgumentException("status is mandatory");
     }
-    if (status != RealizationStatus.ACCEPTED && status != RealizationStatus.REJECTED) {
+    Set<RealizationStatus> allowedStatus = Set.of(RealizationStatus.ACCEPTED,
+                                                  RealizationStatus.REJECTED,
+                                                  RealizationStatus.PENDING);
+    if (!allowedStatus.contains(status)) {
       throw new IllegalArgumentException("Allowed manual status can be either ACCEPTED or REJECTED");
     }
     RealizationDTO realization = getRealizationById(realizationId);
