@@ -143,7 +143,7 @@ public class RealizationRest implements ResourceContainer {
                                   @DefaultValue("USER")
                                   @QueryParam("identityType")
                                   IdentityType identityType,
-                                  @Parameter(description = "Realization status. Possible values: ACCEPTED, REJECTED, CANCELED, DELETED", required = false)
+                                  @Parameter(description = "Realization status. Possible values: ACCEPTED, PENDING, REJECTED, CANCELED, DELETED", required = false)
                                   @QueryParam("status")
                                   RealizationStatus status,
                                   @Parameter(description = "Program technical identifiers. that will be used to filter achievements", required = false)
