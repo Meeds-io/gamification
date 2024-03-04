@@ -1,6 +1,5 @@
 package io.meeds.gamification.service.impl;
 
-import static io.meeds.gamification.constant.EntityType.MANUAL;
 import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CANCEL_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CREATE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_REALIZATION_UPDATE_EVENT;
