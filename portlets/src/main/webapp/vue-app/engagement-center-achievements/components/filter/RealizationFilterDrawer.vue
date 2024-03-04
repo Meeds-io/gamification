@@ -103,6 +103,15 @@
             </div>
           </v-flex>
         </v-card-text>
+        <v-card-text>
+          <span class="subtitle-1">{{ $t('realization.label.filter.status') }}</span>
+          <v-radio-group v-model="status" class="mt-1">
+            <v-radio :label="$t('realization.label.filter.status.all')" value="ALL" />
+            <v-radio :label="$t('realization.label.filter.status.accepted')" value="ACCEPTED" />
+            <v-radio :label="$t('realization.label.filter.status.pending')" value="PENDING" />
+            <v-radio :label="$t('realization.label.filter.status.rejected')" value="REJECTED" />
+          </v-radio-group>
+        </v-card-text>
       </form>
     </template>
     <template slot="footer">
@@ -155,6 +164,7 @@ export default {
       drawer: false,
       disabled: false,
       granteeAttendee: null,
+      status: 'ALL',
       grantees: [],
       granteesIds: [],
       program: null,
@@ -240,7 +250,7 @@ export default {
     },
     confirm(differ) {
       window.setTimeout(() => {
-        this.$emit('selectionConfirmed', this.programs, this.rules, this.grantees);
+        this.$emit('selectionConfirmed', this.programs, this.rules, this.grantees, this.status);
         this.$refs.drawer.close();
       }, differ && 200 || 10);
     },
@@ -252,6 +262,7 @@ export default {
       this.rule = null;
       this.granteeAttendee = null;
       this.includeDisabledPrograms = false;
+      this.status = 'ALL';
     },
     resetAndApply() {
       this.reset();
