@@ -406,9 +406,7 @@ export default {
         });
     },
     realizationUpdated(updatedRealization) {
-      const index = this.realizations && this.realizations.findIndex((realization) => {
-        return realization.id === updatedRealization.id;
-      });
+      const index = this.realizations?.findIndex(realization => realization.id === updatedRealization.id);
       this.$set(this.realizations, index, updatedRealization);
       if (this.status !== null && this.status !== 'ALL' && this.status !== updatedRealization.status) {
         this.realizations.splice(index, 1);
