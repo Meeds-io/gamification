@@ -32,7 +32,6 @@ export default {
     };
   },
   created() {
-    this.$connectorWebSocket.initCometd(this.handleConnectorIdentifierUpdates);
     document.addEventListener('extension-gamification-connectors-updated', this.refreshConnectorExtensions);
     this.$root.$on('gamification-connectors-refresh', this.refreshConnectors);
     this.init();
@@ -68,9 +67,6 @@ export default {
           this.$emit('connectors-loaded', this.connectors, this.connectorExtensions);
         });
     },
-    handleConnectorIdentifierUpdates(updateParams) {
-      this.$root.$emit('gamification-connector-identifier-updated', updateParams);
-    }
   },
 };
 </script>
