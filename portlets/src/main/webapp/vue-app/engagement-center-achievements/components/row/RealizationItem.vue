@@ -201,39 +201,69 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </td>
       <td class="text-truncate align-center">
         <div v-if="isAdministrator" class="text-center">
-          <v-btn
-            class="mx-2"
-            height="16px"
-            width="16px"
-            fab
-            dark
-            depressed
-            :class="statusValue === 'ACCEPTED' && 'success-color-background' || 'light-black-background'"
-            @click="updateRealizationStatus('ACCEPTED')">
-            <v-icon size="10" dark>fas fa-check</v-icon>
-          </v-btn>
-          <v-btn
-            class="mx-2"
-            height="16px"
-            width="16px"
-            fab
-            dark
-            depressed
-            :class="statusValue === 'PENDING' && 'orange darken-2' || 'light-black-background'"
-            @click="updateRealizationStatus('PENDING')">
-            <v-icon size="10" dark>fas fa-question</v-icon>
-          </v-btn>
-          <v-btn
-            class="mx-2"
-            height="16px"
-            width="16px"
-            fab
-            dark
-            depressed
-            :class="statusValue === 'REJECTED' && 'error-color-background' || 'light-black-background'"
-            @click="updateRealizationStatus('REJECTED')">
-            <v-icon size="10" dark>fas fa-times</v-icon>
-          </v-btn>
+          <v-tooltip
+            z-index="4"
+            max-width="300"
+            bottom>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                :class="accepted && 'success-color-background not-clickable' || 'light-black-background'"
+                class="mx-2"
+                height="16px"
+                width="16px"
+                fab
+                dark
+                depressed
+                v-bind="attrs"
+                v-on="on"
+                @click="updateRealizationStatus('ACCEPTED')">
+                <v-icon size="10" dark>fas fa-check</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ accepted ? statusLabel : $t('realization.label.accept') }}</span>
+          </v-tooltip>
+          <v-tooltip
+            z-index="4"
+            max-width="300"
+            bottom>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                :class="pending && 'orange darken-2 not-clickable' || 'light-black-background'"
+                class="mx-2"
+                height="16px"
+                width="16px"
+                fab
+                dark
+                depressed
+                v-bind="attrs"
+                v-on="on"
+                @click="updateRealizationStatus('PENDING')">
+                <v-icon size="10" dark>fas fa-question</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ pending ? statusLabel : $t('realization.label.review') }}</span>
+          </v-tooltip>
+          <v-tooltip
+            z-index="4"
+            max-width="300"
+            bottom>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                :class="rejected && 'error-color-background not-clickable' || 'light-black-background'"
+                class="mx-2"
+                height="16px"
+                width="16px"
+                fab
+                dark
+                depressed
+                v-bind="attrs"
+                v-on="on"
+                @click="updateRealizationStatus('REJECTED')">
+                <v-icon size="10" dark>fas fa-times</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ rejected ? statusLabel : $t('realization.label.reject') }}</span>
+          </v-tooltip>
         </div>
         <v-tooltip v-else bottom>
           <template #activator="{ on, attrs }">
@@ -359,6 +389,15 @@ export default {
     status() {
       return this.realization.status;
     },
+    accepted() {
+      return this.status === 'ACCEPTED';
+    },
+    pending() {
+      return this.status === 'PENDING';
+    },
+    rejected() {
+      return this.status === 'REJECTED';
+    },
     statusIcon() {
       switch (this.status) {
       case 'ACCEPTED':
@@ -443,6 +482,9 @@ export default {
   },
   methods: {
     updateRealizationStatus(status) {
+      if (status === this.statusValue) {
+        return;
+      }
       return this.$realizationService.updateRealizationStatus(this.realization.id, status)
         .then(() => {
           this.statusValue = status;
