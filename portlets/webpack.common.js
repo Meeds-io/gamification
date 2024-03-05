@@ -49,7 +49,9 @@ module.exports = {
     connectorUserProfile: './src/main/webapp/vue-app/connector-user-profile/main.js',
     connectorUserSettings: './src/main/webapp/vue-app/connector-user-settings/main.js',
     connectorAdminSettings: './src/main/webapp/vue-app/connector-admin-settings/main.js',
-    connectorExtensions: './src/main/webapp/vue-app/connectors-extensions/main.js'
+    connectorEvents: './src/main/webapp/vue-app/connector-events-extensions/main.js',
+    connectorExtensions: './src/main/webapp/vue-app/connectors-extensions/main.js',
+    connectorUserExtensions: './src/main/webapp/vue-app/connector-user-extensions/main.js'
   },
   plugins: [
     new ESLintPlugin({

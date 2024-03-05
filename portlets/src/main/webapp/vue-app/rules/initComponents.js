@@ -15,6 +15,7 @@ import RuleRecurrence from './components/detail/RuleRecurrence.vue';
 import RuleRecurrenceValidity from './components/detail/RuleRecurrenceValidity.vue';
 import RulePrerequisites from './components/detail/RulePrerequisites.vue';
 import RulePrerequisiteItem from './components/detail/RulePrerequisiteItem.vue';
+import RuleConnectorPrerequisiteItem from './components/detail/RuleConnectorPrerequisiteItem.vue';
 import RuleAnnouncementForm from './components/detail/RuleAnnouncementForm.vue';
 import RulePoints from './components/detail/RulePoints.vue';
 import RuleDateStart from './components/detail/RuleDateStart.vue';
@@ -27,6 +28,7 @@ import RuleDateInfoChip from './components/detail/RuleDateInfoChip.vue';
 import RuleFavoriteAction from './components/detail/RuleFavoriteAction.vue';
 
 import RuleFormDrawer from './components/drawers/RuleFormDrawer.vue';
+import RuleFormAutomaticFlow from './components/drawers/RuleFormAutomaticFlow.vue';
 import RuleDetailDrawer from './components/drawers/RuleDetailDrawer.vue';
 import RuleAchievementsDrawer from './components/drawers/RuleAchievementsDrawer.vue';
 import ProgramOwnersDrawer from './components/drawers/ProgramOwnersDrawer.vue';
@@ -63,10 +65,12 @@ const components = {
   'engagement-center-rule-announcement-form': RuleAnnouncementForm,
   'engagement-center-rule-prerequisites': RulePrerequisites,
   'engagement-center-rule-prerequisite-item': RulePrerequisiteItem,
+  'engagement-center-rule-connector-prerequisite-item': RuleConnectorPrerequisiteItem,
 
   'engagement-center-rule-extensions': RuleExtensions,
 
   'engagement-center-rule-form-drawer': RuleFormDrawer,
+  'engagement-center-rule-form-automatic-flow': RuleFormAutomaticFlow,
   'engagement-center-rule-detail-drawer': RuleDetailDrawer,
   'engagement-center-rule-achievements-drawer': RuleAchievementsDrawer,
   'engagement-center-program-owners-drawer': ProgramOwnersDrawer,

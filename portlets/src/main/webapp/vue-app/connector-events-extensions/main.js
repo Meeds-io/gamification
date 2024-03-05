@@ -1,7 +1,8 @@
 /*
+ *
  * This file is part of the Meeds project (https://meeds.io/).
  *
- * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,17 +15,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
  */
-export function initCometd(callback) {
-  cCometd.subscribe('/GamificationConnectors', null, (event) => {
-    const data = event.data && JSON.parse(event.data);
-    if (!data) {
-      return;
-    }
-    callback(data);
-  });
+
+import './initComponents.js';
+import './extensions.js';
+
+// get overridden components if exists
+if (extensionRegistry) {
+  const components = extensionRegistry.loadComponents('engagementCenterEvent');
+  if (components?.length) {
+    components.forEach(cmp => {
+      Vue.component(cmp.componentName, cmp.componentOptions);
+    });
+  }
 }
 
-export function isDisconnected() {
-  return cCometd.isDisconnected();
-}
+Vue.prototype.$utils?.includeExtensions?.('engagementCenterConnectorEvents');

@@ -70,6 +70,10 @@
           <engagement-center-rule-card-mask-prequisite-rules
             v-else-if="!isValidPrerequities"
             :rule="ruleWithProgram" />
+          <engagement-center-rule-card-mask-connector
+            v-else-if="isRequireConnectorConnection"
+            :extension="connectorValueExtension"
+            :title="rule.title" />
         </engagement-center-card-mask>
       </div>
       <v-card
@@ -78,7 +82,7 @@
         flat>
         <v-card-title class="rule-card-title d-flex flex-nowrap pb-4 text-break">
           <div :title="title" class="d-flex align-center flex-grow-1 text-truncate">
-            <rule-icon :rule-event="rule.event" class="me-2" />
+            <rule-icon :rule-event="ruleEvent" class="me-2" />
             <span class="text-truncate subtitle-1 pt-2px">
               {{ title }}
             </span>
@@ -142,10 +146,14 @@ export default {
   },
   data: () => ({
     showMenu: false,
+    connectorValueExtensions: []
   }),
   computed: {
     ruleProgram() {
       return this.rule?.program || this.program;
+    },
+    ruleEvent() {
+      return this.rule?.event?.title;
     },
     ruleWithProgram() {
       return this.rule?.program && this.rule || Object.assign(this.rule, {
@@ -165,7 +173,7 @@ export default {
       return this.rule?.description;
     },
     isValid() {
-      return this.noValidation || this.rule?.userInfo?.context?.valid;
+      return (this.noValidation || this.rule?.userInfo?.context?.valid) && !this.isRequireConnectorConnection;
     },
     isValidDates() {
       return this.rule?.userInfo?.context?.validDates;
@@ -186,6 +194,20 @@ export default {
     isValidWhitelist() {
       return this.rule?.userInfo?.context?.validWhitelist;
     },
+    eventType() {
+      return this.rule?.event?.type;
+    },
+    connectorValueExtension() {
+      if (this.connectorValueExtensions) {
+        return this.rule?.event?.type
+            && Object.values(this.connectorValueExtensions)
+              .find(extension => extension?.name === this.eventType);
+      }
+      return null;
+    },
+    isRequireConnectorConnection() {
+      return this.ruleEvent && this.connectorValueExtension?.identifier === null;
+    },
     programStyle() {
       return this.ruleProgram?.color && `border: 1px solid ${this.ruleProgram.color} !important;` || '';
     },
@@ -202,6 +224,10 @@ export default {
         }, 200);
       }
     });
+    this.$root.$on('connector-value-extensions-updated', (connectorValueExtensions) => {
+      this.connectorValueExtensions = connectorValueExtensions;
+    });
+    this.connectorValueExtensions = this.$root.connectorValueExtensions;
   },
 };
 </script>

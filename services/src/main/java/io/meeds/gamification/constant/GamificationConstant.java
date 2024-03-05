@@ -100,6 +100,9 @@ public interface GamificationConstant { // NOSONAR
     /** USER LOGIN CONTEXT */
     String GAMIFICATION_ATTENDANCE_USER_LOGIN                                           = "userLogin";
 
+    /*************************************************** CONSTANTS TO MANAGE CONTRIBUTIONS GAMIFICATION PROCESS **********************************************/
+    String GAMIFICATION_CONTRIBUTIONS_CREATE_RULE                                       = "createRule";
+
     //Achievement object types
     
     String IDENTITY_OBJECT_TYPE                                       = "identity";
@@ -113,6 +116,8 @@ public interface GamificationConstant { // NOSONAR
     String OBJECT_ID_PARAM                                            = "objectId";
 
     String OBJECT_TYPE_PARAM                                          = "objectType";
+
+    String EVENT_DETAILS_PARAM                                        = "eventDetails";
 
     /**
      * @deprecated this constant name is ambiguous since its name reflect to

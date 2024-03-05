@@ -2,7 +2,7 @@
  *
  * This file is part of the Meeds project (https://meeds.io/).
  *
- * Copyright (C) 2023 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,10 +17,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-import * as connectorWebSocket from '../connector-user-settings/js/WebSocket.js';
+import ConnectorUserExtensions from './components/ConnectorUserExtensions.vue';
 
-if (!Vue.prototype.$connectorWebSocket) {
-  window.Object.defineProperty(Vue.prototype, '$connectorWebSocket', {
-    value: connectorWebSocket,
-  });
+const components = {
+  'engagement-center-user-connectors-extensions': ConnectorUserExtensions,
+};
+
+for (const key in components) {
+  Vue.component(key, components[key]);
 }

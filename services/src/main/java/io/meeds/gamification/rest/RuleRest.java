@@ -158,6 +158,9 @@ public class RuleRest implements ResourceContainer {
                            @Parameter(description = "Used to filter rules by space audience", required = false)
                            @QueryParam("spaceId")
                            List<Long> spaceIds,
+                           @Parameter(description = "Used to filter rules by event name")
+                           @QueryParam("eventName")
+                           String eventName,
                            @Parameter(description = "Rules type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = ALL.", required = false)
                            @QueryParam("type")
                            @DefaultValue("ALL")
@@ -254,6 +257,7 @@ public class RuleRest implements ResourceContainer {
     ruleFilter.setExcludedRuleIds(excludedRuleIds);
     ruleFilter.setProgramId(programId);
     ruleFilter.setSpaceIds(spaceIds);
+    ruleFilter.setEventName(eventName);
     ruleFilter.setIdentityId(getCurrentUserIdentityId());
     ruleFilter.setExcludeNoSpace(CollectionUtils.isNotEmpty(spaceIds));
     ruleFilter.setSortBy(sortField);
@@ -399,8 +403,6 @@ public class RuleRest implements ResourceContainer {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
-    } catch (ObjectAlreadyExistsException e) {
-      return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
     }
   }
 

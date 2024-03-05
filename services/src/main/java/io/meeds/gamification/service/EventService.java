@@ -21,10 +21,31 @@ import java.util.List;
 
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
-import org.exoplatform.commons.ObjectAlreadyExistsException;
+import io.meeds.gamification.plugin.EventPlugin;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public interface EventService {
+
+  /**
+   * Add a new {@link EventPlugin} for a given Event Type
+   *
+   * @param eventPlugin {@link EventPlugin}
+   */
+  void addPlugin(EventPlugin eventPlugin);
+
+  /**
+   * Removes a {@link EventPlugin} identified by its eventType
+   *
+   * @param eventType Event type
+   */
+  void removePlugin(String eventType);
+
+  /**
+   * Gets a {@link EventPlugin} identified by its eventType
+   *
+   * @return eventPlugin {@link EventPlugin}
+   */
+  EventPlugin getEventPlugin(String eventType);
 
   /**
    * Get events by filter using offset and limit.
@@ -60,22 +81,12 @@ public interface EventService {
   EventDTO getEventByTitleAndTrigger(String title, String trigger);
 
   /**
-   * Get gamification event by event type and title
-   *
-   * @param type event type
-   * @param title event title
-   * @return {@link EventDTO}
-   */
-  EventDTO getEventByTypeAndTitle(String type, String title);
-
-  /**
    * Add Event to DB
    *
    * @param eventDTO {@link EventDTO} to create
    * @return {@link EventDTO}
-   * @throws ObjectAlreadyExistsException when event already exists
    */
-  EventDTO createEvent(EventDTO eventDTO) throws ObjectAlreadyExistsException;
+  EventDTO createEvent(EventDTO eventDTO);
 
   /**
    * Update event
@@ -85,6 +96,19 @@ public interface EventService {
    * @throws ObjectNotFoundException when event doesn't exists
    */
   EventDTO updateEvent(EventDTO eventDTO) throws ObjectNotFoundException;
+
+  /**
+   * Get events by canceller trigger
+   *
+   * @param cancellerTrigger canceller trigger
+   * @param eventType        event Type
+   * @param offset           Offset of result
+   * @param limit            Limit of result
+   * @return {@link List} of {@link EventDTO}
+   */
+  default List<EventDTO> getEventsByCancellerTrigger(String eventType, String cancellerTrigger, int offset, int limit) {
+    throw new UnsupportedOperationException();
+  }
 
   /**
    * Retrieves gamification event by event id

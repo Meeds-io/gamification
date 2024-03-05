@@ -145,6 +145,7 @@
               class="px-0 py-6 rule-has-validity-message">
               <engagement-center-rule-disabled
                 v-if="isDisabled" />
+              <engagement-center-rule-connector-prerequisite-item v-else-if="isRequireConnectorConnection" :extension="connectorValueExtension" />
               <engagement-center-rule-invalid-audience
                 v-else-if="!isValidAudience" />
               <engagement-center-rule-invalid-whitelist
@@ -171,6 +172,17 @@
             :rule="rule" />
         </v-col>
       </v-row>
+      <v-card
+        v-if="isExtensibleEvent && !isPublicSite"
+        class="px-10 py-3"
+        flat>
+        <extension-registry-components
+          :params="eventParams"
+          name="engagementCenterEvent"
+          type="connector-event-extensions"
+          parent-element="div"
+          element="div" />
+      </v-card>
     </template>
     <template v-if="announcementFormOpened && rule && !loading && drawer" #footer>
       <div class="d-flex mr-2">
@@ -211,6 +223,9 @@ export default {
     updatePath: false,
     isPublicSite: eXo.env.portal.portalName === 'public',
     objectType: 'activity',
+    connectorsEventComponentsExtensions: [],
+    extensionEventApp: 'engagementCenterEvent',
+    connectorEventExtensionType: 'connector-event-extensions',
   }),
   computed: {
     now() {
@@ -244,6 +259,7 @@ export default {
         || !this.isValidAudience
         || !this.isValidWhitelist
         || this.isDisabled
+        || this.isRequireConnectorConnection
         || false;
     },
     hasRecurrence() {
@@ -257,6 +273,9 @@ export default {
           || this.rule?.deleted
           || !this.rule?.program?.enabled
           || this.rule?.program?.deleted;
+    },
+    isRequireConnectorConnection() {
+      return this.connectorValueExtension?.identifier === null;
     },
     isValidWhitelist() {
       return this.rule?.userInfo?.context?.validWhitelist;
@@ -295,6 +314,32 @@ export default {
     spaceId() {
       return this.rule?.program?.spaceId;
     },
+    eventType() {
+      return this.rule?.event?.type;
+    },
+    connectorValueExtensions() {
+      return this.$root.connectorValueExtensions;
+    },
+    connectorValueExtension() {
+      if (this.connectorValueExtensions) {
+        return this.rule?.event?.type
+            && Object.values(this.connectorValueExtensions)
+              .find(extension => extension?.name === this.eventType);
+
+      }
+      return null;
+    },
+    isExtensibleEvent() {
+      return this.connectorsEventComponentsExtensions.map(extension => extension?.componentOptions?.isEnabled(this.eventParams));
+    },
+    eventParams() {
+      return {
+        trigger: this.rule?.event?.trigger,
+        type: this.rule?.event?.type,
+        properties: this.rule?.event?.properties,
+        isEditing: false,
+      };
+    },
   },
   watch: {
     sending() {
@@ -330,9 +375,12 @@ export default {
     this.$root.$on('rule-detail-drawer', this.open);
     this.$root.$on('rule-detail-drawer-by-id', this.openById);
     this.$root.$on('rule-form-drawer-opened', this.close);
+    this.$root.$on('rule-detail-drawer-close', this.close);
     this.$root.$on('rule-deleted', this.close);
     document.addEventListener('rule-detail-drawer-event', event => this.open(event?.detail?.rule, event?.detail?.openAnnouncement, event?.detail?.goBackButton, event?.detail?.updatePath));
     document.addEventListener('rule-detail-drawer-by-id-event', event => this.openById(event?.detail?.ruleId, event?.detail?.openAnnouncement));
+    document.addEventListener(`component-${this.extensionEventApp}-${this.connectorEventExtensionType}-updated`, this.refreshConnectorExtensions);
+    this.refreshConnectorExtensions();
   },
   methods: {
     open(ruleToDisplay, displayAnnouncementForm, goBackButton, updatePath) {
@@ -450,7 +498,7 @@ export default {
               ruleDescription: this.rule.description,
               ruleBudget: this.rule.score || 0,
               ruleType: this.rule.type,
-              ruleEvent: this.rule.event,
+              ruleEvent: this.rule.event?.title,
               programId: this.rule.program?.id,
               programTitle: this.rule.program?.title,
               programType: this.rule.program?.type,
@@ -473,6 +521,11 @@ export default {
         .catch(() => this.$root.$emit('alert-message', this.$t('rule.detail.errorJoining'), 'error'))
         .then(() => this.openById(this.rule.id))
         .finally(() => this.joining = false);
+    },
+    refreshConnectorExtensions() {
+      // Get list of connectors from extensionRegistry
+      this.connectorsEventComponentsExtensions = extensionRegistry.loadComponents(this.extensionEventApp) || [];
+      this.$emit('event-extension-initialized', this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name));
     },
   }
 };

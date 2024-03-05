@@ -36,7 +36,9 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     ].includes(actionLabel),
     getLink: (realization) => {
       Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${realization?.objectId}`);
-    }
+    },
+    isExtensible: true,
+    notExtensible: ['pinActivityOnSpace', 'receiveActivity']
   },
 });
 
@@ -58,8 +60,8 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     ].includes(actionLabel),
     getLink: realization => {
       if (realization?.objectType === 'identity'
-          && realization?.action?.event !== 'addUserProfileNotificationSetting'
-          && realization?.action?.event !== 'userLogin') {
+          && realization?.action?.event?.title !== 'addUserProfileNotificationSetting'
+          && realization?.action?.event?.title !== 'userLogin') {
         if (realization?.objectId === eXo.env.portal.profileOwnerIdentityId) {
           realization.link = `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/profile/${eXo.env.portal.profileOwner}`;
           return realization.link;
@@ -123,5 +125,37 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
         return null;
       }
     }
+  },
+});
+
+extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
+  type: 'connector-connect',
+  options: {
+    rank: 80,
+    icon: 'fa-solid fa-plug',
+    match: (actionLabel) => actionLabel?.startsWith('connectorConnect'),
+    getLink: realization => {
+      if (realization?.objectId === eXo.env.portal.profileOwnerIdentityId) {
+        realization.link = `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/profile/${eXo.env.portal.profileOwner}`;
+        return realization.link;
+      } else {
+        return window?.eXo?.env?.portal?.userName?.length && Vue.prototype.$identityService.getIdentityById(realization?.objectId)
+          .then(identity => {
+            realization.link = `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/profile/${identity.remoteId}`;
+            return realization.link;
+          }) || null;
+      }
+    },
+  }
+});
+
+extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
+  type: 'Contributions',
+  options: {
+    rank: 10,
+    icon: 'fas fa-plus-square',
+    match: (actionLabel) => [
+      'createRule'
+    ].includes(actionLabel)
   },
 });

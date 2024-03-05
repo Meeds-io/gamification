@@ -49,13 +49,15 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   private static final String  EVENT_PARAM_NAME          = "event";
 
+  private static final String  EVENT_TYPE_PARAM_NAME     = "eventType";
+
   private static final String  QUERY_FILTER_FIND_PREFIX  = "Rule.findAllRules";
 
   private static final String  QUERY_FILTER_COUNT_PREFIX = "Rule.countAllRules";
 
   private static final String  DOMAIN_ID_PARAM_NAME      = "domainId";
 
-  private Map<String, Boolean> filterNamedQueries        = new HashMap<>();
+  private final Map<String, Boolean> filterNamedQueries        = new HashMap<>();
 
   public List<Long> findHighestBudgetProgramIds(int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIds", Tuple.class);
@@ -196,6 +198,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (StringUtils.isNotBlank(filter.getEventName())) {
       query.setParameter(EVENT_PARAM_NAME, filter.getEventName());
     }
+    if (StringUtils.isNotBlank(filter.getEventType())) {
+      query.setParameter(EVENT_TYPE_PARAM_NAME, filter.getEventType());
+    }
     if (filter.getProgramId() > 0) {
       query.setParameter(DOMAIN_ID_PARAM_NAME, filter.getProgramId());
     }
@@ -306,7 +311,11 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
     if (StringUtils.isNotBlank(filter.getEventName())) {
       suffixes.add("Event");
-      predicates.add("r.event = :event");
+      predicates.add("r.eventEntity.title = :event");
+    }
+    if (StringUtils.isNotBlank(filter.getEventType())) {
+      suffixes.add("EventType");
+      predicates.add("r.eventEntity.type = :eventType");
     }
     if (filter.getProgramId() > 0) {
       suffixes.add("Domain");
@@ -367,8 +376,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       break;
     case STARTED:
       suffixes.add("StartDateAndEndDate");
-      predicates.add("((r.startDate IS NULL OR r.startDate <= :date)" +
-          " AND (r.endDate IS NULL OR r.endDate > :date))");
+      predicates.add("((r.startDate IS NULL OR r.startDate <= :date)" + " AND (r.endDate IS NULL OR r.endDate > :date))");
       break;
     case STARTED_WITH_END:
       suffixes.add("StartDateAndEndDateNotNull");

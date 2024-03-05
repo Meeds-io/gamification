@@ -18,12 +18,10 @@
 package io.meeds.gamification.entity;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import jakarta.persistence.*;
 
-import org.exoplatform.commons.utils.StringListConverter;
 import lombok.Data;
 
 @Entity(name = "EventEntity")
@@ -31,9 +29,6 @@ import lombok.Data;
 @NamedQuery(name = "EventEntity.getEventByTitleAndTrigger",
             query = "SELECT event FROM EventEntity event"
                  + " WHERE event.title =: title" + " AND event.trigger =: trigger")
-@NamedQuery(name = "EventEntity.getEventByTypeAndTitle",
-query = "SELECT event FROM EventEntity event"
-    + " WHERE event.type =: type" + " AND event.title =: title")
 @NamedQuery(name = "EventEntity.getEventsByTitle",
             query = "SELECT event FROM EventEntity event"
                  + " WHERE event.title =: title ORDER BY event.type ASC")
@@ -56,10 +51,6 @@ public class EventEntity implements Serializable {
 
   @Column(name = "EVENT_TRIGGER", nullable = false)
   private String          trigger;
-
-  @Convert(converter = StringListConverter.class)
-  @Column(name = "CANCELLER_EVENTS")
-  private List<String> cancellerEvents;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @MapKeyColumn(name = "NAME")

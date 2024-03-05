@@ -18,10 +18,13 @@
 package io.meeds.gamification.service.impl;
 
 import io.meeds.gamification.model.EventDTO;
+import io.meeds.gamification.model.Trigger;
 import io.meeds.gamification.model.filter.EventFilter;
+import io.meeds.gamification.plugin.EventPlugin;
+import io.meeds.gamification.service.EventRegistry;
 import io.meeds.gamification.service.EventService;
 import io.meeds.gamification.storage.EventStorage;
-import org.exoplatform.commons.ObjectAlreadyExistsException;
+import org.apache.commons.collections.CollectionUtils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 import java.util.*;
@@ -30,8 +33,28 @@ public class EventServiceImpl implements EventService {
 
   private final EventStorage eventStorage;
 
-  public EventServiceImpl(EventStorage eventStorage) {
+  private final EventRegistry eventRegistry;
+
+  private final Map<String, EventPlugin> eventPlugins              = new HashMap<>();
+
+  public EventServiceImpl(EventStorage eventStorage, EventRegistry eventRegistry) {
     this.eventStorage = eventStorage;
+    this.eventRegistry = eventRegistry;
+  }
+
+  @Override
+  public void addPlugin(EventPlugin eventPlugin) {
+    eventPlugins.put(eventPlugin.getEventType(), eventPlugin);
+  }
+
+  @Override
+  public void removePlugin(String eventType) {
+    eventPlugins.remove(eventType);
+  }
+
+  @Override
+  public EventPlugin getEventPlugin(String eventName) {
+    return eventPlugins.values().stream().filter(eventPlugin -> eventPlugin.getTriggers().contains(eventName)).findFirst().orElse(null);
   }
 
   @Override
@@ -55,18 +78,9 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
-  public EventDTO getEventByTypeAndTitle(String type, String title) {
-    return eventStorage.getEventByTypeAndTitle(type, title);
-  }
-
-  @Override
-  public EventDTO createEvent(EventDTO eventDTO) throws ObjectAlreadyExistsException {
+  public EventDTO createEvent(EventDTO eventDTO) {
     if (eventDTO == null) {
       throw new IllegalArgumentException("event object is mandatory");
-    }
-    EventDTO similarEvent = eventStorage.getEventByTitleAndTrigger(eventDTO.getTitle(), eventDTO.getTrigger());
-    if (similarEvent != null) {
-      throw new ObjectAlreadyExistsException("Event with same title and trigger already exist");
     }
     return eventStorage.saveEvent(eventDTO);
   }
@@ -81,6 +95,20 @@ public class EventServiceImpl implements EventService {
       throw new ObjectNotFoundException("Event with id " + eventDTO.getId() + " is not found");
     }
     return eventStorage.saveEvent(eventDTO);
+  }  
+  
+  @Override
+  public List<EventDTO> getEventsByCancellerTrigger(String eventType, String cancellerTrigger, int offset, int limit) {
+    List<String> triggers = eventRegistry.getTriggers(eventType)
+                                         .stream()
+                                         .filter(t -> CollectionUtils.isNotEmpty(t.getCanceller())
+                                             && t.getCanceller().contains(cancellerTrigger))
+                                         .map(Trigger::getTitle)
+                                         .toList();
+    EventFilter eventFilter = new EventFilter();
+    eventFilter.setTriggers(triggers);
+
+    return getEvents(eventFilter, offset, limit);
   }
 
   public EventDTO getEvent(long eventId) {
