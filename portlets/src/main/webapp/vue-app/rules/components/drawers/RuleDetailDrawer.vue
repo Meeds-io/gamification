@@ -381,9 +381,6 @@ export default {
     document.addEventListener('rule-detail-drawer-by-id-event', event => this.openById(event?.detail?.ruleId, event?.detail?.openAnnouncement));
     document.addEventListener(`component-${this.extensionEventApp}-${this.connectorEventExtensionType}-updated`, this.refreshConnectorExtensions);
     this.refreshConnectorExtensions();
-    if (!this.isPublicSite) {
-      this.$connectorWebSocket.initCometd(this.handleConnectorIdentifierUpdates);
-    }
   },
   methods: {
     open(ruleToDisplay, displayAnnouncementForm, goBackButton, updatePath) {
@@ -530,9 +527,6 @@ export default {
       this.connectorsEventComponentsExtensions = extensionRegistry.loadComponents(this.extensionEventApp) || [];
       this.$emit('event-extension-initialized', this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name));
     },
-    handleConnectorIdentifierUpdates(updateParams) {
-      this.$root.$emit('gamification-connector-identifier-updated', updateParams);
-    }
   }
 };
 </script>
