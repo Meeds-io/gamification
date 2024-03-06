@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -187,14 +187,14 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     try {
       Long result = query.getSingleResult();
-      return result == null ? 0 : result.longValue();
+      return result == null ? 0 : result;
     } catch (NoResultException e) {
       return 0;
     }
   }
 
   public List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerId, Date fromDate, Date toDate) {
-    TypedQuery<PiechartLeaderboard> query = null;
+    TypedQuery<PiechartLeaderboard> query;
     if (fromDate != null && toDate != null) {
       query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardStatsByIdentityIdAndDates",
                                                   PiechartLeaderboard.class);
@@ -230,7 +230,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("RealizationEntity.getScoreByIdentityIdAndBetweenDates",
                                                                  Long.class);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId)
-         .setParameter(FROM_DATE_PARAM_NAME, fromDate == null ? new Date(0l) : fromDate)
+         .setParameter(FROM_DATE_PARAM_NAME, fromDate == null ? new Date(0L) : fromDate)
          .setParameter(TO_DATE_PARAM_NAME, toDate == null ? new Date() : toDate)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     Long count = query.getSingleResult();
@@ -288,7 +288,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     query.setParameter(DATE_PARAM_NAME, sinceDate)
          .setParameter(RULE_ID_PARAM_NAME, ruleId)
          .setParameter(EARNER_ID_PARAM_NAME, earnerIdentityId)
-         .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
+         .setParameter(STATUS_PARAM_NAME, List.of(RealizationStatus.ACCEPTED, RealizationStatus.PENDING));
     try {
       Long count = query.getSingleResult();
       return count == null ? 0 : count.intValue();
