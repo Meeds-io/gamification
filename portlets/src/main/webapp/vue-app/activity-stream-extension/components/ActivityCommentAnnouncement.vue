@@ -38,8 +38,8 @@
       <v-card
         color="transparent"
         flat>
-        <div class="text-truncate font-weight-bold text-color text-wrap text-break mb-1">
-          {{ $t('announcement.detail.done') }}
+        <div :class="realizationStatusClass" class="text-truncate font-weight-bold text-color text-wrap text-break mb-1">
+          {{ realizationStatusLabel }}
         </div>
         <div class="text-light-color caption text-wrap text-break rich-editor-content reset-style-box">
           <span v-sanitized-html="announcementComment"></span>
@@ -63,6 +63,20 @@ export default {
   computed: {
     announcementId() {
       return this.activity?.templateParams?.announcementId || 0;
+    },
+    realizationStatus() {
+      return this.activity?.templateParams?.realizationStatus || 'ACCEPTED';
+    },
+    realizationStatusLabel() {
+      return this.$t(`announcement.detail.${this.realizationStatus.toLowerCase()}`);
+    },
+    realizationStatusClass() {
+      switch (this.realizationStatus) {
+      case 'PENDING': return 'orange--text text--darken-2';
+      case 'ACCEPTED': return 'success-color';
+      case 'REJECTED': return 'error-color';
+      }
+      return 'success-color';
     },
     announcementComment() {
       return (this.activity?.templateParams?.comment)
