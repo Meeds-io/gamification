@@ -52,10 +52,12 @@ public class AnnouncementRealizationUpdater extends Listener<Object, Object> {
     if (!RealizationStatus.CANCELED.name().equals(realization.getStatus())
         && !RealizationStatus.DELETED.name().equals(realization.getStatus())) {
       ExoSocialActivity announcementComment = activityManager.getActivity(String.valueOf(realization.getActivityId()));
-      Map<String, String> templateParams = announcementComment.getTemplateParams();
-      templateParams.put(REALIZATION_STATUS_TEMPLATE_PARAM, String.valueOf(realization.getStatus()));
-      announcementComment.setTemplateParams(templateParams);
-      activityManager.updateActivity(announcementComment);
+      if (announcementComment != null) {
+        Map<String, String> templateParams = announcementComment.getTemplateParams();
+        templateParams.put(REALIZATION_STATUS_TEMPLATE_PARAM, String.valueOf(realization.getStatus()));
+        announcementComment.setTemplateParams(templateParams);
+        activityManager.updateActivity(announcementComment);
+      }
     }
   }
 
