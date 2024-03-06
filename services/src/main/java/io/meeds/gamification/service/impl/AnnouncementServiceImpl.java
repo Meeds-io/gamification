@@ -1,18 +1,10 @@
 package io.meeds.gamification.service.impl;
 
-import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_COMMENT_TYPE;
-import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM;
-import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ID_TEMPLATE_PARAM;
-import static io.meeds.gamification.utils.Utils.POST_CANCEL_ANNOUNCEMENT_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_CREATE_ANNOUNCEMENT_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_UPDATE_ANNOUNCEMENT_EVENT;
-import static io.meeds.gamification.utils.Utils.broadcastEvent;
-
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import io.meeds.gamification.constant.RealizationStatus;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -32,6 +24,8 @@ import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.AnnouncementStorage;
+
+import static io.meeds.gamification.utils.Utils.*;
 
 public class AnnouncementServiceImpl implements AnnouncementService {
 
@@ -191,6 +185,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       comment.setUserId(userIdentityId);
       templateParams.put(ANNOUNCEMENT_ID_TEMPLATE_PARAM, String.valueOf(announcement.getId()));
       templateParams.put(ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM, rule.getTitle());
+      templateParams.put(REALIZATION_STATUS_TEMPLATE_PARAM, String.valueOf(RealizationStatus.PENDING));
       buildActivityParams(comment, templateParams);
 
       activityManager.saveComment(activity, comment);
@@ -206,19 +201,17 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   private void buildActivityParams(ExoSocialActivity activity, Map<String, String> templateParams) {
-    Map<String, String> currentTemplateParams = activity.getTemplateParams() == null ? new HashMap<>()
-            : new HashMap<>(activity.getTemplateParams());
+    Map<String, String> currentTemplateParams =
+                                              activity.getTemplateParams() == null ? new HashMap<>()
+                                                                                   : new HashMap<>(activity.getTemplateParams());
     if (templateParams != null) {
       currentTemplateParams.putAll(templateParams);
     }
-    Iterator<Entry<String, String>> entries = currentTemplateParams.entrySet().iterator();
-    while (entries.hasNext()) {
-      Map.Entry<String, String> entry = entries.next();
+    for (Entry<String, String> entry : currentTemplateParams.entrySet()) {
       if (entry != null && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-"))) {
         entry.setValue("");
       }
     }
     activity.setTemplateParams(currentTemplateParams);
   }
-
 }
