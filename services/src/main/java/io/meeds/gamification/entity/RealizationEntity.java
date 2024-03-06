@@ -177,7 +177,7 @@ import lombok.EqualsAndHashCode;
   query = "SELECT COUNT(a) FROM RealizationEntity a"
       + " WHERE a.ruleEntity.id = :ruleId"
       + " AND a.earnerId = :earnerId"
-      + " AND a.status = :status"
+      + " AND a.status IN (:status)"
       + " AND a.createdDate >= :date"
 )
 @NamedQuery(
