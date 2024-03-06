@@ -62,6 +62,8 @@ public class Utils {
 
   public static final String                        ANNOUNCEMENT_ACTIVITY_EVENT             = "challenge.announcement.activity";
 
+  public static final String                        REALIZATION_STATUS_TEMPLATE_PARAM       = "realizationStatus";
+
   public static final long                          DEFAULT_LAST_MODIFIED                   = System.currentTimeMillis();
 
   public static final DateTimeFormatter             RFC_3339_FORMATTER                      =
