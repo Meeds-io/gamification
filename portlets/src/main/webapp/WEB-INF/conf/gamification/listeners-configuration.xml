@@ -233,6 +233,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </values-param>
       </init-params>
     </component-plugin>
+    <component-plugin>
+      <name>realization.updated</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.AnnouncementRealizationUpdater</type>
+    </component-plugin>
+    <component-plugin>
+      <name>realization.canceled</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.gamification.listener.AnnouncementRealizationUpdater</type>
+    </component-plugin>
 
   </external-component-plugins>
 

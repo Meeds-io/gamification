@@ -16,6 +16,7 @@
  */
 package io.meeds.gamification.test;
 
+import io.meeds.gamification.listener.*;
 import io.meeds.gamification.service.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -36,15 +37,6 @@ import io.meeds.gamification.dao.ConnectorAccountDAOTest;
 import io.meeds.gamification.dao.ProgramDAOTest;
 import io.meeds.gamification.dao.RealizationDAOTest;
 import io.meeds.gamification.dao.RuleDAOTest;
-import io.meeds.gamification.listener.AnnouncementActivityUpdaterTest;
-import io.meeds.gamification.listener.GamificationActivityListenerTest;
-import io.meeds.gamification.listener.GamificationNotificationListenerTest;
-import io.meeds.gamification.listener.GamificationProfileListenerTest;
-import io.meeds.gamification.listener.GamificationRelationshipListenerTest;
-import io.meeds.gamification.listener.GamificationSpaceListenerTest;
-import io.meeds.gamification.listener.ProgramAutoDisableListenerTest;
-import io.meeds.gamification.listener.ProgramSpaceListenerTest;
-import io.meeds.gamification.listener.RuleIndexingListenerTest;
 import io.meeds.gamification.notification.plugin.ActionAnnouncedNotificationPluginTest;
 import io.meeds.gamification.notification.plugin.ActionPublishedNotificationPluginTest;
 import io.meeds.gamification.plugin.ProgramTranslationPluginTest;
@@ -107,6 +99,7 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     GamificationProfileListenerTest.class,
     GamificationNotificationListenerTest.class,
     AnnouncementActivityUpdaterTest.class,
+    AnnouncementRealizationUpdaterTest.class,
     RuleSearchConnectorTest.class,
     RuleIndexingServiceConnectorTest.class,
     RuleIndexingListenerTest.class,
