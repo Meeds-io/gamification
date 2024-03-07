@@ -24,9 +24,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :icon-size="size"
             :max="maxAvatarsToShow"
             :default-length="avatarsCount"
+            margin-left="ml-n4"
             clickable
             avatar-overlay-position
             retrieve-extra-information
+            compact
             @open-detail="$emit('open-avatars-drawer')" />
         </div>
       </template>
@@ -51,7 +53,7 @@ export default {
     },
     size: {
       type: Number,
-      default: null
+      default: () => 27,
     },
   },
 };
