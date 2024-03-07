@@ -52,7 +52,7 @@ export default {
     },
   },
   data: () => ({
-    avatarSize: 26,
+    avatarSize: 27,
     defaultAvatarUrl: `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/default-image/avatar`,
   }),
   computed: {
