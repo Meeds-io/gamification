@@ -142,8 +142,8 @@ public class RealizationStorage {
     return gamificationHistoryDAO.countRealizationsByRuleIdAndEarnerId(earnerIdentityId, ruleId);
   }
 
-  public int countRealizationsByRuleIdAndEarnerIdSinceDate(String earnerIdentityId, long ruleId, Date sinceDate) {
-    return gamificationHistoryDAO.countRealizationsByRuleIdAndEarnerIdSinceDate(earnerIdentityId, ruleId, sinceDate);
+  public int countRealizationsInPeriod(String earnerIdentityId, long ruleId, Date sinceDate) {
+    return gamificationHistoryDAO.countRealizationsInPeriod(earnerIdentityId, ruleId, sinceDate);
   }
 
   public long countParticipantsBetweenDates(Date fromDate, Date toDate) {

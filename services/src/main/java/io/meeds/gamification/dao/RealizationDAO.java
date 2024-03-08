@@ -281,9 +281,9 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public int countRealizationsByRuleIdAndEarnerIdSinceDate(String earnerIdentityId, long ruleId, Date sinceDate) {
+  public int countRealizationsInPeriod(String earnerIdentityId, long ruleId, Date sinceDate) {
     TypedQuery<Long> query =
-                           getEntityManager().createNamedQuery("RealizationEntity.countRealizationsByRuleIdAndEarnerIdSinceDate",
+                           getEntityManager().createNamedQuery("RealizationEntity.countRealizationsInPeriod",
                                                                Long.class);
     query.setParameter(DATE_PARAM_NAME, sinceDate)
          .setParameter(RULE_ID_PARAM_NAME, ruleId)

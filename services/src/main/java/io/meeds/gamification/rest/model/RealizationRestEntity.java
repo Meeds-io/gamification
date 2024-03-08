@@ -31,6 +31,8 @@ public class RealizationRestEntity implements Cloneable {
 
   private String            createdDate;
 
+  private String            sendingDate;
+
   private String            status;
 
   private String            space;
@@ -56,6 +58,7 @@ public class RealizationRestEntity implements Cloneable {
                                      score,
                                      creator,
                                      createdDate,
+                                     sendingDate,
                                      status,
                                      space,
                                      objectId,

@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-col class="col-sm-8 col-8">
           <date-format
             :format="dateFormat"
-            :value="realization.createdDate" />
+            :value="createdDate" />
         </v-col>
       </v-row>
       <v-row v-if="isAdministrator" class="text-truncate align-center">
@@ -127,6 +127,9 @@ export default {
     menu: false,
   }),
   computed: {
+    createdDate() {
+      return this.realization?.sendingDate || this.realization?.createdDate;
+    },
     earnerFullName() {
       return this.realization?.earner?.fullName;
     },
