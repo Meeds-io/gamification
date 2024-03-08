@@ -41,7 +41,7 @@
       <v-list-item-subtitle>
         <date-format
           :format="dateFormat"
-          :value="realization.createdDate" />
+          :value="createdDate" />
       </v-list-item-subtitle>
     </v-list-item-content>
     <v-list-item-action class="ma-0 pa-0 justify-end">
@@ -70,6 +70,9 @@ export default {
   computed: {
     isManualType() {
       return this.realization?.action?.type === 'MANUAL';
+    },
+    createdDate() {
+      return this.realization?.sendingDate || this.realization?.createdDate;
     },
     hasAccess() {
       return !!this.actionLabel;
