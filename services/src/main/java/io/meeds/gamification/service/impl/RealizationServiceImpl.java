@@ -668,7 +668,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   private boolean hasNoRealizationInPeriod(String earnerIdentityId, Long ruleId, Date sinceDate) {
-    return realizationStorage.countRealizationsByRuleIdAndEarnerIdSinceDate(earnerIdentityId, ruleId, sinceDate) == 0;
+    return realizationStorage.countRealizationsInPeriod(earnerIdentityId, ruleId, sinceDate) == 0;
   }
 
   private RealizationDTO toRealization(RuleDTO ruleDto,
@@ -736,6 +736,10 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   private void updateRealizationStatus(RealizationDTO realization, RealizationStatus status) {
+    if (RealizationStatus.PENDING.name().equals(realization.getStatus())) {
+      realization.setSendingDate(realization.getCreatedDate());
+      realization.setCreatedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
+    }
     realization.setStatus(status.name());
     try {
       realizationStorage.updateRealization(realization);

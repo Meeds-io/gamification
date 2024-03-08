@@ -25,7 +25,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         link-style>
         <template slot="subTitle">
           <relative-date-format
-            :value="realization.createdDate"
+            :value="createdDate"
             class="text-none text-light-color text-truncate" />
         </template>
       </user-avatar>
@@ -69,6 +69,9 @@ export default {
     basePath: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}`,
   }),
   computed: {
+    createdDate() {
+      return this.realization?.sendingDate || this.realization?.createdDate;
+    },
     earnerFullName() {
       return this.realization?.earner?.fullName;
     },
