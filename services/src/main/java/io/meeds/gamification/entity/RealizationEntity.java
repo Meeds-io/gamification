@@ -58,7 +58,7 @@ import lombok.EqualsAndHashCode;
       + " SELECT earnerId, ROW_NUMBER() OVER() rankIndex FROM " 
       + " (SELECT g.EARNER_ID earnerId, SUM(g.ACTION_SCORE) total"
       + " FROM GAMIFICATION_ACTIONS_HISTORY g"
-      + " WHERE g.CREATED_DATE >= :date"
+      + " WHERE (g.CREATED_DATE >= :date OR g.LAST_MODIFIED_DATE >= :date)"
       + " AND g.DOMAIN_ID = :domainId"
       + " AND g.EARNER_TYPE = :earnerType"
       + " AND g.STATUS = :status "
@@ -85,7 +85,7 @@ import lombok.EqualsAndHashCode;
     + " SELECT earnerId, ROW_NUMBER() OVER() rankIndex FROM " 
     + " (SELECT g.EARNER_ID earnerId, SUM(g.ACTION_SCORE) total"
     + " FROM GAMIFICATION_ACTIONS_HISTORY g"
-    + " WHERE g.CREATED_DATE >= :date"
+    + " WHERE (g.CREATED_DATE >= :date OR g.LAST_MODIFIED_DATE >= :date)"
     + " AND g.EARNER_TYPE = :earnerType"
     + " AND g.STATUS = :status "
     + " GROUP BY g.EARNER_ID"
@@ -106,7 +106,7 @@ import lombok.EqualsAndHashCode;
   name = "RealizationEntity.getLeaderboardByDateAndProgramId",
   query = "SELECT new io.meeds.gamification.model.StandardLeaderboard(g.earnerId as earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g"
-    + " WHERE g.createdDate >= :date"
+    + " WHERE (g.createdDate >= :date OR g.lastModifiedDate >= :date)"
     + " AND g.domainEntity.id = :domainId"
     + " AND g.earnerType = :earnerType"
     + " AND g.status = :status"
@@ -127,7 +127,7 @@ import lombok.EqualsAndHashCode;
   name = "RealizationEntity.getLeaderboardByDate",
   query = "SELECT new io.meeds.gamification.model.StandardLeaderboard(g.earnerId as earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g"
-    + " WHERE g.createdDate >= :date"
+    + " WHERE (g.createdDate >= :date OR g.lastModifiedDate >= :date)"
     + " AND g.earnerType = :earnerType"
     + " AND g.status = :status"
     + " GROUP BY g.earnerId"
@@ -153,8 +153,8 @@ import lombok.EqualsAndHashCode;
     + " AND g.domainEntity IS NOT NULL"
     + " AND g.actionScore > 0"
     + " AND g.status = :status"
-    + " AND g.createdDate >= :fromDate"
-    + " AND g.createdDate < :toDate"
+    + " AND ((g.createdDate >= :fromDate AND g.createdDate < :toDate)"
+    +       " OR (g.lastModifiedDate >= :fromDate AND g.lastModifiedDate < :toDate))"
     + " GROUP BY  g.domainEntity.id"
     + " ORDER BY total DESC, domainId DESC"
 )
@@ -168,10 +168,23 @@ import lombok.EqualsAndHashCode;
 @NamedQuery(name = "RealizationEntity.getScorePerProgramByIdentityId", query = "SELECT"
     + " new io.meeds.gamification.model.ProfileReputation(g.domainEntity.id,SUM(g.actionScore))"
     + " FROM RealizationEntity g WHERE g.earnerId = :earnerId AND g.status = :status AND g.domainEntity IS NOT NULL GROUP BY g.domainEntity.id")
-@NamedQuery(name = "RealizationEntity.getScoreByIdentityIdAndBetweenDates", query = "SELECT SUM(g.actionScore) as total"
-    + " FROM RealizationEntity g  WHERE g.earnerId = :earnerId AND g.status = :status AND g.createdDate >= :fromDate AND g.createdDate < :toDate")
-@NamedQuery(name = "RealizationEntity.getScoreByIdentityIdsAndBetweenDates", query = "SELECT g.earnerId,SUM(g.actionScore) as total"
-    + " FROM RealizationEntity g  WHERE g.earnerId IN :earnersId AND g.status = :status AND g.createdDate >= :fromDate AND g.createdDate < :toDate GROUP BY g.earnerId")
+@NamedQuery(
+  name = "RealizationEntity.getScoreByIdentityIdAndBetweenDates",
+  query = "SELECT SUM(g.actionScore) as total"
+    + " FROM RealizationEntity g"
+    + " WHERE g.earnerId = :earnerId"
+    + " AND g.status = :status "
+    + " AND ((g.createdDate >= :fromDate AND g.createdDate < :toDate)"
+    +     " OR (g.lastModifiedDate >= :fromDate AND g.lastModifiedDate < :toDate))")
+@NamedQuery(
+  name = "RealizationEntity.getScoreByIdentityIdsAndBetweenDates",
+  query = "SELECT g.earnerId,SUM(g.actionScore) as total"
+    + " FROM RealizationEntity g"
+    + " WHERE g.earnerId IN :earnersId"
+    + " AND g.status = :status"
+    + " AND ((g.createdDate >= :fromDate AND g.createdDate < :toDate)"
+    +      " OR (g.lastModifiedDate >= :fromDate AND g.lastModifiedDate < :toDate))"
+    + " GROUP BY g.earnerId")
 @NamedQuery(
   name = "RealizationEntity.countRealizationsByRuleIdAndEarnerIdSinceDate",
   query = "SELECT COUNT(a) FROM RealizationEntity a"
@@ -207,8 +220,8 @@ import lombok.EqualsAndHashCode;
 @NamedQuery(
   name = "RealizationEntity.countParticipantsBetweenDates",
   query = "SELECT COUNT(DISTINCT g.earnerId) FROM RealizationEntity g" +
-      " WHERE g.createdDate >= :fromDate" +
-      " AND g.createdDate < :toDate" +
+      " WHERE ((g.createdDate >= :fromDate AND g.createdDate < :toDate) " +
+              " OR (g.lastModifiedDate >= :fromDate AND g.lastModifiedDate < :toDate))" +
       " AND g.earnerType = :earnerType" +
       " AND g.status = :status"
 )

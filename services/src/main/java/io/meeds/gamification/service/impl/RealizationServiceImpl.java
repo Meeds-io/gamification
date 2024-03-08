@@ -737,6 +737,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   private void updateRealizationStatus(RealizationDTO realization, RealizationStatus status) {
     realization.setStatus(status.name());
+    realization.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
     try {
       realizationStorage.updateRealization(realization);
     } catch (Exception e) {
