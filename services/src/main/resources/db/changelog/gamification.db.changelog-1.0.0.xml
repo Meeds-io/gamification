@@ -788,4 +788,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <dropColumn tableName="GAMIFICATION_EVENTS" columnName="CANCELLER_EVENTS" />
     </changeSet>
 
+    <changeSet author="exo-gamification" id="1.0.0-73">
+        <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
+            <column name="SENDING_DATE" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

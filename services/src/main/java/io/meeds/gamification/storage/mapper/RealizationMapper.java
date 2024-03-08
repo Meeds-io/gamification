@@ -53,7 +53,7 @@ public class RealizationMapper {
                               realizationEntity.getCreatedBy(),
                               Utils.toRFC3339Date(realizationEntity.getCreatedDate()),
                               realizationEntity.getLastModifiedBy(),
-                              Utils.toRFC3339Date(realizationEntity.getLastModifiedDate()),
+                              Utils.toRFC3339Date(realizationEntity.getSendingDate()),
                               realizationEntity.getStatus().name(),
                               realizationEntity.getType());
   }
@@ -97,10 +97,8 @@ public class RealizationMapper {
     } else {
       realizationEntity.setCreatedDate(new Date());
     }
-    if (realization.getLastModifiedDate() != null) {
-      realizationEntity.setLastModifiedDate(Utils.parseRFC3339Date(realization.getLastModifiedDate()));
-    } else {
-      realizationEntity.setLastModifiedDate(new Date());
+    if (realization.getSendingDate() != null) {
+      realizationEntity.setSendingDate(Utils.parseRFC3339Date(realization.getSendingDate()));
     }
     realizationEntity.setCreatedBy(realization.getCreatedBy() != null ? realization.getCreatedBy()
                                                                    : Utils.SYSTEM_USERNAME);
