@@ -151,13 +151,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               v-on="on">
               <date-format
                 :format="dateFormat"
-                :value="realization.createdDate" />
+                :value="createdDate" />
             </div>
           </template>
           <span>           
             <date-format
               :format="tooltipDateFormat"
-              :value="realization.createdDate" />
+              :value="createdDate" />
           </span>
         </v-tooltip>
       </td>
@@ -327,6 +327,9 @@ export default {
     statusValue: null
   }),
   computed: {
+    createdDate() {
+      return this.realization?.sendingDate || this.realization?.createdDate;
+    },
     earnerFullName() {
       return this.realization?.earner?.fullName;
     },

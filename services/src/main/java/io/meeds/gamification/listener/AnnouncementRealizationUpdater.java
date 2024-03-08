@@ -50,7 +50,7 @@ public class AnnouncementRealizationUpdater extends Listener<Object, Object> {
       return;
     }
     if (!RealizationStatus.CANCELED.name().equals(realization.getStatus())
-        && !RealizationStatus.DELETED.name().equals(realization.getStatus())) {
+        && !RealizationStatus.DELETED.name().equals(realization.getStatus()) && realization.getActivityId() != null) {
       ExoSocialActivity announcementComment = activityManager.getActivity(String.valueOf(realization.getActivityId()));
       if (announcementComment != null) {
         Map<String, String> templateParams = announcementComment.getTemplateParams();
