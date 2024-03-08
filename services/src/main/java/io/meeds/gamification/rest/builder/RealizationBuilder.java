@@ -107,6 +107,7 @@ public class RealizationBuilder {
                                                  null :
                                                  getCreatorFullName(realization),
                                        realization.getCreatedDate(),
+                                       realization.getSendingDate(),
                                        realization.getStatus(),
                                        canViewProgram && !anonymous ? spaceDisplayName : null,
                                        realization.getObjectId(),
