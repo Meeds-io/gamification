@@ -17,6 +17,7 @@
 package io.meeds.gamification.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -173,12 +174,12 @@ import lombok.EqualsAndHashCode;
 @NamedQuery(name = "RealizationEntity.getScoreByIdentityIdsAndBetweenDates", query = "SELECT g.earnerId,SUM(g.actionScore) as total"
     + " FROM RealizationEntity g  WHERE g.earnerId IN :earnersId AND g.status = :status AND g.createdDate >= :fromDate AND g.createdDate < :toDate GROUP BY g.earnerId")
 @NamedQuery(
-  name = "RealizationEntity.countRealizationsByRuleIdAndEarnerIdSinceDate",
+  name = "RealizationEntity.countRealizationsInPeriod",
   query = "SELECT COUNT(a) FROM RealizationEntity a"
       + " WHERE a.ruleEntity.id = :ruleId"
       + " AND a.earnerId = :earnerId"
       + " AND a.status IN (:status)"
-      + " AND a.createdDate >= :date"
+      + " AND (a.sendingDate >= :date OR (a.sendingDate IS NULL AND a.createdDate >= :date))"
 )
 @NamedQuery(
   name = "RealizationEntity.countRealizationsByRuleIdAndEarnerId",
@@ -274,10 +275,13 @@ public class RealizationEntity extends AbstractAuditingEntity implements Seriali
 
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "STATUS", nullable = false)
-  private RealizationStatus     status;
+  private RealizationStatus status;
 
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "TYPE", nullable = false)
   private EntityType        type;
+
+  @Column(name = "SENDING_DATE")
+  protected Date            sendingDate;
 
 }
