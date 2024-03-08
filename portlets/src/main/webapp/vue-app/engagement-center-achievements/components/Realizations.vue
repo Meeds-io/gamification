@@ -21,7 +21,6 @@
   <v-app class="card-border-radius overflow-hidden">
     <main
       id="rulesList"
-      :class="classWelcomeMessage"
       class="Realizations border-box-sizing"
       role="main">
       <application-toolbar
