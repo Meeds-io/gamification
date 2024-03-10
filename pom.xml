@@ -50,9 +50,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <!-- **************************************** -->
         <!-- Dependencies versions                    -->
         <!-- **************************************** -->
-        <org.exoplatform.social.version>6.6.x-exo-SNAPSHOT</org.exoplatform.social.version>
-        <org.exoplatform.platform-ui.version>6.6.x-exo-SNAPSHOT</org.exoplatform.platform-ui.version>
-        <addon.exo.analytics.version>1.5.x-exo-SNAPSHOT</addon.exo.analytics.version>
+        <org.exoplatform.social.version>6.6.0-exo-20240310</org.exoplatform.social.version>
+        <org.exoplatform.platform-ui.version>6.6.0-exo-20240310</org.exoplatform.platform-ui.version>
+        <addon.exo.analytics.version>1.5.0-exo-20240310</addon.exo.analytics.version>
 
         <!-- Sonar properties -->
         <sonar.organization>meeds-io</sonar.organization>
