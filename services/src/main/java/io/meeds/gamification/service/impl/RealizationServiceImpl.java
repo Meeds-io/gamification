@@ -299,6 +299,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user"
           + realization.getEarnerId());
     }
+    if (RealizationStatus.CANCELED.name().equals(realization.getStatus())) {
+      throw new IllegalArgumentException("Canceled achievement cannot be updated");
+    }
     updateRealizationStatus(realization, status);
   }
 
