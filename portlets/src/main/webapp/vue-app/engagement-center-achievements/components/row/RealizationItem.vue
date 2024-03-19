@@ -409,12 +409,9 @@ export default {
     },
     rejected() {
       return this.status === 'REJECTED';
-<<<<<<< Updated upstream
-=======
     },
     canceled() {
       return this.status === 'CANCELED';
->>>>>>> Stashed changes
     },
     statusIcon() {
       switch (this.status) {
