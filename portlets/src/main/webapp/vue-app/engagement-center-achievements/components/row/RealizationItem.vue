@@ -399,7 +399,7 @@ export default {
       return this.status === 'PENDING';
     },
     rejected() {
-      return this.status === 'REJECTED';
+      return this.status === 'REJECTED' || this.status === 'CANCELED';
     },
     statusIcon() {
       switch (this.status) {
