@@ -200,7 +200,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         {{ score }}
       </td>
       <td class="text-truncate align-center">
-        <div v-if="isAdministrator" class="text-center">
+        <v-tooltip v-if="canceled" bottom>
+          <template #activator="{ on, attrs }">
+            <span
+              class="not-clickable"
+              v-bind="attrs"
+              v-on="on"> - </span>
+          </template>
+          <span>{{ statusLabel }}</span>
+        </v-tooltip>
+        <div v-else-if="isAdministrator" class="text-center">
           <v-tooltip
             z-index="4"
             max-width="300"
@@ -400,6 +409,9 @@ export default {
     },
     rejected() {
       return this.status === 'REJECTED' || this.status === 'CANCELED';
+    },
+    canceled() {
+      return this.status === 'CANCELED' || this.status === 'DELETED';
     },
     statusIcon() {
       switch (this.status) {
