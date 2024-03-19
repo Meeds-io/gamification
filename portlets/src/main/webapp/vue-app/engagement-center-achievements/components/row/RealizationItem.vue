@@ -411,7 +411,7 @@ export default {
       return this.status === 'REJECTED' || this.status === 'CANCELED';
     },
     canceled() {
-      return this.status === 'CANCELED';
+      return this.status === 'CANCELED' || this.status === 'DELETED';
     },
     statusIcon() {
       switch (this.status) {
