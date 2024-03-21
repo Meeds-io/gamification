@@ -211,7 +211,7 @@
     <component-plugin>
       <name>AnnouncementActivityTypePlugin</name>
       <set-method>addActivityTypePlugin</set-method>
-      <type>org.exoplatform.social.core.ActivityTypePlugin</type>
+      <type>io.meeds.gamification.plugin.AnnouncementActivityTypePlugin</type>
       <init-params>
         <value-param>
           <name>type</name>
