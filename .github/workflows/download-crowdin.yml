@@ -138,3 +138,69 @@ jobs:
             git commit -m "Merge Translations"
             git push origin
           fi
+  # stable/x.x.x-exo
+  reset-branch-integration-stable-exo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: stable/${{vars.CROWDIN_MAINTENANCE_EXO_VERSION}}
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: reset translation branch to stable's
+        run: |
+          git push origin origin/develop-meed:refs/heads/integration/${{vars.CROWDIN_MAINTENANCE_EXO_VERSION}}-translation -f
+  crowdin-download-stable-exo:
+    needs: [reset-branch-integration-stable-exo]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+          ref: integration/${{vars.CROWDIN_MAINTENANCE_EXO_VERSION}}-translation
+      - name: Crowdin push
+        uses: crowdin/github-action@v1
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          crowdin_branch_name: ${{vars.CROWDIN_MAINTENANCE_EXO_VERSION}}
+          localization_branch_name: integration/${{vars.CROWDIN_MAINTENANCE_EXO_VERSION}}-translation
+          create_pull_request: false
+          skip_ref_checkout: true
+          download_translations_args: '-l ar -l aro -l az -l ca -l ceb -l co -l cs -l de -l el -l en -l es-ES -l eu -l fa -l fi
+           -l fil -l fr -l hi -l hu -l id -l it -l ja -l ko -l lt -l ms -l nl -l no -l pcm -l pl -l pt-BR -l pt-PT -l ro -l ru
+           -l sk -l sl -l sv-SE -l th -l tl -l tr -l uk -l ur-IN -l vi -l zh-CN -l zh-TW'
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+  crowdin-merge-translation-stable-exo:
+    needs: [crowdin-download-stable-exo]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: stable/${{vars.CROWDIN_MAINTENANCE_EXO_VERSION}}
+          token: ${{ secrets.CROWDIN_GITHUB_TOKEN }}
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.SWF_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SWF_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+      - name: Merge translation to stable exo
+        run: |
+          git fetch origin integration/${{vars.CROWDIN_MAINTENANCE_EXO_VERSION}}-translation
+          git config --global user.email "exo-swf@exoplatform.com"
+          git config --global user.name "eXo Software Factory"
+          changes_to_apply=$(git merge --squash origin/integration/${{vars.CROWDIN_MAINTENANCE_EXO_VERSION}}-translation 2>&1)
+          if [[ "$changes_to_apply" == *"up to date"* ]]; then
+            echo "Nothing to commit"
+          else
+            git commit -m "Merge Translations"
+            git push origin
+          fi
