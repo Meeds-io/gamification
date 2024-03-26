@@ -96,6 +96,7 @@
             :filtered-rule-ids="ruleIds"
             :filtered-program-ids="searchList"
             :filtered-earner-ids="earnerIds"
+            :extensions="extensions"
             @updated="realizationUpdated" />
         </template>
       </v-data-table>
@@ -194,6 +195,9 @@ export default {
     selected: 'Date',
     programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`,
     tabName: window.location.hash === '#hosted' ? 'OWNED' : 'YOURS',
+    extensionApp: 'engagementCenterAchievements',
+    extensionType: 'achievements-extensions',
+    extensions: [],
   }),
   computed: {
     administrationMode() {
@@ -287,6 +291,7 @@ export default {
   watch: {
     selectedPeriod(newValue) {
       if (newValue) {
+        this.refreshExtensions();
         this.filterActivated = false;
         this.fromDate = new Date(newValue.min).toISOString() ;
         this.toDate = new Date(newValue.max).toISOString();
@@ -341,6 +346,7 @@ export default {
     },
   },
   created() {
+    document.addEventListener(`extension-${this.extensionApp}-${this.extensionType}-updated`, this.refreshExtensions);
     this.realizationsHeaders.map((header) => {
       if (header.sortable && header.value !== 'type') {
         this.availableSortBy.push(header);
@@ -431,7 +437,14 @@ export default {
       this.realizations = [];
       this.loadRealizations();
       this.$root.$emit('reset-filter-values');
-    }
+    },
+    refreshExtensions() {
+      // Get list of connectors from extensionRegistry
+      this.extensions = extensionRegistry.loadExtensions(this.extensionApp, this.extensionType) || [];
+      this.extensions.forEach(extension => {
+        extension?.init(Date.parse(this.fromDate) / 1000 , Date.parse(this.toDate)/ 1000);
+      });
+    },
   }
 };
 </script>

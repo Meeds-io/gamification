@@ -69,6 +69,7 @@ export function init(isAdministrator, isProgramManager) {
       i18n
     }, `#${appId}`, 'EngagementCenterAchievements');
   }).finally(() => {
+    Vue.prototype.$utils?.includeExtensions?.('engagementCenterAchievements');
     Vue.prototype.$utils?.includeExtensions?.('engagementCenterActions');
     Vue.prototype.$utils?.includeExtensions?.('gamificationUserConnectorsExtensions');
   });
