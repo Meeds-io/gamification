@@ -17,6 +17,7 @@
 package io.meeds.gamification.test;
 
 import io.meeds.gamification.listener.*;
+import io.meeds.gamification.plugin.*;
 import io.meeds.gamification.service.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -39,10 +40,6 @@ import io.meeds.gamification.dao.RealizationDAOTest;
 import io.meeds.gamification.dao.RuleDAOTest;
 import io.meeds.gamification.notification.plugin.ActionAnnouncedNotificationPluginTest;
 import io.meeds.gamification.notification.plugin.ActionPublishedNotificationPluginTest;
-import io.meeds.gamification.plugin.ProgramTranslationPluginTest;
-import io.meeds.gamification.plugin.RuleActivityTypePluginTest;
-import io.meeds.gamification.plugin.RuleAttachmentPluginTest;
-import io.meeds.gamification.plugin.RuleTranslationPluginTest;
 import io.meeds.gamification.rest.TestAnnouncementRest;
 import io.meeds.gamification.rest.TestBadgeRest;
 import io.meeds.gamification.rest.TestConnectorRest;
@@ -116,6 +113,7 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     ActionAnnouncedNotificationPluginTest.class,
     ActionPublishedNotificationPluginTest.class,
     RuleActivityTypePluginTest.class,
+    AnnouncementActivityTypePluginTest.class,
     EventServiceTest.class,
     TriggerServiceTest.class,
     ProgramVisibilityUpgradePluginTest.class,
