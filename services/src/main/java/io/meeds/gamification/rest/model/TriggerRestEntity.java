@@ -37,8 +37,8 @@ public class TriggerRestEntity extends Trigger {
 
   private List<String> permissions;
 
-  public TriggerRestEntity(String title, String type, List<String> canceller, List<Long> disabled, List<String> permissions) {
-    super(title, type, canceller);
+  public TriggerRestEntity(String title, String type, List<String> canceller, boolean isVerificationRequired, List<Long> disabled, List<String> permissions) {
+    super(title, type, canceller, isVerificationRequired);
     this.disabledAccounts = disabled;
     this.permissions = permissions;
   }
