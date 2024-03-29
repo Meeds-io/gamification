@@ -103,18 +103,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </init-params>
     </component-plugin>
     <component-plugin>
-      <name>AnnouncementActivityProcessor</name>
-      <set-method>addProcessorPlugin</set-method>
-      <type>io.meeds.gamification.activity.processor.AnnouncementActivityProcessor</type>
-      <init-params>
-        <value-param>
-          <name>priority</name>
-          <description>priority of this processor (lower are executed first)</description>
-          <value>30</value>
-        </value-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
       <name>AnnouncementActivityUpdaterListener</name>
       <set-method>addActivityEventListener</set-method>
       <type>io.meeds.gamification.listener.AnnouncementActivityUpdater</type>
