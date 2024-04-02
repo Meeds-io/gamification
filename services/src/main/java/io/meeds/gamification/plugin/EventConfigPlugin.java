@@ -21,17 +21,27 @@ import io.meeds.gamification.model.EventDTO;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.container.component.BaseComponentPlugin;
+import org.exoplatform.container.xml.Deserializer;
 import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.container.xml.ValuesParam;
 
 @Getter
 public class EventConfigPlugin extends BaseComponentPlugin {
 
-  private static final String EVENT_PARAM_NAME = "event";
+  private static final String EVENT_PARAM_NAME         = "event";
+
+  private static final String IS_VERIFICATION_REQUIRED = "isVerificationRequired";
 
   private EventDTO            event;
 
+  private boolean             isVerificationRequired;
+
   public EventConfigPlugin(InitParams params) {
-    if (params != null && params.containsKey(EVENT_PARAM_NAME)) {
+    ValuesParam values = params.getValuesParam(IS_VERIFICATION_REQUIRED);
+    if (values != null && values.getValue().length() > 0) {
+      this.isVerificationRequired = Boolean.parseBoolean(Deserializer.resolveVariables(values.getValue()));
+    }
+    if (params.containsKey(EVENT_PARAM_NAME)) {
       this.event = (EventDTO) params.getObjectParam(EVENT_PARAM_NAME).getObject();
     }
     if (this.event == null || StringUtils.isBlank(this.event.getTitle()) || StringUtils.isBlank(this.event.getType())
