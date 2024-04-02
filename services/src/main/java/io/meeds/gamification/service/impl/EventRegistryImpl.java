@@ -24,10 +24,6 @@ import java.util.Map;
 import io.meeds.gamification.model.Trigger;
 import io.meeds.gamification.plugin.EventConfigPlugin;
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.commons.api.settings.SettingValue;
-import org.exoplatform.commons.api.settings.data.Context;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
 import io.meeds.gamification.service.EventRegistry;
 
@@ -49,6 +45,23 @@ public class EventRegistryImpl implements Startable, EventRegistry {
   }
 
   @Override
+  public Trigger getTrigger(String triggerType, String triggerName) {
+    if (StringUtils.isBlank(triggerType) || StringUtils.isBlank(triggerName)) {
+      return null;
+    }
+    return eventConfigPluginMap.values()
+                               .stream()
+                               .filter(eventConfigPlugin -> eventConfigPlugin.getEvent().getType().equals(triggerType)
+                                   && eventConfigPlugin.getEvent().getTrigger().equals(triggerName))
+                               .map(eventConfigPlugin -> new Trigger(eventConfigPlugin.getEvent().getTrigger(),
+                                                                     eventConfigPlugin.getEvent().getType(),
+                                                                     eventConfigPlugin.getEvent().getCancellerEvents(),
+                                                                     eventConfigPlugin.isVerificationRequired()))
+                               .findFirst()
+                               .orElse(null);
+  }
+
+  @Override
   public List<Trigger> getTriggers(String connectorName) {
     if (StringUtils.isNotBlank(connectorName)) {
       return eventConfigPluginMap.values()
@@ -56,14 +69,16 @@ public class EventRegistryImpl implements Startable, EventRegistry {
                                  .filter(eventConfigPlugin -> eventConfigPlugin.getEvent().getType().equals(connectorName))
                                  .map(eventConfigPlugin -> new Trigger(eventConfigPlugin.getEvent().getTrigger(),
                                                                        eventConfigPlugin.getEvent().getType(),
-                                                                       eventConfigPlugin.getEvent().getCancellerEvents()))
+                                                                       eventConfigPlugin.getEvent().getCancellerEvents(),
+                                                                       eventConfigPlugin.isVerificationRequired()))
                                  .toList();
     }
     return eventConfigPluginMap.values()
                                .stream()
                                .map(eventConfigPlugin -> new Trigger(eventConfigPlugin.getEvent().getTrigger(),
                                                                      eventConfigPlugin.getEvent().getType(),
-                                                                     eventConfigPlugin.getEvent().getCancellerEvents()))
+                                                                     eventConfigPlugin.getEvent().getCancellerEvents(),
+                                                                     eventConfigPlugin.isVerificationRequired()))
                                .toList();
 
   }
