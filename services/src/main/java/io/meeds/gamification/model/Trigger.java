@@ -28,14 +28,16 @@ import java.util.List;
 @NoArgsConstructor
 public class Trigger {
 
-  private String              title;
+  private String       title;
 
-  private String              type;
+  private String       type;
 
-  private List<String>        canceller;
+  private List<String> canceller;
+
+  private boolean      isVerificationRequired;
 
   @Override
   public Trigger clone() { // NOSONAR
-    return new Trigger(title, type, canceller);
+    return new Trigger(title, type, canceller, isVerificationRequired);
   }
 }
