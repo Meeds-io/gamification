@@ -38,12 +38,20 @@ public interface EventRegistry {
   boolean remove(EventConfigPlugin eventConfigPlugin);
 
   /**
+   * Gets a configured triggers by type and name
+   *
+   * @param triggerType trigger type
+   * @param triggerName trigger name
+   * @return {@link Trigger}
+   */
+  Trigger getTrigger(String triggerType, String triggerName);
+
+  /**
    * Gets a all configured triggers by type
    *
    * @param connectorName connector name
    * @return {@link List} of {@link Trigger}
    */
   List<Trigger> getTriggers(String connectorName);
-
 
 }
