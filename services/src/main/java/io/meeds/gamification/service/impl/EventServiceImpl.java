@@ -31,11 +31,11 @@ import java.util.*;
 
 public class EventServiceImpl implements EventService {
 
-  private final EventStorage eventStorage;
+  private final EventStorage             eventStorage;
 
-  private final EventRegistry eventRegistry;
+  private final EventRegistry            eventRegistry;
 
-  private final Map<String, EventPlugin> eventPlugins              = new HashMap<>();
+  private final Map<String, EventPlugin> eventPlugins = new HashMap<>();
 
   public EventServiceImpl(EventStorage eventStorage, EventRegistry eventRegistry) {
     this.eventStorage = eventStorage;
@@ -54,7 +54,11 @@ public class EventServiceImpl implements EventService {
 
   @Override
   public EventPlugin getEventPlugin(String eventName) {
-    return eventPlugins.values().stream().filter(eventPlugin -> eventPlugin.getTriggers().contains(eventName)).findFirst().orElse(null);
+    return eventPlugins.values()
+                       .stream()
+                       .filter(eventPlugin -> eventPlugin.getTriggers().contains(eventName))
+                       .findFirst()
+                       .orElse(null);
   }
 
   @Override
@@ -95,8 +99,8 @@ public class EventServiceImpl implements EventService {
       throw new ObjectNotFoundException("Event with id " + eventDTO.getId() + " is not found");
     }
     return eventStorage.saveEvent(eventDTO);
-  }  
-  
+  }
+
   @Override
   public List<EventDTO> getEventsByCancellerTrigger(String eventType, String cancellerTrigger, int offset, int limit) {
     List<String> triggers = eventRegistry.getTriggers(eventType)
@@ -109,6 +113,15 @@ public class EventServiceImpl implements EventService {
     eventFilter.setTriggers(triggers);
 
     return getEvents(eventFilter, offset, limit);
+  }
+
+  @Override
+  public boolean isVerificationRequiredForEvent(String triggerType, String triggerName) {
+    Trigger trigger = eventRegistry.getTrigger(triggerType, triggerName);
+    if (trigger != null) {
+      return trigger.isVerificationRequired();
+    }
+    return false;
   }
 
   public EventDTO getEvent(long eventId) {

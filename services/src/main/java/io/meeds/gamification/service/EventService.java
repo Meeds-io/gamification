@@ -101,12 +101,23 @@ public interface EventService {
    * Get events by canceller trigger
    *
    * @param cancellerTrigger canceller trigger
-   * @param eventType        event Type
-   * @param offset           Offset of result
-   * @param limit            Limit of result
+   * @param eventType event Type
+   * @param offset Offset of result
+   * @param limit Limit of result
    * @return {@link List} of {@link EventDTO}
    */
   default List<EventDTO> getEventsByCancellerTrigger(String eventType, String cancellerTrigger, int offset, int limit) {
+    throw new UnsupportedOperationException();
+  }
+
+  /**
+   * Check if verification required
+   *
+   * @param triggerType trigger type
+   * @param triggerName trigger name
+   * @return {@link Boolean}
+   */
+  default boolean isVerificationRequiredForEvent(String triggerType, String triggerName) {
     throw new UnsupportedOperationException();
   }
 
