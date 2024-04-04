@@ -106,7 +106,7 @@ public class ConnectorServiceImpl implements ConnectorService {
       if (remoteConnectorSettings != null) {
         remoteConnector.setApiKey(remoteConnectorSettings.getApiKey());
         remoteConnector.setRedirectUrl(remoteConnectorSettings.getRedirectUrl());
-        remoteConnector.setEnabled(remoteConnectorSettings.isEnabled());
+        remoteConnector.setEnabled(remoteConnectorSettings.isEnabled() || connectorPlugin.enabled(username));
       }
       connectorList.add(remoteConnector);
     });
