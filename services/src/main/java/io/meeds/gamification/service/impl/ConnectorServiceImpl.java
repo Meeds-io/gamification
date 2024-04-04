@@ -27,7 +27,6 @@ import io.meeds.gamification.websocket.entity.ConnectorIdentifierModification;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.ObjectAlreadyExistsException;
-import org.exoplatform.commons.api.settings.ExoFeatureService;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -67,18 +66,14 @@ public class ConnectorServiceImpl implements ConnectorService {
 
   private final ListenerService              listenerService;
 
-  private ExoFeatureService                  featureService;
-
   public ConnectorServiceImpl(ConnectorAccountStorage connectorAccountStorage,
                               IdentityManager identityManager,
                               ConnectorSettingService connectorSettingService,
-                              ListenerService listenerService,
-                              ExoFeatureService featureService) {
+                              ListenerService listenerService) {
     this.connectorAccountStorage = connectorAccountStorage;
     this.connectorSettingService = connectorSettingService;
     this.identityManager = identityManager;
     this.listenerService = listenerService;
-    this.featureService = featureService;
   }
 
   @Override
