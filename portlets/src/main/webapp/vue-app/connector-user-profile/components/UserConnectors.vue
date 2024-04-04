@@ -69,7 +69,7 @@ export default {
       return this.isCurrentUserProfile ? this.$t('gamification.connectors.profile.YourGamifiedProfiles') : this.$t('gamification.connectors.profile.MyGamifiedProfiles');
     },
     enabledConnectors() {
-      return  this.connectors?.filter(connector => connector.enabled) || [];
+      return  this.connectors?.filter(connector => connector.enabled && connector.apiKey && connector.redirectUrl) || [];
     },
     enabledConnectedConnectors() {
       return this.enabledConnectors
