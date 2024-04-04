@@ -55,4 +55,12 @@ public abstract class ConnectorPlugin extends BaseComponentPlugin {
    * @return the connector name
    */
   public abstract String getConnectorName();
+
+  /**
+   * @param username User name accessing connector
+   * @return true if connector is enabled else return false
+   */
+  public boolean enabled(String username) {
+    return false;
+  }
 }
