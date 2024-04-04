@@ -210,69 +210,82 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <span>{{ statusLabel }}</span>
         </v-tooltip>
         <div v-else-if="isAdministrator" class="text-center">
-          <v-tooltip
-            z-index="4"
-            max-width="300"
-            bottom>
-            <template #activator="{ on, attrs }">
-              <v-btn
-                :class="accepted && 'success-color-background not-clickable' || 'light-black-background'"
-                class="mx-2"
-                height="16px"
-                width="16px"
-                fab
-                dark
-                depressed
-                v-bind="attrs"
-                v-on="on"
-                @click="updateRealizationStatus('ACCEPTED')">
-                <v-icon size="10" dark>fas fa-check</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ accepted ? statusLabel : $t('realization.label.accept') }}</span>
-          </v-tooltip>
-          <v-tooltip
-            z-index="4"
-            max-width="300"
-            bottom>
-            <template #activator="{ on, attrs }">
-              <v-btn
-                :class="pending && 'orange darken-2 not-clickable' || 'light-black-background'"
-                class="mx-2"
-                height="16px"
-                width="16px"
-                fab
-                dark
-                depressed
-                v-bind="attrs"
-                v-on="on"
-                @click="updateRealizationStatus('PENDING')">
-                <v-icon size="10" dark>fas fa-question</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ pending ? statusLabel : $t('realization.label.review') }}</span>
-          </v-tooltip>
-          <v-tooltip
-            z-index="4"
-            max-width="300"
-            bottom>
-            <template #activator="{ on, attrs }">
-              <v-btn
-                :class="rejected && 'error-color-background not-clickable' || 'light-black-background'"
-                class="mx-2"
-                height="16px"
-                width="16px"
-                fab
-                dark
-                depressed
-                v-bind="attrs"
-                v-on="on"
-                @click="updateRealizationStatus('REJECTED')">
-                <v-icon size="10" dark>fas fa-times</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ rejected ? statusLabel : $t('realization.label.reject') }}</span>
-          </v-tooltip>
+          <v-btn
+            :class="accepted && 'success-color-background not-clickable' || 'light-black-background'"
+            class="mx-2"
+            height="16px"
+            width="16px"
+            fab
+            dark
+            depressed
+            v-on="canUpdateStatus ? { click: () => updateRealizationStatus('ACCEPTED') } : {}">
+            <v-tooltip
+              z-index="4"
+              max-width="300"
+              bottom>
+              <template #activator="{ on, attrs }">
+                <v-icon
+                  v-bind="attrs"
+                  v-on="on"
+                  size="10"
+                  dark>
+                  fas fa-check
+                </v-icon>
+              </template>
+              <span>{{ accepted ? statusLabel : acceptLabel }}</span>
+            </v-tooltip>
+          </v-btn>
+
+          <v-btn
+            :class="pending ? 'orange darken-2 not-clickable' : 'light-black-background'"
+            class="mx-2"
+            height="16px"
+            width="16px"
+            fab
+            dark
+            depressed
+            v-on="canUpdateStatus ? { click: () => updateRealizationStatus('PENDING') } : {}">
+            <v-tooltip
+              z-index="4"
+              max-width="300"
+              bottom>
+              <template #activator="{on, attrs }">
+                <v-icon
+                  v-bind="attrs"
+                  v-on="on"
+                  size="10"
+                  dark>
+                  fas fa-question
+                </v-icon>
+              </template>
+              <span>{{ pending ? statusLabel : reviewLabel }}</span>
+            </v-tooltip>
+          </v-btn>
+          <v-btn
+            :class="rejected && 'error-color-background not-clickable' || 'light-black-background'"
+            class="mx-2"
+            height="16px"
+            width="16px"
+            fab
+            dark
+            depressed
+            v-on="canUpdateStatus ? { click: () => updateRealizationStatus('REJECTED') } : {}">
+            <v-tooltip
+              z-index="4"
+              max-width="300"
+              bottom>
+              <template #activator="{ on, attrs }">
+                <v-icon
+                  v-bind="attrs"
+                  v-on="on"
+                  size="10"
+                  dark>
+                  fas fa-times
+                </v-icon>
+              </template>
+              <span>{{ rejected ? statusLabel : rejectLabel }}</span>
+            </v-tooltip>
+          </v-btn>
         </div>
         <v-tooltip v-else bottom>
           <template #activator="{ on, attrs }">
@@ -322,6 +335,10 @@ export default {
       type: Array,
       default: null,
     },
+    extensions: {
+      type: Array,
+      default: null,
+    }
   },
   data: () => ({
     menu: false,
@@ -336,6 +353,15 @@ export default {
     statusValue: null
   }),
   computed: {
+    rejectLabel() {
+      return this.canUpdateStatus ? this.$t('realization.label.reject') : this.cannotUpdateStatusLabel;
+    },
+    acceptLabel() {
+      return this.canUpdateStatus ? this.$t('realization.label.accept') : this.cannotUpdateStatusLabel;
+    },
+    reviewLabel() {
+      return this.canUpdateStatus ? this.$t('realization.label.review') : this.cannotUpdateStatusLabel;
+    },
     createdDate() {
       return this.realization?.sendingDate || this.realization?.createdDate;
     },
@@ -476,6 +502,19 @@ export default {
     },
     programLabelChanged() {
       return this.realization?.programLabelChanged;
+    },
+    updateStatusExtension() {
+      return this.extensions.find(extension => extension?.canUpdateStatus);
+    },
+    createdDateInSecond() {
+      const dateObject = new Date(this.createdDate);
+      return Math.floor(dateObject.getTime() / 1000);
+    },
+    canUpdateStatus() {
+      return this.pending || this.updateStatusExtension?.canUpdateStatus(this.createdDateInSecond);
+    },
+    cannotUpdateStatusLabel() {
+      return this.$t(`${this.updateStatusExtension?.cannotUpdateStatusLabel}`);
     },
   },
   created() {
