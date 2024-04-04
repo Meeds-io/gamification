@@ -49,7 +49,7 @@ export default {
   }),
   computed: {
     enabledConnectors() {
-      return  this.connectors?.filter(connector => connector.enabled) || [];
+      return  this.connectors?.filter(connector => connector.enabled && connector.apiKey && connector.redirectUrl) || [];
     },
     displayUserSetting() {
       return this.displayed && this.enabledConnectors?.length > 0;
