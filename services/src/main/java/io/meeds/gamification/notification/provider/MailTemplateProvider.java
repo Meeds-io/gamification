@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
  *
  * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
@@ -17,9 +17,8 @@
  */
 package io.meeds.gamification.notification.provider;
 
-import static io.meeds.gamification.utils.Utils.RULE_ANNOUNCED_NOTIFICATION_ID;
-import static io.meeds.gamification.utils.Utils.RULE_PUBLISHED_NOTIFICATION_ID;
-
+import io.meeds.gamification.notification.provider.builder.ContributionAcceptedTemplateBuilder;
+import io.meeds.gamification.notification.provider.builder.ContributionRejectedTemplateBuilder;
 import org.exoplatform.commons.api.notification.annotation.TemplateConfig;
 import org.exoplatform.commons.api.notification.annotation.TemplateConfigs;
 import org.exoplatform.commons.api.notification.channel.template.TemplateProvider;
@@ -32,10 +31,13 @@ import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.social.translation.service.TranslationService;
 
+import static io.meeds.gamification.utils.Utils.*;
+
 @TemplateConfigs(templates = {
     @TemplateConfig(pluginId = RULE_PUBLISHED_NOTIFICATION_ID, template = "classpath:/notification/gamification/RulePublishedMailTemplate.gtmpl"),
     @TemplateConfig(pluginId = RULE_ANNOUNCED_NOTIFICATION_ID, template = "classpath:/notification/gamification/RuleAnnouncedMailTemplate.gtmpl"),
-})
+    @TemplateConfig(pluginId = CONTRIBUTION_ACCEPTED_NOTIFICATION_ID, template = "classpath:/notification/gamification/ContributionAcceptedMailTemplate.gtmpl"),
+    @TemplateConfig(pluginId = CONTRIBUTION_REJECTED_NOTIFICATION_ID, template = "classpath:/notification/gamification/ContributionRejectedMailTemplate.gtmpl") })
 public class MailTemplateProvider extends TemplateProvider {
 
   public MailTemplateProvider(RuleService ruleService,
@@ -51,5 +53,17 @@ public class MailTemplateProvider extends TemplateProvider {
                                                                  translationService,
                                                                  this,
                                                                  false));
+    this.templateBuilders.put(PluginKey.key(CONTRIBUTION_ACCEPTED_NOTIFICATION_ID),
+                              new ContributionAcceptedTemplateBuilder(ruleService,
+                                                                      announcementService,
+                                                                      translationService,
+                                                                      this,
+                                                                      false));
+    this.templateBuilders.put(PluginKey.key(CONTRIBUTION_REJECTED_NOTIFICATION_ID),
+                              new ContributionRejectedTemplateBuilder(ruleService,
+                                                                      announcementService,
+                                                                      translationService,
+                                                                      this,
+                                                                      false));
   }
 }
