@@ -43,6 +43,8 @@ public class RealizationRestEntity implements Cloneable {
 
   private Long              activityId;
 
+  private String            comment;
+
   private boolean           actionLabelChanged;
 
   private boolean           programLabelChanged;
@@ -64,6 +66,7 @@ public class RealizationRestEntity implements Cloneable {
                                      objectId,
                                      objectType,
                                      activityId,
+                                     comment,
                                      actionLabelChanged,
                                      programLabelChanged);
   }
