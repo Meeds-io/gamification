@@ -111,7 +111,8 @@ extensionRegistry.registerExtension('activity', 'comment-action', {
   isEnabled: (activity, comment) => {
     return comment.type === 'gamificationActionAnnouncement'
       && comment.canDelete === 'true'
-      && comment?.identity?.remoteId === eXo.env.portal.userName;
+      && comment?.identity?.remoteId === eXo.env.portal.userName
+      && !['ACCEPTED', 'REJECTED'].includes(comment?.templateParams?.realizationStatus);
   },
   click: (activity, comment) => {
     document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
