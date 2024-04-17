@@ -507,7 +507,7 @@ export default {
       return this.extensions.find(extension => extension?.canUpdateStatus);
     },
     createdDateInSecond() {
-      const dateObject = new Date(this.createdDate);
+      const dateObject = new Date(this.realization?.createdDate);
       return Math.floor(dateObject.getTime() / 1000);
     },
     canUpdateStatus() {
