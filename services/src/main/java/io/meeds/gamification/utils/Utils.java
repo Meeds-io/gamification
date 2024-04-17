@@ -232,13 +232,21 @@ public class Utils {
                                                                                    "GamificationActionPublishedNotification";
 
   public static final String                        RULE_ANNOUNCED_NOTIFICATION_ID          =
-                                                                                   "GamificationActionAnnouncedNotification";
+                                                                                   "GamificationActionAnnouncedNotification";  
+
+  public static final String                        CONTRIBUTION_ACCEPTED_NOTIFICATION_ID   =
+                                                                                            "GamificationContributionAcceptedNotification";
+
+  public static final String                        CONTRIBUTION_REJECTED_NOTIFICATION_ID   =
+                                                                                            "GamificationContributionRejectedNotification";
 
   public static final String                        RULE_ID_NOTIFICATION_PARAM              = "RULE_ID";
 
   public static final String                        RULE_PUBLISHER_NOTIFICATION_PARAM       = "PUBLISHER";
 
   public static final String                        ANNOUNCEMENT_ID_NOTIFICATION_PARAM      = "ANNOUNCEMENT_ID";
+  
+  public static final String                        REALIZATION_ID_NOTIFICATION_PARAM       = "REALIZATION_ID";
 
   public static final ArgumentLiteral<RuleDTO>      RULE_NOTIFICATION_PARAMETER             =
                                                                                 new ArgumentLiteral<>(RuleDTO.class, "rule");
@@ -249,6 +257,10 @@ public class Utils {
   public static final ArgumentLiteral<Announcement> ANNOUNCEMENT_NOTIFICATION_PARAMETER     =
                                                                                         new ArgumentLiteral<>(Announcement.class,
                                                                                                               "announcement");
+
+  public static final ArgumentLiteral<RealizationDTO> REALIZATION_NOTIFICATION_PARAMETER    =
+                                                                                         new ArgumentLiteral<>(RealizationDTO.class,
+                                                                                                               "realization");
 
   public static final JsonGenerator                 JSON_GENERATOR                          = new JsonGeneratorImpl();
 
