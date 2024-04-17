@@ -22,7 +22,9 @@ extensionRegistry.registerExtension('WebNotification', 'notification-group-exten
   name: 'gamification',
   plugins: [
     'GamificationActionPublishedNotification',
-    'GamificationActionAnnouncedNotification'
+    'GamificationActionAnnouncedNotification',
+    'GamificationContributionAcceptedNotification',
+    'GamificationContributionRejectedNotification',
   ],
   icon: 'fa-trophy',
 });
@@ -35,4 +37,14 @@ extensionRegistry.registerExtension('WebNotification', 'notification-content-ext
   type: 'GamificationActionAnnouncedNotification',
   rank: 10,
   vueComponent: Vue.options.components['user-notification-rule-announced'],
+});
+extensionRegistry.registerExtension('WebNotification', 'notification-content-extension', {
+  type: 'GamificationContributionAcceptedNotification',
+  rank: 10,
+  vueComponent: Vue.options.components['user-notification-contribution-accepted'],
+});
+extensionRegistry.registerExtension('WebNotification', 'notification-content-extension', {
+  type: 'GamificationContributionRejectedNotification',
+  rank: 10,
+  vueComponent: Vue.options.components['user-notification-contribution-rejected'],
 });
