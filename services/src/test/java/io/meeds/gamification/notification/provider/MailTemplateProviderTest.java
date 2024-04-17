@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
  *
  * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
@@ -17,15 +17,14 @@
  */
 package io.meeds.gamification.notification.provider;
 
-import static io.meeds.gamification.utils.Utils.RULE_ANNOUNCED_NOTIFICATION_ID;
-import static io.meeds.gamification.utils.Utils.RULE_PUBLISHED_NOTIFICATION_ID;
-
 import org.exoplatform.commons.api.notification.channel.AbstractChannel;
 import org.exoplatform.commons.api.notification.channel.ChannelManager;
 import org.exoplatform.commons.api.notification.model.ChannelKey;
 import org.exoplatform.commons.api.notification.model.PluginKey;
 import org.exoplatform.commons.notification.channel.MailChannel;
 import org.exoplatform.social.notification.AbstractCoreTest;
+
+import static io.meeds.gamification.utils.Utils.*;
 
 public class MailTemplateProviderTest extends AbstractCoreTest {
 
@@ -37,7 +36,7 @@ public class MailTemplateProviderTest extends AbstractCoreTest {
     manager = getService(ChannelManager.class);
   }
 
-  public void testMailTemplateProvider() throws Exception {
+  public void testMailTemplateProvider() {
     AbstractChannel channel = manager.getChannel(ChannelKey.key(MailChannel.ID));
     assertNotNull(channel);
 
@@ -48,13 +47,23 @@ public class MailTemplateProviderTest extends AbstractCoreTest {
     actual = channel.getTemplateFilePath(PluginKey.key(RULE_ANNOUNCED_NOTIFICATION_ID));
     expected = "classpath:/notification/gamification/RuleAnnouncedMailTemplate.gtmpl";
     assertEquals(expected, actual);
+
+    actual = channel.getTemplateFilePath(PluginKey.key(CONTRIBUTION_ACCEPTED_NOTIFICATION_ID));
+    expected = "classpath:/notification/gamification/ContributionAcceptedMailTemplate.gtmpl";
+    assertEquals(expected, actual);
+
+    actual = channel.getTemplateFilePath(PluginKey.key(CONTRIBUTION_REJECTED_NOTIFICATION_ID));
+    expected = "classpath:/notification/gamification/ContributionRejectedMailTemplate.gtmpl";
+    assertEquals(expected, actual);
   }
 
-  public void testMailTemplateBuilder() throws Exception {
+  public void testMailTemplateBuilder() {
     AbstractChannel channel = manager.getChannel(ChannelKey.key(MailChannel.ID));
     assertNotNull(channel);
     assertTrue(channel.hasTemplateBuilder(PluginKey.key(RULE_PUBLISHED_NOTIFICATION_ID)));
     assertTrue(channel.hasTemplateBuilder(PluginKey.key(RULE_ANNOUNCED_NOTIFICATION_ID)));
+    assertTrue(channel.hasTemplateBuilder(PluginKey.key(CONTRIBUTION_ACCEPTED_NOTIFICATION_ID)));
+    assertTrue(channel.hasTemplateBuilder(PluginKey.key(CONTRIBUTION_REJECTED_NOTIFICATION_ID)));
   }
 
 }

@@ -17,6 +17,7 @@
 package io.meeds.gamification.test;
 
 import io.meeds.gamification.listener.*;
+import io.meeds.gamification.notification.plugin.ContributionStatusUpdatedNotificationPluginTest;
 import io.meeds.gamification.plugin.*;
 import io.meeds.gamification.service.*;
 import org.junit.AfterClass;
@@ -112,6 +113,7 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     ProgramAutoDisableJobTest.class,
     ActionAnnouncedNotificationPluginTest.class,
     ActionPublishedNotificationPluginTest.class,
+    ContributionStatusUpdatedNotificationPluginTest.class,
     RuleActivityTypePluginTest.class,
     AnnouncementActivityTypePluginTest.class,
     EventServiceTest.class,
