@@ -113,6 +113,7 @@ public class RealizationBuilder {
                                        realization.getObjectId(),
                                        realization.getObjectType(),
                                        realization.getActivityId(),
+                                       realization.getComment(),
                                        actionLabelChanged,
                                        programLabelChanged);
 

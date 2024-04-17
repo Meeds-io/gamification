@@ -1,9 +1,6 @@
 package io.meeds.gamification.service.impl;
 
-import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CANCEL_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CREATE_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_REALIZATION_UPDATE_EVENT;
-import static io.meeds.gamification.utils.Utils.escapeIllegalCharacterInMessage;
+import static io.meeds.gamification.utils.Utils.*;
 import static java.util.Date.from;
 
 import java.io.File;
@@ -47,6 +44,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.exoplatform.commons.api.notification.NotificationContext;
+import org.exoplatform.commons.api.notification.model.PluginKey;
+import org.exoplatform.commons.notification.impl.NotificationContextImpl;
 import org.picocontainer.Startable;
 
 import org.exoplatform.commons.api.persistence.ExoTransactional;
@@ -749,6 +749,18 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     realization.setStatus(status.name());
     try {
       realizationStorage.updateRealization(realization);
+      if (RealizationStatus.ACCEPTED.name().equals(realization.getStatus())
+          || RealizationStatus.REJECTED.name().equals(realization.getStatus())) {
+        String notificationPluginKey =
+                                     RealizationStatus.ACCEPTED.name()
+                                                               .equals(realization.getStatus()) ? CONTRIBUTION_ACCEPTED_NOTIFICATION_ID
+                                                                                                : CONTRIBUTION_REJECTED_NOTIFICATION_ID;
+        NotificationContext ctx = NotificationContextImpl.cloneInstance();
+        ctx.append(REALIZATION_NOTIFICATION_PARAMETER, realization)
+           .getNotificationExecutor()
+           .with(ctx.makeCommand(PluginKey.key(notificationPluginKey)))
+           .execute(ctx);
+      }
     } catch (Exception e) {
       LOG.warn("Error deleting realization with id {}", realization.getId(), e);
     } finally {
