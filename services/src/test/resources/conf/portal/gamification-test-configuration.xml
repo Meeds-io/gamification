@@ -390,6 +390,8 @@
           <name>notification.plugin.ids</name>
           <value>GamificationActionPublishedNotification</value>
           <value>GamificationActionAnnouncedNotification</value>
+          <value>GamificationContributionAcceptedNotification</value>
+          <value>GamificationContributionRejectedNotification</value>
         </values-param>
       </init-params>
     </component-plugin>
@@ -449,6 +451,76 @@
             </field>
             <field name="order">
               <string>4</string>
+            </field>
+            <field name="defaultConfig">
+              <collection type="java.util.ArrayList">
+                <value>
+                  <string>Instantly</string>
+                </value>
+              </collection>
+            </field>
+            <field name="groupId">
+              <string>gamification</string>
+            </field>
+            <field name="bundlePath">
+              <string>locale.addon.Gamification</string>
+            </field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>notification.plugins</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.notification.plugin.ContributionAcceptedNotificationPlugin</type>
+      <init-params>
+        <object-param>
+          <name>template.GamificationContributionAcceptedNotification</name>
+          <description>The template of ContributionAcceptedNotificationPlugin</description>
+          <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
+            <field name="pluginId">
+              <string>GamificationContributionAcceptedNotification</string>
+            </field>
+            <field name="resourceBundleKey">
+              <string>UINotification.label.GamificationContributionAcceptedNotification</string>
+            </field>
+            <field name="order">
+              <string>5</string>
+            </field>
+            <field name="defaultConfig">
+              <collection type="java.util.ArrayList">
+                <value>
+                  <string>Instantly</string>
+                </value>
+              </collection>
+            </field>
+            <field name="groupId">
+              <string>gamification</string>
+            </field>
+            <field name="bundlePath">
+              <string>locale.addon.Gamification</string>
+            </field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>notification.plugins</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.notification.plugin.ContributionRejectedNotificationPlugin</type>
+      <init-params>
+        <object-param>
+          <name>template.GamificationContributionRejectedNotification</name>
+          <description>The template of ContributionRejectedNotification</description>
+          <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
+            <field name="pluginId">
+              <string>GamificationContributionRejectedNotification</string>
+            </field>
+            <field name="resourceBundleKey">
+              <string>UINotification.label.GamificationContributionRejectedNotification</string>
+            </field>
+            <field name="order">
+              <string>6</string>
             </field>
             <field name="defaultConfig">
               <collection type="java.util.ArrayList">
