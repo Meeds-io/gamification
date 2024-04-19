@@ -23,12 +23,33 @@
     :message="$t('Notification.gamification.webNotif.contributionRejected')"
     :url="activityUrl">
     <template #avatar>
-      <v-icon size="40">fa fa-trophy</v-icon>
+      <v-badge
+        offset-y="15"
+        offset-x="17"
+        color="grey-background"
+        overlap
+        bottom>
+        <v-list-item-avatar
+          class="border-color rounded ma-0"
+          tile>
+          <v-img :src="programAvatarUrl" />
+        </v-list-item-avatar>
+        <template #badge>
+          <v-icon class="error-color">fas fa-times</v-icon>
+        </template>
+      </v-badge>
     </template>
     <template #actions>
+      <div class="d-flex flex-row mb-1">
+        <v-icon size="14" class="me-1">fas fa-trophy</v-icon>
+        <div class="text-truncate">
+          {{ actionTitle }}
+        </div>
+      </div>
       <div class="d-flex flex-row">
         <v-icon size="14" class="me-1">far fa-comment</v-icon>
-        <div class="text-truncate" v-sanitized-html="comment">
+        <div class="text-truncate">
+          {{ getContributionComment() }}
         </div>
       </div>
     </template>
@@ -63,6 +84,12 @@ export default {
       return this.activityId && `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.activityId}#comment-reply`
           || '#';
     },
+    programAvatarUrl() {
+      return this.realization?.program?.avatarUrl;
+    },
+    actionTitle() {
+      return this.realization?.action?.title;
+    },
   },
   created() {
     this.$realizationService.getRealizationById(this.realizationId)
@@ -72,5 +99,14 @@ export default {
       })
       .finally(() => this.loading = false);
   },
+  methods: {
+    getContributionComment() {
+      let text = this.comment;
+      const div = document.createElement('div');
+      div.innerHTML = text;
+      text = div.textContent || div.innerText || '';
+      return text;
+    }
+  }
 };
 </script>
