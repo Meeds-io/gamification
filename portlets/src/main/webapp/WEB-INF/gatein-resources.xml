@@ -196,7 +196,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <portlet>
     <name>EngagementCenterAchievements</name>
     <module>
-      <load-group>engagement-center-achievements-extensions</load-group>
       <script>
         <minify>false</minify>
         <path>/js/engagementCenterAchievements.bundle.js</path>
@@ -212,6 +211,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>gamificationUserConnectors</module>
+      </depends>
+      <depends>
+        <module>engagementCenterAchievementsExtensions</module>
       </depends>
       <depends>
         <module>usersLeaderboardCommon</module>
@@ -682,6 +684,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <module>connectorExtensions</module>
     </depends>
     <depends>
+      <module>engagementCenterAchievementsExtensions</module>
+    </depends>
+    <depends>
       <module>gamificationConnectorEvents</module>
     </depends>
     <depends>
@@ -1007,6 +1012,30 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>ruleExtensions</module>
+    </depends>
+  </module>
+
+  <module>
+    <name>engagementCenterAchievementsExtensions</name>
+    <load-group>engagement-center-achievements-extensions</load-group>
+    <script>
+      <minify>false</minify>
+      <path>/js/gamificationAchievements.bundle.js</path>
+    </script>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>vuetify</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>extensionRegistry</module>
     </depends>
   </module>
 

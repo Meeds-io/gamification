@@ -32,6 +32,7 @@ module.exports = {
     ruleSearch: './src/main/webapp/vue-app/rules-search/main.js',
     gamificationCommon: './src/main/webapp/vue-app/commons/main.js',
     gamificationAnalytics: './src/main/webapp/vue-app/analytics/main.js',
+    gamificationAchievements: './src/main/webapp/vue-app/achievements-extension/main.js',
     badge: './src/main/webapp/vue-app/badge/badge.js',
     profileStats: './src/main/webapp/vue-app/profileStats/main.js',
     myContributions: './src/main/webapp/vue-app/myContributions/main.js',
