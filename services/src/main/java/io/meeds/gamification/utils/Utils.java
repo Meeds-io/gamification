@@ -63,6 +63,8 @@ public class Utils {
   public static final String                        ANNOUNCEMENT_ACTIVITY_EVENT             = "challenge.announcement.activity";
 
   public static final String                        REALIZATION_STATUS_TEMPLATE_PARAM       = "realizationStatus";
+  
+  public static final String                        REALIZATION_CREATED_DATE_PARAM          = "realizationCreatedDate";
 
   public static final long                          DEFAULT_LAST_MODIFIED                   = System.currentTimeMillis();
 
