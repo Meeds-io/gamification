@@ -24,14 +24,14 @@
     :url="activityUrl">
     <template #avatar>
       <v-badge
-        offset-y="15"
-        offset-x="17"
-        color="grey-background"
-        overlap
-        bottom>
+          overlap
+          bottom
+          offset-y="15"
+          offset-x="17"
+          color="grey-background">
         <v-list-item-avatar
-          class="border-color rounded ma-0"
-          tile>
+            class="border-color rounded ma-0"
+            tile>
           <v-img :src="programAvatarUrl" />
         </v-list-item-avatar>
         <template #badge>
@@ -42,8 +42,7 @@
     <template #actions>
       <div class="d-flex flex-row mb-1">
         <v-icon size="14" class="me-1">fas fa-trophy</v-icon>
-        <div class="text-truncate">
-          {{ actionTitle }}
+        <div class="text-truncate">{{ actionTitle }}
         </div>
       </div>
       <div class="d-flex flex-row">
