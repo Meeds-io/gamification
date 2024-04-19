@@ -19,6 +19,7 @@
 package io.meeds.gamification.activity.processor;
 
 import static io.meeds.gamification.listener.AnnouncementActivityUpdater.ANNOUNCEMENT_ID_PARAM;
+import static io.meeds.gamification.utils.Utils.REALIZATION_CREATED_DATE_PARAM;
 import static io.meeds.gamification.utils.Utils.REALIZATION_STATUS_TEMPLATE_PARAM;
 
 import io.meeds.gamification.constant.RealizationStatus;
@@ -48,8 +49,7 @@ public class AnnouncementActivityPreProcessor extends BaseActivityProcessorPlugi
 
   @Override
   public void processActivity(ExoSocialActivity activity) {
-    if (!Utils.ANNOUNCEMENT_COMMENT_TYPE.equals(activity.getType())
-        || activity.getTemplateParams().containsKey(REALIZATION_STATUS_TEMPLATE_PARAM)) {
+    if (!Utils.ANNOUNCEMENT_COMMENT_TYPE.equals(activity.getType())) {
       return;
     }
     long realizationId = Long.parseLong(activity.getTemplateParams().get(ANNOUNCEMENT_ID_PARAM));
@@ -61,6 +61,7 @@ public class AnnouncementActivityPreProcessor extends BaseActivityProcessorPlugi
         && !RealizationStatus.DELETED.name().equals(realization.getStatus()) && realization.getActivityId() != null) {
       Map<String, String> templateParams = activity.getTemplateParams();
       templateParams.put(REALIZATION_STATUS_TEMPLATE_PARAM, String.valueOf(realization.getStatus()));
+      templateParams.put(REALIZATION_CREATED_DATE_PARAM, realization.getCreatedDate());
       activity.setTemplateParams(templateParams);
     }
   }
