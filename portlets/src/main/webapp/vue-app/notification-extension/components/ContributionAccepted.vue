@@ -23,9 +23,28 @@
     :message="$t('Notification.gamification.webNotif.contributionAccepted')"
     :url="activityUrl">
     <template #avatar>
-      <v-icon size="40">fa fa-trophy</v-icon>
+      <v-badge
+          overlap
+          bottom
+          offset-y="15"
+          offset-x="17"
+          color="grey-background">
+        <v-list-item-avatar
+            class="border-color rounded ma-0"
+            tile>
+          <v-img :src="programAvatarUrl" />
+        </v-list-item-avatar>
+        <template #badge>
+          <v-icon class="success-color">fas fa-check</v-icon>
+        </template>
+      </v-badge>
     </template>
     <template #actions>
+      <div class="d-flex flex-row mb-1">
+        <v-icon size="14" class="me-1">fas fa-trophy</v-icon>
+        <div class="text-truncate">{{ actionTitle }}
+        </div>
+      </div>
       <div class="d-flex flex-row">
         <v-icon size="14" class="me-1">far fa-comment</v-icon>
         <div class="text-truncate" v-sanitized-html="comment">
@@ -62,6 +81,12 @@ export default {
     replyUrl() {
       return this.activityId && `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.activityId}#comment-reply`
           || '#';
+    },
+    programAvatarUrl() {
+      return this.realization?.program?.avatarUrl;
+    },
+    actionTitle() {
+      return this.realization?.action?.title;
     },
   },
   created() {
