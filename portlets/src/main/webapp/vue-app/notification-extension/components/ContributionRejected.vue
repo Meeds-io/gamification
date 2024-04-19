@@ -24,14 +24,14 @@
     :url="activityUrl">
     <template #avatar>
       <v-badge
-          overlap
-          bottom
-          offset-y="15"
-          offset-x="17"
-          color="grey-background">
+        offset-y="15"
+        offset-x="17"
+        color="grey-background"
+        overlap
+        bottom>
         <v-list-item-avatar
-            class="border-color rounded ma-0"
-            tile>
+          class="border-color rounded ma-0"
+          tile>
           <v-img :src="programAvatarUrl" />
         </v-list-item-avatar>
         <template #badge>
@@ -42,13 +42,14 @@
     <template #actions>
       <div class="d-flex flex-row mb-1">
         <v-icon size="14" class="me-1">fas fa-trophy</v-icon>
-        <div class="text-truncate">{{ actionTitle }}
+        <div class="text-truncate">
+          {{ actionTitle }}
         </div>
       </div>
       <div class="d-flex flex-row">
         <v-icon size="14" class="me-1">far fa-comment</v-icon>
         <div class="text-truncate">
-          {{ commentText }}
+          {{ getContributionComment() }}
         </div>
       </div>
     </template>
@@ -100,6 +101,15 @@ export default {
         return this.$nextTick();
       })
       .finally(() => this.loading = false);
+  },
+  methods: {
+    getContributionComment() {
+      let text = this.comment;
+      const div = document.createElement('div');
+      div.innerHTML = text;
+      text = div.textContent || div.innerText || '';
+      return text;
+    }
   }
 };
 </script>
