@@ -1,7 +1,7 @@
-/**
+/*
  * This file is part of the Meeds project (https://meeds.io/).
  *
- * Copyright (C) 2023 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -11,21 +11,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import './initComponents.js';
-import './extensions.js';
-import {initAchievementCommentExtension} from './extensions';
-
-Vue.prototype.$utils?.includeExtensions?.('engagementCenterActions');
-Vue.prototype.$utils?.includeExtensions?.('engagementCenterConnectors');
-Vue.prototype.$utils?.includeExtensions?.('engagementCenterConnectorEvents');
 Vue.prototype.$utils?.includeExtensions?.('engagementCenterAchievements');
-
-const achievementsExtensions = extensionRegistry.loadExtensions('engagementCenterAchievements', 'achievements-extensions');
-const updateStatusExtension = achievementsExtensions.find(extension => extension?.canUpdateStatus);
-updateStatusExtension.init();
-initAchievementCommentExtension(updateStatusExtension);
