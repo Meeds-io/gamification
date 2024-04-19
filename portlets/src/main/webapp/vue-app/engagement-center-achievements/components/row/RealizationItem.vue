@@ -507,7 +507,7 @@ export default {
       return this.extensions.find(extension => extension?.canUpdateStatus);
     },
     createdDateInSecond() {
-      const dateObject = new Date(this.createdDate);
+      const dateObject = new Date(this.realization?.createdDate);
       return Math.floor(dateObject.getTime() / 1000);
     },
     canUpdateStatus() {
@@ -544,6 +544,8 @@ export default {
           this.statusValue = status;
           const updatedRealization = Object.assign(this.realization, {
             status,
+            sendingDate: this.pending ? this.realization?.createdDate: null,
+            createdDate: this.pending ? new Date().toISOString() : this.realization?.createdDate,
           });
           this.$emit('updated', updatedRealization);
         });
