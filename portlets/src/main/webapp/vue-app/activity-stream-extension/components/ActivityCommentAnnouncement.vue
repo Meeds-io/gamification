@@ -91,5 +91,19 @@ export default {
       return `/gamification-portlets/skin/images/announcement/${this.announcementImageIndex}.webp`;
     },
   },
+  created() {
+    document.addEventListener('contribution-status-updated', this.refreshComment);
+  },
+  beforeDestroy() {
+    document.removeEventListener('contribution-status-updated', this.refreshComment);
+  },
+  methods: {
+    refreshComment(event) {
+      if (this.announcementId === event?.detail?.announcementId) {
+        this.activity.templateParams.realizationStatus = event?.detail?.status;
+        this.$root.$emit('alert-message',  this.$t('announcement.detail.statusUpdateSuccess'), 'success');
+      }
+    },
+  },
 };
 </script>
