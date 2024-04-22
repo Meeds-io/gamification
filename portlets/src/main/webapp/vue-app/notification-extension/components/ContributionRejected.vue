@@ -49,7 +49,7 @@
       <div class="d-flex flex-row">
         <v-icon size="14" class="me-1">far fa-comment</v-icon>
         <div class="text-truncate">
-          {{ getContributionComment() }}
+          {{ commentText }}
         </div>
       </div>
     </template>
@@ -73,6 +73,9 @@ export default {
     },
     comment() {
       return this.realization?.comment;
+    },
+    commentText() {
+      return this.comment && this.$utils.htmlToText(this.comment) || '';
     },
     activityId() {
       return this.notification?.parameters?.activityId;
@@ -98,15 +101,6 @@ export default {
         return this.$nextTick();
       })
       .finally(() => this.loading = false);
-  },
-  methods: {
-    getContributionComment() {
-      let text = this.comment;
-      const div = document.createElement('div');
-      div.innerHTML = text;
-      text = div.textContent || div.innerText || '';
-      return text;
-    }
   }
 };
 </script>
