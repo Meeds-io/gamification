@@ -185,8 +185,9 @@ export function initAchievementCommentExtension(updateStatusExtension) {
     isEnabled: (activity, comment) => {
       const dateObject = new Date(comment?.templateParams?.realizationCreatedDate);
       const createdDateInSecond = Math.floor(dateObject.getTime() / 1000);
+      const rule = activity?.rule;
       return comment.type === 'gamificationActionAnnouncement'
-          && eXo.env.portal.isRewardingManager === 'true'
+          && (rule?.userInfo?.programOwner || rule?.userInfo?.manager)
           && (comment?.templateParams?.realizationStatus === 'PENDING' || updateStatusExtension?.canUpdateStatus(createdDateInSecond))
           && comment?.templateParams?.realizationStatus !== 'ACCEPTED';
     },
@@ -209,8 +210,9 @@ export function initAchievementCommentExtension(updateStatusExtension) {
     isEnabled: (activity, comment) => {
       const dateObject = new Date(comment?.templateParams?.realizationCreatedDate);
       const createdDateInSecond = Math.floor(dateObject.getTime() / 1000);
+      const rule = activity?.rule;
       return comment.type === 'gamificationActionAnnouncement'
-          && eXo.env.portal.isRewardingManager === 'true'
+          && (rule?.userInfo?.programOwner || rule?.userInfo?.manager)
           && (comment?.templateParams?.realizationStatus === 'PENDING' || updateStatusExtension?.canUpdateStatus(createdDateInSecond))
           && comment?.templateParams?.realizationStatus !== 'REJECTED';
 
@@ -234,8 +236,9 @@ export function initAchievementCommentExtension(updateStatusExtension) {
     isEnabled: (activity, comment) => {
       const dateObject = new Date(comment?.templateParams?.realizationCreatedDate);
       const createdDateInSecond = Math.floor(dateObject.getTime() / 1000);
+      const rule = activity?.rule;
       return comment.type === 'gamificationActionAnnouncement'
-          && eXo.env.portal.isRewardingManager === 'true'
+          && (rule?.userInfo?.programOwner || rule?.userInfo?.manager)
           && updateStatusExtension?.canUpdateStatus(createdDateInSecond)
           && comment?.templateParams?.realizationStatus !== 'PENDING';
 
