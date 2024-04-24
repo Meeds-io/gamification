@@ -23,12 +23,15 @@ export default {
     extensionApp: 'gamification',
     connectorValueExtensionType: 'connectors',
     connectorValueExtensions: {},
+    isPublicSite: eXo.env.portal.portalName === 'public',
   }),
   created() {
     document.addEventListener(`extension-${this.extensionApp}-${this.connectorValueExtensionType}-updated`, this.refreshConnectorValueExtensions);
     document.addEventListener('gamification-connector-identifier-updated', this.refreshConnectorValueExtensions);
     this.refreshConnectorValueExtensions();
-    this.$connectorWebSocket.initCometd(this.handleConnectorIdentifierUpdates);
+    if (!this.isPublicSite) {
+      this.$connectorWebSocket.initCometd(this.handleConnectorIdentifierUpdates);
+    }
   },
   beforeDestroy() {
     document.removeEventListener(`extension-${this.extensionApp}-${this.connectorValueExtensionType}-updated`, this.refreshConnectorValueExtensions);
