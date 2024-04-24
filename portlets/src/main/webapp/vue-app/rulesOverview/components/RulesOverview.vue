@@ -38,11 +38,7 @@ export default {
   }),
   watch: {
     hidden() {
-      if (this.hidden) {
-        this.$el.closest('.PORTLET-FRAGMENT').classList.add('hidden');
-      } else {
-        this.$el.closest('.PORTLET-FRAGMENT').classList.remove('hidden');
-      }
+      this.$root.$updateApplicationVisibility(!this.hidden);
     }
   },
   mounted() {
