@@ -47,6 +47,8 @@ public class RuleRestEntity extends RuleDTO {
 
   private long                        realizationsCount;
 
+  private boolean                     hasPendingRealization;
+
   private UserInfo                    userInfo;                               // NOSONAR
 
   private List<RuleDTO>               prerequisiteRules;
@@ -80,6 +82,7 @@ public class RuleRestEntity extends RuleDTO {
                         Set<Long> managers,
                         List<RealizationRestEntity> realizations,
                         long realizationsCount,
+                        boolean hasPendingRealization,
                         UserInfo userInfo,
                         List<RuleDTO> prerequisiteRules) {
     super(id,
@@ -107,6 +110,7 @@ public class RuleRestEntity extends RuleDTO {
     this.managers = managers;
     this.realizations = realizations;
     this.realizationsCount = realizationsCount;
+    this.hasPendingRealization = hasPendingRealization;
     this.userInfo = userInfo;
     this.prerequisiteRules = prerequisiteRules;
   }
@@ -138,6 +142,7 @@ public class RuleRestEntity extends RuleDTO {
                               managers,
                               realizations,
                               realizationsCount,
+                              hasPendingRealization,
                               userInfo,
                               prerequisiteRules);
   }

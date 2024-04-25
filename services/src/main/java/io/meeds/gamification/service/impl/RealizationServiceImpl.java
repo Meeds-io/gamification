@@ -540,6 +540,10 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     return realizationStorage.findRealizationsByObjectIdAndObjectType(objectId, objectType);
   }
 
+  public boolean hasPendingRealization(long ruleId, String earnerIdentityId) {
+    return realizationStorage.hasPendingRealization(ruleId, earnerIdentityId);
+  }
+
   @Override
   public InputStream exportXlsx(RealizationFilter filter,
                                 Identity identity,
