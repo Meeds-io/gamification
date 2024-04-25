@@ -88,7 +88,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-row>
       <v-row>
         <v-col class="col-sm-4 col-4">
-          <span class="font-weight-bold"> {{ isAdministrator ? headers[5].text : headers[4].text }}</span>
+          <span class="font-weight-bold"> {{ isAdministrator ? headers[6].text : headers[4].text }}</span>
         </v-col>
         <v-col class="col-sm-8 col-8">
           <v-btn

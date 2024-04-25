@@ -793,4 +793,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="SENDING_DATE" type="TIMESTAMP"/>
         </addColumn>
     </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-74">
+        <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
+            <column name="REVIEWER_ID" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
