@@ -106,6 +106,11 @@ function getRealizationsFormData(filter) {
       formData.append('earnerIds', earnerId);
     }
   }
+  if (filter?.reviewerIds?.length > 0) {
+    for (const reviewerId of filter.reviewerIds) {
+      formData.append('reviewerIds', reviewerId);
+    }
+  }
   if (filter?.identityType) {
     formData.append('identityType', filter.identityType.toUpperCase());
   }

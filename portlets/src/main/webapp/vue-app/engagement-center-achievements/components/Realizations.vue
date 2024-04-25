@@ -96,6 +96,7 @@
             :filtered-rule-ids="ruleIds"
             :filtered-program-ids="searchList"
             :filtered-earner-ids="earnerIds"
+            :filtered-reviewer-ids="reviewerIds"
             :extensions="extensions"
             @updated="realizationUpdated" />
         </template>
@@ -164,6 +165,7 @@ export default {
     searchList: [],
     ownedPrograms: [],
     earnerIds: [],
+    reviewerIds: [],
     status: null,
     ruleIds: [],
     offset: 0,
@@ -207,6 +209,7 @@ export default {
       return (this.searchList?.length && 1 || 0)
         + (this.ruleIds?.length && 1 || 0)
         + (this.earnerIds?.length && 1 || 0)
+        + (this.reviewerIds?.length && 1 || 0)
         + (this.status !== null && this.status !== 'ALL'? 1 : 0)  ;
     },
     hasMore() {
@@ -214,6 +217,9 @@ export default {
     },
     earnerIdToRetrieve() {
       return this.earnerIds?.length && this.earnerIds || (!this.administrationMode && [this.earnerId] || null);
+    },
+    reviewerIdToRetrieve() {
+      return this.reviewerIds?.length && this.reviewerIds;
     },
     realizationsToDisplay() {
       return this.realizations.slice(0, this.limit);
@@ -223,6 +229,7 @@ export default {
         fromDate: this.fromDate,
         toDate: this.toDate,
         earnerIds: this.earnerIdToRetrieve,
+        reviewerIds: this.reviewerIdToRetrieve,
         sortBy: this.sortBy,
         sortDescending: this.sortDescending,
         programIds: this.searchList,
@@ -241,21 +248,23 @@ export default {
           sortable: false,
           value: 'actionLabel',
           class: 'actionHeader',
-          width: '188'
+          width: '125'
         },
         {
           text: this.$t('realization.label.programLabel'),
           sortable: false,
+          align: 'center',
           value: 'programLabel',
           class: 'actionHeader',
-          width: '110'
+          width: '75'
         },
         {
           text: this.$t('realization.label.date'),
           value: 'date',
           sortable: true,
+          align: 'center',
           class: 'actionHeader',
-          width: '120'
+          width: '75'
         },
         {
           text: this.$t('realization.label.points'),
@@ -263,7 +272,7 @@ export default {
           align: 'center',
           value: 'points',
           class: 'actionHeader',
-          width: '80',
+          width: '50',
         },
         {
           text: this.$t('realization.label.status'),
@@ -271,7 +280,7 @@ export default {
           sortable: true,
           align: 'center',
           class: 'actionHeader',
-          width: '100',
+          width: '60',
         },
       ];
       if (this.administrationMode) {
@@ -280,9 +289,16 @@ export default {
             value: 'grantee',
             text: this.$t('realization.label.grantee'),
             sortable: false,
-            align: 'center',
             class: 'actionHeader',
-            width: '70',
+            width: '100',
+          },);
+        realizationsHeaders.splice(5, 0,
+          {
+            value: 'reviewer',
+            text: this.$t('realization.label.reviewer'),
+            sortable: false,
+            class: 'actionHeader',
+            width: '100',
           },);
       }
       return realizationsHeaders;
@@ -417,13 +433,14 @@ export default {
         this.realizations.splice(index, 1);
       }
     },
-    filter(programs, rules, grantees, status) {
+    filter(programs, rules, grantees, status, reviewers) {
       this.filterActivated = true;
       this.initialized = false;
       this.realizations = [];
       this.searchList = programs.map(program => program.id);
       this.ruleIds = rules.map(rule => rule.id);
       this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
+      this.reviewerIds = reviewers.map(reviewer => reviewer.identity.identityId);
       this.status = status !== null && status !== 'ALL' ? status : null;
       this.loadRealizations();
     },
@@ -434,6 +451,7 @@ export default {
       this.searchList = [];
       this.ruleIds = [];
       this.earnerIds = [];
+      this.reviewerIds = [];
       this.realizations = [];
       this.loadRealizations();
       this.$root.$emit('reset-filter-values');
