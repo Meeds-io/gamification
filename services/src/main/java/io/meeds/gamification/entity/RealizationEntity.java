@@ -258,7 +258,7 @@ public class RealizationEntity extends AbstractAuditingEntity implements Seriali
 
   @ManyToOne
   @JoinColumn(name = "DOMAIN_ID")
-  private ProgramEntity      domainEntity;
+  private ProgramEntity     domainEntity;
 
   @ManyToOne
   @JoinColumn(name = "RULE_ID")
@@ -283,5 +283,8 @@ public class RealizationEntity extends AbstractAuditingEntity implements Seriali
 
   @Column(name = "SENDING_DATE")
   protected Date            sendingDate;
+
+  @Column(name = "REVIEWER_ID")
+  private Long              reviewerId;
 
 }
