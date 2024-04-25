@@ -103,6 +103,25 @@
             </div>
           </v-flex>
         </v-card-text>
+        <v-card-text v-if="isAdministrator">
+          <span class="subtitle-1">{{ $t('realization.label.filter.reviewer') }}</span>
+          <v-flex class="user-suggester text-truncate">
+            <exo-identity-suggester
+                ref="reviewerAttendeeAutoComplete"
+                name="reviewerAttendee"
+                v-model="reviewerAttendee"
+                :search-options="searchOptions"
+                :labels="reviewerSuggesterLabels"
+                include-users />
+            <div v-if="reviewers && reviewers.length" class="identitySuggester no-border mt-0">
+              <engagement-center-realizations-grantee-attendee-item
+                  v-for="reviewer in reviewers"
+                  :key="reviewer.identity.id"
+                  :attendee="reviewer"
+                  @remove-attendee="removeReviewerAttendee" />
+            </div>
+          </v-flex>
+        </v-card-text>
         <v-card-text>
           <span class="subtitle-1">{{ $t('realization.label.filter.status') }}</span>
           <v-radio-group v-model="status" class="mt-1">
@@ -164,9 +183,12 @@ export default {
       drawer: false,
       disabled: false,
       granteeAttendee: null,
+      reviewerAttendee: null,
       status: 'ALL',
       grantees: [],
+      reviewers: [],
       granteesIds: [],
+      reviewersIds: [],
       program: null,
       programs: [],
       rule: null,
@@ -184,6 +206,13 @@ export default {
         searchPlaceholder: this.$t('realization.label.filter.grantee.searchPlaceholder'),
         placeholder: this.$t('realization.label.filter.grantee.placeholder'),
         noDataLabel: this.$t('realization.label.filter.grantee.noDataLabel'),
+      };
+    },
+    reviewerSuggesterLabels() {
+      return {
+        searchPlaceholder: this.$t('realization.label.filter.reviewer.searchPlaceholder'),
+        placeholder: this.$t('realization.label.filter.reviewer.placeholder'),
+        noDataLabel: this.$t('realization.label.filter.reviewer.noDataLabel'),
       };
     },
     ruleSuggesterLabels() {
@@ -211,6 +240,9 @@ export default {
     granteeAttendee() {
       this.addSelectedGrantee(this.granteeAttendee);
     },
+    reviewerAttendee() {
+      this.addSelectedReviewer(this.reviewerAttendee);
+    },
     rule() {
       this.addSelectedRule(this.rule);
     },
@@ -235,6 +267,8 @@ export default {
     this.$root.$on('realization-filter-action-remove', this.ruleRemove);
     this.$root.$on('realization-filter-earner-add', this.earnerAdd);
     this.$root.$on('realization-filter-earner-remove', this.earnerRemove);
+    this.$root.$on('realization-filter-reviewer-add', this.reviewerAdd);
+    this.$root.$on('realization-filter-reviewer-remove', this.reviewerRemove);
   },
   methods: {
     open() {
@@ -250,7 +284,7 @@ export default {
     },
     confirm(differ) {
       window.setTimeout(() => {
-        this.$emit('selectionConfirmed', this.programs, this.rules, this.grantees, this.status);
+        this.$emit('selectionConfirmed', this.programs, this.rules, this.grantees, this.status, this.reviewers);
         this.$refs.drawer.close();
       }, differ && 200 || 10);
     },
@@ -258,9 +292,11 @@ export default {
       this.programs = [];
       this.rules = [];
       this.grantees = [];
+      this.reviewers = [];
       this.program = null;
       this.rule = null;
       this.granteeAttendee = null;
+      this.reviewerAttendee = null;
       this.includeDisabledPrograms = false;
       this.status = 'ALL';
     },
@@ -276,6 +312,16 @@ export default {
       if (index >= 0) {
         this.grantees.splice(index, 1);
         this.granteesIds.splice(index, 1);
+      }
+    },
+    removeReviewerAttendee(reviewer) {
+      const index = this.reviewers.findIndex(addedAttendee => {
+        return reviewer.identity.remoteId === addedAttendee.identity.remoteId
+            && reviewer.identity.providerId === addedAttendee.identity.providerId;
+      });
+      if (index >= 0) {
+        this.reviewers.splice(index, 1);
+        this.reviewersIds.splice(index, 1);
       }
     },
     removeProgram(program) {
@@ -332,6 +378,27 @@ export default {
       }
       this.granteeAttendee = null;
     },
+    addSelectedReviewer(reviewer) {
+      if (!reviewer) {
+        if (this.$refs?.reviewerAttendeeAutoComplete) {
+          this.$nextTick(this.$refs.reviewerAttendeeAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
+        }
+        return;
+      }
+      if (!this.reviewers) {
+        this.reviewers = [];
+      }
+      const found = this.reviewers?.find(r => {
+        return r.identity.remoteId === reviewer.remoteId
+            && r.identity.providerId === reviewer.providerId;
+      });
+      if (!found) {
+        this.reviewers.push({
+          identity: reviewer,
+        });
+      }
+      this.reviewerAttendee = null;
+    },
     programAdd(program) {
       this.addSelectedProgram(program);
       this.$nextTick(this.confirm);
@@ -371,6 +438,26 @@ export default {
       const index = this.grantees.findIndex(e => earnerId === e?.identity?.identityId);
       if (index >= 0) {
         this.grantees.splice(index, 1);
+      }
+      this.$nextTick(this.confirm);
+    },
+    reviewerAdd(reviewer) {
+      this.addSelectedReviewer({
+        id: `organization:${reviewer.remoteId}`,
+        providerId: 'organization',
+        remoteId: reviewer.remoteId,
+        identityId: reviewer.id,
+        profile: {
+          avatarUrl: reviewer.avatarUrl,
+          fullName: reviewer.fullName,
+        },
+      });
+      this.$nextTick(this.confirm);
+    },
+    reviewerRemove(reviewerId) {
+      const index = this.reviewers.findIndex(e => reviewerId === e?.identity?.identityId);
+      if (index >= 0) {
+        this.reviewers.splice(index, 1);
       }
       this.$nextTick(this.confirm);
     },

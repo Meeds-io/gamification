@@ -243,7 +243,8 @@ public class RuleBuilder {
                                  periodType.getToDate(),
                                  IdentityType.USER,
                                  RealizationStatus.ACCEPTED,
-                                 Collections.singletonList(ruleId));
+                                 Collections.singletonList(ruleId),
+                                 null);
   }
 
   private static boolean isPublished(ActivityManager activityManager, RuleDTO rule) {

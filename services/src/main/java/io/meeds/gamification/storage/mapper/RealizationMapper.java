@@ -55,7 +55,8 @@ public class RealizationMapper {
                               realizationEntity.getLastModifiedBy(),
                               Utils.toRFC3339Date(realizationEntity.getSendingDate()),
                               realizationEntity.getStatus().name(),
-                              realizationEntity.getType());
+                              realizationEntity.getType(),
+                              realizationEntity.getReviewerId());
   }
 
   public static List<RealizationDTO> fromEntities(ProgramStorage programStorage,
@@ -99,6 +100,9 @@ public class RealizationMapper {
     }
     if (realization.getSendingDate() != null) {
       realizationEntity.setSendingDate(Utils.parseRFC3339Date(realization.getSendingDate()));
+    }
+    if (realization.getReviewerId() != null) {
+      realizationEntity.setReviewerId(realization.getReviewerId());
     }
     realizationEntity.setCreatedBy(realization.getCreatedBy() != null ? realization.getCreatedBy()
                                                                    : Utils.SYSTEM_USERNAME);

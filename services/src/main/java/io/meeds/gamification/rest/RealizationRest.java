@@ -152,6 +152,9 @@ public class RealizationRest implements ResourceContainer {
                                   @Parameter(description = "Rule technical identifiers that will be used to filter achievements", required = false)
                                   @QueryParam("ruleIds")
                                   List<Long> ruleIds,
+                                  @Parameter(description = "reviewerIds, that will be used to filter achievements")
+                                  @QueryParam("reviewerIds")
+                                  List<Long> reviewerIds,
                                   @Parameter(description = "If true, this will return the list of realizations, the current user can manage. Possible values = true or false. Default value = false.", required = false)
                                   @QueryParam("owned")
                                   @DefaultValue("false")
@@ -186,6 +189,7 @@ public class RealizationRest implements ResourceContainer {
                                                      identityType,
                                                      programIds,
                                                      ruleIds,
+                                                     reviewerIds,
                                                      allPrograms);
 
     boolean isXlsx = StringUtils.isNotBlank(returnType) && returnType.equals("xlsx");

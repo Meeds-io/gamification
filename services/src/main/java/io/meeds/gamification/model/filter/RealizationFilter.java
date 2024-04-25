@@ -54,6 +54,8 @@ public class RealizationFilter implements Serializable {
 
   private List<Long>        ruleIds;
 
+  private List<Long>      reviewerIds;
+
   private boolean           allPrograms;
 
   public RealizationFilter(List<String> earnerIds, // NOSONAR
@@ -63,7 +65,8 @@ public class RealizationFilter implements Serializable {
                            Date toDate,
                            IdentityType identityType,
                            RealizationStatus status,
-                           List<Long> ruleIds) {
+                           List<Long> ruleIds,
+                           List<Long> reviewerIds) {
     this.earnerIds = earnerIds;
     this.sortField = sortField;
     this.sortDescending = sortDescending;
@@ -72,6 +75,7 @@ public class RealizationFilter implements Serializable {
     this.earnerType = identityType;
     this.status = status;
     this.ruleIds = ruleIds;
+    this.reviewerIds = reviewerIds;
   }
 
   @Override
@@ -86,6 +90,7 @@ public class RealizationFilter implements Serializable {
                                  earnerType,
                                  programIds == null ? null : new ArrayList<>(programIds),
                                  ruleIds == null ? null : new ArrayList<>(ruleIds),
+                                 reviewerIds == null ? null : new ArrayList<>(reviewerIds),
                                  allPrograms);
   }
 
