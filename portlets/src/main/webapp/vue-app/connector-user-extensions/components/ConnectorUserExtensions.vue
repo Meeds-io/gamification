@@ -28,7 +28,9 @@ export default {
     document.addEventListener(`extension-${this.extensionApp}-${this.connectorValueExtensionType}-updated`, this.refreshConnectorValueExtensions);
     document.addEventListener('gamification-connector-identifier-updated', this.refreshConnectorValueExtensions);
     this.refreshConnectorValueExtensions();
-    this.$connectorWebSocket.initCometd(this.handleConnectorIdentifierUpdates);
+    if (eXo?.env?.portal?.userName) {
+      this.$connectorWebSocket.initCometd(this.handleConnectorIdentifierUpdates);
+    }
   },
   beforeDestroy() {
     document.removeEventListener(`extension-${this.extensionApp}-${this.connectorValueExtensionType}-updated`, this.refreshConnectorValueExtensions);
