@@ -289,6 +289,7 @@ export default {
             value: 'grantee',
             text: this.$t('realization.label.grantee'),
             sortable: false,
+            align: 'center',
             class: 'actionHeader',
             width: '100',
           },);
@@ -297,6 +298,7 @@ export default {
             value: 'reviewer',
             text: this.$t('realization.label.reviewer'),
             sortable: false,
+            align: 'center',
             class: 'actionHeader',
             width: '100',
           },);
