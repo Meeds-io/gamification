@@ -270,7 +270,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (status == null) {
       throw new IllegalArgumentException("status is mandatory");
     }
-
+    realization.setStatus(status.name());
     updateRealizationStatus(realization, status);
   }
 
@@ -303,6 +303,15 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         || RealizationStatus.DELETED.name().equals(realization.getStatus())) {
       throw new IllegalArgumentException("Canceled achievement cannot be updated");
     }
+    if (RealizationStatus.PENDING.name().equals(realization.getStatus()) && realization.getSendingDate() == null) {
+      realization.setSendingDate(realization.getCreatedDate());
+      realization.setCreatedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
+    }
+    org.exoplatform.social.core.identity.model.Identity reviewerIdentity = identityManager.getOrCreateUserIdentity(username);
+    if (reviewerIdentity != null) {
+      realization.setReviewerId(Long.valueOf(reviewerIdentity.getId()));
+    }
+    realization.setStatus(status.name());
     updateRealizationStatus(realization, status);
   }
 
@@ -742,11 +751,6 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   private void updateRealizationStatus(RealizationDTO realization, RealizationStatus status) {
-    if (RealizationStatus.PENDING.name().equals(realization.getStatus())) {
-      realization.setSendingDate(realization.getCreatedDate());
-      realization.setCreatedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
-    }
-    realization.setStatus(status.name());
     try {
       realizationStorage.updateRealization(realization);
       if (RealizationStatus.ACCEPTED.name().equals(realization.getStatus())
