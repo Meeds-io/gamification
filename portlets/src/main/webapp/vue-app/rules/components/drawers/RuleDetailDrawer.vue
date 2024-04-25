@@ -164,9 +164,15 @@
                 :rule="rule"
                 class="rounded" />
             </v-col>
+            <v-col
+              v-if="hasPendingRealization"
+              :class="showEndDate && 'align-end'"
+              class="px-0 rule-has-recurrence"
+              cols="12">
+              <engagement-center-rule-achievement-status />
+            </v-col>
           </v-row>
         </v-col>
-
         <v-col v-if="!expanded" :class="!expandedView && 'px-8'">
           <engagement-center-rule-description
             :rule="rule" />
@@ -295,6 +301,9 @@ export default {
     },
     endDateMillis() {
       return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
+    },
+    hasPendingRealization() {
+      return this.rule?.hasPendingRealization;
     },
     alreadyStarted() {
       return !this.startDateMillis || this.startDateMillis < this.now;
