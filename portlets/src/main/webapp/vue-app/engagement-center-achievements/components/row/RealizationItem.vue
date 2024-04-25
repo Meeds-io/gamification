@@ -84,8 +84,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-card>
         </div>
       </td>
-      <td>
-        <div class="d-flex">
+      <td class="d-flex text-truncate justify-center">
           <v-tooltip bottom>
             <template #activator="{ on }">
               <component
@@ -94,7 +93,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   href: programUrl
                 }"
                 :is="programUrl && 'a' || 'div'"
-                class="text-truncate">
+                class="text-truncate my-auto">
                 <div class="text-truncate">{{ programTitle }}</div>
               </component>
             </template>
@@ -141,9 +140,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <span>{{ isFilteredByProgram && $t('realization.label.removeThisProgramToFilter') || $t('realization.label.addThisProgramToFilter') }}</span>
             </v-tooltip>
           </v-card>
-        </div>
       </td>
-      <td class="wrap">
+      <td class="wrap text-truncate align-center">
         <v-tooltip bottom>
           <template #activator="{ on, attrs }">
             <div
@@ -161,7 +159,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </span>
         </v-tooltip>
       </td>
-      <td v-if="isAdministrator" class="d-flex align-center justify-center">
+      <td v-if="isAdministrator">
+        <div class="d-flex">
         <user-avatar
           :name="earnerFullName"
           :avatar-url="earnerAvatarUrl"
@@ -169,12 +168,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :popover="earnerRemoteId"
           :size="28"
           extra-class="d-inline-block"
-          link-style
-          avatar />
+          link-style />
         <v-card
           v-if="hover && earnerId"
           color="transparent"
-          class="position-relative my-auto"
+          width="28"
+          class="position-relative my-auto ms-2"
           flat>
           <v-tooltip
             z-index="4"
@@ -184,7 +183,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                class="btn absolute-vertical-center ms-2"
+                class="btn absolute-vertical-center"
                 icon
                 absolute
                 small
@@ -195,9 +194,48 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <span>{{ isFilteredByEarner && $t('realization.label.removeThisEarnerToFilter') || $t('realization.label.addThisEarnerToFilter') }}</span>
           </v-tooltip>
         </v-card>
+        </div>
       </td>
       <td class="text-truncate align-center">
         {{ score }}
+      </td>
+      <td v-if="isAdministrator">
+        <div v-if="reviewer" class="d-flex">
+          <user-avatar
+              :name="reviewerFullName"
+              :avatar-url="reviewerAvatarUrl"
+              :profile-id="reviewerRemoteId"
+              :popover="reviewerRemoteId"
+              :size="28"
+              extra-class="d-inline-block"
+              link-style />
+          <v-card
+              v-if="hover && reviewerId"
+              color="transparent"
+              width="28"
+              class="position-relative my-auto ms-2"
+              flat>
+            <v-tooltip
+                z-index="4"
+                max-width="300"
+                bottom>
+              <template #activator="{ on, attrs }">
+                <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    class="btn absolute-vertical-center"
+                    icon
+                    absolute
+                    small
+                    @click="filterByReviewer">
+                  <v-icon size="14">{{ isFilteredByReviewer && 'fa-search-minus' || 'fa-search-plus' }}</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ isFilteredByReviewer && $t('realization.label.removeThisReviewerToFilter') || $t('realization.label.addThisReviewerToFilter') }}</span>
+            </v-tooltip>
+          </v-card>
+        </div>
+        <div v-else class="text-color">{{ $t('realization.label.notReviewed') }}</div>
       </td>
       <td class="text-truncate align-center">
         <v-tooltip v-if="canceled" bottom>
@@ -235,7 +273,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <span>{{ accepted ? statusLabel : acceptLabel }}</span>
             </v-tooltip>
           </v-btn>
-
           <v-btn
             :class="pending ? 'orange darken-2 not-clickable' : 'light-black-background'"
             class="mx-2"
@@ -335,6 +372,10 @@ export default {
       type: Array,
       default: null,
     },
+    filteredReviewerIds: {
+      type: Array,
+      default: null,
+    },
     extensions: {
       type: Array,
       default: null,
@@ -365,20 +406,35 @@ export default {
     createdDate() {
       return this.realization?.sendingDate || this.realization?.createdDate;
     },
-    earnerFullName() {
-      return this.realization?.earner?.fullName;
-    },
-    earnerAvatarUrl() {
-      return this.realization?.earner?.avatarUrl;
-    },
-    earnerRemoteId() {
-      return this.realization?.earner?.remoteId;
-    },
     earner() {
       return this.realization?.earner;
     },
+    earnerFullName() {
+      return this.earner?.fullName;
+    },
+    earnerAvatarUrl() {
+      return this.earner?.avatarUrl;
+    },
+    earnerRemoteId() {
+      return this.earner?.remoteId;
+    },
     earnerId() {
-      return this.realization?.earner?.id;
+      return this.earner?.id;
+    },
+    reviewer() {
+      return this.realization?.reviewer;
+    },
+    reviewerFullName() {
+      return this.reviewer?.fullName;
+    },
+    reviewerAvatarUrl() {
+      return this.reviewer?.avatarUrl;
+    },
+    reviewerRemoteId() {
+      return this.reviewer?.remoteId;
+    },
+    reviewerId() {
+      return this.reviewer?.id;
     },
     isAutomaticType() {
       return !!this.eventName;
@@ -403,6 +459,9 @@ export default {
     },
     isFilteredByEarner() {
       return this.earnerId && this.filteredEarnerIds && this.filteredEarnerIds.find(id => id === this.earnerId);
+    },
+    isFilteredByReviewer() {
+      return this.reviewerId && this.filteredReviewerIds && this.filteredReviewerIds.find(id => id === this.reviewerId);
     },
     actionLabel() {
       const actionLabel = this.realization?.action?.title || this.realizationActionLabel;
@@ -542,10 +601,12 @@ export default {
       return this.$realizationService.updateRealizationStatus(this.realization.id, status)
         .then(() => {
           this.statusValue = status;
+          const reviewer = {remoteId: eXo.env.portal.userName};
           const updatedRealization = Object.assign(this.realization, {
             status,
             sendingDate: this.pending ? this.realization?.createdDate: null,
             createdDate: this.pending ? new Date().toISOString() : this.realization?.createdDate,
+            reviewer
           });
           this.$emit('updated', updatedRealization);
         });
@@ -569,6 +630,13 @@ export default {
         this.$root.$emit('realization-filter-earner-remove', this.earnerId);
       } else {
         this.$root.$emit('realization-filter-earner-add', this.earner);
+      }
+    },
+    filterByReviewer() {
+      if (this.isFilteredByReviewer) {
+        this.$root.$emit('realization-filter-reviewer-remove', this.reviewerId);
+      } else {
+        this.$root.$emit('realization-filter-reviewer-add', this.reviewer);
       }
     },
     retrieveRealizationLink() {
