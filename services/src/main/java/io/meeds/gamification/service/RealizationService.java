@@ -322,4 +322,15 @@ public interface RealizationService {
    */
   long countParticipantsBetweenDates(Date fromDate, Date toDate);
 
+  /**
+   * Makes a check whether a given user has a pending realization for a given rule
+   * or not.
+   *
+   * @param ruleId {@link RuleDTO} identifier
+   * @param earnerIdentityId
+   *          {@link org.exoplatform.social.core.identity.model.Identity} id
+   * @return true if has a pending realization, else false
+   */
+  boolean hasPendingRealization(long ruleId, String earnerIdentityId);
+
 }
