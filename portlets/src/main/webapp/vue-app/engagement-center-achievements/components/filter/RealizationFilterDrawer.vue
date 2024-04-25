@@ -107,18 +107,18 @@
           <span class="subtitle-1">{{ $t('realization.label.filter.reviewer') }}</span>
           <v-flex class="user-suggester text-truncate">
             <exo-identity-suggester
-                ref="reviewerAttendeeAutoComplete"
-                name="reviewerAttendee"
-                v-model="reviewerAttendee"
-                :search-options="searchOptions"
-                :labels="reviewerSuggesterLabels"
-                include-users />
+              ref="reviewerAttendeeAutoComplete"
+              name="reviewerAttendee"
+              v-model="reviewerAttendee"
+              :search-options="searchOptions"
+              :labels="reviewerSuggesterLabels"
+              include-users />
             <div v-if="reviewers && reviewers.length" class="identitySuggester no-border mt-0">
               <engagement-center-realizations-grantee-attendee-item
-                  v-for="reviewer in reviewers"
-                  :key="reviewer.identity.id"
-                  :attendee="reviewer"
-                  @remove-attendee="removeReviewerAttendee" />
+                v-for="reviewer in reviewers"
+                :key="reviewer.identity.id"
+                :attendee="reviewer"
+                @remove-attendee="removeReviewerAttendee" />
             </div>
           </v-flex>
         </v-card-text>

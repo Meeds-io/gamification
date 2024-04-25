@@ -7,6 +7,7 @@ import RulePublish from './components/form/RulePublish.vue';
 
 import RuleAchievements from './components/detail/RuleAchievements.vue';
 import RuleAchievementItem from './components/detail/RuleAchievementItem.vue';
+import RuleAchievementStatus from './components/detail/RuleAchievementStatus.vue';
 import RuleProgram from './components/detail/RuleProgram.vue';
 import RuleHeader from './components/detail/RuleHeader.vue';
 import RuleMenu from './components/detail/RuleMenu.vue';
@@ -52,6 +53,7 @@ const components = {
   'engagement-center-rule-program': RuleProgram,
   'engagement-center-rule-achievements': RuleAchievements,
   'engagement-center-rule-achievement-item': RuleAchievementItem,
+  'engagement-center-rule-achievement-status': RuleAchievementStatus,
   'engagement-center-rule-recurrence': RuleRecurrence,
   'engagement-center-rule-recurrence-validity': RuleRecurrenceValidity,
   'engagement-center-rule-date-info-chip': RuleDateInfoChip,
