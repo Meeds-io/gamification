@@ -21,6 +21,7 @@ import StreamEventDisplay from './components/stream/StreamEventDisplay.vue';
 import StreamEventSpaceItem from './components/stream/StreamEventSpaceItem.vue';
 import ProfileEvent from './components/profile/ProfileEvent.vue';
 import SpaceEvent from './components/space/SpaceEvent.vue';
+import ContributionEvent from './components/contribution/ContributionEvent.vue';
 
 const components = {
   'meeds-stream-event': StreamEvent,
@@ -29,6 +30,7 @@ const components = {
   'meeds-stream-event-space-item': StreamEventSpaceItem,
   'meeds-profile-event': ProfileEvent,
   'meeds-space-event': SpaceEvent,
+  'meeds-contribution-event': ContributionEvent,
 };
 
 for (const key in components) {

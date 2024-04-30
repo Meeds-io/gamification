@@ -31,7 +31,7 @@
         id="realizationFilter">
         <v-card-text>
           <span class="subtitle-1">{{ $t('realization.label.filter.program') }}</span>
-          <engagement-center-realizations-program-suggester
+          <gamification-program-suggester
             ref="programAutoComplete"
             v-model="program"
             :labels="programSuggesterLabels"
@@ -40,10 +40,11 @@
             :only-owned="administrationMode"
             :excluded-ids="programIds" />
           <div v-if="programs && programs.length" class="identitySuggester no-border mt-0">
-            <engagement-center-realizations-program-item
+            <gamification-program-item
               v-for="program in programs"
               :key="program.id"
               :program="program"
+              class="me-4 mt-4"
               @remove-attendee="removeProgram" />
           </div>
           <v-checkbox
@@ -66,10 +67,11 @@
             :excluded-ids="ruleIds"
             :include-deleted="includeDisabledRules" />
           <div v-if="rules && rules.length" class="identitySuggester no-border mt-0">
-            <engagement-center-realizations-rule-item
+            <gamification-rule-item
               v-for="(rule, index) in rules"
               :key="rule.id"
               :rule="rule"
+              class="me-4 mt-4"
               @remove="rules.splice(index, 1)" />
           </div>
           <v-checkbox
