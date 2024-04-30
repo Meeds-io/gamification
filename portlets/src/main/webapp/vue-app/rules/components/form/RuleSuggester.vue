@@ -21,13 +21,13 @@
   <v-flex :id="id">
     <v-autocomplete
       ref="selectAutoComplete"
-      v-model="selection"
+      v-model="value"
       :label="labels.label"
       :placeholder="labels.placeholder"
       :items="ruleItems"
       :loading="!!loadingSuggestions"
       :multiple="multiple"
-      :hide-no-data="!noDataLabel"
+      :hide-no-data="hideNoData"
       append-icon=""
       menu-props="closeOnClick, closeOnContentClick, maxHeight = 100"
       class="identitySuggester identitySuggesterInputStyle my-0"
@@ -36,6 +36,7 @@
       max-width="100%"
       item-text="title"
       item-value="id"
+      cache-items
       return-object
       persistent-hint
       hide-selected
@@ -46,21 +47,15 @@
       @update:search-input="searchTerm = $event">
       <template slot="no-data">
         <v-list-item class="pa-0">
-          <v-list-item-title class="px-2">
-            {{ noDataLabel }}
+          <v-list-item-title
+            v-if="displaySearchPlaceHolder"
+            class="px-2">
+            {{ labels.searchPlaceholder }}
           </v-list-item-title>
         </v-list-item>
       </template>
-      <template slot="selection" slot-scope="{item, selected}">
-        <v-chip
-          :input-value="selected"
-          :close="true"
-          class="identitySuggesterItem"
-          @click:close="removeItem(item)">
-          <span class="text-truncate">
-            {{ item.title }}
-          </span>
-        </v-chip>
+      <template slot="selection" slot-scope="{item}">
+        <gamification-rule-item :rule="item" @remove="remove(item)" />
       </template>
       <template slot="item" slot-scope="{ item }">
         <v-list-item-title class="text-truncate identitySuggestionMenuItemText">
@@ -114,9 +109,9 @@ export default {
     return {
       id: `RuleSuggester${parseInt(Math.random() * 10000)}`,
       rules: [],
-      selection: null,
       searchTerm: null,
       loadingSuggestions: 0,
+      searchStarted: false,
       broadcast: true,
       startSearchAfterInMilliseconds: 300,
       endTypingKeywordTimeout: 50,
@@ -125,14 +120,22 @@ export default {
     };
   },
   computed: {
-    noDataLabel() {
-      return this.searchTerm?.length ? this.labels?.searchPlaceholder : this.labels?.noDataLabel;
+    displaySearchPlaceHolder() {
+      return this.labels.searchPlaceholder && !this.searchStarted;
+    },
+    hideNoData() {
+      return !this.searchStarted && this.rules.length === 0;
     },
     ruleItems() {
-      return this.rules && this.excludedIds?.length && this.rules.filter(r => !this.excludedIds.find(id => id === r.id)) || this.rules || [];
+      return this.rules && this.excludedIds?.length && this.rules?.filter(r => !this.excludedIds.find(id => id === r.id)) || this.rules || [];
     },
   },
   watch: {
+    loadingSuggestions() {
+      if (this.loadingSuggestions > 0 && !this.searchStarted) {
+        this.searchStarted = true;
+      }
+    },
     searchTerm() {
       this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
       if (!this.typing) {
@@ -140,27 +143,10 @@ export default {
         this.waitForEndTyping();
       }
     },
-    selection() {
-      this.$emit('input', this.selection);
-    },
     value() {
-      if (!this.rules.length && this.value) {
-        this.rules.push(this.value);
-      }
+      this.$emit('input', this.value);
+      this.init();
     },
-  },
-  created() {
-    if (this.multiple) {
-      this.rules = this.value?.length && this.value || [];
-    } else {
-      this.rules = this.value && [this.value] || [];
-    }
-    if (this.multiple) {
-      this.selection = this.value || [];
-    } else {
-      this.selection = this.value;
-    }
-    this.retrieveRules();
   },
   mounted() {
     $(`#${this.id} input`).on('blur', () => {
@@ -168,12 +154,29 @@ export default {
     });
   },
   methods: {
-    removeItem(item) {
-      if (this.multiple) {
-        this.selection = this.selection.filter(r => r.id !== item?.id);
-      } else {
-        this.selection = null;
+    init() {
+      if (this.value && this.value.length) {
+        this.value.forEach(item => {
+          if (item.id) {
+            this.rules.push(item);
+          }
+        });
+      } else if (this.value && this.value.id){
+        this.rules = [this.value];
       }
+    },
+    remove(item) {
+      if (this.value) {
+        if (this.value.splice) {
+          const index = this.value.findIndex(val => val.id === item.id);
+          if (index >= 0){
+            this.value.splice(index, 1);
+          }
+        } else {
+          this.value = null;
+        }
+      }
+      this.$emit('removeRule',item);
     },
     waitForEndTyping() {
       window.setTimeout(() => {
@@ -196,6 +199,7 @@ export default {
         }
         this.previousSearchTerm = this.searchTerm;
       } else {
+        this.searchStarted = false;
         this.rules = [];
       }
     },
@@ -218,7 +222,7 @@ export default {
         .then(data => {
           this.rules = this.excludePrerequisites
               && this.excludedIds?.length
-              && data.rules.filter(r => !r.prerequisiteRules?.find(p => p.id === this.excludedIds[0]))
+              && data.rules?.filter(r => !r.prerequisiteRules?.find(p => p.id === this.excludedIds[0]))
               || data.rules;
         })
         .finally(() => this.loadingSuggestions--);

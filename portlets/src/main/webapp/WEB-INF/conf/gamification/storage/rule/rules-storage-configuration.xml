@@ -605,5 +605,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </object-param>
       </init-params>
     </component-plugin>
+    <component-plugin>
+      <name>ReviewContribution</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.EventConfigPlugin</type>
+      <init-params>
+        <object-param>
+          <name>event</name>
+          <object type="io.meeds.gamification.model.EventDTO">
+            <field name="title">
+              <string>reviewContribution</string>
+            </field>
+            <field name="type">
+              <string>meeds</string>
+            </field>
+            <field name="trigger">
+              <string>reviewContribution</string>
+            </field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
   </external-component-plugins>
 </configuration>

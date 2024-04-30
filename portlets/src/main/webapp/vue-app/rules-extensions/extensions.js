@@ -150,12 +150,29 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
 });
 
 extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
-  type: 'Contributions',
+  type: 'Rule',
   options: {
-    rank: 10,
+    rank: 90,
     icon: 'fas fa-plus-square',
     match: (actionLabel) => [
       'createRule'
     ].includes(actionLabel)
+  },
+});
+
+extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
+  type: 'Contributions',
+  options: {
+    rank: 100,
+    icon: 'fas fa-check-double',
+    match: (actionLabel) => [
+      'reviewContribution'
+    ].includes(actionLabel),
+    getLink: (realization) => {
+      if (realization?.objectId) {
+        Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${realization?.objectId}`);
+      }
+    },
+    isExtensible: true,
   },
 });

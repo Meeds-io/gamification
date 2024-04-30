@@ -85,61 +85,61 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </div>
       </td>
       <td class="d-flex text-truncate justify-center">
-          <v-tooltip bottom>
-            <template #activator="{ on }">
-              <component
-                v-on="on"
-                v-bind="programUrl && {
-                  href: programUrl
-                }"
-                :is="programUrl && 'a' || 'div'"
-                class="text-truncate my-auto">
-                <div class="text-truncate">{{ programTitle }}</div>
-              </component>
-            </template>
-            <span>{{ programTitle }}</span>
-          </v-tooltip>
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <component
+              v-on="on"
+              v-bind="programUrl && {
+                href: programUrl
+              }"
+              :is="programUrl && 'a' || 'div'"
+              class="text-truncate my-auto">
+              <div class="text-truncate">{{ programTitle }}</div>
+            </component>
+          </template>
+          <span>{{ programTitle }}</span>
+        </v-tooltip>
+        <v-tooltip
+          v-if="programLabelChanged"
+          z-index="4"
+          max-width="300"
+          bottom>
+          <template #activator="{ on, attrs }">
+            <v-icon
+              size="14"
+              class="primary--text ms-1"
+              v-bind="attrs"
+              v-on="on">
+              fas fa-info-circle
+            </v-icon>
+          </template>
+          <span>{{ $t('realization.label.previouslyNamed') }}: {{ programLabel }}</span>
+        </v-tooltip>
+        <v-card
+          v-if="hover && programId"
+          color="transparent"
+          width="28"
+          class="position-relative my-auto ms-2"
+          flat>
           <v-tooltip
-            v-if="programLabelChanged"
             z-index="4"
             max-width="300"
             bottom>
             <template #activator="{ on, attrs }">
-              <v-icon
-                size="14"
-                class="primary--text ms-1"
+              <v-btn
                 v-bind="attrs"
-                v-on="on">
-                fas fa-info-circle
-              </v-icon>
+                v-on="on"
+                class="btn absolute-vertical-center"
+                icon
+                absolute
+                small
+                @click="filterByProgram">
+                <v-icon size="14">{{ isFilteredByProgram && 'fa-search-minus' || 'fa-search-plus' }}</v-icon>
+              </v-btn>
             </template>
-            <span>{{ $t('realization.label.previouslyNamed') }}: {{ programLabel }}</span>
+            <span>{{ isFilteredByProgram && $t('realization.label.removeThisProgramToFilter') || $t('realization.label.addThisProgramToFilter') }}</span>
           </v-tooltip>
-          <v-card
-            v-if="hover && programId"
-            color="transparent"
-            width="28"
-            class="position-relative my-auto ms-2"
-            flat>
-            <v-tooltip
-              z-index="4"
-              max-width="300"
-              bottom>
-              <template #activator="{ on, attrs }">
-                <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  class="btn absolute-vertical-center"
-                  icon
-                  absolute
-                  small
-                  @click="filterByProgram">
-                  <v-icon size="14">{{ isFilteredByProgram && 'fa-search-minus' || 'fa-search-plus' }}</v-icon>
-                </v-btn>
-              </template>
-              <span>{{ isFilteredByProgram && $t('realization.label.removeThisProgramToFilter') || $t('realization.label.addThisProgramToFilter') }}</span>
-            </v-tooltip>
-          </v-card>
+        </v-card>
       </td>
       <td class="wrap text-truncate align-center">
         <v-tooltip bottom>
@@ -161,39 +161,39 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </td>
       <td v-if="isAdministrator">
         <div class="d-flex">
-        <user-avatar
-          :name="earnerFullName"
-          :avatar-url="earnerAvatarUrl"
-          :profile-id="earnerRemoteId"
-          :popover="earnerRemoteId"
-          :size="28"
-          extra-class="d-inline-block"
-          link-style />
-        <v-card
-          v-if="hover && earnerId"
-          color="transparent"
-          width="28"
-          class="position-relative my-auto ms-2"
-          flat>
-          <v-tooltip
-            z-index="4"
-            max-width="300"
-            bottom>
-            <template #activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                class="btn absolute-vertical-center"
-                icon
-                absolute
-                small
-                @click="filterByEarner">
-                <v-icon size="14">{{ isFilteredByEarner && 'fa-search-minus' || 'fa-search-plus' }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ isFilteredByEarner && $t('realization.label.removeThisEarnerToFilter') || $t('realization.label.addThisEarnerToFilter') }}</span>
-          </v-tooltip>
-        </v-card>
+          <user-avatar
+            :name="earnerFullName"
+            :avatar-url="earnerAvatarUrl"
+            :profile-id="earnerRemoteId"
+            :popover="earnerRemoteId"
+            :size="28"
+            extra-class="d-inline-block"
+            link-style />
+          <v-card
+            v-if="hover && earnerId"
+            color="transparent"
+            width="28"
+            class="position-relative my-auto ms-2"
+            flat>
+            <v-tooltip
+              z-index="4"
+              max-width="300"
+              bottom>
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="btn absolute-vertical-center"
+                  icon
+                  absolute
+                  small
+                  @click="filterByEarner">
+                  <v-icon size="14">{{ isFilteredByEarner && 'fa-search-minus' || 'fa-search-plus' }}</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ isFilteredByEarner && $t('realization.label.removeThisEarnerToFilter') || $t('realization.label.addThisEarnerToFilter') }}</span>
+            </v-tooltip>
+          </v-card>
         </div>
       </td>
       <td class="text-truncate align-center">
@@ -202,32 +202,32 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <td v-if="isAdministrator">
         <div v-if="reviewer" class="d-flex">
           <user-avatar
-              :name="reviewerFullName"
-              :avatar-url="reviewerAvatarUrl"
-              :profile-id="reviewerRemoteId"
-              :popover="reviewerRemoteId"
-              :size="28"
-              extra-class="d-inline-block"
-              link-style />
+            :name="reviewerFullName"
+            :avatar-url="reviewerAvatarUrl"
+            :profile-id="reviewerRemoteId"
+            :popover="reviewerRemoteId"
+            :size="28"
+            extra-class="d-inline-block"
+            link-style />
           <v-card
-              v-if="hover && reviewerId"
-              color="transparent"
-              width="28"
-              class="position-relative my-auto ms-2"
-              flat>
+            v-if="hover && reviewerId"
+            color="transparent"
+            width="28"
+            class="position-relative my-auto ms-2"
+            flat>
             <v-tooltip
-                z-index="4"
-                max-width="300"
-                bottom>
+              z-index="4"
+              max-width="300"
+              bottom>
               <template #activator="{ on, attrs }">
                 <v-btn
-                    v-bind="attrs"
-                    v-on="on"
-                    class="btn absolute-vertical-center"
-                    icon
-                    absolute
-                    small
-                    @click="filterByReviewer">
+                  v-bind="attrs"
+                  v-on="on"
+                  class="btn absolute-vertical-center"
+                  icon
+                  absolute
+                  small
+                  @click="filterByReviewer">
                   <v-icon size="14">{{ isFilteredByReviewer && 'fa-search-minus' || 'fa-search-plus' }}</v-icon>
                 </v-btn>
               </template>
