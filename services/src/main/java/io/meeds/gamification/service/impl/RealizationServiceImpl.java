@@ -319,13 +319,14 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       RuleDTO rule = ruleService.findRuleById(realization.getRuleId());
       String eventDetails = null;
       if (rule != null) {
-        eventDetails = "{ruleId: " + rule.getId() + ", programId: " + rule.getProgram().getId() + "}";
+        String eventReviewed = rule.getEvent() != null ? rule.getEvent().getTrigger() : null;
+        eventDetails = "{ruleId: " + rule.getId() + ", programId: " + rule.getProgram().getId() + ", eventReviewed: " + eventReviewed + "}";
       }
       createRealizations(GAMIFICATION_CONTRIBUTIONS_REVIEW_CONTRIBUTIONS,
                          eventDetails,
                          reviewerIdentity.getId(),
                          reviewerIdentity.getId(),
-                         String.valueOf(realization.getActivityId()),
+                         realization.getActivityId() != null ? String.valueOf(realization.getActivityId()) : null,
                          null);
     }
   }
