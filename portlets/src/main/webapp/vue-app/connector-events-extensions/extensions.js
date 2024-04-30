@@ -56,3 +56,12 @@ extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-ex
     'joinSpace'
   ].includes(params?.trigger),
 });
+
+extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-extensions', {
+  id: 'contribution-event',
+  name: 'contribution',
+  vueComponent: Vue.options.components['meeds-contribution-event'],
+  isEnabled: (params) => [
+    'reviewContribution'
+  ].includes(params?.trigger),
+});
