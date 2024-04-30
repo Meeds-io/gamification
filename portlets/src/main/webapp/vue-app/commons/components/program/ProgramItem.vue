@@ -1,7 +1,7 @@
 <template>
   <v-chip
     close
-    class="identitySuggesterItem me-4 mt-4"
+    class="identitySuggesterItem"
     @click:close="$emit('remove-attendee', program)">
     <v-avatar
       :style="programStyle"
