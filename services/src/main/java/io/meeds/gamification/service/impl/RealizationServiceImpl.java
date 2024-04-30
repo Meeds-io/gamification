@@ -1,5 +1,7 @@
 package io.meeds.gamification.service.impl;
 
+import static io.meeds.gamification.constant.GamificationConstant.*;
+import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
 import static io.meeds.gamification.utils.Utils.*;
 import static java.util.Date.from;
 
@@ -313,6 +315,20 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
     realization.setStatus(status.name());
     updateRealizationStatus(realization, status);
+    if (!RealizationStatus.PENDING.equals(status) && reviewerIdentity != null) {
+      RuleDTO rule = ruleService.findRuleById(realization.getRuleId());
+      String eventDetails = null;
+      if (rule != null) {
+        String eventReviewed = rule.getEvent() != null ? rule.getEvent().getTrigger() : null;
+        eventDetails = "{ruleId: " + rule.getId() + ", programId: " + rule.getProgram().getId() + ", eventReviewed: " + eventReviewed + "}";
+      }
+      createRealizations(GAMIFICATION_CONTRIBUTIONS_REVIEW_CONTRIBUTIONS,
+                         eventDetails,
+                         reviewerIdentity.getId(),
+                         reviewerIdentity.getId(),
+                         realization.getActivityId() != null ? String.valueOf(realization.getActivityId()) : null,
+                         null);
+    }
   }
 
   @Override

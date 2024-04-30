@@ -14,14 +14,20 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import Widget from './components/Widget.vue';
-import WidgetRow from './components/WidgetRow.vue';
-import WidgetEmptyRow from './components/WidgetEmptyRow.vue';
+import Widget from './components/overview/Widget.vue';
+import WidgetRow from './components/overview/WidgetRow.vue';
+import WidgetEmptyRow from './components/overview/WidgetEmptyRow.vue';
+import ProgramSuggester from './components/program/ProgramSuggester.vue';
+import ProgramItem from './components/program/ProgramItem.vue';
+import RuleItem from './components/program/RuleItem.vue';
 
 const components = {
   'gamification-overview-widget': Widget,
   'gamification-overview-widget-row': WidgetRow,
   'gamification-overview-widget-empty-row': WidgetEmptyRow,
+  'gamification-program-suggester': ProgramSuggester,
+  'gamification-program-item': ProgramItem,
+  'gamification-rule-item': RuleItem,
 };
 
 for (const key in components) {
