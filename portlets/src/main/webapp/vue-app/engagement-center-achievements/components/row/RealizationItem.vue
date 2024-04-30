@@ -249,6 +249,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-tooltip>
         <div v-else-if="isAdministrator" class="text-center">
           <v-btn
+            :aria-label="accepted ? statusLabel : acceptLabel"
             :class="accepted && 'success-color-background not-clickable' || 'light-black-background'"
             class="mx-2"
             height="16px"
@@ -274,6 +275,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-tooltip>
           </v-btn>
           <v-btn
+            :aria-label="pending ? statusLabel : reviewLabel"
             :class="pending ? 'orange darken-2 not-clickable' : 'light-black-background'"
             class="mx-2"
             height="16px"
@@ -299,6 +301,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-tooltip>
           </v-btn>
           <v-btn
+            :aria-label="rejected ? statusLabel : rejectLabel"
             :class="rejected && 'error-color-background not-clickable' || 'light-black-background'"
             class="mx-2"
             height="16px"
