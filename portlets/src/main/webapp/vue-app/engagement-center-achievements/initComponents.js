@@ -28,9 +28,6 @@ import RealizationExportButton from './components/action/RealizationExportButton
 
 import RealizationFilterDrawer from './components/filter/RealizationFilterDrawer.vue';
 import GranteeAttendeeItem from './components/filter/GranteeAttendeeItem.vue';
-import ProgramItem from './components/filter/ProgramItem.vue';
-import RuleItem from './components/filter/RuleItem.vue';
-import ProgramSuggester from './components/filter/ProgramSuggester.vue';
 import SelectPeriod from './components/filter/SelectPeriod.vue';
 
 const components = {
@@ -40,9 +37,6 @@ const components = {
   'engagement-center-realizations-select-period': SelectPeriod,
   'engagement-center-realizations-filter-drawer': RealizationFilterDrawer,
   'engagement-center-realizations-grantee-attendee-item': GranteeAttendeeItem,
-  'engagement-center-realizations-program-item': ProgramItem,
-  'engagement-center-realizations-rule-item': RuleItem,
-  'engagement-center-realizations-program-suggester': ProgramSuggester,
   'engagement-center-realizations-export-button': RealizationExportButton,
   'engagement-center-realizations-manual-action-value': ManualActionValue,
   'engagement-center-realizations-automatic-action-value': AutomaticActionValue,

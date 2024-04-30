@@ -181,6 +181,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <set-method>addPlugin</set-method>
       <type>io.meeds.gamification.plugin.StreamEventPlugin</type>
     </component-plugin>
+    <component-plugin>
+      <name>contribution</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.ContributionEventPlugin</type>
+    </component-plugin>
   </external-component-plugins>
 
 </configuration>

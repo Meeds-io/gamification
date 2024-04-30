@@ -18,16 +18,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-flex :id="id">
     <v-autocomplete
       ref="selectAutoComplete"
-      v-model="program"
+      v-model="value"
       :label="labels.label"
       :placeholder="labels.placeholder"
       :items="programItems"
       :loading="loadingSuggestions"
       :multiple="multiple"
-      hide-no-data
+      :hide-no-data="hideNoData"
       append-icon=""
       menu-props="closeOnClick, closeOnContentClick, maxHeight = 100"
-      class="identitySuggester identitySuggesterInputStyle"
+      class="identitySuggester identitySuggesterInputStyle my-0"
       content-class="identitySuggesterContent"
       width="100%"
       max-width="100%"
@@ -36,31 +36,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       return-object
       persistent-hint
       hide-selected
+      cache-items
       chips
       dense
       flat
       required
-      @update:search-input="searchTerm = $event"
-      attach>
+      @update:search-input="searchTerm = $event">
       <template slot="no-data">
         <v-list-item class="pa-0">
           <v-list-item-title
+            v-if="displaySearchPlaceHolder"
             class="px-2">
             {{ labels.searchPlaceholder }}
           </v-list-item-title>
         </v-list-item>
       </template>
-
-      <template slot="selection" slot-scope="{item, selected}">
-        <v-chip
-          :input-value="selected"
-          :close="true"
-          class="identitySuggesterItem"
-          @click:close="program = null">
-          <span class="text-truncate">
-            {{ item.title }}
-          </span>
-        </v-chip>
+      <template slot="selection" slot-scope="{item}">
+        <gamification-program-item :program="item" @remove-attendee="remove(item)" />
       </template>
       <template slot="item" slot-scope="data">
         <v-list-item-title
@@ -118,8 +110,8 @@ export default {
     return {
       id: `ProgramSuggester${parseInt(Math.random() * 10000)}`,
       programs: [],
-      program: null,
       searchTerm: null,
+      searchStarted: false,
       loadingSuggestions: false,
       broadcast: true,
       startSearchAfterInMilliseconds: 300,
@@ -129,11 +121,22 @@ export default {
     };
   },
   computed: {
+    displaySearchPlaceHolder() {
+      return this.labels.searchPlaceholder && !this.searchStarted;
+    },
+    hideNoData() {
+      return !this.searchStarted && this.programs.length === 0;
+    },
     programItems() {
       return this.programs && this.excludedIds?.length && this.programs.filter(r => !this.excludedIds.find(id => id === r.id)) || this.programs || [];
     },
   },
   watch: {
+    loadingSuggestions() {
+      if (this.loadingSuggestions && !this.searchStarted) {
+        this.searchStarted = true;
+      }
+    },
     searchTerm() {
       this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
       if (!this.typing) {
@@ -141,25 +144,13 @@ export default {
         this.waitForEndTyping();
       }
     },
-    program() {
-      if (this.program !== this.value) {
-        this.$emit('input', this.program);
-      }
-    },
     value() {
-      if (!this.programs.length && this.value) {
-        this.programs.push(this.value);
-      }
+      this.$emit('input', this.value);
+      this.init();
     },
     includeDeleted() {
       this.$refs.selectAutoComplete.cachedItems = [];
     },
-  },
-  created() {
-    this.program = this.value;
-    if (this.program) {
-      this.programs = [this.program];
-    }
   },
   mounted() {
     $(`#${this.id} input`).on('blur', () => {
@@ -167,9 +158,29 @@ export default {
     });
   },
   methods: {
+    init() {
+      if (this.value && this.value.length) {
+        this.value.forEach(item => {
+          if (item.id) {
+            this.programs.push(item);
+          }
+        });
+      } else if (this.value && this.value.id){
+        this.programs = [this.value];
+      }
+    },
     remove(item) {
-      this.value = null;
-      this.$emit('removeProgram', item.title);
+      if (this.value) {
+        if (this.value.splice) {
+          const index = this.value.findIndex(val => val.id === item.id);
+          if (index >= 0){
+            this.value.splice(index, 1);
+          }
+        } else {
+          this.value = null;
+        }
+      }
+      this.$emit('removeProgram',item);
     },
     waitForEndTyping() {
       window.setTimeout(() => {
@@ -204,7 +215,7 @@ export default {
         }
         this.previousSearchTerm = this.searchTerm;
       } else {
-        this.programs = [];
+        this.searchStarted = false;
       }
     },
     clear() {
