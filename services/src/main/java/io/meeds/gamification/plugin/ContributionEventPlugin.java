@@ -26,7 +26,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 public class ContributionEventPlugin extends EventPlugin {
 
-  public static final String EVENT_TYPE = "stream";
+  public static final String EVENT_TYPE = "contribution";
 
   @Override
   public String getEventType() {
@@ -51,7 +51,7 @@ public class ContributionEventPlugin extends EventPlugin {
       String ruleId = triggerDetailsMap.get("ruleId");
       return ruleId != null && desiredRuleIds.contains(ruleId);
     }
-    return true;
+    return triggerDetailsMap.get("eventReviewed") == null || !triggerDetailsMap.get("eventReviewed").equals("reviewContribution");
   }
 
   private List<String> getListFromCsv(String csvString) {
