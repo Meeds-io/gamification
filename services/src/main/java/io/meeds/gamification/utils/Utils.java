@@ -152,9 +152,17 @@ public class Utils {
 
   public static final String                        STATISTICS_ACTIVITY_PARAM               = "realizationActivityId";
 
-  public static final String                        STATISTICS_RECEIVED_ID                  = "realizationSenderId";
+  public static final String                        STATISTICS_RECEIVED_ID                  = "realizationReceiverId";
 
-  public static final String                        STATISTICS_STATUS                       = "realizationStatus";
+  public static final String                        STATISTICS_REALIZATION_STATUS_PARAM     = "realizationStatus";
+
+  public static final String                        STATISTICS_REALIZATION_ID_PARAM         = "realizationId";
+
+  public static final String                        STATISTICS_REVIEWER_ID_PARAM            = "reviewerId";
+
+  public static final String                        STATISTICS_OBJECT_ID_PARAM              = "objectId";
+
+  public static final String                        STATISTICS_OBJECT_TYPE_PARAM            = "objectType";
 
   public static final String                        STATISTICS_PROGRAM_SUBMODULE            = "program";
 
@@ -598,11 +606,15 @@ public class Utils {
           && StringUtils.isNumeric(realization.getEarnerId())) {
         statisticData.setUserId(Long.parseLong(realization.getEarnerId()));
       }
+      statisticData.addParameter(STATISTICS_REALIZATION_ID_PARAM, realization.getId());
       statisticData.addParameter(STATISTICS_EARNER_TYPE, realization.getEarnerType());
       statisticData.addParameter(STATISTICS_EARNER_ID_PARAM, realization.getEarnerId());
       statisticData.addParameter(STATISTICS_ACTIVITY_PARAM, realization.getActivityId());
       statisticData.addParameter(STATISTICS_RECEIVED_ID, realization.getReceiver());
-      statisticData.addParameter(STATISTICS_STATUS, realization.getStatus());
+      statisticData.addParameter(STATISTICS_REALIZATION_STATUS_PARAM, realization.getStatus());
+      statisticData.addParameter(STATISTICS_REVIEWER_ID_PARAM, realization.getReviewerId());
+      statisticData.addParameter(STATISTICS_OBJECT_ID_PARAM, realization.getObjectId());
+      statisticData.addParameter(STATISTICS_OBJECT_TYPE_PARAM, realization.getObjectType());
     }
     if (StringUtils.isNotBlank(realization.getEarnerType())) {
       statisticData.setUserId(Long.parseLong(realization.getEarnerId()));
