@@ -11,6 +11,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -160,9 +161,13 @@ public class Utils {
 
   public static final String                        STATISTICS_REVIEWER_ID_PARAM            = "reviewerId";
 
-  public static final String                        STATISTICS_OBJECT_ID_PARAM              = "objectId";
+  public static final String                        STATISTICS_OBJECT_ID_PARAM              = "contributionObjectId";
 
-  public static final String                        STATISTICS_OBJECT_TYPE_PARAM            = "objectType";
+  public static final String                        STATISTICS_OBJECT_TYPE_PARAM            = "contributionObjectType";
+
+  public static final String                        STATISTICS_STATUS_UPDATE_DURATION       = "statusUpdateDuration";
+
+  public static final String                        STATISTICS_UPDATE_SINCE_LAST_DURATION   = "updateSinceLastDuration";
 
   public static final String                        STATISTICS_PROGRAM_SUBMODULE            = "program";
 
@@ -615,6 +620,14 @@ public class Utils {
       statisticData.addParameter(STATISTICS_REVIEWER_ID_PARAM, realization.getReviewerId());
       statisticData.addParameter(STATISTICS_OBJECT_ID_PARAM, realization.getObjectId());
       statisticData.addParameter(STATISTICS_OBJECT_TYPE_PARAM, realization.getObjectType());
+      Date sendingDate = parseRFC3339Date(realization.getSendingDate());
+      if (sendingDate != null) {
+        statisticData.addParameter(STATISTICS_STATUS_UPDATE_DURATION, ChronoUnit.SECONDS.between(sendingDate.toInstant(), new Date().toInstant()));
+      }
+      Date lastModifiedDate = parseRFC3339Date(realization.getLastModifiedDate());
+      if (lastModifiedDate != null) {
+        statisticData.addParameter(STATISTICS_UPDATE_SINCE_LAST_DURATION, ChronoUnit.SECONDS.between(lastModifiedDate.toInstant(), new Date().toInstant()));
+      }
     }
     if (StringUtils.isNotBlank(realization.getEarnerType())) {
       statisticData.setUserId(Long.parseLong(realization.getEarnerId()));

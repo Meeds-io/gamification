@@ -44,6 +44,8 @@ public class RealizationDTO implements Cloneable {
 
   private String     lastModifiedBy;
 
+  private String     lastModifiedDate;
+
   private String     sendingDate;
 
   private String     status;
@@ -71,6 +73,7 @@ public class RealizationDTO implements Cloneable {
                         String createdBy,
                         String createdDate,
                         String lastModifiedBy,
+                        String lastModifiedDate,
                         String sendingDate,
                         String status,
                         EntityType type,
@@ -94,6 +97,7 @@ public class RealizationDTO implements Cloneable {
     this.createdBy = createdBy;
     this.createdDate = createdDate;
     this.lastModifiedBy = lastModifiedBy;
+    this.lastModifiedDate = lastModifiedDate;
     this.sendingDate = sendingDate;
     this.status = status;
     this.type = type;
@@ -124,6 +128,7 @@ public class RealizationDTO implements Cloneable {
                               createdBy,
                               createdDate,
                               lastModifiedBy,
+                              lastModifiedDate,
                               sendingDate,
                               status,
                               type,
