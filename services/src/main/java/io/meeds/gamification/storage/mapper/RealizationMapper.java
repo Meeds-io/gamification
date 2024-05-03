@@ -21,8 +21,7 @@ public class RealizationMapper {
     // Class with static methods
   }
 
-  public static RealizationDTO fromEntity(ProgramStorage programStorage,
-                                          RealizationEntity realizationEntity) {
+  public static RealizationDTO fromEntity(ProgramStorage programStorage, RealizationEntity realizationEntity) {
     if (realizationEntity == null) {
       return null;
     }
@@ -53,20 +52,18 @@ public class RealizationMapper {
                               realizationEntity.getCreatedBy(),
                               Utils.toRFC3339Date(realizationEntity.getCreatedDate()),
                               realizationEntity.getLastModifiedBy(),
+                              Utils.toRFC3339Date(realizationEntity.getLastModifiedDate()),
                               Utils.toRFC3339Date(realizationEntity.getSendingDate()),
                               realizationEntity.getStatus().name(),
                               realizationEntity.getType(),
                               realizationEntity.getReviewerId());
   }
 
-  public static List<RealizationDTO> fromEntities(ProgramStorage programStorage,
-                                                  List<RealizationEntity> realizationEntities) {
+  public static List<RealizationDTO> fromEntities(ProgramStorage programStorage, List<RealizationEntity> realizationEntities) {
     if (CollectionUtils.isEmpty(realizationEntities)) {
       return new ArrayList<>(Collections.emptyList());
     } else {
-      return realizationEntities.stream()
-                                .map(entity -> fromEntity(programStorage, entity))
-                                .toList();
+      return realizationEntities.stream().map(entity -> fromEntity(programStorage, entity)).toList();
     }
   }
 
@@ -97,6 +94,9 @@ public class RealizationMapper {
       realizationEntity.setCreatedDate(Utils.parseRFC3339Date(realization.getCreatedDate()));
     } else {
       realizationEntity.setCreatedDate(new Date());
+    }
+    if (realization.getLastModifiedDate() != null) {
+      realizationEntity.setLastModifiedDate(Utils.parseRFC3339Date(realization.getLastModifiedDate()));
     }
     if (realization.getSendingDate() != null) {
       realizationEntity.setSendingDate(Utils.parseRFC3339Date(realization.getSendingDate()));
