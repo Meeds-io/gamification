@@ -20,7 +20,6 @@
   <v-list-item class="clickable mb-2" @click="openRule">
     <v-list-item-icon class="me-3 my-auto">
       <v-avatar
-        :style="programStyle"
         class="border-color white"
         left
         dark>
@@ -57,9 +56,6 @@ export default {
     },
     program() {
       return this.rule?.program;
-    },
-    programStyle() {
-      return this.program?.color && `border: 1px solid ${this.program.color} !important;` || '';
     },
   },
   methods: {
