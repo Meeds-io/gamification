@@ -38,19 +38,11 @@ public enum PeriodType {
                                .toInstant());
     }
     case MONTH: {
-      yield Date.from(LocalDate.now()
-                               .with(TemporalAdjusters.firstDayOfMonth())
-                               .atStartOfDay(ZoneId.systemDefault())
-                               .toInstant());
+      yield Date.from(LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
     case YEAR: {
-      yield Date.from(LocalDate.now()
-                               .with(TemporalAdjusters.firstDayOfYear())
-                               .atStartOfDay(ZoneId.systemDefault())
-                               .toInstant());
+      yield Date.from(LocalDate.now().with(TemporalAdjusters.firstDayOfYear()).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
-    default:
-      throw new IllegalArgumentException("Unexpected value: " + this);
     };
   }
 
@@ -78,9 +70,6 @@ public enum PeriodType {
                                .atStartOfDay(ZoneId.systemDefault())
                                .toInstant());
     }
-    default:
-      throw new IllegalArgumentException("Unexpected value: " + this);
     };
   }
-
 }
