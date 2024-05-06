@@ -20,10 +20,10 @@
   <v-list-item class="clickable mb-2" @click="openRule">
     <v-list-item-icon class="me-3 my-auto">
       <v-avatar
-        class="border-color white"
+        background-color="transparent"
         left
         dark>
-        <rule-icon :rule-event="ruleEvent" />
+        <rule-icon :rule-event="ruleEvent" size="24"/>
       </v-avatar>
     </v-list-item-icon>
     <v-list-item-content>
