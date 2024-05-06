@@ -305,6 +305,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         || RealizationStatus.DELETED.name().equals(realization.getStatus())) {
       throw new IllegalArgumentException("Canceled achievement cannot be updated");
     }
+    boolean reviewed = realization.getReviewerId() != null;
     if (RealizationStatus.PENDING.name().equals(realization.getStatus()) && realization.getSendingDate() == null) {
       realization.setSendingDate(realization.getCreatedDate());
       realization.setCreatedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
@@ -315,12 +316,13 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
     realization.setStatus(status.name());
     updateRealizationStatus(realization, status);
-    if (!RealizationStatus.PENDING.equals(status) && reviewerIdentity != null) {
+    if (!RealizationStatus.PENDING.equals(status) && reviewerIdentity != null && !reviewed) {
       RuleDTO rule = ruleService.findRuleById(realization.getRuleId());
       String eventDetails = null;
       if (rule != null) {
         String eventReviewed = rule.getEvent() != null ? rule.getEvent().getTrigger() : null;
-        eventDetails = "{ruleId: " + rule.getId() + ", programId: " + rule.getProgram().getId() + ", eventReviewed: " + eventReviewed + "}";
+        eventDetails = "{ruleId: " + rule.getId() + ", programId: " + rule.getProgram().getId() + ", eventReviewed: "
+            + eventReviewed + "}";
       }
       createRealizations(GAMIFICATION_CONTRIBUTIONS_REVIEW_CONTRIBUTIONS,
                          eventDetails,
