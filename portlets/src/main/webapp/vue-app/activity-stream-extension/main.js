@@ -18,7 +18,14 @@
 
 import './initComponents.js';
 import './extensions.js';
+import {initAchievementCommentExtension} from './extensions';
 
 Vue.prototype.$utils?.includeExtensions?.('engagementCenterActions');
 Vue.prototype.$utils?.includeExtensions?.('engagementCenterConnectors');
 Vue.prototype.$utils?.includeExtensions?.('engagementCenterConnectorEvents');
+Vue.prototype.$utils?.includeExtensions?.('engagementCenterAchievements');
+
+const achievementsExtensions = extensionRegistry.loadExtensions('engagementCenterAchievements', 'achievements-extensions');
+const updateStatusExtension = achievementsExtensions.find(extension => extension?.canUpdateStatus);
+updateStatusExtension.init();
+initAchievementCommentExtension(updateStatusExtension);

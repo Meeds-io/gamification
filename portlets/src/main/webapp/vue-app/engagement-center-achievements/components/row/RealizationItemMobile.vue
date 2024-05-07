@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-col class="col-sm-8 col-8">
           <date-format
             :format="dateFormat"
-            :value="realization.createdDate" />
+            :value="createdDate" />
         </v-col>
       </v-row>
       <v-row v-if="isAdministrator" class="text-truncate align-center">
@@ -88,15 +88,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-row>
       <v-row>
         <v-col class="col-sm-4 col-4">
-          <span class="font-weight-bold"> {{ isAdministrator ? headers[6].text : headers[5].text }}</span>
+          <span class="font-weight-bold"> {{ isAdministrator ? headers[6].text : headers[4].text }}</span>
         </v-col>
         <v-col class="col-sm-8 col-8">
-          <v-icon
-            :class="statusIconClass"
-            class="me-1"
-            size="16">
-            {{ statusIcon }}
-          </v-icon>
+          <v-btn
+            v-if="!canceled"
+            class="not-clickable"
+            height="16px"
+            width="16px"
+            fab
+            dark
+            depressed
+            :class="statusIconClass">
+            <v-icon size="10" dark>{{ statusIcon }}</v-icon>
+          </v-btn>
+          <span v-else> - </span>
         </v-col>
       </v-row>
       <v-divider class="my-2" />
@@ -127,6 +133,9 @@ export default {
     menu: false,
   }),
   computed: {
+    createdDate() {
+      return this.realization?.sendingDate || this.realization?.createdDate;
+    },
     earnerFullName() {
       return this.realization?.earner?.fullName;
     },
@@ -167,10 +176,27 @@ export default {
       return this.realization.status;
     },
     statusIcon() {
-      return this.status === 'ACCEPTED' ? 'fas fa-check-circle' : 'fas fa-times-circle';
+      switch (this.status) {
+      case 'ACCEPTED':
+        return 'fas fa-check';
+      case 'PENDING':
+        return 'fas fa-question';
+      default:
+        return 'fas fa-times';
+      }
     },
     statusIconClass() {
-      return this.status === 'ACCEPTED' ? 'primary--text' : 'secondary--text';
+      switch (this.status) {
+      case 'ACCEPTED':
+        return 'success-color-background';
+      case 'PENDING':
+        return 'orange darken-2';
+      default:
+        return 'error-color-background';
+      }
+    },
+    canceled() {
+      return this.status === 'CANCELED' || this.status === 'DELETED';
     },
     actionTypeIcon() {
       return this.isAutomaticType ? 'fas fa-cogs' : 'fas fa-hand-pointer';

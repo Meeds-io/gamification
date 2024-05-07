@@ -19,10 +19,14 @@
 
 import RulePublished from './components/RulePublished.vue';
 import RuleAnnounced from './components/RuleAnnounced.vue';
+import ContributionAccepted from './components/ContributionAccepted.vue';
+import ContributionRejected from './components/ContributionRejected.vue';
 
 const components = {
   'user-notification-rule-published': RulePublished,
   'user-notification-rule-announced': RuleAnnounced,
+  'user-notification-contribution-accepted': ContributionAccepted,
+  'user-notification-contribution-rejected': ContributionRejected,
 };
 
 for (const key in components) {

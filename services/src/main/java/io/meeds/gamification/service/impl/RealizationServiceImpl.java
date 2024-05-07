@@ -1,9 +1,8 @@
 package io.meeds.gamification.service.impl;
 
-import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CANCEL_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CREATE_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_REALIZATION_UPDATE_EVENT;
-import static io.meeds.gamification.utils.Utils.escapeIllegalCharacterInMessage;
+import static io.meeds.gamification.constant.GamificationConstant.*;
+import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
+import static io.meeds.gamification.utils.Utils.*;
 import static java.util.Date.from;
 
 import java.io.File;
@@ -35,6 +34,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import io.meeds.gamification.constant.*;
 import io.meeds.gamification.plugin.EventPlugin;
 import io.meeds.gamification.service.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -46,6 +46,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.exoplatform.commons.api.notification.NotificationContext;
+import org.exoplatform.commons.api.notification.model.PluginKey;
+import org.exoplatform.commons.notification.impl.NotificationContextImpl;
 import org.picocontainer.Startable;
 
 import org.exoplatform.commons.api.persistence.ExoTransactional;
@@ -61,13 +64,6 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-import io.meeds.gamification.constant.DateFilterType;
-import io.meeds.gamification.constant.EntityFilterType;
-import io.meeds.gamification.constant.EntityStatusType;
-import io.meeds.gamification.constant.IdentityType;
-import io.meeds.gamification.constant.Period;
-import io.meeds.gamification.constant.RealizationStatus;
-import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.ProfileReputation;
 import io.meeds.gamification.model.ProgramDTO;
@@ -276,7 +272,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (status == null) {
       throw new IllegalArgumentException("status is mandatory");
     }
-
+    realization.setStatus(status.name());
     updateRealizationStatus(realization, status);
   }
 
@@ -290,7 +286,10 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (status == null) {
       throw new IllegalArgumentException("status is mandatory");
     }
-    if (status != RealizationStatus.ACCEPTED && status != RealizationStatus.REJECTED) {
+    Set<RealizationStatus> allowedStatus = Set.of(RealizationStatus.ACCEPTED,
+                                                  RealizationStatus.REJECTED,
+                                                  RealizationStatus.PENDING);
+    if (!allowedStatus.contains(status)) {
       throw new IllegalArgumentException("Allowed manual status can be either ACCEPTED or REJECTED");
     }
     RealizationDTO realization = getRealizationById(realizationId);
@@ -302,7 +301,36 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user"
           + realization.getEarnerId());
     }
+    if (RealizationStatus.CANCELED.name().equals(realization.getStatus())
+        || RealizationStatus.DELETED.name().equals(realization.getStatus())) {
+      throw new IllegalArgumentException("Canceled achievement cannot be updated");
+    }
+    boolean reviewed = realization.getReviewerId() != null;
+    if (RealizationStatus.PENDING.name().equals(realization.getStatus()) && realization.getSendingDate() == null) {
+      realization.setSendingDate(realization.getCreatedDate());
+      realization.setCreatedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
+    }
+    org.exoplatform.social.core.identity.model.Identity reviewerIdentity = identityManager.getOrCreateUserIdentity(username);
+    if (reviewerIdentity != null) {
+      realization.setReviewerId(Long.valueOf(reviewerIdentity.getId()));
+    }
+    realization.setStatus(status.name());
     updateRealizationStatus(realization, status);
+    if (!RealizationStatus.PENDING.equals(status) && reviewerIdentity != null && !reviewed) {
+      RuleDTO rule = ruleService.findRuleById(realization.getRuleId());
+      String eventDetails = null;
+      if (rule != null) {
+        String eventReviewed = rule.getEvent() != null ? rule.getEvent().getTrigger() : null;
+        eventDetails = "{ruleId: " + rule.getId() + ", programId: " + rule.getProgram().getId() + ", eventReviewed: "
+            + eventReviewed + "}";
+      }
+      createRealizations(GAMIFICATION_CONTRIBUTIONS_REVIEW_CONTRIBUTIONS,
+                         eventDetails,
+                         reviewerIdentity.getId(),
+                         reviewerIdentity.getId(),
+                         realization.getActivityId() != null ? String.valueOf(realization.getActivityId()) : null,
+                         null);
+    }
   }
 
   @Override
@@ -530,6 +558,10 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     return realizationStorage.findRealizationsByObjectIdAndObjectType(objectId, objectType);
   }
 
+  public boolean hasPendingRealization(long ruleId, String earnerIdentityId) {
+    return realizationStorage.hasPendingRealization(ruleId, earnerIdentityId);
+  }
+
   @Override
   public InputStream exportXlsx(RealizationFilter filter,
                                 Identity identity,
@@ -671,7 +703,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   private boolean hasNoRealizationInPeriod(String earnerIdentityId, Long ruleId, Date sinceDate) {
-    return realizationStorage.countRealizationsByRuleIdAndEarnerIdSinceDate(earnerIdentityId, ruleId, sinceDate) == 0;
+    return realizationStorage.countRealizationsInPeriod(earnerIdentityId, ruleId, sinceDate) == 0;
   }
 
   private RealizationDTO toRealization(RuleDTO ruleDto,
@@ -691,7 +723,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     realization.setReceiver(receiverIdentityId);
     realization.setObjectId(objectId);
     realization.setObjectType(objectType);
-    realization.setStatus(RealizationStatus.ACCEPTED.name());
+    boolean isVerificationRequired = eventService.isVerificationRequiredForEvent(ruleDto.getEvent().getType(),
+                                                                                 ruleDto.getEvent().getTrigger());
+    realization.setStatus(isVerificationRequired ? RealizationStatus.PENDING.name() : RealizationStatus.ACCEPTED.name());
     realization.setType(ruleDto.getType());
     return realization;
   }
@@ -739,9 +773,21 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   private void updateRealizationStatus(RealizationDTO realization, RealizationStatus status) {
-    realization.setStatus(status.name());
     try {
+      realization.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
       realizationStorage.updateRealization(realization);
+      if (RealizationStatus.ACCEPTED.name().equals(realization.getStatus())
+          || RealizationStatus.REJECTED.name().equals(realization.getStatus())) {
+        String notificationPluginKey =
+                                     RealizationStatus.ACCEPTED.name()
+                                                               .equals(realization.getStatus()) ? CONTRIBUTION_ACCEPTED_NOTIFICATION_ID
+                                                                                                : CONTRIBUTION_REJECTED_NOTIFICATION_ID;
+        NotificationContext ctx = NotificationContextImpl.cloneInstance();
+        ctx.append(REALIZATION_NOTIFICATION_PARAMETER, realization)
+           .getNotificationExecutor()
+           .with(ctx.makeCommand(PluginKey.key(notificationPluginKey)))
+           .execute(ctx);
+      }
     } catch (Exception e) {
       LOG.warn("Error deleting realization with id {}", realization.getId(), e);
     } finally {

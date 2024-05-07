@@ -4,11 +4,10 @@ import static io.meeds.gamification.storage.mapper.RealizationMapper.fromEntitie
 import static io.meeds.gamification.storage.mapper.RealizationMapper.fromEntity;
 import static io.meeds.gamification.storage.mapper.RealizationMapper.toEntity;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.dao.RealizationDAO;
 import io.meeds.gamification.entity.RealizationEntity;
 import io.meeds.gamification.model.PiechartLeaderboard;
@@ -67,6 +66,15 @@ public class RealizationStorage {
     List<RealizationEntity> realizationEntities = gamificationHistoryDAO.getRealizationsByObjectIdAndObjectType(objectId,
                                                                                                                 objectType);
     return fromEntities(programStorage, realizationEntities);
+  }  
+  
+  public boolean hasPendingRealization(long ruleId, String earnerIdentityId) {
+    RealizationFilter realizationFilter = new RealizationFilter();
+    realizationFilter.setEarnerIds(new ArrayList<>(Collections.singleton(earnerIdentityId)));
+    realizationFilter.setEarnerType(IdentityType.USER);
+    realizationFilter.setStatus(RealizationStatus.PENDING);
+    realizationFilter.setRuleIds(new ArrayList<>(Collections.singleton(ruleId)));
+    return gamificationHistoryDAO.countRealizationsByFilter(realizationFilter) > 0;
   }
 
   public int getLeaderboardRankByDate(IdentityType identityType, String earnerIdentityId, Date fromDate) {
@@ -142,8 +150,8 @@ public class RealizationStorage {
     return gamificationHistoryDAO.countRealizationsByRuleIdAndEarnerId(earnerIdentityId, ruleId);
   }
 
-  public int countRealizationsByRuleIdAndEarnerIdSinceDate(String earnerIdentityId, long ruleId, Date sinceDate) {
-    return gamificationHistoryDAO.countRealizationsByRuleIdAndEarnerIdSinceDate(earnerIdentityId, ruleId, sinceDate);
+  public int countRealizationsInPeriod(String earnerIdentityId, long ruleId, Date sinceDate) {
+    return gamificationHistoryDAO.countRealizationsInPeriod(earnerIdentityId, ruleId, sinceDate);
   }
 
   public long countParticipantsBetweenDates(Date fromDate, Date toDate) {

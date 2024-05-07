@@ -31,6 +31,8 @@ public class RealizationRestEntity implements Cloneable {
 
   private String            createdDate;
 
+  private String            sendingDate;
+
   private String            status;
 
   private String            space;
@@ -41,9 +43,13 @@ public class RealizationRestEntity implements Cloneable {
 
   private Long              activityId;
 
+  private String            comment;
+
   private boolean           actionLabelChanged;
 
   private boolean           programLabelChanged;
+
+  private UserInfo          reviewer;
 
   @Override
   public RealizationRestEntity clone() { // NOSONAR
@@ -56,12 +62,15 @@ public class RealizationRestEntity implements Cloneable {
                                      score,
                                      creator,
                                      createdDate,
+                                     sendingDate,
                                      status,
                                      space,
                                      objectId,
                                      objectType,
                                      activityId,
+                                     comment,
                                      actionLabelChanged,
-                                     programLabelChanged);
+                                     programLabelChanged,
+                                     reviewer);
   }
 }

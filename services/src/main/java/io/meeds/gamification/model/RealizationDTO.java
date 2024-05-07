@@ -46,9 +46,13 @@ public class RealizationDTO implements Cloneable {
 
   private String     lastModifiedDate;
 
+  private String     sendingDate;
+
   private String     status;
 
   private EntityType type;
+
+  private Long       reviewerId;
 
   public RealizationDTO(Long id, // NOSONAR
                         String earnerId,
@@ -70,8 +74,10 @@ public class RealizationDTO implements Cloneable {
                         String createdDate,
                         String lastModifiedBy,
                         String lastModifiedDate,
+                        String sendingDate,
                         String status,
-                        EntityType type) { // NOSONAR
+                        EntityType type,
+                        Long reviewerId) { // NOSONAR
     this.id = id;
     this.earnerId = earnerId;
     this.earnerType = earnerType;
@@ -92,8 +98,10 @@ public class RealizationDTO implements Cloneable {
     this.createdDate = createdDate;
     this.lastModifiedBy = lastModifiedBy;
     this.lastModifiedDate = lastModifiedDate;
+    this.sendingDate = sendingDate;
     this.status = status;
     this.type = type;
+    this.reviewerId = reviewerId;
   }
 
   public RealizationDTO() {
@@ -121,7 +129,9 @@ public class RealizationDTO implements Cloneable {
                               createdDate,
                               lastModifiedBy,
                               lastModifiedDate,
+                              sendingDate,
                               status,
-                              type);
+                              type,
+                              reviewerId);
   }
 }

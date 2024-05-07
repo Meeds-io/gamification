@@ -101,7 +101,9 @@ public interface GamificationConstant { // NOSONAR
     String GAMIFICATION_ATTENDANCE_USER_LOGIN                                           = "userLogin";
 
     /*************************************************** CONSTANTS TO MANAGE CONTRIBUTIONS GAMIFICATION PROCESS **********************************************/
-    String GAMIFICATION_CONTRIBUTIONS_CREATE_RULE                                       = "createRule";
+    String GAMIFICATION_CONTRIBUTIONS_CREATE_RULE                     = "createRule";
+
+    String GAMIFICATION_CONTRIBUTIONS_REVIEW_CONTRIBUTIONS            = "reviewContribution";
 
     //Achievement object types
     

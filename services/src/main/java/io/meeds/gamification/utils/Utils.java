@@ -11,6 +11,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -61,6 +62,10 @@ public class Utils {
   public static final String                        ANNOUNCEMENT_ID_TEMPLATE_PARAM          = "announcementId";
 
   public static final String                        ANNOUNCEMENT_ACTIVITY_EVENT             = "challenge.announcement.activity";
+
+  public static final String                        REALIZATION_STATUS_TEMPLATE_PARAM       = "realizationStatus";
+  
+  public static final String                        REALIZATION_CREATED_DATE_PARAM          = "realizationCreatedDate";
 
   public static final long                          DEFAULT_LAST_MODIFIED                   = System.currentTimeMillis();
 
@@ -128,8 +133,6 @@ public class Utils {
 
   public static final String                        STATISTICS_RULE_COVERFILEID_PARAM       = "ruleCoverFileId";
 
-  public static final String                        STATISTICS_RULE_EVENT_PARAM             = "ruleEvent";
-
   public static final String                        STATISTICS_RULE_SUBMODULE               = "rule";
 
   public static final String                        STATISTICS_REALIZATION_SUBMODULE        = "realization";
@@ -150,9 +153,21 @@ public class Utils {
 
   public static final String                        STATISTICS_ACTIVITY_PARAM               = "realizationActivityId";
 
-  public static final String                        STATISTICS_RECEIVED_ID                  = "realizationSenderId";
+  public static final String                        STATISTICS_RECEIVED_ID                  = "realizationReceiverId";
 
-  public static final String                        STATISTICS_STATUS                       = "realizationStatus";
+  public static final String                        STATISTICS_REALIZATION_STATUS_PARAM     = "realizationStatus";
+
+  public static final String                        STATISTICS_REALIZATION_ID_PARAM         = "realizationId";
+
+  public static final String                        STATISTICS_REVIEWER_ID_PARAM            = "reviewerId";
+
+  public static final String                        STATISTICS_OBJECT_ID_PARAM              = "contributionObjectId";
+
+  public static final String                        STATISTICS_OBJECT_TYPE_PARAM            = "contributionObjectType";
+
+  public static final String                        STATISTICS_STATUS_UPDATE_DURATION       = "statusUpdateDuration";
+
+  public static final String                        STATISTICS_UPDATE_SINCE_LAST_DURATION   = "updateSinceLastDuration";
 
   public static final String                        STATISTICS_PROGRAM_SUBMODULE            = "program";
 
@@ -232,13 +247,21 @@ public class Utils {
                                                                                    "GamificationActionPublishedNotification";
 
   public static final String                        RULE_ANNOUNCED_NOTIFICATION_ID          =
-                                                                                   "GamificationActionAnnouncedNotification";
+                                                                                   "GamificationActionAnnouncedNotification";  
+
+  public static final String                        CONTRIBUTION_ACCEPTED_NOTIFICATION_ID   =
+                                                                                            "GamificationContributionAcceptedNotification";
+
+  public static final String                        CONTRIBUTION_REJECTED_NOTIFICATION_ID   =
+                                                                                            "GamificationContributionRejectedNotification";
 
   public static final String                        RULE_ID_NOTIFICATION_PARAM              = "RULE_ID";
 
   public static final String                        RULE_PUBLISHER_NOTIFICATION_PARAM       = "PUBLISHER";
 
   public static final String                        ANNOUNCEMENT_ID_NOTIFICATION_PARAM      = "ANNOUNCEMENT_ID";
+  
+  public static final String                        REALIZATION_ID_NOTIFICATION_PARAM       = "REALIZATION_ID";
 
   public static final ArgumentLiteral<RuleDTO>      RULE_NOTIFICATION_PARAMETER             =
                                                                                 new ArgumentLiteral<>(RuleDTO.class, "rule");
@@ -249,6 +272,10 @@ public class Utils {
   public static final ArgumentLiteral<Announcement> ANNOUNCEMENT_NOTIFICATION_PARAMETER     =
                                                                                         new ArgumentLiteral<>(Announcement.class,
                                                                                                               "announcement");
+
+  public static final ArgumentLiteral<RealizationDTO> REALIZATION_NOTIFICATION_PARAMETER    =
+                                                                                         new ArgumentLiteral<>(RealizationDTO.class,
+                                                                                                               "realization");
 
   public static final JsonGenerator                 JSON_GENERATOR                          = new JsonGeneratorImpl();
 
@@ -528,10 +555,8 @@ public class Utils {
     statisticData.addParameter(STATISTICS_RULE_ECTIVITY_ID_PARAM, rule.getActivityId());
     statisticData.addParameter(STATISTICS_RULE_TITLE_PARAM, rule.getTitle());
     statisticData.addParameter(STATISTICS_RULE_DESCRIPTION_PARAM, rule.getDescription());
-    statisticData.addParameter(STATISTICS_RULE_EVENT_PARAM, rule.getEvent());
     statisticData.addParameter(STATISTICS_RULE_SCORE_PARAM, rule.getScore());
     statisticData.addParameter(STATISTICS_RULE_TYPE_PARAM, rule.getType());
-
     if (event != null) {
       statisticData.addParameter(STATISTICS_EVENT_ID_PARAM, event.getId());
       statisticData.addParameter(STATISTICS_EVENT_TYPE_PARAM, event.getType());
@@ -541,7 +566,8 @@ public class Utils {
       if (properties != null) {
         properties.forEach((k, v) -> {
           if (!statisticData.getParameters().containsKey(k)) {
-            statisticData.addParameter(k, v);
+            String[] values = StringUtils.split(v, ",");
+            statisticData.addParameter(k, Arrays.asList(values));
           }
         });
       }
@@ -585,11 +611,23 @@ public class Utils {
           && StringUtils.isNumeric(realization.getEarnerId())) {
         statisticData.setUserId(Long.parseLong(realization.getEarnerId()));
       }
+      statisticData.addParameter(STATISTICS_REALIZATION_ID_PARAM, realization.getId());
       statisticData.addParameter(STATISTICS_EARNER_TYPE, realization.getEarnerType());
       statisticData.addParameter(STATISTICS_EARNER_ID_PARAM, realization.getEarnerId());
       statisticData.addParameter(STATISTICS_ACTIVITY_PARAM, realization.getActivityId());
       statisticData.addParameter(STATISTICS_RECEIVED_ID, realization.getReceiver());
-      statisticData.addParameter(STATISTICS_STATUS, realization.getStatus());
+      statisticData.addParameter(STATISTICS_REALIZATION_STATUS_PARAM, realization.getStatus());
+      statisticData.addParameter(STATISTICS_REVIEWER_ID_PARAM, realization.getReviewerId());
+      statisticData.addParameter(STATISTICS_OBJECT_ID_PARAM, realization.getObjectId());
+      statisticData.addParameter(STATISTICS_OBJECT_TYPE_PARAM, realization.getObjectType());
+      Date sendingDate = parseRFC3339Date(realization.getSendingDate());
+      if (sendingDate != null) {
+        statisticData.addParameter(STATISTICS_STATUS_UPDATE_DURATION, ChronoUnit.SECONDS.between(sendingDate.toInstant(), new Date().toInstant()));
+      }
+      Date lastModifiedDate = parseRFC3339Date(realization.getLastModifiedDate());
+      if (lastModifiedDate != null) {
+        statisticData.addParameter(STATISTICS_UPDATE_SINCE_LAST_DURATION, ChronoUnit.SECONDS.between(lastModifiedDate.toInstant(), new Date().toInstant()));
+      }
     }
     if (StringUtils.isNotBlank(realization.getEarnerType())) {
       statisticData.setUserId(Long.parseLong(realization.getEarnerId()));

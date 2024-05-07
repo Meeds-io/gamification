@@ -111,7 +111,8 @@ extensionRegistry.registerExtension('activity', 'comment-action', {
   isEnabled: (activity, comment) => {
     return comment.type === 'gamificationActionAnnouncement'
       && comment.canDelete === 'true'
-      && comment?.identity?.remoteId === eXo.env.portal.userName;
+      && comment?.identity?.remoteId === eXo.env.portal.userName
+      && !['ACCEPTED', 'REJECTED'].includes(comment?.templateParams?.realizationStatus);
   },
   click: (activity, comment) => {
     document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
@@ -173,4 +174,83 @@ export function initRuleActivity(params) {
     }
     return activity.ruleFetch;
   }
+}
+
+export function initAchievementCommentExtension(updateStatusExtension) {
+  extensionRegistry.registerExtension('activity', 'comment-action', {
+    id: 'acceptContribution',
+    labelKey: 'realization.label.accept',
+    icon: 'fas fa-check-circle',
+    rank: 10,
+    isEnabled: (activity, comment) => {
+      const dateObject = new Date(comment?.templateParams?.realizationCreatedDate);
+      const createdDateInSecond = Math.floor(dateObject.getTime() / 1000);
+      const rule = activity?.rule;
+      return comment.type === 'gamificationActionAnnouncement'
+          && (rule?.userInfo?.programOwner || rule?.userInfo?.manager)
+          && (comment?.templateParams?.realizationStatus === 'PENDING' || updateStatusExtension?.canUpdateStatus(createdDateInSecond))
+          && comment?.templateParams?.realizationStatus !== 'ACCEPTED';
+    },
+    click: (activity, comment) => {
+      document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      return Vue.prototype.$realizationService.updateRealizationStatus(comment?.templateParams?.announcementId, 'ACCEPTED')
+        .then(() => document.dispatchEvent(new CustomEvent('contribution-status-updated', {detail: {
+          announcementId: comment?.templateParams?.announcementId,
+          status: 'ACCEPTED'
+        }})))
+        .finally(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading')));
+    },
+  });
+
+  extensionRegistry.registerExtension('activity', 'comment-action', {
+    id: 'rejectContribution',
+    labelKey: 'realization.label.reject',
+    icon: 'fas fa-times-circle',
+    rank: 10,
+    isEnabled: (activity, comment) => {
+      const dateObject = new Date(comment?.templateParams?.realizationCreatedDate);
+      const createdDateInSecond = Math.floor(dateObject.getTime() / 1000);
+      const rule = activity?.rule;
+      return comment.type === 'gamificationActionAnnouncement'
+          && (rule?.userInfo?.programOwner || rule?.userInfo?.manager)
+          && (comment?.templateParams?.realizationStatus === 'PENDING' || updateStatusExtension?.canUpdateStatus(createdDateInSecond))
+          && comment?.templateParams?.realizationStatus !== 'REJECTED';
+
+    },
+    click: (activity, comment) => {
+      document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      return Vue.prototype.$realizationService.updateRealizationStatus(comment?.templateParams?.announcementId, 'REJECTED')
+        .then(() => document.dispatchEvent(new CustomEvent('contribution-status-updated', {detail: {
+          announcementId: comment?.templateParams?.announcementId,
+          status: 'REJECTED'
+        }})))
+        .finally(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading')));
+    },
+  });
+
+  extensionRegistry.registerExtension('activity', 'comment-action', {
+    id: 'reviewContribution',
+    labelKey: 'realization.label.review',
+    icon: 'fas fa-question-circle',
+    rank: 10,
+    isEnabled: (activity, comment) => {
+      const dateObject = new Date(comment?.templateParams?.realizationCreatedDate);
+      const createdDateInSecond = Math.floor(dateObject.getTime() / 1000);
+      const rule = activity?.rule;
+      return comment.type === 'gamificationActionAnnouncement'
+          && (rule?.userInfo?.programOwner || rule?.userInfo?.manager)
+          && updateStatusExtension?.canUpdateStatus(createdDateInSecond)
+          && comment?.templateParams?.realizationStatus !== 'PENDING';
+
+    },
+    click: (activity, comment) => {
+      document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      return Vue.prototype.$realizationService.updateRealizationStatus(comment?.templateParams?.announcementId, 'PENDING')
+        .then(() => document.dispatchEvent(new CustomEvent('contribution-status-updated', {detail: {
+          announcementId: comment?.templateParams?.announcementId,
+          status: 'PENDING'
+        }})))
+        .finally(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading')));
+    },
+  });
 }

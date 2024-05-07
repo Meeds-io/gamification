@@ -49,10 +49,9 @@ public class RealizationBuilder {
       boolean anonymous = StringUtils.isBlank(currentUsername);
       ProgramDTO program = realization.getProgram();
       boolean canViewProgram = Utils.isRewardingManager(currentUsername)
-                               || (program != null && programService.canViewProgram(program.getId(), currentUsername));
-      boolean canViewTitle = canViewProgram
-                             || StringUtils.equals(currentUsername, realization.getEarnerId())
-                             || StringUtils.equals(String.valueOf(Utils.getCurrentUserIdentityId()), realization.getEarnerId());
+          || (program != null && programService.canViewProgram(program.getId(), currentUsername));
+      boolean canViewTitle = canViewProgram || StringUtils.equals(currentUsername, realization.getEarnerId())
+          || StringUtils.equals(String.valueOf(Utils.getCurrentUserIdentityId()), realization.getEarnerId());
 
       ProgramRestEntity programRestEntity = null;
       if (canViewProgram && program != null) {
@@ -89,13 +88,17 @@ public class RealizationBuilder {
                                                   null);
       }
 
-      boolean actionLabelChanged = canViewProgram && (rule == null || !StringUtils.equals(realization.getActionTitle(), rule.getTitle()));
-      boolean programLabelChanged = canViewProgram && (rule == null || rule.getProgram() == null || !StringUtils.equals(realization.getProgramLabel(), rule.getProgram().getTitle()));
-      String spaceDisplayName = programRestEntity != null && programRestEntity.getSpace() != null ?
-                                                                                                  programRestEntity.getSpace()
-                                                                                                                   .getDisplayName() :
-                                                                                                  null;
+      boolean actionLabelChanged = canViewProgram
+          && (rule == null || !StringUtils.equals(realization.getActionTitle(), rule.getTitle()));
+      boolean programLabelChanged = canViewProgram && (rule == null || rule.getProgram() == null
+          || !StringUtils.equals(realization.getProgramLabel(), rule.getProgram().getTitle()));
+      String spaceDisplayName = programRestEntity != null
+          && programRestEntity.getSpace() != null ? programRestEntity.getSpace().getDisplayName() : null;
       Identity earnerIdentity = identityManager.getIdentity(realization.getEarnerId());
+      Identity reviewerIdentity = null;
+      if (realization.getReviewerId() != null) {
+        reviewerIdentity = identityManager.getIdentity(String.valueOf(realization.getReviewerId()));
+      }
       return new RealizationRestEntity(realization.getId(),
                                        toUserInfo(earnerIdentity, anonymous),
                                        ruleRestEntity,
@@ -103,17 +106,18 @@ public class RealizationBuilder {
                                        canViewTitle ? realization.getProgramLabel() : null,
                                        canViewTitle ? realization.getActionTitle() : null,
                                        realization.getActionScore(),
-                                       anonymous ?
-                                                 null :
-                                                 getCreatorFullName(realization),
+                                       anonymous ? null : getCreatorFullName(realization),
                                        realization.getCreatedDate(),
+                                       realization.getSendingDate(),
                                        realization.getStatus(),
                                        canViewProgram && !anonymous ? spaceDisplayName : null,
                                        realization.getObjectId(),
                                        realization.getObjectType(),
                                        realization.getActivityId(),
+                                       realization.getComment(),
                                        actionLabelChanged,
-                                       programLabelChanged);
+                                       programLabelChanged,
+                                       reviewerIdentity != null ? toUserInfo(reviewerIdentity, false) : null);
 
     } catch (Exception e) {
       LOG.error("Error while mapping history with id {}", realization.getId(), e);
@@ -161,9 +165,8 @@ public class RealizationBuilder {
   }
 
   private static String getCreatorFullName(RealizationDTO realization) {
-    return Utils.getUserFullName(realization.getCreator()
-        != null ? String.valueOf(realization.getCreator()) :
-                realization.getReceiver());
+    return Utils.getUserFullName(realization.getCreator() != null ? String.valueOf(realization.getCreator())
+                                                                  : realization.getReceiver());
   }
 
   private static UserInfo toUserInfo(Identity identity, boolean anonymous) {

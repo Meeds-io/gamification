@@ -99,6 +99,12 @@ public class RuleBuilder {
     if (countRealizations && realizationService != null) {
       realizationsCount = countRealizations(realizationService, rule.getId(), periodType);
     }
+    boolean hasPendingRealization = false;
+    if (countRealizations && realizationService != null) {
+      hasPendingRealization = hasPendingRealization(realizationService,
+              rule.getId(),
+              String.valueOf(Utils.getCurrentUserIdentityId()));
+    }
     boolean isFavorite = !anonymous
                          && expandFields != null
                          && expandFields.contains("favorites")
@@ -175,6 +181,7 @@ public class RuleBuilder {
                               rule.getManagers(),
                               realizationEntities,
                               realizationsCount,
+                              hasPendingRealization,
                               userContext,
                               prerequisiteRules);
   }
@@ -243,7 +250,12 @@ public class RuleBuilder {
                                  periodType.getToDate(),
                                  IdentityType.USER,
                                  RealizationStatus.ACCEPTED,
-                                 Collections.singletonList(ruleId));
+                                 Collections.singletonList(ruleId),
+                                 null);
+  }
+
+  private static boolean hasPendingRealization(RealizationService realizationService, long ruleId, String userId) {
+    return realizationService.hasPendingRealization(ruleId, userId);
   }
 
   private static boolean isPublished(ActivityManager activityManager, RuleDTO rule) {

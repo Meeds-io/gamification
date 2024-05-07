@@ -1,0 +1,60 @@
+﻿<%
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ *
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
+%>
+<table border="0" cellpadding="0" cellspacing="0" width="600" bgcolor="#ffffff" align="center" style="background-color: #ffffff; font-size: 13px; color: #333333; line-height: 18px; font-family: HelveticaNeue, Helvetica, Arial, sans-serif;">
+  <%
+    _templateContext.put("header_title", _ctx.appRes("Notification.title.GamificationContributionAcceptedNotification"));
+    _ctx.include("war:/notification/templates/mail/NotificationHeader.gtmpl", _templateContext);
+  %>
+  <tr>
+    <td bgcolor="#ffffff" style="background-color: #ffffff;">
+      <table cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" style="background-color: #ffffff; border-left: 1px solid #d8d8d8; border-right: 1px solid #d8d8d8;">
+        <tr>
+          <td bgcolor="#ffffff" style="background-color: #ffffff;">
+            <table border="0" cellpadding="0" cellspacing="0" width="92%" bgcolor="#ffffff" align="center" style="background-color: #ffffff; font-size: 13px; color: #333333; line-height: 18px;">
+              <tr>
+                <td align="left" bgcolor="#ffffff" style="background-color: #ffffff; padding: 10px 0;">
+                  <p style="margin: 10px 0;">
+                    <%=_ctx.appRes("Notification.label.SayHello")%> <%=_ctx.escapeHTML(FIRSTNAME)%>,
+                  </p>
+                  <p style="margin: 10px 0 20px;">
+                    <%=_ctx.appRes("Notification.gamification.mail.content.contributionAccepted")%>
+                  </p>
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" align="center" style="background-color: #ffffff; font-size: 13px; color: #333333; line-height: 18px; margin-bottom: 15px;">
+                    <tbody>
+                      <tr>
+                        <td align="left" bgcolor="#ffffff" style="background-color: #f9f9f9; padding: 0;">
+                          <a href="<%=ANNOUNCEMENT_URL%>" target="_blank">$RULE_TITLE</a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <!--end content area-->
+  <%
+    _ctx.include("war:/notification/templates/mail/NotificationFooter.gtmpl", _templateContext);
+  %>
+</table>

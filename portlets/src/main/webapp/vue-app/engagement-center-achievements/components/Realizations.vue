@@ -21,7 +21,6 @@
   <v-app class="card-border-radius overflow-hidden">
     <main
       id="rulesList"
-      :class="classWelcomeMessage"
       class="Realizations border-box-sizing"
       role="main">
       <application-toolbar
@@ -90,12 +89,15 @@
         class="realizationsTable px-3 pt-2">
         <template slot="item" slot-scope="props">
           <engagement-center-realization-item
+            :key="props.item.id"
             :realization="props.item"
             :date-format="dateFormat"
             :is-administrator="administrationMode"
             :filtered-rule-ids="ruleIds"
             :filtered-program-ids="searchList"
             :filtered-earner-ids="earnerIds"
+            :filtered-reviewer-ids="reviewerIds"
+            :extensions="extensions"
             @updated="realizationUpdated" />
         </template>
       </v-data-table>
@@ -163,6 +165,8 @@ export default {
     searchList: [],
     ownedPrograms: [],
     earnerIds: [],
+    reviewerIds: [],
+    status: null,
     ruleIds: [],
     offset: 0,
     limit: 25,
@@ -193,6 +197,9 @@ export default {
     selected: 'Date',
     programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`,
     tabName: window.location.hash === '#hosted' ? 'OWNED' : 'YOURS',
+    extensionApp: 'engagementCenterAchievements',
+    extensionType: 'achievements-extensions',
+    extensions: [],
   }),
   computed: {
     administrationMode() {
@@ -201,13 +208,18 @@ export default {
     filtersCount() {
       return (this.searchList?.length && 1 || 0)
         + (this.ruleIds?.length && 1 || 0)
-        + (this.earnerIds?.length && 1 || 0);
+        + (this.earnerIds?.length && 1 || 0)
+        + (this.reviewerIds?.length && 1 || 0)
+        + (this.status !== null && this.status !== 'ALL'? 1 : 0)  ;
     },
     hasMore() {
       return this.limit < this.totalSize;
     },
     earnerIdToRetrieve() {
       return this.earnerIds?.length && this.earnerIds || (!this.administrationMode && [this.earnerId] || null);
+    },
+    reviewerIdToRetrieve() {
+      return this.reviewerIds?.length && this.reviewerIds;
     },
     realizationsToDisplay() {
       return this.realizations.slice(0, this.limit);
@@ -217,11 +229,13 @@ export default {
         fromDate: this.fromDate,
         toDate: this.toDate,
         earnerIds: this.earnerIdToRetrieve,
+        reviewerIds: this.reviewerIdToRetrieve,
         sortBy: this.sortBy,
         sortDescending: this.sortDescending,
         programIds: this.searchList,
         ruleIds: this.ruleIds,
         owned: this.administrationMode,
+        status: this.status,
       };
     },
     exportFileLink() {
@@ -234,29 +248,23 @@ export default {
           sortable: false,
           value: 'actionLabel',
           class: 'actionHeader',
-          width: '188'
+          width: '125'
         },
         {
           text: this.$t('realization.label.programLabel'),
           sortable: false,
+          align: 'center',
           value: 'programLabel',
           class: 'actionHeader',
-          width: '110'
+          width: '75'
         },
         {
           text: this.$t('realization.label.date'),
           value: 'date',
           sortable: true,
-          class: 'actionHeader',
-          width: '120'
-        },
-        {
-          text: this.$t('realization.label.actionType'),
-          value: 'type',
-          sortable: true,
           align: 'center',
           class: 'actionHeader',
-          width: '85',
+          width: '75'
         },
         {
           text: this.$t('realization.label.points'),
@@ -264,7 +272,7 @@ export default {
           align: 'center',
           value: 'points',
           class: 'actionHeader',
-          width: '80',
+          width: '50',
         },
         {
           text: this.$t('realization.label.status'),
@@ -272,16 +280,10 @@ export default {
           sortable: true,
           align: 'center',
           class: 'actionHeader',
-          width: '95',
+          width: '60',
         },
       ];
       if (this.administrationMode) {
-        realizationsHeaders.push({
-          text: this.$t('realization.label.actions'),
-          sortable: false,
-          class: 'actionHeader',
-          width: '80',
-        });
         realizationsHeaders.splice(3, 0,         
           {
             value: 'grantee',
@@ -289,7 +291,16 @@ export default {
             sortable: false,
             align: 'center',
             class: 'actionHeader',
-            width: '70',
+            width: '100',
+          },);
+        realizationsHeaders.splice(5, 0,
+          {
+            value: 'reviewer',
+            text: this.$t('realization.label.reviewer'),
+            sortable: false,
+            align: 'center',
+            class: 'actionHeader',
+            width: '100',
           },);
       }
       return realizationsHeaders;
@@ -298,6 +309,7 @@ export default {
   watch: {
     selectedPeriod(newValue) {
       if (newValue) {
+        this.refreshExtensions();
         this.filterActivated = false;
         this.fromDate = new Date(newValue.min).toISOString() ;
         this.toDate = new Date(newValue.max).toISOString();
@@ -352,6 +364,7 @@ export default {
     },
   },
   created() {
+    document.addEventListener(`extension-${this.extensionApp}-${this.extensionType}-updated`, this.refreshExtensions);
     this.realizationsHeaders.map((header) => {
       if (header.sortable && header.value !== 'type') {
         this.availableSortBy.push(header);
@@ -415,18 +428,22 @@ export default {
           this.displaySearchResult = this.searchList?.length >= 0 && this.realizations.length > 0;
         });
     },
-    realizationUpdated(updatedRealization){
-      const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
-      this.realizations[index] = updatedRealization;
-      this.$set(this.realizations,index,updatedRealization);
+    realizationUpdated(updatedRealization) {
+      const index = this.realizations?.findIndex(realization => realization.id === updatedRealization.id);
+      this.$set(this.realizations, index, updatedRealization);
+      if (this.status !== null && this.status !== 'ALL' && this.status !== updatedRealization.status) {
+        this.realizations.splice(index, 1);
+      }
     },
-    filter(programs, rules, grantees) {
+    filter(programs, rules, grantees, status, reviewers) {
       this.filterActivated = true;
       this.initialized = false;
       this.realizations = [];
       this.searchList = programs.map(program => program.id);
       this.ruleIds = rules.map(rule => rule.id);
       this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
+      this.reviewerIds = reviewers.map(reviewer => reviewer.identity.identityId);
+      this.status = status !== null && status !== 'ALL' ? status : null;
       this.loadRealizations();
     },
     onResize () {
@@ -436,10 +453,18 @@ export default {
       this.searchList = [];
       this.ruleIds = [];
       this.earnerIds = [];
+      this.reviewerIds = [];
       this.realizations = [];
       this.loadRealizations();
       this.$root.$emit('reset-filter-values');
-    }
+    },
+    refreshExtensions() {
+      // Get list of connectors from extensionRegistry
+      this.extensions = extensionRegistry.loadExtensions(this.extensionApp, this.extensionType) || [];
+      this.extensions.forEach(extension => {
+        extension?.init(Date.parse(new Date(this.selectedPeriod?.min).toISOString()) / 1000 , Date.parse(new Date(this.selectedPeriod?.max).toISOString())/ 1000);
+      });
+    },
   }
 };
 </script>

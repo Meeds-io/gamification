@@ -29,6 +29,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               v-else
               :href="realization.url"
               :class="actionLabelClass"
+              target="_blank"
               class="text-color">
               <span class="actionDescription">
                 {{ actionLabel }}
@@ -83,40 +84,93 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-card>
         </div>
       </td>
-      <td>
-        <div class="d-flex">
-          <v-tooltip bottom>
-            <template #activator="{ on }">
-              <component
-                v-on="on"
-                v-bind="programUrl && {
-                  href: programUrl
-                }"
-                :is="programUrl && 'a' || 'div'"
-                class="text-truncate">
-                <div class="text-truncate">{{ programTitle }}</div>
-              </component>
-            </template>
-            <span>{{ programTitle }}</span>
-          </v-tooltip>
+      <td class="d-flex text-truncate justify-center">
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <component
+              v-on="on"
+              v-bind="programUrl && {
+                href: programUrl
+              }"
+              :is="programUrl && 'a' || 'div'"
+              class="text-truncate my-auto">
+              <div class="text-truncate">{{ programTitle }}</div>
+            </component>
+          </template>
+          <span>{{ programTitle }}</span>
+        </v-tooltip>
+        <v-tooltip
+          v-if="programLabelChanged"
+          z-index="4"
+          max-width="300"
+          bottom>
+          <template #activator="{ on, attrs }">
+            <v-icon
+              size="14"
+              class="primary--text ms-1"
+              v-bind="attrs"
+              v-on="on">
+              fas fa-info-circle
+            </v-icon>
+          </template>
+          <span>{{ $t('realization.label.previouslyNamed') }}: {{ programLabel }}</span>
+        </v-tooltip>
+        <v-card
+          v-if="hover && programId"
+          color="transparent"
+          width="28"
+          class="position-relative my-auto ms-2"
+          flat>
           <v-tooltip
-            v-if="programLabelChanged"
             z-index="4"
             max-width="300"
             bottom>
             <template #activator="{ on, attrs }">
-              <v-icon
-                size="14"
-                class="primary--text ms-1"
+              <v-btn
                 v-bind="attrs"
-                v-on="on">
-                fas fa-info-circle
-              </v-icon>
+                v-on="on"
+                class="btn absolute-vertical-center"
+                icon
+                absolute
+                small
+                @click="filterByProgram">
+                <v-icon size="14">{{ isFilteredByProgram && 'fa-search-minus' || 'fa-search-plus' }}</v-icon>
+              </v-btn>
             </template>
-            <span>{{ $t('realization.label.previouslyNamed') }}: {{ programLabel }}</span>
+            <span>{{ isFilteredByProgram && $t('realization.label.removeThisProgramToFilter') || $t('realization.label.addThisProgramToFilter') }}</span>
           </v-tooltip>
+        </v-card>
+      </td>
+      <td class="wrap text-truncate align-center">
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <div
+              v-bind="attrs"
+              v-on="on">
+              <date-format
+                :format="dateFormat"
+                :value="createdDate" />
+            </div>
+          </template>
+          <span>           
+            <date-format
+              :format="tooltipDateFormat"
+              :value="createdDate" />
+          </span>
+        </v-tooltip>
+      </td>
+      <td v-if="isAdministrator">
+        <div class="d-flex">
+          <user-avatar
+            :name="earnerFullName"
+            :avatar-url="earnerAvatarUrl"
+            :profile-id="earnerRemoteId"
+            :popover="earnerRemoteId"
+            :size="28"
+            extra-class="d-inline-block"
+            link-style />
           <v-card
-            v-if="hover && programId"
+            v-if="hover && earnerId"
             color="transparent"
             width="28"
             class="position-relative my-auto ms-2"
@@ -133,143 +187,163 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   icon
                   absolute
                   small
-                  @click="filterByProgram">
-                  <v-icon size="14">{{ isFilteredByProgram && 'fa-search-minus' || 'fa-search-plus' }}</v-icon>
+                  @click="filterByEarner">
+                  <v-icon size="14">{{ isFilteredByEarner && 'fa-search-minus' || 'fa-search-plus' }}</v-icon>
                 </v-btn>
               </template>
-              <span>{{ isFilteredByProgram && $t('realization.label.removeThisProgramToFilter') || $t('realization.label.addThisProgramToFilter') }}</span>
+              <span>{{ isFilteredByEarner && $t('realization.label.removeThisEarnerToFilter') || $t('realization.label.addThisEarnerToFilter') }}</span>
             </v-tooltip>
           </v-card>
         </div>
       </td>
-      <td class="wrap">
-        <v-tooltip bottom>
-          <template #activator="{ on, attrs }">
-            <div
-              v-bind="attrs"
-              v-on="on">
-              <date-format
-                :format="dateFormat"
-                :value="realization.createdDate" />
-            </div>
-          </template>
-          <span>           
-            <date-format
-              :format="tooltipDateFormat"
-              :value="realization.createdDate" />
-          </span>
-        </v-tooltip>
-      </td>
-      <td v-if="isAdministrator" class="d-flex align-center justify-center">
-        <user-avatar
-          :name="earnerFullName"
-          :avatar-url="earnerAvatarUrl"
-          :profile-id="earnerRemoteId"
-          :popover="earnerRemoteId"
-          :size="28"
-          extra-class="d-inline-block"
-          link-style
-          avatar />
-        <v-card
-          v-if="hover && earnerId"
-          color="transparent"
-          class="position-relative my-auto"
-          flat>
-          <v-tooltip
-            z-index="4"
-            max-width="300"
-            bottom>
-            <template #activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                class="btn absolute-vertical-center ms-2"
-                icon
-                absolute
-                small
-                @click="filterByEarner">
-                <v-icon size="14">{{ isFilteredByEarner && 'fa-search-minus' || 'fa-search-plus' }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ isFilteredByEarner && $t('realization.label.removeThisEarnerToFilter') || $t('realization.label.addThisEarnerToFilter') }}</span>
-          </v-tooltip>
-        </v-card>
-      </td>
-      <td class="text-truncate align-center">
-        <v-tooltip bottom>
-          <template #activator="{ on, attrs }">
-            <v-icon
-              :class="statusIconClass"
-              class="me-1"
-              size="16"
-              v-bind="attrs"
-              v-on="on">
-              {{ actionTypeIcon }}
-            </v-icon>
-          </template>
-          <span>{{ isAutomaticTypeLabel }}</span>
-        </v-tooltip>
-      </td>
       <td class="text-truncate align-center">
         {{ score }}
       </td>
+      <td v-if="isAdministrator">
+        <div v-if="reviewer" class="d-flex">
+          <user-avatar
+            :name="reviewerFullName"
+            :avatar-url="reviewerAvatarUrl"
+            :profile-id="reviewerRemoteId"
+            :popover="reviewerRemoteId"
+            :size="28"
+            extra-class="d-inline-block"
+            link-style />
+          <v-card
+            v-if="hover && reviewerId"
+            color="transparent"
+            width="28"
+            class="position-relative my-auto ms-2"
+            flat>
+            <v-tooltip
+              z-index="4"
+              max-width="300"
+              bottom>
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  class="btn absolute-vertical-center"
+                  icon
+                  absolute
+                  small
+                  @click="filterByReviewer">
+                  <v-icon size="14">{{ isFilteredByReviewer && 'fa-search-minus' || 'fa-search-plus' }}</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ isFilteredByReviewer && $t('realization.label.removeThisReviewerToFilter') || $t('realization.label.addThisReviewerToFilter') }}</span>
+            </v-tooltip>
+          </v-card>
+        </div>
+        <div v-else class="text-color">{{ $t('realization.label.notReviewed') }}</div>
+      </td>
       <td class="text-truncate align-center">
-        <v-tooltip bottom>
+        <v-tooltip v-if="canceled" bottom>
           <template #activator="{ on, attrs }">
-            <v-icon
-              :class="statusIconClass"
-              class="me-1"
-              size="16"
+            <span
+              class="not-clickable"
               v-bind="attrs"
-              v-on="on">
-              {{ statusIcon }}
-            </v-icon>
+              v-on="on"> - </span>
           </template>
           <span>{{ statusLabel }}</span>
         </v-tooltip>
-      </td>
-      <td v-if="isAdministrator" class="text-truncate actions align-center">
-        <v-menu
-          v-if="hasActions"
-          v-model="menu"
-          :left="!$vuetify.rtl"
-          :right="$vuetify.rtl"
-          bottom
-          offset-y
-          attach>
+        <div v-else-if="isAdministrator" class="text-center">
+          <v-btn
+            :aria-label="accepted ? statusLabel : acceptLabel"
+            :class="accepted && 'success-color-background not-clickable' || 'light-black-background'"
+            class="mx-2"
+            height="16px"
+            width="16px"
+            fab
+            dark
+            depressed
+            v-on="canUpdateStatus ? { click: () => updateRealizationStatus('ACCEPTED') } : {}">
+            <v-tooltip
+              z-index="4"
+              max-width="300"
+              bottom>
+              <template #activator="{ on, attrs }">
+                <v-icon
+                  v-bind="attrs"
+                  v-on="on"
+                  size="10"
+                  dark>
+                  fas fa-check
+                </v-icon>
+              </template>
+              <span>{{ accepted ? statusLabel : acceptLabel }}</span>
+            </v-tooltip>
+          </v-btn>
+          <v-btn
+            :aria-label="pending ? statusLabel : reviewLabel"
+            :class="pending ? 'orange darken-2 not-clickable' : 'light-black-background'"
+            class="mx-2"
+            height="16px"
+            width="16px"
+            fab
+            dark
+            depressed
+            v-on="canUpdateStatus ? { click: () => updateRealizationStatus('PENDING') } : {}">
+            <v-tooltip
+              z-index="4"
+              max-width="300"
+              bottom>
+              <template #activator="{on, attrs }">
+                <v-icon
+                  v-bind="attrs"
+                  v-on="on"
+                  size="10"
+                  dark>
+                  fas fa-question
+                </v-icon>
+              </template>
+              <span>{{ pending ? statusLabel : reviewLabel }}</span>
+            </v-tooltip>
+          </v-btn>
+          <v-btn
+            :aria-label="rejected ? statusLabel : rejectLabel"
+            :class="rejected && 'error-color-background not-clickable' || 'light-black-background'"
+            class="mx-2"
+            height="16px"
+            width="16px"
+            fab
+            dark
+            depressed
+            v-on="canUpdateStatus ? { click: () => updateRealizationStatus('REJECTED') } : {}">
+            <v-tooltip
+              z-index="4"
+              max-width="300"
+              bottom>
+              <template #activator="{ on, attrs }">
+                <v-icon
+                  v-bind="attrs"
+                  v-on="on"
+                  size="10"
+                  dark>
+                  fas fa-times
+                </v-icon>
+              </template>
+              <span>{{ rejected ? statusLabel : rejectLabel }}</span>
+            </v-tooltip>
+          </v-btn>
+        </div>
+        <v-tooltip v-else bottom>
           <template #activator="{ on, attrs }">
             <v-btn
-              icon
-              small
-              class="me-2"
+              class="mx-2 not-clickable"
+              height="16px"
+              width="16px"
+              fab
+              dark
+              depressed
+              :class="statusIconClass"
               v-bind="attrs"
               v-on="on">
-              <v-icon size="16" class="icon-default-color">fas fa-ellipsis-v</v-icon>
+              <v-icon size="10" dark>{{ statusIcon }}</v-icon>
             </v-btn>
           </template>
-          <v-list dense class="pa-0">
-            <template>
-              <v-list-item
-                v-if="canAccept"
-                dense
-                @click="updateRealizationStatus('ACCEPTED')">
-                <v-icon size="13" class="icon-default-color">fas fa-check</v-icon>
-                <v-list-item-title class="text-justify ps-3">
-                  {{ $t('realization.label.accept') }}
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                v-if="canReject"
-                dense
-                @click="updateRealizationStatus('REJECTED')">
-                <v-icon size="13" class="icon-default-color">fas fa-ban</v-icon>
-                <v-list-item-title class="text-justify ps-3">
-                  {{ $t('realization.label.reject') }}
-                </v-list-item-title>
-              </v-list-item>
-            </template>
-          </v-list>
-        </v-menu>
+          <span>{{ statusLabel }}</span>
+        </v-tooltip>
       </td>
     </tr>
   </v-hover>
@@ -301,6 +375,14 @@ export default {
       type: Array,
       default: null,
     },
+    filteredReviewerIds: {
+      type: Array,
+      default: null,
+    },
+    extensions: {
+      type: Array,
+      default: null,
+    }
   },
   data: () => ({
     menu: false,
@@ -312,22 +394,50 @@ export default {
       hour: 'numeric',
       minute: 'numeric',
     },
+    statusValue: null
   }),
   computed: {
-    earnerFullName() {
-      return this.realization?.earner?.fullName;
+    rejectLabel() {
+      return this.canUpdateStatus ? this.$t('realization.label.reject') : this.cannotUpdateStatusLabel;
     },
-    earnerAvatarUrl() {
-      return this.realization?.earner?.avatarUrl;
+    acceptLabel() {
+      return this.canUpdateStatus ? this.$t('realization.label.accept') : this.cannotUpdateStatusLabel;
     },
-    earnerRemoteId() {
-      return this.realization?.earner?.remoteId;
+    reviewLabel() {
+      return this.canUpdateStatus ? this.$t('realization.label.review') : this.cannotUpdateStatusLabel;
+    },
+    createdDate() {
+      return this.realization?.sendingDate || this.realization?.createdDate;
     },
     earner() {
       return this.realization?.earner;
     },
+    earnerFullName() {
+      return this.earner?.fullName;
+    },
+    earnerAvatarUrl() {
+      return this.earner?.avatarUrl;
+    },
+    earnerRemoteId() {
+      return this.earner?.remoteId;
+    },
     earnerId() {
-      return this.realization?.earner?.id;
+      return this.earner?.id;
+    },
+    reviewer() {
+      return this.realization?.reviewer;
+    },
+    reviewerFullName() {
+      return this.reviewer?.fullName;
+    },
+    reviewerAvatarUrl() {
+      return this.reviewer?.avatarUrl;
+    },
+    reviewerRemoteId() {
+      return this.reviewer?.remoteId;
+    },
+    reviewerId() {
+      return this.reviewer?.id;
     },
     isAutomaticType() {
       return !!this.eventName;
@@ -353,6 +463,9 @@ export default {
     isFilteredByEarner() {
       return this.earnerId && this.filteredEarnerIds && this.filteredEarnerIds.find(id => id === this.earnerId);
     },
+    isFilteredByReviewer() {
+      return this.reviewerId && this.filteredReviewerIds && this.filteredReviewerIds.find(id => id === this.reviewerId);
+    },
     actionLabel() {
       const actionLabel = this.realization?.action?.title || this.realizationActionLabel;
       if (actionLabel) {
@@ -376,11 +489,37 @@ export default {
     status() {
       return this.realization.status;
     },
+    accepted() {
+      return this.status === 'ACCEPTED';
+    },
+    pending() {
+      return this.status === 'PENDING';
+    },
+    rejected() {
+      return this.status === 'REJECTED' || this.status === 'CANCELED';
+    },
+    canceled() {
+      return this.status === 'CANCELED' || this.status === 'DELETED';
+    },
     statusIcon() {
-      return this.status === 'ACCEPTED' ? 'fas fa-check-circle' : 'fas fa-times-circle';
+      switch (this.status) {
+      case 'ACCEPTED':
+        return 'fas fa-check';
+      case 'PENDING':
+        return 'fas fa-question';
+      default:
+        return 'fas fa-times';
+      }
     },
     statusIconClass() {
-      return this.status === 'ACCEPTED' ? 'primary--text' : 'secondary--text';
+      switch (this.status) {
+      case 'ACCEPTED':
+        return 'success-color-background';
+      case 'PENDING':
+        return 'orange darken-2';
+      default:
+        return 'error-color-background';
+      }
     },
     actionTypeIcon() {
       return this.isAutomaticType ? 'fas fa-cogs' : 'fas fa-hand-pointer';
@@ -388,14 +527,8 @@ export default {
     actionLabelClass() {
       return !this.realization.url && 'defaultCursor' || '';
     },
-    canReject() {
-      return this.status === 'ACCEPTED';
-    },
     canAccept() {
       return this.status === 'REJECTED';
-    },
-    hasActions() {
-      return this.canReject || this.canAccept;
     },
     objectId() {
       return this.realization?.objectId;
@@ -417,9 +550,6 @@ export default {
       }
       return null;
     },
-    isAutomaticTypeLabel() {
-      return this.isAutomaticType ? this.$t('gamification.label.automatic') : this.$t('realization.label.manual');
-    },
     statusLabel() {
       return this.$t(`realization.label.${this.status.toLowerCase()}`);
     },
@@ -434,6 +564,19 @@ export default {
     },
     programLabelChanged() {
       return this.realization?.programLabelChanged;
+    },
+    updateStatusExtension() {
+      return this.extensions.find(extension => extension?.canUpdateStatus);
+    },
+    createdDateInSecond() {
+      const dateObject = new Date(this.realization?.createdDate);
+      return Math.floor(dateObject.getTime() / 1000);
+    },
+    canUpdateStatus() {
+      return this.pending || this.updateStatusExtension?.canUpdateStatus(this.createdDateInSecond);
+    },
+    cannotUpdateStatusLabel() {
+      return this.$t(`${this.updateStatusExtension?.cannotUpdateStatusLabel}`);
     },
   },
   created() {
@@ -451,13 +594,22 @@ export default {
           this.realizationLink = this.realization?.link || this.realization?.url;
         }
       });
+    this.statusValue = this.status === 'DELETED' || this.status === 'CANCELED' ? 'REJECTED' : this.status;
   },
   methods: {
     updateRealizationStatus(status) {
-      this.$realizationService.updateRealizationStatus(this.realization.id, status)
+      if (status === this.statusValue) {
+        return;
+      }
+      return this.$realizationService.updateRealizationStatus(this.realization.id, status)
         .then(() => {
+          this.statusValue = status;
+          const reviewer = {remoteId: eXo.env.portal.userName};
           const updatedRealization = Object.assign(this.realization, {
             status,
+            sendingDate: this.pending ? this.realization?.createdDate: null,
+            createdDate: this.pending ? new Date().toISOString() : this.realization?.createdDate,
+            reviewer
           });
           this.$emit('updated', updatedRealization);
         });
@@ -481,6 +633,13 @@ export default {
         this.$root.$emit('realization-filter-earner-remove', this.earnerId);
       } else {
         this.$root.$emit('realization-filter-earner-add', this.earner);
+      }
+    },
+    filterByReviewer() {
+      if (this.isFilteredByReviewer) {
+        this.$root.$emit('realization-filter-reviewer-remove', this.reviewerId);
+      } else {
+        this.$root.$emit('realization-filter-reviewer-add', this.reviewer);
       }
     },
     retrieveRealizationLink() {
