@@ -16,7 +16,7 @@
  */
 import BadgeApp from './BadgeApp.vue';
 
-$(document).ready(() => {
+export function init() {
   const lang = window.eXo?.env?.portal?.language;
   const url = `${window.eXo?.env?.portal?.context}/${window.eXo?.env?.portal?.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`;
 
@@ -31,9 +31,4 @@ $(document).ready(() => {
       return translation !== key && translation || defaultValue;
     };
   });
-});
-
-
-
-
-
+}
