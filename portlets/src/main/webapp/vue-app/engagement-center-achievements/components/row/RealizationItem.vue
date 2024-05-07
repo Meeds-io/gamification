@@ -199,8 +199,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <td class="text-truncate align-center">
         {{ score }}
       </td>
-      <td v-if="isAdministrator">
-        <div v-if="reviewer" class="d-flex">
+      <td v-if="isAdministrator" :class="loading ? 'align-center' : ''">
+        <v-progress-circular
+          v-if="loading"
+          indeterminate
+          color="primary"
+          size="20"
+          class="ms-3 my-auto" />
+        <div v-else-if="reviewer" class="d-flex">
           <user-avatar
             :name="reviewerFullName"
             :avatar-url="reviewerAvatarUrl"
@@ -394,7 +400,8 @@ export default {
       hour: 'numeric',
       minute: 'numeric',
     },
-    statusValue: null
+    statusValue: null,
+    loading: false
   }),
   computed: {
     rejectLabel() {
@@ -601,6 +608,7 @@ export default {
       if (status === this.statusValue) {
         return;
       }
+      this.loading = true;
       return this.$realizationService.updateRealizationStatus(this.realization.id, status)
         .then(() => {
           this.statusValue = status;
@@ -612,7 +620,7 @@ export default {
             reviewer
           });
           this.$emit('updated', updatedRealization);
-        });
+        }).finally(() => this.loading = false);
     },
     filterByProgram() {
       if (this.isFilteredByProgram) {
