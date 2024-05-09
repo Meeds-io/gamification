@@ -18,7 +18,6 @@
 
 const activityTypeExtensions = extensionRegistry.loadExtensions('activity', 'type');
 const defaultActivityOptions = activityTypeExtensions.find(extension => extension.type === 'default').options;
-defaultActivityOptions.displayLastCommentsRequiredActions.push('GamificationActionAnnouncedNotification');
 const gamificationRuleActivityOptions = Object.assign(Object.assign({}, defaultActivityOptions), {
   canDelete: () => false,
   canHide: () => true,
@@ -30,6 +29,11 @@ const gamificationAnnouncementCommentOptions = Object.assign(Object.assign({}, d
   canDelete: (activity, comment) => comment?.canDelete === 'true' && comment?.identity?.remoteId !== eXo.env.portal.userName,
   getTitle: () => '',
   getBody: () => '',
+});
+
+extensionRegistry.registerExtension('activity', 'expand-action-type', {
+  id: 'GamificationActionAnnouncedNotification',
+  rank: 35,
 });
 
 extensionRegistry.registerExtension('activity', 'type', {
