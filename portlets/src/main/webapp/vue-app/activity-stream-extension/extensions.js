@@ -22,9 +22,6 @@ const gamificationRuleActivityOptions = Object.assign(Object.assign({}, defaultA
   canDelete: () => false,
   canHide: () => true,
   canUnhide: activity => activity?.rule?.activityId === Number(activity.id),
-  displayLastComments: activity => activity?.metadatas?.unread?.length
-                                   && activity?.metadatas?.unread[0]
-                                   && activity?.metadatas?.unread[0]?.properties?.actionType === 'GamificationActionAnnouncedNotification',
   init: initRuleActivity,
 });
 
@@ -32,6 +29,11 @@ const gamificationAnnouncementCommentOptions = Object.assign(Object.assign({}, d
   canDelete: (activity, comment) => comment?.canDelete === 'true' && comment?.identity?.remoteId !== eXo.env.portal.userName,
   getTitle: () => '',
   getBody: () => '',
+});
+
+extensionRegistry.registerExtension('activity', 'expand-action-type', {
+  id: 'GamificationActionAnnouncedNotification',
+  rank: 35,
 });
 
 extensionRegistry.registerExtension('activity', 'type', {
