@@ -22,6 +22,9 @@ const gamificationRuleActivityOptions = Object.assign(Object.assign({}, defaultA
   canDelete: () => false,
   canHide: () => true,
   canUnhide: activity => activity?.rule?.activityId === Number(activity.id),
+  displayLastComments: activity => activity?.metadatas?.unread?.length
+                                   && activity?.metadatas?.unread[0]
+                                   && activity?.metadatas?.unread[0]?.properties?.actionType === 'GamificationActionAnnouncedNotification',
   init: initRuleActivity,
 });
 
