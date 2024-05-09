@@ -18,13 +18,11 @@
 
 const activityTypeExtensions = extensionRegistry.loadExtensions('activity', 'type');
 const defaultActivityOptions = activityTypeExtensions.find(extension => extension.type === 'default').options;
+defaultActivityOptions.displayLastCommentsRequiredActions.push('GamificationActionAnnouncedNotification');
 const gamificationRuleActivityOptions = Object.assign(Object.assign({}, defaultActivityOptions), {
   canDelete: () => false,
   canHide: () => true,
   canUnhide: activity => activity?.rule?.activityId === Number(activity.id),
-  displayLastComments: activity => activity?.metadatas?.unread?.length
-                                   && activity?.metadatas?.unread[0]
-                                   && activity?.metadatas?.unread[0]?.properties?.actionType === 'GamificationActionAnnouncedNotification',
   init: initRuleActivity,
 });
 
