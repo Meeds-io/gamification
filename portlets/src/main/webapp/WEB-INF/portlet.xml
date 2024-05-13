@@ -326,7 +326,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/html/createProgramButton.html</value>
+      <value>/WEB-INF/jsp/createProgramButton.jsp</value>
     </init-param>
     <supports>
       <mime-type>text/html</mime-type>
