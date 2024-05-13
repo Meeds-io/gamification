@@ -161,9 +161,9 @@ public class Utils {
 
   public static final String                        STATISTICS_REVIEWER_ID_PARAM            = "reviewerId";
 
-  public static final String                        STATISTICS_OBJECT_ID_PARAM              = "contributionObjectId";
+  public static final String                        STATISTICS_OBJECT_ID_PARAM              = "realizationObjectId";
 
-  public static final String                        STATISTICS_OBJECT_TYPE_PARAM            = "contributionObjectType";
+  public static final String                        STATISTICS_OBJECT_TYPE_PARAM            = "realizationObjectType";
 
   public static final String                        STATISTICS_STATUS_UPDATE_DURATION       = "statusUpdateDuration";
 
@@ -618,7 +618,7 @@ public class Utils {
       statisticData.addParameter(STATISTICS_RECEIVED_ID, realization.getReceiver());
       statisticData.addParameter(STATISTICS_REALIZATION_STATUS_PARAM, realization.getStatus());
       statisticData.addParameter(STATISTICS_REVIEWER_ID_PARAM, realization.getReviewerId());
-      statisticData.addParameter(STATISTICS_OBJECT_ID_PARAM, realization.getObjectId());
+      statisticData.addParameter(STATISTICS_OBJECT_ID_PARAM, "_" + realization.getObjectId());
       statisticData.addParameter(STATISTICS_OBJECT_TYPE_PARAM, realization.getObjectType());
       Date sendingDate = parseRFC3339Date(realization.getSendingDate());
       if (sendingDate != null) {
