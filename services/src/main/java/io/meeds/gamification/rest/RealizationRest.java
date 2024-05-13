@@ -9,8 +9,11 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
+
+import io.meeds.gamification.constant.PeriodType;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -261,26 +264,22 @@ public class RealizationRest implements ResourceContainer {
                                        @QueryParam("period")
                                        @DefaultValue("WEEK")
                                        String period) {
+    Set<String> validPeriods = Set.of(PeriodType.WEEK.name(), PeriodType.MONTH.name(), PeriodType.YEAR.name());
     if (StringUtils.isBlank(userId)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("missingUserIdParameter").build();
-    } else if (!StringUtils.equalsIgnoreCase("WEEK", period) && !StringUtils.equalsIgnoreCase("MONTH", period)) {
+    } else if (!validPeriods.contains(StringUtils.upperCase(period))) {
       return Response.status(Response.Status.BAD_REQUEST).entity("badPeriodParameterValue").build();
     }
-    org.exoplatform.social.core.identity.model.Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId);
+    org.exoplatform.social.core.identity.model.Identity identity =
+                                                                 identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                                                     userId);
     long points;
     if (period == null || StringUtils.equalsIgnoreCase(Period.ALL.name(), period)) {
       points = realizationService.getScoreByIdentityId(identity.getId());
     } else {
-      Date fromDate = StringUtils.equalsIgnoreCase("WEEK", period)
-                                                                   ? Date.from(LocalDate.now()
-                                                                                        .with(DayOfWeek.MONDAY)
-                                                                                        .atStartOfDay(ZoneId.systemDefault())
-                                                                                        .toInstant())
-                                                                   : Date.from(LocalDate.now()
-                                                                                        .with(TemporalAdjusters.firstDayOfMonth())
-                                                                                        .atStartOfDay(ZoneId.systemDefault())
-                                                                                        .toInstant());
-      Date toDate = Date.from(Instant.now());
+      PeriodType periodType = PeriodType.valueOf(period);
+      Date fromDate = periodType.getFromDate();
+      Date toDate = periodType.getToDate();
       points = realizationService.getScoreByIdentityIdAndBetweenDates(identity.getId(), fromDate, toDate);
     }
     return Response.ok(String.valueOf(points)).build();
