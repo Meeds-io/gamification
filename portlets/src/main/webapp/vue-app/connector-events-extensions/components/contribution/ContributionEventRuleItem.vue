@@ -23,7 +23,7 @@
         background-color="transparent"
         left
         dark>
-        <rule-icon :rule-event="ruleEvent" size="24"/>
+        <rule-icon :rule-event="ruleEvent" size="24" />
       </v-avatar>
     </v-list-item-icon>
     <v-list-item-content>

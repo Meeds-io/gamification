@@ -25,13 +25,17 @@ const urls = [
 ];
 const appId = 'createProgramButton';
 
-export function init() {
-  exoi18n.loadLanguageAsync(lang, urls)
-    .then(i18n => {
-      Vue.createApp({
-        template: `<gamification-overview-create-program id="${appId}" />`,
-        i18n,
-        vuetify: Vue.prototype.vuetifyOptions,
-      }, `#${appId}`, 'Create Program');
-    });
+export function init(canManagePrograms) {
+  if (canManagePrograms) {
+    exoi18n.loadLanguageAsync(lang, urls)
+      .then(i18n => {
+        Vue.createApp({
+          template: `<gamification-overview-create-program id="${appId}" />`,
+          i18n,
+          vuetify: Vue.prototype.vuetifyOptions,
+        }, `#${appId}`, 'Create Program');
+      });
+  } else {
+    Vue.prototype.$updateApplicationVisibility(false, document.querySelector(`#${appId}`));
+  }
 }
