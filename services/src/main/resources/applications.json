@@ -1,0 +1,24 @@
+{
+    "descriptors": [
+        {
+            "name": "Contributions",
+            "imagePath": "war:/../skin/images/contributionCenterIcon.webp",
+            "overrideMode": "merge",
+            "override": false,
+            "enabled": true,
+            "application": {
+                "title": "Contributions",
+                "description": "Contributions application",
+                "url": "./contributions",
+                "system": false,
+                "active": true,
+                "isMandatory": true,
+                "isMobile": true,
+                "permissions": [
+                    "*:/platform/users",
+                    "*:/platform/externals"
+                ]
+            }
+        }
+    ]
+}
