@@ -137,6 +137,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 @filter-changed="updateFilter" />
               <v-list-item-subtitle class="text-color pt-4">
                 <v-data-table
+                  :loading="loadingRules"
                   :headers="rulesHeaders"
                   :items="programRulesToDisplay"
                   :options.sync="options"
@@ -321,13 +322,6 @@ export default {
     options() {
       this.retrieveProgramRules();
     },
-    loadingRules() {
-      if (this.loadingRules) {
-        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
-      } else {
-        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
-      }
-    },
     keyword() {
       if (!this.keyword) {
         this.retrieveProgramRules();
@@ -391,6 +385,10 @@ export default {
       }
     },
     updateFilter(status, dateFilter) {
+      if (status !== this.status
+          || dateFilter !== this.dateFilter) {
+        this.programRules = [];
+      }
       this.status = status;
       this.dateFilter = dateFilter;
       this.retrieveProgramRules();
