@@ -40,12 +40,12 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -266,9 +266,11 @@ public class RuleRest implements ResourceContainer {
     List<String> expandFields = getExpandOptions(expand);
 
     try {
+      ResponseBuilder responseBuilder = Response.status(200);
       if (!groupByProgram || programId > 0) {
         RuleList ruleList = new RuleList();
-        List<RuleRestEntity> ruleEntities = getRules(ruleFilter,
+        List<RuleRestEntity> ruleEntities = getRules(responseBuilder,
+                                                     ruleFilter,
                                                      periodType,
                                                      locale,
                                                      expandFields,
@@ -283,7 +285,7 @@ public class RuleRest implements ResourceContainer {
         if (returnSize) {
           ruleList.setSize(ruleService.countRules(ruleFilter, currentUser));
         }
-        return Response.ok(ruleList).build();
+        return responseBuilder.entity(ruleList).build();
       } else {
         ProgramFilter programFilter = new ProgramFilter();
         programFilter.setStatus(programStatus);
@@ -292,7 +294,8 @@ public class RuleRest implements ResourceContainer {
         for (ProgramDTO program : programs) {
           ProgramWithRulesRestEntity programWithRule = new ProgramWithRulesRestEntity(program);
           ruleFilter.setProgramId(program.getId());
-          List<RuleRestEntity> ruleEntities = getRules(ruleFilter,
+          List<RuleRestEntity> ruleEntities = getRules(responseBuilder,
+                                                       ruleFilter,
                                                        periodType,
                                                        locale,
                                                        expandFields,
@@ -309,7 +312,7 @@ public class RuleRest implements ResourceContainer {
           }
           programsWithRules.add(programWithRule);
         }
-        return Response.ok(programsWithRules).build();
+        return responseBuilder.entity(programsWithRules).build();
       }
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
@@ -483,7 +486,8 @@ public class RuleRest implements ResourceContainer {
     return expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
   }
 
-  private List<RuleRestEntity> getRules(RuleFilter filter, // NOSONAR
+  private List<RuleRestEntity> getRules(ResponseBuilder responseBuilder, // NOSONAR
+                                        RuleFilter filter,
                                         PeriodType periodType,
                                         Locale locale,
                                         List<String> expandFields,
@@ -492,25 +496,44 @@ public class RuleRest implements ResourceContainer {
                                         int limit,
                                         int realizationsLimit,
                                         boolean noProgram) {
+    List<String> times = new ArrayList<>();
+    long startTime = System.currentTimeMillis();
+
     List<RuleDTO> rules = ruleService.getRules(filter, username, offset, limit);
-    return rules.stream()
-                .map(rule -> RuleBuilder.toRestEntity(programService,
-                                                      ruleService,
-                                                      realizationService,
-                                                      translationService,
-                                                      favoriteService,
-                                                      identityManager,
-                                                      activityManager,
-                                                      xmlProcessor,
-                                                      userAcl,
-                                                      rule,
-                                                      locale,
-                                                      expandFields,
-                                                      realizationsLimit,
-                                                      noProgram,
-                                                      isAnonymous(),
-                                                      periodType))
-                .toList();
+
+    times.add("list;dur=" + (System.currentTimeMillis() - startTime));
+    startTime = System.currentTimeMillis();
+
+    try {
+      return rules.stream()
+                  .map(rule -> {
+                    long mapStartTime = System.currentTimeMillis();
+                    try {
+                      return RuleBuilder.toRestEntity(programService,
+                                               ruleService,
+                                               realizationService,
+                                               translationService,
+                                               favoriteService,
+                                               identityManager,
+                                               activityManager,
+                                               xmlProcessor,
+                                               userAcl,
+                                               rule,
+                                               locale,
+                                               expandFields,
+                                               realizationsLimit,
+                                               noProgram,
+                                               isAnonymous(),
+                                               periodType);
+                    } finally {
+                      times.add("rule-mapping-" + rule.getId() + ";dur=" + (System.currentTimeMillis() - mapStartTime));
+                    }
+                  })
+                  .toList();
+    } finally {
+      times.add("all-rules-mappings;dur=" + (System.currentTimeMillis() - startTime));
+      responseBuilder.header("Server-Timing", StringUtils.join(times, ","));
+    }
   }
 
   private RuleRestEntity toRestEntity(RuleDTO rule, Locale locale) {
