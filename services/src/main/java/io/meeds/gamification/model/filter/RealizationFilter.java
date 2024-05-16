@@ -54,7 +54,7 @@ public class RealizationFilter implements Serializable {
 
   private List<Long>        ruleIds;
 
-  private List<Long>      reviewerIds;
+  private List<Long>        reviewerIds;
 
   private boolean           allPrograms;
 

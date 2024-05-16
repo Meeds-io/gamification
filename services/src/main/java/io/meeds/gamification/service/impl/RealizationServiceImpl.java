@@ -1,7 +1,6 @@
 package io.meeds.gamification.service.impl;
 
 import static io.meeds.gamification.constant.GamificationConstant.*;
-import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
 import static io.meeds.gamification.utils.Utils.*;
 import static java.util.Date.from;
 
