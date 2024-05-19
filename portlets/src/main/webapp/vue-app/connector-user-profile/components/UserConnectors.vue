@@ -21,8 +21,7 @@
 <template>
   <v-app
     v-if="displayed"
-    v-show="!loading"
-    class="white">
+    v-show="!loading">
     <widget-wrapper :title="title">
       <v-list v-if="!loading" class="pa-0">
         <v-list-item v-if="notConnectedYet" class="pa-0">
