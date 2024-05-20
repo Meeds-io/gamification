@@ -20,7 +20,7 @@
     v-if="image"
     :src="image"
     :alt="ruleEvent"
-    width="28">
+    :width="size">
   <v-icon
     v-else
     :size="size"
