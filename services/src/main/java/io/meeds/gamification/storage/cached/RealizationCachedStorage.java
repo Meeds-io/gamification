@@ -17,6 +17,8 @@
  */
 package io.meeds.gamification.storage.cached;
 
+import java.io.Serializable;
+
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.services.cache.CacheService;
@@ -30,9 +32,13 @@ import io.meeds.gamification.storage.RuleStorage;
 
 public class RealizationCachedStorage extends RealizationStorage {
 
-  private static final String                REALIZATION_CACHE_NAME = "gamification.realization";
+  public static final String                           REALIZATION_CACHE_NAME    = "gamification.realization";
 
-  private FutureExoCache<Long, Long, Object> realizationFutureCache;
+  public static final int                              REALIZATION_ID_CONTEXT    = 0;
+
+  public static final int                              REALIZATION_SCORE_CONTEXT = 1;
+
+  private FutureExoCache<Serializable, Object, Object> realizationFutureCache;
 
   public RealizationCachedStorage(ProgramStorage programStorage,
                                   RuleStorage ruleStorage,
@@ -40,11 +46,17 @@ public class RealizationCachedStorage extends RealizationStorage {
                                   CacheService cacheService) {
     super(programStorage, ruleStorage, gamificationHistoryDAO);
 
-    ExoCache<Long, Long> realizationCache = cacheService.getCacheInstance(REALIZATION_CACHE_NAME);
-    Loader<Long, Long, Object> realizationLoader = new Loader<Long, Long, Object>() {
+    ExoCache<Serializable, Object> realizationCache = cacheService.getCacheInstance(REALIZATION_CACHE_NAME);
+    Loader<Serializable, Object, Object> realizationLoader = new Loader<>() {
       @Override
-      public Long retrieve(Object context, Long identityId) throws Exception {
-        return RealizationCachedStorage.super.getScoreByIdentityId(identityId.toString());
+      public Object retrieve(Object context, Serializable key) throws Exception {
+        if (((int) context) == REALIZATION_SCORE_CONTEXT) {
+          return RealizationCachedStorage.super.getScoreByIdentityId((String) key);
+        } else if (((int) context) == REALIZATION_ID_CONTEXT) {
+          return RealizationCachedStorage.super.getRealizationById((long) key);
+        } else {
+          throw new IllegalStateException("Unknown context id " + context);
+        }
       }
     };
     this.realizationFutureCache = new FutureExoCache<>(realizationLoader, realizationCache);
@@ -52,14 +64,20 @@ public class RealizationCachedStorage extends RealizationStorage {
 
   @Override
   public long getScoreByIdentityId(String earnerIdentityId) {
-    return this.realizationFutureCache.get(null, Long.parseLong(earnerIdentityId));
+    return (long) this.realizationFutureCache.get(REALIZATION_SCORE_CONTEXT, earnerIdentityId);
+  }
+
+  @Override
+  public RealizationDTO getRealizationById(long id) {
+    return (RealizationDTO) this.realizationFutureCache.get(REALIZATION_ID_CONTEXT, id);
   }
 
   @Override
   public RealizationDTO updateRealization(RealizationDTO realization) {
     realization = super.updateRealization(realization);
     if (realization != null) {
-      this.realizationFutureCache.remove(Long.parseLong(realization.getEarnerId()));
+      this.realizationFutureCache.remove(realization.getEarnerId());
+      this.realizationFutureCache.remove(realization.getId());
     }
     return realization;
   }
@@ -68,7 +86,7 @@ public class RealizationCachedStorage extends RealizationStorage {
   public RealizationDTO createRealization(RealizationDTO realization) {
     realization = super.createRealization(realization);
     if (realization != null) {
-      this.realizationFutureCache.remove(Long.parseLong(realization.getEarnerId()));
+      this.realizationFutureCache.remove(realization.getEarnerId());
     }
     return realization;
   }
