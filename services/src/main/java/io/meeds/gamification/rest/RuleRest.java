@@ -510,21 +510,21 @@ public class RuleRest implements ResourceContainer {
                     long mapStartTime = System.currentTimeMillis();
                     try {
                       return RuleBuilder.toRestEntity(programService,
-                                               ruleService,
-                                               realizationService,
-                                               translationService,
-                                               favoriteService,
-                                               identityManager,
-                                               activityManager,
-                                               xmlProcessor,
-                                               userAcl,
-                                               rule,
-                                               locale,
-                                               expandFields,
-                                               realizationsLimit,
-                                               noProgram,
-                                               isAnonymous(),
-                                               periodType);
+                                                      ruleService,
+                                                      realizationService,
+                                                      translationService,
+                                                      favoriteService,
+                                                      identityManager,
+                                                      activityManager,
+                                                      xmlProcessor,
+                                                      userAcl,
+                                                      rule,
+                                                      locale,
+                                                      expandFields,
+                                                      realizationsLimit,
+                                                      noProgram,
+                                                      isAnonymous(),
+                                                      periodType);
                     } finally {
                       times.add("rule-mapping-" + rule.getId() + ";dur=" + (System.currentTimeMillis() - mapStartTime));
                     }

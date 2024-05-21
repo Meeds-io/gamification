@@ -47,6 +47,7 @@ import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.rest.impl.ApplicationContextImpl;
 import org.exoplatform.services.rest.impl.ContainerResponse;
@@ -76,6 +77,9 @@ import io.meeds.gamification.search.RuleIndexingServiceConnector;
 import io.meeds.gamification.storage.ProgramStorage;
 import io.meeds.gamification.storage.RealizationStorage;
 import io.meeds.gamification.storage.RuleStorage;
+import io.meeds.gamification.storage.cached.ProgramCachedStorage;
+import io.meeds.gamification.storage.cached.RealizationCachedStorage;
+import io.meeds.gamification.storage.cached.RuleCachedStorage;
 import io.meeds.gamification.utils.Utils;
 import io.meeds.portal.security.constant.UserRegistrationType;
 import io.meeds.portal.security.service.SecuritySettingService;
@@ -270,6 +274,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providerBinder, null));
     launcher = new ResourceLauncher(requestHandler);
     resetUserSession();
+    CacheService cacheService = ExoContainerContext.getService(CacheService.class);
+    cacheService.getCacheInstance(RuleCachedStorage.RULE_CACHE_NAME);
+    cacheService.getCacheInstance(RealizationCachedStorage.REALIZATION_CACHE_NAME);
+    cacheService.getCacheInstance(ProgramCachedStorage.PROGRAM_CACHE_NAME);
     begin();
   }
 
