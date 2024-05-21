@@ -190,7 +190,7 @@ import lombok.EqualsAndHashCode;
 )
 @NamedQuery(
   name = "RealizationEntity.findReadlizationsByRuleIdAndEarnerIdAndReceiverAndObjectId",
-  query = "SELECT g FROM RealizationEntity g" +
+  query = "SELECT g.id FROM RealizationEntity g" +
     " WHERE g.ruleEntity.id = :ruleId" +
     " AND g.earnerId = :earnerId" +
     " AND g.receiver = :receiverId" +
@@ -201,7 +201,7 @@ import lombok.EqualsAndHashCode;
 )
 @NamedQuery(
   name = "RealizationEntity.getRealizationsByObjectIdAndObjectType",
-  query = "SELECT g FROM RealizationEntity g" +
+  query = "SELECT g.id FROM RealizationEntity g" +
     " WHERE g.objectId = :objectId" +
     " AND g.objectType = :objectType"
 )
