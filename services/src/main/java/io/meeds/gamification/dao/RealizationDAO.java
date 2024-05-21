@@ -289,14 +289,14 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public RealizationEntity findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(long ruleId,
+  public Long findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(long ruleId,
                                                                                          String earnerId,
                                                                                          String receiverId,
                                                                                          String objectId,
                                                                                          String objectType) {
-    TypedQuery<RealizationEntity> query =
+    TypedQuery<Long> query =
                                         getEntityManager().createNamedQuery("RealizationEntity.findReadlizationsByRuleIdAndEarnerIdAndReceiverAndObjectId",
-                                                                            RealizationEntity.class);
+                                                                            Long.class);
     query.setParameter(RULE_ID_PARAM_NAME, ruleId)
          .setParameter(EARNER_ID_PARAM_NAME, earnerId)
          .setParameter(RECEIVER_ID_PARAM_NAME, receiverId)
@@ -305,18 +305,16 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     query.setMaxResults(1);
 
-    List<RealizationEntity> resultList = query.getResultList();
+    List<Long> resultList = query.getResultList();
     return CollectionUtils.isEmpty(resultList) ? null : resultList.get(0);
   }
 
-  public List<RealizationEntity> getRealizationsByObjectIdAndObjectType(String objectId, String objectType) {
-    TypedQuery<RealizationEntity> query =
-                                        getEntityManager().createNamedQuery("RealizationEntity.getRealizationsByObjectIdAndObjectType",
-                                                                            RealizationEntity.class);
+  public List<Long> getRealizationsByObjectIdAndObjectType(String objectId, String objectType) {
+    TypedQuery<Tuple> query = getEntityManager().createNamedQuery("RealizationEntity.getRealizationsByObjectIdAndObjectType", Tuple.class);
     query.setParameter(OBJECT_ID_PARAM_NAME, objectId);
     query.setParameter(OBJECT_TYPE_PARAM_NAME, objectType);
     try {
-      return query.getResultList();
+      return query.getResultList().stream().map(t -> t.get(0, Long.class)).toList();
     } catch (NoResultException e) {
       return Collections.emptyList();
     }
@@ -330,15 +328,15 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
    * @param limit : how many realizations we should load from DB
    * @return a list of object of type {@link RealizationEntity}
    */
-  public List<RealizationEntity> findRealizationsByFilter(RealizationFilter realizationFilter, int offset, int limit) {
-    TypedQuery<RealizationEntity> query = buildQueryFromFilter(realizationFilter, RealizationEntity.class, false);
+  public List<Long> findRealizationsByFilter(RealizationFilter realizationFilter, int offset, int limit) {
+    TypedQuery<Tuple> query = buildQueryFromFilter(realizationFilter, Tuple.class, false);
     if (limit > 0) {
       query.setMaxResults(limit);
     }
     if (offset > 0) {
       query.setFirstResult(offset);
     }
-    return query.getResultList();
+    return query.getResultList().stream().map(t -> t.get(0, Long.class)).toList();
   }
 
   public int countRealizationsByFilter(RealizationFilter filter) {
@@ -412,7 +410,8 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   }
 
   private String getQueryFilterContent(RealizationFilter filter, List<String> predicates, boolean count) {
-    String querySelect = count ? "SELECT COUNT(g) FROM RealizationEntity g " : "SELECT DISTINCT g FROM RealizationEntity g ";
+    String querySelect = count ? "SELECT COUNT(g) FROM RealizationEntity g " :
+                               "SELECT DISTINCT g.id, g." + getSortRealizationField(filter) + " FROM RealizationEntity g ";
     String queryContent;
     if (predicates.isEmpty()) {
       queryContent = querySelect;
@@ -455,6 +454,19 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     if (filter.getStatus() != null) {
       query.setParameter(STATUS_PARAM_NAME, filter.getStatus());
     }
+  }
+
+  private String getSortRealizationField(RealizationFilter filter) {
+    if (StringUtils.isBlank(filter.getSortField()) || StringUtils.equals(DATE_PARAM_NAME, filter.getSortField())) {
+      return "createdDate";
+    }
+    return switch (filter.getSortField()) {
+    case STATUS_PARAM_NAME, "type", EARNER_ID_PARAM_NAME, "receiver", OBJECT_ID_PARAM_NAME, OBJECT_TYPE_PARAM_NAME, EARNER_TYPE_PARAM_NAME, "actionScore", "globalScore", DATE_PARAM_NAME: {
+      yield filter.getSortField();
+    }
+    default:
+      throw new IllegalArgumentException("Unexpected Sort Field value: " + filter.getSortField());
+    };
   }
 
   private String getSortField(RealizationFilter filter) {

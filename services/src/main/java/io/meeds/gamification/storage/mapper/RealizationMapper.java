@@ -1,11 +1,6 @@
 package io.meeds.gamification.storage.mapper;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
 
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.RealizationStatus;
@@ -57,14 +52,6 @@ public class RealizationMapper {
                               realizationEntity.getStatus().name(),
                               realizationEntity.getType(),
                               realizationEntity.getReviewerId());
-  }
-
-  public static List<RealizationDTO> fromEntities(ProgramStorage programStorage, List<RealizationEntity> realizationEntities) {
-    if (CollectionUtils.isEmpty(realizationEntities)) {
-      return new ArrayList<>(Collections.emptyList());
-    } else {
-      return realizationEntities.stream().map(entity -> fromEntity(programStorage, entity)).toList();
-    }
   }
 
   public static RealizationEntity toEntity(RuleStorage ruleStorage, RealizationDTO realization) {
