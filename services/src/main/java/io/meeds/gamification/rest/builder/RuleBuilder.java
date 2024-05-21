@@ -102,8 +102,8 @@ public class RuleBuilder {
     boolean hasPendingRealization = false;
     if (countRealizations && realizationService != null) {
       hasPendingRealization = hasPendingRealization(realizationService,
-              rule.getId(),
-              String.valueOf(Utils.getCurrentUserIdentityId()));
+                                                    rule.getId(),
+                                                    String.valueOf(Utils.getCurrentUserIdentityId()));
     }
     boolean isFavorite = !anonymous
                          && expandFields != null

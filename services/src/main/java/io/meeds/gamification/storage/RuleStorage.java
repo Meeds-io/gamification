@@ -100,4 +100,8 @@ public class RuleStorage {
     // implemented in cached storage
   }
 
+  public void clearListCache() {
+    // implemented in cached storage
+  }
+
 }
