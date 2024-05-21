@@ -17,10 +17,13 @@
  */
 package io.meeds.gamification.storage.cached;
 
+import static io.meeds.gamification.storage.cached.RuleCachedStorage.RULES_BY_FILTER_CONTEXT;
+import static io.meeds.gamification.storage.cached.RuleCachedStorage.RULES_COUNT_BY_FILTER_CONTEXT;
 import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,7 +37,9 @@ import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.RootContainer.PortalContainerPostCreateTask;
 import org.exoplatform.services.cache.CacheService;
+import org.exoplatform.services.cache.CachedObjectSelector;
 import org.exoplatform.services.cache.ExoCache;
+import org.exoplatform.services.cache.ObjectCacheInfo;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.listener.ListenerService;
@@ -50,6 +55,7 @@ import io.meeds.gamification.dao.ProgramDAO;
 import io.meeds.gamification.dao.RuleDAO;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.storage.ProgramStorage;
+import io.meeds.gamification.storage.cached.model.CacheKey;
 import io.meeds.gamification.utils.Utils;
 
 import jakarta.servlet.ServletContext;
@@ -57,13 +63,15 @@ import lombok.SneakyThrows;
 
 public class ProgramCachedStorage extends ProgramStorage {
 
-  private static final String                       PROGRAM_CACHE_NAME = "gamification.domain";
+  public static final String                        PROGRAM_CACHE_NAME = "gamification.domain";
 
   private FutureExoCache<Long, ProgramDTO, Object>  programFutureCache;
 
   private FutureCache<Object, List<String>, Object> administratorsRetrivalTask;
 
   private List<String>                              administrators;
+
+  private ExoCache<Serializable, Object>            ruleCache;
 
   public ProgramCachedStorage(FileService fileService, // NOSONAR
                               UploadService uploadService,
@@ -74,6 +82,7 @@ public class ProgramCachedStorage extends ProgramStorage {
                               OrganizationService organizationService,
                               PortalContainer container) {
     super(fileService, uploadService, programDAO, ruleDAO, organizationService);
+    this.ruleCache = cacheService.getCacheInstance(RuleCachedStorage.RULE_CACHE_NAME);
     ExoCache<Long, ProgramDTO> programCache = cacheService.getCacheInstance(PROGRAM_CACHE_NAME);
     Loader<Long, ProgramDTO, Object> programLoader = new Loader<>() {
       @Override
@@ -160,6 +169,7 @@ public class ProgramCachedStorage extends ProgramStorage {
   @Override
   public void clearCache() {
     programFutureCache.clear();
+    clearRulesListCache();
   }
 
   @ContainerTransactional
@@ -216,6 +226,28 @@ public class ProgramCachedStorage extends ProgramStorage {
       }
     }
 
+  }
+
+  public void clearRulesListCache() {
+    try {
+      this.ruleCache.select(new CachedObjectSelector<>() {
+        @Override
+        public boolean select(Serializable key, ObjectCacheInfo<? extends Object> ocinfo) {
+          return key instanceof CacheKey cacheKey
+                 && (cacheKey.getContext() == RULES_BY_FILTER_CONTEXT
+                     || cacheKey.getContext() == RULES_COUNT_BY_FILTER_CONTEXT);
+        }
+
+        @Override
+        public void onSelect(ExoCache<? extends Serializable, ? extends Object> cache,
+                             Serializable key,
+                             ObjectCacheInfo<? extends Object> ocinfo) throws Exception {
+          cache.remove(key);
+        }
+      });
+    } catch (Exception e) {
+      this.ruleCache.clearCache();
+    }
   }
 
 }
