@@ -339,45 +339,37 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setEarnerType(IdentityType.getType(""));
     dateFilter.setProgramIds(domainIds);
-    List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
-    assertNotNull(result);
-    assertEquals(2, result.size());
+    List<Long> ids = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
+    assertNotNull(ids);
+    assertEquals(2, ids.size());
     assertEquals(Arrays.asList(histories.get(6).getId(), histories.get(3).getId()),
-                 result.stream()
-                       .map(RealizationEntity::getId)
-                       .toList());
+                 ids);
 
-    result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 4);
-    assertNotNull(result);
-    assertEquals(4, result.size());
+    ids = realizationDAO.findRealizationsByFilter(dateFilter, 0, 4);
+    assertNotNull(ids);
+    assertEquals(4, ids.size());
     assertEquals(Arrays.asList(histories.get(6).getId(),
                                histories.get(3).getId(),
                                histories.get(1).getId(),
                                histories.get(5).getId()),
-                 result.stream()
-                       .map(RealizationEntity::getId)
-                       .toList());
+                 ids);
 
     dateFilter.setSortDescending(false);
-    result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
-    assertNotNull(result);
-    assertEquals(2, result.size());
+    ids = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
+    assertNotNull(ids);
+    assertEquals(2, ids.size());
     assertEquals(Arrays.asList(histories.get(5).getId(), histories.get(4).getId()),
-                 result.stream()
-                       .map(RealizationEntity::getId)
-                       .toList());
+                 ids);
 
-    result = realizationDAO.findRealizationsByFilter(dateFilter, 2, 6);
-    assertNotNull(result);
-    assertEquals(5, result.size());
+    ids = realizationDAO.findRealizationsByFilter(dateFilter, 2, 6);
+    assertNotNull(ids);
+    assertEquals(5, ids.size());
     assertEquals(Arrays.asList(histories.get(2).getId(),
                                histories.get(0).getId(),
                                histories.get(6).getId(),
                                histories.get(3).getId(),
                                histories.get(1).getId()),
-                 result.stream()
-                       .map(RealizationEntity::getId)
-                       .toList());
+                 ids);
   }
 
   @Test
@@ -392,9 +384,9 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     dateFilter.setEarnerType(IdentityType.getType(""));
     dateFilter.setProgramIds(domainIds);
     // Test default Sort field = 'date' with sort descending = false
-    List<RealizationEntity> filteredRealizations = realizationDAO.findRealizationsByFilter(dateFilter,
-                                                                                           OFFSET,
-                                                                                           LIMIT);
+    List<Long> filteredRealizations = realizationDAO.findRealizationsByFilter(dateFilter,
+                                                                              OFFSET,
+                                                                              LIMIT);
     assertEquals(0, filteredRealizations.size());
 
     List<RealizationEntity> createdActionHistories = new ArrayList<>();
@@ -410,9 +402,7 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
                                        .stream()
                                        .map(RealizationEntity::getId)
                                        .toList(),
-                 filteredRealizations.stream()
-                                     .map(RealizationEntity::getId)
-                                     .toList());
+                 filteredRealizations);
 
     // Test explicit Sort field = 'date' with sort descending = false
     dateFilter.setSortField("date");
@@ -423,9 +413,7 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
                                        .stream()
                                        .map(RealizationEntity::getId)
                                        .toList(),
-                 filteredRealizations.stream()
-                                     .map(RealizationEntity::getId)
-                                     .toList());
+                 filteredRealizations);
 
     // Test explicit Sort field = 'date' with sort descending = true
     dateFilter.setSortField("date");
@@ -437,9 +425,7 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
                                        .stream()
                                        .map(RealizationEntity::getId)
                                        .toList(),
-                 filteredRealizations.stream()
-                                     .map(RealizationEntity::getId)
-                                     .toList());
+                 filteredRealizations);
   }
 
   @Test
@@ -474,49 +460,53 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     dateFilter.setSortDescending(true);
     dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setEarnerType(IdentityType.getType(""));
-    List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
-    assertNotNull(result);
-    assertEquals(2, result.size());
+    List<Long> ids = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
+    assertNotNull(ids);
+    assertEquals(2, ids.size());
     assertEquals(Arrays.asList(histories.get(3).getId(), histories.get(1).getId()),
-                 result.stream().map(RealizationEntity::getId).toList());
-    assertTrue(result.stream()
-                     .map(RealizationEntity::getCreatedDate)
-                     .map(this::isThisDateWithinThisRange)
-                     .reduce(true, Boolean::logicalAnd));
+                 ids);
+    assertTrue(ids.stream()
+                  .map(realizationDAO::find)
+                  .map(RealizationEntity::getCreatedDate)
+                  .map(this::isThisDateWithinThisRange)
+                  .reduce(true, Boolean::logicalAnd));
 
-    result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 3);
-    assertNotNull(result);
-    assertEquals(3, result.size());
+    ids = realizationDAO.findRealizationsByFilter(dateFilter, 0, 3);
+    assertNotNull(ids);
+    assertEquals(3, ids.size());
     assertEquals(Arrays.asList(histories.get(3).getId(), histories.get(1).getId(), histories.get(5).getId()),
-                 result.stream().map(RealizationEntity::getId).toList());
-    assertTrue(result.stream()
-                     .map(RealizationEntity::getCreatedDate)
-                     .map(this::isThisDateWithinThisRange)
-                     .reduce(true, Boolean::logicalAnd));
+                 ids);
+    assertTrue(ids.stream()
+                  .map(realizationDAO::find)
+                  .map(RealizationEntity::getCreatedDate)
+                  .map(this::isThisDateWithinThisRange)
+                  .reduce(true, Boolean::logicalAnd));
 
     dateFilter.setSortDescending(false);
-    result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
-    assertNotNull(result);
-    assertEquals(2, result.size());
+    ids = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
+    assertNotNull(ids);
+    assertEquals(2, ids.size());
     assertEquals(Arrays.asList(histories.get(5).getId(), histories.get(4).getId()),
-                 result.stream().map(RealizationEntity::getId).toList());
-    assertTrue(result.stream()
-                     .map(RealizationEntity::getCreatedDate)
-                     .map(this::isThisDateWithinThisRange)
-                     .reduce(true, Boolean::logicalAnd));
+                 ids);
+    assertTrue(ids.stream()
+                  .map(realizationDAO::find)
+                  .map(RealizationEntity::getCreatedDate)
+                  .map(this::isThisDateWithinThisRange)
+                  .reduce(true, Boolean::logicalAnd));
 
-    result = realizationDAO.findRealizationsByFilter(dateFilter, 2, 6);
-    assertNotNull(result);
-    assertEquals(4, result.size());
+    ids = realizationDAO.findRealizationsByFilter(dateFilter, 2, 6);
+    assertNotNull(ids);
+    assertEquals(4, ids.size());
     assertEquals(Arrays.asList(histories.get(2).getId(),
                                histories.get(0).getId(),
                                histories.get(3).getId(),
                                histories.get(1).getId()),
-                 result.stream().map(RealizationEntity::getId).toList());
-    assertTrue(result.stream()
-                     .map(RealizationEntity::getCreatedDate)
-                     .map(this::isThisDateWithinThisRange)
-                     .reduce(true, Boolean::logicalAnd));
+                 ids);
+    assertTrue(ids.stream()
+                  .map(realizationDAO::find)
+                  .map(RealizationEntity::getCreatedDate)
+                  .map(this::isThisDateWithinThisRange)
+                  .reduce(true, Boolean::logicalAnd));
   }
 
   @Test
@@ -535,42 +525,34 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     dateFilter.setSortDescending(true);
     dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setEarnerType(IdentityType.getType(""));
-    List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
-    assertNotNull(result);
-    assertEquals(2, result.size());
+    List<Long> ids = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
+    assertNotNull(ids);
+    assertEquals(2, ids.size());
     assertEquals(Arrays.asList(histories.get(1).getId(), histories.get(2).getId()),
-                 result.stream()
-                       .map(RealizationEntity::getId)
-                       .toList());
+                 ids);
 
-    result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 3);
-    assertNotNull(result);
-    assertEquals(3, result.size());
+    ids = realizationDAO.findRealizationsByFilter(dateFilter, 0, 3);
+    assertNotNull(ids);
+    assertEquals(3, ids.size());
     assertEquals(Arrays.asList(histories.get(1).getId(),
                                histories.get(2).getId(),
                                histories.get(0).getId()),
-                 result.stream()
-                       .map(RealizationEntity::getId)
-                       .toList());
+                 ids);
 
     dateFilter.setSortDescending(false);
-    result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
-    assertNotNull(result);
-    assertEquals(2, result.size());
+    ids = realizationDAO.findRealizationsByFilter(dateFilter, 0, 2);
+    assertNotNull(ids);
+    assertEquals(2, ids.size());
     assertEquals(Arrays.asList(histories.get(2).getId(), histories.get(0).getId()),
-                 result.stream()
-                       .map(RealizationEntity::getId)
-                       .toList());
+                 ids);
 
-    result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 3);
-    assertNotNull(result);
-    assertEquals(3, result.size());
+    ids = realizationDAO.findRealizationsByFilter(dateFilter, 0, 3);
+    assertNotNull(ids);
+    assertEquals(3, ids.size());
     assertEquals(Arrays.asList(histories.get(2).getId(),
                                histories.get(0).getId(),
                                histories.get(1).getId()),
-                 result.stream()
-                       .map(RealizationEntity::getId)
-                       .toList());
+                 ids);
   }
 
   @Test
@@ -597,21 +579,21 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     dateFilter.setSortDescending(true);
     dateFilter.setEarnerType(IdentityType.getType(""));
 
-    List<RealizationEntity> result1 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    List<Long> result1 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result1);
     assertEquals(6, result1.size());
 
     // Test get All Realizations when a simple user calls, Sort field =
     // 'actionType' with sort descending = false
     dateFilter.setEarnerIds(new ArrayList<>(Collections.singleton("2")));
-    List<RealizationEntity> result3 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    List<Long> result3 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result3);
     assertEquals(1, result3.size());
 
     // Test get All Realizations when a simple user calls, Sort field =
     // 'actionType' with sort descending = true
     dateFilter.setSortDescending(true);
-    List<RealizationEntity> result4 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    List<Long> result4 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result4);
     assertEquals(1, result4.size());
 
@@ -620,7 +602,7 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     dateFilter.setSortField("date");
     dateFilter.setSortDescending(false);
     dateFilter.setEarnerIds(new ArrayList<>(Collections.singleton("2")));
-    List<RealizationEntity> result7 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    List<Long> result7 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result7);
     assertEquals(1, result7.size());
 
@@ -628,7 +610,7 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     // with sort descending = true
     dateFilter.setSortField("date");
     dateFilter.setSortDescending(true);
-    List<RealizationEntity> result8 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    List<Long> result8 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result8);
     assertEquals(1, result8.size());
 
@@ -637,7 +619,7 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     dateFilter.setSortField("status");
     dateFilter.setSortDescending(false);
     dateFilter.setEarnerIds(new ArrayList<>(Collections.singleton("2")));
-    List<RealizationEntity> result9 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    List<Long> result9 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result9);
     assertEquals(1, result9.size());
 
@@ -645,7 +627,7 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     // with sort descending = true
     dateFilter.setSortField("status");
     dateFilter.setSortDescending(true);
-    List<RealizationEntity> result10 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    List<Long> result10 = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result10);
     assertEquals(1, result10.size());
   }
@@ -698,13 +680,13 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
     dateFilter.setEarnerType(IdentityType.getType(""));
-    List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    List<Long> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result);
     assertEquals(3, result.size());
     assertEquals(Arrays.asList(histories.get(0).getId(),
                                histories.get(1).getId(),
                                histories.get(2).getId()),
-                 result.stream().map(RealizationEntity::getId).toList());
+                 result);
   }
 
   @Test
@@ -757,13 +739,13 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     dateFilter.setEarnerType(IdentityType.getType(""));
     dateFilter.setSortField("type");
     dateFilter.setSortDescending(true);
-    List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    List<Long> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result);
     assertEquals(3, result.size());
     assertEquals(Arrays.asList(histories.get(2).getId(),
                                histories.get(1).getId(),
                                histories.get(0).getId()),
-                 result.stream().map(RealizationEntity::getId).toList());
+                 result);
   }
 
   @Test
@@ -814,12 +796,12 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
     dateFilter.setEarnerType(IdentityType.getType(""));
-    List<RealizationEntity> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    List<Long> result = realizationDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result);
     assertEquals(2, result.size());
     assertEquals(Arrays.asList(histories.get(0).getId(),
                                histories.get(2).getId()),
-                 result.stream().map(RealizationEntity::getId).toList());
+                 result);
   }
 
 }
