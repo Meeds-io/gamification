@@ -1,6 +1,5 @@
 package io.meeds.gamification.storage;
 
-import static io.meeds.gamification.storage.mapper.RealizationMapper.fromEntities;
 import static io.meeds.gamification.storage.mapper.RealizationMapper.fromEntity;
 import static io.meeds.gamification.storage.mapper.RealizationMapper.toEntity;
 
@@ -35,10 +34,10 @@ public class RealizationStorage {
   public List<RealizationDTO> getRealizationsByFilter(RealizationFilter realizationFilter,
                                                       int offset,
                                                       int limit) {
-    List<RealizationEntity> realizationEntities = gamificationHistoryDAO.findRealizationsByFilter(realizationFilter,
+    List<Long> ids = gamificationHistoryDAO.findRealizationsByFilter(realizationFilter,
                                                                                                   offset,
                                                                                                   limit);
-    return fromEntities(programStorage, realizationEntities);
+    return ids.stream().map(this::getRealizationById).toList();
   }
 
   public int countRealizationsByFilter(RealizationFilter realizationFilter) {
@@ -63,11 +62,10 @@ public class RealizationStorage {
   }
 
   public List<RealizationDTO> findRealizationsByObjectIdAndObjectType(String objectId, String objectType) {
-    List<RealizationEntity> realizationEntities = gamificationHistoryDAO.getRealizationsByObjectIdAndObjectType(objectId,
-                                                                                                                objectType);
-    return fromEntities(programStorage, realizationEntities);
-  }  
-  
+    List<Long> ids = gamificationHistoryDAO.getRealizationsByObjectIdAndObjectType(objectId, objectType);
+    return ids.stream().map(this::getRealizationById).toList();
+  }
+
   public boolean hasPendingRealization(long ruleId, String earnerIdentityId) {
     RealizationFilter realizationFilter = new RealizationFilter();
     realizationFilter.setEarnerIds(new ArrayList<>(Collections.singleton(earnerIdentityId)));
@@ -138,12 +136,12 @@ public class RealizationStorage {
                                                                                       String receiverId,
                                                                                       String objectId,
                                                                                       String objectType) {
-    return fromEntity(programStorage,
-                      gamificationHistoryDAO.findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(ruleId,
-                                                                                                           earnerId,
-                                                                                                           receiverId,
-                                                                                                           objectId,
-                                                                                                           objectType));
+    Long id = gamificationHistoryDAO.findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(ruleId,
+                                                                                                   earnerId,
+                                                                                                   receiverId,
+                                                                                                   objectId,
+                                                                                                   objectType);
+    return id == null || id == 0 ? null : getRealizationById(id);
   }
 
   public int countRealizationsByRuleIdAndEarnerId(String earnerIdentityId, long ruleId) {
