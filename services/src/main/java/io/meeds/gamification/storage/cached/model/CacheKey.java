@@ -66,6 +66,13 @@ public class CacheKey implements Serializable {
     this.limit = limit;
   }
 
+  public CacheKey(Integer context, RuleFilter ruleFilter) {
+    this.context = context;
+    this.ruleFilter = ruleFilter;
+    this.offset = -1;
+    this.limit = -1;
+  }
+
   public CacheKey(Integer context, ProgramFilter programFilter, int offset, int limit) {
     this.context = context;
     this.programFilter = programFilter;
