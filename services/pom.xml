@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.exoplatform.addons.gamification</groupId>
     <artifactId>gamification</artifactId>
-    <version>7.0.x-SNAPSHOT</version>
+    <version>7.0.0-M05</version>
   </parent>
 
   <artifactId>gamification-services</artifactId>
