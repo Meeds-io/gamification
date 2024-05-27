@@ -30,7 +30,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <import>war:/conf/gamification/notification-configuration.xml</import>
     <import>war:/conf/gamification/listeners-configuration.xml</import>
     <import>war:/conf/gamification/bundle-configuration.xml</import>
-    <import>war:/conf/gamification/application-registry-configuration.xml</import>
     <import>war:/conf/gamification/upgrade-configuration.xml</import>
     <import>war:/conf/gamification/search-configuration.xml</import>
     <import>war:/conf/gamification/ckeditor-configuration.xml</import>
