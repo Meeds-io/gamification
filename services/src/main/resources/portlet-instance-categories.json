@@ -5,9 +5,6 @@
       "names":{
         "en":"layout.portletInstance.category.contributions.name"
       },
-      "descriptions":{
-        "en":"layout.portletInstance.category.contributions.description"
-      },
       "icon":"fa-rocket",
       "permissions":[
         "*:/platform/users"
