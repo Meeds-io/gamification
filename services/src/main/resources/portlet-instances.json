@@ -2,7 +2,7 @@
   "descriptors":[
     {
       "nameId":"ProfileStats",
-      "categoryNameId":"spaces",
+      "categoryNameId":"profile",
       "portletName":"ProfileStats",
       "names":{
         "en":"layout.portletInstance.ProfileStats.name"
@@ -14,6 +14,22 @@
       "preferences":[
         
       ],
+      "permissions":[
+        "*:/platform/users"
+      ],
+      "system":true,
+      "spaceApplication":false
+    },
+    {
+      "nameId":"EngagementCenterAchievements",
+      "categoryNameId":"contributions",
+      "portletName":"EngagementCenterAchievements",
+      "names":{
+        "en":"layout.portletInstance.EngagementCenterAchievements.name"
+      },
+      "descriptions":{
+        "en":"layout.portletInstance.EngagementCenterAchievements.description"
+      },
       "permissions":[
         "*:/platform/users"
       ],
@@ -179,6 +195,21 @@
       ],
       "system":true,
       "spaceApplication":false
+    },
+    {
+      "nameId":"BadgesOverview",
+      "categoryNameId":"profile",
+      "portletName":"BadgesOverview",
+      "names":{
+        "en":"layout.portletInstance.BadgesOverview.name"
+      },
+      "descriptions":{
+        "en":"layout.portletInstance.BadgesOverview.description"
+      },
+      "permissions":[
+        "*:/platform/users"
+      ],
+      "system":true,
     }
   ]
 }
