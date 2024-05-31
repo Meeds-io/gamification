@@ -148,6 +148,14 @@ export default {
       this.init();
     },
   },
+  created() {
+    if (this.multiple) {
+      this.rules = this.value?.length && this.value || [];
+    } else {
+      this.rules = this.value && [this.value] || [];
+    }
+    this.retrieveRules();
+  },
   mounted() {
     $(`#${this.id} input`).on('blur', () => {
       this.$refs.selectAutoComplete.isFocused = false;
