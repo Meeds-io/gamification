@@ -15,10 +15,10 @@
         
       ],
       "permissions":[
-        "*:/platform/users"
+        "*:/platform/administrators",
+        "*:/platform/web-contributors"
       ],
-      "system":true,
-      "spaceApplication":false
+      "system":true
     },
     {
       "nameId":"EngagementCenterAchievements",
@@ -33,8 +33,7 @@
       "permissions":[
         "*:/platform/users"
       ],
-      "system":true,
-      "spaceApplication":false
+      "system":true
     },
     {
       "nameId":"myContributions",
@@ -73,8 +72,7 @@
       "permissions":[
         "*:/platform/users"
       ],
-      "system":true,
-      "spaceApplication":false
+      "system":true
     },
     {
       "nameId":"myRewards",
@@ -93,8 +91,7 @@
       "permissions":[
         "*:/platform/users"
       ],
-      "system":true,
-      "spaceApplication":false
+      "system":true
     },
     {
       "nameId":"topChallengers",
@@ -113,8 +110,7 @@
       "permissions":[
         "*:/platform/users"
       ],
-      "system":true,
-      "spaceApplication":false
+      "system":true
     },
     {
       "nameId":"challengesOverview",
@@ -133,8 +129,7 @@
       "permissions":[
         "*:/platform/users"
       ],
-      "system":true,
-      "spaceApplication":false
+      "system":true
     },
     {
       "nameId":"programsOverview",
@@ -153,8 +148,7 @@
       "permissions":[
         "*:/platform/users"
       ],
-      "system":true,
-      "spaceApplication":false
+      "system":true
     },
     {
       "nameId":"PopularSpaces",
@@ -173,8 +167,7 @@
       "permissions":[
         "*:/platform/users"
       ],
-      "system":true,
-      "spaceApplication":false
+      "system":true
     },
     {
       "nameId":"UsersLeaderboard",
@@ -193,8 +186,7 @@
       "permissions":[
         "*:/platform/users"
       ],
-      "system":true,
-      "spaceApplication":false
+      "system":true
     },
     {
       "nameId":"BadgesOverview",
@@ -207,7 +199,8 @@
         "en":"layout.portletInstance.BadgesOverview.description"
       },
       "permissions":[
-        "*:/platform/users"
+        "*:/platform/administrators",
+        "*:/platform/web-contributors"
       ],
       "system":true
     }
