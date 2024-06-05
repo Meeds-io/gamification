@@ -31,6 +31,11 @@ const gamificationAnnouncementCommentOptions = Object.assign(Object.assign({}, d
   getBody: () => '',
 });
 
+extensionRegistry.registerExtension('activity', 'expand-action-type', {
+  id: 'GamificationActionAnnouncedNotification',
+  rank: 35,
+});
+
 extensionRegistry.registerExtension('activity', 'type', {
   type: 'gamificationRuleActivity',
   options: gamificationRuleActivityOptions,
