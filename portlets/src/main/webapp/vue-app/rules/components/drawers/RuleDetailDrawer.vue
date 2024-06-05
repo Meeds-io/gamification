@@ -232,6 +232,7 @@ export default {
     connectorsEventComponentsExtensions: [],
     extensionEventApp: 'engagementCenterEvent',
     connectorEventExtensionType: 'connector-event-extensions',
+    connectorValueExtensions: []
   }),
   computed: {
     now() {
@@ -326,9 +327,6 @@ export default {
     eventType() {
       return this.rule?.event?.type;
     },
-    connectorValueExtensions() {
-      return this.$root.connectorValueExtensions;
-    },
     connectorValueExtension() {
       if (this.connectorValueExtensions) {
         return this.rule?.event?.type
@@ -369,6 +367,8 @@ export default {
     drawer() {
       if (!this.drawer) {
         this.updatePagePath();
+      } else {
+        this.refreshConnectorExtensions();
       }
     },
     expanded() {
@@ -389,7 +389,6 @@ export default {
     document.addEventListener('rule-detail-drawer-event', event => this.open(event?.detail?.rule, event?.detail?.openAnnouncement, event?.detail?.goBackButton, event?.detail?.updatePath));
     document.addEventListener('rule-detail-drawer-by-id-event', event => this.openById(event?.detail?.ruleId, event?.detail?.openAnnouncement));
     document.addEventListener(`component-${this.extensionEventApp}-${this.connectorEventExtensionType}-updated`, this.refreshConnectorExtensions);
-    this.refreshConnectorExtensions();
   },
   methods: {
     open(ruleToDisplay, displayAnnouncementForm, goBackButton, updatePath) {
@@ -534,6 +533,7 @@ export default {
     refreshConnectorExtensions() {
       // Get list of connectors from extensionRegistry
       this.connectorsEventComponentsExtensions = extensionRegistry.loadComponents(this.extensionEventApp) || [];
+      this.connectorValueExtensions = this.$root.connectorValueExtensions;
       this.$emit('event-extension-initialized', this.connectorsEventComponentsExtensions.map(extension => extension.componentOptions.name));
     },
   }
