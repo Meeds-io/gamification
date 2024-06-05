@@ -305,7 +305,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       throw new IllegalArgumentException("Canceled achievement cannot be updated");
     }
     boolean reviewed = realization.getReviewerId() != null;
-    if (RealizationStatus.PENDING.name().equals(realization.getStatus()) && realization.getSendingDate() == null) {
+    if (RealizationStatus.PENDING.name().equals(realization.getStatus())) {
       realization.setSendingDate(realization.getCreatedDate());
       realization.setCreatedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
     }
