@@ -37,6 +37,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :connectors="connectors"
       :connector-extensions="connectors"
       @connectors-loaded="connectorsLoaded" />
+    <engagement-center-user-connectors-extensions />
   </v-app>
 </template>
 
