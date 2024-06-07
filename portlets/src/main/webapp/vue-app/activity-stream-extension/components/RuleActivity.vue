@@ -46,6 +46,7 @@
           <v-img :src="programAvatarUrl" />
         </v-avatar>
         <v-btn
+          :aria-label="ruleTitle"
           :disabled="!isActivityOfRule"
           :width="ruleIconSize"
           :max-width="ruleIconSize"
