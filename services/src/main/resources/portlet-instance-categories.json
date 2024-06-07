@@ -1,0 +1,15 @@
+{
+  "descriptors":[
+    {
+      "nameId":"contributions",
+      "names":{
+        "en":"layout.portletInstance.category.contributions.name"
+      },
+      "icon":"fa-rocket",
+      "permissions":[
+        "*:/platform/users"
+      ],
+      "system":true
+    }
+  ]
+}

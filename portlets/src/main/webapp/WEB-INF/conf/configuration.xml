@@ -23,7 +23,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <import>war:/conf/gamification/portal/user-page-configuration.xml</import>
     <import>war:/conf/gamification/portal/dynamic-container-configuration.xml</import>
-    <import profiles="app-center">war:/conf/gamification/portal/app-center-configuration.xml</import>
 
     <import>war:/conf/gamification/storage/storage-configuration.xml</import>
 
@@ -31,7 +30,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <import>war:/conf/gamification/notification-configuration.xml</import>
     <import>war:/conf/gamification/listeners-configuration.xml</import>
     <import>war:/conf/gamification/bundle-configuration.xml</import>
-    <import>war:/conf/gamification/application-registry-configuration.xml</import>
     <import>war:/conf/gamification/upgrade-configuration.xml</import>
     <import>war:/conf/gamification/search-configuration.xml</import>
     <import>war:/conf/gamification/ckeditor-configuration.xml</import>
