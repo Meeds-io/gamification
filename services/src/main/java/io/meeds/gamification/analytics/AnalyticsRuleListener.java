@@ -24,13 +24,13 @@ import static io.meeds.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
 import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_SUBMODULE;
 import static io.meeds.gamification.utils.Utils.STATISTICS_UPDATE_RULE_OPERATION;
 import static io.meeds.gamification.utils.Utils.addRuleStatisticParameters;
-import static org.exoplatform.analytics.utils.AnalyticsUtils.addStatisticData;
+import static io.meeds.analytics.utils.AnalyticsUtils.addStatisticData;
 
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.exoplatform.analytics.model.StatisticData;
+import io.meeds.analytics.model.StatisticData;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
