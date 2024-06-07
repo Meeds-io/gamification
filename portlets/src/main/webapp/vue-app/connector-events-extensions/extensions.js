@@ -65,3 +65,10 @@ extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-ex
     'reviewContribution'
   ].includes(params?.trigger),
 });
+
+extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-extensions', {
+  id: 'Connector-connect',
+  name: 'ConnectorConnect',
+  vueComponent: Vue.options.components['meeds-connector-connect-event'],
+  isEnabled: (params) => params?.trigger?.startsWith('connectorConnect'),
+});

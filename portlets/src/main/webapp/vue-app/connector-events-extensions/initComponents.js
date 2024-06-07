@@ -26,6 +26,7 @@ import ContributionEventForm from './components/contribution/ContributionEventFo
 import ContributionEventDisplay from './components/contribution/ContributionEventDisplay.vue';
 import ContributionEventProgramItem from './components/contribution/ContributionEventProgramItem.vue';
 import ContributionEventRuleItem from './components/contribution/ContributionEventRuleItem.vue';
+import ConnectorConnectEvent from './components/connector-connect/ConnectorConnectEvent.vue';
 
 const components = {
   'meeds-stream-event': StreamEvent,
@@ -39,6 +40,7 @@ const components = {
   'meeds-contribution-event-display': ContributionEventDisplay,
   'meeds-contribution-event-program-item': ContributionEventProgramItem,
   'meeds-contribution-event-rule-item': ContributionEventRuleItem,
+  'meeds-connector-connect-event': ConnectorConnectEvent,
 };
 
 for (const key in components) {
