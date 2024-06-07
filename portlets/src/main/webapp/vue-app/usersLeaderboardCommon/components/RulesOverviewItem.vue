@@ -29,7 +29,7 @@
         <rule-icon :rule-event="eventTitle" size="30" />
       </v-card>
     </template>
-    <v-list-item class="px-0">
+    <v-list-item :role="null" class="px-0">
       <v-list-item-content class="py-0 my-auto">
         <v-list-item-title class="subtitle-2">
           {{ ruleTitle }}
