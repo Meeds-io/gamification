@@ -1,7 +1,7 @@
 <template>
   <div
     id="engagementCenterRulePublication"
-    class="d-flex flex-column">
+    class="d-flex flex-column text-subtitle-1">
     <div class="d-flex align-center pt-4">
       <v-card
         :max-width="spaceId && '50%' || 'calc(100% - 50px)'"
