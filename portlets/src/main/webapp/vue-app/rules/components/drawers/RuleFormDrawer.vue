@@ -121,27 +121,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         @ready="handleRichEditorReady" />
                     </translation-text-field>
                   </v-card-text>
-                  <v-card-text class="d-flex flex-grow-1 text-no-wrap px-0 pb-2">
-                    {{ $t('rule.form.label.rewards') }}
-                  </v-card-text>
-                  <v-card
-                    flat
-                    width="180"
-                    class="d-flex flex-grow-1">
-                    <v-text-field
-                      v-model="rule.score"
-                      :rules="scoreRules"
-                      class="mt-0 pt-0 me-2"
-                      type="number"
-                      outlined
-                      dense
-                      required>
-                      <template #append-outer>
-                        <label class="mt-1">{{ $t('rule.form.label.points') }}</label>
-                      </template>
-                    </v-text-field>
-                  </v-card>
-                  <v-card-text class="d-flex flex-grow-1 text-no-wrap px-0 pb-2">
+                  <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
                     {{ $t('rule.form.label.type') }}
                   </v-card-text>
                   <div class="d-flex flex-row pb-4">
@@ -209,6 +189,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <v-stepper-items class="py-1">
                 <v-slide-y-transition>
                   <div v-show="expanded || (stepper > finalStep - 1)">
+                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                      {{ $t('rule.form.label.rewards') }}
+                    </v-card-text>
+                    <v-card
+                      flat
+                      width="180"
+                      class="d-flex flex-grow-1">
+                      <v-text-field
+                        v-model="rule.score"
+                        :rules="scoreRules"
+                        class="mt-0 pt-0 me-2"
+                        type="number"
+                        outlined
+                        dense
+                        required>
+                        <template #append-outer>
+                          <label class="mt-1">{{ $t('rule.form.label.points') }}</label>
+                        </template>
+                      </v-text-field>
+                    </v-card>
                     <engagement-center-rule-publish-editor
                       v-if="enablePublication"
                       ref="rulePublishInput"
