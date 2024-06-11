@@ -30,7 +30,7 @@
       <v-card
         v-if="!loading"
         min-height="114"
-        class="fill-height"
+        class="fill-height transparent"
         flat>
         <div class="d-flex flex-grow-1 fill-height">
           <gamification-overview-widget-row class="d-flex flex-column col col-6 px-0" normal-height>

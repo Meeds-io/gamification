@@ -20,7 +20,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     :loading="loading">
     <v-card
       :class="!kudosDisplayed && 'align-center justify-center'"
-      class="d-flex flex-grow-1 fill-height"
+      class="d-flex flex-grow-1 fill-height transparent"
       flat>
       <gamification-overview-widget-row
         v-show="!loading"
@@ -47,10 +47,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </gamification-overview-widget-row>
     </v-card>
     <v-card
-      class="d-flex flex-grow-1 fill-height full-width"
+      class="d-flex flex-grow-1 fill-height transparent full-width"
       flat>
       <v-card
-        class="full-height full-width"
+        class="full-height full-width transparent"
         flat>
         <div class="d-flex flex-column full-height">
           <extension-registry-components

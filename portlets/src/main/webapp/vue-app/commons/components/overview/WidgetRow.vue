@@ -1,5 +1,5 @@
 <template>
-  <v-list class="py-0 flex-grow-1 flex-shrink-1" :disabled="disabled">
+  <v-list class="py-0 flex-grow-1 flex-shrink-1 transparent" :disabled="disabled">
     <div v-if="$slots.title" class="subtitle-1">
       <slot name="title"></slot>
     </div>
