@@ -18,7 +18,7 @@
 
 -->
 <template>
-  <v-app class="card-border-radius overflow-hidden">
+  <v-app class="card-border-radius app-background-color overflow-hidden">
     <main
       id="rulesList"
       class="Realizations border-box-sizing"
