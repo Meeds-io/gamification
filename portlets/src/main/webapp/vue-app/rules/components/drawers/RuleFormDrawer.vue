@@ -121,8 +121,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         :tag-enabled="false"
                         ck-editor-type="rule"
                         oembed
-                        @validity-updated="validDescription = $event"
-                        @ready="handleRichEditorReady" />
+                        @validity-updated="validDescription = $event" />
                     </translation-text-field>
                   </v-card-text>
                   <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
@@ -196,23 +195,52 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
                       {{ $t('rule.form.label.rewards') }}
                     </v-card-text>
-                    <v-card
-                      flat
-                      width="180"
-                      class="d-flex flex-grow-1">
-                      <v-text-field
-                        v-model="rule.score"
-                        :rules="scoreRules"
-                        class="mt-0 pt-0 me-2"
-                        type="number"
-                        outlined
-                        dense
-                        required>
-                        <template #append-outer>
-                          <label class="mt-1">{{ $t('rule.form.label.points') }}</label>
-                        </template>
-                      </v-text-field>
-                    </v-card>
+                    <div v-if="canVariableRewarding" class="d-flex justify-center">
+                      <v-chip
+                        class="ma-2"
+                        :color="!variablePoints && 'primary' || ''"
+                        :outlined="variablePoints"
+                        :dark="!variablePoints"
+                        @click="selectRewardingMode">
+                        {{ $t('rule.form.label.fixedPoints') }}
+                      </v-chip>
+                      <v-chip
+                        class="ma-2"
+                        :color="variablePoints && 'primary' || ''"
+                        :outlined="!variablePoints"
+                        :dark="variablePoints"
+                        @click="selectRewardingMode">
+                        {{ $t('rule.form.label.variablePoints') }}
+                      </v-chip>
+                    </div>
+                    <div class="d-flex flex-row">
+                      <v-card
+                        flat
+                        class="d-flex flex-grow-1 pt-2 px-0 col-4">
+                        <v-text-field
+                          v-model="rule.score"
+                          :rules="scoreRules"
+                          class="mt-0 pt-0 me-2"
+                          type="number"
+                          outlined
+                          dense
+                          required />
+                      </v-card>
+                      <v-card-text class="mt-1 px-0 col-2"> {{ canVariableRewarding && variablePoints ? $t('rule.form.label.pointsFor') : $t('rule.form.label.points') }} </v-card-text>
+                      <v-card
+                        v-if="canVariableRewarding && variablePoints"
+                        flat
+                        class="d-flex flex-grow-1 pt-2 pe-0 col-4">
+                        <v-text-field
+                          v-model="totalTargetItem"
+                          class="mt-0 pt-0 me-2"
+                          type="number"
+                          outlined
+                          dense
+                          required />
+                      </v-card>
+                      <v-card-text v-if="canVariableRewarding && variablePoints" class="mt-1 px-0 col-2"> {{ targetItem }} </v-card-text>
+                    </div>
                     <engagement-center-rule-publish-editor
                       v-if="enablePublication"
                       ref="rulePublishInput"
@@ -347,6 +375,11 @@ export default {
     drawer: false,
     expanded: false,
     durationCondition: false,
+    variablePoints: false,
+    canVariableRewarding: false,
+    totalTargetItem: null,
+    defaultTotalTargetItem: null,
+    targetItem: '',
     recurrenceCondition: false,
     prerequisiteRuleCondition: false,
     validDatesInput: false,
@@ -552,6 +585,8 @@ export default {
       this.selectedTrigger = this.rule?.event?.title;
       this.triggerType = this.rule?.event?.type;
       this.eventProperties = this.rule?.event?.properties;
+      this.variablePoints = !!this.rule?.event?.properties?.totalTargetItem;
+      this.totalTargetItem = Number(this.rule?.event?.properties?.totalTargetItem);
       this.validEventProperties = true;
       if (this.$refs.ruleFormDrawer) {
         this.$refs.ruleFormDrawer.open();
@@ -575,9 +610,15 @@ export default {
       };
       this.$set(this.rule, 'event', event);
     },
-    eventExtensionInitialized(extensible) {
-      if (extensible) {
-        this.isExtensibleEvent = extensible;
+    eventExtensionInitialized(extension, canVariableRewarding) {
+      if (extension) {
+        this.isExtensibleEvent = extension?.isExtensible;
+        this.targetItem = extension?.targetItemLabel;
+        this.canVariableRewarding = canVariableRewarding;
+        this.defaultTotalTargetItem = extension?.defaultTotalTargetItem;
+        if (!this.totalTargetItem) {
+          this.totalTargetItem = this.defaultTotalTargetItem;
+        }
       }
     },
     close() {
@@ -676,6 +717,13 @@ export default {
       }
     },
     computeRuleModel(rule, program, description) {
+      if (rule?.event && this.canVariableRewarding) {
+        if (this.variablePoints) {
+          rule.event.properties.totalTargetItem = this.totalTargetItem;
+        } else {
+          delete rule.event.properties.totalTargetItem;
+        }
+      }
       const ruleModel = {
         id: rule?.id,
         title: this.ruleTitle,
@@ -723,6 +771,10 @@ export default {
     updatePrerequisiteRuleCondition() {
       this.prerequisiteRuleCondition = !this.prerequisiteRuleCondition;
       this.$set(this.rule,'prerequisiteRules', []);
+    },
+    selectRewardingMode() {
+      this.variablePoints = !this.variablePoints;
+      this.totalTargetItem = !this.variablePoints ? 0 : this.defaultTotalTargetItem;
     },
     nextStep(event) {
       if (event) {

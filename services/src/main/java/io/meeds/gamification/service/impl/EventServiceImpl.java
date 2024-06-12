@@ -124,6 +124,15 @@ public class EventServiceImpl implements EventService {
     return false;
   }
 
+  @Override
+  public boolean canVariableRewarding(String triggerType, String triggerName) {
+    Trigger trigger = eventRegistry.getTrigger(triggerType, triggerName);
+    if (trigger != null) {
+      return trigger.isCanVariableRewarding();
+    }
+    return false;
+  }
+
   public EventDTO getEvent(long eventId) {
     return eventStorage.getEventById(eventId);
   }
