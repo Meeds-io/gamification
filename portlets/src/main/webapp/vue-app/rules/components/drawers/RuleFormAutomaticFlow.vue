@@ -166,6 +166,7 @@ export default {
     trigger: '',
     connectors: [],
     triggers: [],
+    triggersItems: [],
     extensionApp: 'engagementCenterConnectors',
     connectorExtensionType: 'connector-extensions',
     connectorsExtensions: [],
@@ -203,6 +204,9 @@ export default {
     isExtensibleEvent() {
       return this.extensionAction?.isExtensible && !this.extensionAction?.notExtensible?.includes(this.trigger);
     },
+    canVariableRewarding() {
+      return this.triggersItems.find(trigger => trigger.title === this.trigger)?.canVariableRewarding;
+    },
   },
   watch: {
     selectedConnector() {
@@ -222,7 +226,7 @@ export default {
       }
     },
     extensionAction() {
-      this.$emit('event-extension-initialized', this.isExtensibleEvent);
+      this.$emit('event-extension-initialized', this.extensionAction, this.canVariableRewarding);
     },
   },
   created() {
@@ -259,6 +263,7 @@ export default {
     init() {
       this.refreshExtensions();
       this.refreshConnectorExtensions();
+      this.retrieveTriggers();
       // Check connectors status from store
       this.loading = true;
       return this.$gamificationConnectorService.getConnectors(eXo.env.portal.userName)
@@ -293,6 +298,7 @@ export default {
     retrieveTriggers() {
       return this.$gamificationConnectorService.getTriggers(this.selectedConnector)
         .then(triggers => {
+          this.triggersItems = triggers;
           this.triggers = triggers.map(trigger => trigger.title);
         });
     },

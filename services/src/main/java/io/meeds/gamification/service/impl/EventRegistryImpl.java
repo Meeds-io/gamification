@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.picocontainer.Startable;
 import io.meeds.gamification.service.EventRegistry;
 
-public class EventRegistryImpl implements Startable, EventRegistry {
+public class EventRegistryImpl implements EventRegistry {
 
   private final Map<String, EventConfigPlugin> eventConfigPluginMap = new HashMap<>();
 
@@ -53,10 +53,7 @@ public class EventRegistryImpl implements Startable, EventRegistry {
                                .stream()
                                .filter(eventConfigPlugin -> eventConfigPlugin.getEvent().getType().equals(triggerType)
                                    && eventConfigPlugin.getEvent().getTrigger().equals(triggerName))
-                               .map(eventConfigPlugin -> new Trigger(eventConfigPlugin.getEvent().getTrigger(),
-                                                                     eventConfigPlugin.getEvent().getType(),
-                                                                     eventConfigPlugin.getEvent().getCancellerEvents(),
-                                                                     eventConfigPlugin.isVerificationRequired()))
+                               .map(this::fromEventConfig)
                                .findFirst()
                                .orElse(null);
   }
@@ -67,29 +64,17 @@ public class EventRegistryImpl implements Startable, EventRegistry {
       return eventConfigPluginMap.values()
                                  .stream()
                                  .filter(eventConfigPlugin -> eventConfigPlugin.getEvent().getType().equals(connectorName))
-                                 .map(eventConfigPlugin -> new Trigger(eventConfigPlugin.getEvent().getTrigger(),
-                                                                       eventConfigPlugin.getEvent().getType(),
-                                                                       eventConfigPlugin.getEvent().getCancellerEvents(),
-                                                                       eventConfigPlugin.isVerificationRequired()))
+                                 .map(this::fromEventConfig)
                                  .toList();
     }
-    return eventConfigPluginMap.values()
-                               .stream()
-                               .map(eventConfigPlugin -> new Trigger(eventConfigPlugin.getEvent().getTrigger(),
-                                                                     eventConfigPlugin.getEvent().getType(),
-                                                                     eventConfigPlugin.getEvent().getCancellerEvents(),
-                                                                     eventConfigPlugin.isVerificationRequired()))
-                               .toList();
-
+    return eventConfigPluginMap.values().stream().map(this::fromEventConfig).toList();
   }
 
-  @Override
-  public void start() {
-    // Nothing to start
-  }
-
-  @Override
-  public void stop() {
-    // Nothing to change
+  private Trigger fromEventConfig(EventConfigPlugin eventConfigPlugin) {
+    return new Trigger(eventConfigPlugin.getEvent().getTrigger(),
+                       eventConfigPlugin.getEvent().getType(),
+                       eventConfigPlugin.getEvent().getCancellerEvents(),
+                       eventConfigPlugin.isVerificationRequired(),
+                       eventConfigPlugin.isCanVariableRewarding());
   }
 }
