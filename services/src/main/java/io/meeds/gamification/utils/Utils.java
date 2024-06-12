@@ -12,11 +12,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -664,5 +660,18 @@ public class Utils {
     } catch (JsonException e) {
       throw new IllegalStateException("Error creating object from string : " + value, e);
     }
+  }
+
+  public static Map<String, String> stringToMap(String mapAsString) {
+    Map<String, String> map = new HashMap<>();
+    mapAsString = mapAsString.substring(1, mapAsString.length() - 1);
+    String[] pairs = mapAsString.split(", ");
+    for (String pair : pairs) {
+      String[] keyValue = pair.split(": ");
+      String key = keyValue[0].trim();
+      String value = keyValue[1].trim();
+      map.put(key, value);
+    }
+    return map;
   }
 }
