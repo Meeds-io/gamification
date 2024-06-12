@@ -61,7 +61,7 @@ public class TriggerRest implements ResourceContainer {
   public Response getTriggers(@Parameter(description = "Used to filter triggers by Connector type") @QueryParam("type") String type,
                               @Parameter(description = "Used to retrieve extra information about triggers") @QueryParam("expand") String expand) {
     List<String> expandFields = getExpandOptions(expand);
-    return Response.ok(getConnectorsRestEntities(expandFields, type)).build();
+    return Response.ok(getTriggersRestEntities(expandFields, type)).build();
   }
 
   @Path("status")
@@ -85,7 +85,7 @@ public class TriggerRest implements ResourceContainer {
     }
   }
 
-  private List<TriggerRestEntity> getConnectorsRestEntities(List<String> expandFields, String type) {
+  private List<TriggerRestEntity> getTriggersRestEntities(List<String> expandFields, String type) {
     Collection<Trigger> triggerList = eventRegistry.getTriggers(type);
     return TriggerBuilder.toRestEntities(triggerService, triggerList, expandFields);
   }
