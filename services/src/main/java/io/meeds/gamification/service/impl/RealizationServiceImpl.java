@@ -34,6 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import io.meeds.gamification.constant.*;
+import io.meeds.gamification.model.*;
 import io.meeds.gamification.plugin.EventPlugin;
 import io.meeds.gamification.service.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -63,12 +64,6 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-import io.meeds.gamification.model.PiechartLeaderboard;
-import io.meeds.gamification.model.ProfileReputation;
-import io.meeds.gamification.model.ProgramDTO;
-import io.meeds.gamification.model.RealizationDTO;
-import io.meeds.gamification.model.RuleDTO;
-import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.LeaderboardFilter;
 import io.meeds.gamification.model.filter.RealizationFilter;
 import io.meeds.gamification.model.filter.RuleFilter;
@@ -253,7 +248,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     return rules.stream()
                 .distinct()
                 .filter(rule -> getRealizationValidityContext(rule, earnerIdentity.getId()).isValidForIdentity())
-                .map(rule -> toRealization(rule, earnerIdentity, receiverIdentityId, objectId, objectType))
+                .map(rule -> toRealization(rule, earnerIdentity, receiverIdentityId, objectId, objectType, eventDetails))
                 .map(r -> {
                   r = realizationStorage.createRealization(r);
                   Utils.broadcastEvent(listenerService, POST_REALIZATION_CREATE_EVENT, r, null);
@@ -709,10 +704,19 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                        org.exoplatform.social.core.identity.model.Identity earnerIdentity,
                                        String receiverIdentityId,
                                        String objectId,
-                                       String objectType) {
+                                       String objectType,
+                                       String eventDetails) {
     // Build only an entry when a rule enable and exist
     RealizationDTO realization = new RealizationDTO();
-    realization.setActionScore(ruleDto.getScore());
+    EventDTO event = ruleDto.getEvent();
+    String eventType = event.getType();
+    String eventTrigger = event.getTrigger();
+    if (eventService.canVariableRewarding(eventType, eventTrigger) && MapUtils.isNotEmpty(event.getProperties())
+        && StringUtils.isNotBlank(event.getProperties().get("totalTargetItem"))) {
+      computeRealizationScore(realization, event, eventDetails, ruleDto.getScore());
+    } else {
+      realization.setActionScore(ruleDto.getScore());
+    }
     realization.setGlobalScore(getScoreByIdentityId(earnerIdentity.getId()) + ruleDto.getScore());
     realization.setEarnerId(earnerIdentity.getId());
     realization.setEarnerType(earnerIdentity.getProviderId());
@@ -862,5 +866,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
     return space == null ? 0 : Long.parseLong(space.getId());
   }
-
+  
+  private void computeRealizationScore(RealizationDTO realizationDTO, EventDTO event, String eventDetails, int score) {
+    EventPlugin eventPlugin = eventService.getEventPlugin(event.getTrigger());
+    if (eventPlugin != null) {
+      realizationDTO.setActionScore((long) Math.ceil(eventPlugin.getPointsRatio(event.getProperties(), eventDetails) * score));
+    }
+  }
 }
