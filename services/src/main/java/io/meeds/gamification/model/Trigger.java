@@ -36,8 +36,10 @@ public class Trigger {
 
   private boolean      isVerificationRequired;
 
+  private boolean      canVariableRewarding;
+
   @Override
   public Trigger clone() { // NOSONAR
-    return new Trigger(title, type, canceller, isVerificationRequired);
+    return new Trigger(title, type, canceller, isVerificationRequired, canVariableRewarding);
   }
 }

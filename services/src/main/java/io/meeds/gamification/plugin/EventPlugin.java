@@ -18,12 +18,13 @@
  */
 package io.meeds.gamification.plugin;
 
-import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.service.EventService;
 import org.exoplatform.container.component.BaseComponentPlugin;
 
 import java.util.List;
 import java.util.Map;
+
+import static io.meeds.gamification.utils.Utils.stringToMap;
 
 /**
  * A plugin that will be used by {@link EventService} to check event by its
@@ -45,4 +46,20 @@ public abstract class EventPlugin extends BaseComponentPlugin {
    * Check if event properties match properties coming from an external trigger
    */
   public abstract boolean isValidEvent(Map<String, String> eventProperties, String triggerDetails);
+
+  /**
+   * get points ration using event properties and properties coming from an
+   * external trigger
+   * 
+   * @return the get points ratio for realization
+   */
+  public double getPointsRatio(Map<String, String> eventProperties, String triggerDetails) {
+    int desiredTotalTargetItem = Integer.parseInt(eventProperties.get("totalTargetItem"));
+    Map<String, String> triggerDetailsMop = stringToMap(triggerDetails);
+    int totalTargetItem = Integer.parseInt(triggerDetailsMop.get("totalTargetItem"));
+    if (desiredTotalTargetItem != 0) {
+      return (double) totalTargetItem / desiredTotalTargetItem;
+    }
+    return 1;
+  }
 }
