@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     v-if="displayWidget"
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
     id="badgesOverview">
-    <div :class="!isOverviewDisplay && 'card-border-radius overflow-hidden'">
+    <div :class="!isOverviewDisplay && 'card-border-radius app-background-color overflow-hidden'">
       <div
         v-if="isOverviewDisplay"
         v-show="!loading && hasBadges"
@@ -29,7 +29,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-toolbar
         v-else
         id="badgesOverviewHeader"
-        color="white"
+        color="transparent"
         flat
         class="border-box-sizing"
         :class="isOverviewDisplay ? 'mb-5' : '64'">
@@ -40,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-card
         v-if="!loading"
         :class="!loading && 'd-flex'"
-        class="align-center justify-center"
+        class="align-center justify-center transparent"
         min-height="100"
         flat>
         <card-carousel

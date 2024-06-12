@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         row
         wrap
         mx-0
-        class="white profileCard card-border-radius overflow-hidden">
+        class="profileCard card-border-radius app-background-color overflow-hidden">
         <v-fade-transition>
           <user-dashbord
             v-show="!isFlipped"
