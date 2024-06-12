@@ -52,6 +52,7 @@ public class TriggerBuilder {
                                  trigger.getType(),
                                  trigger.getCanceller(),
                                  trigger.isVerificationRequired(),
+                                 trigger.isCanVariableRewarding(),
                                  CollectionUtils.isNotEmpty(disabledAccounts) ? disabledAccounts : Collections.emptyList(),
                                  CollectionUtils.isNotEmpty(permissions) ? permissions : Collections.emptyList());
   }
