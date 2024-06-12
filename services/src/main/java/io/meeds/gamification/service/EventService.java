@@ -122,6 +122,17 @@ public interface EventService {
   }
 
   /**
+   * Check if variable rewarding
+   *
+   * @param triggerType trigger type
+   * @param triggerName trigger name
+   * @return {@link Boolean}
+   */
+  default boolean canVariableRewarding(String triggerType, String triggerName) {
+    throw new UnsupportedOperationException();
+  }
+
+  /**
    * Retrieves gamification event by event id
    *
    * @param eventId Event Identifier
