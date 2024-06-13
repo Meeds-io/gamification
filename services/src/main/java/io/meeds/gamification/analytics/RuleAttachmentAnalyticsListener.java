@@ -15,28 +15,53 @@
  */
 package io.meeds.gamification.analytics;
 
-import io.meeds.gamification.model.ProgramDTO;
-import io.meeds.gamification.model.RuleDTO;
-import io.meeds.gamification.service.RuleService;
-import org.exoplatform.analytics.listener.social.BaseAttachmentAnalyticsListener;
-import org.exoplatform.analytics.model.StatisticData;
-import org.exoplatform.container.xml.InitParams;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import org.exoplatform.services.listener.Asynchronous;
+import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.social.attachment.AttachmentService;
 import org.exoplatform.social.attachment.model.ObjectAttachmentId;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import io.meeds.analytics.listener.social.BaseAttachmentAnalyticsListener;
+import io.meeds.analytics.model.StatisticData;
+import io.meeds.gamification.model.ProgramDTO;
+import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.service.RuleService;
+
+import jakarta.annotation.PostConstruct;
+import lombok.Getter;
+
 @Asynchronous
+@Component
 public class RuleAttachmentAnalyticsListener extends BaseAttachmentAnalyticsListener {
 
-  private RuleService ruleService;
+  private static final List<String> SUPPORTED_OBJECT_TYPES = Collections.singletonList("rule");
 
-  public RuleAttachmentAnalyticsListener(AttachmentService attachmentService,
-                                         SpaceService spaceService,
-                                         InitParams initParams,
-                                         RuleService ruleService) {
-    super(attachmentService, spaceService, initParams);
-    this.ruleService = ruleService;
+  private static final List<String> EVENT_NAMES            = Arrays.asList("attachment.created", "attachment.deleted");
+
+  @Autowired
+  private RuleService               ruleService;
+
+  @Getter
+  @Autowired
+  private AttachmentService         attachmentService;
+
+  @Getter
+  @Autowired
+  private SpaceService              spaceService;
+
+  @Autowired
+  private ListenerService           listenerService;
+
+  @PostConstruct
+  public void init() {
+    EVENT_NAMES.forEach(name -> listenerService.addListener(name, this));
   }
 
   @Override
@@ -60,4 +85,10 @@ public class RuleAttachmentAnalyticsListener extends BaseAttachmentAnalyticsList
   protected String getSubModule(ObjectAttachmentId objectAttachment) {
     return "rule";
   }
+
+  @Override
+  protected List<String> getSupportedObjectType() {
+    return SUPPORTED_OBJECT_TYPES;
+  }
+
 }
