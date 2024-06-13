@@ -1,6 +1,6 @@
 package io.meeds.gamification.utils;
 
-import static org.exoplatform.analytics.utils.AnalyticsUtils.addSpaceStatistics;
+import static io.meeds.analytics.utils.AnalyticsUtils.addSpaceStatistics;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.analytics.model.StatisticData;
+import io.meeds.analytics.model.StatisticData;
 import org.exoplatform.commons.api.notification.model.ArgumentLiteral;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
