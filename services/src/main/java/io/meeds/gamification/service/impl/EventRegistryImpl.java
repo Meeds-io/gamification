@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.picocontainer.Startable;
 import io.meeds.gamification.service.EventRegistry;
 
-public class EventRegistryImpl implements Startable, EventRegistry {
+public class EventRegistryImpl implements EventRegistry {
 
   private final Map<String, EventConfigPlugin> eventConfigPluginMap = new HashMap<>();
 
@@ -68,16 +68,6 @@ public class EventRegistryImpl implements Startable, EventRegistry {
                                  .toList();
     }
     return eventConfigPluginMap.values().stream().map(this::fromEventConfig).toList();
-  }
-
-  @Override
-  public void start() {
-    // Nothing to start
-  }
-
-  @Override
-  public void stop() {
-    // Nothing to change
   }
 
   private Trigger fromEventConfig(EventConfigPlugin eventConfigPlugin) {
