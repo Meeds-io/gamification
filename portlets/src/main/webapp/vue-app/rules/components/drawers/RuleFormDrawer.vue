@@ -241,19 +241,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       </v-card>
                       <v-card-text v-if="canVariableRewarding && variablePoints" class="mt-1 px-0 col-2"> {{ targetItem }} </v-card-text>
                     </div>
-                    <engagement-center-rule-publish-editor
-                      v-if="enablePublication"
-                      ref="rulePublishInput"
-                      :enabled="!rule.id"
-                      :rule="rule"
-                      :metadata-object-id="metadataObjectId"
-                      :program="program"
-                      :publish.sync="rule.publish"
-                      :space-id.sync="rule.spaceId"
-                      :message.sync="rule.message"
-                      :template-params="rule.templateParams"
-                      :valid-message.sync="validMessage"
-                      @attachments-edited="attachmentsEdited = true" />
                     <div class="pt-4 text-subtitle-1">{{ $t('rule.form.ruleConditionsLabel') }}</div>
                     <div class="ps-7">
                       <v-chip
@@ -304,6 +291,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         :program-id="programId"
                         :excluded-ids="excludedRuleIds" />
                     </div>
+                    <engagement-center-rule-publish-editor
+                      v-if="enablePublication"
+                      ref="rulePublishInput"
+                      :enabled="!rule.id"
+                      :rule="rule"
+                      :metadata-object-id="metadataObjectId"
+                      :program="program"
+                      :publish.sync="rule.publish"
+                      :space-id.sync="rule.spaceId"
+                      :message.sync="rule.message"
+                      :template-params="rule.templateParams"
+                      :valid-message.sync="validMessage"
+                      @attachments-edited="attachmentsEdited = true" />
                   </div>
                 </v-slide-y-transition>
               </v-stepper-items>
