@@ -10,7 +10,7 @@
       "descriptions":{
         "en":"layout.portletInstance.ProfileStats.description"
       },
-      "illustrationPath":"war:/../skin/DefaultSkin/portletIcons/ProfileStats.png",
+      "illustrationPath":"war:/../images/portlets/profileStatistics.webp",
       "preferences":[
         
       ],
@@ -30,6 +30,7 @@
       "descriptions":{
         "en":"layout.portletInstance.EngagementCenterAchievements.description"
       },
+      "illustrationPath":"war:/../images/portlets/contributionsList.webp",
       "permissions":[
         "*:/platform/users"
       ],
@@ -45,7 +46,7 @@
       "descriptions":{
         "en":"layout.portletInstance.myContributions.description"
       },
-      "illustrationPath":"war:/../skin/DefaultSkin/portletIcons/myContributions.png",
+      "illustrationPath":"war:/../images/portlets/myContributions.webp",
       "preferences":[
         
       ],
@@ -65,7 +66,7 @@
       "descriptions":{
         "en":"layout.portletInstance.myReputation.description"
       },
-      "illustrationPath":"war:/../skin/DefaultSkin/portletIcons/myReputation.png",
+      "illustrationPath":"war:/../images/portlets/myReputation.webp",
       "preferences":[
         
       ],
@@ -84,7 +85,7 @@
       "descriptions":{
         "en":"layout.portletInstance.myRewards.description"
       },
-      "illustrationPath":"war:/../skin/DefaultSkin/portletIcons/myRewards.png",
+      "illustrationPath":"war:/../images/portlets/myRewards.webp",
       "preferences":[
         
       ],
@@ -103,7 +104,7 @@
       "descriptions":{
         "en":"layout.portletInstance.topChallengers.description"
       },
-      "illustrationPath":"war:/../skin/DefaultSkin/portletIcons/topChallengers.png",
+      "illustrationPath":"war:/../images/portlets/topChallengers.webp",
       "preferences":[
         
       ],
@@ -122,7 +123,7 @@
       "descriptions":{
         "en":"layout.portletInstance.challengesOverview.description"
       },
-      "illustrationPath":"war:/../skin/DefaultSkin/portletIcons/challengesOverview.png",
+      "illustrationPath":"war:/../images/portlets/challengesOverview.webp",
       "preferences":[
         
       ],
@@ -141,7 +142,7 @@
       "descriptions":{
         "en":"layout.portletInstance.programsOverview.description"
       },
-      "illustrationPath":"war:/../skin/DefaultSkin/portletIcons/programsOverview.png",
+      "illustrationPath":"war:/../images/portlets/programsOverview.webp",
       "preferences":[
         
       ],
@@ -179,7 +180,7 @@
       "descriptions":{
         "en":"layout.portletInstance.UsersLeaderboard.description"
       },
-      "illustrationPath":"war:/../skin/DefaultSkin/portletIcons/UsersLeaderboard.png",
+      "illustrationPath":"war:/../images/portlets/UserLeaderboard.webp",
       "preferences":[
         
       ],
@@ -198,6 +199,7 @@
       "descriptions":{
         "en":"layout.portletInstance.BadgesOverview.description"
       },
+      "illustrationPath":"war:/../images/portlets/badgesOverview.webp",
       "permissions":[
         "*:/platform/administrators",
         "*:/platform/web-contributors"
