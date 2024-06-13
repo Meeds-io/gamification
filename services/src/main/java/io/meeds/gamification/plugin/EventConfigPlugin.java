@@ -42,11 +42,11 @@ public class EventConfigPlugin extends BaseComponentPlugin {
 
   public EventConfigPlugin(InitParams params) {
     ValuesParam values = params.getValuesParam(IS_VERIFICATION_REQUIRED);
-    if (values != null && values.getValue().length() > 0) {
+    if (values != null && !values.getValue().isEmpty()) {
       this.isVerificationRequired = Boolean.parseBoolean(Deserializer.resolveVariables(values.getValue()));
     }
     values = params.getValuesParam(CAN_VARIABLE_REWARDING);
-    if (values != null && values.getValue().length() > 0) {
+    if (values != null && !values.getValue().isEmpty()) {
       this.canVariableRewarding = Boolean.parseBoolean(Deserializer.resolveVariables(values.getValue()));
     }
     if (params.containsKey(EVENT_PARAM_NAME)) {
