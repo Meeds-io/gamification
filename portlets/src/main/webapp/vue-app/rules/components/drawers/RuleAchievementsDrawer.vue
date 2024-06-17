@@ -41,10 +41,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :realization="realization"
         :rule="rule"
         @open="openUserAchievements(realization)" />
-      <users-leaderboard-profile-achievements-drawer
-        ref="profileStatsDrawer"
-        go-back-button
-        relative />
+      <div>
+        <users-leaderboard-profile-achievements-drawer
+          ref="profileStatsDrawer"
+          go-back-button
+          relative />
+      </div>
     </template>
     <template v-if="hasMore" #footer>
       <v-btn
