@@ -121,11 +121,6 @@ export default {
   created() {
     window.addEventListener('rules-list-drawer-open', this.openActionsList);
   },
-  mounted() {
-    if (!this.relative) {
-      document.querySelector('#vuetify-apps').appendChild(this.$el);
-    }
-  },
   beforeDestroy() {
     window.removeEventListener('rules-list-drawer-open', this.openActionsList);
   },
