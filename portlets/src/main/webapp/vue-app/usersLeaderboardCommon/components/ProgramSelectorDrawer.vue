@@ -96,9 +96,6 @@ export default {
   created() {
     this.init();
   },
-  mounted() {
-    document.querySelector('#vuetify-apps').appendChild(this.$el);
-  },
   methods: {
     open() {
       this.reset();
