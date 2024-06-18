@@ -20,68 +20,9 @@
 -->
 <template>
   <v-app>
-    <v-card-text class="px-0 dark-grey-color font-weight-bold">
-      {{ $t('rule.form.label.application') }}
-    </v-card-text>
-    <v-autocomplete
-      id="applicationAutoComplete"
-      ref="applicationAutoComplete"
-      v-model="selectedConnector"
-      :items="sortedConnectors"
-      :placeholder="$t('rule.form.label.application.Placeholder')"
-      :filter="filterConnectors"
-      class="pa-0"
-      background-color="white"
-      item-value="name"
-      dense
-      flat
-      cache-items
-      solo
-      outlined>
-      <template #selection="{item, selected}">
-        <v-chip
-          :input-value="selected"
-          color="white">
-          <v-icon
-            v-if="item.icon"
-            :class="item.iconColorClass"
-            size="20"
-            class="pe-2">
-            {{ item.icon }}
-          </v-icon>
-          <img
-            v-else
-            :src="item.image"
-            :alt="item.name"
-            class="pe-2"
-            width="28">
-          {{ item.title }}
-        </v-chip>
-      </template>
-      <template #item="{item}">
-        <v-icon
-          v-if="item.icon"
-          :class="item.iconColorClass"
-          size="20"
-          class="pe-2">
-          {{ item.icon }}
-        </v-icon>
-        <img
-          v-else
-          :src="item.image"
-          :alt="item.name"
-          class="pe-2"
-          width="20">
-        <v-list-item-content>
-          <v-list-item-title>
-            {{ item.title }}
-          </v-list-item-title>
-        </v-list-item-content>
-      </template>
-    </v-autocomplete>
-    <template v-if="selectedConnector">
-      <v-card-text class="px-0 dark-grey-color font-weight-bold">
-        {{ $t('rule.form.label.event') }}
+    <template>
+      <v-card-text class="px-0 text-subtitle-1">
+        {{ $t('rule.form.label.application.createAutomaticFlow') }}
       </v-card-text>
       <v-autocomplete
         id="triggerAutoComplete"
@@ -166,7 +107,6 @@ export default {
   data: () => ({
     selectedConnector: null,
     trigger: '',
-    connectors: [],
     triggers: [],
     triggersItems: [],
     extensionApp: 'engagementCenterConnectors',
@@ -191,9 +131,6 @@ export default {
     sortedTriggers() {
       const filteredTriggers = this.triggers?.length && this.triggers.slice() || [];
       return filteredTriggers.sort((a, b) => this.getTriggerLabel(a).localeCompare(this.getTriggerLabel(b)));
-    },
-    sortedConnectors() {
-      return this.connectors.slice().sort((a, b) => a.title.localeCompare(b.title));
     },
     params() {
       return {
@@ -264,33 +201,9 @@ export default {
   methods: {
     init() {
       this.refreshExtensions();
-      this.refreshConnectorExtensions();
       this.retrieveTriggers();
-      // Check connectors status from store
-      this.loading = true;
-      return this.$gamificationConnectorService.getConnectors(eXo.env.portal.userName)
-        .then(connectors => {
-          const enabledConnectors = connectors?.filter(connector => connector.enabled) || [];
-          const connectorsToDisplay = this.connectorsExtensions.filter(connectorExtension => enabledConnectors.some(item => item.name === connectorExtension.name) || connectorExtension.defaultConnector) || [];
-          this.connectors.push(...connectorsToDisplay);
-        }).then(() => {
-          if (this.triggerType) {
-            this.selectedConnector = this.connectors.find(connector => connector.name === this.triggerType)?.name;
-            this.$nextTick().then(() => {
-              this.trigger = this.selectedTrigger;
-            });
-          }
-        })
-        .finally(() => {
-          this.loading = false;
-        });
     },
-    refreshConnectorExtensions() {
-      this.connectorsExtensions = extensionRegistry.loadExtensions(this.extensionApp, this.connectorExtensionType) || [];
-    },
-    filterConnectors(item, queryText) {
-      return item.title.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1;
-    },
+
     filterTriggers(item, queryText) {
       return this.getTriggerLabel(item).toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1;
     },
@@ -298,7 +211,7 @@ export default {
       return this.$t(`gamification.event.title.${trigger}`);
     },
     retrieveTriggers() {
-      return this.$gamificationConnectorService.getTriggers(this.selectedConnector)
+      return this.$gamificationConnectorService.getTriggers(this.triggerType)
         .then(triggers => {
           this.triggersItems = triggers;
           this.triggers = triggers.map(trigger => trigger.title);
@@ -332,12 +245,6 @@ export default {
         this.actionValueExtensions = this.$root.actionValueExtensions;
       } else {
         this.$utils.includeExtensions('engagementCenterActions');
-        const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
-        extensions.forEach(extension => {
-          if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
-            this.$set(this.actionValueExtensions, extension.type, extension.options);
-          }
-        });
       }
     },
   }
