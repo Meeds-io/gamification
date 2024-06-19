@@ -22,6 +22,7 @@ extensionRegistry.registerExtension('engagementCenterConnectors', 'connector-ext
   image: '/gamification-portlets/images/connector/meeds.svg',
   title: 'Meeds',
   description: 'gamification.admin.meeds.label.description',
+  actionLabel: 'gamification.label.meeds.action.form',
   defaultConnector: true,
   rank: 10
 });
