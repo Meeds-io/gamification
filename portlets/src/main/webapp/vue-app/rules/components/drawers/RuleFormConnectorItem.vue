@@ -19,8 +19,11 @@
 
 -->
 <template>
-  <v-list-item dense class="border-color-grey border-radius my-1">
-    <v-list-item-icon class="me-2">
+  <v-list-item dense class="border-color-grey border-radius my-2 ps-3">
+    <v-list-item-avatar
+      class="mx-2"
+      size="25"
+      tile>
       <v-icon
         v-if="icon"
         :class="iconColorClass">
@@ -30,7 +33,7 @@
         v-else
         :src="image"
         :alt="name">
-    </v-list-item-icon>
+    </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title v-text="label" />
     </v-list-item-content>
@@ -50,7 +53,7 @@ export default {
       return this.connector?.name || '';
     },
     label() {
-      return this.connector?.title || '';
+      return this.connector?.actionLabel ? this.$t(`${this.connector?.actionLabel}`) : this.connector?.title;
     },
     icon() {
       return this.connector?.icon || '';

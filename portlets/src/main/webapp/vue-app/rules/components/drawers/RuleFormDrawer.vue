@@ -52,7 +52,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </template>
         </translation-text-field>
       </v-card-text>
-      <v-card-text class="text-subtitle-1 pb-0">How do you want to incentivize users?</v-card-text>
+      <v-card-text class="text-subtitle-1 pb-0">{{ $t('rule.form.label.incentivizeUsers') }}</v-card-text>
       <v-list-item-group
         v-model="selectedConnectorIndex"
         :role="null"
@@ -63,14 +63,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           v-for="connector in connectors"
           :key="connector.id"
           :connector="connector" />
-        <v-list-item dense class="border-color-grey border-radius my-1">
-          <v-list-item-icon class="me-2">
-            <v-icon>
+        <v-list-item dense class="border-color-grey border-radius my-2 ps-3">
+          <v-list-item-avatar
+            class="mx-2"
+            size="25"
+            tile>
+            <v-icon size="24">
               fas fa-bullhorn
             </v-icon>
-          </v-list-item-icon>
+          </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title>Let them submit their contribution</v-list-item-title>
+            <v-list-item-title>{{ $t('rule.form.label.manuelLabel') }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-item-group>
@@ -163,10 +166,10 @@ export default {
   },
   created() {
     this.$root.$on('rule-form-drawer-event', this.open);
+    this.refreshConnectorExtensions();
   },
   methods: {
     init() {
-      this.refreshExtensions();
       this.refreshConnectorExtensions();
       // Check connectors status from store
       this.loading = true;
@@ -181,27 +184,24 @@ export default {
             this.$nextTick().then(() => {
               this.trigger = this.selectedTrigger;
             });
+          } else if (this.ruleId) {
+            this.selectedConnectorIndex = 0;
           }
         })
         .finally(() => {
           this.loading = false;
         });
     },
-    refreshExtensions() {
-      if (this.$root.actionValueExtensions && Object.keys(this.$root.actionValueExtensions).length) {
-        this.actionValueExtensions = this.$root.actionValueExtensions;
-      } else {
-        this.$utils.includeExtensions('engagementCenterActions');
-        const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
-        extensions.forEach(extension => {
-          if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
-            this.$set(this.actionValueExtensions, extension.type, extension.options);
-          }
-        });
-      }
-    },
     refreshConnectorExtensions() {
       this.connectorsExtensions = extensionRegistry.loadExtensions(this.extensionApp, this.connectorExtensionType) || [];
+      this.connectorsExtensions.forEach(extension => {
+        if (extension?.init) {
+          const initPromise = extension.init();
+          if (initPromise?.then) {
+            return initPromise.then(() => this.$nextTick());
+          }
+        }
+      });
     },
     open(rule, program) {
       this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
