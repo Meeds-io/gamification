@@ -105,7 +105,6 @@ export default {
     }
   },
   data: () => ({
-    selectedConnector: null,
     trigger: '',
     triggers: [],
     triggersItems: [],
@@ -148,14 +147,6 @@ export default {
     },
   },
   watch: {
-    selectedConnector() {
-      if (this.selectedConnector) {
-        this.trigger = null;
-        this.triggers = [];
-        this.validEventProperties = false;
-        this.retrieveTriggers();
-      }
-    },
     validEventProperties() {
       if (this.validEventProperties) {
         const index = this.programEventsWithSameTrigger.findIndex(event => JSON.stringify(event.properties) === JSON.stringify(this.eventProperties));
@@ -173,13 +164,13 @@ export default {
     document.addEventListener('event-form-filled', (event) => {
       this.eventProperties = event?.detail ? event?.detail : null;
       this.validEventProperties = true;
-      this.$emit('triggerUpdated', this.trigger, this.selectedConnector, this.eventProperties, true);
+      this.$emit('triggerUpdated', this.trigger, this.triggerType, this.eventProperties, true);
 
     });
     document.addEventListener('event-form-unfilled', () => {
       this.eventProperties = null;
       this.validEventProperties = false;
-      this.$emit('triggerUpdated', this.trigger, this.selectedConnector, this.eventProperties, false);
+      this.$emit('triggerUpdated', this.trigger, this.triggerType, this.eventProperties, false);
     });
 
     if (this.selectedTrigger) {
@@ -228,7 +219,7 @@ export default {
           eventName: this.trigger,
         }).then(result => {
           this.programEventsWithSameTrigger = result?.rules.map(rule => rule.event);
-          if (this.selectedConnector && !this.isExtensibleEvent) {
+          if (this.triggerType && !this.isExtensibleEvent) {
             const index = this.programEventsWithSameTrigger.findIndex(event => event.trigger === this.trigger);
             if (index >= 0) {
               this.$root.$emit('alert-message', this.$t('rule.form.error.sameEventExistsInProgram'), 'warning');
@@ -236,7 +227,7 @@ export default {
           }
         }).finally(window.setTimeout(() => this.initialized = true, 10));
         if (!this.isExtensibleEvent) {
-          this.$emit('triggerUpdated', this.trigger, this.selectedConnector ? this.selectedConnector : this.triggerType, this.eventProperties, true);
+          this.$emit('triggerUpdated', this.trigger, this.triggerType, this.eventProperties, true);
         }
       }
     },
