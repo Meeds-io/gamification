@@ -20,15 +20,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.exoplatform.addons.gamification</groupId>
+        <groupId>io.meeds.addons.gamification</groupId>
         <artifactId>gamification</artifactId>
         <version>7.0.x-SNAPSHOT</version>
     </parent>
 
     <artifactId>gamification-packaging</artifactId>
     <packaging>pom</packaging>
-    <name>eXo Gamification :: Extension Packaging</name>
-    <description>eXo Gamification packaging for installation</description>
+    <name>Meeds:: Gamification :: Extension Packaging</name>
+    <description>Meeds Gamification packaging for installation</description>
 
     <dependencies>
         <dependency>
