@@ -44,7 +44,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="width-auto flex-grow-1 pb-1 pt-4"
           back-icon
           autofocus
-          required>
+          required
+          @initialized="setFormInitialized">
           <template #title>
             <div class="text-subtitle-1">
               {{ $t('rule.form.label.rules') }}
@@ -92,6 +93,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :program="program"
         :trigger-type="triggerType"
         :rule-title-translations="ruleTitleTranslations"
+        :original-rule-title-translations="originalRuleTitleTranslations"
         @saved="close" />
     </template>
   </exo-drawer>
@@ -105,6 +107,7 @@ export default {
     ruleDescription: null,
     value: '',
     drawer: false,
+    originalRuleTitleTranslations: {},
     expanded: false,
     connectors: [],
     selectedConnectorIndex: -1,
@@ -214,6 +217,8 @@ export default {
         this.rule.templateParams = Object.assign({}, this.defaultTemplateParams);
       }
       this.program = this.rule?.program || program;
+      this.ruleTitle = this.rule?.title || '';
+      this.ruleTitleTranslations = {};
       if (this.$refs.ruleFormDrawer) {
         this.$refs.ruleFormDrawer.open();
       }
@@ -273,6 +278,9 @@ export default {
         ruleModel.prerequisiteRuleIds = rule.prerequisiteRules.map(r => r.id).filter(id => id);
       }
       return ruleModel;
+    },
+    setFormInitialized() {
+      this.originalRuleTitleTranslations = this.ruleTitleTranslations && JSON.parse(JSON.stringify(this.ruleTitleTranslations));
     },
   }
 };
