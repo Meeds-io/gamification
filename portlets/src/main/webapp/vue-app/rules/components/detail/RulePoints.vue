@@ -30,9 +30,9 @@
         small>
         <span class="subtitle-2">+ {{ rule.score }}</span>
       </v-chip>
-      <div v-if="totalTargetItem > 0" class="text-sub-title font-italic mb-1 ms-2">
-        {{ $t('actions.for') }} {{ totalTargetItem }} {{ targetItemLabel }}
-      </div>
+      <span v-if="totalTargetItem > 0" class="subtitle-2 text-sub-title align-self-center ms-1">
+        {{ $t('actions.for') }}  {{ totalTargetItem }} {{ targetItemLabel }}
+      </span>
     </div>
   </div>
 </template>
