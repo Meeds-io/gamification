@@ -21,7 +21,8 @@
     :subtite="subtitle"
     :height="height"
     :min-width="minWidth"
-    :extra-class="extraClass">
+    :extra-class="extraClass"
+    class="application-body">
     <template #title>
       <slot name="title"></slot>
     </template> 
