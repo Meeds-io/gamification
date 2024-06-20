@@ -23,12 +23,17 @@
     <div class="text-subtitle mb-1">
       {{ $t('rules.achieveItFor') }}
     </div>
-    <v-chip
-      color="#F57C00"
-      class="content-box-sizing white--text"
-      small>
-      <span class="text-subtitle">+ {{ rule.score }}</span>
-    </v-chip>
+    <div class="d-flex flex-row">
+      <v-chip
+        color="#F57C00"
+        class="content-box-sizing white--text"
+        small>
+        <span class="subtitle-2">+ {{ rule.score }}</span>
+      </v-chip>
+      <span v-if="totalTargetItem > 0" class="subtitle-2 text-sub-title align-self-center ms-1">
+        {{ $t('actions.for') }}  {{ totalTargetItem }} {{ targetItemLabel }}
+      </span>
+    </div>
   </div>
 </template>
 <script>
@@ -38,6 +43,15 @@ export default {
       type: Object,
       default: null,
     },
+    targetItemLabel: {
+      type: String,
+      default: null,
+    }
   },
+  computed: {
+    totalTargetItem() {
+      return this.rule?.event?.properties?.totalTargetItem || 0;
+    }
+  }
 };
 </script>
