@@ -20,7 +20,7 @@
 -->
 <template>
   <exo-drawer
-    ref="ruleFormDrawer"
+    ref="ruleContentFormDrawer"
     v-model="drawer"
     :confirm-close="ruleChanged"
     :confirm-close-labels="confirmCloseLabels"
@@ -31,7 +31,7 @@
     @opened="stepper = 1"
     @closed="clear">
     <template #title>
-      {{ ruleTitle }}
+      <span class="text-truncate">{{ ruleTitle }}</span>
     </template>
     <template v-if="drawer" #content>
       <v-form
@@ -332,6 +332,10 @@ export default {
       type: Object,
       default: null
     },
+    originalRuleTitleTranslations: {
+      type: Object,
+      default: null
+    },
   },
   data: () => ({
     rule: {},
@@ -509,9 +513,9 @@ export default {
     },
     saving() {
       if (this.saving) {
-        this.$refs.ruleFormDrawer.startLoading();
+        this.$refs.ruleContentFormDrawer.startLoading();
       } else {
-        this.$refs.ruleFormDrawer.endLoading();
+        this.$refs.ruleContentFormDrawer.endLoading();
       }
     },
     expanded() {
@@ -529,10 +533,23 @@ export default {
   methods: {
     open() {
       this.rule = this.content;
-      this.selectedTrigger = this.rule?.event?.title;
+      this.ruleDescription = this.rule?.description || '';
+      this.validDescription = !!this.ruleDescription;
+      this.ruleDescriptionTranslations = {};
+      this.durationCondition = this.rule.startDate || this.rule.endDate;
+      this.recurrenceCondition = !!this.rule.recurrence;
+      this.prerequisiteRuleCondition = this.rule.prerequisiteRules?.length;
+      this.eventExist = false;
+      this.metadataObjectId = this.content?.id;
+      this.attachmentsEdited = false;
       this.value = this.rule?.event?.title;
-      if (this.$refs.ruleFormDrawer) {
-        this.$refs.ruleFormDrawer.open();
+      this.selectedTrigger = this.rule?.event?.title;
+      this.eventProperties = this.rule?.event?.properties;
+      this.variablePoints = !!this.rule?.event?.properties?.totalTargetItem;
+      this.totalTargetItem = Number(this.rule?.event?.properties?.totalTargetItem);
+      this.validEventProperties = true;
+      if (this.$refs.ruleContentFormDrawer) {
+        this.$refs.ruleContentFormDrawer.open();
       }
     },
     selectTrigger(trigger, triggerType, eventProperties, validEventProperties) {
@@ -562,7 +579,7 @@ export default {
       }
     },
     close() {
-      this.$refs.ruleFormDrawer.close();
+      this.$refs.ruleContentFormDrawer.close();
     },
     clear() {
       this.stepper = 0;
@@ -725,7 +742,6 @@ export default {
     },
     setFormInitialized() {
       this.originalRule = this.computeRuleModel(this.rule, this.program);
-      this.originalRuleTitleTranslations = this.ruleTitleTranslations && JSON.parse(JSON.stringify(this.ruleTitleTranslations));
       this.originalRuleDescriptionTranslations = this.ruleDescriptionTranslations && JSON.parse(JSON.stringify(this.ruleDescriptionTranslations));
     },
     previousStep(event) {

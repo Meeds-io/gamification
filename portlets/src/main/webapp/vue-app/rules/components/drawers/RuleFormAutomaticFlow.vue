@@ -19,7 +19,7 @@
 
 -->
 <template>
-  <v-app>
+  <div>
     <template>
       <v-card-text class="px-0 text-subtitle-1">
         {{ $t('rule.form.label.application.createAutomaticFlow') }}
@@ -72,7 +72,7 @@
           class="d-flex flex-column" />
       </v-card>
     </template>
-  </v-app>
+  </div>
 </template>
 
 <script>
@@ -155,9 +155,6 @@ export default {
         }
       }
     },
-    extensionAction() {
-      this.$emit('event-extension-initialized', this.extensionAction, this.canVariableRewarding);
-    },
   },
   created() {
     document.addEventListener(`extension-${this.extensionApp}-${this.connectorExtensionType}-updated`, this.refreshConnectorExtensions);
@@ -206,6 +203,9 @@ export default {
         .then(triggers => {
           this.triggersItems = triggers;
           this.triggers = triggers.map(trigger => trigger.title);
+          this.$nextTick().then(() => {
+            this.$emit('event-extension-initialized', this.extensionAction, this.canVariableRewarding);
+          });
         });
     },
     triggerChanged() {
