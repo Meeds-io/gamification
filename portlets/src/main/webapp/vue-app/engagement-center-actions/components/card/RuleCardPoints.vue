@@ -19,12 +19,17 @@
 
 -->
 <template>
-  <v-chip
-    color="#F57C00"
-    class="content-box-sizing white--text"
-    small>
-    <span class="subtitle-2">+ {{ rule.score }}</span>
-  </v-chip>
+  <div class="d-flex flex-column">
+    <div v-if="totalTargetItem > 0" class="subtitle-2 text-sub-title mb-1">
+      {{ $t('actions.for') }} {{ totalTargetItem }} {{ targetItemLabel }}
+    </div>
+    <v-chip
+      color="#F57C00"
+      class="content-box-sizing white--text align-self-start"
+      small>
+      <span class="subtitle-2">+ {{ rule.score }}</span>
+    </v-chip>
+  </div>
 </template>
 <script>
 export default {
@@ -33,6 +38,15 @@ export default {
       type: Object,
       default: null,
     },
+    targetItemLabel: {
+      type: String,
+      default: null,
+    }
   },
+  computed: {
+    totalTargetItem() {
+      return this.rule?.event?.properties?.totalTargetItem || 0;
+    }
+  }
 };
 </script>
