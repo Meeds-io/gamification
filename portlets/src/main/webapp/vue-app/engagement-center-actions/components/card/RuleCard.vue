@@ -114,7 +114,8 @@
           <v-spacer />
           <v-card-text class="d-flex align-center pt-0">
             <engagement-center-rule-card-points
-              :rule="ruleWithProgram" />
+              :rule="ruleWithProgram"
+              :target-item-label="targetItemLabel" />
             <engagement-center-rule-card-recurrence
               v-if="rule.recurrence" 
               :rule="ruleWithProgram"
@@ -213,6 +214,16 @@ export default {
     },
     isProgramMember() {
       return this.rule?.userInfo?.member;
+    },
+    actionValueExtension() {
+      return this.ruleEvent
+          && Object.values(this.$root.actionValueExtensions)
+            .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
+            .find(extension => extension?.match?.(this.ruleEvent))
+          || null;
+    },
+    targetItemLabel() {
+      return this.actionValueExtension?.targetItemLabel;
     },
   },
   created() {
