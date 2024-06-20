@@ -223,7 +223,7 @@ export default {
       this.$refs.drawer.open();
       this.$nextTick()
         .then(() => {
-          this.retrieveRules();
+          this.$nextTick().then(() => this.retrieveRules());
           this.collectProgramVisit();
         });
     },
