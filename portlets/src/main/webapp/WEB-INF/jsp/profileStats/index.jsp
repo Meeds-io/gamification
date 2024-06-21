@@ -31,7 +31,7 @@
   <div class="VuetifyApp">
     <div id="profile-stats-portlet"></div>
     <script type="text/javascript">
-      require(['SHARED/profileStatsBundle'], app => app.init());
+      window.require(['SHARED/profileStatsBundle'], app => app.init());
     </script>
   </div>
 <% } %>

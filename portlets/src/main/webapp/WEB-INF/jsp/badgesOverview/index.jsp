@@ -35,7 +35,7 @@
       <v-cacheable-dom-app cache-id="badgesOverview_<%=profileOwnerId%>"></v-cacheable-dom-app>
       <script type="text/javascript" defer="defer">
         eXo.env.portal.addOnLoadCallback(() => {
-          require(['PORTLET/gamification-portlets/BadgesOverview'], app => app.init());
+          window.require(['PORTLET/gamification-portlets/BadgesOverview'], app => app.init());
         });
       </script>
     </div>

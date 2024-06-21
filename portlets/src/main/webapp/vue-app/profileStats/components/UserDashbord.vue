@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-toolbar
       height="64"
       flat
-      class="border-box-sizing profile-card-header app-background-color flex-column flex-shrink-1 flex-grow-0">
+      class="border-box-sizing profile-card-header flex-column flex-shrink-1 flex-grow-0">
       <div class="widget-text-header text-truncate">
         {{ title }}
       </div>

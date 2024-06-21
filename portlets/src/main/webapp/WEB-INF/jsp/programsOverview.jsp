@@ -10,8 +10,8 @@
   <div class="VuetifyApp">
     <div id="programsOverview">
       <script type="text/javascript">
-                require(['PORTLET/gamification-portlets/programsOverview'], app => app.init());
-        </script>
+        window.require(['PORTLET/gamification-portlets/programsOverview'], app => app.init());
+      </script>
     </div>
   </div>
 <% } %>

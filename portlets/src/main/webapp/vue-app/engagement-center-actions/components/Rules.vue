@@ -18,7 +18,7 @@
 
 -->
 <template>
-  <v-app class="card-border-radius app-background-color overflow-hidden">
+  <v-app class="application-body">
     <engagement-center-user-connectors-extensions />
     <engagement-center-rule-extensions />
     <main

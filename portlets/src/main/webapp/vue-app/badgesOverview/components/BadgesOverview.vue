@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     v-if="displayWidget"
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
     id="badgesOverview">
-    <div :class="!isOverviewDisplay && 'card-border-radius app-background-color overflow-hidden'">
+    <div :class="!isOverviewDisplay && 'application-body overflow-hidden'">
       <div
         v-if="isOverviewDisplay"
         v-show="!loading && hasBadges"

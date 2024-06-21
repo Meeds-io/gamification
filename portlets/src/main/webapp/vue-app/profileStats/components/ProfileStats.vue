@@ -18,12 +18,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-app
     flat
     dark>
-    <v-container pa-0>
+    <v-container class="application-body" pa-0>
       <v-layout
         row
         wrap
         mx-0
-        class="profileCard card-border-radius app-background-color overflow-hidden">
+        class="profileCard">
         <v-fade-transition>
           <user-dashbord
             v-show="!isFlipped"
