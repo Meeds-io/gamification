@@ -22,7 +22,9 @@
   <v-app
     v-if="displayed"
     v-show="!loading">
-    <widget-wrapper :title="title">
+    <widget-wrapper
+      :title="title"
+      extra-class="application-body">
       <v-list v-if="!loading" class="pa-0">
         <v-list-item v-if="notConnectedYet" class="pa-0">
           <div class="mx-auto mb-2 ps-0">

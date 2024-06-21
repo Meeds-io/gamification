@@ -15,10 +15,10 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app>
+  <div>
     <v-card
       v-if="displayUserSetting"
-      class="card-border-radius app-background-color"
+      class="application-body"
       flat>
       <v-list>
         <v-list-item>
@@ -38,7 +38,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :connector-extensions="connectors"
       @connectors-loaded="connectorsLoaded" />
     <engagement-center-user-connectors-extensions />
-  </v-app>
+  </div>
 </template>
 
 <script>

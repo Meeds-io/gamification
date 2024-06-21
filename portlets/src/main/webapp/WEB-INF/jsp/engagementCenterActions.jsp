@@ -27,10 +27,10 @@
     boolean isAdministrator = request.getRemoteUser() != null && Utils.isRewardingManager(request.getRemoteUser());
     boolean isProgramManager = request.getRemoteUser() != null && (isAdministrator || ExoContainerContext.getService(ProgramService.class).countOwnedPrograms(request.getRemoteUser()) > 0);
 %>
-<div class="VuetifyApp singlePageApplication">
+<div class="VuetifyApp">
   <div id="EngagementCenterActions">
     <script type="text/javascript">
-      require(['PORTLET/gamification-portlets/EngagementCenterActions'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>));
+      window.require(['PORTLET/gamification-portlets/EngagementCenterActions'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>));
     </script>
   </div>
 </div>
