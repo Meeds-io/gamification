@@ -12,7 +12,7 @@
 <div class="VuetifyApp">
   <div id="createProgramButton">
     <script type="text/javascript">
-      require(['PORTLET/gamification-portlets/CreateProgramButton'], app => app.init(<%=canManagePrograms%>));
+      window.require(['PORTLET/gamification-portlets/CreateProgramButton'], app => app.init(<%=canManagePrograms%>));
     </script>
   </div>
 </div>

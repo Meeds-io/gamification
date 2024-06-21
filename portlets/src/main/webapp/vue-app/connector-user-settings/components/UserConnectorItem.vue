@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app class="full-width">
+  <div class="full-width">
     <v-card
       v-show="initialized"
       flat>
@@ -76,7 +76,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </div>
       </div>
     </v-card>
-  </v-app>
+  </div>
 </template>
 
 <script>
