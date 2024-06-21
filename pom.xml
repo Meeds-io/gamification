@@ -25,7 +25,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <version>18-M03</version>
     </parent>
 
-    <groupId>io.meeds.addons.gamification</groupId>
+    <groupId>io.meeds.gamification</groupId>
     <artifactId>gamification</artifactId>
     <version>7.0.x-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -56,7 +56,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
         <!-- Sonar properties -->
         <sonar.organization>meeds-io</sonar.organization>
-    <exo.snapshots.repo.url>https://repository.exoplatform.org/content/repositories/meeds-snapshots</exo.snapshots.repo.url>
+        <exo.snapshots.repo.url>https://repository.exoplatform.org/content/repositories/meeds-snapshots</exo.snapshots.repo.url>
     </properties>
 
     <dependencyManagement>
