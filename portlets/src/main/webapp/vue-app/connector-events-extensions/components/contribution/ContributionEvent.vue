@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app>
+  <div>
     <meeds-contribution-event-form
       v-if="isEditing"
       :trigger="trigger"
@@ -26,7 +26,7 @@
       v-else
       :trigger="trigger"
       :properties="properties" />
-  </v-app>
+  </div>
 </template>
 <script>
 export default {

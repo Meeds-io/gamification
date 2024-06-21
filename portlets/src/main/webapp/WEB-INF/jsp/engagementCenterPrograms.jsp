@@ -28,10 +28,10 @@ boolean isAdministrator = Utils.isRewardingManager(ConversationState.getCurrent(
 boolean isProgramManager = isAdministrator || ExoContainerContext.getService(ProgramService.class).countOwnedPrograms(ConversationState.getCurrent().getIdentity().getUserId()) > 0;
 %>
 
-<div class="VuetifyApp singlePageApplication">
+<div class="VuetifyApp">
   <div id="EngagementCenterPrograms">
     <script type="text/javascript">
-      require(['PORTLET/gamification-portlets/EngagementCenterPrograms'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>));
+      window.require(['PORTLET/gamification-portlets/EngagementCenterPrograms'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>));
     </script>
   </div>
 </div>
