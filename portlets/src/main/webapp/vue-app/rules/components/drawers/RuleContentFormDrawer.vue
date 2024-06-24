@@ -99,19 +99,6 @@
                     @triggerUpdated="selectTrigger"
                     @unfilled="eventProperties = {}"
                     @event-extension-initialized="eventExtensionInitialized" />
-                  <div v-if="ruleId">
-                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
-                      {{ $t('rule.form.label.status') }}
-                    </v-card-text>
-                    <div class="d-flex flex-row">
-                      <label class="subtitle-1 text-light-color mt-1 pe-3">{{ $t('rule.form.label.enabled') }}</label>
-                      <v-switch
-                        id="allowAttendeeToUpdateRef"
-                        ref="allowAttendeeToUpdateRef"
-                        v-model="rule.enabled"
-                        class="mt-0 ms-4" />
-                    </div>
-                  </div>
                 </div>
               </v-slide-y-transition>
             </v-stepper-items>
@@ -258,6 +245,18 @@
               <v-stepper-items class="py-1">
                 <v-slide-y-transition>
                   <div v-show="expanded || (stepper === 4)">
+                    <div v-if="ruleId" class="d-flex align-center">
+                      <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                        {{ $t('rule.form.label.enabled') }}
+                      </v-card-text>
+                      <div class="flex-shrink-0 ms-2">
+                        <v-switch
+                          id="engagementCenterActionStatusSwitch"
+                          ref="engagementCenterActionStatusSwitchRef"
+                          v-model="rule.enabled"
+                          class="my-0 ms-0 me-n1" />
+                      </div>
+                    </div>
                     <engagement-center-rule-publish-editor
                       v-if="enablePublication"
                       ref="rulePublishInput"
