@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.ProgramDTO;
@@ -77,6 +78,7 @@ public class RuleRestEntity extends RuleDTO {
                         boolean favorite,
                         Set<Long> prerequisiteRuleIds,
                         EntityType type,
+                        RealizationStatus defaultRealizationStatus,
                         RecurrenceType recurrence,
                         long audience,
                         Set<Long> managers,
@@ -103,6 +105,7 @@ public class RuleRestEntity extends RuleDTO {
           cacheTime,
           prerequisiteRuleIds,
           type,
+          defaultRealizationStatus,
           recurrence);
     this.published = published;
     this.favorite = favorite;
@@ -137,6 +140,7 @@ public class RuleRestEntity extends RuleDTO {
                               favorite,
                               prerequisiteRuleIds,
                               type,
+                              defaultRealizationStatus,
                               recurrence,
                               audience,
                               managers,
