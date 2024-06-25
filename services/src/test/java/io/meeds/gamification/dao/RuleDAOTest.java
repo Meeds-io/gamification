@@ -23,13 +23,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import io.meeds.gamification.constant.*;
 import org.junit.Test;
 
-import io.meeds.gamification.constant.DateFilterType;
-import io.meeds.gamification.constant.EntityFilterType;
-import io.meeds.gamification.constant.EntityStatusType;
-import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.model.filter.RuleFilter;
@@ -214,6 +210,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleEntityNotStarted.setLastModifiedDate(new Date());
     ruleEntityNotStarted.setDomainEntity(domainEntity1);
     ruleEntityNotStarted.setType(EntityType.MANUAL);
+    ruleEntityNotStarted.setDefaultRealizationStatus(RealizationStatus.ACCEPTED);
     ruleEntityNotStarted.setRecurrence(RecurrenceType.NONE);
     ruleEntityNotStarted.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
         + 10 * MILLIS_IN_A_DAY))));
@@ -238,6 +235,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleEntityEnded.setLastModifiedDate(new Date());
     ruleEntityEnded.setDomainEntity(domainEntity1);
     ruleEntityEnded.setType(EntityType.MANUAL);
+    ruleEntityEnded.setDefaultRealizationStatus(RealizationStatus.ACCEPTED);
     ruleEntityEnded.setRecurrence(RecurrenceType.NONE);
     ruleEntityEnded.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date())));
     ruleEntityEnded.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
