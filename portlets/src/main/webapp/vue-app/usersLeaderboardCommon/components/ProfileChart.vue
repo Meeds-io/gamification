@@ -23,7 +23,7 @@
   <v-card
     :loading="loading"
     :min-height="size"
-    class="d-flex flex-row overflow-hidden subtitle-2 text-color full-width flex-grow-1"
+    class="d-flex flex-row overflow-hidden full-width flex-grow-1"
     flat>
     <v-card
       :max-height="size"
@@ -43,7 +43,7 @@
             :id="`${id}-${item.id}`"
             :color="item.id === programId && 'primary' || ''"
             :class="hoverProgramId === item.id && 'primary-border-color py-1 mt-1'"
-            class="text-truncate-2 caption font-weight-light my-1"
+            class="text-truncate-2 my-1"
             flat>
             <div class="d-inline-block">
               <v-card

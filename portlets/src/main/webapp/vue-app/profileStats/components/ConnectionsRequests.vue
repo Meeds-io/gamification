@@ -59,8 +59,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-list-item-avatar>
 
             <v-list-item-content class="py-0">
-              <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-sanitized-html="item.senderFullName" />
-              <v-list-item-subtitle class="caption grey-color" v-text="item.commonConnections+ ' ' + $t('homepage.profileStatus.commonConnections')" />
+              <v-list-item-title class="request-user-name darken-2" v-sanitized-html="item.senderFullName" />
+              <v-list-item-subtitle v-text="item.commonConnections+ ' ' + $t('homepage.profileStatus.commonConnections')" />
             </v-list-item-content>
             <v-list-item-action>
               <v-btn-toggle
