@@ -63,7 +63,6 @@
 
         <v-col
           :cols="expandedView && 6 || 12"
-          :class="!expandedView && 'px-8'"
           class="py-0">
           <v-row class="ma-0 pa-0">
             <v-col cols="6" class="px-0">
@@ -89,7 +88,6 @@
         <v-col
           v-if="hasDetails"
           :cols="expandedView && 6 || 12"
-          :class="!expandedView && 'px-8'"
           class="py-0">
           <v-row class="ma-0 pa-0">
             <v-col
@@ -174,14 +172,14 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col v-if="!expanded" :class="!expandedView && 'px-8'">
+        <v-col v-if="!expanded">
           <engagement-center-rule-description
             :rule="rule" />
         </v-col>
       </v-row>
       <v-card
         v-if="isExtensibleEvent && !isPublicSite"
-        class="px-10 py-3"
+        class="px-5 py-3"
         flat>
         <extension-registry-components
           :params="eventParams"

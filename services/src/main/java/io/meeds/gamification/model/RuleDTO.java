@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.RecurrenceType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,45 +33,47 @@ import lombok.NoArgsConstructor;
 @Data
 public class RuleDTO implements Serializable {
 
-  private static final long serialVersionUID = 7423093905330790451L;
+  private static final long   serialVersionUID = 7423093905330790451L;
 
-  protected Long            id;
+  protected Long              id;
 
-  protected String          title;
+  protected String            title;
 
-  protected String          description;
+  protected String            description;
 
-  protected int             score;
+  protected int               score;
 
-  protected ProgramDTO      program;
+  protected ProgramDTO        program;
 
-  protected boolean         enabled;
+  protected boolean           enabled;
 
-  protected boolean         deleted;
+  protected boolean           deleted;
 
-  protected String          createdBy;
+  protected String            createdBy;
 
-  protected String          createdDate;
+  protected String            createdDate;
 
-  protected String          lastModifiedBy;
+  protected String            lastModifiedBy;
 
-  protected EventDTO        event;
+  protected EventDTO          event;
 
-  protected String          lastModifiedDate;
+  protected String            lastModifiedDate;
 
-  protected String          startDate;
+  protected String            startDate;
 
-  protected String          endDate;
+  protected String            endDate;
 
-  protected long            activityId;
+  protected long              activityId;
 
-  protected long            cacheTime;
+  protected long              cacheTime;
 
-  protected Set<Long>       prerequisiteRuleIds;                    // NOSONAR
+  protected Set<Long>         prerequisiteRuleIds;                    // NOSONAR
 
-  protected EntityType      type;
+  protected EntityType        type;
 
-  protected RecurrenceType  recurrence;
+  protected RealizationStatus defaultRealizationStatus;
+
+  protected RecurrenceType    recurrence;
 
   /**
    * Deprecated should be renamed to spaceId knowing that audienceId should
@@ -120,6 +123,7 @@ public class RuleDTO implements Serializable {
                        cacheTime,
                        prerequisiteRuleIds == null ? null : new HashSet<>(prerequisiteRuleIds),
                        type,
+                       defaultRealizationStatus,
                        recurrence);
   }
 

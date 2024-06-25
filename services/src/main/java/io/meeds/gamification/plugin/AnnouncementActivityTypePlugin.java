@@ -40,8 +40,7 @@ public class AnnouncementActivityTypePlugin extends ActivityTypePlugin {
   @Override
   public boolean isActivityEditable(ExoSocialActivity activity, Identity userAclIdentity) {
     String realizationStatus = activity.getTemplateParams().get(REALIZATION_STATUS_TEMPLATE_PARAM);
-    if (RealizationStatus.ACCEPTED.name().equals(realizationStatus)
-        || RealizationStatus.REJECTED.name().equals(realizationStatus)) {
+    if (RealizationStatus.REJECTED.name().equals(realizationStatus)) {
       return false;
     }
     org.exoplatform.social.core.identity.model.Identity identity =
