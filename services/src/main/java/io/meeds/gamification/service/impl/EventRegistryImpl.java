@@ -74,7 +74,6 @@ public class EventRegistryImpl implements EventRegistry {
     return new Trigger(eventConfigPlugin.getEvent().getTrigger(),
                        eventConfigPlugin.getEvent().getType(),
                        eventConfigPlugin.getEvent().getCancellerEvents(),
-                       eventConfigPlugin.isVerificationRequired(),
                        eventConfigPlugin.isCanVariableRewarding());
   }
 }

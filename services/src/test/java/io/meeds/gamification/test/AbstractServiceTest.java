@@ -374,6 +374,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain());
       rule.setType(EntityType.AUTOMATIC);
+      rule.setDefaultRealizationStatus(RealizationStatus.ACCEPTED);
       rule.setRecurrence(RecurrenceType.NONE);
       rule = ruleDAO.create(rule);
     }
@@ -397,6 +398,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(domainEntity);
       rule.setType(EntityType.AUTOMATIC);
+      rule.setDefaultRealizationStatus(RealizationStatus.ACCEPTED);
       rule.setRecurrence(RecurrenceType.NONE);
       rule = ruleDAO.create(rule);
     }
@@ -419,6 +421,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(domainEntity);
       rule.setType(EntityType.MANUAL);
+      rule.setDefaultRealizationStatus(RealizationStatus.PENDING);
       rule.setRecurrence(RecurrenceType.NONE);
       rule.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis() + 2 * MILLIS_IN_A_DAY))));
       rule.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 2 * MILLIS_IN_A_DAY))));
@@ -448,6 +451,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain(domain));
       rule.setType(ruleType);
+      rule.setDefaultRealizationStatus(RealizationStatus.ACCEPTED);
       rule.setRecurrence(RecurrenceType.NONE);
       rule.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis() + 2 * MILLIS_IN_A_DAY))));
       rule.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 2 * MILLIS_IN_A_DAY))));
