@@ -176,6 +176,7 @@ public class RuleBuilder {
                               isFavorite,
                               rule.getPrerequisiteRuleIds(),
                               rule.getType(),
+                              rule.getDefaultRealizationStatus(),
                               rule.getRecurrence(),
                               rule.getSpaceId(),
                               rule.getManagers(),
