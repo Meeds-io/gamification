@@ -798,4 +798,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="REVIEWER_ID" type="BIGINT"/>
         </addColumn>
     </changeSet>
+    <changeSet  author="exo-gamification" id="1.0.0-75">
+        <addColumn tableName="GAMIFICATION_RULE">
+            <column name="DEFAULT_REALIZATION_STATUS" type="INT" defaultValueNumeric="5" >
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <update tableName="GAMIFICATION_RULE">
+            <column name="DEFAULT_REALIZATION_STATUS" valueNumeric="0"/>
+            <where>TYPE = 0</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>
