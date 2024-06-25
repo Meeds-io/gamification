@@ -208,6 +208,7 @@ export default {
     },
     triggerChanged() {
       if (this.trigger) {
+        this.$emit('event-extension-initialized', this.extensionAction, this.canVariableRewarding);
         this.initialized = false;
         this.$ruleService.getRules({
           status: 'ENABLED',
