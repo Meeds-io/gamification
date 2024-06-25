@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+import io.meeds.gamification.constant.RealizationStatus;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -118,56 +119,60 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+  private static final long   serialVersionUID = 1L;
 
   @Id
   @SequenceGenerator(name = "SEQ_GAMIFICATION_RULE_ID", sequenceName = "SEQ_GAMIFICATION_RULE_ID", allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_GAMIFICATION_RULE_ID")
-  protected Long            id;
+  protected Long              id;
 
   @Column(name = "TITLE", unique = true, nullable = false)
-  protected String          title;
+  protected String            title;
 
   @Column(name = "DESCRIPTION")
-  protected String          description;
+  protected String            description;
 
   @Column(name = "SCORE")
-  protected int             score;
+  protected int               score;
 
   @Column(name = "ACTIVITY_ID")
-  protected long            activityId;
+  protected long              activityId;
 
   @ManyToOne
   @JoinColumn(name = "EVENT_ID")
-  private EventEntity       eventEntity;
+  private EventEntity         eventEntity;
 
   @ManyToOne
   @JoinColumn(name = "DOMAIN_ID")
-  private ProgramEntity     domainEntity;
+  private ProgramEntity       domainEntity;
 
   @Column(name = "ENABLED", nullable = false)
-  protected boolean         isEnabled;
+  protected boolean           isEnabled;
 
   @Column(name = "DELETED", nullable = false)
-  protected boolean         isDeleted;
+  protected boolean           isDeleted;
 
   @Column(name = "START_DATE")
-  private Date              startDate;
+  private Date                startDate;
 
   @Column(name = "END_DATE")
-  private Date              endDate;
+  private Date                endDate;
 
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "TYPE", nullable = false)
-  protected EntityType      type;
+  protected EntityType        type;
 
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "RECURRENCE", nullable = false)
-  private RecurrenceType    recurrence;
+  private RecurrenceType      recurrence;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "GAMIFICATION_PREREQUISITE_RULES", joinColumns = @JoinColumn(name = "RULE_ID"))
   @Column(name = "PREREQUISITE_RULE_ID")
-  private Set<Long>         prerequisiteRules;
+  private Set<Long>           prerequisiteRules;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "DEFAULT_REALIZATION_STATUS", nullable = false)
+  protected RealizationStatus defaultRealizationStatus;
 
 }
