@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.model.RuleDTO;
@@ -58,6 +59,11 @@ public class RuleMapper {
     } else {
       ruleEntity.setType(EntityType.AUTOMATIC);
     }
+    if (rule.getDefaultRealizationStatus() != null) {
+      ruleEntity.setDefaultRealizationStatus(rule.getDefaultRealizationStatus());
+    } else {
+      ruleEntity.setDefaultRealizationStatus(RealizationStatus.PENDING);
+    }
     if (rule.getCreatedDate() != null) {
       ruleEntity.setCreatedDate(Utils.parseRFC3339Date(rule.getCreatedDate()));
     }
@@ -85,6 +91,7 @@ public class RuleMapper {
       rule.setDeleted(ruleEntity.isDeleted());
       rule.setCreatedBy(ruleEntity.getCreatedBy());
       rule.setPrerequisiteRuleIds(ruleEntity.getPrerequisiteRules());
+      rule.setDefaultRealizationStatus(ruleEntity.getDefaultRealizationStatus());
       if (ruleEntity.getStartDate() != null) {
         rule.setStartDate(Utils.toSimpleDateFormat(ruleEntity.getStartDate()));
       }
@@ -95,6 +102,11 @@ public class RuleMapper {
         rule.setType(ruleEntity.getType());
       } else {
         rule.setType(EntityType.AUTOMATIC);
+      }
+      if (ruleEntity.getDefaultRealizationStatus() != null) {
+        rule.setDefaultRealizationStatus(ruleEntity.getDefaultRealizationStatus());
+      } else {
+        rule.setDefaultRealizationStatus(RealizationStatus.PENDING);
       }
       rule.setCreatedDate(Utils.toRFC3339Date(ruleEntity.getCreatedDate()));
       rule.setLastModifiedDate(Utils.toRFC3339Date(ruleEntity.getLastModifiedDate()));

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.RecurrenceType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,11 +43,7 @@ public class RulePublication extends RuleDTO {
 
   protected boolean             publish;
 
-  public RulePublication(RuleDTO rule,
-                         long spaceId,
-                         String message,
-                         Map<String, String> templateParams,
-                         boolean publish) {
+  public RulePublication(RuleDTO rule, long spaceId, String message, Map<String, String> templateParams, boolean publish) {
     super(rule.getId(),
           rule.getTitle(),
           rule.getDescription(),
@@ -65,6 +62,7 @@ public class RulePublication extends RuleDTO {
           rule.getCacheTime(),
           rule.getPrerequisiteRuleIds(),
           rule.getType(),
+          rule.getDefaultRealizationStatus(),
           rule.getRecurrence());
     this.spaceId = spaceId;
     this.message = message;
@@ -90,6 +88,7 @@ public class RulePublication extends RuleDTO {
                          long cacheTime,
                          Set<Long> prerequisiteRuleIds,
                          EntityType type,
+                         RealizationStatus defaultRealizationStatus,
                          RecurrenceType recurrence,
                          long spaceId,
                          String message,
@@ -113,6 +112,7 @@ public class RulePublication extends RuleDTO {
           cacheTime,
           prerequisiteRuleIds,
           type,
+          defaultRealizationStatus,
           recurrence);
     this.spaceId = spaceId;
     this.message = message;
@@ -140,6 +140,7 @@ public class RulePublication extends RuleDTO {
                                cacheTime,
                                prerequisiteRuleIds,
                                type,
+                               defaultRealizationStatus,
                                recurrence,
                                spaceId,
                                message,
