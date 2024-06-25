@@ -17,12 +17,12 @@
                 class="body-2 font-weight-bold suggestions-list-item-title">
                 <a
                   :href="url"
-                  class="font-weight-bold subtitle-2 request-user-name darken-2">
+                  class="request-user-name darken-2">
                   {{ spaceSuggestion.displayName }}
                 </a>
               </v-list-item-title>
               <v-list-item-subtitle
-                class="caption text-sub-title suggestions-list-item-subtitle">
+                class="suggestions-list-item-subtitle">
                 <span>
                   {{ spaceSuggestion.members }} {{ $t('spacemember.Label') }}
                 </span>

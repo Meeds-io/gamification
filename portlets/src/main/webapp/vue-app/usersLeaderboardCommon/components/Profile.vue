@@ -56,7 +56,7 @@
           extra-class="me-0 pa-0 my-0 text-truncate-2"
           popover-left-position
           offset-x />
-        <span v-else class="text-color subtitle-2">
+        <span v-else class="text-body">
           {{ user.fullname }}
         </span>
       </v-list-item-title>
