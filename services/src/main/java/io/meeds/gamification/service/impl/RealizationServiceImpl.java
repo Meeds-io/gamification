@@ -728,9 +728,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     realization.setReceiver(receiverIdentityId);
     realization.setObjectId(objectId);
     realization.setObjectType(objectType);
-    boolean isVerificationRequired = eventService.isVerificationRequiredForEvent(ruleDto.getEvent().getType(),
-                                                                                 ruleDto.getEvent().getTrigger());
-    realization.setStatus(isVerificationRequired ? RealizationStatus.PENDING.name() : RealizationStatus.ACCEPTED.name());
+    realization.setStatus(String.valueOf(ruleDto.getDefaultRealizationStatus()));
     realization.setType(ruleDto.getType());
     return realization;
   }

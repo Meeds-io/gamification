@@ -34,12 +34,10 @@ public class Trigger {
 
   private List<String> canceller;
 
-  private boolean      isVerificationRequired;
-
   private boolean      canVariableRewarding;
 
   @Override
   public Trigger clone() { // NOSONAR
-    return new Trigger(title, type, canceller, isVerificationRequired, canVariableRewarding);
+    return new Trigger(title, type, canceller, canVariableRewarding);
   }
 }
