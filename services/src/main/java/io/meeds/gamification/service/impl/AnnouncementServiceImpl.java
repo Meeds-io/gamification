@@ -185,7 +185,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       comment.setUserId(userIdentityId);
       templateParams.put(ANNOUNCEMENT_ID_TEMPLATE_PARAM, String.valueOf(announcement.getId()));
       templateParams.put(ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM, rule.getTitle());
-      templateParams.put(REALIZATION_STATUS_TEMPLATE_PARAM, String.valueOf(RealizationStatus.PENDING));
+      templateParams.put(REALIZATION_STATUS_TEMPLATE_PARAM, String.valueOf(rule.getDefaultRealizationStatus()));
       buildActivityParams(comment, templateParams);
 
       activityManager.saveComment(activity, comment);

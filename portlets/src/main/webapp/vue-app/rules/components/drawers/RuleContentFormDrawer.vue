@@ -180,7 +180,44 @@
               <v-stepper-items class="py-1">
                 <v-slide-y-transition>
                   <div v-show="expanded || (stepper === 3)">
-                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-header px-0 pb-2">
+                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-0 pt-4">
+                      {{ $t('rule.form.defaultRealizationStatus.defaultStatus') }}
+                    </v-card-text>
+                    <v-radio-group
+                      v-model="rule.defaultRealizationStatus"
+                      class="mt-0 ps-2 pt-0"
+                      mandatory
+                      dense>
+                      <v-radio
+                        value="PENDING"
+                        class="my-0 align-baseline">
+                        <template #label>
+                          <v-list-item two-line>
+                            <v-list-item-content class="py-0">
+                              <v-list-item-title>{{ $t('rule.form.defaultRealizationStatus.pending') }}</v-list-item-title>
+                              <v-list-item-subtitle>
+                                {{ $t('rule.form.defaultRealizationStatus.pending.placeholder') }}
+                              </v-list-item-subtitle>
+                            </v-list-item-content>
+                          </v-list-item>
+                        </template>
+                      </v-radio>
+                      <v-radio
+                        value="ACCEPTED"
+                        class="my-0 align-baseline">
+                        <template #label>
+                          <v-list-item two-line>
+                            <v-list-item-content class="py-0">
+                              <v-list-item-title>{{ $t('rule.form.defaultRealizationStatus.accepted') }}</v-list-item-title>
+                              <v-list-item-subtitle>
+                                {{ $t('rule.form.defaultRealizationStatus.accepted.placeholder') }}
+                              </v-list-item-subtitle>
+                            </v-list-item-content>
+                          </v-list-item>
+                        </template>
+                      </v-radio>
+                    </v-radio-group>
+                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
                       {{ $t('rule.form.label.rewards') }}
                     </v-card-text>
                     <div v-if="canVariableRewarding" class="d-flex justify-center">
@@ -455,6 +492,7 @@ export default {
         title: JSON.parse(JSON.stringify(this.originalRuleTitleTranslations)),
         description: JSON.parse(JSON.stringify(this.originalRuleDescriptionTranslations)),
         type: this.originalRule.type,
+        defaultRealizationStatus: this.originalRule.defaultRealizationStatus,
         score: this.originalRule.score,
         enabled: this.originalRule.enabled,
         event: this.originalRule.type === 'AUTOMATIC' && this.originalRule.event?.title || null,
@@ -470,6 +508,7 @@ export default {
         title: JSON.parse(JSON.stringify(this.ruleTitleTranslations)),
         description: JSON.parse(JSON.stringify(this.ruleDescriptionTranslations)),
         type: this.ruleToSave.type,
+        defaultRealizationStatus: this.ruleToSave.defaultRealizationStatus,
         score: this.ruleToSave.score,
         enabled: this.ruleToSave.enabled,
         event: this.ruleToSave.type === 'AUTOMATIC' && this.ruleToSave.event?.title || null,
@@ -490,9 +529,6 @@ export default {
         ok: this.$t('confirm.yes'),
         cancel: this.$t('confirm.no'),
       };
-    },
-    finalStep() {
-      return this.automaticType ? 3 : 2;
     },
     programStyle() {
       return this.program?.color && `border: 1px solid ${this.program.color} !important;` || '';
@@ -518,16 +554,15 @@ export default {
       }
     },
     expanded() {
-      if (this.expanded) {
-        this.stepper = this.finalStep;
-      } else {
-        this.stepper = 1;
-      }
+      this.stepper = this.expanded ? 3 : 1;
     },
 
   },
   created() {
     this.$root.$on('rule-form-drawer-event', this.open);
+  },
+  beforeDestroy() {
+    this.$root.$off('rule-form-drawer-event', this.open);
   },
   methods: {
     open() {
@@ -709,6 +744,9 @@ export default {
       }
       if (rule.type) {
         ruleModel.type = rule.type;
+      }
+      if (rule.defaultRealizationStatus) {
+        ruleModel.defaultRealizationStatus = rule.defaultRealizationStatus;
       }
       if (rule.prerequisiteRules?.length) {
         ruleModel.prerequisiteRuleIds = rule.prerequisiteRules.map(r => r.id).filter(id => id);
