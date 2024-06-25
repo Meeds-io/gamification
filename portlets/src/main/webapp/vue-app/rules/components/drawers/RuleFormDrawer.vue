@@ -272,6 +272,9 @@ export default {
       if (rule.type) {
         ruleModel.type = rule.type;
       }
+      if (rule.defaultRealizationStatus) {
+        ruleModel.defaultRealizationStatus = rule.defaultRealizationStatus;
+      }
       if (rule.prerequisiteRules?.length) {
         ruleModel.prerequisiteRuleIds = rule.prerequisiteRules.map(r => r.id).filter(id => id);
       }
