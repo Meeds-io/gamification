@@ -116,15 +116,6 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
-  public boolean isVerificationRequiredForEvent(String triggerType, String triggerName) {
-    Trigger trigger = eventRegistry.getTrigger(triggerType, triggerName);
-    if (trigger != null) {
-      return trigger.isVerificationRequired();
-    }
-    return false;
-  }
-
-  @Override
   public boolean canVariableRewarding(String triggerType, String triggerName) {
     Trigger trigger = eventRegistry.getTrigger(triggerType, triggerName);
     if (trigger != null) {
