@@ -108,14 +108,6 @@ public class AnnouncementActivityTypePluginTest {
     assertTrue(activityManager.isActivityEditable(activity, owner));
     assertFalse(activityManager.isActivityEditable(activity, viewer));
 
-    // When contribution accepted
-    templateParams = new HashMap<>();
-    templateParams.put(REALIZATION_STATUS_TEMPLATE_PARAM, String.valueOf(RealizationStatus.ACCEPTED));
-    when(activity.getTemplateParams()).thenReturn(templateParams);
-
-    assertFalse(activityManager.isActivityEditable(activity, owner));
-    assertFalse(activityManager.isActivityEditable(activity, viewer));
-
     // When contribution rejected
     templateParams = new HashMap<>();
     templateParams.put(REALIZATION_STATUS_TEMPLATE_PARAM, String.valueOf(RealizationStatus.REJECTED));

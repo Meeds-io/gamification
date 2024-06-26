@@ -185,13 +185,12 @@
                     </v-card-text>
                     <v-radio-group
                       v-model="rule.defaultRealizationStatus"
-                      class="mt-0"
+                      class="mt-0 ps-2 pt-0"
                       mandatory
-                      row
-                      inset>
+                      dense>
                       <v-radio
                         value="PENDING"
-                        class="my-0">
+                        class="my-0 align-baseline">
                         <template #label>
                           <v-list-item two-line>
                             <v-list-item-content class="py-0">
@@ -205,7 +204,7 @@
                       </v-radio>
                       <v-radio
                         value="ACCEPTED"
-                        class="my-0">
+                        class="my-0 align-baseline">
                         <template #label>
                           <v-list-item two-line>
                             <v-list-item-content class="py-0">
