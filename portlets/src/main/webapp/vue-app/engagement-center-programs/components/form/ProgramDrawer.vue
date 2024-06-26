@@ -54,16 +54,14 @@
             <v-stepper-step
               step="1"
               class="ma-0 px-6">
-              <span class="font-weight-bold dark-grey-color text-subtitle-1">
+              <span class="text-header">
                 {{ $t('programs.label.introduceYourProgram') }}
               </span>
             </v-stepper-step>
             <v-slide-y-transition>
               <div v-show="expanded || stepper === 1" class="px-6">
                 <div class="pt-2">
-                  <span class="subtitle-1">
-                    {{ $t('programs.label.programCover') }}
-                  </span>
+                  {{ $t('programs.label.programCover') }}
                   <engagement-center-program-image-selector
                     id="engagementCenterProgramDrawerImageSelector"
                     ref="programCover"
@@ -74,9 +72,7 @@
                     @deleted="removeCover" />
                 </div>
                 <div class="pt-4">
-                  <span class="subtitle-1">
-                    {{ $t('programs.label.programAvatar') }}
-                  </span>
+                  {{ $t('programs.label.programAvatar') }}
                   <engagement-center-program-image-selector
                     id="engagementCenterProgramDrawerImageSelector"
                     ref="programAvatar"
@@ -86,7 +82,7 @@
                     @deleted="removeAvatar" />
                 </div>
                 <div class="mt-4">
-                  <span class="subtitle-1 d-flex align-center">
+                  <span class="d-flex align-center">
                     {{ $t('program.form.programColorTitle') }}
                   </span>
                   <engagement-center-program-color-picker
@@ -115,7 +111,7 @@
                   required
                   @initialized="setFormInitialized">
                   <template #title>
-                    <div class="text-subtitle-1">
+                    <div class="text-header">
                       {{ $t('programs.label.nameYourProgram') }}
                     </div>
                   </template>
@@ -135,7 +131,7 @@
                   rich-editor
                   @initialized="setFormInitialized">
                   <template #title>
-                    <div class="text-subtitle-1">
+                    <div class="text-header">
                       {{ $t('programs.label.describeProgram') }}
                     </div>
                   </template>
@@ -156,14 +152,14 @@
             <v-stepper-step
               step="2"
               class="ma-0 px-6">
-              <span class="font-weight-bold dark-grey-color text-subtitle-1">
+              <span class="text-header">
                 {{ $t('programs.label.introduceProgramDetais') }}
               </span>
             </v-stepper-step>
             <v-slide-y-transition>
               <div v-show="expanded || stepper > 1" class="px-6">
                 <div>
-                  <span class="subtitle-1 d-flex align-center">
+                  <span class="d-flex align-center">
                     {{ $t('programs.label.audienceSpace') }}
                   </span>
                   <div class="mt-4">
@@ -199,7 +195,7 @@
                   </div>
                 </div>
                 <div class="mt-4">
-                  <span class="subtitle-1 d-flex align-center">
+                  <span class="d-flex align-center">
                     {{ $t('programs.label.programOwners') }}
                   </span>
                   <div class="d-flex align-center">
@@ -232,7 +228,7 @@
                 </div>
                 <div v-if="programId && activeRulesCount" class="mt-4">
                   <div class="d-flex align-center">
-                    <span class="subtitle-1 me-auto">{{ $t('programs.label.status') }}</span>
+                    <span class="me-auto">{{ $t('programs.label.status') }}</span>
                     <v-switch
                       id="engagementCenterProgramDrawerSwitch"
                       v-model="program.enabled"

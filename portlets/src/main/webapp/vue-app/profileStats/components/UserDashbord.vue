@@ -54,13 +54,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     @click="openSpaceDrawer">{{ spacesRequestsSize }}
                   </v-btn>
                   <div
-                    class="headline text-color font-weight-bold pa-1"
+                    class="text-title text-h5 pa-1"
                     @click="openSpaceDrawer">
                     <span>{{ isCurrentUserProfile ? spacesSize : commonsSpaceDefaultSize }}</span>
                   </div>
                 </v-badge>
               </a>
-              <v-card-text class="pa-1 subtitle-1 text-color">
+              <v-card-text class="pa-1">
                 <span>{{ isCurrentUserProfile ? $t('homepage.profileStatus.spaces') : $t('homepage.profileStatus.Commonspaces') }}</span>
               </v-card-text>
             </v-card>
@@ -84,12 +84,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     height="20"
                     width="20"
                     @click="openConnectionsDrawer">{{ connectionsRequestsSize }}</v-btn>
-                  <div class="headline text-color font-weight-bold pa-1" @click="openConnectionsDrawer">
+                  <div class="text-title text-h5 pa-1" @click="openConnectionsDrawer">
                     <span>{{ isCurrentUserProfile ? connectionsSize : commonConnectionsSize }}</span>
                   </div>
                 </v-badge>
               </a>
-              <v-card-text class="pa-1 subtitle-1 text-color">
+              <v-card-text class="pa-1">
                 <span>{{ isCurrentUserProfile ? $t('homepage.profileStatus.connections') : $t('homepage.commonConnections.label') }}</span>
               </v-card-text>
             </v-card>
@@ -111,10 +111,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-card
               flat
               @click="openAchievementsDrawer()">
-              <v-card-text class="headline text-color font-weight-bold pa-1">
+              <v-card-text class="text-title text-h5 pa-1">
                 <span v-show="!loadingWidgets">{{ userPoints || '-' }}</span>
               </v-card-text>
-              <v-card-text class="pa-1 subtitle-1 text-color">
+              <v-card-text class="pa-1">
                 <span>{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
               </v-card-text>
             </v-card>
@@ -129,10 +129,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               align-center
               flat
               @click="$emit('flip')">
-              <v-card-text class="headline text-color font-weight-bold pa-1">
+              <v-card-text class="text-title text-h5 pa-1">
                 <span v-show="!loadingWidgets">{{ gamificationRank || '-' }}</span>
               </v-card-text>
-              <v-card-text class="pa-1 subtitle-1 text-color">
+              <v-card-text class="pa-1">
                 <span>{{ $t('homepage.profileStatus.weeklyRank') }}</span>
               </v-card-text>
             </v-card>
@@ -146,8 +146,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         align-center
         justify-center>
         <div class="d-flex flex-column align-center justify-center">
-          <v-icon color="secondary" size="54">fa-chart-pie</v-icon>
-          <span class="subtitle-1 mt-3 text-wrap">{{ $t('gamification.overview.noWeeklyAchievements') }}</span>
+          <v-icon color="tertiary" size="54">fa-chart-pie</v-icon>
+          <span class="mt-3 text-wrap">{{ $t('gamification.overview.noWeeklyAchievements') }}</span>
         </div>
       </v-flex>
     </v-layout>

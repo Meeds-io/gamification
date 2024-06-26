@@ -23,10 +23,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-list>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title class="title text-color">
+            <v-list-item-title class="text-title">
               {{ $t('gamification.connectors.label.thirdPartyApps') }}
             </v-list-item-title>
-            <v-list-item-subtitle class="my-3 text-sub-title font-italic">
+            <v-list-item-subtitle class="my-3">
               <gamification-user-connector-setting-list :connected-connectors="enabledConnectors" :connector-extensions="connectorExtensions" />
             </v-list-item-subtitle>
           </v-list-item-content>

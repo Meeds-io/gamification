@@ -70,7 +70,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 d-flex
                 xs12
                 justify-center>
-                <span class="pe-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ $t('homepage.profileStatus.spaceList') }}</span>
+                <span class="pe-2 spaceListTitle profile-card-header" @click="openSpace()">{{ $t('homepage.profileStatus.spaceList') }}</span>
                 <v-btn
                   fab
                   depressed
@@ -79,7 +79,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   width="20"
                   class="mb-1 header-badge-color"
                   @click="openSpace()">
-                  <span class="white--text caption">{{ spacesSize }}</span>
+                  <span class="white--text text-subtitle">{{ spacesSize }}</span>
                 </v-btn>
               </v-flex>
               <template>
@@ -116,7 +116,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       mt-n2
                       justify-center>
                       <div>
-                        <span class="pe-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.SuggestionsSpaces') }}</span>
+                        <span class="pe-2 spaceRequestedTitle profile-card-header">{{ $t('homepage.profileStatus.SuggestionsSpaces') }}</span>
                         <v-btn
                           fab
                           depressed
@@ -124,7 +124,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                           height="20"
                           width="20"
                           class="mb-1 header-badge-color">
-                          <span class="white--text caption">{{ spacesSuggestionsList.length > 3 ? 3 : spacesSuggestionsList.length }}</span>
+                          <span class="white--text text-subtitle">{{ spacesSuggestionsList.length > 3 ? 3 : spacesSuggestionsList.length }}</span>
                         </v-btn>
                       </div>
                     </v-flex>
@@ -146,7 +146,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 d-flex
                 xs12
                 justify-center>
-                <span class="pe-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ $t('homepage.profileStatus.commonSpaceList') }}</span>
+                <span class="pe-2 spaceListTitle profile-card-header" @click="openSpace()">{{ $t('homepage.profileStatus.commonSpaceList') }}</span>
                 <v-btn
                   fab
                   depressed
@@ -154,7 +154,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   height="20"
                   width="20"
                   class="mb-1 header-badge-color">
-                  <span class="white--text caption">{{ commonSpacesSize }}</span>
+                  <span class="white--text text-subtitle">{{ commonSpacesSize }}</span>
                 </v-btn>
               </v-flex>
               <space-drawer-items
@@ -171,7 +171,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <p class="noSpaceYetIcons">
                 <v-icon>fa-users</v-icon>
               </p>
-              <p class="title font-weight-bold">
+              <p class="text-title">
                 {{ isCurrentUserProfile ? $t('homepage.profileStatus.noSpaces') : $t('homepage.profileStatus.noCommonSpaces') }}
               </p>
             </div>

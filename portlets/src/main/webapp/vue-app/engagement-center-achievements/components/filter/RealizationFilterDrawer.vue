@@ -30,7 +30,7 @@
         ref="realizationFilter"
         id="realizationFilter">
         <v-card-text>
-          <span class="subtitle-1">{{ $t('realization.label.filter.program') }}</span>
+          <span>{{ $t('realization.label.filter.program') }}</span>
           <gamification-program-suggester
             ref="programAutoComplete"
             v-model="program"
@@ -52,14 +52,12 @@
             hide-details
             @click="changeSelection">
             <template #label>
-              <span class="text--color subtitle-2 font-weight-normal">
-                {{ $t('realization.label.filter.program.includeDisabledOrRemoved') }}
-              </span>
+              {{ $t('realization.label.filter.program.includeDisabledOrRemoved') }}
             </template>
           </v-checkbox>
         </v-card-text>
         <v-card-text>
-          <span class="subtitle-1">{{ $t('realization.label.filter.action') }}</span>
+          <span>{{ $t('realization.label.filter.action') }}</span>
           <rule-suggester
             ref="ruleAutoComplete"
             v-model="rule"
@@ -80,14 +78,12 @@
             hide-details
             @click="changeSelection">
             <template #label>
-              <span class="text--color subtitle-2 font-weight-normal">
-                {{ $t('realization.label.filter.program.includeDisabledOrRemovedActions') }}
-              </span>
+              {{ $t('realization.label.filter.program.includeDisabledOrRemovedActions') }}
             </template>
           </v-checkbox>
         </v-card-text>
         <v-card-text v-if="isAdministrator">
-          <span class="subtitle-1">{{ $t('realization.label.filter.grantee') }}</span>
+          <span>{{ $t('realization.label.filter.grantee') }}</span>
           <v-flex class="user-suggester text-truncate">
             <exo-identity-suggester
               ref="granteeAttendeeAutoComplete"
@@ -106,7 +102,7 @@
           </v-flex>
         </v-card-text>
         <v-card-text v-if="isAdministrator">
-          <span class="subtitle-1">{{ $t('realization.label.filter.reviewer') }}</span>
+          <span>{{ $t('realization.label.filter.reviewer') }}</span>
           <v-flex class="user-suggester text-truncate">
             <exo-identity-suggester
               ref="reviewerAttendeeAutoComplete"
@@ -125,7 +121,7 @@
           </v-flex>
         </v-card-text>
         <v-card-text>
-          <span class="subtitle-1">{{ $t('realization.label.filter.status') }}</span>
+          <span>{{ $t('realization.label.filter.status') }}</span>
           <v-radio-group v-model="status" class="mt-1">
             <v-radio :label="$t('realization.label.filter.status.all')" value="ALL" />
             <v-radio :label="$t('realization.label.filter.status.accepted')" value="ACCEPTED" />

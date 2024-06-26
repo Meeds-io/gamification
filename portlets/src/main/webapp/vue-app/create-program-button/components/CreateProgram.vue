@@ -20,7 +20,7 @@
 <template>
   <v-app class="application-body">
     <div class="d-flex flex-column align-center justify-center pa-5">
-      <div class="title font-weight-bold text-color">
+      <div class="text-title">
         {{ $t('program.createProgramsTitle') }}
       </div>
       <v-btn

@@ -24,8 +24,7 @@
     :icon="alreadyEnded && 'fas fa-calendar-check' || 'fas fa-calendar-plus'"
     class="rule-card-mask-dates">
     <engagement-center-rule-date-info-chip
-      :rule="rule"
-      class="subtitle-1" />
+      :rule="rule" />
   </engagement-center-rule-card-mask-content>
 </template>
 <script>

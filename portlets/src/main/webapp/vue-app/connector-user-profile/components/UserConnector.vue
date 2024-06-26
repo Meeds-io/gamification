@@ -37,8 +37,7 @@
             :src="image"
             :alt="name">
         </v-list-item-avatar>
-        <span
-          class="subtitle-1 text-color my-0">{{ connectorRemoteIdentifier }} </span>
+        <span class="text-body my-0">{{ connectorRemoteIdentifier }} </span>
       </v-list-item>
     </v-list>
   </div>

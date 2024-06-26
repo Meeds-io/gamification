@@ -31,7 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-icon dark>
           mdi-plus
         </v-icon>
-        <span class="ms-2 d-none d-lg-inline subtitle-1">
+        <span class="ms-2 d-none d-lg-inline">
           {{ $t('programs.details.rule.button.addRule') }}
         </span>
       </v-btn>

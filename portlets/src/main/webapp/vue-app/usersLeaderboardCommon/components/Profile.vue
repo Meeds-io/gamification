@@ -29,7 +29,7 @@
     dense>
     <div class="me-3">
       <v-avatar
-        :color="selected && 'tertiary' || ''"
+        :color="selected && 'secondary white--text' || ''"
         :class="!selected && 'border-color'"
         class="my-auto"
         size="32">

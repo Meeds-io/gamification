@@ -50,7 +50,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-tooltip :disabled="$root.isMobile" bottom>
               <template #activator="{ on, attrs }">
                 <span
-                  class="d-flex-inline position-relative text-truncate-2 font-weight-bold text-subtitle-1 text--secondary" 
+                  class="d-flex-inline position-relative text-truncate-2 text-header" 
                   v-bind="attrs"
                   v-on="on">
                   {{ program.title }}

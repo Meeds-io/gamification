@@ -20,7 +20,7 @@
 -->
 <template>
   <div class="rule-realizations">
-    <div class="text-sub-title font-italic mb-1">
+    <div class="text-header mb-1">
       {{ $t('rules.participations') }}
     </div>
     <engagement-center-avatars-list
