@@ -82,7 +82,7 @@
         flat
         @click="$emit('open')">
         <h4 class="text-color my-0">{{ $t('overview.myContributions.Total') }}</h4>
-        <h4 class="subtitle-1 primary--text my-0">
+        <h4 class="text-header primary--text my-0">
           {{ totalScore }}
         </h4>
       </v-card>

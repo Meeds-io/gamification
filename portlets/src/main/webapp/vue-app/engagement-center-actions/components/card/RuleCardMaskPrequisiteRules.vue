@@ -26,7 +26,7 @@
     class="rule-card-mask-prerequisites">
     <div
       v-sanitized-html="prerequisitesTitle"
-      class="white--text text-wrap subtitle-1 px-2 text-truncate-2">
+      class="white--text text-wrap px-2 text-truncate-2">
     </div>
   </engagement-center-rule-card-mask-content>
 </template>

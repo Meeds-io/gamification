@@ -19,7 +19,7 @@
 <template>
   <div>
     <template v-if="programs.length">
-      <div class="subtitle-1 font-weight-bold mb-2">
+      <div class="text-header mb-2">
         {{ $t('gamification.event.display.goThere') }}
       </div>
       <v-progress-linear
@@ -33,7 +33,7 @@
         :program="program" />
     </template>
     <template v-if="rules.length">
-      <div class="subtitle-1 font-weight-bold mb-2">
+      <div class="text-header mb-2">
         {{ $t('gamification.event.display.goThere') }}
       </div>
       <v-progress-linear

@@ -41,12 +41,17 @@
           size="24" />
       </v-avatar>
     </div>
-    <div class="d-flex flex-column ms-2">
-      <div class="rule-title font-weight-bold text-truncate-2 mx-0 my-auto">
+    <div class="d-flex flex-column ms-2 my-auto">
+      <div class="rule-title font-weight-bold text-truncate-2 ma-0">
         {{ ruleTitle }}
       </div>
-      <div v-if="reduced" class="rule-score font-weight-bold text--secondary">
-        {{ rule.score }} {{ $t('challenges.label.points') }}
+      <div v-if="reduced" class="rule-score text-subtitle">
+        <v-chip
+          color="#F57C00"
+          class="content-box-sizing white--text"
+          small>
+          <span>+ {{ rule.score }}</span>
+        </v-chip>
       </div>
     </div>
   </div>

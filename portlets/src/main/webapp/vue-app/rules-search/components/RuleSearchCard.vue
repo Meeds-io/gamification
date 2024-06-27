@@ -52,7 +52,7 @@
           color="#F57C00"
           class="content-box-sizing white--text me-2"
           small>
-          <span class="subtitle-2">+ {{ rule.score }}</span>
+          <span>+ {{ rule.score }}</span>
         </v-chip>
         <div class="d-flex flex-nowrap justify-center">
           <v-tooltip top>

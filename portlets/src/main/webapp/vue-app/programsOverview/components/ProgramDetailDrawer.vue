@@ -61,7 +61,7 @@
             role="presentation"
             alt="">
         </v-avatar>
-        <div class="subtitle-1 dark-grey-color font-weight-bold mt-5">
+        <div class="text-header mt-5">
           {{ $t('programs.details.label.description') }}
         </div>
         <div
@@ -70,10 +70,10 @@
         </div>
         <div v-if="!$root.isAnonymous" class="d-flex flex-column mt-5">
           <div class="d-flex flex-row">
-            <div class="subtitle-1 dark-grey-color font-weight-bold flex-start text-start flex-grow-1 flex-shrink-1 text-truncate">
+            <div class="text-header flex-start text-start flex-grow-1 flex-shrink-1 text-truncate">
               {{ $t('programs.details.label.audienceSpace') }}
             </div>
-            <div class="subtitle-1 dark-grey-color font-weight-bold flex-end text-end flex-grow-0 flex-shrink-0">
+            <div class="text-header flex-end text-end flex-grow-0 flex-shrink-0">
               {{ $t('programs.details.label.programOwners') }}
             </div>
           </div>
@@ -114,7 +114,7 @@
         go-back-button
         class="mb-4 mx-1">
         <template #title>
-          <div class="subtitle-1 dark-grey-color font-weight-bold text-truncate">
+          <div class="text-header text-truncate">
             {{ $t('programs.label.programActions') }}
           </div>
         </template>

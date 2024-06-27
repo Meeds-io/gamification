@@ -42,23 +42,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           transform: rotateY(180deg);
         }
 
-        .header-badge-color {
-        	background-color: @tertiaryColor !important;
-          	border-color: @tertiaryColor !important;
-          	color: white !important;
-        }
-
         .connexion-accept-btn .v-icon {
         	background-color: transparent !important;
-          	border-color: @primaryColor !important;
-          	color: @primaryColor !important;
+        	border-color: @primaryColor !important;
+        	color: @primaryColor !important;
         }
 
         .spaceRequestedTitle{
-            font-size: 14px!important;
-            font-weight: bold;
             cursor: pointer;
-            color: @darkGrey;
         }
 
         .connexion-refuse-btn .v-icon {
@@ -76,8 +67,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           font-size: 0.7rem!important;
         }
         .v-badge.badge-color .v-badge__badge .v-btn {
-          background-color: @tertiaryColor!important;
-          border-color: @tertiaryColor!important;
+          background-color: @secondaryColor!important;
+          border-color: @secondaryColor!important;
           color: white !important;
         }
         .top1 {
@@ -259,10 +250,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             max-height: inherit;
           }
           .spaceListTitle {
-            font-size: 14px!important;
-            font-weight: bold;
             cursor: pointer;
-            color: @darkGrey;
           }
           .noSpaceYetBlock {
             .noSpaceYet {
@@ -300,6 +288,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   .uiIconAppGamification, .uiIconAppachievements {
     .fa();
     .fa-trophy();
+  }
+
+  .header-badge-color {
+    background-color: @secondaryColor !important;
+    border-color: @secondaryColor !important;
+    color: white !important;
   }
 
   @media screen and (max-height: 780px) {

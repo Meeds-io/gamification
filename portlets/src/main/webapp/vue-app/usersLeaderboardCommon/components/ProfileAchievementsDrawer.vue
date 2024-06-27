@@ -39,7 +39,7 @@
           no-action />
 
         <div class="d-flex align-center mb-2 mt-5">
-          <div class="subtitle-1 me-2">
+          <div class="text-header me-2">
             {{ $t(`gamification.profileStats.${period}`) }}
           </div>
           <v-divider />
@@ -52,7 +52,7 @@
           @select="programId = $event" />
 
         <div class="d-flex align-center mb-2 mt-5">
-          <div class="subtitle-1 me-2">
+          <div class="text-header me-2">
             {{ $t('gamification.profileStats.achievements') }}
           </div>
           <v-divider />
@@ -68,8 +68,8 @@
     </template>
     <template v-else-if="drawer && !loading" #content>
       <div class="d-flex flex-column full-width full-height align-center justify-center">
-        <v-icon color="secondary" size="54">fa-chart-pie</v-icon>
-        <span v-html="noResultsText" class="subtitle-1 font-weight-bold mt-7"></span>
+        <v-icon color="tertiary" size="54">fa-chart-pie</v-icon>
+        <span v-html="noResultsText" class="text-body mt-7"></span>
       </div>
       <gamification-rules-overview-list-drawer
         ref="actionsList"

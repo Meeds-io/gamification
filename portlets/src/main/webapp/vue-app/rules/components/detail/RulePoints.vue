@@ -20,7 +20,7 @@
 -->
 <template>
   <div class="rule-points">
-    <div class="text-sub-title font-italic mb-1">
+    <div class="text-header mb-1">
       {{ $t('rules.achieveItFor') }}
     </div>
     <div class="d-flex flex-row">
@@ -28,9 +28,9 @@
         color="#F57C00"
         class="content-box-sizing white--text"
         small>
-        <span class="subtitle-2">+ {{ rule.score }}</span>
+        <span>+ {{ rule.score }}</span>
       </v-chip>
-      <span v-if="totalTargetItem > 0" class="subtitle-2 text-sub-title align-self-center ms-1">
+      <span v-if="totalTargetItem > 0" class="text-subtitle align-self-center ms-1">
         {{ $t('actions.for') }}  {{ totalTargetItem }} {{ targetItemLabel }}
       </span>
     </div>

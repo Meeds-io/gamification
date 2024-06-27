@@ -34,12 +34,12 @@
     </v-icon>
     <div
       v-if="title"
-      class="white--text text-wrap title full-width px-2">
+      class="white--text text-wrap text-header full-width px-2">
       {{ title }}
     </div>
     <div
       v-sanitized-html="prerequisitesTitle"
-      class="white--text text-wrap subtitle-1 px-2 text-truncate-2">
+      class="white--text text-wrap px-2 text-truncate-2">
     </div>
   </div>
 </template>

@@ -18,11 +18,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-list-item class="pa-0 BadgeItem">
     <v-list-item-action-text 
       class="BadgeItemPoints"
-      :class="isCurrent && 'primary--text' || !isAquired && 'text-sub-title' || 'text-color'">
+      :class="isCurrent && 'primary--text' || !isAquired && 'text-subtitle' || 'text-body'">
       {{ score }}
       {{ $t('exoplatform.gamification.gamificationinformation.Points') }}
     </v-list-item-action-text>
-    <v-list-item-avatar tile class="BadgeItemAvatarParent">
+    <v-list-item-avatar tile class="BadgeItemAvatarParent mx-2">
       <v-list-item-avatar
         :tile="!isCurrent"
         :class="isCurrent && 'BadgeItemAvatarProfile' || !isAquired && 'badgeNotAquired'"
@@ -33,13 +33,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-list-item-content>
       <v-list-item-title
         v-if="title"
-        :class="isCurrent && 'primary--text' || !isAquired && 'text-sub-title' || 'text-color'">
+        :class="isCurrent && 'primary--text' || !isAquired && 'text-subtitle' || 'text-body'">
         {{ title }}
       </v-list-item-title>
       <v-list-item-title
         v-if="description"
         :title="description"
-        class="caption text-sub-title">
+        class="text-subtitle">
         {{ description }}
       </v-list-item-title>
     </v-list-item-content>
@@ -96,9 +96,8 @@ export default {
       return translation === label && key || translation;
     },
     getDescription(base, title, program, value) {
-      const label = `${base}.${title}_${program}`;
-      const translation = this.$t(label);
-      return translation === label && value || translation;
+      const label = `${base}.${title}_${program?.title}`;
+      return this.$te(label) ? this.$t(label) : value;
     }
   },
 };
