@@ -25,7 +25,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     @expand-updated="expanded = $event"
     @closed="clear">
     <template #title>
-      {{ drawerTitle }}
+      <span class="text-color">{{ drawerTitle }}</span>
     </template>
     <template v-if="drawer" #content>
       <v-card-text class="d-flex">
