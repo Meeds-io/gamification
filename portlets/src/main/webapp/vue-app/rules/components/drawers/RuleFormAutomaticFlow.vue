@@ -20,7 +20,7 @@
 -->
 <template>
   <div>
-    <v-card-text class="px-0">
+    <v-card-text class="px-0 pt-0 pb-2">
       {{ $t('rule.form.label.application.createAutomaticFlow') }}
     </v-card-text>
     <v-autocomplete
