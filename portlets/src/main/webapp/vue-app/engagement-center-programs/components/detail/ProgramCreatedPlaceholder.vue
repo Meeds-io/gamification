@@ -25,13 +25,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         depressed
         large
         @click="$emit('add')">
-        <v-icon
-          size="18"
-          class="text-title white--text"
-          dark>
-          fa-plus
+        <v-icon class="text-title" dark>
+          mdi-plus
         </v-icon>
-        <span class="ms-2 d-none d-lg-inline text-title white--text">
+        <span class="ms-2 d-none d-lg-inline text-title">
           {{ $t('programs.details.rule.button.addIncentive') }}
         </span>
       </v-btn>
