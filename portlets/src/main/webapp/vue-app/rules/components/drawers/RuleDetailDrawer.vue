@@ -179,7 +179,7 @@
       </v-row>
       <v-card
         v-if="isExtensibleEvent && !isPublicSite"
-        class="px-10 py-3"
+        class="px-5 py-3"
         flat>
         <extension-registry-components
           :params="eventParams"
