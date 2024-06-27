@@ -163,7 +163,6 @@ export default {
 
     });
     document.addEventListener('event-form-unfilled', () => {
-      this.eventProperties = null;
       this.validEventProperties = false;
       this.$emit('triggerUpdated', this.trigger, this.triggerType, this.eventProperties, false);
     });
