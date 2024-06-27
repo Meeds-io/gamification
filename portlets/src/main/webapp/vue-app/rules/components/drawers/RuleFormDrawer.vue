@@ -47,13 +47,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           required
           @initialized="setFormInitialized">
           <template #title>
-            <div class="text-subtitle-1">
+            <div class="text-header">
               {{ $t('rule.form.label.rules') }}
             </div>
           </template>
         </translation-text-field>
       </v-card-text>
-      <v-card-text class="text-subtitle-1 pb-0">{{ $t('rule.form.label.incentivizeUsers') }}</v-card-text>
+      <v-card-text class="text-header pb-0">{{ $t('rule.form.label.incentivizeUsers') }}</v-card-text>
       <v-list-item-group
         v-model="selectedConnectorIndex"
         :role="null"
