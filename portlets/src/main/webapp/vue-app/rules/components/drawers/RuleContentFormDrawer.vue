@@ -51,7 +51,7 @@
               :step="1"
               :editable="!expanded"
               class="ma-0 pa-0">
-              <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepOne') }}</span>
+              <span class="text-header">{{ $t('rule.form.label.stepOne') }}</span>
             </v-stepper-step>
             <v-stepper-items class="py-1">
               <v-slide-y-transition>
@@ -73,7 +73,7 @@
                       rich-editor-oembed
                       @initialized="setFormInitialized">
                       <template #title>
-                        <div class="text-subtitle-1">
+                        <div class="text-header">
                           {{ $t('rule.form.label.description') }}
                         </div>
                       </template>
@@ -100,11 +100,11 @@
                     @unfilled="eventProperties = {}"
                     @event-extension-initialized="eventExtensionInitialized" />
                   <div v-if="ruleId">
-                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-header px-0 pb-2">
                       {{ $t('rule.form.label.status') }}
                     </v-card-text>
                     <div class="d-flex flex-row">
-                      <label class="subtitle-1 text-light-color mt-1 pe-3">{{ $t('rule.form.label.enabled') }}</label>
+                      <label class="text-header mt-1 pe-3">{{ $t('rule.form.label.enabled') }}</label>
                       <v-switch
                         id="allowAttendeeToUpdateRef"
                         ref="allowAttendeeToUpdateRef"
@@ -122,12 +122,12 @@
                 :step="2"
                 class="ma-0 px-0 py-1"
                 :editable="ruleTitleValid && firstStepValid && !expanded">
-                <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepTwo') }}</span>
+                <span class="font-weight-bold text-header">{{ $t('rule.form.label.stepTwo') }}</span>
               </v-stepper-step>
               <v-stepper-items class="py-1">
                 <v-slide-y-transition>
                   <div v-show="expanded || (stepper === 2)">
-                    <div class="pt-4 text-subtitle-1">{{ $t('rule.form.ruleConditionsLabel') }}</div>
+                    <div class="pt-4 text-header">{{ $t('rule.form.ruleConditionsLabel') }}</div>
                     <div class="ps-7">
                       <v-chip
                         class="ma-2"
@@ -188,12 +188,12 @@
                 :step="3"
                 class="ma-0 px-0 py-1"
                 :editable="ruleTitleValid && firstStepValid && !expanded">
-                <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepThree') }}</span>
+                <span class="text-header">{{ $t('rule.form.label.stepThree') }}</span>
               </v-stepper-step>
               <v-stepper-items class="py-1">
                 <v-slide-y-transition>
                   <div v-show="expanded || (stepper === 3)">
-                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-header px-0 pb-2">
                       {{ $t('rule.form.label.rewards') }}
                     </v-card-text>
                     <div v-if="canVariableRewarding" class="d-flex justify-center">
@@ -253,7 +253,7 @@
                 :step="4"
                 class="ma-0 px-0 py-1"
                 :editable="ruleTitleValid && firstStepValid && !expanded">
-                <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepFour') }}</span>
+                <span class="font-weight-bold dark-grey-color text-header">{{ $t('rule.form.label.stepFour') }}</span>
               </v-stepper-step>
               <v-stepper-items class="py-1">
                 <v-slide-y-transition>
