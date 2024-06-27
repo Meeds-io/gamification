@@ -30,7 +30,7 @@
     @expand-updated="expanded = $event"
     @opened="stepper = 1">
     <template #title>
-      <span class="text-truncate">{{ ruleTitle }}</span>
+      {{ ruleTitle }}
     </template>
     <template v-if="drawer" #content>
       <v-form
@@ -52,7 +52,7 @@
               class="ma-0 pa-0">
               <span class="text-header">{{ $t('rule.form.label.stepOne') }}</span>
             </v-stepper-step>
-            <v-stepper-items class="py-1">
+            <v-stepper-items>
               <v-slide-y-transition>
                 <div v-show="expanded || (stepper === 1)">
                   <v-card-text class="pa-0">
@@ -93,6 +93,7 @@
                     :event-properties="eventProperties"
                     :program-id="programId"
                     :rule-id="ruleId"
+                    class="pt-5"
                     @triggerUpdated="selectTrigger"
                     @unfilled="eventProperties = {}"
                     @event-extension-initialized="eventExtensionInitialized" />
@@ -101,14 +102,14 @@
             </v-stepper-items>
           </div>
           <div :class="expanded && 'col-6'" class="flex-grow-1 flex-shrink-0">
-            <div :class="!expanded && 'pt-5'">
+            <div :class="!expanded && 'pt-6'">
               <v-stepper-step
                 :step="2"
-                class="ma-0 px-0 py-1"
+                class="ma-0 pa-0"
                 :editable="ruleTitleValid && firstStepValid && !expanded">
                 <span class="text-header">{{ $t('rule.form.label.stepTwo') }}</span>
               </v-stepper-step>
-              <v-stepper-items class="py-1">
+              <v-stepper-items>
                 <v-slide-y-transition>
                   <div v-show="expanded || (stepper === 2)">
                     <div class="pt-4">{{ $t('rule.form.ruleConditionsLabel') }}</div>
@@ -167,14 +168,14 @@
             </div>
           </div>
           <div :class="expanded && 'col-6'" class="flex-grow-1 flex-shrink-0">
-            <div :class="!expanded && 'pt-5'">
+            <div :class="!expanded && 'pt-6'">
               <v-stepper-step
                 :step="3"
-                class="ma-0 px-0 py-1"
+                class="ma-0 pa-0"
                 :editable="ruleTitleValid && firstStepValid && !expanded">
                 <span class="text-header">{{ $t('rule.form.label.stepThree') }}</span>
               </v-stepper-step>
-              <v-stepper-items class="py-1">
+              <v-stepper-items>
                 <v-slide-y-transition>
                   <div v-show="expanded || (stepper === 3)">
                     <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left px-0 pb-2">
@@ -214,7 +215,7 @@
                         </template>
                       </v-radio>
                     </v-radio-group>
-                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-header px-0 pt-5 pb-2">
                       {{ $t('rule.form.label.rewards') }}
                     </v-card-text>
                     <div v-if="canVariableRewarding" class="d-flex justify-center">
@@ -238,7 +239,7 @@
                     <div class="d-flex flex-row">
                       <v-card
                         flat
-                        class="d-flex flex-grow-1 pt-2 px-0 col-4">
+                        class="d-flex flex-grow-1 pa-0 col-4">
                         <v-text-field
                           v-model="rule.score"
                           :rules="scoreRules"
@@ -269,26 +270,102 @@
             </div>
           </div>
           <div :class="expanded && 'col-6'" class="flex-grow-1 flex-shrink-0">
-            <div :class="!expanded && 'pt-5'">
+            <div :class="!expanded && 'pt-6'">
               <v-stepper-step
                 :step="4"
-                class="ma-0 px-0 py-1"
+                class="ma-0 pa-0"
                 :editable="ruleTitleValid && firstStepValid && !expanded">
                 <span class="text-header">{{ $t('rule.form.label.stepFour') }}</span>
               </v-stepper-step>
-              <v-stepper-items class="py-1">
+              <v-stepper-items>
                 <v-slide-y-transition>
                   <div v-show="expanded || (stepper === 4)">
                     <div v-if="ruleId" class="d-flex align-center">
-                      <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                      <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-header px-0 pb-2">
                         {{ $t('rule.form.label.enabled') }}
                       </v-card-text>
-                      <div class="flex-shrink-0 ms-2">
-                        <v-switch
-                          id="engagementCenterActionStatusSwitch"
-                          ref="engagementCenterActionStatusSwitchRef"
-                          v-model="rule.enabled"
-                          class="my-0 ms-0 me-n1" />
+                      <v-radio-group
+                        v-model="rule.defaultRealizationStatus"
+                        class="mt-0 ps-2 pt-0"
+                        mandatory
+                        dense>
+                        <v-radio
+                          value="PENDING"
+                          class="my-0 align-baseline">
+                          <template #label>
+                            <v-list-item two-line>
+                              <v-list-item-content class="py-0">
+                                <v-list-item-title>{{ $t('rule.form.defaultRealizationStatus.pending') }}</v-list-item-title>
+                                <v-list-item-subtitle>
+                                  {{ $t('rule.form.defaultRealizationStatus.pending.placeholder') }}
+                                </v-list-item-subtitle>
+                              </v-list-item-content>
+                            </v-list-item>
+                          </template>
+                        </v-radio>
+                        <v-radio
+                          value="ACCEPTED"
+                          class="my-0 align-baseline">
+                          <template #label>
+                            <v-list-item two-line>
+                              <v-list-item-content class="py-0">
+                                <v-list-item-title>{{ $t('rule.form.defaultRealizationStatus.accepted') }}</v-list-item-title>
+                                <v-list-item-subtitle>
+                                  {{ $t('rule.form.defaultRealizationStatus.accepted.placeholder') }}
+                                </v-list-item-subtitle>
+                              </v-list-item-content>
+                            </v-list-item>
+                          </template>
+                        </v-radio>
+                      </v-radio-group>
+                      <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pt-5 pb-2">
+                        {{ $t('rule.form.label.rewards') }}
+                      </v-card-text>
+                      <div v-if="canVariableRewarding" class="d-flex justify-center">
+                        <v-chip
+                          class="ma-2"
+                          :color="!variablePoints && 'primary' || ''"
+                          :outlined="variablePoints"
+                          :dark="!variablePoints"
+                          @click="selectRewardingMode">
+                          {{ $t('rule.form.label.fixedPoints') }}
+                        </v-chip>
+                        <v-chip
+                          class="ma-2"
+                          :color="variablePoints && 'primary' || ''"
+                          :outlined="!variablePoints"
+                          :dark="variablePoints"
+                          @click="selectRewardingMode">
+                          {{ $t('rule.form.label.variablePoints') }}
+                        </v-chip>
+                      </div>
+                      <div class="d-flex flex-row align-center">
+                        <v-card
+                          flat
+                          class="d-flex flex-grow-1 pa-0 col-4">
+                          <v-text-field
+                            v-model="rule.score"
+                            :rules="scoreRules"
+                            class="mt-0 pt-0 me-2"
+                            type="number"
+                            outlined
+                            dense
+                            required />
+                        </v-card>
+                        <v-card-text class="pa-0 me-2 col-2"> {{ canVariableRewarding && variablePoints ? $t('rule.form.label.pointsFor') : $t('rule.form.label.points') }} </v-card-text>
+                        <v-card
+                          v-if="canVariableRewarding && variablePoints"
+                          flat
+                          class="d-flex flex-grow-1 pa-0 col-4">
+                          <v-text-field
+                            v-model="totalTargetItem"
+                            class="mt-0 pt-0"
+                            type="number"
+                            outlined
+                            dense
+                            required />
+                        </v-card>
+                        <v-card-text v-if="canVariableRewarding && variablePoints" class="mt-1 px-0 col-2"> {{ targetItem }} </v-card-text>
                       </div>
                     </div>
                     <engagement-center-rule-publish-editor
