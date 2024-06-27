@@ -30,7 +30,7 @@
     @expand-updated="expanded = $event"
     @opened="stepper = 1">
     <template #title>
-      <span class="text-truncate">{{ ruleTitle }}</span>
+      {{ ruleTitle }}
     </template>
     <template v-if="drawer" #content>
       <v-form
@@ -52,7 +52,7 @@
               class="ma-0 pa-0">
               <span class="text-header">{{ $t('rule.form.label.stepOne') }}</span>
             </v-stepper-step>
-            <v-stepper-items class="py-1">
+            <v-stepper-items>
               <v-slide-y-transition>
                 <div v-show="expanded || (stepper === 1)">
                   <v-card-text class="pa-0">
@@ -95,6 +95,7 @@
                     :event-properties="eventProperties"
                     :program-id="programId"
                     :rule-id="ruleId"
+                    class="pt-5"
                     @triggerUpdated="selectTrigger"
                     @unfilled="eventProperties = {}"
                     @event-extension-initialized="eventExtensionInitialized" />
@@ -103,17 +104,17 @@
             </v-stepper-items>
           </div>
           <div :class="expanded && 'col-6'" class="flex-grow-1 flex-shrink-0">
-            <div :class="!expanded && 'pt-5'">
+            <div :class="!expanded && 'pt-6'">
               <v-stepper-step
                 :step="2"
-                class="ma-0 px-0 py-1"
+                class="ma-0 pa-0"
                 :editable="ruleTitleValid && firstStepValid && !expanded">
-                <span class="font-weight-bold text-header">{{ $t('rule.form.label.stepTwo') }}</span>
+                <span class="text-header">{{ $t('rule.form.label.stepTwo') }}</span>
               </v-stepper-step>
-              <v-stepper-items class="py-1">
+              <v-stepper-items>
                 <v-slide-y-transition>
                   <div v-show="expanded || (stepper === 2)">
-                    <div class="pt-4 text-header">{{ $t('rule.form.ruleConditionsLabel') }}</div>
+                    <div class="pt-4 pb-2 text-header">{{ $t('rule.form.ruleConditionsLabel') }}</div>
                     <div class="ps-7">
                       <v-chip
                         class="ma-2"
@@ -169,17 +170,17 @@
             </div>
           </div>
           <div :class="expanded && 'col-6'" class="flex-grow-1 flex-shrink-0">
-            <div :class="!expanded && 'pt-5'">
+            <div :class="!expanded && 'pt-6'">
               <v-stepper-step
                 :step="3"
-                class="ma-0 px-0 py-1"
+                class="ma-0 pa-0"
                 :editable="ruleTitleValid && firstStepValid && !expanded">
                 <span class="text-header">{{ $t('rule.form.label.stepThree') }}</span>
               </v-stepper-step>
-              <v-stepper-items class="py-1">
+              <v-stepper-items>
                 <v-slide-y-transition>
                   <div v-show="expanded || (stepper === 3)">
-                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-0 pt-4">
+                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-header px-0 pb-2 pt-4">
                       {{ $t('rule.form.defaultRealizationStatus.defaultStatus') }}
                     </v-card-text>
                     <v-radio-group
@@ -216,7 +217,7 @@
                         </template>
                       </v-radio>
                     </v-radio-group>
-                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-header px-0 pt-5 pb-2">
                       {{ $t('rule.form.label.rewards') }}
                     </v-card-text>
                     <div v-if="canVariableRewarding" class="d-flex justify-center">
@@ -240,7 +241,7 @@
                     <div class="d-flex flex-row">
                       <v-card
                         flat
-                        class="d-flex flex-grow-1 pt-2 px-0 col-4">
+                        class="d-flex flex-grow-1 pa-0 col-4">
                         <v-text-field
                           v-model="rule.score"
                           :rules="scoreRules"
@@ -271,18 +272,18 @@
             </div>
           </div>
           <div :class="expanded && 'col-6'" class="flex-grow-1 flex-shrink-0">
-            <div :class="!expanded && 'pt-5'">
+            <div :class="!expanded && 'pt-6'">
               <v-stepper-step
                 :step="4"
-                class="ma-0 px-0 py-1"
+                class="ma-0 pa-0"
                 :editable="ruleTitleValid && firstStepValid && !expanded">
-                <span class="font-weight-bold dark-grey-color text-header">{{ $t('rule.form.label.stepFour') }}</span>
+                <span class="text-header">{{ $t('rule.form.label.stepFour') }}</span>
               </v-stepper-step>
-              <v-stepper-items class="py-1">
+              <v-stepper-items>
                 <v-slide-y-transition>
                   <div v-show="expanded || (stepper === 4)">
                     <div v-if="ruleId" class="d-flex align-center">
-                      <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                      <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-header px-0 pb-2">
                         {{ $t('rule.form.label.enabled') }}
                       </v-card-text>
                       <div class="flex-shrink-0 ms-2">
