@@ -47,11 +47,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-card-text class="py-0 text-truncate-3">{{ description }}</v-card-text>
     <v-spacer />
     <div v-if="comingSoon" class="d-flex flex-row pa-4">
-      <v-icon size="20" class="tertiary--text">fas fa-bolt</v-icon>
-      <div class="text-subtitle ps-3">{{ $t('challenges.label.comingSoon') }}</div>
+      <v-icon size="20" class="primary--text">fas fa-bolt</v-icon>
+      <div class="text-body ps-3">{{ $t('challenges.label.comingSoon') }}</div>
     </div>
     <div v-if="triggersSize" class="d-flex flex-row pa-4">
-      <v-icon size="20" class="tertiary--text">fas fa-bolt</v-icon>
+      <v-icon size="20" class="primary--text">fas fa-bolt</v-icon>
       <div class="text-subtitle ps-3">{{ triggersSize }} {{ $t('gamification.label.events') }}</div>
     </div>
   </v-card>
