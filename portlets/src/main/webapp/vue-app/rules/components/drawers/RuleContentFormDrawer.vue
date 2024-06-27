@@ -28,8 +28,7 @@
     right
     allow-expand
     @expand-updated="expanded = $event"
-    @opened="stepper = 1"
-    @closed="clear">
+    @opened="stepper = 1">
     <template #title>
       <span class="text-truncate">{{ ruleTitle }}</span>
     </template>
@@ -476,9 +475,6 @@ export default {
           && !this.program?.deleted
           && (!this.rule.id || !this.rule.published);
     },
-    automaticType() {
-      return this.ruleType === 'AUTOMATIC';
-    },
     ruleToSave() {
       return this.computeRuleModel(this.rule, this.program, this.ruleDescription);
     },
@@ -554,13 +550,6 @@ export default {
     expanded() {
       this.stepper = this.expanded ? 3 : 1;
     },
-
-  },
-  created() {
-    this.$root.$on('rule-form-drawer-event', this.open);
-  },
-  beforeDestroy() {
-    this.$root.$off('rule-form-drawer-event', this.open);
   },
   methods: {
     open() {
@@ -612,20 +601,6 @@ export default {
     },
     close() {
       this.$refs.ruleContentFormDrawer.close();
-    },
-    clear() {
-      this.stepper = 0;
-      this.rule.enabled = true;
-      this.rule.event = null;
-      this.durationCondition = false;
-      this.recurrenceCondition = false;
-      this.prerequisiteRuleCondition = false;
-      this.$set(this.rule,'title','');
-      this.rule.description = '';
-      this.value = {};
-      this.validEventProperties = false;
-      this.isExtensibleEvent = false;
-      this.triggerType = null;
     },
     saveRule() {
       this.saving = true;
