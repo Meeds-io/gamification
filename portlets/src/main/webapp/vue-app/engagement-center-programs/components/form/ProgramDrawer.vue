@@ -111,7 +111,9 @@
                   required
                   @initialized="setFormInitialized">
                   <template #title>
-                    {{ $t('programs.label.nameYourProgram') }}
+                    <div class="text-header">
+                      {{ $t('programs.label.nameYourProgram') }}
+                    </div>
                   </template>
                 </translation-text-field>
                 <translation-text-field
@@ -129,7 +131,9 @@
                   rich-editor
                   @initialized="setFormInitialized">
                   <template #title>
-                    {{ $t('programs.label.describeProgram') }}
+                    <div class="text-header">
+                      {{ $t('programs.label.describeProgram') }}
+                    </div>
                   </template>
                   <rich-editor
                     id="programDescription"
