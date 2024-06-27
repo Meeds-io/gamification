@@ -74,21 +74,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <div class="me-auto pe-sm-6 pt-5">
             <v-list-item two-line class="px-0">
               <v-list-item-content class="pa-0">
-                <div class="text-subtitle-1 dark-grey-color font-weight-bold mb-0">
+                <div class="text-header mb-0">
                   {{ $t('programs.details.label.description') }}
                 </div>
-                <v-list-item-subtitle class="text-color pt-2">
+                <v-list-item-title class="pt-2">
                   <div class="d-flex flex-grow-0 flex-shrink-1 pb-sm-5 rich-editor-content">
                     <span
                       class="mt-1 align-self-center text-wrap text-left text-break"
                       v-sanitized-html="programDescription"></span>
                   </div>
-                </v-list-item-subtitle>
+                </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </div>
           <div class="d-flex flex-column pt-sm-5 px-0 col-sm-3">
-            <div class="dark-grey-color text-subtitle-1 font-weight-bold width-fit-content ms-sm-auto">
+            <div class="text-header width-fit-content ms-sm-auto">
               {{ $t('programs.details.label.programOwners') }}
             </div>
             <div v-if="owners.length">
@@ -99,7 +99,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :size="25"
                 class="d-flex justify-sm-end pt-2"
                 @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
-              <div class="dark-grey-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
+              <div class="text-header pt-3 width-fit-content ms-sm-auto">
                 {{ $t('programs.details.label.audienceSpace') }}
               </div>
               <exo-space-avatar
@@ -121,8 +121,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="pt-5">
         <v-list-item two-line class="px-0">
           <v-list-item-content>
-            <span class="text-header-title subtitle-1 d-sm-none mb-5" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
-            <v-list-item-title class="dark-grey-color font-weight-bold">
+            <span class="text-header d-sm-none mb-5" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+            <v-list-item-title class="text-header">
               {{ $t('programs.details.label.rulesOfProgram') }}
             </v-list-item-title>
             <engagement-center-program-created-placeholder

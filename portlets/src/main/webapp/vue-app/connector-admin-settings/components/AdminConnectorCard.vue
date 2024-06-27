@@ -38,7 +38,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :alt="name"
           width="28">
         <v-list class="ms-3">
-          <v-list-item-title class="font-weight-bold">
+          <v-list-item-title class="text-title">
             {{ title }}
           </v-list-item-title>
         </v-list>
@@ -47,12 +47,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-card-text class="py-0 text-truncate-3">{{ description }}</v-card-text>
     <v-spacer />
     <div v-if="comingSoon" class="d-flex flex-row pa-4">
-      <v-icon size="20" class="primary--text">fas fa-bolt</v-icon>
-      <div class="text-subtitle-2 font-weight-bold dark-grey-color ps-3">{{ $t('challenges.label.comingSoon') }}</div>
+      <v-icon size="20" class="tertiary--text">fas fa-bolt</v-icon>
+      <div class="text-subtitle ps-3">{{ $t('challenges.label.comingSoon') }}</div>
     </div>
     <div v-if="triggersSize" class="d-flex flex-row pa-4">
-      <v-icon size="20" class="primary--text">fas fa-bolt</v-icon>
-      <div class="text-subtitle-2 font-weight-bold dark-grey-color ps-3">{{ triggersSize }} {{ $t('gamification.label.events') }}</div>
+      <v-icon size="20" class="tertiary--text">fas fa-bolt</v-icon>
+      <div class="text-subtitle ps-3">{{ triggersSize }} {{ $t('gamification.label.events') }}</div>
     </div>
   </v-card>
 </template>

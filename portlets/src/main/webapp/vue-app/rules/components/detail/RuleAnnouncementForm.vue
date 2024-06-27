@@ -36,11 +36,11 @@
             :extra-class="spaceId && 'ms-n4 mt-6' || ''"
             avatar />
           <v-list-item-content class="py-0 accountTitleLabel text-truncate">
-            <v-list-item-title class="font-weight-bold d-flex body-2 mb-0">
+            <v-list-item-title class="d-flex mb-0">
               <exo-space-avatar
                 :space-id="spaceId"
                 :space="space"
-                extra-class="text-truncate"
+                extra-class="font-weight-bold text-truncate"
                 fullname
                 bold-title
                 link-style

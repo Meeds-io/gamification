@@ -17,10 +17,10 @@
   <v-app>
     <gamification-overview-widget v-if="!hasConfiguredWallet" :loading="loading">
       <div v-if="!loading" class="d-flex flex-column align-center justify-center full-height full-width">
-        <v-icon color="secondary" size="54">fa-money-bill</v-icon>
+        <v-icon color="tertiary" size="54">fa-money-bill</v-icon>
         <span
           v-html="noWalletSummaryText"
-          class="subtitle-1 font-weight-bold mt-7"></span>
+          class="text-body mt-7"></span>
       </div>
     </gamification-overview-widget>
     <gamification-overview-widget
@@ -35,7 +35,7 @@
         <div class="d-flex flex-grow-1 fill-height">
           <gamification-overview-widget-row class="d-flex flex-column col col-6 px-0" normal-height>
             <template #title>
-              <div class="d-flex">
+              <div class="d-flex text-body">
                 {{ $t('gamification.overview.rewards.earningsTitle') }}
               </div>
             </template>
@@ -47,7 +47,7 @@
           </gamification-overview-widget-row>
           <gamification-overview-widget-row class="d-flex flex-column col col-6 px-0" normal-height>
             <template #title>
-              <div class="subtitle-1 d-flex">
+              <div class="text-body d-flex">
                 <div>{{ $t('gamification.overview.rewards.walletTitle') }}</div>
                 <v-spacer />
                 <v-btn
@@ -81,10 +81,10 @@
         </template>
         <template v-if="!loading">
           <div v-if="displayPerkstorePlaceholder && productsLoaded" class="d-flex flex-column align-center justify-center">
-            <v-icon color="secondary" size="54">fa-shopping-cart</v-icon>
+            <v-icon color="tertiary" size="54">fa-shopping-cart</v-icon>
             <span
               v-sanitized-html="emptyPerkstoreSummaryText"
-              class="subtitle-1 font-weight-bold mt-7"></span>
+              class="text-body mt-7"></span>
           </div>
           <extension-registry-components
             v-if="hasConfiguredWallet"

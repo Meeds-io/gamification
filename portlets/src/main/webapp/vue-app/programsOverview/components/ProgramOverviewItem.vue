@@ -42,7 +42,7 @@
             color="#F57C00"
             class="content-box-sizing white--text"
             small>
-            <span class="subtitle-2">+ {{ programTotalScore }}</span>
+            <span>+ {{ programTotalScore }}</span>
           </v-chip>
         </v-list-item-action-text>
       </v-list-item-action>

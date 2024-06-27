@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-show="!loading"
         :class="!loading && 'd-flex flex-column'">
         <template #title>
-          <div v-if="kudosDisplayed" class="subtitle-1 d-flex">
+          <div v-if="kudosDisplayed" class="text-body d-flex">
             <span>{{ $t('gamification.myReputation.KudosTitle') }}</span>
             <v-spacer />
             <v-btn

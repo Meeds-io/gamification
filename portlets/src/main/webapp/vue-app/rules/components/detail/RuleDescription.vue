@@ -20,7 +20,7 @@
 -->
 <template>
   <div class="rule-description">
-    <div class="subtitle-1 font-weight-bold mb-2">
+    <div class="text-header mb-2">
       {{ $t('rules.description') }}
     </div>
     <div

@@ -8,11 +8,11 @@
           class="position-absolute" />
       </v-list-item-avatar>
       <v-list-item-content>
-        <v-list-item-title class="text-subtitle-2 text-color mb-2">{{ triggerTitleLabel }}</v-list-item-title>
-        <v-list-item-subtitle class="text-sub-title">{{ triggerDescription }}</v-list-item-subtitle>
+        <v-list-item-title class="mb-2">{{ triggerTitleLabel }}</v-list-item-title>
+        <v-list-item-subtitle>{{ triggerDescription }}</v-list-item-subtitle>
         <div v-if="cancellerTriggersSize" class="d-flex flex-row pt-2px">
-          <v-list-item-subtitle class="text-sub-title">
-            <span class="dark-grey-color">{{ $t('gamification.label.cancelledBy') }}: </span>{{ cancellerTriggersToDisplay }}
+          <v-list-item-subtitle>
+            {{ $t('gamification.label.cancelledBy') }}: <span class="font-weight-bold">{{ cancellerTriggersToDisplay }}</span>
             <v-btn
               v-if="cancellerTriggersSize > 2"
               depressed

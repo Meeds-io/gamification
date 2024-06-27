@@ -40,8 +40,8 @@
           rounded>
           <v-img :src="program.avatarUrl" />
         </v-avatar>
-        <div class="d-flex text-truncate">
-          <div class="text-truncate me-2">
+        <div class="d-flex align-center text-truncate">
+          <div class="text-title text-truncate me-2">
             {{ title }}
           </div>
           {{ counter }}

@@ -20,7 +20,7 @@
 -->
 <template>
   <v-app>
-    <v-card-text class="px-0 dark-grey-color font-weight-bold">
+    <v-card-text class="px-0">
       {{ $t('rule.form.label.application') }}
     </v-card-text>
     <v-autocomplete
@@ -80,7 +80,7 @@
       </template>
     </v-autocomplete>
     <template v-if="selectedConnector">
-      <v-card-text class="px-0 dark-grey-color font-weight-bold">
+      <v-card-text class="px-0">
         {{ $t('rule.form.label.event') }}
       </v-card-text>
       <v-autocomplete
@@ -133,9 +133,7 @@
     </template>
   </v-app>
 </template>
-
 <script>
-
 export default {
   props: {
     triggerType: {

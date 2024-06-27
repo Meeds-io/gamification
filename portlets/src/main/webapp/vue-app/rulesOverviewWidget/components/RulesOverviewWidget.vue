@@ -31,7 +31,7 @@
     <div v-if="!loading || hasValidRules" :class="$slots.title && 'mt-n5'">
       <template v-if="lockedRulesCount">
         <div class="d-flex align-center">
-          <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
+          <span class="me-2">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
           <v-divider />
         </div>
         <gamification-rules-overview-item
@@ -42,7 +42,7 @@
       </template>
       <template v-if="endingRulesCount">
         <div class="d-flex align-center pt-5">
-          <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.endingActionsTitle') }}</span>
+          <span class="me-2">{{ $t('gamification.overview.endingActionsTitle') }}</span>
           <v-divider />
         </div>
         <gamification-rules-overview-item
@@ -53,7 +53,7 @@
       </template>
       <template v-if="validRulesCount">
         <div v-if="sectionsCount > 1" class="d-flex align-center pt-5">
-          <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.availableActionsTitle') }}</span>
+          <span class="me-2">{{ $t('gamification.overview.availableActionsTitle') }}</span>
           <v-divider />
         </div>
         <gamification-rules-overview-item
@@ -64,7 +64,7 @@
       </template>
       <template v-if="upcomingRulesCount">
         <div class="d-flex align-center pt-5">
-          <span class="me-2 subtitle-1 text-color">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
+          <span class="me-2">{{ $t('gamification.overview.upcomingActionsTitle') }}</span>
           <v-divider />
         </div>
         <gamification-rules-overview-item
@@ -104,11 +104,11 @@
             <v-img :src="completedRulesImageUrl" eager />
           </v-avatar>
         </v-card>
-        <div class="flex-shrink-1 text-start text-truncate text-sub-title body-1">
+        <div class="flex-shrink-1 text-start text-truncate">
           {{ $t('gamification.overview.rulesOverviewCompletedTitle') }}
         </div>
       </div>
-      <div class="d-flex mx-auto align-center justify-center text-sub-title body-2 my-4">
+      <div class="d-flex mx-auto align-center justify-center text-subtitle my-4">
         {{ $t('gamification.overview.rulesOverviewCompletedSubtitle') }}
       </div>
     </gamification-overview-widget-row>

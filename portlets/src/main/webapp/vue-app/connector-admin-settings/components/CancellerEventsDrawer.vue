@@ -29,7 +29,7 @@
         <template v-for="item in cancellerEvents">
           <template v-if="item">
             <v-list-item :key="item">
-              <v-list-item-title class="text-subtitle-1 dark-grey-color">{{ item }}</v-list-item-title>
+              <v-list-item-title>{{ item }}</v-list-item-title>
             </v-list-item>
           </template>
         </template>

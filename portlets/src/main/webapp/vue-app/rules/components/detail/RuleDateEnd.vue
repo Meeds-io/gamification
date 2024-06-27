@@ -20,7 +20,7 @@
 -->
 <template>
   <div class="rule-end-date">
-    <div class="text-sub-title font-italic mb-1">
+    <div class="text-subtitle mb-1">
       {{ $t('actions.label.endsInShort') }}
     </div>
     <div class="d-flex align-center">

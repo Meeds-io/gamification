@@ -23,7 +23,7 @@
     color="#F57C00"
     class="content-box-sizing white--text"
     small>
-    <span class="subtitle-2">+ {{ rule.score }}</span>
+    <span class="text-subtitle">+ {{ rule.score }}</span>
   </v-chip>
 </template>
 <script>
