@@ -20,14 +20,14 @@
 -->
 <template>
   <div class="rule-points">
-    <div class="text-sub-title font-italic mb-1">
+    <div class="text-subtitle mb-1">
       {{ $t('rules.achieveItFor') }}
     </div>
     <v-chip
       color="#F57C00"
       class="content-box-sizing white--text"
       small>
-      <span class="subtitle-2">+ {{ rule.score }}</span>
+      <span class="text-subtitle">+ {{ rule.score }}</span>
     </v-chip>
   </div>
 </template>

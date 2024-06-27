@@ -27,7 +27,7 @@
     </template>
     <template #content>
       <v-card flat>
-        <v-card-title class="pb-0 text-subtitle-1 text-color font-weight-bold">
+        <v-card-title class="pb-0 text-header">
           {{ $t('gamification.actions.filter.filterByType') }}
         </v-card-title>
         <v-card-text class="pb-0">
@@ -43,7 +43,7 @@
               value="AUTOMATIC" />
           </v-radio-group>
         </v-card-text>
-        <v-card-title class="pb-0 text-subtitle-1 text-color font-weight-bold">
+        <v-card-title class="pb-0 text-header">
           {{ $t('gamification.actions.filter.filterByStatus') }}
         </v-card-title>
         <v-card-text class="pb-0">

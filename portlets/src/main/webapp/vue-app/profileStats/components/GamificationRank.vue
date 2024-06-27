@@ -33,8 +33,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       v-if="displayPlaceholder"
       :class="!isOverviewDisplay && 'mt-n7'"
       class="d-flex flex-column align-center justify-center full-width fill-height">
-      <v-icon color="secondary" size="54">fa-trophy</v-icon>
-      <span class="subtitle-1 font-weight-bold mt-7">{{ $t('gamification.overview.weeklyLeaderboard') }}</span>
+      <v-icon color="tertiary" size="54">fa-trophy</v-icon>
+      <span class="text-body mt-7">{{ $t('gamification.overview.weeklyLeaderboard') }}</span>
     </div>
     <template v-else-if="!loading">
       <v-flex class="xs12 mb-1">

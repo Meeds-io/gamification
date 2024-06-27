@@ -20,7 +20,7 @@
 -->
 <template>
   <div v-if="recurrence" class="rule-recurrence d-flex flex-column full-height">
-    <div class="text-sub-title font-italic mb-1">
+    <div class="text-subtitle mb-1">
       {{ $t('rules.earnPoints') }}
     </div>
     <div class="d-flex align-center">

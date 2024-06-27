@@ -33,7 +33,7 @@
           class="overflow-hidden px-2">
           <span class="text-none">{{ period.text }}</span>
         </v-tab>
-        <v-tabs-slider color="tertiary" />
+        <v-tabs-slider color="secondary" />
       </v-tabs>
       <v-btn
         small

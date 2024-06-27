@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <div>
-    <v-card-text class="px-0 pb-0 dark-grey-color font-weight-bold">
+    <v-card-text class="px-0 pb-0">
       {{ $t('gamification.event.detail.activity.label') }}
     </v-card-text>
     <v-radio-group v-model="activity" @change="changeSelection">

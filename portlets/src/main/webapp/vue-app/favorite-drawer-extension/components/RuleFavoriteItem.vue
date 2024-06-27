@@ -10,7 +10,7 @@
       </v-avatar>
     </v-list-item-icon>
     <v-list-item-content>
-      <v-list-item-title class="text-color body-2 text-truncate">{{ ruleTitle }}</v-list-item-title>
+      <v-list-item-title class="text-truncate">{{ ruleTitle }}</v-list-item-title>
     </v-list-item-content>
     <v-list-item-action>
       <favorite-button
