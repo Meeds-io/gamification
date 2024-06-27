@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-icon class="px-3 icon-default-color" size="16">
               fas fa-arrow-left
             </v-icon>
-            <div class="text-subtitle-1 font-weight-bold dark-grey-color"> {{ $t('programs.details.label.BackToList') }} </div>
+            <div class="text-header"> {{ $t('programs.details.label.BackToList') }} </div>
           </div>
         </template>
         <span>{{ $t('programs.details.label.BackToList') }}</span>
@@ -34,34 +34,34 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </div>
     <div class="pt-12 d-flex align-center justify-center">
       <v-icon 
-        class="px-8 primary--text"
+        class="px-8 tertiary--text"
         size="40">
         fas fa-award
       </v-icon>
       <v-icon 
-        class="px-4 px-sm-12 secondary--text"
+        class="px-4 px-sm-12 tertiary--text"
         size="40">
         fas fa-stream
       </v-icon>
       <v-icon 
-        class="px-8 primary--text"
+        class="px-8 tertiary--text"
         size="40">
         fas fa-trophy
       </v-icon>
     </div>
     <div class="d-flex flex-column justify-center align-center py-12 col-sm-8 mx-auto">
-      <p class="text-header-title font-weight-regular mb-8">
+      <p class="text-header mb-8">
         {{ messageTitle }}
       </p>
-      <p class="text-header-title font-weight-regular">
+      <p class="text-header">
         {{ messageInfoOne }}
       </p>
       <p 
         v-if="sanitizedHtml" 
-        class="text-header-title font-weight-regular" 
+        class="text-header" 
         v-sanitized-html="sanitizedHtml"> 
       </p>
-      <p class="text-header-title font-weight-regular">
+      <p class="text-header">
         {{ messageInfoTwo }}
       </p>
       <v-btn
@@ -69,11 +69,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :href="url"
         class="btn btn-primary my-4"
         @click="$emit('button-event')">
-        <span class="mx-2 text-capitalize-first-letter subtitle-1">
+        <span class="mx-2">
           {{ buttonText }}
         </span>
       </v-btn>
-      <p class="text-header-title font-weight-regular">
+      <p class="text-header">
         {{ messageInfoThree }}
       </p>
     </div>

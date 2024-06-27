@@ -14,7 +14,7 @@
             </v-list-item-avatar>
             <v-list-item-content class="py-0">
               <v-list-item-title
-                class="body-2 font-weight-bold suggestions-list-item-title">
+                class="suggestions-list-item-title">
                 <a
                   :href="url"
                   class="request-user-name darken-2">

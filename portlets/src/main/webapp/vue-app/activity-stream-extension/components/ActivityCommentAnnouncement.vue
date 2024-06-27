@@ -41,7 +41,7 @@
         <div :class="realizationStatusClass" class="text-truncate font-weight-bold text-color text-wrap text-break mb-1">
           {{ realizationStatusLabel }}
         </div>
-        <div class="text-light-color caption text-wrap text-break rich-editor-content reset-style-box">
+        <div class="text-subtitle text-wrap text-break rich-editor-content reset-style-box">
           <span v-sanitized-html="announcementComment"></span>
         </div>
       </v-card>

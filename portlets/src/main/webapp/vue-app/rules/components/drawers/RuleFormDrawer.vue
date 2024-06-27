@@ -47,12 +47,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :step="1"
               :editable="!expanded"
               class="ma-0 pa-0">
-              <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepOne') }}</span>
+              {{ $t('rule.form.label.stepOne') }}
             </v-stepper-step>
             <v-stepper-items class="py-1">
               <v-slide-y-transition>
                 <div v-show="expanded || (stepper === 1)">
-                  <v-card-text class="d-flex flex-grow-1 text-left text-subtitle-1 px-0 py-2">
+                  <v-card-text class="d-flex flex-grow-1 px-0 py-2">
                     {{ $t('rule.form.label.program') }}
                   </v-card-text>
                   <v-card-text class="d-flex pa-0">
@@ -85,9 +85,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       required
                       @initialized="setFormInitialized">
                       <template #title>
-                        <div class="text-subtitle-1">
-                          {{ $t('rule.form.label.rules') }}
-                        </div>
+                        {{ $t('rule.form.label.rules') }}
                       </template>
                     </translation-text-field>
                   </v-card-text>
@@ -108,9 +106,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       rich-editor-oembed
                       @initialized="setFormInitialized">
                       <template #title>
-                        <div class="text-subtitle-1">
-                          {{ $t('rule.form.label.description') }}
-                        </div>
+                        {{ $t('rule.form.label.description') }}
                       </template>
                       <rich-editor
                         id="ruleDescription"
@@ -125,7 +121,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         @ready="handleRichEditorReady" />
                     </translation-text-field>
                   </v-card-text>
-                  <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                  <v-card-text class="d-flex flex-grow-1 text-no-wrap px-0 pb-2">
                     {{ $t('rule.form.label.rewards') }}
                   </v-card-text>
                   <v-card
@@ -145,7 +141,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       </template>
                     </v-text-field>
                   </v-card>
-                  <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                  <v-card-text class="d-flex flex-grow-1 text-no-wrap px-0 pb-2">
                     {{ $t('rule.form.label.type') }}
                   </v-card-text>
                   <div class="d-flex flex-row pb-4">
@@ -163,7 +159,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     </v-btn>
                   </div>
                   <div v-if="ruleId">
-                    <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
+                    <v-card-text class="d-flex flex-grow-1 text-no-wrap px-0 pb-2">
                       {{ $t('rule.form.label.status') }}
                     </v-card-text>
                     <div class="d-flex flex-row">
@@ -185,7 +181,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :step="2"
                 :editable="ruleTitleValid && !expanded"
                 class="ma-0 pa-0">
-                <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.application.createAutomaticFlow') }}</span>
+                {{ $t('rule.form.label.application.createAutomaticFlow') }}
               </v-stepper-step>
               <v-stepper-items class="py-1">
                 <v-slide-y-transition>
@@ -208,7 +204,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :step="finalStep"
                 class="ma-0 px-0 py-1"
                 :editable="ruleTitleValid && secondStepValid && !expanded">
-                <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepTwo') }}</span>
+                {{ $t('rule.form.label.stepTwo') }}
               </v-stepper-step>
               <v-stepper-items class="py-1">
                 <v-slide-y-transition>
@@ -226,7 +222,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       :template-params="rule.templateParams"
                       :valid-message.sync="validMessage"
                       @attachments-edited="attachmentsEdited = true" />
-                    <div class="pt-4 text-subtitle-1">{{ $t('rule.form.ruleConditionsLabel') }}</div>
+                    <div class="pt-4">{{ $t('rule.form.ruleConditionsLabel') }}</div>
                     <div class="ps-7">
                       <v-chip
                         class="ma-2"

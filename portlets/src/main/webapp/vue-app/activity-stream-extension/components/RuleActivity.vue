@@ -53,7 +53,7 @@
           :height="ruleIconSize"
           :max-height="ruleIconSize"
           :class="$vuetify.rtl && 'l-0' || 'r-0'"
-          class="rule-icon border-color grey lighten-2 elevation-2 ms-auto mt-auto position-absolute b-0"
+          class="rule-icon border-color icon-default-color elevation-2 ms-auto mt-auto position-absolute b-0"
           icon>
           <rule-icon :rule-event="ruleEvent" :size="ruleIconSize - 20" />
         </v-btn>
@@ -66,7 +66,7 @@
         <div class="text-truncate font-weight-bold text-color text-wrap text-break mb-1">
           {{ ruleTitle }}
         </div>
-        <div class="text-truncate-2 text-light-color caption text-wrap text-break mb-4 rich-editor-content reset-style-box">
+        <div class="text-truncate-2 text-subtitle text-wrap text-break mb-4 rich-editor-content reset-style-box">
           {{ ruleDescription }}
         </div>
         <v-chip
@@ -74,7 +74,7 @@
           color="#F57C00"
           class="content-box-sizing white--text"
           small>
-          <span class="subtitle-2">+ {{ ruleScore }}</span>
+          <span class="text-subtitle white--text">+ {{ ruleScore }}</span>
         </v-chip>
       </v-card>
     </div>

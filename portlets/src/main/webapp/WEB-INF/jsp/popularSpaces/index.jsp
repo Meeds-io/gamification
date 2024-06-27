@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="v-card v-card--flat v-sheet theme--light">
-        <div class="v-card__title text-sub-title subtitle-1 text-uppercase pb-2">
+        <div class="v-card__title text-header pb-2">
           <%=bundle.getString("popularSpaces.title")%>
         </div>
       </div>

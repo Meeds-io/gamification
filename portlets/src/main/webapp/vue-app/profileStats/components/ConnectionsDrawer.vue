@@ -61,7 +61,9 @@
               <v-col>
                 <v-row class="align-center">
                   <v-col>
-                    <span class="pe-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.suggestions.label') }}</span>
+                    <span class="pe-2 profile-card-header">
+                      {{ $t('homepage.suggestions.label') }}
+                    </span>
                   </v-col>
                 </v-row>
                 <v-list>
@@ -85,7 +87,7 @@
             <div v-if="showConnections">
               <v-row align="center">
                 <v-col>
-                  <span class="pe-2 text-uppercase subtitle-2 profile-card-header">{{ isCurrentUserProfile ? $t('homepage.profileStatus.connectionsList') : $t('homepage.commonConnections.label') }}</span>
+                  <span class="pe-2 profile-card-header">{{ isCurrentUserProfile ? $t('homepage.profileStatus.connectionsList') : $t('homepage.commonConnections.label') }}</span>
                   <v-btn
                     fab
                     depressed
@@ -93,7 +95,7 @@
                     height="20"
                     width="20"
                     class="mb-1 header-badge-color">
-                    <span class="white--text caption">{{ isCurrentUserProfile ? connections.length : commonConnections.length }}</span>
+                    <span class="white--text text-subtitle">{{ isCurrentUserProfile ? connections.length : commonConnections.length }}</span>
                   </v-btn>
                 </v-col>
               </v-row>
@@ -114,7 +116,7 @@
                     <p class="noPeopleYetIcons">
                       <v-icon>fa-users</v-icon>
                     </p>
-                    <p class="title font-weight-bold">
+                    <p class="text-title">
                       {{ $t('peopleList.label.noConnection') }}
                     </p>
                   </div>

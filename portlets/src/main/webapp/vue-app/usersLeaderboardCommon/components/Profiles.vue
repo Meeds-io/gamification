@@ -33,7 +33,7 @@
           {{ $t('exoplatform.gamification.leaderboard.rank') }}
         </div>
         <div>
-          <v-avatar color="tertiary" size="32">
+          <v-avatar color="secondary" size="32">
             {{ currentRank }}
           </v-avatar>
         </div>

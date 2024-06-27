@@ -55,7 +55,7 @@
             color="#F57C00"
             class="content-box-sizing white--text"
             small>
-            <span class="subtitle-2">+ {{ ruleScore }}</span>
+            <span>+ {{ ruleScore }}</span>
           </v-chip>
         </v-list-item-action-text>
       </v-list-item-action>

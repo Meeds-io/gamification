@@ -34,11 +34,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </div>
     </template>
     <template slot="content">
-      <badges-overview-drawer-item
-        v-for="tmp in badges"
-        :key="tmp.id"
-        :badge="tmp"
-        :current-score="badge && badge.score" />
+      <div class="pa-5">
+        <badges-overview-drawer-item
+          v-for="tmp in badges"
+          :key="tmp.id"
+          :badge="tmp"
+          :current-score="badge && badge.score" />
+      </div>
     </template>
   </exo-drawer>
 </template>
@@ -53,7 +55,7 @@ export default {
   },
   computed: {
     programLabel() {
-      return this.badge?.programLabel;
+      return this.badge?.programLabel || this.badge?.program?.title;
     },
   },
   created() {

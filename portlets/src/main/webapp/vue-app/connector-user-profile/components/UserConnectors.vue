@@ -29,7 +29,7 @@
         <v-list-item v-if="notConnectedYet" class="pa-0">
           <div class="mx-auto mb-2 ps-0">
             <div class="d-flex flex-column">
-              <span class="subtitle-1 text-color">{{ $t('gamification.connectors.profile.notConnectedYet') }}</span>
+              <span class="text-body">{{ $t('gamification.connectors.profile.notConnectedYet') }}</span>
             </div>
             <div class="d-flex justify-center my-3">
               <v-btn
