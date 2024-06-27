@@ -20,14 +20,14 @@
 -->
 <template>
   <div class="d-flex flex-column">
-    <div v-if="totalTargetItem > 0" class="subtitle-2 text-sub-title mb-1">
+    <div v-if="totalTargetItem > 0" class="mb-1">
       {{ $t('actions.for') }} {{ totalTargetItem }} {{ targetItemLabel }}
     </div>
     <v-chip
       color="#F57C00"
       class="content-box-sizing white--text align-self-start"
       small>
-      <span class="subtitle-2">+ {{ rule.score }}</span>
+      + {{ rule.score }}
     </v-chip>
   </div>
 </template>
