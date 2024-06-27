@@ -21,7 +21,7 @@
 <template>
   <div>
     <template>
-      <v-card-text class="px-0 text-subtitle-1">
+      <v-card-text class="px-0 text-header">
         {{ $t('rule.form.label.application.createAutomaticFlow') }}
       </v-card-text>
       <v-autocomplete
