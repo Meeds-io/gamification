@@ -227,6 +227,8 @@ export default {
         if (!this.isExtensibleEvent) {
           this.$emit('triggerUpdated', this.trigger, this.triggerType, this.eventProperties, true);
         }
+      } else {
+        this.$emit('triggerUpdated', this.trigger, this.triggerType, this.eventProperties, true);
       }
     },
     refreshExtensions() {
