@@ -80,7 +80,7 @@
         :class="!isValid && 'filter-blur-3'"
         class="d-flex flex-column full-height"
         flat>
-        <v-card-title class="rule-card-title d-flex flex-nowrap pb-4 text-break">
+        <v-card-title class="rule-card-title text-body font-weight-bold d-flex flex-nowrap pb-4 text-break">
           <div :title="title" class="d-flex align-center flex-grow-1 text-truncate">
             <rule-icon :rule-event="ruleEvent" class="me-2" />
             <span class="text-truncate pt-2px">

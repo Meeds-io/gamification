@@ -88,7 +88,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           block
           small
           @click="join">
-          <v-icon>mdi-plus</v-icon>
+          <v-icon size="18">fa-plus</v-icon>
           <span class="spaceMembershipButtonText d-inline">
             {{ $t('popularSpaces.button.join') }}
           </span>
@@ -103,7 +103,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           block
           small
           @click="requestJoin">
-          <v-icon>mdi-plus</v-icon>
+          <v-icon size="18">fa-plus</v-icon>
           <span class="spaceMembershipButtonText d-inline">
             {{ $t('popularSpaces.button.requestJoin') }}
           </span>

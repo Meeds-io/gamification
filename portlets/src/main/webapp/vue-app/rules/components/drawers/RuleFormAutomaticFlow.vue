@@ -20,58 +20,56 @@
 -->
 <template>
   <div>
-    <template>
-      <v-card-text class="px-0 text-header">
-        {{ $t('rule.form.label.application.createAutomaticFlow') }}
-      </v-card-text>
-      <v-autocomplete
-        id="triggerAutoComplete"
-        ref="triggerAutoComplete"
-        v-model="trigger"
-        :items="sortedTriggers"
-        :placeholder="$t('rule.form.label.event.placeholder')"
-        :filter="filterTriggers"
-        class="pa-0"
-        background-color="white"
-        dense
-        flat
-        solo
-        outlined
-        @change="triggerChanged">
-        <template #selection="{item, selected}">
-          <v-chip
-            :input-value="selected"
-            color="white">
-            <rule-icon :rule-event="item" class="me-2" />
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <span v-on="on" class="text-truncate">{{ getTriggerLabel(item) }}
-                </span>
-              </template>
-              <span>{{ getTriggerLabel(item) }}</span>
-            </v-tooltip>
-          </v-chip>
-        </template>
-        <template #item="{item}">
+    <v-card-text class="px-0">
+      {{ $t('rule.form.label.application.createAutomaticFlow') }}
+    </v-card-text>
+    <v-autocomplete
+      id="triggerAutoComplete"
+      ref="triggerAutoComplete"
+      v-model="trigger"
+      :items="sortedTriggers"
+      :placeholder="$t('rule.form.label.event.placeholder')"
+      :filter="filterTriggers"
+      class="pa-0"
+      background-color="white"
+      dense
+      flat
+      solo
+      outlined
+      @change="triggerChanged">
+      <template #selection="{item, selected}">
+        <v-chip
+          :input-value="selected"
+          color="white">
           <rule-icon :rule-event="item" class="me-2" />
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ getTriggerLabel(item) }}
-            </v-list-item-title>
-          </v-list-item-content>
-        </template>
-      </v-autocomplete>
-      <v-card v-if="trigger && isExtensibleEvent" flat>
-        <extension-registry-components
-          v-if="initialized"
-          :params="params"
-          name="engagementCenterEvent"
-          type="connector-event-extensions"
-          parent-element="div"
-          element="div"
-          class="d-flex flex-column" />
-      </v-card>
-    </template>
+          <v-tooltip bottom>
+            <template #activator="{ on }">
+              <span v-on="on" class="text-truncate">{{ getTriggerLabel(item) }}
+              </span>
+            </template>
+            <span>{{ getTriggerLabel(item) }}</span>
+          </v-tooltip>
+        </v-chip>
+      </template>
+      <template #item="{item}">
+        <rule-icon :rule-event="item" class="me-2" />
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ getTriggerLabel(item) }}
+          </v-list-item-title>
+        </v-list-item-content>
+      </template>
+    </v-autocomplete>
+    <v-card v-if="trigger && isExtensibleEvent" flat>
+      <extension-registry-components
+        v-if="initialized"
+        :params="params"
+        name="engagementCenterEvent"
+        type="connector-event-extensions"
+        parent-element="div"
+        element="div"
+        class="d-flex flex-column" />
+    </v-card>
   </div>
 </template>
 
