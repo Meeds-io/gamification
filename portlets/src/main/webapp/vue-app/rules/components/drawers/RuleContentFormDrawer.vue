@@ -241,7 +241,7 @@
                           {{ $t('rule.form.label.variablePoints') }}
                         </v-chip>
                       </div>
-                      <div class="d-flex flex-row">
+                      <div class="d-flex flex-row align-center">
                         <v-card
                           flat
                           class="d-flex flex-grow-1 pa-0 col-4">
@@ -254,14 +254,14 @@
                             dense
                             required />
                         </v-card>
-                        <v-card-text class="mt-1 px-0 col-2"> {{ canVariableRewarding && variablePoints ? $t('rule.form.label.pointsFor') : $t('rule.form.label.points') }} </v-card-text>
+                        <v-card-text class="pa-0 me-2 col-2"> {{ canVariableRewarding && variablePoints ? $t('rule.form.label.pointsFor') : $t('rule.form.label.points') }} </v-card-text>
                         <v-card
                           v-if="canVariableRewarding && variablePoints"
                           flat
-                          class="d-flex flex-grow-1 pt-2 pe-0 col-4">
+                          class="d-flex flex-grow-1 pa-0 col-4">
                           <v-text-field
                             v-model="totalTargetItem"
-                            class="mt-0 pt-0 me-2"
+                            class="mt-0 pt-0"
                             type="number"
                             outlined
                             dense
