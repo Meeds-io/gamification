@@ -20,7 +20,7 @@
 -->
 <template>
   <div class="rule-points">
-    <div class="text-header mb-1">
+    <div class="text-subtitle mb-1">
       {{ $t('rules.achieveItFor') }}
     </div>
     <div class="d-flex flex-row">
