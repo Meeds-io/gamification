@@ -26,10 +26,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-btn
         v-else
         class="btn btn-primary"
-        small
         @click="$root.$emit('rule-form-drawer', null, program)">
-        <v-icon dark>
-          mdi-plus
+        <v-icon size="18" dark>
+          fa-plus
         </v-icon>
         <span class="ms-2 d-none d-lg-inline">
           {{ $t('programs.details.rule.button.addRule') }}

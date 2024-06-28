@@ -111,9 +111,7 @@
                   required
                   @initialized="setFormInitialized">
                   <template #title>
-                    <div class="text-header">
-                      {{ $t('programs.label.nameYourProgram') }}
-                    </div>
+                    {{ $t('programs.label.nameYourProgram') }}
                   </template>
                 </translation-text-field>
                 <translation-text-field
@@ -131,9 +129,7 @@
                   rich-editor
                   @initialized="setFormInitialized">
                   <template #title>
-                    <div class="text-header">
-                      {{ $t('programs.label.describeProgram') }}
-                    </div>
+                    {{ $t('programs.label.describeProgram') }}
                   </template>
                   <rich-editor
                     id="programDescription"
@@ -170,7 +166,7 @@
                         v-model="program.open"
                         class="ms-0 me-n1 mt-0 mb-n2 pt-0" />
                     </div>
-                    <div class="caption text-light-color">
+                    <div class="text-subtitle">
                       {{ $t('programs.subtitle.programAudience.all') }}
                     </div>
                   </div>
@@ -190,7 +186,7 @@
                     :width="220"
                     sugester-class="ma-0 no-box-shadow border-color"
                     include-spaces />
-                  <div v-if="openSpace !== null" class="caption text-light-color mt-2">
+                  <div v-if="openSpace !== null" class="text-subtitle mt-2">
                     {{ openSpace && $t('programs.label.openSpaceSubtitle') || $t('programs.label.restrictedSpaceSubtitle') }}
                   </div>
                 </div>
@@ -199,7 +195,7 @@
                     {{ $t('programs.label.programOwners') }}
                   </span>
                   <div class="d-flex align-center">
-                    <span class="caption text-light-color"> {{ $t('programs.label.accessPermission') }}</span>
+                    <span class="text-subtitle"> {{ $t('programs.label.accessPermission') }}</span>
                   </div>
                 </div>
                 <v-row v-if="audience" class="mt-4 mx-0">
@@ -234,7 +230,7 @@
                       v-model="program.enabled"
                       class="my-0 ms-0 me-n1" />
                   </div>
-                  <div class="caption text-light-color">
+                  <div class="text-subtitle">
                     {{ $t('programs.label.programStatusSubtitle') }}
                   </div>
                 </div>

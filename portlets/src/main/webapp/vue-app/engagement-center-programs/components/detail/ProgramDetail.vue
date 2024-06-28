@@ -77,13 +77,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <div class="text-header mb-0">
                   {{ $t('programs.details.label.description') }}
                 </div>
-                <v-list-item-subtitle class="text-color pt-2">
+                <v-list-item-title class="pt-2">
                   <div class="d-flex flex-grow-0 flex-shrink-1 pb-sm-5 rich-editor-content">
                     <span
                       class="mt-1 align-self-center text-wrap text-left text-break"
                       v-sanitized-html="programDescription"></span>
                   </div>
-                </v-list-item-subtitle>
+                </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </div>

@@ -26,7 +26,7 @@
       <engagement-center-rules-category
         :category="category"
         disabled-collapsing>
-        <v-card-title class="px-0 py-1 text-color font-weight-bold text-break">
+        <v-card-title class="px-0 py-1 text-title text-break">
           {{ category.title }}
         </v-card-title>
       </engagement-center-rules-category>

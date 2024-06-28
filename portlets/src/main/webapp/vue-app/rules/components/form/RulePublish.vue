@@ -1,7 +1,7 @@
 <template>
   <div
     id="engagementCenterRulePublication"
-    class="d-flex flex-column text-header">
+    class="d-flex flex-column">
     <div class="d-flex align-center pt-4">
       <v-card
         :max-width="spaceId && '50%' || 'calc(100% - 50px)'"
@@ -24,7 +24,7 @@
           class="my-0 ms-0 me-n1" />
       </div>
     </div>
-    <div v-if="rule.id && !rule.published" class="caption text-light-color">
+    <div v-if="rule.id && !rule.published" class="text-subtitle">
       {{ $t('rule.form.actionHidden') }}
     </div>
     <rich-editor
