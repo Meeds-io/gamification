@@ -21,8 +21,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     :confirm-close-labels="confirmCloseLabels"
     class="EngagementCenterDrawer"
     right
-    allow-expand
-    @expand-updated="expanded = $event"
     @closed="clear">
     <template #title>
       {{ drawerTitle }}
@@ -37,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :placeholder="$t('rule.form.label.rules.placeholder')"
           :maxlength="maxTitleLength"
           :object-id="ruleId"
-          :no-expand-icon="!expanded"
+          no-expand-icon
           object-type="rule"
           field-name="title"
           drawer-title="rule.form.translateTitle"
@@ -108,7 +106,6 @@ export default {
     value: '',
     drawer: false,
     originalRuleTitleTranslations: {},
-    expanded: false,
     connectors: [],
     selectedConnectorIndex: -1,
     selectedConnector: null,
