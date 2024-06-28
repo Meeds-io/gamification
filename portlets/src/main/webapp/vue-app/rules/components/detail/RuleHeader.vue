@@ -42,7 +42,7 @@
       </v-avatar>
     </div>
     <div class="d-flex flex-column ms-2 my-auto">
-      <div class="rule-title font-weight-bold text-truncate-2 ma-0">
+      <div class="rule-title text-title font-weight-bold text-truncate-2 ma-0">
         {{ ruleTitle }}
       </div>
       <div v-if="reduced" class="rule-score text-subtitle">
