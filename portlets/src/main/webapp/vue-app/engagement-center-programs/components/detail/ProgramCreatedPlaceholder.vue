@@ -27,11 +27,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         @click="$emit('add')">
         <v-icon
           size="18"
-          class="text-title"
+          class="text-title white--text"
           dark>
           fa-plus
         </v-icon>
-        <span class="ms-2 d-none d-lg-inline text-title">
+        <span class="ms-2 d-none d-lg-inline text-title white--text">
           {{ $t('programs.details.rule.button.addIncentive') }}
         </span>
       </v-btn>
@@ -42,7 +42,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="d-flex justify-center me-3"
           min-width="50"
           flat>
-          <v-icon color="primary" size="30">fa-trophy</v-icon>
+          <v-icon color="tertiary" size="30">fa-trophy</v-icon>
         </v-card>
         {{ $t('programs.details.label.manualActionIntroduction') }}
       </div>
