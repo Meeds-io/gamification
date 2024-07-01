@@ -213,6 +213,7 @@ export default {
       }
       this.program = this.rule?.program || program;
       this.ruleTitle = this.rule?.title || '';
+      this.ruleDescription = this.rule?.description || '';
       this.ruleTitleTranslations = {};
       if (this.$refs.ruleFormDrawer) {
         this.$refs.ruleFormDrawer.open();
