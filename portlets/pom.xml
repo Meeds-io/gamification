@@ -20,15 +20,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.exoplatform.addons.gamification</groupId>
+    <groupId>io.meeds.gamification</groupId>
     <artifactId>gamification</artifactId>
     <version>7.0.x-exo-SNAPSHOT</version>
   </parent>
 
   <artifactId>gamification-portlets</artifactId>
   <packaging>war</packaging>
-  <name>eXo Gamification :: Portlets Pack</name>
-  <description>eXo Gamification Portlets Pack</description>
+  <name>Meeds:: Gamification :: Portlets Pack</name>
+  <description>Meeds Gamification Portlets Pack</description>
 
   <dependencies>
     <dependency>
@@ -37,14 +37,14 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.exoplatform.social</groupId>
+      <groupId>io.meeds.social</groupId>
       <artifactId>social-component-service</artifactId>
       <scope>provided</scope>
     </dependency>
 
     <!-- Platform-ui for Less Variables use-->
     <dependency>
-      <groupId>org.exoplatform.platform-ui</groupId>
+      <groupId>io.meeds.platform-ui</groupId>
       <artifactId>platform-ui-skin</artifactId>
       <classifier>sources</classifier>
       <scope>provided</scope>
