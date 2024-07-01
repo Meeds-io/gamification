@@ -195,10 +195,10 @@
                           value="PENDING"
                           class="my-0 align-baseline">
                           <template #label>
-                            <v-list-item two-line>
+                            <v-list-item class="px-0" two-line>
                               <v-list-item-content class="py-0">
                                 <v-list-item-title>{{ $t('rule.form.defaultRealizationStatus.pending') }}</v-list-item-title>
-                                <v-list-item-subtitle>
+                                <v-list-item-subtitle class="text-subtitle-font-size">
                                   {{ $t('rule.form.defaultRealizationStatus.pending.placeholder') }}
                                 </v-list-item-subtitle>
                               </v-list-item-content>
@@ -209,10 +209,10 @@
                           value="ACCEPTED"
                           class="my-0 align-baseline">
                           <template #label>
-                            <v-list-item two-line>
+                            <v-list-item class="px-0" two-line>
                               <v-list-item-content class="py-0">
                                 <v-list-item-title>{{ $t('rule.form.defaultRealizationStatus.accepted') }}</v-list-item-title>
-                                <v-list-item-subtitle>
+                                <v-list-item-subtitle class="text-subtitle-font-size">
                                   {{ $t('rule.form.defaultRealizationStatus.accepted.placeholder') }}
                                 </v-list-item-subtitle>
                               </v-list-item-content>
