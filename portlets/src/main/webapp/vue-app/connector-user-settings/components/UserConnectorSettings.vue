@@ -56,6 +56,16 @@ export default {
       return this.displayed && this.enabledConnectors?.length > 0;
     }
   },
+  watch: {
+    displayUserSetting: {
+      immediate: true,
+      handler() {
+        if (this.$root.$el) {
+          this.$root.$updateApplicationVisibility(!!this.displayUserSetting, this.$el);
+        }
+      },
+    },
+  },
   created() {
     document.addEventListener('hideSettingsApps', (event) => {
       if (event?.detail && this.id !== event.detail) {
@@ -63,6 +73,9 @@ export default {
       }
     });
     document.addEventListener('showSettingsApps', () => this.displayed = true);
+  },
+  mounted() {
+    this.$root.$updateApplicationVisibility(!!this.displayUserSetting, this.$el);
   },
   methods: {
     connectorsLoaded(connectors, connectorExtensions) {
