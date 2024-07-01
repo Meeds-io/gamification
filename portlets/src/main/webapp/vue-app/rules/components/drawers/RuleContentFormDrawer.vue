@@ -30,7 +30,7 @@
     @expand-updated="expanded = $event"
     @opened="stepper = 1">
     <template #title>
-      <span class="text-truncate text-color">{{ ruleTitle }}</span>
+      {{ ruleTitle }}
     </template>
     <template v-if="drawer" #content>
       <v-form
@@ -51,7 +51,7 @@
                 :step="1"
                 :editable="!expanded"
                 class="ma-0 pa-0">
-                <span class="text-header">{{ $t('rule.form.label.stepOne') }}</span>
+                {{ $t('rule.form.label.stepOne') }}
               </v-stepper-step>
               <v-stepper-items>
                 <v-slide-y-transition>
@@ -73,9 +73,7 @@
                         rich-editor-oembed
                         @initialized="setFormInitialized">
                         <template #title>
-                          <div class="text-header pb-2">
-                            {{ $t('rule.form.label.description') }}
-                          </div>
+                          {{ $t('rule.form.label.description') }}
                         </template>
                         <rich-editor
                           id="ruleDescription"
@@ -110,12 +108,12 @@
                   :step="2"
                   class="ma-0 pa-0"
                   :editable="ruleTitleValid && firstStepValid && !expanded">
-                  <span class="font-weight-bold text-header">{{ $t('rule.form.label.stepTwo') }}</span>
+                  {{ $t('rule.form.label.stepTwo') }}
                 </v-stepper-step>
                 <v-stepper-items>
                   <v-slide-y-transition>
                     <div v-show="expanded || (stepper === 2)">
-                      <div class="pt-4 pb-2 text-header">{{ $t('rule.form.ruleConditionsLabel') }}</div>
+                      {{ $t('rule.form.ruleConditionsLabel') }}
                       <div class="ps-7">
                         <v-chip
                           class="ma-2"
@@ -178,7 +176,7 @@
                   :step="3"
                   class="ma-0 pa-0"
                   :editable="ruleTitleValid && firstStepValid && !expanded">
-                  <span class="font-weight-bold text-header">{{ $t('rule.form.label.stepThree') }}</span>
+                  {{ $t('rule.form.label.stepThree') }}
                 </v-stepper-step>
                 <v-stepper-items>
                   <v-slide-y-transition>
@@ -280,7 +278,7 @@
                   :step="4"
                   class="ma-0 pa-0"
                   :editable="ruleTitleValid && firstStepValid && !expanded">
-                  <span class="font-weight-bold text-header">{{ $t('rule.form.label.stepFour') }}</span>
+                  {{ $t('rule.form.label.stepFour') }}
                 </v-stepper-step>
                 <v-stepper-items>
                   <v-slide-y-transition>
