@@ -87,29 +87,46 @@ public interface ProgramService {
    * Gets Program Ids by rule title.
    *
    * @param ruleTitle used to filter results
+   * @param programFilter {@link ProgramFilter} used to filter results
+   * @param username User name accessing programs
    * @param offset index of the search
    * @param limit limit of results to return
    * @return {@link List} of {@link ProgramDTO} id of found programs
+   * @throws IllegalAccessException when user is not authorized to get programs
    */
-  List<Long> getProgramIdsByRuleTitle(String ruleTitle, int offset, int limit);
+  List<Long> getProgramIdsByRuleTitle(String ruleTitle,
+                                      ProgramFilter programFilter,
+                                      String username,
+                                      int offset,
+                                      int limit) throws IllegalAccessException;
 
   /**
    * Gets programs by rule title.
    *
    * @param ruleTitle used to filter results
+   * @param programFilter {@link ProgramFilter} used to filter results
+   * @param username User name accessing programs
    * @param offset index of the search
    * @param limit limit of results to return
    * @return A {@link List &lt;ProgramDTO&gt;} object
+   * @throws IllegalAccessException when user is not authorized to get programs
    */
-  List<ProgramDTO> getProgramsByRuleTitle(String ruleTitle, int offset, int limit);
+  List<ProgramDTO> getProgramsByRuleTitle(String ruleTitle,
+                                          ProgramFilter programFilter,
+                                          String username,
+                                          int offset,
+                                          int limit) throws IllegalAccessException;
 
   /**
    * count programs by rule title.
    *
    * @param ruleTitle used to filter results
+   * @param programFilter {@link ProgramFilter} used to filter results
+   * @param username User name accessing programs
    * @return Programs count
+   * @throws IllegalAccessException when user is not authorized to get programs
    */
-  int countProgramsByRuleTitle(String ruleTitle);
+  int countProgramsByRuleTitle(String ruleTitle, ProgramFilter programFilter, String username) throws IllegalAccessException;
 
   /**
    * @param  username user name

@@ -45,6 +45,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   private static final String        TITLE_PARAM_NAME          = "ruleTitle";
 
+  private static final String        SPACES_IDS_PARAM_NAME     = "spacesIds";
+
   private static final String        EVENT_PARAM_NAME          = "event";
 
   private static final String        EVENT_TYPE_PARAM_NAME     = "eventType";
@@ -75,9 +77,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  public List<Long> findProgramIdsByRuleTitle(String term, int offset, int limit) {
+  public List<Long> findProgramIdsByRuleTitle(String term, List<Long> spacesIds, int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.findProgramIdsByRuleTitle", Tuple.class);
     query.setParameter(TITLE_PARAM_NAME, term);
+    query.setParameter(SPACES_IDS_PARAM_NAME, spacesIds);
     List<Tuple> result = query.getResultList();
     if (result == null) {
       return Collections.emptyList();
@@ -93,10 +96,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  public int countProgramsByRuleTitle(String term) {
+  public int countProgramsByRuleTitle(String term, List<Long> spacesIds) {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.countProgramsByRuleTitle", Long.class);
     query.setParameter(TITLE_PARAM_NAME, term);
-
+    query.setParameter(SPACES_IDS_PARAM_NAME, spacesIds);
     try {
       Long count = query.getSingleResult();
       return count == null ? 0 : count.intValue();

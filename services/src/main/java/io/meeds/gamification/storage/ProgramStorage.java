@@ -135,12 +135,12 @@ public class ProgramStorage {
     return programDAO.getProgramIdsByFilter(offset, limit, filter);
   }
 
-  public List<Long> getProgramIdsByRuleTitle(String ruleTitle, int offset, int limit) {
-    return ruleDAO.findProgramIdsByRuleTitle(ruleTitle, offset, limit);
+  public List<Long> getProgramIdsByRuleTitle(String ruleTitle, ProgramFilter programFilter, int offset, int limit) {
+    return ruleDAO.findProgramIdsByRuleTitle(ruleTitle, programFilter.getSpacesIds(), offset, limit);
   }
 
-  public int countProgramsByRuleTitle(String ruleTitle) {
-    return ruleDAO.countProgramsByRuleTitle(ruleTitle);
+  public int countProgramsByRuleTitle(String ruleTitle, ProgramFilter programFilter) {
+    return ruleDAO.countProgramsByRuleTitle(ruleTitle, programFilter.getSpacesIds());
   }
 
   public int countPrograms(ProgramFilter programFilter) {

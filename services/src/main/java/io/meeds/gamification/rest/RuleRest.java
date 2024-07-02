@@ -303,8 +303,8 @@ public class RuleRest implements ResourceContainer {
         List<ProgramDTO> programs;
         int programSize;
         if (StringUtils.isNotBlank(term)) {
-          programs = programService.getProgramsByRuleTitle(term, categoryOffset, categoryLimit);
-          programSize = programService.countProgramsByRuleTitle(term);
+          programs = programService.getProgramsByRuleTitle(term, programFilter, currentUser, categoryOffset, categoryLimit);
+          programSize = programService.countProgramsByRuleTitle(term, programFilter, currentUser);
         } else {
           programs = programService.getPrograms(programFilter, currentUser, categoryOffset, categoryLimit);
           programSize = programService.countPrograms(programFilter, currentUser);

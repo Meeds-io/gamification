@@ -92,6 +92,7 @@ import lombok.EqualsAndHashCode;
     " INNER JOIN rule.domainEntity domain" +
     "   ON domain.isEnabled = true" +
     "  AND domain.isDeleted = false" +
+    "  AND (domain.audienceId IS NULL OR domain.audienceId in (:spacesIds))" +
     " WHERE LOWER(rule.title) LIKE LOWER(CONCAT('%', :ruleTitle, '%'))" +
     " GROUP BY rule.domainEntity.id "
 )
@@ -103,6 +104,7 @@ import lombok.EqualsAndHashCode;
     " INNER JOIN rule.domainEntity domain" +
     "   ON domain.isEnabled = true" +
     "  AND domain.isDeleted = false" +
+    "  AND (domain.audienceId IS NULL OR domain.audienceId in (:spacesIds))" +
     " WHERE LOWER(rule.title) LIKE LOWER(CONCAT('%', :ruleTitle, '%'))"
 )
 @NamedQuery(

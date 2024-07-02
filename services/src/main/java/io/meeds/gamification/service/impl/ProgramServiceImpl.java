@@ -96,19 +96,25 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public List<Long> getProgramIdsByRuleTitle(String ruleTitle, int offset, int limit) {
-    return programStorage.getProgramIdsByRuleTitle(ruleTitle, offset, limit);
+  public List<Long> getProgramIdsByRuleTitle(String ruleTitle, ProgramFilter programFilter, String username, int offset, int limit) throws IllegalAccessException {
+    programFilter = computeUserSpaces(programFilter, username);
+    return programStorage.getProgramIdsByRuleTitle(ruleTitle, programFilter, offset, limit);
   }
 
   @Override
-  public List<ProgramDTO> getProgramsByRuleTitle(String ruleTitle, int offset, int limit) {
-    List<Long> programIds = getProgramIdsByRuleTitle(ruleTitle, offset, limit);
+  public List<ProgramDTO> getProgramsByRuleTitle(String ruleTitle,
+                                                 ProgramFilter programFilter,
+                                                 String username,
+                                                 int offset,
+                                                 int limit) throws IllegalAccessException {
+    List<Long> programIds = getProgramIdsByRuleTitle(ruleTitle, programFilter, username, offset, limit);
     return programIds.stream().map(this::getProgramById).toList();
   }
 
   @Override
-  public int countProgramsByRuleTitle(String ruleTitle) {
-    return programStorage.countProgramsByRuleTitle(ruleTitle);
+  public int countProgramsByRuleTitle(String ruleTitle, ProgramFilter programFilter, String username) throws IllegalAccessException {
+    programFilter = computeUserSpaces(programFilter, username);
+    return programStorage.countProgramsByRuleTitle(ruleTitle, programFilter);
   }
 
   @Override
