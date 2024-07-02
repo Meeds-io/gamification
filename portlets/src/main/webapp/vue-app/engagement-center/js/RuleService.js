@@ -79,6 +79,12 @@ export function getRules(filter) {
   if (filter?.lang) {
     formData.append('lang', filter.lang);
   }
+  if (filter?.categoryOffset) {
+    formData.append('categoryOffset', filter.categoryOffset);
+  }
+  if (filter?.categoryLimit) {
+    formData.append('categoryLimit', filter.categoryLimit);
+  }
   const params = new URLSearchParams(formData).toString();
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules?${params}`, {
     method: 'GET',

@@ -96,6 +96,22 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
+  public List<Long> getProgramIdsByRuleTitle(String ruleTitle, int offset, int limit) {
+    return programStorage.getProgramIdsByRuleTitle(ruleTitle, offset, limit);
+  }
+
+  @Override
+  public List<ProgramDTO> getProgramsByRuleTitle(String ruleTitle, int offset, int limit) {
+    List<Long> programIds = getProgramIdsByRuleTitle(ruleTitle, offset, limit);
+    return programIds.stream().map(this::getProgramById).toList();
+  }
+
+  @Override
+  public int countProgramsByRuleTitle(String ruleTitle) {
+    return programStorage.countProgramsByRuleTitle(ruleTitle);
+  }
+
+  @Override
   public List<Long> getOwnedProgramIds(String username, int offset, int limit) {
     if (StringUtils.isBlank(username)) {
       return Collections.emptyList();

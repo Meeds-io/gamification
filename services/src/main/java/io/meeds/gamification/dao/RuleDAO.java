@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import io.meeds.gamification.constant.*;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Tuple;
@@ -35,27 +36,24 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
-import io.meeds.gamification.constant.DateFilterType;
-import io.meeds.gamification.constant.EntityFilterType;
-import io.meeds.gamification.constant.EntityStatusType;
-import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.model.filter.RuleFilter;
 
 public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements GenericDAO<RuleEntity, Long> {
 
-  private static final String  DATE_PARAM_NAME           = "date";
+  private static final String        DATE_PARAM_NAME           = "date";
 
-  private static final String  EVENT_PARAM_NAME          = "event";
+  private static final String        TITLE_PARAM_NAME          = "ruleTitle";
 
-  private static final String  EVENT_TYPE_PARAM_NAME     = "eventType";
+  private static final String        EVENT_PARAM_NAME          = "event";
 
-  private static final String  QUERY_FILTER_FIND_PREFIX  = "Rule.findAllRules";
+  private static final String        EVENT_TYPE_PARAM_NAME     = "eventType";
 
-  private static final String  QUERY_FILTER_COUNT_PREFIX = "Rule.countAllRules";
+  private static final String        QUERY_FILTER_FIND_PREFIX  = "Rule.findAllRules";
 
-  private static final String  DOMAIN_ID_PARAM_NAME      = "domainId";
+  private static final String        QUERY_FILTER_COUNT_PREFIX = "Rule.countAllRules";
+
+  private static final String        DOMAIN_ID_PARAM_NAME      = "domainId";
 
   private final Map<String, Boolean> filterNamedQueries        = new HashMap<>();
 
@@ -74,6 +72,36 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
         resultStream = resultStream.limit(limit);
       }
       return resultStream.toList();
+    }
+  }
+
+  public List<Long> findProgramIdsByRuleTitle(String term, int offset, int limit) {
+    TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.findProgramIdsByRuleTitle", Tuple.class);
+    query.setParameter(TITLE_PARAM_NAME, term);
+    List<Tuple> result = query.getResultList();
+    if (result == null) {
+      return Collections.emptyList();
+    } else {
+      Stream<Long> resultStream = result.stream().map(tuple -> tuple.get(0, Long.class));
+      if (offset > 0) {
+        resultStream = resultStream.skip(offset);
+      }
+      if (limit > 0) {
+        resultStream = resultStream.limit(limit);
+      }
+      return resultStream.toList();
+    }
+  }
+
+  public int countProgramsByRuleTitle(String term) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.countProgramsByRuleTitle", Long.class);
+    query.setParameter(TITLE_PARAM_NAME, term);
+
+    try {
+      Long count = query.getSingleResult();
+      return count == null ? 0 : count.intValue();
+    } catch (NoResultException e) {
+      return 0;
     }
   }
 

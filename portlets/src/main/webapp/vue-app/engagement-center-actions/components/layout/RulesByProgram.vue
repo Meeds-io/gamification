@@ -24,6 +24,17 @@
       :key="category.id"
       :category="category"
       :program="category" />
+    <template>
+      <div v-if="categoryPagesCount > 1 && !loading" class="d-flex justify-center">
+        <v-pagination
+          v-model="categoryPage"
+          :length="categoryPagesCount"
+          circle
+          light
+          flat
+          @input="changePage" />
+      </div>
+    </template>
   </div>
 </template>
 <script>
@@ -51,6 +62,12 @@ export default {
     applyFilters: false,
     categories: [],
     pageSize: 6,
+    categorySize: 0,
+    categoryOffset: 0,
+    categoryLimit: 25,
+    categoryPageSize: 25,
+    categoryPage: 1,
+    categoryPagesCount: 1,
   }),
   computed: {
     validCategories() {
@@ -70,6 +87,9 @@ export default {
   watch: {
     term() {
       this.applyFilters = true;
+      this.categoryOffset = 0;
+      this.categoryLimit = 25;
+      this.categoryPage = 1;
     },
     type() {
       this.applyFilters = true;
@@ -140,6 +160,8 @@ export default {
         limit,
         expand: 'countRealizations,favorites',
         lang: eXo.env.portal.language,
+        categoryOffset: this.categoryOffset,
+        categoryLimit: this.categoryLimit
       })
         .then(data => {
           if (categoryId) {
@@ -151,10 +173,18 @@ export default {
             }
             this.rulesSize = this.categories.map(cat => cat.size || 0).reduce((sum, v) => sum += v, 0) || 0;
           } else {
-            this.categories = data;
-            this.rulesSize = this.categories.map(cat => cat.size || 0).reduce((sum, v) => sum += v, 0);
+            this.categories = data?.programWithRules;
+            this.categorySize = data && data.size && Number(data.size) || 0;
+            this.categoryPagesCount = parseInt((this.categorySize + this.categoryLimit - 1) / this.categoryLimit);
+            this.rulesSize = this.categories.map(cat => cat.size || 0).reduce((sum, v) => sum + v, 0);
           }
         }).finally(() => this.loading = false);
+    },
+    changePage() {
+      this.$root.selectedRuleId = null;
+      this.categoryOffset = (this.categoryPage - 1) * this.categoryPageSize;
+      this.categories = [];
+      return this.$nextTick().then(() => this.retrieveRules());
     },
   }
 };

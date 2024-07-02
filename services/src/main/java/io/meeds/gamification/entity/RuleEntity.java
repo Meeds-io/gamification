@@ -86,6 +86,26 @@ import lombok.EqualsAndHashCode;
     " ORDER BY totalScore DESC"
 )
 @NamedQuery(
+ name = "Rule.findProgramIdsByRuleTitle",
+ query =
+    " SELECT rule.domainEntity.id FROM Rule rule" +
+    " INNER JOIN rule.domainEntity domain" +
+    "   ON domain.isEnabled = true" +
+    "  AND domain.isDeleted = false" +
+    " WHERE LOWER(rule.title) LIKE LOWER(CONCAT('%', :ruleTitle, '%'))" +
+    " GROUP BY rule.domainEntity.id "
+)
+
+@NamedQuery(
+ name = "Rule.countProgramsByRuleTitle",
+ query =
+    " SELECT COUNT(DISTINCT rule.domainEntity) FROM Rule rule" +
+    " INNER JOIN rule.domainEntity domain" +
+    "   ON domain.isEnabled = true" +
+    "  AND domain.isDeleted = false" +
+    " WHERE LOWER(rule.title) LIKE LOWER(CONCAT('%', :ruleTitle, '%'))"
+)
+@NamedQuery(
   name = "Rule.getHighestBudgetOpenDomainIds",
   query =
     " SELECT rule.domainEntity.id, SUM(rule.score) as totalScore FROM Rule rule" +

@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.security.RolesAllowed;
+
+import io.meeds.gamification.rest.model.ProgramWithRulesList;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -227,6 +229,14 @@ public class RuleRest implements ResourceContainer {
                            @Parameter(description = "Used to retrieve the title and description in requested language")
                            @QueryParam("lang")
                            String lang,
+                           @Parameter(description = "Category offset of results to retrieve", required = false)
+                           @QueryParam("categoryOffset")
+                           @DefaultValue("0")
+                           int categoryOffset,
+                           @Parameter(description = "Category limit of results to retrieve", required = false)
+                           @QueryParam("categoryLimit")
+                           @DefaultValue("25")
+                           int categoryLimit,
                            @Parameter(description = "Asking for a full representation of a specific subresource, ex: userRealizations")
                            @QueryParam("expand")
                            String expand) {
@@ -287,9 +297,18 @@ public class RuleRest implements ResourceContainer {
         }
         return responseBuilder.entity(ruleList).build();
       } else {
+        ProgramWithRulesList programsWithRulesEntityList = new ProgramWithRulesList();
         ProgramFilter programFilter = new ProgramFilter();
         programFilter.setStatus(programStatus);
-        List<ProgramDTO> programs = programService.getPrograms(programFilter, currentUser, 0, -1);
+        List<ProgramDTO> programs;
+        int programSize;
+        if (StringUtils.isNotBlank(term)) {
+          programs = programService.getProgramsByRuleTitle(term, categoryOffset, categoryLimit);
+          programSize = programService.countProgramsByRuleTitle(term);
+        } else {
+          programs = programService.getPrograms(programFilter, currentUser, categoryOffset, categoryLimit);
+          programSize = programService.countPrograms(programFilter, currentUser);
+        }
         List<ProgramWithRulesRestEntity> programsWithRules = new ArrayList<>();
         for (ProgramDTO program : programs) {
           ProgramWithRulesRestEntity programWithRule = new ProgramWithRulesRestEntity(program);
@@ -312,7 +331,11 @@ public class RuleRest implements ResourceContainer {
           }
           programsWithRules.add(programWithRule);
         }
-        return responseBuilder.entity(programsWithRules).build();
+        programsWithRulesEntityList.setProgramWithRules(programsWithRules);
+        programsWithRulesEntityList.setOffset(categoryOffset);
+        programsWithRulesEntityList.setLimit(categoryLimit);
+        programsWithRulesEntityList.setSize(programSize);
+        return responseBuilder.entity(programsWithRulesEntityList).build();
       }
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();

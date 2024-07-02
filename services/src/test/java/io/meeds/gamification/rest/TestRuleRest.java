@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.meeds.gamification.model.EventDTO;
+import io.meeds.gamification.rest.model.ProgramWithRulesList;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.junit.Before;
@@ -457,9 +458,9 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    List<ProgramWithRulesRestEntity> domainWithRules = (List<ProgramWithRulesRestEntity>) response.getEntity();
-    assertEquals(1, domainWithRules.size());
-    assertEquals(2, domainWithRules.get(0).getRules().size());
+    ProgramWithRulesList programWithRulesList = (ProgramWithRulesList) response.getEntity();
+    assertEquals(1, programWithRulesList.getSize());
+    assertEquals(2, programWithRulesList.getProgramWithRules().getFirst().getRules().size());
 
     restPath = GAMIFICATION_RULES_REST_PATH + "?offset=0&limit=1&returnSize=true";
     response = getResponse("GET", restPath, null);

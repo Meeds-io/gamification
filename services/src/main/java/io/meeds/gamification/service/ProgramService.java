@@ -82,6 +82,34 @@ public interface ProgramService {
   List<Long> getProgramIds(ProgramFilter programFilter,
                            int offset,
                            int limit);
+  
+  /**
+   * Gets Program Ids by rule title.
+   *
+   * @param ruleTitle used to filter results
+   * @param offset index of the search
+   * @param limit limit of results to return
+   * @return {@link List} of {@link ProgramDTO} id of found programs
+   */
+  List<Long> getProgramIdsByRuleTitle(String ruleTitle, int offset, int limit);
+
+  /**
+   * Gets programs by rule title.
+   *
+   * @param ruleTitle used to filter results
+   * @param offset index of the search
+   * @param limit limit of results to return
+   * @return A {@link List &lt;ProgramDTO&gt;} object
+   */
+  List<ProgramDTO> getProgramsByRuleTitle(String ruleTitle, int offset, int limit);
+
+  /**
+   * count programs by rule title.
+   *
+   * @param ruleTitle used to filter results
+   * @return Programs count
+   */
+  int countProgramsByRuleTitle(String ruleTitle);
 
   /**
    * @param  username user name
