@@ -28,7 +28,8 @@
     right
     allow-expand
     @expand-updated="expanded = $event"
-    @opened="stepper = 1">
+    @opened="stepper = 1"
+    @confirm-close="closeEffectively">
     <template #title>
       {{ ruleTitle }}
     </template>
@@ -609,6 +610,9 @@ export default {
     },
     close() {
       this.$refs.ruleContentFormDrawer.close();
+    },
+    closeEffectively() {
+      this.$nextTick().then(() => this.$emit('closed'));
     },
     saveRule() {
       this.saving = true;
