@@ -16,7 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <v-card class="card-border-radius overflow-hidden" flat>
+    <v-card class="application-body" flat>
       <template v-if="selectedConnector">
         <extension-registry-component
           v-if="editSettings"
@@ -28,18 +28,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :connector="selectedConnector"
           :connector-extension="connectorExtension" />
       </template>
-      <v-list v-else class="pa-0">
-        <v-list-item>
-          <v-list-item-content class="pa-0">
-            <v-list-item-subtitle class="my-3 text-sub-title">
-              <gamification-admin-connector-card-list
-                v-if="connectors.length"
-                :connectors="connectors"
-                :connector-extensions="connectorsExtensions" />
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+      <div v-else class="px-5">
+        <gamification-admin-connector-card-list
+          v-if="connectors.length"
+          :connectors="connectors"
+          :connector-extensions="connectorsExtensions" />
+      </div>
       <engagement-center-rule-extensions />
     </v-card>
   </v-app>

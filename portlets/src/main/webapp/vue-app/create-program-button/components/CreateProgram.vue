@@ -18,9 +18,9 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app class="card-border-radius app-background-color">
+  <v-app class="application-body">
     <div class="d-flex flex-column align-center justify-center pa-5">
-      <div class="title font-weight-bold text-color">
+      <div class="text-title">
         {{ $t('program.createProgramsTitle') }}
       </div>
       <v-btn

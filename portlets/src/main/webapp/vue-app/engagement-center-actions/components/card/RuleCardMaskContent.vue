@@ -28,18 +28,18 @@
     </v-icon>
     <div
       v-if="title"
-      class="white--text text-wrap title full-width px-2">
+      class="white--text text-wrap text-header full-width px-2">
       {{ title }}
     </div>
     <div
       v-if="$slots.default"
-      class="white--text text-wrap title full-width px-2">
+      class="white--text text-wrap text-header full-width px-2">
       <slot></slot>
     </div>
     <div
       v-else-if="text"
       v-sanitized-html="text"
-      class="white--text text-wrap subtitle-1 full-width px-2">
+      class="white--text text-wrap full-width px-2">
     </div>
   </div>
 </template>

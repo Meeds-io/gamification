@@ -17,7 +17,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-app>
     <widget-wrapper
-      :title="$t('popularSpaces.title')">
+      :title="$t('popularSpaces.title')"
+      extra-class="application-body">
       <v-card :loading="loading" flat>
         <v-list
           v-if="spaces && spaces.length"

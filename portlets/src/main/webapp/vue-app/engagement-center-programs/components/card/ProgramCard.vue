@@ -50,7 +50,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-tooltip :disabled="$root.isMobile" bottom>
               <template #activator="{ on, attrs }">
                 <span
-                  class="d-flex-inline position-relative text-truncate-2 font-weight-bold text-subtitle-1 text--secondary" 
+                  class="d-flex-inline position-relative text-truncate-2 font-weight-bold" 
                   v-bind="attrs"
                   v-on="on">
                   {{ program.title }}
@@ -63,13 +63,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-list>
       <v-spacer />
       <div class="d-flex justify-center py-2">
-        <v-icon size="18" class="pe-2 primary--text">fas fa-trophy</v-icon>
-        <span class="text-light-color text-caption" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+        <v-icon size="18" class="pe-2 tertiary--text">fas fa-trophy</v-icon>
+        <span v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
       </div>
     </div>
     <div class="d-flex ma-2">
       <div class="pa-1 d-none d-sm-inline">
-        <span class="my-auto caption text-light-color"> {{ $t('programs.details.label.hosts') }} </span>
+        <span class="my-auto text-subtitle"> {{ $t('programs.details.label.hosts') }} </span>
       </div>
       <v-spacer />
       <engagement-center-avatars-list

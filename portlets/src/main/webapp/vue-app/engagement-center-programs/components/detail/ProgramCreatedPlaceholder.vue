@@ -16,7 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <div class="d-flex flex-column align-center justify-center">
-    <span class="subtitle-1 pt-14">
+    <span class="pt-14">
       {{ $t('programs.details.label.newProgramIntroduction') }}
     </span>
     <span class="py-10">
@@ -25,21 +25,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         depressed
         large
         @click="$emit('add')">
-        <v-icon class="font-weight-bold" dark>
-          mdi-plus
+        <v-icon
+          size="18"
+          class="text-title white--text"
+          dark>
+          fa-plus
         </v-icon>
-        <span class="ms-2 d-none d-lg-inline title font-weight-bold">
+        <span class="ms-2 d-none d-lg-inline text-title white--text">
           {{ $t('programs.details.rule.button.addIncentive') }}
         </span>
       </v-btn>
     </span>
-    <div class="pb-12 subtitle-1 text-wrap">
+    <div class="pb-12 text-wrap">
       <div class="d-flex align-center">
         <v-card
           class="d-flex justify-center me-3"
           min-width="50"
           flat>
-          <v-icon color="primary" size="30">fa-trophy</v-icon>
+          <v-icon color="tertiary" size="30">fa-trophy</v-icon>
         </v-card>
         {{ $t('programs.details.label.manualActionIntroduction') }}
       </div>
@@ -48,7 +51,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="d-flex justify-center me-3"
           min-width="50"
           flat>
-          <v-icon color="primary" size="30">fa-award</v-icon>
+          <v-icon color="tertiary" size="30">fa-award</v-icon>
         </v-card>
         {{ $t('programs.details.label.automaticActionIntroduction') }}
       </div>

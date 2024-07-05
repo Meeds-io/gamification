@@ -15,18 +15,18 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app>
+  <div>
     <v-card
       v-if="displayUserSetting"
-      class="card-border-radius app-background-color"
+      class="application-body"
       flat>
       <v-list>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title class="title text-color">
+            <v-list-item-title class="text-title">
               {{ $t('gamification.connectors.label.thirdPartyApps') }}
             </v-list-item-title>
-            <v-list-item-subtitle class="my-3 text-sub-title font-italic">
+            <v-list-item-subtitle class="my-3">
               <gamification-user-connector-setting-list :connected-connectors="enabledConnectors" :connector-extensions="connectorExtensions" />
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -38,7 +38,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :connector-extensions="connectors"
       @connectors-loaded="connectorsLoaded" />
     <engagement-center-user-connectors-extensions />
-  </v-app>
+  </div>
 </template>
 
 <script>
@@ -56,6 +56,16 @@ export default {
       return this.displayed && this.enabledConnectors?.length > 0;
     }
   },
+  watch: {
+    displayUserSetting: {
+      immediate: true,
+      handler() {
+        if (this.$root.$el) {
+          this.$root.$updateApplicationVisibility(!!this.displayUserSetting, this.$el);
+        }
+      },
+    },
+  },
   created() {
     document.addEventListener('hideSettingsApps', (event) => {
       if (event?.detail && this.id !== event.detail) {
@@ -63,6 +73,9 @@ export default {
       }
     });
     document.addEventListener('showSettingsApps', () => this.displayed = true);
+  },
+  mounted() {
+    this.$root.$updateApplicationVisibility(!!this.displayUserSetting, this.$el);
   },
   methods: {
     connectorsLoaded(connectors, connectorExtensions) {

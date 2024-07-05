@@ -17,8 +17,8 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app>
-    <v-card-text class="px-0 pb-0 dark-grey-color font-weight-bold">
+  <div>
+    <v-card-text class="px-0 pb-0">
       {{ $t('gamification.event.detail.action.label') }}
     </v-card-text>
     <v-radio-group v-model="rule" @change="changeSelection">
@@ -40,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :labels="ruleSuggesterLabels"
         multiple />
     </v-radio-group>
-  </v-app>
+  </div>
 </template>
 
 <script>

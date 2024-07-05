@@ -31,21 +31,21 @@
     </template>
     <v-list-item :role="null" class="px-0">
       <v-list-item-content class="py-0 my-auto">
-        <v-list-item-title class="subtitle-2">
+        <v-list-item-title>
           {{ ruleTitle }}
         </v-list-item-title>
-        <v-list-item-subtitle v-if="upcoming || ending" class="d-flex flex-nowrap align-center subtitle-2">
+        <v-list-item-subtitle v-if="upcoming || ending" class="d-flex flex-nowrap align-center">
           <engagement-center-rule-date-info-chip
             :rule="rule"
             size="18" />
         </v-list-item-subtitle>
-        <v-list-item-subtitle v-else-if="realizationsCount === 0" class="subtitle-2">
+        <v-list-item-subtitle v-else-if="realizationsCount === 0">
           {{ $t('gamification.overview.label.firstAnnounecement') }}
         </v-list-item-subtitle>
-        <v-list-item-subtitle v-else-if="realizationsCount === 1" class="subtitle-2">
+        <v-list-item-subtitle v-else-if="realizationsCount === 1">
           1 {{ $t('gamification.overview.label.participation') }}
         </v-list-item-subtitle>
-        <v-list-item-subtitle v-else class="subtitle-2">
+        <v-list-item-subtitle v-else>
           {{ realizationsCount }} {{ $t('gamification.overview.label.participations') }}
         </v-list-item-subtitle>
       </v-list-item-content>
@@ -55,7 +55,7 @@
             color="#F57C00"
             class="content-box-sizing white--text"
             small>
-            <span class="subtitle-2">+ {{ ruleScore }}</span>
+            <span>+ {{ ruleScore }}</span>
           </v-chip>
         </v-list-item-action-text>
       </v-list-item-action>

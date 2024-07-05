@@ -33,7 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           xs12
           mt-n2
           justify-center>
-          <span class="pe-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.connectionsRequests') }}</span>
+          <span class="pe-2 profile-card-header">{{ $t('homepage.profileStatus.connectionsRequests') }}</span>
           <v-btn
             fab
             depressed
@@ -42,7 +42,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             width="20"
             class="mb-1 header-badge-color"
             :href="receivedInvitationsUrl">
-            <span class="white--text caption">{{ connectionsRequestsSize }}</span>
+            <span class="white--text text-subtitle">{{ connectionsRequestsSize }}</span>
           </v-btn>
         </v-flex>
       </v-layout>
@@ -59,8 +59,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-list-item-avatar>
 
             <v-list-item-content class="py-0">
-              <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-sanitized-html="item.senderFullName" />
-              <v-list-item-subtitle class="caption grey-color" v-text="item.commonConnections+ ' ' + $t('homepage.profileStatus.commonConnections')" />
+              <v-list-item-title class="request-user-name darken-2" v-sanitized-html="item.senderFullName" />
+              <v-list-item-subtitle v-text="item.commonConnections+ ' ' + $t('homepage.profileStatus.commonConnections')" />
             </v-list-item-content>
             <v-list-item-action>
               <v-btn-toggle

@@ -17,9 +17,9 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app>
+  <div>
     <template v-if="activityId">
-      <div class="subtitle-1 font-weight-bold mb-2">
+      <div class="text-header mb-2">
         {{ $t('gamification.event.display.doItNow') }}
       </div>
       <v-list-item class="clickable" :href="activityUrl">
@@ -43,7 +43,7 @@
           </v-icon>
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title class="text-color body-2">
+          <v-list-item-title>
             <p
               class="ma-auto text-truncate"
               v-sanitized-html="activityTitle"></p>
@@ -52,7 +52,7 @@
       </v-list-item>
     </template>
     <template v-else-if="spaces.length">
-      <div class="subtitle-1 font-weight-bold mb-2">
+      <div class="text-header mb-2">
         {{ $t('gamification.event.display.goThere') }}
       </div>
       <v-progress-linear
@@ -66,7 +66,7 @@
         :space="space" />
     </template>
     <template v-else>
-      <div class="subtitle-1 font-weight-bold mb-2">
+      <div class="text-header mb-2">
         {{ $t('gamification.event.display.goThere') }}
       </div>
       <div class="d-flex justify-center">
@@ -78,7 +78,7 @@
         </v-btn>
       </div>
     </template>
-  </v-app>
+  </div>
 </template>
 
 <script>

@@ -18,10 +18,10 @@
 
 -->
 <template>
-  <v-app class="card-border-radius app-background-color overflow-hidden">
+  <v-app>
     <main
       id="rulesList"
-      class="Realizations border-box-sizing"
+      class="Realizations application-body border-box-sizing"
       role="main">
       <application-toolbar
         :center-button-toggle="isProgramManager && !isMobile && {
@@ -51,7 +51,7 @@
           <engagement-center-realizations-select-period
             v-model="selectedPeriod"
             :left="!$vuetify.breakpoint.mobile"
-            class="mx-2" />
+            class="mx-2 border-box-sizing" />
         </template>
       </application-toolbar>
   
@@ -137,12 +137,12 @@
           </span>
         </v-btn>
       </v-toolbar>
-      <engagement-center-realizations-filter-drawer
-        ref="filterRealizationDrawer"
-        :is-administrator="administrationMode"
-        :administration-mode="administrationMode"
-        @selectionConfirmed="filter" />
     </main>
+    <engagement-center-realizations-filter-drawer
+      ref="filterRealizationDrawer"
+      :is-administrator="administrationMode"
+      :administration-mode="administrationMode"
+      @selectionConfirmed="filter" />
     <engagement-center-rule-extensions />
   </v-app>
 </template>

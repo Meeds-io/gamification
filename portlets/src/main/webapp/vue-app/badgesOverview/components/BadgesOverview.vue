@@ -19,11 +19,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     v-if="displayWidget"
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
     id="badgesOverview">
-    <div :class="!isOverviewDisplay && 'card-border-radius app-background-color overflow-hidden'">
+    <div :class="!isOverviewDisplay && 'application-body overflow-hidden'">
       <div
         v-if="isOverviewDisplay"
-        v-show="!loading && hasBadges"
-        class="subtitle-1">
+        v-show="!loading && hasBadges">
         {{ $t('gamification.overview.badges') }}
       </div>
       <v-toolbar
@@ -53,10 +52,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :badge="badge" />
         </card-carousel>
         <div v-else class="d-flex flex-column align-center justify-center full-height full-width py-4">
-          <v-icon color="secondary" size="54">fa-graduation-cap</v-icon>
+          <v-icon color="tertiary" size="54">fa-graduation-cap</v-icon>
           <span
             v-html="emptyBadgesSummaryText"
-            class="subtitle-1 font-weight-bold mt-7"></span>
+            class="mt-7"></span>
         </div>
       </v-card>
     </div>

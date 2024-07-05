@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app class="full-width">
+  <div class="full-width">
     <v-card
       v-show="initialized"
       flat>
@@ -42,7 +42,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-list>
           <a
             v-if="connectorRemoteIdentifier"
-            class="ps-1 pt-1 subtitle-1 text-decoration-underline text-truncate d-sm-none align-center"
+            class="ps-1 pt-1 text-decoration-underline text-truncate d-sm-none align-center"
             :href="connectorRemoteIdentifierLink"
             target="_blank">{{ connectorRemoteIdentifier }}</a>
         </div>
@@ -58,7 +58,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               class="btn"
               small
               @click="disconnect">
-              <span class="mx-sm-2 text-capitalize-first-letter subtitle-1">
+              <span class="mx-sm-2">
                 {{ $t('gamification.connectors.label.disconnect') }}
               </span>
             </v-btn>
@@ -69,14 +69,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             class="btn"
             small
             @click="connect">
-            <span class="mx-sm-2 text-capitalize-first-letter subtitle-1">
+            <span class="mx-sm-2">
               {{ $t('gamification.connectors.label.connect') }}
             </span>
           </v-btn>
         </div>
       </div>
     </v-card>
-  </v-app>
+  </div>
 </template>
 
 <script>

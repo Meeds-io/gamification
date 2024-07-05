@@ -23,7 +23,7 @@
   <v-app>
     <v-card
       flat
-      class="pa-5 card-border-radius app-background-color">
+      class="pa-5 application-body">
       <div class="d-flex UserGamificationHeader text-color">
         <div
           class="d-inline-block widget-text-header text-truncate">
