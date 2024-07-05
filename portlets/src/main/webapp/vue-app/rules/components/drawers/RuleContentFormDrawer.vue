@@ -114,7 +114,9 @@
                 <v-stepper-items>
                   <v-slide-y-transition>
                     <div v-show="expanded || (stepper === 2)">
-                      {{ $t('rule.form.ruleConditionsLabel') }}
+                      <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left font-weight-bold px-0 pb-0 pt-4">
+                        {{ $t('rule.form.ruleConditionsLabel') }}
+                      </v-card-text>
                       <div class="ps-7">
                         <v-chip
                           class="ma-2"
@@ -182,7 +184,7 @@
                 <v-stepper-items>
                   <v-slide-y-transition>
                     <div v-show="expanded || (stepper === 3)">
-                      <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-header px-0 pb-2 pt-4">
+                      <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left font-weight-bold px-0 pb-0 pt-4">
                         {{ $t('rule.form.defaultRealizationStatus.defaultStatus') }}
                       </v-card-text>
                       <v-radio-group
@@ -219,7 +221,7 @@
                           </template>
                         </v-radio>
                       </v-radio-group>
-                      <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-header px-0 pt-5 pb-2">
+                      <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left font-weight-bold px-0 pb-0 pt-4">
                         {{ $t('rule.form.label.rewards') }}
                       </v-card-text>
                       <div v-if="canVariableRewarding" class="d-flex justify-center">
@@ -240,10 +242,10 @@
                           {{ $t('rule.form.label.variablePoints') }}
                         </v-chip>
                       </div>
-                      <div class="d-flex flex-row">
+                      <div class="d-flex flex-row align-baseline">
                         <v-card
                           flat
-                          class="d-flex flex-grow-1 pa-0 col-4">
+                          class="d-flex flex-grow-1 pa-0 col-3">
                           <v-text-field
                             v-model="rule.score"
                             :rules="scoreRules"
@@ -253,11 +255,11 @@
                             dense
                             required />
                         </v-card>
-                        <v-card-text class="mt-1 px-0 col-2"> {{ canVariableRewarding && variablePoints ? $t('rule.form.label.pointsFor') : $t('rule.form.label.points') }} </v-card-text>
+                        <v-card-text class="pa-0 col-3"> {{ canVariableRewarding && variablePoints ? $t('rule.form.label.pointsFor') : $t('rule.form.label.points') }} </v-card-text>
                         <v-card
                           v-if="canVariableRewarding && variablePoints"
                           flat
-                          class="d-flex flex-grow-1 pt-2 pe-0 col-4">
+                          class="d-flex flex-grow-1 pa-0 col-3">
                           <v-text-field
                             v-model="totalTargetItem"
                             class="mt-0 pt-0 me-2"
@@ -266,7 +268,7 @@
                             dense
                             required />
                         </v-card>
-                        <v-card-text v-if="canVariableRewarding && variablePoints" class="mt-1 px-0 col-2"> {{ targetItem }} </v-card-text>
+                        <v-card-text v-if="canVariableRewarding && variablePoints" class="pa-0 col-3"> {{ targetItem }} </v-card-text>
                       </div>
                     </div>
                   </v-slide-y-transition>
@@ -284,10 +286,12 @@
                 <v-stepper-items>
                   <v-slide-y-transition>
                     <div v-show="expanded || (stepper === 4)">
-                      <div v-if="ruleId" class="d-flex align-center">
-                        <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-header px-0 pb-2">
+                      <div v-if="ruleId" class="d-flex align-center pt-4">
+                        <v-card
+                          class="flex-grow-1 flex-shrink-0 text-wrap d-flex text-start me-2"
+                          flat>
                           {{ $t('rule.form.label.enabled') }}
-                        </v-card-text>
+                        </v-card>
                         <div class="flex-shrink-0 ms-2">
                           <v-switch
                             id="engagementCenterActionStatusSwitch"
