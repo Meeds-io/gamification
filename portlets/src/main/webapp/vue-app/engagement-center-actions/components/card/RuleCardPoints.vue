@@ -20,7 +20,7 @@
 -->
 <template>
   <div class="d-flex flex-column">
-    <div v-if="totalTargetItem > 0" class="mb-1">
+    <div v-if="totalTargetItem > 0" class="text-subtitle mb-1">
       {{ $t('actions.for') }} {{ totalTargetItem }} {{ targetItemLabel }}
     </div>
     <v-chip
