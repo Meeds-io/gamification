@@ -24,6 +24,7 @@
     v-model="drawer"
     :confirm-close="ruleChanged"
     :confirm-close-labels="confirmCloseLabels"
+    :go-back-button="ruleId"
     class="EngagementCenterDrawer"
     right
     allow-expand
