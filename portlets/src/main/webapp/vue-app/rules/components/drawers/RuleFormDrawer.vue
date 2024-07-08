@@ -79,11 +79,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :disabled="disableStartButton"
           class="btn btn-primary"
           @click="start">
-          Start
+          {{ startButtonLabel }}
         </v-btn>
       </div>
       <engagement-center-rule-content-form-drawer
-        v-if="!disableStartButton"
         ref="ruleContentFormDrawer"
         :content="ruleToSave"
         :program="program"
@@ -151,6 +150,9 @@ export default {
     triggerType() {
       return this.selectedConnector?.name || null;
     },
+    startButtonLabel() {
+      return this.ruleId && this.$t('rule.form.label.button.update') || this.$t('rule.form.label.button.start');
+    }
   },
   watch: {
     selectedConnectorIndex() {
@@ -222,6 +224,11 @@ export default {
       this.init();
       this.$nextTick().then(() => {
         this.$root.$emit('rule-form-drawer-opened', this.rule);
+        this.$nextTick().then(() => {
+          if (this.ruleId) {
+            this.start();
+          }
+        });
       });
     },
     start() {
