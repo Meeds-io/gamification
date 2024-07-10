@@ -172,6 +172,8 @@ export default {
       if (this.selectedConnectorIndex > 0) {
         this.selectedConnector = this.connectors[this.selectedConnectorIndex - 1];
         this.$set(this.rule,'type', 'AUTOMATIC');
+        const event = {type: this.selectedConnector?.name};
+        this.$set(this.rule,'event', event);
       } else if (this.selectedConnectorIndex === 0){
         this.selectedConnector = null;
         this.$set(this.rule,'type', 'MANUAL');
