@@ -43,10 +43,17 @@
             class="col-10 text-wrap d-flex text-start pa-0 align-center"
             flat>
             <div class="d-flex flex-column align-center justify-center pa-0 me-3">
-              <rule-icon
-                :rule-event="selectedTrigger"
-                size="25"
-                class="my-auto" />
+              <img
+                v-if="connectorImage"
+                :src="connectorImage"
+                :alt="triggerType"
+                width="22">
+              <v-icon
+                v-else
+                :class="connectorIconColorClass"
+                size="22">
+                {{ connectorIcon }}
+              </v-icon>
             </div>
             <div :title="ruleTitle" class="text-truncate">
               {{ ruleTitle }}
@@ -378,8 +385,8 @@
 <script>
 export default {
   props: {
-    triggerType: {
-      type: String,
+    connector: {
+      type: Object,
       default: null
     },
     content: {
@@ -463,6 +470,9 @@ export default {
     },
     ruleId() {
       return this.rule?.id;
+    },
+    triggerType() {
+      return this.connector?.name;
     },
     excludedRuleIds() {
       return this.ruleId && [this.ruleId] || [];
@@ -550,6 +560,15 @@ export default {
     },
     programStyle() {
       return this.program?.color && `border: 1px solid ${this.program.color} !important;` || '';
+    },
+    connectorIcon() {
+      return this.connector?.icon || 'fas fa-bullhorn';
+    },
+    connectorIconColorClass() {
+      return this.connector?.iconColorClass;
+    },
+    connectorImage() {
+      return this.connector?.image;
     },
   },
   watch: {

@@ -87,11 +87,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         ref="ruleContentFormDrawer"
         :content="ruleToSave"
         :program="program"
-        :trigger-type="triggerType"
+        :connector="selectedConnector"
         :rule-title-translations="ruleTitleTranslations"
         :original-rule-title-translations="originalRuleTitleTranslations"
         @contentChanged="contentChanged = $event"
-        @saved="close"
+        @saved="save"
         @closed="close" />
     </template>
   </exo-drawer>
@@ -160,7 +160,7 @@ export default {
     ruleChanged() {
       return this.contentChanged || (JSON.stringify({
         title: this.originalRuleTitleTranslations,
-        triggerType: this.originalSelectedConnector
+        triggerType: this.originalSelectedConnector ? this.originalSelectedConnector : null,
       }) !== JSON.stringify({
         title: this.ruleTitleTranslations,
         triggerType: this.triggerType
@@ -252,6 +252,11 @@ export default {
     },
     close() {
       this.$refs.ruleFormDrawer.close();
+    },
+    save() {
+      this.originalRuleTitleTranslations = this.ruleTitleTranslations;
+      this.originalSelectedConnector = this.triggerType;
+      this.$nextTick().then(() => this.close());
     },
     clear() {
       this.connectors = [];
