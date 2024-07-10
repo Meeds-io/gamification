@@ -22,8 +22,6 @@
   <exo-drawer
     ref="ruleContentFormDrawer"
     v-model="drawer"
-    :confirm-close="ruleChanged"
-    :confirm-close-labels="confirmCloseLabels"
     class="EngagementCenterDrawer"
     right
     allow-expand
@@ -42,7 +40,7 @@
         @submit="saveRule">
         <div class="d-flex px-4 pt-4 flex-row justify-space-between">
           <v-card
-            class="col-10 text-wrap d-flex text-start pa-0"
+            class="col-10 text-wrap d-flex text-start pa-0 align-center"
             flat>
             <div class="d-flex flex-column align-center justify-center pa-0 me-3">
               <rule-icon
@@ -550,14 +548,6 @@ export default {
         templateParams: this.ruleToSave.templateParams
       });
     },
-    confirmCloseLabels() {
-      return {
-        title: this.rule?.id && this.$t('rule.confirmCloseModificationTitle') || this.$t('rule.confirmCloseCreationTitle'),
-        message: this.rule?.id && this.$t('rule.confirmCloseModificationMessage') || this.$t('rule.confirmCloseCreationMessage'),
-        ok: this.$t('confirm.yes'),
-        cancel: this.$t('confirm.no'),
-      };
-    },
     programStyle() {
       return this.program?.color && `border: 1px solid ${this.program.color} !important;` || '';
     },
@@ -583,6 +573,11 @@ export default {
     },
     expanded() {
       this.stepper = this.expanded ? 3 : 1;
+    },
+    drawer() {
+      if (!this.drawer) {
+        this.$emit('contentChanged', this.ruleChanged);
+      }
     },
   },
   methods: {
