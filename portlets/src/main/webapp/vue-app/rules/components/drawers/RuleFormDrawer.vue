@@ -151,7 +151,7 @@ export default {
       return this.selectedConnector?.name || null;
     },
     startButtonLabel() {
-      return this.ruleId && this.$t('rule.form.label.button.update') || this.$t('rule.form.label.button.start');
+      return this.ruleId && this.$t('rule.form.label.button.next') || this.$t('rule.form.label.button.start');
     }
   },
   watch: {

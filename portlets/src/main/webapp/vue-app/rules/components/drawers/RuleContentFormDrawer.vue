@@ -24,7 +24,6 @@
     v-model="drawer"
     :confirm-close="ruleChanged"
     :confirm-close-labels="confirmCloseLabels"
-    :go-back-button="ruleId"
     class="EngagementCenterDrawer"
     right
     allow-expand
@@ -41,6 +40,27 @@
         class="form-horizontal pt-0 pb-4"
         flat
         @submit="saveRule">
+        <div class="d-flex px-4 pt-4 flex-row justify-space-between">
+          <v-card
+            class="col-10 text-wrap d-flex text-start pa-0"
+            flat>
+            <div class="d-flex flex-column align-center justify-center pa-0 me-3">
+              <rule-icon
+                :rule-event="selectedTrigger"
+                size="25"
+                class="my-auto" />
+            </div>
+            <div :title="ruleTitle" class="text-truncate">
+              {{ ruleTitle }}
+            </div>
+          </v-card>
+          <v-btn
+            icon
+            small
+            @click="close">
+            <v-icon size="16">fa-edit</v-icon>
+          </v-btn>
+        </div>
         <v-stepper
           v-model="stepper"
           :class="expanded && 'flex-row' || 'flex-column'"
