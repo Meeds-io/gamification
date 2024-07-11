@@ -18,7 +18,7 @@ import BadgeApp from './BadgeApp.vue';
 
 export function init() {
   const lang = window.eXo?.env?.portal?.language;
-  const url = `${window.eXo?.env?.portal?.context}/${window.eXo?.env?.portal?.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`;
+  const url = `/gamification-portlets/i18n/locale.addon.Gamification?lang=${lang}`;
 
   exoi18n.loadLanguageAsync(lang, url).then(i18n => {
     const vueApp = new Vue({
