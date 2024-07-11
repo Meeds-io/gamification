@@ -36,8 +36,8 @@ const lang = eXo && eXo.env.portal.language || 'en';
 
 //should expose the locale ressources as REST API 
 const urls = [
-  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`,
-  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`
+  `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`,
+  `/gamification-portlets/i18n/locale.addon.Gamification?lang=${lang}`
 ];
 
 document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
