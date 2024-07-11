@@ -19,7 +19,7 @@ import './initComponents.js';
 // getting language of user
 const lang = eXo?.env?.portal?.language || 'en';
 const resourceBundleName = 'locale.addon.Gamification';
-const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
+const url = `/gamification-portlets/i18n/${resourceBundleName}?lang=${lang}`;
 
 const appId = 'myContributions';
 

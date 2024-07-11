@@ -26,7 +26,7 @@ extensionRegistry.registerComponent('my-reputation-overview-badges', 'my-reputat
 const lang = eXo?.env?.portal?.language || 'en';
 
 const resourceBundleName = 'locale.addon.Gamification';
-const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
+const url = `/gamification-portlets/i18n/${resourceBundleName}?lang=${lang}`;
 const appId = 'myReputation';
 
 export function init() {
