@@ -22,9 +22,6 @@
   <exo-drawer
     ref="ruleContentFormDrawer"
     v-model="drawer"
-    :confirm-close="ruleChanged"
-    :confirm-close-labels="confirmCloseLabels"
-    :go-back-button="ruleId"
     class="EngagementCenterDrawer"
     right
     allow-expand
@@ -41,6 +38,34 @@
         class="form-horizontal pt-0 pb-4"
         flat
         @submit="saveRule">
+        <div class="d-flex px-4 pt-4 flex-row justify-space-between">
+          <v-card
+            class="col-10 text-wrap d-flex text-start pa-0 align-center"
+            flat>
+            <div class="d-flex flex-column align-center justify-center pa-0 me-3">
+              <img
+                v-if="connectorImage"
+                :src="connectorImage"
+                :alt="triggerType"
+                width="22">
+              <v-icon
+                v-else
+                :class="connectorIconColorClass"
+                size="22">
+                {{ connectorIcon }}
+              </v-icon>
+            </div>
+            <div :title="ruleTitle" class="text-truncate">
+              {{ ruleTitle }}
+            </div>
+          </v-card>
+          <v-btn
+            icon
+            small
+            @click="close">
+            <v-icon size="16">fa-edit</v-icon>
+          </v-btn>
+        </div>
         <v-stepper
           v-model="stepper"
           :class="expanded && 'flex-row' || 'flex-column'"
@@ -360,8 +385,8 @@
 <script>
 export default {
   props: {
-    triggerType: {
-      type: String,
+    connector: {
+      type: Object,
       default: null
     },
     content: {
@@ -445,6 +470,9 @@ export default {
     },
     ruleId() {
       return this.rule?.id;
+    },
+    triggerType() {
+      return this.connector?.name;
     },
     excludedRuleIds() {
       return this.ruleId && [this.ruleId] || [];
@@ -530,16 +558,17 @@ export default {
         templateParams: this.ruleToSave.templateParams
       });
     },
-    confirmCloseLabels() {
-      return {
-        title: this.rule?.id && this.$t('rule.confirmCloseModificationTitle') || this.$t('rule.confirmCloseCreationTitle'),
-        message: this.rule?.id && this.$t('rule.confirmCloseModificationMessage') || this.$t('rule.confirmCloseCreationMessage'),
-        ok: this.$t('confirm.yes'),
-        cancel: this.$t('confirm.no'),
-      };
-    },
     programStyle() {
       return this.program?.color && `border: 1px solid ${this.program.color} !important;` || '';
+    },
+    connectorIcon() {
+      return this.connector?.icon || 'fas fa-bullhorn';
+    },
+    connectorIconColorClass() {
+      return this.connector?.iconColorClass;
+    },
+    connectorImage() {
+      return this.connector?.image;
     },
   },
   watch: {
@@ -563,6 +592,11 @@ export default {
     },
     expanded() {
       this.stepper = this.expanded ? 3 : 1;
+    },
+    drawer() {
+      if (!this.drawer) {
+        this.$emit('contentChanged', this.ruleChanged);
+      }
     },
   },
   methods: {
