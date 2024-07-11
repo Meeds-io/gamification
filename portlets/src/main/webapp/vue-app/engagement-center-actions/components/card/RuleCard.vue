@@ -101,7 +101,7 @@
                 type-label="rules" />
             </div>
             <engagement-center-rule-menu
-              v-if="canEdit && hover"
+              v-if="canEdit"
               :rule="ruleWithProgram"
               small />
           </div>
