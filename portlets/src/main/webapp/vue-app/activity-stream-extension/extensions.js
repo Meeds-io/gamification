@@ -64,7 +64,7 @@ extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensi
   id: 'announcement',
   init: () => {
     const lang = window.eXo.env.portal.language;
-    const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
+    const url = `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`;
     return exoi18n.loadLanguageAsync(lang, url);
   },
   isEnabled: (params) => params?.activity?.type === 'challenges-announcement',
@@ -148,7 +148,7 @@ extensionRegistry.registerComponent('activity', 'type', {
   id: 'announcement',
   init: () => {
     const lang = window.eXo.env.portal.language;
-    const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
+    const url = `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`;
     return exoi18n.loadLanguageAsync(lang, url);
   },
   isEnabled: (params) => params?.activity?.type === 'challenges-announcement',
@@ -162,7 +162,7 @@ export function initRuleActivity(params) {
     return Promise.resolve();
   }
   const lang = window.eXo.env.portal.language;
-  const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
+  const url = `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`;
   if (activity.rule) {
     return Promise.resolve(activity.rule);
   } else {

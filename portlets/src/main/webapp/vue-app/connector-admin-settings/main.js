@@ -24,7 +24,7 @@ const appId = 'connectorAdminSettings';
 const lang = eXo.env.portal.language || 'en';
 
 //should expose the locale ressources as REST API 
-const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
+const url = `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`;
 
 export function init() {
   exoi18n.loadLanguageAsync(lang, url)
