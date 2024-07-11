@@ -19,6 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     ref="ruleFormDrawer"
     v-model="drawer"
     :confirm-close-labels="confirmCloseLabels"
+    :confirm-close="ruleChanged"
     class="EngagementCenterDrawer"
     right
     @closed="clear">
@@ -86,10 +87,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         ref="ruleContentFormDrawer"
         :content="ruleToSave"
         :program="program"
-        :trigger-type="triggerType"
+        :connector="selectedConnector"
         :rule-title-translations="ruleTitleTranslations"
         :original-rule-title-translations="originalRuleTitleTranslations"
-        @saved="close"
+        @contentChanged="contentChanged = $event"
+        @saved="save"
         @closed="close" />
     </template>
   </exo-drawer>
@@ -106,6 +108,7 @@ export default {
     originalRuleTitleTranslations: {},
     connectors: [],
     selectedConnectorIndex: -1,
+    originalSelectedConnector: null,
     selectedConnector: null,
     ruleTitle: null,
     ruleTitleTranslations: {},
@@ -116,6 +119,7 @@ export default {
     connectorsExtensions: [],
     actionValueExtensions: {},
     actionValueExtensionType: 'user-actions',
+    contentChanged: false
   }),
   computed: {
     ruleId() {
@@ -151,7 +155,16 @@ export default {
       return this.selectedConnector?.name || null;
     },
     startButtonLabel() {
-      return this.ruleId && this.$t('rule.form.label.button.update') || this.$t('rule.form.label.button.start');
+      return this.ruleId && this.$t('rule.form.label.button.next') || this.$t('rule.form.label.button.start');
+    },
+    ruleChanged() {
+      return this.contentChanged || (JSON.stringify({
+        title: this.originalRuleTitleTranslations,
+        triggerType: this.originalSelectedConnector ? this.originalSelectedConnector : null,
+      }) !== JSON.stringify({
+        title: this.ruleTitleTranslations,
+        triggerType: this.triggerType
+      }));
     }
   },
   watch: {
@@ -159,6 +172,9 @@ export default {
       if (this.selectedConnectorIndex > 0) {
         this.selectedConnector = this.connectors[this.selectedConnectorIndex - 1];
         this.$set(this.rule,'type', 'AUTOMATIC');
+        if (this.triggerType !== this.originalSelectedConnector) {
+          this.$set(this.rule,'event', {type: this.triggerType});
+        }
       } else if (this.selectedConnectorIndex === 0){
         this.selectedConnector = null;
         this.$set(this.rule,'type', 'MANUAL');
@@ -218,6 +234,7 @@ export default {
       this.ruleTitle = this.rule?.title || '';
       this.ruleDescription = this.rule?.description || '';
       this.ruleTitleTranslations = {};
+      this.originalSelectedConnector = this.rule?.event?.type;
       if (this.$refs.ruleFormDrawer) {
         this.$refs.ruleFormDrawer.open();
       }
@@ -239,6 +256,11 @@ export default {
     close() {
       this.$refs.ruleFormDrawer.close();
     },
+    save() {
+      this.originalRuleTitleTranslations = this.ruleTitleTranslations;
+      this.originalSelectedConnector = this.triggerType;
+      this.$nextTick().then(() => this.close());
+    },
     clear() {
       this.connectors = [];
       this.selectedConnectorIndex = -1;
@@ -246,6 +268,7 @@ export default {
       this.ruleTitle = null;
       this.ruleTitleTranslations = {};
       this.$set(this.rule,'title','');
+      this.contentChanged = false;
     },
     computeRuleModel(rule, program, description) {
       if (rule?.event && this.canVariableRewarding) {
