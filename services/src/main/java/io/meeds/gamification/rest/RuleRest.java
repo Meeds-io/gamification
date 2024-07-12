@@ -19,23 +19,15 @@ package io.meeds.gamification.rest;
 import static io.meeds.gamification.utils.Utils.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.security.RolesAllowed;
+
+import io.meeds.gamification.constant.*;
 import jakarta.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+
+import javax.ws.rs.*;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -48,16 +40,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.portal.config.UserACL;
+import org.exoplatform.services.rest.http.PATCH;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.social.common.xmlprocessor.XMLProcessor;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.metadata.favorite.FavoriteService;
 
-import io.meeds.gamification.constant.DateFilterType;
-import io.meeds.gamification.constant.EntityFilterType;
-import io.meeds.gamification.constant.EntityStatusType;
-import io.meeds.gamification.constant.PeriodType;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.RulePublication;
@@ -144,32 +133,32 @@ public class RuleRest implements ResourceContainer {
   public Response getRules(// NOSONAR
                            @Context
                            HttpServletRequest request,
-                           @Parameter(description = "Offset of results to retrieve", required = false)
+                           @Parameter(description = "Offset of results to retrieve")
                            @QueryParam("offset")
                            @DefaultValue("0")
                            int offset,
-                           @Parameter(description = "Limit of results to retrieve", required = false)
+                           @Parameter(description = "Limit of results to retrieve")
                            @QueryParam("limit")
                            @DefaultValue("20")
                            int limit,
-                           @Parameter(description = "Used to filter rules by program", required = false)
+                           @Parameter(description = "Used to filter rules by program")
                            @QueryParam("programId")
                            long programId,
-                           @Parameter(description = "Used to filter rules by space audience", required = false)
+                           @Parameter(description = "Used to filter rules by space audience")
                            @QueryParam("spaceId")
                            List<Long> spaceIds,
                            @Parameter(description = "Used to filter rules by event name")
                            @QueryParam("eventName")
                            String eventName,
-                           @Parameter(description = "Rules type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = ALL.", required = false)
+                           @Parameter(description = "Rules type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = ALL.")
                            @QueryParam("type")
                            @DefaultValue("ALL")
                            EntityFilterType ruleType,
-                           @Parameter(description = "Programs status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false)
+                           @Parameter(description = "Programs status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.")
                            @QueryParam("programStatus")
                            @DefaultValue("ALL")
                            EntityStatusType programStatus,
-                           @Parameter(description = "Rules status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ALL.", required = false)
+                           @Parameter(description = "Rules status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ALL.")
                            @QueryParam("status")
                            @DefaultValue("ALL")
                            EntityStatusType ruleStatus,
@@ -181,11 +170,11 @@ public class RuleRest implements ResourceContainer {
                            @Parameter(description = "term to search rules with")
                            @QueryParam("term")
                            String term,
-                           @Parameter(description = "Whether to search in favorites only or not", required = false)
+                           @Parameter(description = "Whether to search in favorites only or not")
                            @DefaultValue("false")
                            @QueryParam("favorites")
                            boolean favorites,
-                           @Parameter(description = "Whether to search in favorites only or not", required = false)
+                           @Parameter(description = "Whether to search in favorites only or not")
                            @QueryParam("tags")
                            List<String> tagNames,
                            @Parameter(description = "Sort field. Possible values: createdDate, startDate, endDate or score.")
@@ -196,7 +185,7 @@ public class RuleRest implements ResourceContainer {
                            @QueryParam("sortDescending")
                            @DefaultValue("true")
                            boolean sortDescending,
-                           @Parameter(description = "If true, this will return the filtered rules including deleted ones. Possible values = true or false. Default value = false.", required = false)
+                           @Parameter(description = "If true, this will return the filtered rules including deleted ones. Possible values = true or false. Default value = false.")
                            @QueryParam("includeDeleted")
                            @DefaultValue("false")
                            boolean includeDeleted,
@@ -212,7 +201,7 @@ public class RuleRest implements ResourceContainer {
                            @DefaultValue("false")
                            @QueryParam("orderByRealizations")
                            boolean orderByRealizations,
-                           @Parameter(description = "Excluded rule Ids", required = false)
+                           @Parameter(description = "Excluded rule Ids")
                            @QueryParam("excludedRuleIds")
                            List<Long> excludedRuleIds,
                            @Parameter(description = "Rule period filtering. Possible values: WEEK, MONTH, YEAR, ALL")
@@ -220,7 +209,7 @@ public class RuleRest implements ResourceContainer {
                            @DefaultValue("ALL")
                            @QueryParam("period")
                            PeriodType periodType,
-                           @Parameter(description = "If true, this will return the total count of filtered programs. Possible values = true or false. Default value = false.", required = false)
+                           @Parameter(description = "If true, this will return the total count of filtered programs. Possible values = true or false. Default value = false.")
                            @QueryParam("returnSize")
                            @DefaultValue("false")
                            boolean returnSize,
@@ -263,7 +252,7 @@ public class RuleRest implements ResourceContainer {
     ruleFilter.setSortBy(sortField);
     ruleFilter.setSortDescending(sortDescending);
     ruleFilter.setIncludeDeleted(includeDeleted);
-    List<String> expandFields = getExpandOptions(expand);
+    List<String> expandFields =  Utils.getExpandOptions(expand);
 
     try {
       ResponseBuilder responseBuilder = Response.status(200);
@@ -342,7 +331,7 @@ public class RuleRest implements ResourceContainer {
                           @Parameter(description = "Used to retrieve the title and description in requested language")
                           @QueryParam("lang")
                           String lang,
-                          @Parameter(description = "Asking for a full representation of a specific subresource, ex: countRealizations", required = false)
+                          @Parameter(description = "Asking for a full representation of a specific subresource, ex: countRealizations")
                           @QueryParam("expand")
                           String expand) {
     if (!Utils.canAccessAnonymousResources(securitySettingService)) {
@@ -352,7 +341,7 @@ public class RuleRest implements ResourceContainer {
     String currentUser = getCurrentUser();
     try {
       RuleDTO rule = ruleService.findRuleById(id, currentUser);
-      List<String> expandFields = getExpandOptions(expand);
+      List<String> expandFields =  Utils.getExpandOptions(expand);
       RuleRestEntity ruleEntity = RuleBuilder.toRestEntity(programService,
                                                            ruleService,
                                                            realizationService,
@@ -473,17 +462,35 @@ public class RuleRest implements ResourceContainer {
     }
   }
 
+  @PATCH
+  @Path("{ruleId}")
+  @RolesAllowed("users")
+  @Operation(summary = "Change enablement status of rule", description = "Change enablement status rule", method = "PATCH")
+  @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled") })
+  public Response updateRuleStatus(@Context HttpServletRequest request,
+                                   @Parameter(description = "Rule Id", required = true)
+                                   @PathParam("ruleId")
+                                   long ruleId) {
+
+    if (ruleId <= 0) {
+      return Response.status(Status.BAD_REQUEST).entity("Rule technical identifier must be positive").build();
+    }
+    try {
+      ruleService.updateRuleStatus(ruleId, request.getRemoteUser());
+      return Response.noContent().build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+    }
+  }
+
   private Locale getLocale(String lang) {
     return StringUtils.isBlank(lang) ? null : Locale.forLanguageTag(lang);
   }
 
   private Locale getLocale(HttpServletRequest request) {
     return request == null ? null : request.getLocale();
-  }
-
-  private List<String> getExpandOptions(String expand) {
-    String[] expandFieldsArray = StringUtils.split(expand, ",");
-    return expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
   }
 
   private List<RuleRestEntity> getRules(ResponseBuilder responseBuilder, // NOSONAR
