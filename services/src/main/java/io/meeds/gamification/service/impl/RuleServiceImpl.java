@@ -255,6 +255,26 @@ public class RuleServiceImpl implements RuleService {
   }
 
   @Override
+  public void updateRuleStatus(long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException {
+    if (username == null) {
+      throw new IllegalArgumentException(USERNAME_IS_MANDATORY_MESSAGE);
+    }
+    if (ruleId <= 0) {
+      throw new IllegalArgumentException("ruleId must be positive");
+    }
+    RuleDTO rule = ruleStorage.findRuleById(ruleId);
+    if (rule == null) {
+      throw new ObjectNotFoundException("Rule with id " + ruleId + " is not found");
+    }
+    if (!isRuleManager(rule, username)) {
+      throw new IllegalAccessException("The user is not authorized to update a rule status");
+    }
+    rule.setEnabled(!rule.isEnabled());
+    updateRule(rule);
+  }
+
+
+  @Override
   public RuleDTO createRule(RuleDTO rule, String username) throws IllegalAccessException,
                                                            ObjectNotFoundException {
     if (rule == null) {

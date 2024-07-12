@@ -110,6 +110,21 @@ public interface RuleService {
   RuleDTO deleteRuleById(long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException;
 
   /**
+   * Updates an existing rule status
+   *
+   * @param  ruleId                  Rule technical identifier to delete
+   * @param  username                User name of user attempting to delete a
+   *                                   rule
+   * @throws IllegalAccessException  when user is not authorized to update the
+   *                                   rule status
+   * @throws ObjectNotFoundException when the rule identified by its technical
+   *                                   identifier is not found
+   */
+  default void updateRuleStatus(long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException {
+    throw new UnsupportedOperationException();
+  }
+
+  /**
    * Deletes an existing rule
    *
    * @param  ruleId Rule technical identifier to delete
