@@ -6,7 +6,7 @@
     :top="top"
     :bottom="!top"
     offset-y
-    attach>
+    :attach="attachMenu">
     <template #activator="{ on, attrs }">
       <v-btn
         :class="dark && 'white'"
@@ -21,30 +21,17 @@
     </template>
     <v-list dense class="pa-0 white">
       <v-list-item
-        v-if="canEdit"
-        dense
-        @click.prevent.stop="editRule">
-        <v-icon size="13" class="icon-default-color me-2">fas fa-edit</v-icon>
-        <v-list-item-title class="text-start">
-          {{ $t('programs.details.rule.button.edit') }}
-        </v-list-item-title>
-      </v-list-item>
-      <v-list-item
-        v-if="canEdit"
-        dense
-        @click.prevent.stop="deleteRule">
-        <v-icon size="13" class="icon-default-color me-2">fas fa-trash-alt</v-icon>
-        <v-list-item-title class="text-start">
-          {{ $t('programs.details.rule.button.delete') }}
-        </v-list-item-title>
-      </v-list-item>
-      <v-list-item
         v-if="isEngagementCenterApp"
         v-show="rule.activityId"
         :href="activityLink"
         :title="$t('rule.form.goToActivityTooltip')"
         dense>
-        <v-icon size="13" class="icon-default-color me-2">fas fa-link</v-icon>
+        <v-list-item-avatar
+          min-width="15"
+          width="15"
+          class="mt-0 mb-auto">
+          <v-icon size="13" class="icon-default-color">fas fa-external-link-alt</v-icon>
+        </v-list-item-avatar>
         <v-list-item-title class="text-start">
           {{ $t('rule.form.goToActivity') }}
         </v-list-item-title>
@@ -54,7 +41,12 @@
         :href="ruleLink"
         :title="$t('rule.form.goToActionTooltip')"
         dense>
-        <v-icon size="13" class="icon-default-color me-2">fas fa-link</v-icon>
+        <v-list-item-avatar
+          min-width="15"
+          width="15"
+          class="mt-0 mb-auto">
+          <v-icon size="13" class="icon-default-color">fas fa-external-link-alt</v-icon>
+        </v-list-item-avatar>
         <v-list-item-title class="text-start">
           {{ $t('rule.form.goToAction') }}
         </v-list-item-title>
@@ -62,9 +54,56 @@
       <v-list-item
         dense
         @click.prevent.stop="copyLink">
-        <v-icon size="13" class="icon-default-color me-2">fas fa-copy</v-icon>
+        <v-list-item-avatar
+          min-width="15"
+          width="15"
+          class="mt-0 mb-auto">
+          <v-icon size="13" class="icon-default-color">fas fa-copy</v-icon>
+        </v-list-item-avatar>
         <v-list-item-title class="text-start">
           {{ $t('programs.details.rule.button.copyLink') }}
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        v-if="canEdit"
+        dense
+        @click.prevent.stop="editRule">
+        <v-list-item-avatar
+          min-width="15"
+          width="15"
+          class="mt-0 mb-auto">
+          <v-icon size="13" class="icon-default-color">fas fa-edit</v-icon>
+        </v-list-item-avatar>
+        <v-list-item-title class="text-start">
+          {{ $t('programs.details.rule.button.edit') }}
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        v-if="canEdit"
+        dense
+        @click.prevent.stop="enableDisableRule">
+        <v-list-item-avatar
+          min-width="15"
+          width="15"
+          class="mt-0 mb-auto">
+          <v-icon size="13" class="icon-default-color">fas fa-user-slash</v-icon>
+        </v-list-item-avatar>
+        <v-list-item-title class="text-start">
+          {{ enableDisableButtonLabel }}
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        v-if="canEdit"
+        dense
+        @click.prevent.stop="deleteRule">
+        <v-list-item-avatar
+          min-width="15"
+          width="15"
+          class="mt-0 mb-auto">
+          <v-icon size="13" class="error-color">fas fa-trash</v-icon>
+        </v-list-item-avatar>
+        <v-list-item-title class="text-start">
+          <span class="error-color">{{ $t('programs.details.rule.button.delete') }}</span>
         </v-list-item-title>
       </v-list-item>
     </v-list>
@@ -93,11 +132,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    attachMenu: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     showMenu: false,
   }),
   computed: {
+    ruleId() {
+      return this.rule?.id;
+    },
     canEdit() {
       return this.rule?.userInfo?.canEdit;
     },
@@ -113,6 +159,12 @@ export default {
     isEngagementCenterApp() {
       return window.location.href.includes('/actions') || window.location.href.includes('/programs') || window.location.href.includes('/achievements');
     },
+    isEnabled() {
+      return this.rule?.enabled;
+    },
+    enableDisableButtonLabel() {
+      return this.isEnabled ? this.$t('programs.details.rule.button.disable') : this.$t('programs.details.rule.button.enable');
+    }
   },
   created() {
     // Workaround to fix closing menu when clicking outside
@@ -158,6 +210,12 @@ export default {
       }
       document.dispatchEvent(new CustomEvent('rule-delete-confirm', {detail: this.rule}));
     },
+    enableDisableRule() {
+      this.$ruleService.updateRuleStatus(this.ruleId).then(() => {
+        this.$root.$emit('alert-message', this.$t('programs.details.ruleStatusUpdateSuccess'), 'success');
+        this.$root.$emit('rule-updated-event', this.rule);
+      });
+    }
   },
 };
 </script>
