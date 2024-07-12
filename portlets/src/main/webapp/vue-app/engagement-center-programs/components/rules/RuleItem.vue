@@ -49,6 +49,7 @@
           <engagement-center-rule-menu
             v-if="canManageRule"
             :rule="rule"
+            :attach-menu="true"
             top />
         </div>
       </td>

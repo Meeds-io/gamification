@@ -312,20 +312,6 @@
                 <v-stepper-items>
                   <v-slide-y-transition>
                     <div v-show="expanded || (stepper === 4)">
-                      <div v-if="ruleId" class="d-flex align-center pt-4">
-                        <v-card
-                          class="flex-grow-1 flex-shrink-0 text-wrap d-flex text-start me-2"
-                          flat>
-                          {{ $t('rule.form.label.enabled') }}
-                        </v-card>
-                        <div class="flex-shrink-0 ms-2">
-                          <v-switch
-                            id="engagementCenterActionStatusSwitch"
-                            ref="engagementCenterActionStatusSwitchRef"
-                            v-model="rule.enabled"
-                            class="my-0 ms-0 me-n1" />
-                        </div>
-                      </div>
                       <engagement-center-rule-publish-editor
                         v-if="enablePublication"
                         ref="rulePublishInput"
