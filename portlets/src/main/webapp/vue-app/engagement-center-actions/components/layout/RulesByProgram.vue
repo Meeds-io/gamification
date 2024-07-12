@@ -121,9 +121,6 @@ export default {
     },
     retrieveRules(categoryId) { // NOSONAR
       const limit = this.pageSize + (categoryId && this.categoriesById[categoryId]?.limit || 0);
-
-      const programStatus = this.isAdministrator ? (this.status === 'DISABLED' && 'DISABLED') || (this.status === 'ALL' && 'ALL') || 'ENABLED'
-        : 'ENABLED';
       const status = this.isAdministrator ? (this.status === 'DISABLED' && 'DISABLED') || (this.status === 'ALL' && 'ALL') || 'ENABLED'
         : 'ENABLED';
       this.loading = true;
@@ -132,7 +129,7 @@ export default {
         term: this.term,
         dateFilter: this.status === 'DISABLED' && 'ALL' || this.status,
         status,
-        programStatus,
+        programStatus: null,
         type: this.type,
         returnSize: true,
         groupByProgram: true,

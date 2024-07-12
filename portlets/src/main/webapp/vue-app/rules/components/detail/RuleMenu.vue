@@ -100,7 +100,7 @@
           min-width="15"
           width="15"
           class="mt-0 mb-auto">
-          <v-icon size="13" class="error-color">fas fa-trash-alt</v-icon>
+          <v-icon size="13" class="error-color">fas fa-trash</v-icon>
         </v-list-item-avatar>
         <v-list-item-title class="text-start">
           <span class="error-color">{{ $t('programs.details.rule.button.delete') }}</span>
