@@ -163,3 +163,17 @@ export function createRule(rule) {
     }
   });
 }
+
+export function updateRuleStatus(ruleId) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules/${ruleId}`, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  }).then(resp => {
+    if (!resp?.ok) {
+      throw new Error('Error saving rule status');
+    }
+  });
+}
