@@ -8,20 +8,38 @@
         flat>
         {{ $t('rule.form.contributorsInformed') }}
       </v-card>
-      <div class="flex-shrink-0 ms-2">
-        <v-btn
-          :href="activityLink"
-          target="_blank"
-          icon
-          small>
-          <v-icon size="20">fas fa-external-link-alt</v-icon>
-        </v-btn>
-        <v-btn
-          icon
-          small
-          @click="publish = true">
-          <v-icon size="20">fas fa-edit</v-icon>
-        </v-btn>
+      <div class="d-flex flex-row ms-2">
+        <v-tooltip
+          :disabled="$root.isMobile"
+          bottom>
+          <template #activator="{ on }">
+            <div v-on="on">
+              <v-btn
+                :href="activityLink"
+                target="_blank"
+                icon
+                small>
+                <v-icon size="20">fas fa-external-link-alt</v-icon>
+              </v-btn>
+            </div>
+          </template>
+          <span> {{ $t('rule.form.goToActivity') }}</span>
+        </v-tooltip>
+        <v-tooltip
+          :disabled="$root.isMobile"
+          bottom>
+          <template #activator="{ on }">
+            <div v-on="on">
+              <v-btn
+                icon
+                small
+                @click="publish = true">
+                <v-icon size="20">fas fa-edit</v-icon>
+              </v-btn>
+            </div>
+          </template>
+          <span> {{ $t('rule.form.createNewMessage') }}</span>
+        </v-tooltip>
       </div>
     </div>
     <div v-else class="d-flex align-center pt-4">
