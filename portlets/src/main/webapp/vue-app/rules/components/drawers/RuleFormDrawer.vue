@@ -294,6 +294,8 @@ export default {
         message: rule?.message,
         spaceId: rule?.spaceId,
         templateParams: rule?.templateParams || Object.assign({}, this.defaultTemplateParams),
+        published: rule?.published,
+        activityId: rule?.activityId,
       };
       if (rule.recurrence) {
         ruleModel.recurrence = rule.recurrence;
