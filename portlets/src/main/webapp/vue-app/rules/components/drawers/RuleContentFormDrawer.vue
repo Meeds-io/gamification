@@ -500,8 +500,7 @@ export default {
       return this.rule?.enabled
           && !this.rule?.deleted
           && this.program?.enabled
-          && !this.program?.deleted
-          && (!this.rule.id || !this.rule.published);
+          && !this.program?.deleted;
     },
     ruleToSave() {
       return this.computeRuleModel(this.rule, this.program, this.ruleDescription);
