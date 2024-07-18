@@ -401,7 +401,8 @@ export default {
       minute: 'numeric',
     },
     statusValue: null,
-    loading: false
+    loading: false,
+    canUpdateStatus: false,
   }),
   computed: {
     rejectLabel() {
@@ -579,11 +580,22 @@ export default {
       const dateObject = new Date(this.realization?.createdDate);
       return Math.floor(dateObject.getTime() / 1000);
     },
-    canUpdateStatus() {
-      return this.pending || this.updateStatusExtension?.canUpdateStatus(this.createdDateInSecond);
+    canUpdateStatusCall() {
+      return this.updateStatusExtension?.canUpdateStatus;
     },
     cannotUpdateStatusLabel() {
       return this.$t(`${this.updateStatusExtension?.cannotUpdateStatusLabel}`);
+    },
+  },
+  watch: {
+    pending() {
+      this.computeCanUpdateStatus();
+    },
+    createdDateInSecond() {
+      this.computeCanUpdateStatus();
+    },
+    canUpdateStatusCall() {
+      this.computeCanUpdateStatus();
     },
   },
   created() {
@@ -662,6 +674,21 @@ export default {
         if (linkPromise?.then) {
           return linkPromise;
         }
+      }
+    },
+    computeCanUpdateStatus() {
+      this.updateStatusExtension?.canUpdateStatus(this.createdDateInSecond);
+      if (this.pending) {
+        this.canUpdateStatus = true;
+      } else if (this.canUpdateStatusCall) {
+        const result = this.canUpdateStatusCall(this.createdDateInSecond);
+        if ('then' in result) {
+          result.then(b => this.canUpdateStatus = b);
+        } else {
+          this.canUpdateStatus = !!result;
+        }
+      } else {
+        this.canUpdateStatus = false;
       }
     },
   }
