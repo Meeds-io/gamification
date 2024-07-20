@@ -29,7 +29,7 @@
     @opened="stepper = 1"
     @confirm-close="closeEffectively">
     <template #title>
-      {{ ruleTitle }}
+      {{ drawerTitle }}
     </template>
     <template v-if="drawer" #content>
       <v-form
@@ -55,7 +55,7 @@
                 {{ connectorIcon }}
               </v-icon>
             </div>
-            <div :title="ruleTitle" class="text-truncate">
+            <div :title="ruleTitle" class="text-truncate text-title">
               {{ ruleTitle }}
             </div>
           </v-card>
@@ -63,7 +63,7 @@
             icon
             small
             @click="close">
-            <v-icon size="16">fa-edit</v-icon>
+            <v-icon size="20">fa-edit</v-icon>
           </v-btn>
         </div>
         <v-stepper
@@ -439,6 +439,9 @@ export default {
     isExtensibleEvent: false
   }),
   computed: {
+    drawerTitle() {
+      return this.ruleId ? this.$t('rule.form.label.edit') : this.$t('rule.form.label.add');
+    },
     scoreRules() {
       return [
         v => v && v <= 10000 || this.$t('rules.actionScoreExceedsMax'),
