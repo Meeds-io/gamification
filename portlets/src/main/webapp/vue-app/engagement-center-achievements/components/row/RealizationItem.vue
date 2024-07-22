@@ -529,14 +529,8 @@ export default {
         return 'error-color-background';
       }
     },
-    actionTypeIcon() {
-      return this.isAutomaticType ? 'fas fa-cogs' : 'fas fa-hand-pointer';
-    },
     actionLabelClass() {
       return !this.realization.url && 'defaultCursor' || '';
-    },
-    canAccept() {
-      return this.status === 'REJECTED';
     },
     objectId() {
       return this.realization?.objectId;
@@ -587,18 +581,8 @@ export default {
       return this.$t(`${this.updateStatusExtension?.cannotUpdateStatusLabel}`);
     },
   },
-  watch: {
-    pending() {
-      this.computeCanUpdateStatus();
-    },
-    createdDateInSecond() {
-      this.computeCanUpdateStatus();
-    },
-    canUpdateStatusCall() {
-      this.computeCanUpdateStatus();
-    },
-  },
   created() {
+    this.computeCanUpdateStatus();
     // Workaround to fix closing menu when clicking outside
     $(document).mousedown(() => {
       if (this.menu) {
@@ -677,7 +661,6 @@ export default {
       }
     },
     computeCanUpdateStatus() {
-      this.updateStatusExtension?.canUpdateStatus(this.createdDateInSecond);
       if (this.pending) {
         this.canUpdateStatus = true;
       } else if (this.canUpdateStatusCall) {
