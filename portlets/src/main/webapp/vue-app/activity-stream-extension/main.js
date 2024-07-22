@@ -27,5 +27,4 @@ Vue.prototype.$utils?.includeExtensions?.('engagementCenterAchievements');
 
 const achievementsExtensions = extensionRegistry.loadExtensions('engagementCenterAchievements', 'achievements-extensions');
 const updateStatusExtension = achievementsExtensions.find(extension => extension?.canUpdateStatus);
-updateStatusExtension.init();
 initAchievementCommentExtension(updateStatusExtension);
