@@ -30,7 +30,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         selected: status,
         items: programStatus,
       }"
+      :right-text-filter="{
+        minCharacters: 3,
+        placeholder: $t('programs.label.filter.search'),
+        tooltip: $t('challenges.filter.searchTooltip'),
+      }"
       hide-cone-button
+      @filter-text-input-end-typing="term = $event"
       @left-button-click="$root.$emit('program-form-open')"
       @filter-select-change="status = $event" />
 
@@ -129,6 +135,7 @@ export default {
       users: [],
       limitToFetch: 0,
       originalLimitToFetch: 0,
+      term: '',
       spacesURL: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/spaces/`,
       isExternal: eXo.env.portal.isExternal === 'true',
     };
@@ -176,6 +183,9 @@ export default {
     status() {
       this.retrievePrograms();
     },
+    term() {
+      this.retrievePrograms();
+    },
   },
   created() {
     this.limitToFetch = this.originalLimitToFetch = this.limit;
@@ -196,6 +206,7 @@ export default {
         owned: !this.isAdministrator && this.isStatusDisabled,
         sortBy: 'title',
         sortDescending: false,
+        query: this.term,
         expand: 'countActiveRulesWhenDisabled,administrators',
         lang: eXo.env.portal.language,
       })
