@@ -152,11 +152,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :value="createdDate" />
             </div>
           </template>
-          <span>           
+          <div class="d-flex">
+            <span class="pe-1">
+              {{ $t('realization.label.submittedOn') }} :
+            </span>
             <date-format
               :format="tooltipDateFormat"
               :value="sendingDate" />
-          </span>
+          </div>
         </v-tooltip>
       </td>
       <td v-if="isAdministrator">
