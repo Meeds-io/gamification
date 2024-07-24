@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-list v-if="enabledConnectors.length !== 0" class="pa-0">
+  <v-list v-if="enabledConnectors.length !== 0" class="my-3 pa-0">
     <gamification-user-connector-setting-item
       v-for="connector in enabledConnectors"
       :key="connector.name"
