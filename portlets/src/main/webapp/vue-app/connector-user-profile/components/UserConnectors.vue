@@ -19,9 +19,7 @@
 
 -->
 <template>
-  <v-app
-    v-if="displayed"
-    v-show="!loading">
+  <v-app v-show="!loading">
     <widget-wrapper
       :title="title"
       extra-class="application-body">
@@ -83,9 +81,17 @@ export default {
       return this.loading || (this.enabledConnectors?.length && (!this.notConnectedYet || (this.notConnectedYet && this.isCurrentUserProfile)));
     },
   },
+  watch: {
+    displayed() {
+      this.$root.$updateApplicationVisibility(this.displayed);
+    },
+  },
   created() {
     document.addEventListener('extension-gamification-connectors-updated', this.refreshUserConnectorList);
     this.init();
+  },
+  mounted() {
+    this.$root.$updateApplicationVisibility(this.displayed);
   },
   methods: {
     init() {
