@@ -24,7 +24,6 @@
     </v-card-text>
     <rule-suggester
       v-model="rules"
-      :program-id="programId"
       :excluded-ids="excludedIds"
       :labels="labels"
       multiple
@@ -40,10 +39,6 @@ export default {
     },
     excludedIds: {
       type: Array,
-      default: null,
-    },
-    programId: {
-      type: String,
       default: null,
     },
   },
