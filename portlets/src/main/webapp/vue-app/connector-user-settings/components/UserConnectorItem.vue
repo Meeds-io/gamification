@@ -21,28 +21,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       flat>
       <div class="d-flex flex-row">
         <div class="d-flex text-truncate">
-          <div class="d-flex align-center pe-1 pe-sm-0">
-            <v-icon
-              v-if="icon"
-              size="33"
-              :class="iconColorClass">
-              {{ icon }}
-            </v-icon>
-            <img
-              v-else
-              :src="image"
-              :alt="name"
-              width="28">
-          </div>
-          <v-list class="d-none d-sm-inline ms-3">
-            <v-list-item-title>
-              {{ title }}
-            </v-list-item-title>
-            <v-list-item-subtitle class="text-truncate d-flex caption mt-1">{{ description }}</v-list-item-subtitle>
-          </v-list>
+          <v-list-item class="px-0 align-start flex-fill">
+            <v-list-item-avatar class="align-self-center me-0 pe-1 pe-sm-0" tile>
+              <v-icon
+                v-if="icon"
+                size="33"
+                :class="iconColorClass">
+                {{ icon }}
+              </v-icon>
+              <img
+                v-else
+                :src="image"
+                :alt="name"
+                width="28">
+            </v-list-item-avatar>
+            <v-list-item-content class="d-none d-sm-inline ms-3">
+              <v-list-item-title>{{ title }}</v-list-item-title>
+              <v-list-item-subtitle class="text-truncate">{{ description }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
           <a
             v-if="connectorRemoteIdentifier"
-            class="ps-1 pt-1 text-decoration-underline text-truncate d-sm-none align-center"
+            class="ps-1 pt-1 text-decoration-underline text-truncate d-sm-none align-self-center"
             :href="connectorRemoteIdentifierLink"
             target="_blank">{{ connectorRemoteIdentifier }}</a>
         </div>
@@ -56,7 +56,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-btn
               :loading="loading"
               class="btn"
-              small
               @click="disconnect">
               <span class="mx-sm-2">
                 {{ $t('gamification.connectors.label.disconnect') }}
@@ -67,7 +66,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-else
             :loading="loading"
             class="btn"
-            small
             @click="connect">
             <span class="mx-sm-2">
               {{ $t('gamification.connectors.label.connect') }}
