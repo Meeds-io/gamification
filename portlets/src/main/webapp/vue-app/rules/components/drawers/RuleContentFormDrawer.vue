@@ -189,7 +189,6 @@
                       <div v-if="prerequisiteRuleCondition">
                         <engagement-center-rule-lock-input
                           v-model="rule.prerequisiteRules"
-                          :program-id="programId"
                           :excluded-ids="excludedRuleIds" />
                       </div>
                     </div>
