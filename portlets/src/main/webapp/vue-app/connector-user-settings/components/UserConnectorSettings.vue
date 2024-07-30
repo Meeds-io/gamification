@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div>
+  <v-app>
     <v-card
       v-if="displayUserSetting"
       class="application-body"
@@ -36,7 +36,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :connector-extensions="connectors"
       @connectors-loaded="connectorsLoaded" />
     <engagement-center-user-connectors-extensions />
-  </div>
+  </v-app>
 </template>
 
 <script>
