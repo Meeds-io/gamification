@@ -50,9 +50,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <!-- **************************************** -->
         <!-- Dependencies versions                    -->
         <!-- **************************************** -->
-        <io.meeds.social.version>7.0.x-exo-SNAPSHOT</io.meeds.social.version>
-        <io.meeds.platform-ui.version>7.0.x-exo-SNAPSHOT</io.meeds.platform-ui.version>
-        <addon.meeds.analytics.version>7.0.x-exo-SNAPSHOT</addon.meeds.analytics.version>
+        <io.meeds.social.version>7.0.0-exo-20240812</io.meeds.social.version>
+        <io.meeds.platform-ui.version>7.0.0-exo-20240812</io.meeds.platform-ui.version>
+        <addon.meeds.analytics.version>7.0.0-exo-20240812</addon.meeds.analytics.version>
 
         <!-- Sonar properties -->
         <sonar.organization>meeds-io</sonar.organization>
