@@ -35,11 +35,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         placeholder: $t('programs.label.filter.search'),
         tooltip: $t('challenges.filter.searchTooltip'),
       }"
-      hide-cone-button
       @filter-text-input-end-typing="term = $event"
       @left-button-click="$root.$emit('program-form-open')"
       @filter-select-change="status = $event" />
-
     <v-layout class="py-3 px-4">
       <v-row class="mx-n3 overflow-hidden">
         <v-col
