@@ -24,35 +24,39 @@ import static io.meeds.gamification.utils.Utils.RULE_ANNOUNCED_NOTIFICATION_ID;
 import static io.meeds.gamification.utils.Utils.RULE_ID_NOTIFICATION_PARAM;
 import static io.meeds.gamification.utils.Utils.getUserRemoteId;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+import io.meeds.gamification.model.ProgramDTO;
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.NotificationInfo;
 import org.exoplatform.commons.api.notification.plugin.BaseNotificationPlugin;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.notification.plugin.SocialNotificationUtils;
 
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.service.RuleService;
-import io.meeds.gamification.utils.Utils;
 
 public class ActionAnnouncedNotificationPlugin extends BaseNotificationPlugin {
 
-  private RuleService     ruleService;
+  private final RuleService     ruleService;
 
-  private ActivityManager activityManager;
+  private final ActivityManager activityManager;
+
+  private final SpaceService    spaceService;
 
   public ActionAnnouncedNotificationPlugin(RuleService ruleService,
                                            ActivityManager activityManager,
-                                           InitParams initParams) {
+                                           InitParams initParams,
+                                           SpaceService spaceService) {
     super(initParams);
     this.ruleService = ruleService;
     this.activityManager = activityManager;
+    this.spaceService = spaceService;
   }
 
   @Override
@@ -63,9 +67,7 @@ public class ActionAnnouncedNotificationPlugin extends BaseNotificationPlugin {
   @Override
   public boolean isValid(NotificationContext ctx) {
     Announcement announcement = ctx.value(ANNOUNCEMENT_NOTIFICATION_PARAMETER);
-    return announcement != null
-        && announcement.getCreator() != null
-        && announcement.getCreator() > 0
+    return announcement != null && announcement.getCreator() != null && announcement.getCreator() > 0
         && announcement.getActivityId() > 0;
   }
 
@@ -83,33 +85,33 @@ public class ActionAnnouncedNotificationPlugin extends BaseNotificationPlugin {
     if (activity == null) {
       return null;
     }
+    List<String> targetUsers = new ArrayList<>();
+    Space space = spaceService.getSpaceById(String.valueOf(rule.getSpaceId()));
+    if (space != null) {
+      targetUsers = Arrays.stream(space.getManagers())
+                          .filter(targetUser -> !Objects.equals(getUserRemoteId(String.valueOf(announcement.getCreator())),
+                                                                targetUser))
+                          .toList();
+    }
+    Set<String> finalTargetUsers = new HashSet<>(targetUsers);
+    ProgramDTO programDTO = rule.getProgram();
+    programDTO.getOwnerIds().forEach(userId -> {
+      String userRemoteId = getUserRemoteId(String.valueOf(userId));
+      finalTargetUsers.add(userRemoteId);
+    });
 
-    Set<String> receivers = new HashSet<>();
-
-    addReceivers(receivers, activity.getCommentedIds());
-    addReceivers(receivers, activity.getPosterId());
-    addReceivers(receivers, activity.getLikeIdentityIds());
-    addReceivers(receivers, activity.getMentionedIds());
-    receivers.remove(getUserRemoteId(String.valueOf(announcement.getCreator())));
-    if (receivers.isEmpty()) {
+    if (targetUsers.isEmpty()) {
       return null;
     }
+
     return NotificationInfo.instance()
-                           .to(receivers.stream().toList())
+                           .to(new ArrayList<>(finalTargetUsers))
                            .setSpaceId(rule.getSpaceId())
                            .with(RULE_ID_NOTIFICATION_PARAM, String.valueOf(announcement.getChallengeId()))
                            .with(ANNOUNCEMENT_ID_NOTIFICATION_PARAM, String.valueOf(announcement.getId()))
                            .with(SocialNotificationUtils.ACTIVITY_ID.getKey(), String.valueOf(announcement.getActivityId()))
                            .key(getId())
                            .end();
-  }
-
-  private void addReceivers(Set<String> receivers, String... userIdentityIds) {
-    if (userIdentityIds != null && userIdentityIds.length > 0) {
-      Arrays.stream(userIdentityIds)
-            .map(Utils::getUserRemoteId)
-            .forEach(receivers::add);
-    }
   }
 
 }
