@@ -21,7 +21,7 @@ extensionRegistry.registerExtension('WebNotification', 'notification-group-exten
   rank: 30,
   name: 'gamification',
   plugins: [
-    'GamificationActionPublishedNotification',
+    'GamificationNewActionAvailableNotification',
     'GamificationActionAnnouncedNotification',
     'GamificationContributionAcceptedNotification',
     'GamificationContributionRejectedNotification',
@@ -29,7 +29,7 @@ extensionRegistry.registerExtension('WebNotification', 'notification-group-exten
   icon: 'fa-trophy',
 });
 extensionRegistry.registerExtension('WebNotification', 'notification-content-extension', {
-  type: 'GamificationActionPublishedNotification',
+  type: 'GamificationNewActionAvailableNotification',
   rank: 10,
   vueComponent: Vue.options.components['user-notification-rule-published'],
 });

@@ -17,4 +17,4 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 %>
-<%=_ctx.appRes("Notification.mobile.GamificationActionPublishedNotification", RULE_TITLE)%>
+<%=_ctx.appRes("Notification.mobile.GamificationNewActionAvailableNotification", RULE_TITLE)%>

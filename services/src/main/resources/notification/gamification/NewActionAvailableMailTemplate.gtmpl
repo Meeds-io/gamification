@@ -19,7 +19,7 @@
 %>
 <table border="0" cellpadding="0" cellspacing="0" width="600" bgcolor="#ffffff" align="center" style="background-color: #ffffff; font-size: 13px; color: #333333; line-height: 18px; font-family: HelveticaNeue, Helvetica, Arial, sans-serif;">
   <%
-    _templateContext.put("header_title", _ctx.appRes("Notification.title.GamificationActionPublishedNotification"));
+    _templateContext.put("header_title", _ctx.appRes("Notification.title.GamificationNewActionAvailableNotification"));
     _ctx.include("war:/notification/templates/mail/NotificationHeader.gtmpl", _templateContext);
   %>
   <tr>
