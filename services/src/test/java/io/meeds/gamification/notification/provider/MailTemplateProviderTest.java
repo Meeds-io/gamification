@@ -40,8 +40,8 @@ public class MailTemplateProviderTest extends AbstractCoreTest {
     AbstractChannel channel = manager.getChannel(ChannelKey.key(MailChannel.ID));
     assertNotNull(channel);
 
-    String actual = channel.getTemplateFilePath(PluginKey.key(RULE_PUBLISHED_NOTIFICATION_ID));
-    String expected = "classpath:/notification/gamification/RulePublishedMailTemplate.gtmpl";
+    String actual = channel.getTemplateFilePath(PluginKey.key(NEW_ACTION_AVAILABLE_NOTIFICATION_ID));
+    String expected = "classpath:/notification/gamification/NewActionAvailableMailTemplate.gtmpl";
     assertEquals(expected, actual);
 
     actual = channel.getTemplateFilePath(PluginKey.key(RULE_ANNOUNCED_NOTIFICATION_ID));
@@ -60,7 +60,7 @@ public class MailTemplateProviderTest extends AbstractCoreTest {
   public void testMailTemplateBuilder() {
     AbstractChannel channel = manager.getChannel(ChannelKey.key(MailChannel.ID));
     assertNotNull(channel);
-    assertTrue(channel.hasTemplateBuilder(PluginKey.key(RULE_PUBLISHED_NOTIFICATION_ID)));
+    assertTrue(channel.hasTemplateBuilder(PluginKey.key(NEW_ACTION_AVAILABLE_NOTIFICATION_ID)));
     assertTrue(channel.hasTemplateBuilder(PluginKey.key(RULE_ANNOUNCED_NOTIFICATION_ID)));
     assertTrue(channel.hasTemplateBuilder(PluginKey.key(CONTRIBUTION_ACCEPTED_NOTIFICATION_ID)));
     assertTrue(channel.hasTemplateBuilder(PluginKey.key(CONTRIBUTION_REJECTED_NOTIFICATION_ID)));

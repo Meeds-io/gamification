@@ -366,7 +366,7 @@
       <init-params>
         <values-param>
           <name>notification.plugin.ids</name>
-          <value>GamificationActionPublishedNotification</value>
+          <value>GamificationNewActionAvailableNotification</value>
           <value>GamificationActionAnnouncedNotification</value>
           <value>GamificationContributionAcceptedNotification</value>
           <value>GamificationContributionRejectedNotification</value>
@@ -380,17 +380,17 @@
     <component-plugin>
       <name>notification.plugins</name>
       <set-method>addPlugin</set-method>
-      <type>io.meeds.gamification.notification.plugin.ActionPublishedNotificationPlugin</type>
+      <type>io.meeds.gamification.notification.plugin.NewActionAvailableNotificationPlugin</type>
       <init-params>
         <object-param>
-          <name>template.GamificationActionPublishedNotification</name>
-          <description>The template of ActionPublishedNotificationPlugin</description>
+          <name>template.GamificationNewActionAvailableNotification</name>
+          <description>The template of NewActionAvailableNotificationPlugin</description>
           <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
             <field name="pluginId">
-              <string>GamificationActionPublishedNotification</string>
+              <string>GamificationNewActionAvailableNotification</string>
             </field>
             <field name="resourceBundleKey">
-              <string>UINotification.label.GamificationActionPublishedNotification</string>
+              <string>UINotification.label.GamificationNewActionAvailableNotification</string>
             </field>
             <field name="order">
               <string>4</string>
@@ -607,9 +607,9 @@
   <external-component-plugins>
     <target-component>org.exoplatform.services.listener.ListenerService</target-component>
     <component-plugin>
-      <name>rule.published</name>
+      <name>rule.created</name>
       <set-method>addListener</set-method>
-      <type>io.meeds.gamification.listener.ActionPublishedNotificationListener</type>
+      <type>io.meeds.gamification.listener.ActionCreatedNotificationListener</type>
     </component-plugin>
     <component-plugin>
       <name>announcement.created</name>
