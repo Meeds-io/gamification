@@ -34,7 +34,7 @@ import io.meeds.social.translation.service.TranslationService;
 import static io.meeds.gamification.utils.Utils.*;
 
 @TemplateConfigs(templates = {
-    @TemplateConfig(pluginId = RULE_PUBLISHED_NOTIFICATION_ID, template = "classpath:/notification/gamification/RulePublishedMobileTemplate.gtmpl"),
+    @TemplateConfig(pluginId = NEW_ACTION_AVAILABLE_NOTIFICATION_ID, template = "classpath:/notification/gamification/NewActionAvailableMobileTemplate.gtmpl"),
     @TemplateConfig(pluginId = RULE_ANNOUNCED_NOTIFICATION_ID, template = "classpath:/notification/gamification/RuleAnnouncedMobileTemplate.gtmpl"),
     @TemplateConfig(pluginId = CONTRIBUTION_ACCEPTED_NOTIFICATION_ID, template = "classpath:/notification/gamification/ContributionAcceptedMobileTemplate.gtmpl"),
     @TemplateConfig(pluginId = CONTRIBUTION_REJECTED_NOTIFICATION_ID, template = "classpath:/notification/gamification/ContributionRejectedMobileTemplate.gtmpl") })
@@ -45,7 +45,7 @@ public class MobilePushTemplateProvider extends TemplateProvider {
                                     TranslationService translationService,
                                     InitParams initParams) {
     super(initParams);
-    this.templateBuilders.put(PluginKey.key(RULE_PUBLISHED_NOTIFICATION_ID),
+    this.templateBuilders.put(PluginKey.key(NEW_ACTION_AVAILABLE_NOTIFICATION_ID),
                               new ActionPublishedTemplateBuilder(ruleService, translationService, this, true));
     this.templateBuilders.put(PluginKey.key(RULE_ANNOUNCED_NOTIFICATION_ID),
                               new ActionAnnouncedTemplateBuilder(ruleService,

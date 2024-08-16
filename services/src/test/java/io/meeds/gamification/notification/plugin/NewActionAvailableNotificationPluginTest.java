@@ -17,7 +17,7 @@
  */
 package io.meeds.gamification.notification.plugin;
 
-import static io.meeds.gamification.utils.Utils.RULE_PUBLISHED_NOTIFICATION_ID;
+import static io.meeds.gamification.utils.Utils.NEW_ACTION_AVAILABLE_NOTIFICATION_ID;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.RulePublication;
 import io.meeds.gamification.test.AbstractPluginTest;
 
-public class ActionPublishedNotificationPluginTest extends AbstractPluginTest { // NOSONAR
+public class NewActionAvailableNotificationPluginTest extends AbstractPluginTest { // NOSONAR
 
   @Override
   public AbstractTemplateBuilder getTemplateBuilder() {
@@ -46,7 +46,7 @@ public class ActionPublishedNotificationPluginTest extends AbstractPluginTest { 
 
   @Override
   public BaseNotificationPlugin getPlugin() {
-    return pluginService.getPlugin(PluginKey.key(RULE_PUBLISHED_NOTIFICATION_ID));
+    return pluginService.getPlugin(PluginKey.key(NEW_ACTION_AVAILABLE_NOTIFICATION_ID));
   }
 
   public void testSimpleCase() throws Exception { // NOSONAR
@@ -89,7 +89,7 @@ public class ActionPublishedNotificationPluginTest extends AbstractPluginTest { 
     List<NotificationInfo> list = assertMadeWebNotifications(SIMPLE_USER, 1);
     NotificationInfo rulePublicationNotification = list.get(0);
 
-    assertEquals(RULE_PUBLISHED_NOTIFICATION_ID, rulePublicationNotification.getKey().getId());
+    assertEquals(NEW_ACTION_AVAILABLE_NOTIFICATION_ID, rulePublicationNotification.getKey().getId());
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
     ctx.setNotificationInfo(rulePublicationNotification.setTo(SIMPLE_USER));
     MessageInfo info = buildMessageInfo(ctx);

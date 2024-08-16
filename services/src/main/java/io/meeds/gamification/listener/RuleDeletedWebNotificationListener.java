@@ -20,7 +20,7 @@ package io.meeds.gamification.listener;
 
 import static io.meeds.gamification.utils.Utils.RULE_ANNOUNCED_NOTIFICATION_ID;
 import static io.meeds.gamification.utils.Utils.RULE_ID_NOTIFICATION_PARAM;
-import static io.meeds.gamification.utils.Utils.RULE_PUBLISHED_NOTIFICATION_ID;
+import static io.meeds.gamification.utils.Utils.NEW_ACTION_AVAILABLE_NOTIFICATION_ID;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,7 +52,7 @@ public class RuleDeletedWebNotificationListener extends Listener<RuleDTO, String
     if (rule != null && rule.isDeleted()) {
       WebNotificationFilter filter = new WebNotificationFilter();
       filter.setPluginKeys(Arrays.asList(PluginKey.key(RULE_ANNOUNCED_NOTIFICATION_ID),
-                                         PluginKey.key(RULE_PUBLISHED_NOTIFICATION_ID)));
+                                         PluginKey.key(NEW_ACTION_AVAILABLE_NOTIFICATION_ID)));
       filter.setParameter(RULE_ID_NOTIFICATION_PARAM, String.valueOf(rule.getId()));
       List<NotificationInfo> webNotifications = webNotificationService.getNotificationInfos(filter, 0, 0);
       webNotifications.forEach(n -> webNotificationService.remove(n.getId()));

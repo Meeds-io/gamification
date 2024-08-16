@@ -18,7 +18,7 @@
 package io.meeds.gamification.notification.provider;
 
 import static io.meeds.gamification.utils.Utils.RULE_ANNOUNCED_NOTIFICATION_ID;
-import static io.meeds.gamification.utils.Utils.RULE_PUBLISHED_NOTIFICATION_ID;
+import static io.meeds.gamification.utils.Utils.NEW_ACTION_AVAILABLE_NOTIFICATION_ID;
 
 import org.exoplatform.commons.api.notification.channel.AbstractChannel;
 import org.exoplatform.commons.api.notification.channel.ChannelManager;
@@ -41,7 +41,7 @@ public class WebTemplateProviderTest extends AbstractCoreTest {
     AbstractChannel channel = manager.getChannel(ChannelKey.key(WebChannel.ID));
     assertNotNull(channel);
 
-    String actual = channel.getTemplateFilePath(PluginKey.key(RULE_PUBLISHED_NOTIFICATION_ID));
+    String actual = channel.getTemplateFilePath(PluginKey.key(NEW_ACTION_AVAILABLE_NOTIFICATION_ID));
     String expected = "classpath:/notification/gamification/RulePublishedWebTemplate.gtmpl";
     assertEquals(expected, actual);
 
@@ -53,7 +53,7 @@ public class WebTemplateProviderTest extends AbstractCoreTest {
   public void testWebTemplateBuilder() throws Exception {
     AbstractChannel channel = manager.getChannel(ChannelKey.key(WebChannel.ID));
     assertNotNull(channel);
-    assertTrue(channel.hasTemplateBuilder(PluginKey.key(RULE_PUBLISHED_NOTIFICATION_ID)));
+    assertTrue(channel.hasTemplateBuilder(PluginKey.key(NEW_ACTION_AVAILABLE_NOTIFICATION_ID)));
     assertTrue(channel.hasTemplateBuilder(PluginKey.key(RULE_ANNOUNCED_NOTIFICATION_ID)));
   }
 
