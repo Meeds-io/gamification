@@ -34,7 +34,7 @@ import io.meeds.social.translation.service.TranslationService;
 import static io.meeds.gamification.utils.Utils.*;
 
 @TemplateConfigs(templates = {
-    @TemplateConfig(pluginId = RULE_PUBLISHED_NOTIFICATION_ID, template = "classpath:/notification/gamification/RulePublishedMailTemplate.gtmpl"),
+    @TemplateConfig(pluginId = NEW_ACTION_AVAILABLE_NOTIFICATION_ID, template = "classpath:/notification/gamification/NewActionAvailableMailTemplate.gtmpl"),
     @TemplateConfig(pluginId = RULE_ANNOUNCED_NOTIFICATION_ID, template = "classpath:/notification/gamification/RuleAnnouncedMailTemplate.gtmpl"),
     @TemplateConfig(pluginId = CONTRIBUTION_ACCEPTED_NOTIFICATION_ID, template = "classpath:/notification/gamification/ContributionAcceptedMailTemplate.gtmpl"),
     @TemplateConfig(pluginId = CONTRIBUTION_REJECTED_NOTIFICATION_ID, template = "classpath:/notification/gamification/ContributionRejectedMailTemplate.gtmpl") })
@@ -45,7 +45,7 @@ public class MailTemplateProvider extends TemplateProvider {
                               TranslationService translationService,
                               InitParams initParams) {
     super(initParams);
-    this.templateBuilders.put(PluginKey.key(RULE_PUBLISHED_NOTIFICATION_ID),
+    this.templateBuilders.put(PluginKey.key(NEW_ACTION_AVAILABLE_NOTIFICATION_ID),
                               new ActionPublishedTemplateBuilder(ruleService, translationService, this, false));
     this.templateBuilders.put(PluginKey.key(RULE_ANNOUNCED_NOTIFICATION_ID),
                               new ActionAnnouncedTemplateBuilder(ruleService,

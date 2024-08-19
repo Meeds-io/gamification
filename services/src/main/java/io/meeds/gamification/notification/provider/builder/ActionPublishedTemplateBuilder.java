@@ -21,7 +21,7 @@ package io.meeds.gamification.notification.provider.builder;
 import static io.meeds.gamification.plugin.RuleTranslationPlugin.RULE_OBJECT_TYPE;
 import static io.meeds.gamification.plugin.RuleTranslationPlugin.RULE_TITLE_FIELD_NAME;
 import static io.meeds.gamification.utils.Utils.RULE_ID_NOTIFICATION_PARAM;
-import static io.meeds.gamification.utils.Utils.RULE_PUBLISHER_NOTIFICATION_PARAM;
+import static io.meeds.gamification.utils.Utils.RULE_CREATOR_NOTIFICATION_PARAM;
 import static io.meeds.gamification.utils.Utils.getUserIdentity;
 
 import java.io.Writer;
@@ -73,7 +73,7 @@ public class ActionPublishedTemplateBuilder extends AbstractTemplateBuilder {
   protected MessageInfo makeMessage(NotificationContext ctx) { // NOSONAR
     NotificationInfo notification = ctx.getNotificationInfo();
     String ruleId = notification.getValueOwnerParameter(RULE_ID_NOTIFICATION_PARAM);
-    String publisher = notification.getValueOwnerParameter(RULE_PUBLISHER_NOTIFICATION_PARAM);
+    String publisher = notification.getValueOwnerParameter(RULE_CREATOR_NOTIFICATION_PARAM);
     if (StringUtils.isBlank(ruleId)) {
       return null;
     }

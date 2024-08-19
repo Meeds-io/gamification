@@ -21,7 +21,7 @@
   <external-component-plugins>
     <target-component>org.exoplatform.commons.upgrade.UpgradeProductService</target-component>
     <component-plugin>
-      <name>GamificationActionPublishedNotification</name>
+      <name>GamificationNewActionAvailableNotification</name>
       <set-method>addUpgradePlugin</set-method>
       <type>io.meeds.social.notification.upgrade.NotificationUpgradePlugin</type>
       <description>An upgrade plugin to set a notification plugin </description>
@@ -39,7 +39,7 @@
         <value-param>
           <name>notificationPluginId</name>
           <description>Notification Plugin Id</description>
-          <value>GamificationActionPublishedNotification</value>
+          <value>GamificationNewActionAvailableNotification</value>
         </value-param>
         <value-param>
           <name>notificationChannelId</name>
