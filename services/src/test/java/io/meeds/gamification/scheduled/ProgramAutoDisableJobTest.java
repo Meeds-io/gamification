@@ -23,13 +23,17 @@ import java.util.Date;
 
 import org.quartz.JobExecutionException;
 
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RuleEntity;
+import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.test.AbstractServiceTest;
+import io.meeds.gamification.utils.Utils;
 
 public class ProgramAutoDisableJobTest extends AbstractServiceTest {
 
-  public void testDisablePrograms() throws JobExecutionException {
+  public void testDisablePrograms() throws JobExecutionException, ObjectNotFoundException {
     ProgramEntity domain1 = newDomain();
     RuleEntity rule1 = newRule("rule1", domain1.getId());
     rule1.setEndDate(Date.from(LocalDate.now().minusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC)));
@@ -49,8 +53,9 @@ public class ProgramAutoDisableJobTest extends AbstractServiceTest {
     assertFalse(domain1.isEnabled());
     assertTrue(domain2.isEnabled());
 
-    rule2.setEndDate(Date.from(LocalDate.now().minusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC)));
-    rule2 = ruleDAO.update(rule1);
+    RuleDTO ruleDto2 = ruleService.findRuleById(rule2.getId());
+    ruleDto2.setEndDate(Utils.toSimpleDateFormat(Date.from(LocalDate.now().minusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC))));
+    ruleService.updateRule(ruleDto2);
 
     programAutoDisableJob.execute(null);
 
