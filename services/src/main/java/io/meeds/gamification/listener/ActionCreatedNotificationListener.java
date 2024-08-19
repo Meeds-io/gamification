@@ -19,7 +19,7 @@ package io.meeds.gamification.listener;
 
 import static io.meeds.gamification.utils.Utils.*;
 
-import org.apache.commons.lang3.StringUtils;
+import io.meeds.gamification.service.RuleService;
 
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.PluginKey;
@@ -32,22 +32,28 @@ import org.exoplatform.services.listener.Listener;
 import io.meeds.gamification.model.RuleDTO;
 
 @Asynchronous
-public class ActionPublishedNotificationListener extends Listener<RuleDTO, String> {
+public class ActionCreatedNotificationListener extends Listener<Long, String> {
+
+  private final RuleService ruleService;
+
+  public ActionCreatedNotificationListener(RuleService ruleService) {
+    this.ruleService = ruleService;
+  }
 
   @Override
   @ExoTransactional
-  public void onEvent(Event<RuleDTO, String> event) throws Exception {
-    RuleDTO rule = event.getSource();
-    String publisher = event.getData();
-    if (rule == null || StringUtils.isBlank(publisher)) {
+  public void onEvent(Event<Long, String> event) throws Exception {
+    long ruleId = event.getSource();
+    RuleDTO rule = ruleService.findRuleById(ruleId);
+    if (rule == null) {
       return;
     }
 
     NotificationContext ctx = NotificationContextImpl.cloneInstance();
     ctx.append(RULE_NOTIFICATION_PARAMETER, rule)
-       .append(RULE_PUBLISHER_NOTIFICATION_PARAMETER, publisher)
+       .append(RULE_CREATOR_NOTIFICATION_PARAMETER, rule.getCreatedBy())
        .getNotificationExecutor()
-       .with(ctx.makeCommand(PluginKey.key(RULE_PUBLISHED_NOTIFICATION_ID)))
+       .with(ctx.makeCommand(PluginKey.key(NEW_ACTION_AVAILABLE_NOTIFICATION_ID)))
        .execute(ctx);
   }
 

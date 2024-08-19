@@ -40,7 +40,7 @@ import io.meeds.gamification.dao.ProgramDAOTest;
 import io.meeds.gamification.dao.RealizationDAOTest;
 import io.meeds.gamification.dao.RuleDAOTest;
 import io.meeds.gamification.notification.plugin.ActionAnnouncedNotificationPluginTest;
-import io.meeds.gamification.notification.plugin.ActionPublishedNotificationPluginTest;
+import io.meeds.gamification.notification.plugin.NewActionAvailableNotificationPluginTest;
 import io.meeds.gamification.rest.TestAnnouncementRest;
 import io.meeds.gamification.rest.TestBadgeRest;
 import io.meeds.gamification.rest.TestConnectorRest;
@@ -112,7 +112,7 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     ProgramAutoDisableListenerTest.class,
     ProgramAutoDisableJobTest.class,
     ActionAnnouncedNotificationPluginTest.class,
-    ActionPublishedNotificationPluginTest.class,
+    NewActionAvailableNotificationPluginTest.class,
     ContributionStatusUpdatedNotificationPluginTest.class,
     RuleActivityTypePluginTest.class,
     AnnouncementActivityTypePluginTest.class,
