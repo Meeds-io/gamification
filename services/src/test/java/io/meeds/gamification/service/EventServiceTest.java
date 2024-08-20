@@ -22,14 +22,23 @@ import static org.junit.Assert.assertThrows;
 import io.meeds.gamification.entity.EventEntity;
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.filter.EventFilter;
+import io.meeds.gamification.plugin.AnnouncementActivityTypePlugin;
+import io.meeds.gamification.plugin.ConnectorPlugin;
+import io.meeds.gamification.plugin.EventPlugin;
 import io.meeds.gamification.storage.mapper.EventMapper;
 import io.meeds.gamification.test.AbstractServiceTest;
+import org.exoplatform.webui.config.Event;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EventServiceTest extends AbstractServiceTest {
 
   private static final String ADMIN_USER = "root1";
+
+  private static final String EVENT_NAME = "eventName";
 
   @Override
   public void setUp() throws Exception {
@@ -74,5 +83,38 @@ public class EventServiceTest extends AbstractServiceTest {
     eventDTO.setTrigger("trigger2");
     eventService.updateEvent(eventDTO);
     assertEquals("trigger2", eventService.getEvent(eventDTO.getId()).getTrigger());
+  }
+
+  public void testEventPlugin() {
+    setEventPlugin();
+    assertEquals(List.of("trigger1", "trigger2", "trigger3"), eventService.getEventPlugin("trigger1").getTriggers());
+    assertFalse(eventService.getEventPlugin("trigger1").isValidEvent(new HashMap<>(), ""));
+  }
+
+  private void removeEventPlugin() {
+    eventService.removePlugin(EVENT_NAME);
+  }
+
+  private void setEventPlugin() {
+    removeEventPlugin();
+    EventPlugin eventPlugin = new EventPlugin() {
+
+      @Override
+      public String getEventType() {
+        return EVENT_NAME;
+      }
+
+      @Override
+      public List<String> getTriggers() {
+        return List.of("trigger1", "trigger2", "trigger3");
+      }
+
+      @Override
+      public boolean isValidEvent(Map<String, String> eventProperties, String triggerDetails) {
+        return false;
+      }
+    };
+    eventPlugin.setName(EVENT_NAME);
+    eventService.addPlugin(eventPlugin);
   }
 }

@@ -63,12 +63,12 @@
 
         <v-col
           :cols="expandedView && 6 || 12"
-          :class="!expandedView && 'px-8'"
           class="py-0">
           <v-row class="ma-0 pa-0">
             <v-col cols="6" class="px-0">
               <engagement-center-rule-points
-                :rule="rule" />
+                :rule="rule"
+                :target-item-label="targetItemLabel" />
             </v-col>
             <v-col cols="6" class="px-0">
               <engagement-center-rule-achievements
@@ -88,7 +88,6 @@
         <v-col
           v-if="hasDetails"
           :cols="expandedView && 6 || 12"
-          :class="!expandedView && 'px-8'"
           class="py-0">
           <v-row class="ma-0 pa-0">
             <v-col
@@ -173,14 +172,14 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col v-if="!expanded" :class="!expandedView && 'px-8'">
+        <v-col v-if="!expanded">
           <engagement-center-rule-description
             :rule="rule" />
         </v-col>
       </v-row>
       <v-card
         v-if="isExtensibleEvent && !isPublicSite"
-        class="px-10 py-3"
+        class="px-5 py-3"
         flat>
         <extension-registry-components
           :params="eventParams"
@@ -339,6 +338,9 @@ export default {
     isExtensibleEvent() {
       return this.connectorsEventComponentsExtensions.map(extension => extension?.componentOptions?.isEnabled(this.eventParams));
     },
+    trigger() {
+      return this.rule?.event?.trigger;
+    },
     eventParams() {
       return {
         trigger: this.rule?.event?.trigger,
@@ -347,6 +349,16 @@ export default {
         isEditing: false,
       };
     },
+    actionValueExtension() {
+      return this.trigger
+          && Object.values(this.$root.actionValueExtensions)
+            .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
+            .find(extension => extension?.match?.(this.trigger))
+          || null;
+    },
+    targetItemLabel() {
+      return this.actionValueExtension?.targetItemLabel;
+    }
   },
   watch: {
     sending() {

@@ -111,13 +111,13 @@ public interface EventService {
   }
 
   /**
-   * Check if verification required
+   * Check if variable rewarding
    *
    * @param triggerType trigger type
    * @param triggerName trigger name
    * @return {@link Boolean}
    */
-  default boolean isVerificationRequiredForEvent(String triggerType, String triggerName) {
+  default boolean canVariableRewarding(String triggerType, String triggerName) {
     throw new UnsupportedOperationException();
   }
 

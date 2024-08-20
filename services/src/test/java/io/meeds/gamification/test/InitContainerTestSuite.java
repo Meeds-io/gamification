@@ -117,6 +117,7 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     RuleActivityTypePluginTest.class,
     AnnouncementActivityTypePluginTest.class,
     EventServiceTest.class,
+    EventRegistryTest.class,
     TriggerServiceTest.class,
     ProgramVisibilityUpgradePluginTest.class,
 })
