@@ -27,6 +27,17 @@ extensionRegistry.registerExtension('AnalyticsSamples', 'SampleItem', {
 });
 
 extensionRegistry.registerExtension('AnalyticsSamples', 'SampleItem', {
+  type: 'programOwners',
+  options: {
+    // Rank of executing 'match' method
+    rank: 60,
+    // Used Vue component to display cell value
+    vueComponent: Vue.options.components['analytics-profile-list-sample-item-attribute'],
+    match: fieldName => fieldName === 'programOwners',
+  },
+});
+
+extensionRegistry.registerExtension('AnalyticsSamples', 'SampleItem', {
   type: 'rule',
   options: {
     // Rank of executing 'match' method
