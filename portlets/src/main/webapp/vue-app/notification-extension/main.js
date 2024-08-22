@@ -22,8 +22,8 @@ import './extensions.js';
 
 const lang = eXo.env.portal.language;
 const urls = [
-  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`,
-  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`
+  `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`,
+  `/gamification-portlets/i18n/locale.addon.Gamification?lang=${lang}`
 ];
 
 export function init() {

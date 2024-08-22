@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 -->
-<gatein-resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/gatein_resources_1_4 http://www.exoplatform.org/xml/ns/gatein_resources_1_4" xmlns="http://www.exoplatform.org/xml/ns/gatein_resources_1_4">
+<gatein-resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/gatein_resources_1_5 http://www.exoplatform.org/xml/ns/gatein_resources_1_5" xmlns="http://www.exoplatform.org/xml/ns/gatein_resources_1_5">
 
   <portlet-skin>
     <application-name>gamification-portlets</application-name>
@@ -64,6 +64,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <skin-name>Enterprise</skin-name>
     <css-path>/skin/css/engagementCenter.css</css-path>
     <css-priority>1</css-priority>
+    <additional-module>ImageCropper</additional-module>
   </portlet-skin>
 
   <portlet-skin>
@@ -71,6 +72,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-name>EngagementCenterPrograms</portlet-name>
     <skin-name>Enterprise</skin-name>
     <css-path>/skin/css/engagementCenter.css</css-path>
+    <additional-module>ImageCropper</additional-module>
   </portlet-skin>
 
   <portlet-skin>
@@ -78,6 +80,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-name>EngagementCenterActions</portlet-name>
     <skin-name>Enterprise</skin-name>
     <css-path>/skin/css/engagementCenter.css</css-path>
+    <additional-module>ImageCropper</additional-module>
   </portlet-skin>
 
   <portlet-skin>
@@ -85,6 +88,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-name>EngagementCenterAchievements</portlet-name>
     <skin-name>Enterprise</skin-name>
     <css-path>/skin/css/engagementCenter.css</css-path>
+    <additional-module>ImageCropper</additional-module>
   </portlet-skin>
 
   <portlet>
