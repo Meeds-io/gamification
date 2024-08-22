@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         class="profileCard">
         <v-fade-transition>
           <user-dashbord
-            v-show="!isFlipped"
+            v-if="!isFlipped"
             :key="userDashBordKey"
             :commons-space-default-size="commonsSpaceDefaultSize"
             :is-current-user-profile="isCurrentUserProfile"
