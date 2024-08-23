@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "event": "testEvent",
+      "score": 1,
+      "appendEmoji": "\uD83E\uDD17",
+      "programTitle": "Sample Program",
+      "recurrence": "DAILY",
+      "defaultRealizationStatus": "ACCEPTED"
+    },
+    {
+      "event": "testEvent2",
+      "score": 10,
+      "appendEmoji": "\uD83E\uDD17",
+      "programTitle": "Sample Program",
+      "recurrence": "DAILY",
+      "defaultRealizationStatus": "ACCEPTED",
+      "prerequisiteRules": ["testEvent"]
+
+    }
+  ]
+}
+
