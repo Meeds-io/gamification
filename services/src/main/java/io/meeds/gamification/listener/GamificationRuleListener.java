@@ -27,6 +27,7 @@ import io.meeds.gamification.service.RuleService;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import java.util.HashMap;
@@ -58,11 +59,15 @@ public class GamificationRuleListener extends Listener<Object, String> {
     boolean ruleDeleted = Utils.POST_DELETE_RULE_EVENT.equals(event.getEventName());
     RuleDTO rule = ruleDeleted ? (RuleDTO) object : ruleService.findRuleById((Long) object);
     String createdBy = rule.getCreatedBy();
-    String userIdentityId = identityManager.getOrCreateUserIdentity(createdBy).getId();
-    createRuleGamificationHistoryEntry(userIdentityId,
-                                       userIdentityId,
-                                       String.valueOf(rule.getId()),
-                                       ruleDeleted ? DELETE_EVENT_NAME : GENERIC_EVENT_NAME);
+    String userIdentityId;
+    Identity userIdentity = identityManager.getOrCreateUserIdentity(createdBy);
+    if (userIdentity != null) {
+      userIdentityId = userIdentity.getId();
+      createRuleGamificationHistoryEntry(userIdentityId,
+                                         userIdentityId,
+                                         String.valueOf(rule.getId()),
+                                         ruleDeleted ? DELETE_EVENT_NAME : GENERIC_EVENT_NAME);
+    }
   }
 
   private void createRuleGamificationHistoryEntry(String earnerIdentityId,

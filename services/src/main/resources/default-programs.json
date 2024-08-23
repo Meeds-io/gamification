@@ -1,0 +1,43 @@
+[
+  {
+    "title": "Getting Started",
+    "appendEmoji": "\uD83D\uDE80",
+    "enabled": true,
+    "coverUrl": "medias/images/discover.png",
+    "i18nTitleKey": "gamification.defaultProgram.gettingStarted.title",
+    "i18nDescriptionKey": "gamification.defaultProgram.gettingStarted.description.",
+    "instructions": [
+      {
+        "key": "firstInstruction",
+        "emoji": "1️⃣"
+      },
+      {
+        "key": "secondInstruction",
+        "emoji": "2️⃣"
+      }
+    ]
+  },
+  {
+    "title": "Community Empowerment",
+    "appendEmoji": "\uD83D\uDCAA",
+    "enabled": true,
+    "coverUrl": "medias/images/support.png",
+    "i18nTitleKey": "gamification.defaultProgram.CommunityEmpowerment.title",
+    "i18nDescriptionKey": "gamification.defaultProgram.CommunityEmpowerment.description.",
+    "instructions": [
+      {
+        "key": "firstInstruction",
+        "emoji": "🔥"
+      },
+      {
+        "key": "secondInstruction",
+        "emoji": "💡"
+      },
+      {
+        "key": "thirdInstruction",
+        "emoji": "✨"
+      }
+    ]
+  }
+]
+

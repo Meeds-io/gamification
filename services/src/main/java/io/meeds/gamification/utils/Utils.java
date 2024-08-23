@@ -201,7 +201,7 @@ public class Utils {
 
   public static final String                          RULE_ACTIVITY_PARAM_RULE_TITLE          = "ruleTitle";
 
-  public static final String                          RULE_ACTIVITY_PARAM_RULE_DESCRIPTION    = "ruleTitle";
+  public static final String                          RULE_ACTIVITY_PARAM_RULE_DESCRIPTION    = "ruleDescription";
 
   public static final String                          RULE_ACTIVITY_PARAM_RULE_SCORE          = "ruleScore";
 
