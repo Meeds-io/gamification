@@ -59,11 +59,11 @@ export default {
     },
     height: {
       type: String,
-      default: () => '348px',
+      default: null,
     },
     minWidth: {
       type: String,
-      default: () => '290px',
+      default: null,
     },
   },
 };
