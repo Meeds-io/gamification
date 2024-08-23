@@ -17,7 +17,7 @@
   <v-app>
     <gamification-overview-widget :loading="loading">
       <template v-if="programsDisplayed || loading" #title>
-        <div v-if="programsDisplayed" class="d-flex flex-grow-1 full-width">
+        <div v-if="programsDisplayed" class="d-flex flex-grow-1 flex-shrink-1 overflow-hidden full-width">
           <div class="widget-text-header text-none text-truncate">
             {{ $t('gamification.overview.programsOverviewTitle') }}
           </div>
@@ -32,18 +32,15 @@
           </v-btn>
         </div>
       </template>
-      <div v-if="programsDisplayed">
+      <div
+        v-if="programsDisplayed"
+        ref="content"
+        class="flex-grow-1 flex-shrink-1 overflow-hidden">
         <gamification-overview-program-item
-          v-for="program in programs" 
+          v-for="program in programsToDisplay" 
           :key="program.id"
           :program="program"
           class="flex-grow-1" />
-        <template v-if="remainingCount">
-          <gamification-overview-widget-empty-row
-            v-for="index in remainingCount"
-            :key="index"
-            class="flex-grow-1" />
-        </template>
       </div>
       <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
         <v-icon color="tertiary" size="54">fa-puzzle-piece</v-icon>
@@ -65,9 +62,18 @@ export default {
   data: () => ({
     programs: [],
     administrators: null,
-    limitToLoad: 4,
     loading: true,
-    programsDisplayed: false
+    programsDisplayed: false,
+    // Dynamic Height Resizer attributes
+    applicationResizeObserver: null,
+    resizeObserver: null,
+    maxItems: 10,
+    itemHeight: 64,
+    itemsParentHeight: 0,
+    mountedComponent: false,
+    fixedHeight: false,
+    dynamicSection: false,
+    hideContent: false,
   }),
   computed: {
     programURL() {
@@ -76,18 +82,53 @@ export default {
     programLink() {
       return this.programsDisplayed && this.programURL || null;
     },
-    remainingCount() {
-      return this.limitToLoad - (this.programs?.length || 0);
+    programsToDisplay() {
+      return this.programs.slice(0, this.limitToDisplay);
+    },
+    limitToDisplay() {
+      if (this.dynamicSection && !this.fixedHeight) {
+        return this.maxItems;
+      } else {
+        return this.programsDisplayed && !this.hideContent && parseInt(this.itemsParentHeight / this.itemHeight) || 0;
+      }
+    },
+    initialized() {
+      return this.mountedComponent && !this.loading;
+    },
+  },
+  watch: {
+    programsDisplayed() {
+      if (!this.programsDisplayed) {
+        this.uninstallObserver();
+      }
+    },
+    initialized() {
+      if (this.programsDisplayed) {
+        this.installObserver();
+      }
+    },
+    limitToDisplay() {
+      if (this.limitToDisplay > this.maxItems
+          && (this.loading || this.programs?.length >= this.maxItems)) {
+        this.maxItems = this.limitToDisplay;
+        this.retrievePrograms();
+      }
     },
   },
   created() {
     this.retrievePrograms();
   },
+  mounted() {
+    this.mountedComponent = true;
+  },
+  beforeDestroy () {
+    this.uninstallObserver();
+  },
   methods: {
     retrievePrograms() {
       this.loading = true;
       return this.$programService.getPrograms({
-        limit: this.limitToLoad,
+        limit: this.maxItems,
         type: 'ALL',
         status: 'ENABLED',
         sortBy: 'modifiedDate',
@@ -101,6 +142,34 @@ export default {
           this.programsDisplayed = data.size > 0;
         })
         .finally(() => this.loading = false);
+    },
+    installObserver() {
+      if (this.$refs.content
+          && this.initialized
+          && (!this.resizeObserver || !this.itemsParentHeight)) {
+        this.refreshContentHeight();
+        this.resizeObserver = new ResizeObserver(this.refreshContentHeight).observe(this.$refs.content);
+        this.applicationResizeObserver = new ResizeObserver(this.refreshApplicationContentHeight).observe(this.$el.closest('.layout-application'));
+      }
+    },
+    uninstallObserver() {
+      if (this.resizeObserver) {
+        this.resizeObserver?.disconnect?.();
+        this.applicationResizeObserver?.disconnect?.();
+      }
+    },
+    refreshApplicationContentHeight() {
+      this.hideContent = true;
+      this.$nextTick()
+        .then(() => {
+          this.refreshContentHeight();
+          this.hideContent = false;
+        });
+    },
+    refreshContentHeight() {
+      this.dynamicSection = !!this.$el.closest('.flex-cell');
+      this.fixedHeight = !!this.$el.closest('.layout-application').style.getPropertyValue('--appHeight');
+      this.itemsParentHeight = this.$refs.content?.offsetHeight || 0;
     },
   },
 };
