@@ -120,6 +120,7 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     EventRegistryTest.class,
     TriggerServiceTest.class,
     ProgramVisibilityUpgradePluginTest.class,
+    DefaultProgramRegistryTest.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
