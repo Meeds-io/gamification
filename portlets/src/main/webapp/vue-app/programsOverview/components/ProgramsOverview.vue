@@ -15,38 +15,66 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget :loading="loading">
-      <template #title>
-        <div v-if="programsDisplayed" class="d-flex flex-grow-1 flex-shrink-1 overflow-hidden full-width">
-          <div class="widget-text-header text-none text-truncate">
-            {{ $t('gamification.overview.programsOverviewTitle') }}
+    <v-hover v-model="hover">
+      <gamification-overview-widget :loading="loading">
+        <template #title>
+          <div class="d-flex flex-grow-1 flex-shrink-1 full-width align-center position-relative">
+            <v-card
+              v-if="programsDisplayed"
+              class="widget-text-header text-none text-truncate d-flex align-center"
+              height="36"
+              flat>
+              {{ $t('gamification.overview.programsOverviewTitle') }}
+            </v-card>
+            <div
+              :class="!programsDisplayed && 'mt-2 me-2'"
+              class="position-absolute t-0 r-0 z-index-one">
+              <v-btn
+                v-show="programLink"
+                :icon="hoverEdit"
+                :small="hoverEdit"
+                height="auto"
+                min-width="auto"
+                class="pa-0"
+                text
+                @click="$refs.listDrawer.open()">
+                <v-icon
+                  v-if="hoverEdit"
+                  size="18"
+                  color="primary">
+                  fa-external-link-alt
+                </v-icon>
+                <span v-else class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+              </v-btn>
+              <v-fab-transition hide-on-leave>
+                <v-btn
+                  v-show="hoverEdit"
+                  :title="$t('gamification.programs.overviewSettings.editTooltip')"
+                  :class="!programsDisplayed && 'mt-n4 me-n2 z-index-one'"
+                  small
+                  icon
+                  @click="$root.$emit('programs-overview-settings')">
+                  <v-icon size="18">fa-cog</v-icon>
+                </v-btn>
+              </v-fab-transition>
+            </div>
           </div>
-          <v-spacer />
-          <v-btn
-            height="auto"
-            min-width="auto"
-            class="pa-0"
-            text
-            @click="$refs.listDrawer.open()">
-            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
-          </v-btn>
+        </template>
+        <div
+          v-if="programsDisplayed"
+          class="flex-grow-1 flex-shrink-1 overflow-hidden">
+          <gamification-overview-program-item
+            v-for="program in programsToDisplay" 
+            :key="program.id"
+            :program="program"
+            class="flex-grow-1" />
         </div>
-      </template>
-      <div
-        v-if="programsDisplayed"
-        ref="content"
-        class="flex-grow-1 flex-shrink-1 overflow-hidden">
-        <gamification-overview-program-item
-          v-for="program in programsToDisplay" 
-          :key="program.id"
-          :program="program"
-          class="flex-grow-1" />
-      </div>
-      <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
-        <v-icon color="tertiary" size="54">fa-puzzle-piece</v-icon>
-        <span class="mt-7">{{ $t('gamification.overview.programs') }}</span>
-      </div>
-    </gamification-overview-widget>
+        <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
+          <v-icon color="tertiary" size="54">fa-puzzle-piece</v-icon>
+          <span class="mt-7">{{ $t('gamification.overview.programs') }}</span>
+        </div>
+      </gamification-overview-widget>
+    </v-hover>
     <div v-if="programsDisplayed">
       <gamification-program-list-drawer
         ref="listDrawer" />
@@ -54,6 +82,8 @@
         :administrators="administrators" />
       <engagement-center-rule-extensions />
     </div>
+    <gamification-programs-overview-settings-drawer
+      v-if="$root.canEdit" />
   </v-app>
 </template>
 <script>
@@ -61,34 +91,15 @@ export default {
   data: () => ({
     programs: [],
     administrators: null,
+    hover: false,
     loading: true,
-    // Dynamic Height Resizer attributes
-    applicationResizeObserver: null,
-    resizeObserver: null,
-    maxItems: 10,
-    itemHeight: 64,
-    itemsParentHeight: 0,
-    mountedComponent: false,
-    fixedHeight: false,
-    dynamicSection: false,
-    hideContent: false,
   }),
   computed: {
-    initialized() {
-      return this.mountedComponent && !this.loading;
-    },
     programsDisplayed() {
       return !!this.programs?.length;
     },
-    limitToDisplay() {
-      if (this.dynamicSection && !this.fixedHeight) {
-        return this.maxItems;
-      } else {
-        return this.programsDisplayed && !this.hideContent && parseInt(this.itemsParentHeight / this.itemHeight) || 0;
-      }
-    },
     programsToDisplay() {
-      return this.programs.slice(0, this.limitToDisplay);
+      return this.programs.slice(0, this.$root.limit);
     },
     programURL() {
       return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`;
@@ -96,22 +107,24 @@ export default {
     programLink() {
       return this.programsDisplayed && this.programURL || null;
     },
+    hoverEdit() {
+      return this.hover && this.$root.canEdit;
+    },
+    limit() {
+      return this.$root.limit || 4;
+    },
+    sortBy() {
+      return this.$root.sortBy || 'modifiedDate';
+    },
   },
   watch: {
-    programsDisplayed() {
-      if (this.programsDisplayed) {
-        this.installObserver();
-      } else {
-        this.uninstallObserver();
+    limit() {
+      if (!this.loading) {
+        this.retrievePrograms();
       }
     },
-    initialized() {
-      this.installObserver();
-    },
-    limitToDisplay() {
-      if (this.limitToDisplay > this.maxItems
-          && (this.loading || this.programs?.length >= this.maxItems)) {
-        this.maxItems = this.limitToDisplay;
+    sortBy() {
+      if (!this.loading) {
         this.retrievePrograms();
       }
     },
@@ -119,28 +132,15 @@ export default {
   created() {
     this.retrievePrograms();
   },
-  mounted() {
-    this.mountedComponent = true;
-    this.init();
-  },
-  beforeDestroy () {
-    this.uninstallAllObservers();
-  },
   methods: {
-    init() {
-      if (this.$el) {
-        this.dynamicSection = !!this.$el.closest('.flex-cell');
-        this.refreshContentHeight();
-      }
-    },
     retrievePrograms() {
       this.loading = true;
       return this.$programService.getPrograms({
-        limit: this.maxItems,
+        sortBy: this.sortBy || 'modifiedDate',
+        sortDescending: this.sortBy !== 'title',
+        limit: this.limit || 4,
         type: 'ALL',
         status: 'ENABLED',
-        sortBy: 'modifiedDate',
-        sortDescending: true,
         lang: eXo.env.portal.language,
         expand: 'countActiveRules,administrators'
       })
@@ -149,51 +149,6 @@ export default {
           this.programs = data?.programs || [];
         })
         .finally(() => this.loading = false);
-    },
-    installObserver() {
-      this.refreshContentHeight();
-      if (this.initialized) {
-        if (!this.resizeObserver && this.$refs.content) {
-          this.resizeObserver = new ResizeObserver(this.refreshContentHeight);
-          this.resizeObserver.observe(this.$refs.content);
-        }
-        if (!this.applicationResizeObserver && this.$el.closest('.layout-application')) {
-          this.applicationResizeObserver = new ResizeObserver(this.refreshApplicationContentHeight);
-          this.applicationResizeObserver.observe(this.$el.closest('.layout-application'));
-        }
-      }
-    },
-    uninstallObserver() {
-      if (this.resizeObserver) {
-        this.resizeObserver?.disconnect?.();
-        this.resizeObserver = null;
-      }
-    },
-    uninstallAllObservers() {
-      if (this.resizeObserver) {
-        this.resizeObserver?.disconnect?.();
-        this.resizeObserver = null;
-      }
-      if (this.applicationResizeObserver) {
-        this.applicationResizeObserver?.disconnect?.();
-        this.applicationResizeObserver = null;
-      }
-    },
-    refreshApplicationContentHeight() {
-      this.hideContent = true;
-      this.$nextTick()
-        .then(() => {
-          window.setTimeout(() => {
-            this.refreshContentHeight();
-            this.hideContent = false;
-          }, 50);
-        });
-    },
-    refreshContentHeight() {
-      if (this.$el?.closest?.('.layout-application')) {
-        this.fixedHeight = !!this.$el.closest('.layout-application')?.style?.getPropertyValue?.('--appHeight');
-      }
-      this.$nextTick().then(() => this.itemsParentHeight = this.$refs.content?.offsetHeight || 0);
     },
   },
 };
