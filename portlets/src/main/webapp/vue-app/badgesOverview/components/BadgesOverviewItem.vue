@@ -15,29 +15,26 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-tooltip bottom>
+  <v-tooltip top>
     <template #activator="{ on }">
       <v-card
-        min-width="90px"
-        width="auto"
-        max-width="30%"
+        width="120px"
+        max-width="120px"
         class="flex-grow-1 mx-auto"
         flat
-        v-on="on">
+        v-on="on"
+        @click="openDrawer">
         <div class="px-1">
           <v-avatar
             class="d-flex flex-column content-box-sizing clickable mx-auto"
-            height="50"
+            height="75"
             width="auto"
-            tile
-            @click="openDrawer">
+            tile>
             <img 
               :src="badge.avatar"
               alt="">
           </v-avatar>
-          <div
-            class="d-block text-center mt-2 clickable text-truncate"
-            @click="openDrawer">
+          <div v-if="$root.showName" class="text-center mt-2 clickable text-truncate-2">
             {{ badgeLabel }}
           </div>
         </div>
