@@ -32,8 +32,6 @@ public class DefaultProgramConfig {
 
   private String            appendEmoji;
 
-  private String            description;
-
   private boolean           enabled;
 
   private String            coverUrl;

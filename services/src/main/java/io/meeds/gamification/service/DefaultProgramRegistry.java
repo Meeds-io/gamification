@@ -21,6 +21,7 @@ package io.meeds.gamification.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.meeds.common.ContainerTransactional;
+import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.*;
 import io.meeds.gamification.model.filter.ProgramFilter;
@@ -85,6 +86,8 @@ public class DefaultProgramRegistry {
   @ContainerTransactional
   public void start() {
     ProgramFilter filter = new ProgramFilter();
+    filter.setIncludeDeleted(true);
+    filter.setStatus(EntityStatusType.ALL);
     int programsCount = programService.countPrograms(filter);
     if (programsCount == 0) {
       loadDefaultPrograms();
@@ -108,8 +111,8 @@ public class DefaultProgramRegistry {
 
     for (DefaultProgramConfig config : programConfigs) {
       ProgramDTO program = new ProgramDTO();
-      program.setTitle(config.getTitle());
-      program.setDescription(config.getDescription());
+      program.setTitle(getI18NLabel(config.getI18nTitleKey(), Locale.ENGLISH) + " " + config.getAppendEmoji());
+      program.setDescription(getProgramDescriptionLabel(config, Locale.ENGLISH));
       program.setEnabled(config.isEnabled());
       if (config.getCoverUrl() != null) {
         program.setCoverFileId(storeProgramCover(config.getCoverUrl()));
@@ -150,11 +153,10 @@ public class DefaultProgramRegistry {
 
   private RuleDTO createRule(DefaultRuleConfig rule, ProgramDTO finalProgram) {
     RuleDTO ruleDTO = new RuleDTO();
-    Locale defaultLocale = localeConfigService.getDefaultLocaleConfig().getLocale();
     String i18nTitleKey = getI18nKey("title", rule.getEvent());
     String i18nDescriptionKey = getI18nKey("description", rule.getEvent());
-    ruleDTO.setTitle(getI18NLabel(i18nTitleKey, defaultLocale));
-    ruleDTO.setDescription(getI18NLabel(i18nDescriptionKey, defaultLocale));
+    ruleDTO.setTitle(getI18NLabel(i18nTitleKey, Locale.ENGLISH));
+    ruleDTO.setDescription(getI18NLabel(i18nDescriptionKey, Locale.ENGLISH));
     ruleDTO.setType(EntityType.AUTOMATIC);
     ruleDTO.setScore(rule.getScore());
     ruleDTO.setEnabled(true);
@@ -181,7 +183,6 @@ public class DefaultProgramRegistry {
   @SneakyThrows
   private void saveProgramTranslations(ProgramDTO program, DefaultProgramConfig config) {
     String i18nTitleKey = config.getI18nTitleKey();
-    String i18nDescriptionKey = config.getI18nDescriptionKey();
     Map<Locale, String> titleTranslations = new HashMap<>();
     Map<Locale, String> descriptionTranslations = new HashMap<>();
 
@@ -195,22 +196,7 @@ public class DefaultProgramRegistry {
                          } else {
                            titleTranslations.put(locale, getI18NLabel(i18nTitleKey, locale));
                          }
-                         StringBuilder description = new StringBuilder();
-                         if (CollectionUtils.isNotEmpty(config.getInstructions())) {
-                           for (DefaultProgramConfig.Instruction instruction : config.getInstructions()) {
-                             description.append("<div>")
-                                     .append(instruction.getEmoji())
-                                     .append(" ")
-                                     .append(getI18NLabel(i18nDescriptionKey + instruction.getKey(), locale))
-                                     .append("</div>\n");
-                           }
-                         }
-                         description.append("<div>")
-                                    .append(getI18NLabel("gamification.defaultProgram.label.seeDocumentation",
-                                                         locale).replace("$DOCUMENTATION", "https://docs.meeds.io/meeds-guides"))
-                                    .append("</div>\n");
-
-                         descriptionTranslations.put(locale, description.toString());
+                         descriptionTranslations.put(locale, getProgramDescriptionLabel(config, locale));
                        });
     saveTranslation("program", program.getId(), titleTranslations, descriptionTranslations);
   }
@@ -298,5 +284,24 @@ public class DefaultProgramRegistry {
       LOG.warn("Error while writing program {} cover file", coverUrl, e);
       return 0;
     }
+  }
+
+  private String getProgramDescriptionLabel(DefaultProgramConfig config, Locale locale) {
+    String i18nDescriptionKey = config.getI18nDescriptionKey();
+    StringBuilder description = new StringBuilder();
+    if (CollectionUtils.isNotEmpty(config.getInstructions())) {
+      for (DefaultProgramConfig.Instruction instruction : config.getInstructions()) {
+        description.append("<div>")
+                   .append(instruction.getEmoji())
+                   .append(" ")
+                   .append(getI18NLabel(i18nDescriptionKey + instruction.getKey(), locale))
+                   .append("</div>\n");
+      }
+      description.append("<div><br>")
+                 .append(getI18NLabel("gamification.defaultProgram.label.seeDocumentation",
+                                      locale).replace("$DOCUMENTATION", "https://docs.meeds.io/meeds-guides"))
+                 .append("</div>\n");
+    }
+    return description.toString();
   }
 }

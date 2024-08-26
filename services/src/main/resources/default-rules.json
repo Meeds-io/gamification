@@ -20,28 +20,37 @@
       "event": "becomeSpaceManager",
       "score": 15,
       "programTitle": "Community Empowerment",
-      "recurrence": "DAILY",
+      "recurrence": "ONCE",
       "defaultRealizationStatus": "ACCEPTED"
     },
     {
       "event": "addSpace",
       "score": 50,
       "programTitle": "Community Empowerment",
+      "recurrence": "ONCE",
       "defaultRealizationStatus": "ACCEPTED"
     },
     {
       "event": "pinActivityOnSpace",
       "score": 15,
       "programTitle": "Community Empowerment",
-      "defaultRealizationStatus": "ACCEPTED",
-      "prerequisiteRules": ["becomeSpaceManager"]
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED"
     },
     {
       "event": "inviteUserToSpace",
       "score": 5,
       "programTitle": "Community Empowerment",
-      "defaultRealizationStatus": "ACCEPTED",
-      "prerequisiteRules": ["becomeSpaceManager"]
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED"
+    },
+
+    {
+      "event": "updateSpaceAvatar",
+      "score": 25,
+      "programTitle": "Community Empowerment",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED"
     },
 
 
@@ -83,7 +92,7 @@
     {
       "event": "addUserProfileWorkExperience",
       "score": 15,
-      "appendEmoji": "⚒",
+      "appendEmoji": "⚒\uFE0F",
       "programTitle": "Getting Started",
       "recurrence": "ONCE",
       "defaultRealizationStatus": "ACCEPTED",
@@ -92,14 +101,14 @@
     {
       "event": "addUserProfileNotificationSetting",
       "score": 15,
-      "appendEmoji": "⚙",
+      "appendEmoji": "⚙\uFE0F",
       "programTitle": "Getting Started",
       "recurrence": "ONCE",
       "defaultRealizationStatus": "ACCEPTED",
       "prerequisiteRules": ["addUserProfileAboutMe"]
     },
     {
-      "event": "joinSpaces",
+      "event": "joinSpace",
       "score": 10,
       "appendEmoji": "\uD83D\uDC65",
       "programTitle": "Getting Started",

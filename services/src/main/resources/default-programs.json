@@ -2,9 +2,8 @@
   {
     "title": "Getting Started",
     "appendEmoji": "\uD83D\uDE80",
-    "description": "See our documentation if needed",
     "enabled": true,
-    "coverUrl": "medias/images/support.png",
+    "coverUrl": "medias/images/discover.png",
     "i18nTitleKey": "gamification.defaultProgram.gettingStarted.title",
     "i18nDescriptionKey": "gamification.defaultProgram.gettingStarted.description.",
     "instructions": [
@@ -21,9 +20,8 @@
   {
     "title": "Community Empowerment",
     "appendEmoji": "\uD83D\uDCAA",
-    "description": "See our documentation if needed",
     "enabled": true,
-    "coverUrl": "medias/images/discover.png",
+    "coverUrl": "medias/images/support.png",
     "i18nTitleKey": "gamification.defaultProgram.CommunityEmpowerment.title",
     "i18nDescriptionKey": "gamification.defaultProgram.CommunityEmpowerment.description.",
     "instructions": [
