@@ -49,7 +49,7 @@
       </div>
       <div class="d-flex flex-nowrap align-center overflow-hidden mt-auto pb-2 pt-1">
         <v-chip
-          color="#F57C00"
+          color="tertiary"
           class="content-box-sizing white--text me-2"
           small>
           <span>+ {{ rule.score }}</span>
