@@ -1,3 +1,7 @@
+<%@page import="org.exoplatform.portal.config.model.Page"%>
+<%@page import="org.exoplatform.portal.application.PortalRequestContext"%>
+<%@page import="org.exoplatform.portal.config.UserACL"%>
+<%@page import="org.exoplatform.container.ExoContainerContext"%>
 <%
 /**
  * This file is part of the Meeds project (https://meeds.io/).
@@ -21,13 +25,20 @@
 <%@ page import="org.exoplatform.social.webui.Utils"%>
 <%@ page import="org.exoplatform.social.core.identity.model.Identity" %>
 <%@ page import="org.exoplatform.social.core.identity.model.Profile" %>
+<%@ page import="org.exoplatform.portal.config.model.Page" %>
 <%
   String profileOwnerId = Utils.getOwnerIdentityId();
   Identity ownerIdentity = Utils.getOwnerIdentity(true);
   Profile profile = ownerIdentity.getProfile();
   boolean isExternal = profile.getProperty(Profile.EXTERNAL) != null && ((String) profile.getProperty(Profile.EXTERNAL)).equals("true");
+  if (!isExternal) {
+    String portletStorageId = ((String) request.getAttribute("portletStorageId"));
+    String showName = request.getAttribute("showName") == null ? "false" : ((String[]) request.getAttribute("showName"))[0];
+    String sortBy = request.getAttribute("sortBy") == null ? "" : ((String[]) request.getAttribute("sortBy"))[0];
+    Page currentPage = PortalRequestContext.getCurrentInstance().getPage();
+    boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage);
+    String pageRef = currentPage.getPageKey().format();
 %>
-<% if (!isExternal) { %>
   <div class="VuetifyApp">
     <div data-app="true"
       class="v-application white v-application--is-ltr theme--light profileAboutMeOther"
@@ -35,7 +46,13 @@
       <v-cacheable-dom-app cache-id="badgesOverview_<%=profileOwnerId%>"></v-cacheable-dom-app>
       <script type="text/javascript" defer="defer">
         eXo.env.portal.addOnLoadCallback(() => {
-          window.require(['PORTLET/gamification-portlets/BadgesOverview'], app => app.init());
+          window.require(['PORTLET/gamification-portlets/BadgesOverview'], app => app.init(
+              '<%=portletStorageId%>',
+              <%=showName%>,
+              '<%=sortBy%>',
+              <%=canEdit%>,
+              '<%=pageRef%>'
+          ));
         });
       </script>
     </div>
