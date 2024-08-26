@@ -141,11 +141,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/WEB-INF/jsp/badgesOverview/index.jsp</value>
+      <value>/WEB-INF/jsp/badgesOverview.jsp</value>
     </init-param>
     <init-param>
       <name>preload.resource.rest</name>
       <value><![CDATA[/portal/rest/gamification/reputation/badges/{userId}]]></value>
+    </init-param>
+    <init-param>
+      <name>layout-content-editable</name>
+      <value>true</value>
     </init-param>
     <supports>
       <mime-type>text/html</mime-type>
@@ -282,6 +286,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <name>portlet-view-dispatched-file-path</name>
       <value>/WEB-INF/jsp/rulesOverview.jsp</value>
     </init-param>
+    <init-param>
+      <name>layout-content-editable</name>
+      <value>true</value>
+    </init-param>
     <supports>
       <mime-type>text/html</mime-type>
     </supports>
@@ -309,6 +317,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <init-param>
       <name>preload.resource.bundles</name>
       <value>locale.addon.Gamification</value>
+    </init-param>
+    <init-param>
+      <name>layout-content-editable</name>
+      <value>true</value>
     </init-param>
     <supports>
       <mime-type>text/html</mime-type>
