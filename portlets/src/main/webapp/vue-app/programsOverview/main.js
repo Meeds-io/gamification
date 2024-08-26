@@ -23,13 +23,18 @@ const urls = [
 ];
 const appId = 'programsOverview';
 
-export function init() {
+export function init(portletStorageId, limit, sortBy, canEdit, pageRef) {
   exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       Vue.createApp({
         data: {
           now: Date.now(),
           isAnonymous: !eXo.env.portal.userIdentityId?.length,
+          portletStorageId,
+          limit,
+          sortBy,
+          canEdit,
+          pageRef,
         },
         template: `<gamification-overview-programs id="${appId}" />`,
         created() {

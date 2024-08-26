@@ -1,7 +1,3 @@
-<%@page import="org.exoplatform.portal.config.model.Page"%>
-<%@page import="org.exoplatform.portal.application.PortalRequestContext"%>
-<%@page import="org.exoplatform.portal.config.UserACL"%>
-<%@page import="org.exoplatform.container.ExoContainerContext"%>
 <%
 /**
  * This file is part of the Meeds project (https://meeds.io/).
@@ -25,7 +21,10 @@
 <%@ page import="org.exoplatform.social.webui.Utils"%>
 <%@ page import="org.exoplatform.social.core.identity.model.Identity" %>
 <%@ page import="org.exoplatform.social.core.identity.model.Profile" %>
-<%@ page import="org.exoplatform.portal.config.model.Page" %>
+<%@ page import="org.exoplatform.portal.config.model.Page"%>
+<%@ page import="org.exoplatform.portal.application.PortalRequestContext"%>
+<%@ page import="org.exoplatform.portal.config.UserACL"%>
+<%@ page import="org.exoplatform.container.ExoContainerContext"%>
 <%
   String profileOwnerId = Utils.getOwnerIdentityId();
   Identity ownerIdentity = Utils.getOwnerIdentity(true);
