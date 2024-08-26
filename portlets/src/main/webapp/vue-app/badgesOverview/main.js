@@ -31,24 +31,29 @@ const vuetify = Vue.prototype.vuetifyOptions;
 // getting language of user
 const lang = eXo?.env?.portal?.language || 'en';
 
-const resourceBundleName = 'locale.addon.Gamification';
-const url = `/gamification-portlets/i18n/${resourceBundleName}?lang=${lang}`;
+const urls = [
+  `/gamification-portlets/i18n/locale.addon.Gamification?lang=${lang}`,
+  `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`
+];
 
 const appId = 'badgesOverview';
-const cacheId = `${appId}_${eXo.env.portal.profileOwnerIdentityId}`;
 
-export function init() {
-  const appElement = document.createElement('div');
-  appElement.id = appId;
-
+export function init(portletStorageId, showName, sortBy, canEdit, pageRef) {
   //getting locale ressources
-  exoi18n.loadLanguageAsync(lang, url)
+  exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       // init Vue app when locale ressources are ready
       Vue.createApp({
-        template: `<badges-overview id='${appId}' v-cacheable="{cacheId: '${cacheId}'}" />`,
+        data: {
+          portletStorageId,
+          showName,
+          sortBy,
+          canEdit,
+          pageRef,
+        },
+        template: `<badges-overview id='${appId}' />`,
         i18n,
         vuetify,
-      }, appElement, 'Badges Overview');
+      }, `#${appId}`, 'Badges Overview');
     });
 }
