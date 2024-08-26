@@ -45,7 +45,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-card
           v-if="!loading"
           :class="!loading && 'd-flex'"
-          class="align-center justify-center transparent flex-grow-0 flex-shrink-0 px-5 pb-2"
+          class="align-center justify-center transparent flex-grow-0 flex-shrink-0 border-box-sizing px-5 pb-2 ma-auto"
+          max-width="100%"
           min-height="100"
           flat>
           <card-carousel
@@ -68,9 +69,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-hover>
     <badges-overview-drawer />
     <badges-overview-settings-drawer v-if="$root.canEdit" />
-    <gamification-rules-overview-list-drawer
-      ref="listDrawer" />
-    <engagement-center-rule-extensions />
   </v-app>
 </template>
 
