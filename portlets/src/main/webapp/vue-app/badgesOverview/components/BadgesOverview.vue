@@ -83,7 +83,7 @@ export default {
   }),
   computed: {
     sortBy() {
-      return this.$root.sortBy;
+      return this.$root.badgesSortBy;
     },
     sortedBadges() {
       const badges = this.badges.slice();
