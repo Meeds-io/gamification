@@ -28,14 +28,14 @@
     eager
     @closed="reset">
     <template slot="title">
-      {{ $t('gamification.programs.overviewSettings.title') }}
+      {{ $t('gamification.rules.overviewSettings.title') }}
     </template>
     <template v-if="drawer" #content>
       <div class="d-flex align-center pa-5">
-        <div>{{ $t('gamification.programs.overviewSettings.sortItemsBy') }}</div>
+        <div>{{ $t('gamification.rules.overviewSettings.sortItemsBy') }}</div>
         <select
           v-model="sortBy"
-          :aria-label="$t('gamification.programs.overviewSettings.sortItemsBy')"
+          :aria-label="$t('gamification.rules.overviewSettings.sortItemsBy')"
           class="width-auto ms-auto my-auto ignore-vuetify-classes">
           <option
             v-for="s in sortTypes"
@@ -45,11 +45,41 @@
           </option>
         </select>
       </div>
+      <div class="d-flex align-center px-5 pb-5">
+        <div>{{ $t('gamification.rules.overviewSettings.itemsCountLabel') }}</div>
+      </div>
       <div class="d-flex align-center px-5">
-        <div>{{ $t('gamification.programs.overviewSettings.itemsCountLabel') }}</div>
+        <div class="font-weight-bold">{{ $t('gamification.rules.overviewSettings.actionsEndingSoon') }}</div>
         <number-input
-          v-model="limit"
+          v-model="endingRulesLimit"
+          :min="0"
+          :max="25"
+          :step="1"
+          class="ms-auto me-n1 my-0 pa-0" />
+      </div>
+      <div class="d-flex align-center px-5">
+        <div class="font-weight-bold">{{ $t('gamification.rules.overviewSettings.actionsToDoFirst') }}</div>
+        <number-input
+          v-model="lockedRulesLimit"
+          :min="0"
+          :max="25"
+          :step="1"
+          class="ms-auto me-n1 my-0 pa-0" />
+      </div>
+      <div class="d-flex align-center px-5">
+        <div class="font-weight-bold">{{ $t('gamification.rules.overviewSettings.actionsAvailable') }}</div>
+        <number-input
+          v-model="availableRulesLimit"
           :min="1"
+          :max="25"
+          :step="1"
+          class="ms-auto me-n1 my-0 pa-0" />
+      </div>
+      <div class="d-flex align-center px-5">
+        <div class="font-weight-bold">{{ $t('gamification.rules.overviewSettings.actionsSoonAvailable') }}</div>
+        <number-input
+          v-model="upcomingRulesLimit"
+          :min="0"
           :max="25"
           :step="1"
           class="ms-auto me-n1 my-0 pa-0" />
@@ -62,14 +92,14 @@
           :title="$t('links.label.cancel')"
           class="btn ms-auto me-2"
           @click="close()">
-          {{ $t('gamification.programs.overviewSettings.cancel') }}
+          {{ $t('gamification.rules.overviewSettings.cancel') }}
         </v-btn>
         <v-btn
           :loading="loading"
           color="primary"
           elevation="0"
           @click="save()">
-          {{ $t('gamification.programs.overviewSettings.save') }}
+          {{ $t('gamification.rules.overviewSettings.save') }}
         </v-btn>
       </div>
     </template>
@@ -80,28 +110,34 @@ export default {
   data: () => ({
     drawer: false,
     loading: false,
-    limit: 4,
-    sortBy: 'modifiedDate',
+    lockedRulesLimit: 0,
+    endingRulesLimit: 0,
+    availableRulesLimit: 0,
+    upcomingRulesLimit: 0,
+    sortBy: 'score',
   }),
   computed: {
     sortTypes() {
       return [{
+        value: 'score',
+        label: this.$t('gamification.rules.overviewSettings.sortByScore'),
+      }, {
         value: 'title',
-        label: this.$t('gamification.programs.overviewSettings.sortByTitle'),
+        label: this.$t('gamification.rules.overviewSettings.sortByTitle'),
       }, {
         value: 'createdDate',
-        label: this.$t('gamification.programs.overviewSettings.sortByCreatedDate'),
+        label: this.$t('gamification.rules.overviewSettings.sortByCreatedDate'),
       }, {
         value: 'modifiedDate',
-        label: this.$t('gamification.programs.overviewSettings.sortByModifiedDate'),
+        label: this.$t('gamification.rules.overviewSettings.sortByModifiedDate'),
       }];
     },
   },
   created() {
-    this.$root.$on('programs-overview-settings', this.open);
+    this.$root.$on('rules-overview-settings', this.open);
   },
   beforeDestroy() {
-    this.$root.$off('programs-overview-settings', this.open);
+    this.$root.$off('rules-overview-settings', this.open);
   },
   methods: {
     open() {
@@ -109,8 +145,11 @@ export default {
       this.$refs.drawer.open();
     },
     reset() {
-      this.sortBy = this.$root.programsSortBy || 'modifiedDate';
-      this.limit = this.$root.limit || 4;
+      this.sortBy = this.$root.rulesSortBy || 'score';
+      this.lockedRulesLimit = this.$root.lockedRulesLimit;
+      this.endingRulesLimit = this.$root.endingRulesLimit;
+      this.availableRulesLimit = this.$root.availableRulesLimit;
+      this.upcomingRulesLimit = this.$root.upcomingRulesLimit;
       this.loading = false;
     },
     close() {
@@ -130,17 +169,29 @@ export default {
         },
         body: JSON.stringify({
           preferences: [{
-            name: 'limit',
-            value: String(this.limit),
+            name: 'lockedRulesLimit',
+            value: String(this.lockedRulesLimit),
           }, {
-            name: 'programsSortBy',
+            name: 'endingRulesLimit',
+            value: String(this.endingRulesLimit),
+          }, {
+            name: 'availableRulesLimit',
+            value: String(this.availableRulesLimit),
+          }, {
+            name: 'upcomingRulesLimit',
+            value: String(this.upcomingRulesLimit),
+          }, {
+            name: 'rulesSortBy',
             value: this.sortBy || 'modifiedDate',
           }],
         }),
       })
         .then(() => {
-          this.$root.programsSortBy = this.sortBy || 'modifiedDate';
-          this.$root.limit = this.limit;
+          this.$root.rulesSortBy = this.sortBy || 'score';
+          this.$root.lockedRulesLimit = this.lockedRulesLimit;
+          this.$root.endingRulesLimit = this.endingRulesLimit;
+          this.$root.availableRulesLimit = this.availableRulesLimit;
+          this.$root.upcomingRulesLimit = this.upcomingRulesLimit;
           this.close();
         })
         .finally(() => this.loading = false);

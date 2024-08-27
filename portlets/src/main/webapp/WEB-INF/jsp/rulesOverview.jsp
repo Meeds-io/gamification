@@ -18,15 +18,36 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 %>
-<%@page import="io.meeds.gamification.utils.Utils"%>
+<%@ page import="io.meeds.gamification.utils.Utils"%>
+<%@ page import="org.exoplatform.portal.config.model.Page"%>
+<%@ page import="org.exoplatform.portal.application.PortalRequestContext"%>
+<%@ page import="org.exoplatform.portal.config.UserACL"%>
+<%@ page import="org.exoplatform.container.ExoContainerContext"%>
 <%
-  Object showLocked = request.getAttribute("showLocked");
  if (Utils.canAccessAnonymousResources()) {
+   String portletStorageId = ((String) request.getAttribute("portletStorageId"));
+   String sortBy = request.getAttribute("rulesSortBy") == null ? "score" : ((String[]) request.getAttribute("rulesSortBy"))[0];
+   String lockedRulesLimit = request.getAttribute("lockedRulesLimit") == null ? "2" : ((String[]) request.getAttribute("lockedRulesLimit"))[0];
+   String endingRulesLimit = request.getAttribute("endingRulesLimit") == null ? "2" : ((String[]) request.getAttribute("endingRulesLimit"))[0];
+   String availableRulesLimit = request.getAttribute("availableRulesLimit") == null ? "4" : ((String[]) request.getAttribute("availableRulesLimit"))[0];
+   String upcomingRulesLimit = request.getAttribute("upcomingRulesLimit") == null ? "2" : ((String[]) request.getAttribute("upcomingRulesLimit"))[0];
+   Page currentPage = PortalRequestContext.getCurrentInstance().getPage();
+   boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage);
+   String pageRef = currentPage.getPageKey().format();
 %>
 <div class="VuetifyApp">
   <div id="rulesOverview">
     <script type="text/javascript">
-      window.require(['PORTLET/gamification-portlets/challengesOverview'], app => app.init(<%=showLocked != null && ((String[])showLocked).length == 1 && "true".equals(((String[])showLocked)[0])%>));
+      window.require(['PORTLET/gamification-portlets/challengesOverview'], app => app.init(
+        <%=portletStorageId%>,
+        <%=lockedRulesLimit%>,
+        <%=endingRulesLimit%>,
+        <%=availableRulesLimit%>,
+        <%=upcomingRulesLimit%>,
+        '<%=sortBy%>',
+        <%=canEdit%>,
+        '<%=pageRef%>'
+      ));
     </script>
   </div>
 </div>
