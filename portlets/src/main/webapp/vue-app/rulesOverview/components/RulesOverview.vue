@@ -17,25 +17,30 @@
 -->
 <template>
   <v-app v-if="!hidden">
-    <gamification-rules-overview-space-list
-      v-if="spaceId"
-      @hide="hidden = true" />
-    <gamification-rules-overview-full-list
-      v-else-if="$root.showLocked" />
-    <gamification-rules-overview-reduced-list
-      v-else
-      @open-list="$refs.listDrawer.open()" />
+    <v-hover v-model="hover">
+      <gamification-rules-overview-widget
+        :hover-edit="hoverEdit"
+        @open-list="$refs.listDrawer.open()"
+        @hide="hidden = true" />
+    </v-hover>
     <gamification-rules-overview-list-drawer
       ref="listDrawer" />
+    <gamification-rules-overview-settings-drawer
+      v-if="$root.canEdit" />
     <engagement-center-rule-extensions />
   </v-app>
 </template>
 <script>
 export default {
   data: () => ({
-    spaceId: eXo.env.portal.spaceId,
     hidden: false,
+    hover: false,
   }),
+  computed: {
+    hoverEdit() {
+      return this.$root.canEdit && this.hover;
+    }
+  },
   watch: {
     hidden() {
       this.$root.$updateApplicationVisibility(!this.hidden);

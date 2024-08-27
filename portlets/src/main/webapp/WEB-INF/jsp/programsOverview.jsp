@@ -7,7 +7,7 @@
   if (Utils.canAccessAnonymousResources()) {
     String portletStorageId = ((String) request.getAttribute("portletStorageId"));
     String limit = request.getAttribute("limit") == null ? "4" : ((String[]) request.getAttribute("limit"))[0];
-    String sortBy = request.getAttribute("sortBy") == null ? "" : ((String[]) request.getAttribute("sortBy"))[0];
+    String sortBy = request.getAttribute("programsSortBy") == null ? "" : ((String[]) request.getAttribute("programsSortBy"))[0];
     Page currentPage = PortalRequestContext.getCurrentInstance().getPage();
     boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage);
     String pageRef = currentPage.getPageKey().format();
@@ -16,7 +16,7 @@
     <div id="programsOverview">
       <script type="text/javascript">
         window.require(['PORTLET/gamification-portlets/programsOverview'], app => app.init(
-          '<%=portletStorageId%>',
+          <%=portletStorageId%>,
           <%=limit%>,
           '<%=sortBy%>',
           <%=canEdit%>,

@@ -35,6 +35,7 @@
         <div>{{ $t('gamification.badges.badgesOverviewSettings.sortItemsBy') }}</div>
         <select
           v-model="sortBy"
+          :aria-label="$t('gamification.badges.badgesOverviewSettings.sortItemsBy')"
           class="width-auto ms-auto my-auto ignore-vuetify-classes">
           <option
             v-for="s in sortTypes"
@@ -102,7 +103,7 @@ export default {
       this.$refs.drawer.open();
     },
     reset() {
-      this.sortBy = this.$root.sortBy || 'score';
+      this.sortBy = this.$root.badgesSortBy || 'score';
       this.showName = this.$root.showName;
       this.loading = false;
     },
@@ -126,13 +127,13 @@ export default {
             name: 'showName',
             value: !!this.showName,
           }, {
-            name: 'sortBy',
+            name: 'badgesSortBy',
             value: this.sortBy || 'score',
           }],
         }),
       })
         .then(() => {
-          this.$root.sortBy = this.sortBy || 'score';
+          this.$root.badgesSortBy = this.sortBy || 'score';
           this.$root.showName = this.showName;
           this.close();
         })
