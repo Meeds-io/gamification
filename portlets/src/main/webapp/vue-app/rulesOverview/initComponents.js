@@ -17,9 +17,11 @@
  */
 
 import RulesOverview from './components/RulesOverview.vue';
+import RulesOverviewSettingsDrawer from './components/RulesOverviewSettingsDrawer.vue';
 
 const components = {
   'gamification-rules-overview': RulesOverview,
+  'gamification-rules-overview-settings-drawer': RulesOverviewSettingsDrawer,
 };
 
 for (const key in components) {

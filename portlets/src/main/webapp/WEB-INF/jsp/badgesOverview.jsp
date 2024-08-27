@@ -33,7 +33,7 @@
   if (!isExternal) {
     String portletStorageId = ((String) request.getAttribute("portletStorageId"));
     String showName = request.getAttribute("showName") == null ? "false" : ((String[]) request.getAttribute("showName"))[0];
-    String sortBy = request.getAttribute("sortBy") == null ? "" : ((String[]) request.getAttribute("sortBy"))[0];
+    String sortBy = request.getAttribute("badgesSortBy") == null ? "" : ((String[]) request.getAttribute("badgesSortBy"))[0];
     Page currentPage = PortalRequestContext.getCurrentInstance().getPage();
     boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage);
     String pageRef = currentPage.getPageKey().format();
@@ -45,11 +45,11 @@
       <script type="text/javascript">
         eXo.env.portal.addOnLoadCallback(() => {
           window.require(['PORTLET/gamification-portlets/BadgesOverview'], app => app.init(
-              '<%=portletStorageId%>',
-              <%=showName%>,
-              '<%=sortBy%>',
-              <%=canEdit%>,
-              '<%=pageRef%>'
+            <%=portletStorageId%>,
+            <%=showName%>,
+            '<%=sortBy%>',
+            <%=canEdit%>,
+            '<%=pageRef%>'
           ));
         });
       </script>
