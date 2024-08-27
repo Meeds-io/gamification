@@ -44,7 +44,6 @@ module.exports = {
     myRewards: './src/main/webapp/vue-app/myRewards/main.js',
     topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',
     rulesOverview: './src/main/webapp/vue-app/rulesOverview/main.js',
-    rulesOverviewWidget: './src/main/webapp/vue-app/rulesOverviewWidget/main.js',
     programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
     createProgramButton: './src/main/webapp/vue-app/create-program-button/main.js',
     connectorUserProfile: './src/main/webapp/vue-app/connector-user-profile/main.js',

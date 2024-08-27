@@ -76,7 +76,7 @@ export default {
         type: 'ALL',
         status: 'ENABLED',
         expand: 'countActiveRules',
-        sortBy: 'modifiedDate',
+        sortBy: this.$root.programsSortBy || 'modifiedDate',
         sortDescending: true,
         lang: eXo.env.portal.language,
       })
