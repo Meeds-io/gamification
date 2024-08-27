@@ -38,7 +38,7 @@ const urls = [
 
 const appId = 'badgesOverview';
 
-export function init(portletStorageId, showName, sortBy, canEdit, pageRef) {
+export function init(portletStorageId, showName, badgesSortBy, canEdit, pageRef) {
   //getting locale ressources
   exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
@@ -47,8 +47,8 @@ export function init(portletStorageId, showName, sortBy, canEdit, pageRef) {
         data: {
           portletStorageId,
           showName,
-          sortBy,
-          canEdit,
+          badgesSortBy,
+          canEdit: portletStorageId && canEdit || false,
           pageRef,
         },
         template: `<badges-overview id='${appId}' />`,
