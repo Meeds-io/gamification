@@ -40,7 +40,7 @@
 
         <div class="d-flex align-center mb-2 mt-5">
           <div class="text-header me-2">
-            {{ $t(`gamification.profileStats.${period}`) }}
+            {{ title }}
           </div>
           <v-divider />
         </div>
@@ -111,6 +111,9 @@ export default {
     pageSize: Math.max(10, parseInt((window.innerHeight - 560) / 62)),
   }),
   computed: {
+    title() {
+      return this.$t(`gamification.profileStats.${this.period.toUpperCase()}`);
+    },
     noResultsText() {
       return this.$t('gamification.overview.emptyAchievementsMessage', {
         0: '<a class="primary--text font-weight-bold" onclick="window.dispatchEvent(new CustomEvent(\'rules-list-drawer-open\'))">',
