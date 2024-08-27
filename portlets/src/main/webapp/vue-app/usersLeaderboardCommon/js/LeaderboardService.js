@@ -22,7 +22,7 @@ export function getPrograms(filter) {
   if (filter?.offset) {
     formData.append('offset', filter.offset);
   }
-  if (filter?.limit) {
+  if (filter?.limit || filter?.limit === 0) {
     formData.append('limit', filter.limit);
   }
   if (filter?.status) {

@@ -79,7 +79,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   // File header
   private static final String[] COLUMNS                       = new String[] { "date", "grantee", "actionType", "programLabel",
-      "actionLabel", "points", "status" };
+                                                                               "actionLabel", "points", "status" };
 
   private static final String   SHEETNAME                     = "Achivements Report";
 
@@ -242,7 +242,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (eventPlugin != null) {
       rules = rules.stream()
                    .filter(ruleDTO -> MapUtils.isEmpty(ruleDTO.getEvent().getProperties())
-                       || eventPlugin.isValidEvent(ruleDTO.getEvent().getProperties(), eventDetails))
+                                      || eventPlugin.isValidEvent(ruleDTO.getEvent().getProperties(), eventDetails))
                    .toList();
     }
     return rules.stream()
@@ -292,8 +292,8 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
 
     if (!Utils.isRewardingManager(username) && !programService.isProgramOwner(realization.getProgram().getId(), username)) {
-      throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user"
-          + realization.getEarnerId());
+      throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user" +
+          realization.getEarnerId());
     }
     if (RealizationStatus.CANCELED.name().equals(realization.getStatus())
         || RealizationStatus.DELETED.name().equals(realization.getStatus())) {
@@ -317,8 +317,8 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       String eventDetails = null;
       if (rule != null) {
         String eventReviewed = rule.getEvent() != null ? rule.getEvent().getTrigger() : null;
-        eventDetails = "{ruleId: " + rule.getId() + ", programId: " + rule.getProgram().getId() + ", eventReviewed: "
-            + eventReviewed + "}";
+        eventDetails = "{ruleId: " + rule.getId() + ", programId: " + rule.getProgram().getId() + ", eventReviewed: " +
+            eventReviewed + "}";
       }
       createRealizations(GAMIFICATION_CONTRIBUTIONS_REVIEW_CONTRIBUTIONS,
                          eventDetails,
@@ -422,7 +422,8 @@ public class RealizationServiceImpl implements RealizationService, Startable {
         realizationRestriction.setValidPrerequisites(new HashMap<>());
         rule.getPrerequisiteRuleIds().forEach(prerequisiteRuleId -> {
           boolean prerequisiteRealized = realizationStorage.countRealizationsByRuleIdAndEarnerId(earnerIdentityId,
-                                                                                                 prerequisiteRuleId) > 0;
+                                                                                                 prerequisiteRuleId)
+              > 0;
           // Rule Id made as string due to JsonGeneratorImpl which needs a
           // String as key
           realizationRestriction.getValidPrerequisites().put(String.valueOf(prerequisiteRuleId), prerequisiteRealized);
@@ -542,7 +543,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     if (realization == null) {
       throw new ObjectNotFoundException(String.format(REALIZATION_NOT_EXIST_MESSAGE, realizationId));
     } else if (programService.canViewProgram(realization.getProgram().getId(), userAclIdentity.getUserId())
-        || realization.getEarnerId().equals(userIdentity.getId())) {
+               || realization.getEarnerId().equals(userIdentity.getId())) {
       return realization;
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to access achievement");
@@ -641,8 +642,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   private boolean isSelfFilter(RealizationFilter realizationFilter, String username) {
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     boolean filterByEarner = CollectionUtils.isNotEmpty(realizationFilter.getEarnerIds());
-    return filterByEarner && realizationFilter.getEarnerIds().size() == 1 && userIdentity != null
-        && realizationFilter.getEarnerIds().get(0).equals(userIdentity.getId());
+    return filterByEarner && realizationFilter.getEarnerIds().size() == 1
+           && userIdentity != null
+           && realizationFilter.getEarnerIds().get(0).equals(userIdentity.getId());
   }
 
   @SuppressWarnings("unchecked")
@@ -695,7 +697,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   private boolean isRecurrenceValid(RuleDTO rule, String earnerIdentityId) {
     return rule.getRecurrence() == null || rule.getRecurrence() == RecurrenceType.NONE
-        || hasNoRealizationInPeriod(earnerIdentityId, rule.getId(), rule.getRecurrence().getPeriodStartDate());
+           || hasNoRealizationInPeriod(earnerIdentityId, rule.getId(), rule.getRecurrence().getPeriodStartDate());
   }
 
   private boolean hasNoRealizationInPeriod(String earnerIdentityId, Long ruleId, Date sinceDate) {
@@ -741,7 +743,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     Date startDate = Utils.parseSimpleDate(rule.getStartDate());
     Date endDate = Utils.parseSimpleDate(rule.getEndDate());
     return (startDate == null || startDate.getTime() < System.currentTimeMillis())
-        && (endDate == null || endDate.getTime() > System.currentTimeMillis());
+           && (endDate == null || endDate.getTime() > System.currentTimeMillis());
   }
 
   private List<RuleDTO> findActiveRulesByEvent(String eventName) {
@@ -783,8 +785,9 @@ public class RealizationServiceImpl implements RealizationService, Startable {
           || RealizationStatus.REJECTED.name().equals(realization.getStatus())) {
         String notificationPluginKey =
                                      RealizationStatus.ACCEPTED.name()
-                                                               .equals(realization.getStatus()) ? CONTRIBUTION_ACCEPTED_NOTIFICATION_ID
-                                                                                                : CONTRIBUTION_REJECTED_NOTIFICATION_ID;
+                                                               .equals(realization.getStatus()) ?
+                                                                                                CONTRIBUTION_ACCEPTED_NOTIFICATION_ID :
+                                                                                                CONTRIBUTION_REJECTED_NOTIFICATION_ID;
         NotificationContext ctx = NotificationContextImpl.cloneInstance();
         ctx.append(REALIZATION_NOTIFICATION_PARAMETER, realization)
            .getNotificationExecutor()
@@ -817,8 +820,8 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     Row row = sheet.createRow(rowIndex);
     try {
       RuleDTO rule = realization.getRuleId() != null
-          && realization.getRuleId() != 0 ? ruleService.findRuleById(realization.getRuleId())
-                                          : ruleService.findRuleByTitle(realization.getActionTitle());
+                     && realization.getRuleId() != 0 ? ruleService.findRuleById(realization.getRuleId()) :
+                                                     ruleService.findRuleByTitle(realization.getActionTitle());
 
       String eventTitle = rule == null || rule.getEvent() == null ? null : rule.getEvent().getTitle();
       String actionLabel = realization.getActionTitle() != null ? realization.getActionTitle() : eventTitle;
@@ -854,10 +857,20 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   private Date getFromDate(String period) {
     Date fromDate = null;
+    LocalDate now = LocalDate.now();
     if (Period.WEEK.name().equals(period)) {
-      fromDate = from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+      fromDate = from(now.with(DayOfWeek.MONDAY)
+                         .atStartOfDay(ZoneId.systemDefault())
+                         .toInstant());
     } else if (Period.MONTH.name().equals(period)) {
-      fromDate = from(LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant());
+      fromDate = from(now.with(TemporalAdjusters.firstDayOfMonth())
+                         .atStartOfDay(ZoneId.systemDefault())
+                         .toInstant());
+    } else if (Period.QUARTER.name().equals(period)) {
+      fromDate = from(now.with(now.getMonth().firstMonthOfQuarter())
+                         .with(TemporalAdjusters.firstDayOfMonth())
+                         .atStartOfDay(ZoneId.systemDefault())
+                         .toInstant());
     }
     return fromDate;
   }
@@ -866,7 +879,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
     return space == null ? 0 : Long.parseLong(space.getId());
   }
-  
+
   private void computeRealizationScore(RealizationDTO realizationDTO, EventDTO event, String eventDetails, int score) {
     EventPlugin eventPlugin = eventService.getEventPlugin(event.getTrigger());
     if (eventPlugin != null) {
