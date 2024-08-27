@@ -15,9 +15,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import MyContributions from './components/MyContributions.vue';
+import MyContributionsSettingsDrawer from './components/MyContributionsSettingsDrawer.vue';
+import MyContributionsProfileChart from './components/MyContributionsProfileChart.vue';
 
 const components = {
   'my-contributions': MyContributions,
+  'my-contributions-settings-drawer': MyContributionsSettingsDrawer,
+  'my-contributions-profile-chart': MyContributionsProfileChart,
 };
 
 for (const key in components) {

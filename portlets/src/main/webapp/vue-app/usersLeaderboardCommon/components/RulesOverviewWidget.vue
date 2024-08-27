@@ -70,8 +70,7 @@
     <template v-if="!loading || !emptyWidget" #default>
       <gamification-rules-overview-empty-widget
         v-if="emptyWidget"
-        :display-completed="!!spaceId && activeRulesSize"
-        :class="$root.canEdit && 'mt-n2'" />
+        :display-completed="!!spaceId && activeRulesSize" />
       <div v-else class="mt-5">
         <template v-if="endingRulesCount">
           <div class="d-flex align-center">
