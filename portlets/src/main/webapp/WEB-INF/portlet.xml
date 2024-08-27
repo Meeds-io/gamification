@@ -298,12 +298,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <title>Challenges Overview</title>
       <keywords>Challenges Overview</keywords>
     </portlet-info>
-    <portlet-preferences>
-      <preference>
-        <name>showLocked</name>
-        <read-only>false</read-only>
-      </preference>
-    </portlet-preferences>
   </portlet>
 
   <portlet>
