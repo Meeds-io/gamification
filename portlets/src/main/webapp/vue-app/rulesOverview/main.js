@@ -23,7 +23,15 @@ const urls = [
 ];
 const appId = 'rulesOverview';
 
-export function init(showLocked) {
+export function init(
+  portletStorageId,
+  lockedRulesLimit,
+  endingRulesLimit,
+  availableRulesLimit,
+  upcomingRulesLimit,
+  rulesSortBy,
+  canEdit,
+  pageRef) {
   exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       Vue.createApp({
@@ -31,7 +39,14 @@ export function init(showLocked) {
           isAnonymous: !eXo.env.portal.userIdentityId?.length,
           now: Date.now(),
           interval: null,
-          showLocked,
+          portletStorageId,
+          lockedRulesLimit,
+          endingRulesLimit,
+          availableRulesLimit,
+          upcomingRulesLimit,
+          rulesSortBy,
+          canEdit: portletStorageId && canEdit || false,
+          pageRef,
         },
         template: `<gamification-rules-overview id="${appId}" />`,
         created() {

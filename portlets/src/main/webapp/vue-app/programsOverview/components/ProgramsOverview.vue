@@ -114,7 +114,7 @@ export default {
       return this.$root.limit || 4;
     },
     sortBy() {
-      return this.$root.sortBy || 'modifiedDate';
+      return this.$root.programsSortBy || 'modifiedDate';
     },
   },
   watch: {

@@ -238,7 +238,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       queryName = (count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX) + "By" + StringUtils.join(suffixes, "And");
     }
     if (StringUtils.isBlank(sortField)) {
-      sortField = "Score";
+      sortField = "score";
     }
     queryName += "OrderBy" + StringUtils.capitalize(sortField) + (sortDescending ? "Desc" : "Asc");
     return queryName;
@@ -265,7 +265,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   private String getSortFieldName(String sortField) {
     if (StringUtils.isBlank(sortField)) {
-      sortField = "Score";
+      sortField = "score";
     }
     return switch (sortField) {
     case "title": {
