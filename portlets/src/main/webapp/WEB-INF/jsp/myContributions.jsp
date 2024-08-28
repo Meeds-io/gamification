@@ -26,7 +26,7 @@
 <%
   String portletStorageId = ((String) request.getAttribute("portletStorageId"));
   String myContributionsPeriod = request.getAttribute("myContributionsPeriod") == null ? "week" : ((String[]) request.getAttribute("myContributionsPeriod"))[0];
-  String myContributionsProgramLimit = request.getAttribute("myContributionsProgramLimit") == null ? "25" : ((String[]) request.getAttribute("myContributionsProgramLimit"))[0];
+  String myContributionsProgramLimit = request.getAttribute("myContributionsProgramLimit") == null ? "5" : ((String[]) request.getAttribute("myContributionsProgramLimit"))[0];
   String myContributionsDisplayLegend = request.getAttribute("myContributionsDisplayLegend") == null ? "true" : ((String[]) request.getAttribute("myContributionsDisplayLegend"))[0];
   Page currentPage = PortalRequestContext.getCurrentInstance().getPage();
   boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage);
