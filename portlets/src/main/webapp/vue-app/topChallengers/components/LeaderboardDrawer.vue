@@ -34,6 +34,7 @@
     <template v-if="drawer" #content>
       <users-leaderboard-tabs
         ref="leaderboard"
+        :period="period"
         :page-size="pageSize"
         class="px-5 pb-5"
         embedded
@@ -64,11 +65,13 @@ export default {
   data: () => ({
     drawer: false,
     loading: false,
+    period: null,
     hasMore: false,
     programId: '0',
   }),
   methods: {
-    open() {
+    open(period) {
+      this.period = period;
       this.$refs.drawer.open();
     },
     close() {

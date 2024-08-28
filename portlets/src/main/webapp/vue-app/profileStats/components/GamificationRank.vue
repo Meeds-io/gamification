@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-layout class="row wrap mx-0 fill-height">
+  <div class="my-auto">
     <div v-if="!isOverviewDisplay && !loading" class="d-flex align-center full-width mt-3 ms-n2">
       <v-btn
         class="pa-0 my-auto"
@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-icon>
       </v-btn>
       <div class="d-flex flex-grow-1 flex-shrink-1 text-truncate">
-        <span class="widget-text-header text-truncate">{{ $t('homepage.profileStatus.weeklyRank') }}</span>
+        <span class="widget-text-header text-truncate">{{ title }}</span>
       </div>
     </div>
     <div
@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :class="!isOverviewDisplay && 'mt-n7'"
       class="d-flex flex-column align-center justify-center full-width fill-height">
       <v-icon color="tertiary" size="54">fa-trophy</v-icon>
-      <span class="text-body mt-7">{{ $t('gamification.overview.weeklyLeaderboard') }}</span>
+      <span class="text-body mt-7">{{ placeholder }}</span>
     </div>
     <template v-else-if="!loading">
       <v-flex class="xs12 mb-1">
@@ -58,11 +58,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
                 avatar
                 popover-left-position />
-              <v-card-text
-                class="top2 grey lighten-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
-                style="height: 40px">
+              <v-img
+                src="/gamification-portlets/images/podium/2.webp"
+                class="top2 d-flex white--text justify-center align-center text-title"
+                width="80">
                 {{ podium[1].score }}
-              </v-card-text>
+              </v-img>
             </v-card>
             <v-card
               v-if="podium[0]"
@@ -78,11 +79,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 extra-class="ml-2 me-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
                 avatar
                 popover-left-position />
-              <v-card-text
-                class="top1 yellow darken-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
-                style="height: 55px">
+              <v-img
+                src="/gamification-portlets/images/podium/1.webp"
+                class="top1 d-flex white--text justify-center align-center text-title"
+                width="80">
                 {{ podium[0].score }}
-              </v-card-text>
+              </v-img>
             </v-card>
             <v-card
               v-if="podium[2]"
@@ -98,11 +100,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
                 avatar
                 popover-left-position />
-              <v-card-text
-                class="top3 amber darken-1 px-3 pb-1 flex d-flex white--text justify-center font-weight-bold pt-2px"
-                style="height: 25px">
+              <v-img
+                src="/gamification-portlets/images/podium/3.webp"
+                class="top3 d-flex white--text justify-center align-center text-title"
+                width="80">
                 {{ podium[2].score }}
-              </v-card-text>
+              </v-img>
             </v-card>
           </v-flex>
         </v-layout>
@@ -120,7 +123,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <users-leaderboard-profile-achievements-drawer
         ref="profileStatsDrawer" />
     </template>
-  </v-layout>
+  </div>
 </template>
 <script>
 export default {
@@ -138,21 +141,51 @@ export default {
     loading: true,
   }),
   computed: {
+    period() {
+      return this.isOverviewDisplay && this.$root.topChallengersPeriod || 'week';
+    },
+    title() {
+      return this.period === 'all' ?
+        this.$t('homepage.profileStatus.allTimeRank')
+        : this.$t(`homepage.profileStatus.${this.period.toLowerCase()}lyRank`);
+    },
+    placeholder() {
+      return this.period === 'all' ?
+        this.$t('gamification.overview.allTimeLeaderboard')
+        : this.$t(`gamification.overview.${this.period.toLowerCase()}lyLeaderboard`);
+    },
+    displayPodium() {
+      return !this.isOverviewDisplay;
+    },
+    displayCurrentPosition() {
+      return this.isOverviewDisplay ? (this.$root.topChallengersCurrentPosition || false) : true;
+    },
     podium() {
       return this.users.slice(0, this.podiumLimit);
     },
     displayPlaceholder() {
       return !this.loading && !this.users?.length;
     },
+    belowPoduimLimit() {
+      return this.isOverviewDisplay ? (this.displayCurrentPosition ? 1 : 0) : this.listBelowPoduimLimit;
+    },
     limit() {
-      return this.listBelowPoduimLimit + this.podiumLimit;
+      return this.belowPoduimLimit + this.podiumLimit;
     },
     listBelowPoduim() {
       if (this.users?.length <= this.podiumLimit) {
-        return this.users;
+        return this.isOverviewDisplay ? [] : this.users;
       } else {
-        return this.users.slice(this.users?.length - this.listBelowPoduimLimit);
+        return this.users.slice(this.users?.length - this.belowPoduimLimit);
       }
+    },
+  },
+  watch: {
+    period() {
+      this.getLeaderboard();
+    },
+    displayCurrentPosition() {
+      this.getLeaderboard();
     },
   },
   created() {
@@ -163,23 +196,23 @@ export default {
       this.loading = true;
       return this.$leaderboardService.getLeaderboard({
         identityId: this.identityId,
-        period: 'WEEK',
+        period: this.period,
         limit: this.limit,
       })
         .then(users => {
           const currentUser = this.identityId && users.find(u => u.identityId === Number(this.identityId));
-          if (currentUser?.rank && currentUser.rank > (this.limit - 1)) {
-            const listBelowPoduimOffset = currentUser.rank - this.listBelowPoduimLimit;
-            const listBelowPoduimLimit = parseInt((this.listBelowPoduimLimit - 1) / 2) * 3 + 1;
+          if (this.belowPoduimLimit > 0
+              && currentUser?.rank
+              && currentUser.rank > (this.limit - 1)) {
+            const listBelowPoduimOffset = currentUser.rank - this.belowPoduimLimit;
+            const listBelowPoduimLimit = parseInt((this.belowPoduimLimit - 1) / 2) * 3 + 1;
             return this.$leaderboardService.getLeaderboard({
-              period: 'WEEK',
+              period: this.period,
               offset: listBelowPoduimOffset,
               limit: listBelowPoduimLimit,
             })
               .then(otherUsers => {
-                this.users = [...users, ...otherUsers]
-                  .sort((v1, v2) => v1.rank - v2.rank)
-                  .filter((v, i, array) => array.findIndex(v2 => v?.identityId === v2?.identityId) === i);
+                this.users = [...users, ...otherUsers];
               });
           } else {
             this.users = users.slice(0, this.limit);
