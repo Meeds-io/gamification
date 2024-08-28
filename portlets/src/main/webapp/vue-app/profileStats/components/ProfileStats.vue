@@ -19,11 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     flat
     dark>
     <v-container class="application-body" pa-0>
-      <v-layout
-        row
-        wrap
-        mx-0
-        class="profileCard">
+      <div class="profileCard">
         <v-fade-transition>
           <user-dashbord
             v-if="!isFlipped"
@@ -46,7 +42,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             class="profileFlippedCard ConnexionsRequests px-5 pb-5"
             @flip="flip" />
         </v-fade-transition>
-      </v-layout>
+      </div>
     </v-container>
     <connections-drawer
       ref="connectionsDrawer"
