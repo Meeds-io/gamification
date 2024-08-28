@@ -33,7 +33,7 @@
             <div class="spacer"></div>
             <div
               :class="displayPlaceholder && 'mt-2 me-2'"
-              class="position-absolute t-0 r-0 z-index-one">
+              class="position-absolute absolute-vertical-center r-0 z-index-one">
               <v-btn
                 v-if="!displayPlaceholder && !loading"
                 :icon="hoverEdit"
