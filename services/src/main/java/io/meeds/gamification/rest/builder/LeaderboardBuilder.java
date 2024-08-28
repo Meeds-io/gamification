@@ -50,9 +50,11 @@ import io.meeds.social.translation.service.TranslationService;
 
 public class LeaderboardBuilder {
 
-  private static final String MONTH_PERIOD_NAME = "MONTH";
+  private static final String QUARTER_PERIOD_NAME = "QUARTER";
 
-  private static final String WEEK_PERIOD_NAME  = "WEEK";
+  private static final String MONTH_PERIOD_NAME   = "MONTH";
+
+  private static final String WEEK_PERIOD_NAME    = "WEEK";
 
   private LeaderboardBuilder() {
     // Utils Class
@@ -152,15 +154,23 @@ public class LeaderboardBuilder {
 
   public static Date getCurrentPeriodStartDate(String period) {
     Date fromDate;
-    switch (period) {
+    LocalDate now = LocalDate.now();
+    switch (StringUtils.upperCase(period)) {
     case WEEK_PERIOD_NAME:
-      fromDate = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+      fromDate = Date.from(now.with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
       break;
     case MONTH_PERIOD_NAME:
-      fromDate = Date.from(LocalDate.now()
-                                    .with(TemporalAdjusters.firstDayOfMonth())
-                                    .atStartOfDay(ZoneId.systemDefault())
-                                    .toInstant());
+      fromDate = Date.from(now
+                              .with(TemporalAdjusters.firstDayOfMonth())
+                              .atStartOfDay(ZoneId.systemDefault())
+                              .toInstant());
+      break;
+    case QUARTER_PERIOD_NAME:
+      fromDate = Date.from(now
+                              .with(now.getMonth().firstMonthOfQuarter())
+                              .with(TemporalAdjusters.firstDayOfMonth())
+                              .atStartOfDay(ZoneId.systemDefault())
+                              .toInstant());
       break;
     default:
       fromDate = null;
