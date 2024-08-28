@@ -23,13 +23,23 @@ const urls = [
 ];
 const appId = 'topChallengers';
 
-export function init() {
+export function init(
+  portletStorageId,
+  topChallengersPeriod,
+  topChallengersCurrentPosition,
+  canEdit,
+  pageRef) {
   exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       Vue.createApp({
         data: {
           isAnonymous: !eXo.env.portal.userIdentityId?.length,
           actionValueExtensions: [],
+          portletStorageId,
+          topChallengersPeriod,
+          topChallengersCurrentPosition,
+          canEdit,
+          pageRef
         },
         template: `<gamification-overview-top-challengers id="${appId}" />`,
         i18n,
