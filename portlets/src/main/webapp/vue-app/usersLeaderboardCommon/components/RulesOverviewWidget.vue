@@ -207,7 +207,6 @@ export default {
             && !lockedRulesToDisplay.find(lr => lr.id === r.id)
             && r.endDate
             && (new Date(r.endDate).getTime() - Date.now()) < this.weekInMs);
-      endingRules.sort((r1, r2) => new Date(r1.endDate).getTime() - new Date(r2.endDate).getTime());
       return endingRules;
     },
     validRules() {
@@ -220,7 +219,6 @@ export default {
         .filter(r => (r?.userInfo?.context?.valid || this.isRuleValidButLocked(r))
             && !lockedRulesToDisplay.find(lr => lr.id === r.id)
             && !endingRulesToDisplay.find(er => er.id === r.id));
-      validRules.sort((r1, r2) => r2.score - r1.score);
       return validRules;
     },
     upcomingRules() {
@@ -230,7 +228,6 @@ export default {
       const upcomingRules = this.rules
         .filter(this.isRuleValidButUpcoming)
         .filter(r => r.startDate && (new Date(r.startDate).getTime() - Date.now()) < this.weekInMs);
-      upcomingRules.sort((r1, r2) => new Date(r1.startDate).getTime() - new Date(r2.startDate).getTime());
       return upcomingRules;
     },
     endingRulesCount() {
