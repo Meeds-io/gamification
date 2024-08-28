@@ -1,11 +1,6 @@
 package io.meeds.gamification.rest;
 
 import java.io.InputStream;
-import java.time.DayOfWeek;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
