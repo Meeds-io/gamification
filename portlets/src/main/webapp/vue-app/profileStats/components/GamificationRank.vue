@@ -110,7 +110,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex xs12>
+      <v-flex v-if="hasListBelowPoduim" xs12>
         <v-list class="py-0" min-height="110">
           <users-leaderboard-profile
             v-for="user in listBelowPoduim"
@@ -178,6 +178,9 @@ export default {
       } else {
         return this.users.slice(this.users?.length - this.belowPoduimLimit);
       }
+    },
+    hasListBelowPoduim() {
+      return this.listBelowPoduim?.length;
     },
   },
   watch: {
