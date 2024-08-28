@@ -31,7 +31,7 @@
             <div class="spacer"></div>
             <div
               :class="neverContributed && 'mt-2 me-2'"
-              class="position-absolute t-0 r-0 z-index-one">
+              class="position-absolute absolute-vertical-center r-0 z-index-one">
               <v-btn
                 v-if="!neverContributed"
                 :icon="hoverEdit"
