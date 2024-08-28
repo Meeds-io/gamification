@@ -40,7 +40,7 @@
                 min-width="auto"
                 class="pa-0"
                 text
-                @click="$refs.detailsDrawer.open(user, period)">
+                @click="$refs.detailsDrawer.open(userDetails, period)">
                 <v-icon
                   v-if="hoverEdit"
                   size="18"
@@ -90,6 +90,7 @@
 export default {
   data: () => ({
     loading: true,
+    allPeriodUser: null,
     user: null,
     userScore: null,
     hover: false,
@@ -101,6 +102,17 @@ export default {
     },
     neverContributed() {
       return this.hasZeroPoints && !this.userScore;
+    },
+    userDetails() {
+      return this.user || {
+        score: 0,
+        rank: 0,
+        identityId: this.allPeriodUser?.identityId,
+        fullname: this.allPeriodUser?.fullname,
+        remoteId: this.allPeriodUser?.remoteId,
+        avatarUrl: this.allPeriodUser?.avatarUrl,
+        profileUrl: this.allPeriodUser?.profileUrl
+      };
     },
     period() {
       return this.$root.myContributionsPeriod || 'week';
@@ -144,7 +156,8 @@ export default {
         limit: 0,
       })
         .then(data => {
-          this.userScore = data?.find?.(u => u.identityId === Number(eXo.env.portal.profileOwnerIdentityId))?.score || 0;
+          this.allPeriodUser = data?.find?.(u => u.identityId === Number(eXo.env.portal.profileOwnerIdentityId));
+          this.userScore = this.allPeriodUser?.score || 0;
         });
     },
     retrieveUserStats() {
@@ -156,7 +169,7 @@ export default {
       })
         .then(data => {
           this.user = data?.find?.(u => u.identityId === Number(eXo.env.portal.profileOwnerIdentityId)) || null;
-          if (!this.user?.score) {
+          if (!this.user?.score && this.$root.myContributionsPeriod !== 'all') {
             return this.retrieveAllPeriodUserStats();
           }
         })
