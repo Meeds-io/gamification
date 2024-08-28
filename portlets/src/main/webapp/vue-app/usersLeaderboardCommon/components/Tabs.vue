@@ -27,11 +27,12 @@
         :show-arrows="mobile"
         class="flex-grow-1 flex-shrink-1 width-auto">
         <v-tab
-          v-for="period in periods"
-          :key="period.value"
-          :href="`#${period.value}`"
+          v-for="p in periods"
+          :key="p.value"
+          :value="p.value"
+          :href="`#${p.value}`"
           class="overflow-hidden px-2">
-          <span class="text-none">{{ period.text }}</span>
+          <span class="text-none">{{ p.text }}</span>
         </v-tab>
         <v-tabs-slider color="secondary" />
       </v-tabs>
@@ -56,16 +57,16 @@
     </div>
     <v-tabs-items v-model="selectedPeriod">
       <v-tab-item
-        v-for="period in periods"
-        :id="period.value"
-        :key="period.value"
-        :value="period.value">
+        v-for="p in periods"
+        :id="p.value"
+        :key="p.value"
+        :value="p.value">
         <v-progress-linear v-if="loading" indeterminate />
         <users-leaderboard-profiles
           v-if="!selectionChanged"
           :users="users"
           :current-rank="!loading && currentRank"
-          :period="period.value"
+          :period="p.value"
           :embedded="embedded" />
       </v-tab-item>
     </v-tabs-items>
@@ -90,6 +91,10 @@
 <script>
 export default {
   props: {
+    period: {
+      type: String,
+      default: null,
+    },
     pageSize: {
       type: Number,
       default: () => 10,
@@ -106,18 +111,21 @@ export default {
     currentRank: null,
     loading: false,
     selectionChanged: false,
-    selectedPeriod: 'WEEK',
+    selectedPeriod: 'week',
   }),
   computed: {
     periods() {
       return [{
-        value: 'WEEK',
+        value: 'week',
         text: this.$t('exoplatform.gamification.leaderboard.selectedPeriod.WEEK'),
       },{
-        value: 'MONTH',
+        value: 'month',
         text: this.$t('exoplatform.gamification.leaderboard.selectedPeriod.MONTH'),
       },{
-        value: 'ALL',
+        value: 'quarter',
+        text: this.$t('exoplatform.gamification.leaderboard.selectedPeriod.QUARTER'),
+      },{
+        value: 'all',
         text: this.$t('exoplatform.gamification.leaderboard.selectedPeriod.ALL'),
       }];
     },
@@ -133,13 +141,13 @@ export default {
   },
   watch: {
     selectedPeriod(newVal, oldVal) {
-      if (oldVal) {
+      if (oldVal && !this.loading) {
         this.selectionChanged = true;
         this.refreshBoard(this.pageSize);
       }
     },
     programId(newVal, oldVal) {
-      if (oldVal) {
+      if (oldVal && !this.loading) {
         this.selectionChanged = true;
         this.refreshBoard(this.pageSize);
       }
@@ -154,6 +162,9 @@ export default {
   created() {
     this.limit = this.pageSize;
     this.loading = true;
+    if (this.period) {
+      this.selectedPeriod = this.period;
+    }
     this.refreshBoard()
       .then(() => this.$nextTick())
       .finally(() => this.loading = false);
@@ -176,6 +187,7 @@ export default {
           this.currentRank = !this.$root.isAnonymous && data.find(user => String(user.identityId) === eXo.env.portal.profileOwnerIdentityId)?.rank;
           this.limit = limit;
         })
+        .then(() => this.$nextTick())
         .finally(() => {
           this.loading = false;
           this.selectionChanged = false;
