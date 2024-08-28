@@ -25,7 +25,7 @@
         <div v-if="hasValidRules" class="widget-text-header text-none text-truncate">
           {{ title }}
         </div>
-        <div class="position-absolute t-0 r-0 z-index-one">
+        <div class="position-absolute absolute-vertical-center r-0 z-index-one">
           <v-btn
             v-if="hasValidRules"
             :icon="hoverEdit"
