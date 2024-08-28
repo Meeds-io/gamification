@@ -279,6 +279,9 @@ export default {
         && !this.loading
         && !this.activeRulesSize;
     },
+    sortBy() {
+      return this.$root.rulesSortBy || (this.spaceId?.length && 'score' || 'createdDate');
+    },
     limit() {
       return this.$root.lockedRulesLimit + this.$root.endingRulesLimit + this.$root.availableRulesLimit + this.$root.upcomingRulesLimit;
     },
@@ -299,6 +302,14 @@ export default {
     },
     limit() {
       if (!this.loading && this.initialized) {
+        this.loading = true;
+        this.refreshLimit();
+        this.retrieveRules();
+      }
+    },
+    sortBy() {
+      if (!this.loading && this.initialized) {
+        this.loading = true;
         this.refreshLimit();
         this.retrieveRules();
       }
@@ -380,7 +391,7 @@ export default {
           spaceId: this.spaceId?.length && [this.spaceId] || null,
           offset: 0,
           limit: this.activeRulesLimit,
-          sortBy: this.$root.rulesSortBy || (this.spaceId?.length && 'score' || 'createdDate'),
+          sortBy: this.sortBy,
           sortDescending: true,
           expand: 'countRealizations,expandPrerequisites',
           lang: eXo.env.portal.language,
