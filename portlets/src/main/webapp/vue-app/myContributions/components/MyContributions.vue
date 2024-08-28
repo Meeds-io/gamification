@@ -105,9 +105,6 @@ export default {
     period() {
       return this.$root.myContributionsPeriod || 'week';
     },
-    limit() {
-      return this.$root.myContributionsProgramLimit || 0;
-    },
     displayLegend() {
       return this.$root.myContributionsDisplayLegend || false;
     },
@@ -146,17 +143,19 @@ export default {
         period: 'ALL',
         limit: 0,
       })
-        .then(data => this.userScore = data?.[0]?.score || 0);
+        .then(data => {
+          this.userScore = data?.find?.(u => u.identityId === Number(eXo.env.portal.profileOwnerIdentityId))?.score || 0;
+        });
     },
     retrieveUserStats() {
       this.loading = true;
       return this.$leaderboardService.getLeaderboard({
         identityId: eXo.env.portal.profileOwnerIdentityId,
         period: this.$root.myContributionsPeriod,
-        limit: this.limit,
+        limit: 0,
       })
         .then(data => {
-          this.user = data?.[0] || null;
+          this.user = data?.find?.(u => u.identityId === Number(eXo.env.portal.profileOwnerIdentityId)) || null;
           if (!this.user?.score) {
             return this.retrieveAllPeriodUserStats();
           }
