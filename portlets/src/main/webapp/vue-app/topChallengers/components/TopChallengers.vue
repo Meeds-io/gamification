@@ -21,43 +21,78 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget
-      :loading="loading"
-      class="d-flex">
-      <template #title>
-        <div v-if="!displayPlaceholder && !loading" class="d-flex flex-grow-1 full-width">
-          <div class="widget-text-header text-capitalize-first-letter text-truncate">
-            {{ $t('gamification.overview.topChallengersTitle') }}
+    <v-hover v-model="hover">
+      <gamification-overview-widget
+        :loading="loading"
+        class="d-flex">
+        <template #title>
+          <div class="d-flex flex-grow-1 full-width position-relative">
+            <div v-if="!displayPlaceholder && !loading" class="widget-text-header text-capitalize-first-letter text-truncate">
+              {{ $t('gamification.overview.topChallengersTitle') }}
+            </div>
+            <div class="spacer"></div>
+            <div
+              :class="displayPlaceholder && 'mt-2 me-2'"
+              class="position-absolute t-0 r-0 z-index-one">
+              <v-btn
+                v-if="!displayPlaceholder && !loading"
+                :icon="hoverEdit"
+                :small="hoverEdit"
+                height="auto"
+                min-width="auto"
+                class="pa-0"
+                text
+                @click="$refs.detailsDrawer.open(period)">
+                <v-icon
+                  v-if="hoverEdit"
+                  size="18"
+                  color="primary">
+                  fa-external-link-alt
+                </v-icon>
+                <span v-else class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+              </v-btn>
+              <v-fab-transition hide-on-leave>
+                <v-btn
+                  v-show="hoverEdit"
+                  :title="$t('gamification.topChallengers.settings.editTooltip')"
+                  :class="displayPlaceholder && 'mt-n4 me-n2 z-index-one'"
+                  small
+                  icon
+                  @click="$root.$emit('topChallengers-overview-settings')">
+                  <v-icon size="18">fa-cog</v-icon>
+                </v-btn>
+              </v-fab-transition>
+            </div>
           </div>
-          <div class="spacer"></div>
-          <v-btn
-            height="auto"
-            min-width="auto"
-            class="pa-0"
-            text
-            @click="$refs.detailsDrawer.open()">
-            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
-          </v-btn>
-        </div>
-      </template>
-      <gamification-rank is-overview-display />
-    </gamification-overview-widget>
+        </template>
+        <gamification-rank is-overview-display />
+      </gamification-overview-widget>
+    </v-hover>
     <gamification-overview-leaderboard-drawer
       ref="detailsDrawer"
       :page-size="pageSize" />
+    <gamification-overview-top-challengers-settings-drawer
+      v-if="$root.canEdit" />
     <engagement-center-rule-extensions />
   </v-app>
 </template>
 <script>
 export default {
   data: () => ({
+    hover: false,
     rankDisplayed: false,
     loading: true,
     pageSize: Math.max(10, parseInt((window.innerHeight - 122) / 45)),
   }),
   computed: {
+    period() {
+      return this.$root.topChallengersPeriod || 'week';
+    },
     displayPlaceholder() {
       return !this.rankDisplayed && !this.loading;
+    },
+    hoverEdit() {
+      return this.hover && this.$root.canEdit;
     },
   },
   created() {
