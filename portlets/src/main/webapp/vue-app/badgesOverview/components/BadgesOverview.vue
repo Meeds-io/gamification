@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-btn
               v-if="$root.canEdit && hover"
               :class="!hasBadges && 'mt-2 me-2'"
-              class="position-absolute t-0 r-0 z-index-one"
+              class="position-absolute absolute-vertical-center r-0 z-index-one"
               icon
               small
               @click="$root.$emit('badges-overview-settings')">
