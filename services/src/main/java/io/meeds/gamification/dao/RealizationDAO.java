@@ -19,16 +19,10 @@ package io.meeds.gamification.dao;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.Query;
-import jakarta.persistence.TemporalType;
-import jakarta.persistence.Tuple;
-import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +36,12 @@ import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.ProfileReputation;
 import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.RealizationFilter;
+
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.TypedQuery;
 
 public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
 
@@ -75,7 +75,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
 
   private static final String        OBJECT_TYPE_PARAM_NAME  = "objectType";
 
-  private final Map<String, Boolean> filterNamedQueries      = new HashMap<>();
+  private final Map<String, Boolean> filterNamedQueries      = new ConcurrentHashMap<>();
 
   public int getLeaderboardRank(IdentityType earnerType, String earnerIdentityId) {
     Query query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardRank");

@@ -392,7 +392,7 @@ export default {
           offset: 0,
           limit: this.activeRulesLimit,
           sortBy: this.sortBy,
-          sortDescending: true,
+          sortDescending: this.sortBy !== 'title',
           expand: 'countRealizations,expandPrerequisites',
           lang: eXo.env.portal.language,
           returnSize: false,
