@@ -19,15 +19,10 @@ package io.meeds.gamification.dao;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
-
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceException;
-import jakarta.persistence.Tuple;
-import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +38,11 @@ import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.model.filter.RuleFilter;
 
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.TypedQuery;
+
 public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements GenericDAO<RuleEntity, Long> {
 
   private static final String  DATE_PARAM_NAME           = "date";
@@ -57,7 +57,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   private static final String  DOMAIN_ID_PARAM_NAME      = "domainId";
 
-  private final Map<String, Boolean> filterNamedQueries        = new HashMap<>();
+  private final Map<String, Boolean> filterNamedQueries        = new ConcurrentHashMap<>();
 
   public List<Long> findHighestBudgetProgramIds(int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIds", Tuple.class);
