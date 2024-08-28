@@ -32,7 +32,7 @@
       flat>
       <v-card
         v-if="centralPoints"
-        class="absolute-horizontal-center d-flex flex-column align-center justify-center transparent"
+        class="absolute-horizontal-center d-flex flex-column align-center justify-center transparent z-index-two"
         flat
         @click="$emit('open')">
         <h4 class="text-color my-0">{{ $t('overview.myContributions.Total') }}</h4>
@@ -195,12 +195,14 @@ export default {
         this.chart.setOption({
           tooltip: {
             trigger: 'item',
+            appendToBody: true,
             formatter: params => `${params.name} <strong style="padding-left: 12px;">${parseInt(params.percent)}%</strong> (${this.format(params.value)})`,
           },
           color: this.colors,
           series: [{
             type: 'pie',
             radius: ['50%', '70%'],
+            avoidLabelOverlap: false,
             label: {
               show: false,
             },
