@@ -17,17 +17,22 @@
  */
 package io.meeds.gamification.dao;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
+
+import io.meeds.gamification.entity.EventEntity;
+import io.meeds.gamification.model.filter.EventFilter;
 
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
-
-import io.meeds.gamification.entity.EventEntity;
-
-import io.meeds.gamification.model.filter.EventFilter;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 public class EventDAO extends GenericDAOJPAImpl<EventEntity, Long> {
 
@@ -43,7 +48,7 @@ public class EventDAO extends GenericDAOJPAImpl<EventEntity, Long> {
 
   public static final String         TRIGGER                   = "trigger";
 
-  private final Map<String, Boolean> filterNamedQueries        = new HashMap<>();
+  private final Map<String, Boolean> filterNamedQueries        = new ConcurrentHashMap<>();
 
   /**
    * Get gamification event by event title and trigger name
