@@ -38,18 +38,20 @@
           :user="user"
           no-action />
 
-        <div class="d-flex align-center mb-2 mt-5">
-          <div class="text-header me-2">
-            {{ title }}
+        <template v-if="user.score">
+          <div class="d-flex align-center mb-2 mt-5">
+            <div class="text-header me-2">
+              {{ title }}
+            </div>
+            <v-divider />
           </div>
-          <v-divider />
-        </div>
-        <users-leaderboard-profile-stats
-          :user="user"
-          :programs="programs"
-          :period="period"
-          :program-id="programId"
-          @select="programId = $event" />
+          <users-leaderboard-profile-stats
+            :user="user"
+            :programs="programs"
+            :period="period"
+            :program-id="programId"
+            @select="programId = $event" />
+        </template>
 
         <div class="d-flex align-center mb-2 mt-5">
           <div class="text-header me-2">
@@ -137,7 +139,6 @@ export default {
       this.loading = true;
       this.$leaderboardService.getLeaderboard({
         identityId,
-        period,
         limit: 0,
       })
         .then(data => this.user = data.find(u => Number(u.identityId) === Number(identityId)))
