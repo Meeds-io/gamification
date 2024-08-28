@@ -111,7 +111,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-layout>
       </v-flex>
       <v-flex v-if="hasListBelowPoduim" xs12>
-        <v-list class="py-0" min-height="110">
+        <v-list class="py-0">
           <users-leaderboard-profile
             v-for="user in listBelowPoduim"
             :key="user.identityId"
@@ -142,7 +142,7 @@ export default {
   }),
   computed: {
     period() {
-      return this.isOverviewDisplay && this.$root.topChallengersPeriod || 'week';
+      return this.$root.topChallengersPeriod || 'week';
     },
     title() {
       return this.period === 'all' ?
@@ -154,9 +154,6 @@ export default {
         this.$t('gamification.overview.allTimeLeaderboard')
         : this.$t(`gamification.overview.${this.period.toLowerCase()}lyLeaderboard`);
     },
-    displayPodium() {
-      return !this.isOverviewDisplay;
-    },
     displayCurrentPosition() {
       return this.isOverviewDisplay ? (this.$root.topChallengersCurrentPosition || false) : true;
     },
@@ -167,17 +164,16 @@ export default {
       return !this.loading && !this.users?.length;
     },
     belowPoduimLimit() {
-      return this.isOverviewDisplay ? (this.displayCurrentPosition ? 1 : 0) : this.listBelowPoduimLimit;
+      return this.displayCurrentPosition ? 1 : 0;
     },
     limit() {
       return this.belowPoduimLimit + this.podiumLimit;
     },
     listBelowPoduim() {
-      if (this.users?.length <= this.podiumLimit) {
-        return this.isOverviewDisplay ? [] : this.users;
-      } else {
+      if (this.belowPoduimLimit && this.users?.length > this.podiumLimit) {
         return this.users.slice(this.users?.length - this.belowPoduimLimit);
       }
+      return [];
     },
     hasListBelowPoduim() {
       return this.listBelowPoduim?.length;
