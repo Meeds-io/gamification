@@ -27,7 +27,7 @@
     }"
     class="px-0"
     dense>
-    <div class="me-3">
+    <div v-if="user.rank" class="me-3">
       <v-avatar
         :color="selected && 'secondary white--text' || ''"
         :class="!selected && 'border-color'"
@@ -61,7 +61,7 @@
         </span>
       </v-list-item-title>
     </v-list-item-content>
-    <v-list-item-action class="justify-end">
+    <v-list-item-action v-if="user.score" class="justify-end">
       <span class="primary--text font-weight-bold">{{ user.score }}</span>
     </v-list-item-action>
   </v-list-item>
