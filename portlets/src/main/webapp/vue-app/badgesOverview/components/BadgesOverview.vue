@@ -70,6 +70,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-hover>
     <badges-overview-drawer />
     <badges-overview-settings-drawer v-if="$root.canEdit" />
+    <gamification-rules-overview-list-drawer
+      v-if="!hasBadges && !loading"
+      ref="listDrawer" />
   </v-app>
 </template>
 
