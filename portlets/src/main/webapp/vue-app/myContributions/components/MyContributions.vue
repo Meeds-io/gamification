@@ -30,8 +30,12 @@
             </div>
             <div class="spacer"></div>
             <div
-              :class="neverContributed && 'mt-2 me-2'"
-              class="position-absolute absolute-vertical-center r-0 z-index-one">
+              :class="{
+                'mt-2 me-2': neverContributed,
+                'l-0': $vuetify.rtl,
+                'r-0': !$vuetify.rtl,
+              }"
+              class="position-absolute absolute-vertical-center z-index-one">
               <v-btn
                 v-if="!neverContributed"
                 :icon="hoverEdit"
@@ -65,8 +69,8 @@
         </template>
         <template #default>
           <div v-if="!loading && hasZeroPoints" class="d-flex flex-column full-width full-height align-center justify-center">
-            <v-icon color="tertiary" size="54">fa-chart-pie</v-icon>
-            <span class="mt-7">{{ placeholder }}</span>
+            <v-icon color="tertiary" size="60">fa-chart-pie</v-icon>
+            <span class="mt-5">{{ placeholder }}</span>
           </div>
           <my-contributions-profile-chart
             v-else-if="!loading && user"
