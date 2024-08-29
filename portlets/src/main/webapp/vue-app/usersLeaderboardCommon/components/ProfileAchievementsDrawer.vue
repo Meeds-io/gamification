@@ -30,7 +30,7 @@
     fixed
     right>
     <template #title>
-      {{ $t('gamification.overview.userAchievementsList.drawer.title') }}
+      {{ header }}
     </template>
     <template v-if="drawer && user && programs" #content>
       <div class="pa-5">
@@ -38,7 +38,7 @@
           :user="user"
           no-action />
 
-        <template v-if="user.score">
+        <template v-if="user.score && !programOnly">
           <div class="d-flex align-center mb-2 mt-5">
             <div class="text-header me-2">
               {{ title }}
@@ -97,6 +97,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    programOnly: {
+      type: Boolean,
+      default: false,
+    },
     relative: {
       type: Boolean,
       default: false,
@@ -113,8 +117,21 @@ export default {
     pageSize: Math.max(10, parseInt((window.innerHeight - 560) / 62)),
   }),
   computed: {
+    header() {
+      return this.programOnly ?
+        this.$t('gamification.overview.userProgramAchievementsList.drawer.title', {
+          0: this.programTitle,
+        })
+        : this.$t('gamification.overview.userAchievementsList.drawer.title');
+    },
     title() {
       return this.$t(`gamification.profileStats.${this.period.toUpperCase()}`);
+    },
+    program() {
+      return this.programId && this.programs?.find?.(p => p.id === this.programId);
+    },
+    programTitle() {
+      return this.program?.title;
     },
     noResultsText() {
       return this.$t('gamification.overview.emptyAchievementsMessage', {
@@ -130,10 +147,10 @@ export default {
     window.removeEventListener('rules-list-drawer-open', this.openActionsList);
   },
   methods: {
-    openByIdentityId(identityId, period) {
+    openByIdentityId(identityId, period, programId) {
       this.period = period || 'WEEK';
       this.user = null;
-      this.programId = null;
+      this.programId = programId;
 
       this.$refs.drawer.open();
       this.loading = true;
@@ -145,10 +162,10 @@ export default {
         .then(() => this.retrievePrograms())
         .finally(() => this.loading = false);
     },
-    open(user, period) {
+    open(user, period, programId) {
       this.period = period || 'WEEK';
       this.user = user;
-      this.programId = null;
+      this.programId = programId;
 
       this.$refs.drawer.open();
       this.loading = true;
