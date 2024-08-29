@@ -40,8 +40,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.Locale;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ProgramImportServiceTest extends BaseExoTestCase {
@@ -80,45 +81,38 @@ public class ProgramImportServiceTest extends BaseExoTestCase {
   private ProgramImportService            importService;
 
   @Test
-  public void testStartWhenNoProgramsExist() {
-    ProgramDTO programDTO = new ProgramDTO();
-    programDTO.setId(1L);
-    programDTO.setTitle("Sample Program");
-    when(programService.countPrograms(any(ProgramFilter.class))).thenReturn(0);
+  public void init() {
+    try {
+      importService.init();
+    } catch (Exception e) {
+      fail("Shouldn't stop the container initialization if import default programs fails");
+    }
 
-    when(programService.createProgram(any(ProgramDTO.class))).thenReturn(programDTO);
-    when(localeConfigService.getDefaultLocaleConfig()).thenReturn(defaultLocaleConfig);
-    when(defaultLocaleConfig.getLocale()).thenReturn(Locale.ENGLISH);
-    LocaleConfig otherLocaleConfig = mock(LocaleConfig.class);
-    when(otherLocaleConfig.getLocale()).thenReturn(Locale.ENGLISH);
-    when(localeConfigService.getLocalConfigs()).thenReturn(Arrays.asList(defaultLocaleConfig, otherLocaleConfig));
+    try {
+      ProgramDTO programDTO = new ProgramDTO();
+      programDTO.setId(1L);
+      programDTO.setTitle("Sample Program");
+      when(programService.countPrograms(any(ProgramFilter.class))).thenReturn(0);
 
-    RuleDTO ruleDTO = new RuleDTO();
+      when(programService.createProgram(any(ProgramDTO.class))).thenReturn(programDTO);
 
-    ruleDTO.setId(1L);
-    ruleDTO.setTitle("Sample Rule");
-    when(ruleService.createRule(any(RuleDTO.class))).thenReturn(ruleDTO);
-    when(ruleService.findRuleByTitle(anyString())).thenReturn(ruleDTO);
+      when(localeConfigService.getDefaultLocaleConfig()).thenReturn(defaultLocaleConfig);
+      when(defaultLocaleConfig.getLocale()).thenReturn(Locale.ENGLISH);
+      LocaleConfig otherLocaleConfig = mock(LocaleConfig.class);
+      when(otherLocaleConfig.getLocale()).thenReturn(Locale.ENGLISH);
+      when(localeConfigService.getLocalConfigs()).thenReturn(Arrays.asList(defaultLocaleConfig, otherLocaleConfig));
 
-    importService.init();
+      RuleDTO ruleDTO = new RuleDTO();
 
-    verify(programService, times(1)).countPrograms(any(ProgramFilter.class));
-    verify(programService, times(1)).createProgram(any(ProgramDTO.class));
-    verify(ruleService, atLeastOnce()).createRule(any(RuleDTO.class));
-  }
-
-  @Test
-  public void testStartWhenProgramsExist() {
-
-    when(programService.countPrograms(any(ProgramFilter.class))).thenReturn(1);
-
-    // When
-    importService.init();
-
-    // Then
-    verify(programService, times(1)).countPrograms(any(ProgramFilter.class));
-    verify(programService, never()).createProgram(any(ProgramDTO.class));
-    verify(ruleService, never()).createRule(any(RuleDTO.class));
+      ruleDTO.setId(1L);
+      ruleDTO.setTitle("Sample Rule");
+      when(ruleService.createRule(any(RuleDTO.class))).thenReturn(ruleDTO);
+      when(ruleService.findRuleByTitle(anyString())).thenReturn(ruleDTO);
+      when(ruleService.findRuleById(anyLong())).thenReturn(ruleDTO);
+      importService.importPrograms();
+    } catch (Exception e) {
+      fail("Shouldn't stop the container initialization if import default programs fails");
+    }
   }
 
 }

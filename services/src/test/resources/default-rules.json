@@ -1,35 +1,14 @@
 {
-  "rules": [
-    {
-      "event": "testEvent",
-      "score": 1,
-      "appendEmoji": "\uD83E\uDD17",
-      "programTitle": "Sample Program",
-      "recurrence": "DAILY",
-      "defaultRealizationStatus": "ACCEPTED"
-    },
-    {
-      "event": "testEvent2",
-      "score": 10,
-      "appendEmoji": "\uD83E\uDD17",
-      "programTitle": "Sample Program",
-      "recurrence": "DAILY",
-      "defaultRealizationStatus": "ACCEPTED",
-      "prerequisiteRules": ["testEvent"]
-
-    }
-  ],
-
   "descriptors": [
     {
-      "nameId":"testEvent",
+      "nameId":"sampleRule",
       "names":{
-        "en":"gamification.defaultProgram.rule.testEvent.title"
+        "en":"gamification.defaultProgram.rule.sampleRule.title"
       },
       "descriptions":{
-        "en":"gamification.defaultProgram.rule.testEvent.description"
+        "en":"gamification.defaultProgram.rule.sampleRule.description"
       },
-      "event": "testEvent",
+      "event": "sampleRule",
       "score": 1,
       "appendEmoji": "\uD83E\uDD17",
       "programNameId":"sampleProgram",
