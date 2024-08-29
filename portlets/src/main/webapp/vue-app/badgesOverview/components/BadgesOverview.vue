@@ -19,53 +19,54 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     v-if="displayWidget"
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
     id="badgesOverview">
-    <v-hover v-slot="{ hover }">
-      <div class="application-body overflow-hidden d-flex flex-column">
-        <component
-          id="badgesOverviewHeader"
-          :is="hasBadges && 'v-toolbar' || 'div'"
-          color="transparent"
-          flat
-          class="border-box-sizing flex-grow-0">
+    <v-hover v-model="hover">
+      <gamification-overview-widget :loading="loading">
+        <template #title>
           <div class="d-flex full-width align-center position-relative">
             <div v-if="hasBadges" class="widget-text-header text-truncate">
               {{ $t('exoplatform.gamification.badgesByDomain') }}
             </div>
             <v-btn
               v-if="$root.canEdit && hover"
-              :class="!hasBadges && 'mt-2 me-2'"
-              class="position-absolute absolute-vertical-center r-0 z-index-one"
+              :class="{
+                'mt-3': !hasBadges,
+                'l-0': $vuetify.rtl,
+                'r-0': !$vuetify.rtl,
+              }"
+              class="position-absolute absolute-vertical-center z-index-one"
               icon
               small
               @click="$root.$emit('badges-overview-settings')">
               <v-icon size="18">fa-cog</v-icon>
             </v-btn>
           </div>
-        </component>
-        <v-card
-          v-if="!loading"
-          :class="!loading && 'd-flex'"
-          class="align-center justify-center transparent flex-grow-0 flex-shrink-0 border-box-sizing px-5 pb-2 ma-auto"
-          max-width="100%"
-          min-height="100"
-          flat>
-          <card-carousel
-            v-if="hasBadges"
-            class="d-flex width-max-content flex-shrink-0 flex-grow-0 align-center justify-center"
-            dense>
-            <badges-overview-item
-              v-for="(badge, index) in sortedBadges"
-              :key="`${badge.id}_${index}`"
-              :badge="badge" />
-          </card-carousel>
-          <div v-else class="d-flex flex-column align-self-center align-center justify-center full-height full-width py-4">
-            <v-icon color="tertiary" size="54">fa-graduation-cap</v-icon>
-            <span
-              v-html="emptyBadgesSummaryText"
-              class="mt-7"></span>
-          </div>
-        </v-card>
-      </div>
+        </template>
+        <template #default>
+          <v-card
+            v-if="!loading"
+            :class="!loading && 'd-flex'"
+            class="align-center justify-center transparent flex-grow-0 flex-shrink-0 border-box-sizing px-5 ma-auto"
+            max-width="100%"
+            min-height="100"
+            flat>
+            <card-carousel
+              v-if="hasBadges"
+              class="d-flex width-max-content flex-shrink-0 flex-grow-0 align-center justify-center"
+              dense>
+              <badges-overview-item
+                v-for="(badge, index) in sortedBadges"
+                :key="`${badge.id}_${index}`"
+                :badge="badge" />
+            </card-carousel>
+            <div v-else class="d-flex flex-column align-self-center align-center justify-center full-height full-width py-4">
+              <v-icon color="tertiary" size="60">fa-graduation-cap</v-icon>
+              <span
+                v-html="emptyBadgesSummaryText"
+                class="mt-5"></span>
+            </div>
+          </v-card>
+        </template>
+      </gamification-overview-widget>
     </v-hover>
     <badges-overview-drawer />
     <badges-overview-settings-drawer v-if="$root.canEdit" />
@@ -78,6 +79,7 @@ export default {
     emptyBadgesActionName: 'gamification-bagdes-check-actions',
     badges: [],
     loading: true,
+    hover: false,
     isCurrentUserProfile: eXo.env.portal.userName === eXo.env.portal.profileOwner,
     collator: new Intl.Collator(eXo.env.portal.language, {numeric: true, sensitivity: 'base'}),
   }),
