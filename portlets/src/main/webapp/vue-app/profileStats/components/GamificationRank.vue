@@ -45,15 +45,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             justify-center
             align-end>
             <v-card
-              v-if="podium[1]"
+              v-if="users[1]"
               class="transparent mx-1 align-center"
               flat
-              @click.prevent.stop="$refs.profileStatsDrawer.open(podium[1], period)">
+              @click.prevent.stop="$refs.profileStatsDrawer.open(users[1], period)">
               <user-avatar
-                :profile-id="podium[1].remoteId"
-                :name="podium[1].fullname"
-                :avatar-url="podium[1].avatarUrl"
-                :popover="podium[1].remoteId"
+                :profile-id="users[1].remoteId"
+                :name="users[1].fullname"
+                :avatar-url="users[1].avatarUrl"
+                :popover="users[1].remoteId"
                 :size="40"
                 extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
                 avatar
@@ -62,19 +62,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 src="/gamification-portlets/images/podium/2.webp"
                 class="top2 d-flex white--text justify-center align-center text-title"
                 width="80">
-                {{ podium[1].score }}
+                {{ users[1].score }}
               </v-img>
             </v-card>
             <v-card
-              v-if="podium[0]"
+              v-if="users[0]"
               class="transparent mx-1 align-center"
               flat
-              @click.prevent.stop="$refs.profileStatsDrawer.open(podium[0], period)">
+              @click.prevent.stop="$refs.profileStatsDrawer.open(users[0], period)">
               <user-avatar
-                :profile-id="podium[0].remoteId"
-                :name="podium[0].fullname"
-                :avatar-url="podium[0].avatarUrl"
-                :popover="podium[0].remoteId"
+                :profile-id="users[0].remoteId"
+                :name="users[0].fullname"
+                :avatar-url="users[0].avatarUrl"
+                :popover="users[0].remoteId"
                 :size="40"
                 extra-class="ml-2 me-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
                 avatar
@@ -83,19 +83,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 src="/gamification-portlets/images/podium/1.webp"
                 class="top1 d-flex white--text justify-center align-center text-title"
                 width="80">
-                {{ podium[0].score }}
+                {{ users[0].score }}
               </v-img>
             </v-card>
             <v-card
-              v-if="podium[2]"
+              v-if="users[2]"
               class="transparent mx-1 align-center"
               flat
-              @click.prevent.stop="$refs.profileStatsDrawer.open(podium[2], period)">
+              @click.prevent.stop="$refs.profileStatsDrawer.open(users[2], period)">
               <user-avatar
-                :profile-id="podium[2].remoteId"
-                :name="podium[2].fullname"
-                :avatar-url="podium[2].avatarUrl"
-                :popover="podium[2].remoteId"
+                :profile-id="users[2].remoteId"
+                :name="users[2].fullname"
+                :avatar-url="users[2].avatarUrl"
+                :popover="users[2].remoteId"
                 :size="40"
                 extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
                 avatar
@@ -104,20 +104,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 src="/gamification-portlets/images/podium/3.webp"
                 class="top3 d-flex white--text justify-center align-center text-title"
                 width="80">
-                {{ podium[2].score }}
+                {{ users[2].score }}
               </v-img>
             </v-card>
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex v-if="hasListBelowPoduim" xs12>
+      <v-flex v-if="currentUser" xs12>
         <v-list class="py-0">
           <users-leaderboard-profile
-            v-for="user in listBelowPoduim"
-            :key="user.identityId"
-            :user="user"
+            :user="currentUser"
             :selected-identity-id="identityId"
-            @open="$refs.profileStatsDrawer.open(user, period)" />
+            @open="$refs.profileStatsDrawer.open(currentUser, period)" />
         </v-list>
       </v-flex>
       <users-leaderboard-profile-achievements-drawer
@@ -135,7 +133,7 @@ export default {
   },
   data: () => ({
     users: [],
-    listBelowPoduimLimit: 3,
+    allUsers: null,
     podiumLimit: 3,
     identityId: eXo.env.portal.profileOwnerIdentityId,
     loading: true,
@@ -149,6 +147,9 @@ export default {
         this.$t('homepage.profileStatus.allTimeRank')
         : this.$t(`homepage.profileStatus.${this.period.toLowerCase()}lyRank`);
     },
+    displayPlaceholder() {
+      return !this.loading && !this.users?.length;
+    },
     placeholder() {
       return this.period === 'all' ?
         this.$t('gamification.overview.allTimeLeaderboard')
@@ -157,26 +158,16 @@ export default {
     displayCurrentPosition() {
       return this.isOverviewDisplay ? (this.$root.topChallengersCurrentPosition || false) : true;
     },
-    podium() {
-      return this.users.slice(0, this.podiumLimit);
-    },
-    displayPlaceholder() {
-      return !this.loading && !this.users?.length;
-    },
-    belowPoduimLimit() {
-      return this.displayCurrentPosition ? 1 : 0;
-    },
-    limit() {
-      return this.belowPoduimLimit + this.podiumLimit;
-    },
-    listBelowPoduim() {
-      if (this.belowPoduimLimit && this.users?.length > this.podiumLimit) {
-        return this.users.slice(this.users?.length - this.belowPoduimLimit);
+    currentUser() {
+      const currentUser = this.identityId
+        && this.allUsers.find(u => u.identityId === Number(this.identityId));
+      if (this.displayCurrentPosition
+          && currentUser?.rank
+          && currentUser?.score
+          && currentUser.rank > this.podiumLimit) {
+        return currentUser;
       }
-      return [];
-    },
-    hasListBelowPoduim() {
-      return this.listBelowPoduim?.length;
+      return null;
     },
   },
   watch: {
@@ -196,25 +187,16 @@ export default {
       return this.$leaderboardService.getLeaderboard({
         identityId: this.identityId,
         period: this.period,
-        limit: this.limit,
+        limit: this.podiumLimit,
       })
         .then(users => {
-          const currentUser = this.identityId && users.find(u => u.identityId === Number(this.identityId));
-          if (this.belowPoduimLimit > 0
-              && currentUser?.rank
-              && currentUser.rank > (this.limit - 1)) {
-            const listBelowPoduimOffset = currentUser.rank - this.belowPoduimLimit;
-            const listBelowPoduimLimit = parseInt((this.belowPoduimLimit - 1) / 2) * 3 + 1;
-            return this.$leaderboardService.getLeaderboard({
-              period: this.period,
-              offset: listBelowPoduimOffset,
-              limit: listBelowPoduimLimit,
-            })
-              .then(otherUsers => {
-                this.users = [...users, ...otherUsers];
-              });
+          this.allUsers = users;
+          if (users?.length) {
+            this.users = users
+              .filter(u => u.rank <= this.podiumLimit)
+              .slice(0, this.podiumLimit);
           } else {
-            this.users = users.slice(0, this.limit);
+            this.users = [];
           }
         })
         .then(() => document.dispatchEvent(new CustomEvent('listOfRankedConnections', {detail: this.users.length})))
