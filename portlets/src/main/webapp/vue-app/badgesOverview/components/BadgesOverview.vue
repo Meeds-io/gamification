@@ -58,7 +58,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :key="`${badge.id}_${index}`"
                 :badge="badge" />
             </card-carousel>
-            <div v-else class="d-flex flex-column align-self-center align-center justify-center full-height full-width py-4">
+            <div v-else class="d-flex flex-column align-self-center align-center justify-center full-height full-width">
               <v-icon color="tertiary" size="60">fa-graduation-cap</v-icon>
               <span
                 v-html="emptyBadgesSummaryText"
@@ -68,14 +68,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </template>
       </gamification-overview-widget>
     </v-hover>
-    <badges-overview-drawer />
-    <badges-overview-settings-drawer v-if="$root.canEdit" />
+    <badges-overview-drawer
+      v-if="hasBadges" />
+    <badges-overview-settings-drawer
+      v-if="$root.canEdit" />
     <gamification-rules-overview-list-drawer
       v-if="!hasBadges && !loading"
       ref="listDrawer" />
+    <engagement-center-rule-extensions />
   </v-app>
 </template>
-
 <script>
 export default {
   data: () => ({
@@ -137,7 +139,9 @@ export default {
           const badges = data || [];
           badges.forEach(badge => {
             badge.avatar = badge.url;
-            badge.programLabel = badge?.program?.title;
+            if (!badge.programLabel) {
+              badge.programLabel = badge?.program?.title || badge.zone;
+            }
             badge.badgeLabel = badge.title;
           });
           this.badges = badges;
