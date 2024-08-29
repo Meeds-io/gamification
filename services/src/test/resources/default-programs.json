@@ -1,0 +1,28 @@
+{
+  "descriptors": [
+    {
+      "nameId": "sampleProgram",
+      "names": {
+        "en": "gamification.defaultProgram.sampleProgram.title"
+      },
+      "appendEmoji": "\uD83D\uDE80",
+      "descriptions": [
+        {
+          "instruction": {
+            "en": "gamification.defaultProgram.gettingStarted.sampleProgram.firstInstruction"
+          },
+          "emoji": "1️⃣"
+        },
+        {
+          "instruction": {
+            "en": "gamification.defaultProgram.gettingStarted.sampleProgram.secondInstruction"
+          },
+          "emoji": "2️⃣"
+        }
+      ],
+      "enabled": true,
+      "coverUrl": "medias/images/discover.png"
+    }
+  ]
+}
+

@@ -1,0 +1,20 @@
+{
+  "descriptors": [
+    {
+      "nameId":"sampleRule",
+      "names":{
+        "en":"gamification.defaultProgram.rule.sampleRule.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.sampleRule.description"
+      },
+      "event": "sampleRule",
+      "score": 1,
+      "appendEmoji": "\uD83E\uDD17",
+      "programNameId":"sampleProgram",
+      "recurrence": "DAILY",
+      "defaultRealizationStatus": "ACCEPTED"
+    }
+  ]
+}
+

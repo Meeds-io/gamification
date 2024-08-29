@@ -1,0 +1,217 @@
+{
+  "descriptors": [
+    {
+      "nameId":"sendRelationshipRequest",
+      "names":{
+        "en":"gamification.defaultProgram.rule.sendRelationshipRequest.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.sendRelationshipRequest.description"
+      },
+      "event": "sendRelationshipRequest",
+      "score": 1,
+      "appendEmoji": "\uD83E\uDD17",
+      "programNameId":"communityEmpowerment",
+      "recurrence": "DAILY",
+      "defaultRealizationStatus": "ACCEPTED"
+    },
+    {
+      "nameId":"receiveRelationshipRequest",
+      "names":{
+        "en":"gamification.defaultProgram.rule.receiveRelationshipRequest.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.receiveRelationshipRequest.description"
+      },
+      "event": "receiveRelationshipRequest",
+      "score": 1,
+      "appendEmoji": "\uD83D\uDC65",
+      "programNameId":"communityEmpowerment",
+      "recurrence": "DAILY",
+      "defaultRealizationStatus": "ACCEPTED"
+    },
+    {
+      "nameId":"becomeSpaceManager",
+      "names":{
+        "en":"gamification.defaultProgram.rule.becomeSpaceManager.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.becomeSpaceManager.description"
+      },
+      "event": "becomeSpaceManager",
+      "score": 15,
+      "programNameId":"communityEmpowerment",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED"
+    },
+    {
+      "nameId":"addSpace",
+      "names":{
+        "en":"gamification.defaultProgram.rule.addSpace.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.addSpace.description"
+      },
+      "event": "addSpace",
+      "score": 50,
+      "programNameId":"communityEmpowerment",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED"
+    },
+    {
+      "nameId":"pinActivityOnSpace",
+      "names":{
+        "en":"gamification.defaultProgram.rule.pinActivityOnSpace.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.pinActivityOnSpace.description"
+      },
+      "event": "pinActivityOnSpace",
+      "score": 15,
+      "programNameId":"communityEmpowerment",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED"
+    },
+    {
+      "nameId":"inviteUserToSpace",
+      "names":{
+        "en":"gamification.defaultProgram.rule.inviteUserToSpace.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.inviteUserToSpace.description"
+      },
+      "event": "inviteUserToSpace",
+      "score": 5,
+      "programNameId":"communityEmpowerment",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED"
+    },
+    {
+      "nameId":"updateSpaceAvatar",
+      "names":{
+        "en":"gamification.defaultProgram.rule.updateSpaceAvatar.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.updateSpaceAvatar.description"
+      },
+      "event": "updateSpaceAvatar",
+      "score": 25,
+      "programNameId":"communityEmpowerment",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED"
+    },
+
+    {
+      "nameId":"addUserProfileAvatar",
+      "names":{
+        "en":"gamification.defaultProgram.rule.addUserProfileAvatar.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.addUserProfileAvatar.description"
+      },
+      "event": "addUserProfileAvatar",
+      "score": 20,
+      "appendEmoji": "\uD83E\uDD20",
+      "programNameId":"gettingStarted",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED"
+    },
+    {
+      "nameId":"addUserProfileBanner",
+      "names":{
+        "en":"gamification.defaultProgram.rule.addUserProfileBanner.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.addUserProfileBanner.description"
+      },
+      "event": "addUserProfileBanner",
+      "score": 10,
+      "appendEmoji": "\uD83C\uDF08",
+      "programNameId":"gettingStarted",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED",
+      "prerequisiteRules": ["addUserProfileAvatar"]
+    },
+    {
+      "nameId":"addUserProfileAboutMe",
+      "names":{
+        "en":"gamification.defaultProgram.rule.addUserProfileAboutMe.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.addUserProfileAboutMe.description"
+      },
+      "event": "addUserProfileAboutMe",
+      "score": 10,
+      "appendEmoji": "\uD83D\uDC4B",
+      "programNameId":"gettingStarted",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED",
+      "prerequisiteRules": ["addUserProfileAvatar"]
+    },
+    {
+      "nameId":"addUserProfileContactInformation",
+      "names":{
+        "en":"gamification.defaultProgram.rule.addUserProfileContactInformation.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.addUserProfileContactInformation.description"
+      },
+      "event": "addUserProfileContactInformation",
+      "score": 10,
+      "appendEmoji": "\uD83D\uDCDE",
+      "programNameId":"gettingStarted",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED",
+      "prerequisiteRules": ["addUserProfileAvatar"]
+    },
+    {
+      "nameId":"addUserProfileWorkExperience",
+      "names":{
+        "en":"gamification.defaultProgram.rule.addUserProfileWorkExperience.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.addUserProfileWorkExperience.description"
+      },
+      "event": "addUserProfileWorkExperience",
+      "score": 15,
+      "appendEmoji": "⚒\uFE0F",
+      "programNameId":"gettingStarted",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED",
+      "prerequisiteRules": ["addUserProfileAvatar"]
+    },
+    {
+      "nameId":"addUserProfileNotificationSetting",
+      "names":{
+        "en":"gamification.defaultProgram.rule.addUserProfileNotificationSetting.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.addUserProfileNotificationSetting.description"
+      },
+      "event": "addUserProfileNotificationSetting",
+      "score": 15,
+      "appendEmoji": "⚙\uFE0F",
+      "programNameId":"gettingStarted",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED",
+      "prerequisiteRules": ["addUserProfileAvatar"]
+    },
+    {
+      "nameId":"joinSpace",
+      "names":{
+        "en":"gamification.defaultProgram.rule.joinSpace.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.joinSpace.description"
+      },
+      "event": "joinSpace",
+      "score": 15,
+      "appendEmoji": "\uD83D\uDC65",
+      "programNameId":"gettingStarted",
+      "recurrence": "ONCE",
+      "defaultRealizationStatus": "ACCEPTED",
+      "prerequisiteRules": ["addUserProfileNotificationSetting"]
+    }
+  ]
+}
+
