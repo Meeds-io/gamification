@@ -298,6 +298,8 @@ public class UserReputationEndpoint implements ResourceContainer {
                 reputation.put("id", badgeDTO.getId());
                 reputation.put("title", badgeDTO.getTitle());
                 reputation.put("zone", badgeDTO.getProgram().getTitle());
+                reputation.put("programId", badgeDTO.getProgram().getId());
+                reputation.put("programLabel", badgeDTO.getProgram().getTitle());
                 reputation.put("level", index);
                 reputation.put("startScore", badgeDTO.getNeededScore());
                 reputation.put("score", score);
