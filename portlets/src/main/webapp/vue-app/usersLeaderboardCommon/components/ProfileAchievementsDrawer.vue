@@ -70,8 +70,8 @@
     </template>
     <template v-else-if="drawer && !loading" #content>
       <div class="d-flex flex-column full-width full-height align-center justify-center">
-        <v-icon color="tertiary" size="54">fa-chart-pie</v-icon>
-        <span v-html="noResultsText" class="text-body mt-7"></span>
+        <v-icon color="tertiary" size="60">fa-chart-pie</v-icon>
+        <span v-html="noResultsText" class="text-body mt-5"></span>
       </div>
       <gamification-rules-overview-list-drawer
         ref="actionsList"
