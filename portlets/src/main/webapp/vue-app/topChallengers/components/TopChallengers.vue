@@ -32,8 +32,12 @@
             </div>
             <div class="spacer"></div>
             <div
-              :class="displayPlaceholder && 'mt-2 me-2'"
-              class="position-absolute absolute-vertical-center r-0 z-index-one">
+              :class="{
+                'mt-2 me-2': displayPlaceholder,
+                'l-0': $vuetify.rtl,
+                'r-0': !$vuetify.rtl,
+              }"
+              class="position-absolute absolute-vertical-center z-index-one">
               <v-btn
                 v-if="!displayPlaceholder && !loading"
                 :icon="hoverEdit"
@@ -65,7 +69,9 @@
             </div>
           </div>
         </template>
-        <gamification-rank is-overview-display />
+        <template #default>
+          <gamification-rank is-overview-display />
+        </template>
       </gamification-overview-widget>
     </v-hover>
     <gamification-overview-leaderboard-drawer
