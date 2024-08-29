@@ -146,8 +146,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         align-center
         justify-center>
         <div class="d-flex flex-column align-center justify-center">
-          <v-icon color="tertiary" size="54">fa-chart-pie</v-icon>
-          <span class="mt-3 text-wrap">{{ $t('gamification.overview.noWeeklyAchievements') }}</span>
+          <v-icon color="tertiary" size="60">fa-chart-pie</v-icon>
+          <span class="mt-5 text-wrap">{{ $t('gamification.overview.noWeeklyAchievements') }}</span>
         </div>
       </v-flex>
     </v-layout>
