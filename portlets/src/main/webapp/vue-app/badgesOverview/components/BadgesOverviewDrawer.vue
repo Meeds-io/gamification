@@ -17,12 +17,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <exo-drawer
     ref="badgesDrawer"
+    :loading="loading"
     class="badgesDrawer"
     body-classes="hide-scroll decrease-z-index-more"
     right>
     <template slot="title">
       <div class="d-flex width-fit-content">
-        {{ $t('exoplatform.gamification.badgesByDomain') }}:
+        {{ $t('gamification.badges.badgesOf') }}:
         <v-tooltip bottom>
           <template #activator="{ on }">
             <div class="ms-1 text-truncate" v-on="on">
@@ -34,13 +35,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </div>
     </template>
     <template slot="content">
-      <div class="pa-5">
-        <badges-overview-drawer-item
-          v-for="tmp in badges"
-          :key="tmp.id"
-          :badge="tmp"
-          :current-score="badge && badge.score" />
+      <div class="pa-5 position-relative">
+        <v-divider
+          v-if="badges.length > 1"
+          class="full-height position-absolute t-0 b-0 ms-7 my-8"
+          size="1px"
+          vertical />
+        <div
+          v-for="b in badges"
+          :key="b.id">
+          <badges-overview-drawer-item
+            :badge="b"
+            :current-score="currentScore"
+            class="mb-2"
+            @open="$refs.achievementsDrawer.open(user, period, programId)" />
+        </div>
       </div>
+      <users-leaderboard-profile-achievements-drawer
+        ref="achievementsDrawer"
+        go-back-button
+        program-only />
     </template>
   </exo-drawer>
 </template>
@@ -49,25 +63,50 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   data() {
     return {
+      loading: false,
+      user: null,
       badge: null,
+      period: 'all',
       badges: [],
     };
   },
   computed: {
+    programId() {
+      return this.badge?.programId;
+    },
     programLabel() {
-      return this.badge?.programLabel || this.badge?.program?.title;
+      return this.badge?.programLabel;
+    },
+    currentScore() {
+      return this.badge?.score;
     },
   },
   created() {
-    this.$root.$on('open-badge-drawer', (badge) => {
-      this.open(badge);
-    });
+    this.$root.$on('open-badge-drawer', this.open);
   },
   methods: {
-    open(badge) {
-      this.badge = badge;
+    async open(badge) {
+      this.loading = true;
 
-      this.$refs.badgesDrawer.startLoading();
+      this.badge = badge;
+      const identity = await this.$identityService.getIdentityById(eXo.env.portal.profileOwnerIdentityId);
+      this.user = {
+        identityId: eXo.env.portal.profileOwnerIdentityId,
+        score: this.badge.score,
+        rank: 0,
+        ...identity,
+        ...identity?.profile,
+      };
+      const users = await this.$leaderboardService.getLeaderboard({
+        identityId: eXo.env.portal.profileOwnerIdentityId,
+        programId: this.programId,
+        period: this.period,
+        limit: 0,
+      });
+      const currentUser = users?.find?.(u => u.identityId === Number(eXo.env.portal.profileOwnerIdentityId));
+      if (currentUser?.rank) {
+        this.user.rank = currentUser?.rank;
+      }
       return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/badges/all`, {
         method: 'GET',
         credentials: 'include',
@@ -85,16 +124,15 @@ export default {
           badges = badges.filter(tmp => tmp?.program?.id && tmp?.program?.id === currentBadgeProgram?.id);
           badges.push({
             isCurrent: true,
+            title: this.user.fullname,
             neededScore: this.badge.score,
-            avatar: `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.profileOwner}/avatar`,
+            avatar: this.user.avatar,
           });
           badges.sort((a,b) => b.neededScore - a.neededScore);
           this.badges = badges;
           this.$refs.badgesDrawer.open();
         })
-        .finally(() => {
-          this.$refs.badgesDrawer.endLoading();
-        });
+        .finally(() => this.loading = false);
     },
   },
 };
