@@ -16,12 +16,17 @@
 <template>
   <v-app>
     <gamification-overview-widget v-if="!hasConfiguredWallet" :loading="loading">
-      <div v-if="!loading" class="d-flex flex-column align-center justify-center full-height full-width">
-        <v-icon color="tertiary" size="54">fa-money-bill</v-icon>
-        <span
-          v-html="noWalletSummaryText"
-          class="text-body mt-7"></span>
-      </div>
+      <template #title>
+        <span></span>
+      </template>
+      <template #default>
+        <div v-show="!loading" class="d-flex flex-column align-center justify-center full-height full-width">
+          <v-icon color="tertiary" size="60">fa-money-bill</v-icon>
+          <span
+            v-html="noWalletSummaryText"
+            class="text-body mt-5"></span>
+        </div>
+      </template>
     </gamification-overview-widget>
     <gamification-overview-widget
       v-else
@@ -43,7 +48,7 @@
                 name="my-rewards-overview"
                 type="my-rewards-item"
                 class="d-flex flex-row my-auto" />
-              <div class="text-body">{{ $t('gamification.overview.rewards.earningsTitle') }}</div>
+              <div class="text-body text-body-1">{{ $t('gamification.overview.rewards.earningsTitle') }}</div>
             </div>
           </gamification-overview-widget-row>
           <gamification-overview-widget-row
@@ -56,7 +61,7 @@
                 name="my-rewards-wallet-overview"
                 type="my-rewards-wallet-item"
                 class="d-flex flex-row my-auto" />
-              <div class="text-body">{{ $t('gamification.overview.rewards.walletTitle') }}</div>
+              <div class="text-body text-body-1">{{ $t('gamification.overview.rewards.walletTitle') }}</div>
             </div>
           </gamification-overview-widget-row>
         </div>
