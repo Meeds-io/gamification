@@ -17,6 +17,7 @@
 -->
 <template>
   <gamification-overview-widget
+    :loading="loading"
     height="auto"
     min-width="auto">
     <template #title>
@@ -25,7 +26,12 @@
         <div v-if="hasValidRules" class="widget-text-header text-none text-truncate">
           {{ title }}
         </div>
-        <div class="position-absolute absolute-vertical-center r-0 z-index-one">
+        <div
+          :class="{
+            'l-0': $vuetify.rtl,
+            'r-0': !$vuetify.rtl,
+          }"
+          class="position-absolute absolute-vertical-center z-index-one">
           <v-btn
             v-if="hasValidRules"
             :icon="hoverEdit"
@@ -67,11 +73,11 @@
     <template #action>
       <slot name="action"></slot>
     </template>
-    <template v-if="!loading || !emptyWidget" #default>
+    <template #default>
       <gamification-rules-overview-empty-widget
-        v-if="emptyWidget"
+        v-if="!loading && emptyWidget"
         :display-completed="!!spaceId && activeRulesSize" />
-      <div v-else class="mt-5">
+      <div v-else-if="!loading">
         <template v-if="endingRulesCount">
           <div class="d-flex align-center">
             <span class="me-2">{{ $t('gamification.overview.endingActionsTitle') }}</span>
