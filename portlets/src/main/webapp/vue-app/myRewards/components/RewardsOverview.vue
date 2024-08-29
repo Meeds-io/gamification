@@ -30,11 +30,13 @@
       :loading="loading">
       <v-card
         v-if="!loading"
-        min-height="114"
         class="my-auto"
         flat>
         <div class="d-flex">
-          <gamification-overview-widget-row class="d-flex flex-column col col-6 px-0" normal-height>
+          <gamification-overview-widget-row
+            class="d-flex flex-column col col-6 px-0"
+            normal-height
+            dense>
             <div class="d-flex flex-column align-center justify-center">
               <extension-registry-components
                 :params="params"
@@ -44,7 +46,10 @@
               <div class="text-body">{{ $t('gamification.overview.rewards.earningsTitle') }}</div>
             </div>
           </gamification-overview-widget-row>
-          <gamification-overview-widget-row class="d-flex flex-column col col-6 px-0" normal-height>
+          <gamification-overview-widget-row
+            class="d-flex flex-column col col-6 px-0"
+            normal-height
+            dense>
             <div class="d-flex flex-column align-center justify-center">
               <extension-registry-components
                 :params="params"
