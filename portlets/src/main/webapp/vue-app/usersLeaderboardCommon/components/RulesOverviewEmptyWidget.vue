@@ -44,8 +44,8 @@
     </div>
   </gamification-overview-widget-row>
   <div v-else class="d-flex flex-column align-center justify-center full-width full-height">
-    <v-icon color="tertiary" size="48">fa-rocket</v-icon>
-    <span class="text-body mt-7">{{ $t('gamification.overview.actions') }}</span>
+    <v-icon color="tertiary" size="60">fa-rocket</v-icon>
+    <span class="text-body mt-5">{{ $t('gamification.overview.actions') }}</span>
   </div>
 </template>
 <script>

@@ -27,8 +27,12 @@
               {{ $t('gamification.overview.programsOverviewTitle') }}
             </v-card>
             <div
-              :class="!programsDisplayed && 'mt-2 me-2'"
-              class="position-absolute absolute-vertical-center r-0 z-index-one">
+              :class="{
+                'mt-2 me-2': !programsDisplayed,
+                'l-0': $vuetify.rtl,
+                'r-0': !$vuetify.rtl,
+              }"
+              class="position-absolute absolute-vertical-center z-index-one">
               <v-btn
                 v-show="programLink"
                 :icon="hoverEdit"
@@ -60,19 +64,21 @@
             </div>
           </div>
         </template>
-        <div
-          v-if="programsDisplayed"
-          class="flex-grow-1 flex-shrink-1 overflow-hidden">
-          <gamification-overview-program-item
-            v-for="program in programsToDisplay" 
-            :key="program.id"
-            :program="program"
-            class="flex-grow-1" />
-        </div>
-        <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
-          <v-icon color="tertiary" size="54">fa-puzzle-piece</v-icon>
-          <span class="mt-7">{{ $t('gamification.overview.programs') }}</span>
-        </div>
+        <template #default>
+          <div
+            v-if="programsDisplayed"
+            class="flex-grow-1 flex-shrink-1 overflow-hidden">
+            <gamification-overview-program-item
+              v-for="program in programsToDisplay" 
+              :key="program.id"
+              :program="program"
+              class="flex-grow-1" />
+          </div>
+          <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
+            <v-icon color="tertiary" size="60">fa-puzzle-piece</v-icon>
+            <span class="mt-5">{{ $t('gamification.overview.programs') }}</span>
+          </div>
+        </template>
       </gamification-overview-widget>
     </v-hover>
     <div v-if="programsDisplayed">
