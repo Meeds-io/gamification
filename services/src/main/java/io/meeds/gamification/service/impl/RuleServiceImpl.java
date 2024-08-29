@@ -17,17 +17,6 @@
  */
 package io.meeds.gamification.service.impl;
 
-import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_PUBLISH_RULE_EVENT;
-import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
-import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_OBJECT_TYPE;
-import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_DESCRIPTION;
-import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_ID;
-import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_SCORE;
-import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_PARAM_RULE_TITLE;
-import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_TYPE;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -67,6 +56,8 @@ import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.RuleStorage;
 import io.meeds.gamification.utils.Utils;
+
+import static io.meeds.gamification.utils.Utils.*;
 
 public class RuleServiceImpl implements RuleService {
 
@@ -307,6 +298,10 @@ public class RuleServiceImpl implements RuleService {
     rule.setLastModifiedBy(Utils.SYSTEM_USERNAME);
     rule.setCreatedBy(Utils.SYSTEM_USERNAME);
     rule.setActivityId(0);
+    if (rule.getEvent() != null) {
+      EventDTO event = eventService.createEvent(rule.getEvent());
+      rule.setEvent(event);
+    }
     return createRuleAndBroadcast(rule, null);
   }
 
@@ -483,7 +478,8 @@ public class RuleServiceImpl implements RuleService {
         || rule.isDeleted()
         || rule.getProgram() == null
         || !rule.getProgram().isEnabled()
-        || rule.getProgram().isDeleted()) {
+        || rule.getProgram().isDeleted()
+        || StringUtils.equals(Utils.SYSTEM_USERNAME, rule.getCreatedBy())) {
       return rule;
     }
     ExoSocialActivity activity = getExistingActivity(rule);

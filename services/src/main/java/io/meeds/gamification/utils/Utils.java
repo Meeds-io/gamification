@@ -22,6 +22,7 @@ import org.exoplatform.commons.api.notification.model.ArgumentLiteral;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -201,7 +202,7 @@ public class Utils {
 
   public static final String                          RULE_ACTIVITY_PARAM_RULE_TITLE          = "ruleTitle";
 
-  public static final String                          RULE_ACTIVITY_PARAM_RULE_DESCRIPTION    = "ruleTitle";
+  public static final String                          RULE_ACTIVITY_PARAM_RULE_DESCRIPTION    = "ruleDescription";
 
   public static final String                          RULE_ACTIVITY_PARAM_RULE_SCORE          = "ruleScore";
 
