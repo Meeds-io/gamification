@@ -1,43 +1,57 @@
-[
-  {
-    "title": "Getting Started",
-    "appendEmoji": "\uD83D\uDE80",
-    "enabled": true,
-    "coverUrl": "medias/images/discover.png",
-    "i18nTitleKey": "gamification.defaultProgram.gettingStarted.title",
-    "i18nDescriptionKey": "gamification.defaultProgram.gettingStarted.description.",
-    "instructions": [
-      {
-        "key": "firstInstruction",
-        "emoji": "1️⃣"
+{
+  "descriptors": [
+    {
+      "nameId": "gettingStarted",
+      "names": {
+        "en": "gamification.defaultProgram.gettingStarted.title"
       },
-      {
-        "key": "secondInstruction",
-        "emoji": "2️⃣"
-      }
-    ]
-  },
-  {
-    "title": "Community Empowerment",
-    "appendEmoji": "\uD83D\uDCAA",
-    "enabled": true,
-    "coverUrl": "medias/images/support.png",
-    "i18nTitleKey": "gamification.defaultProgram.CommunityEmpowerment.title",
-    "i18nDescriptionKey": "gamification.defaultProgram.CommunityEmpowerment.description.",
-    "instructions": [
-      {
-        "key": "firstInstruction",
-        "emoji": "🔥"
+      "appendEmoji": "\uD83D\uDE80",
+      "descriptions": [
+        {
+          "instruction": {
+            "en": "gamification.defaultProgram.gettingStarted.description.firstInstruction"
+          },
+          "emoji": "1️⃣"
+        },
+        {
+          "instruction": {
+            "en": "gamification.defaultProgram.gettingStarted.description.secondInstruction"
+          },
+          "emoji": "2️⃣"
+        }
+      ],
+      "enabled": true,
+      "coverUrl": "medias/images/discover.png"
+    },
+    {
+      "nameId": "communityEmpowerment",
+      "names": {
+        "en": "gamification.defaultProgram.CommunityEmpowerment.title"
       },
-      {
-        "key": "secondInstruction",
-        "emoji": "💡"
-      },
-      {
-        "key": "thirdInstruction",
-        "emoji": "✨"
-      }
-    ]
-  }
-]
+      "appendEmoji": "\uD83D\uDCAA",
+      "descriptions": [
+        {
+          "instruction": {
+            "en": "gamification.defaultProgram.CommunityEmpowerment.description.firstInstruction"
+          },
+          "emoji": "\uD83D\uDD25"
+        },
+        {
+          "instruction": {
+            "en": "gamification.defaultProgram.CommunityEmpowerment.description.secondInstruction"
+          },
+          "emoji": "\uD83D\uDCA1"
+        },
+        {
+          "instruction": {
+            "en": "gamification.defaultProgram.CommunityEmpowerment.description.thirdInstruction"
+          },
+          "emoji": "✨"
+        }
+      ],
+      "enabled": true,
+      "coverUrl": "medias/images/support.png"
+    }
+  ]
+}
 

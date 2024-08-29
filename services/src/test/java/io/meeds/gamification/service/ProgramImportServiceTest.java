@@ -21,8 +21,14 @@ package io.meeds.gamification.service;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
+import io.meeds.gamification.service.injection.ProgramImportService;
+import io.meeds.gamification.service.injection.ProgramTranslationImportService;
 import io.meeds.social.translation.service.TranslationService;
+import org.exoplatform.commons.api.settings.SettingService;
+import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.commons.testing.BaseExoTestCase;
+import org.exoplatform.container.configuration.ConfigurationManager;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.resources.LocaleConfig;
 import org.exoplatform.services.resources.LocaleConfigService;
 import org.junit.Test;
@@ -38,25 +44,40 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class DefaultProgramRegistryTest extends BaseExoTestCase {
+public class ProgramImportServiceTest extends BaseExoTestCase {
 
   @Mock
-  private ProgramService         programService;
+  private ProgramService                  programService;
 
   @Mock
-  private RuleService            ruleService;
+  private RuleService                     ruleService;
 
   @Mock
-  private TranslationService     translationService;
+  private TranslationService              translationService;
 
   @Mock
-  private LocaleConfigService    localeConfigService;
+  private LocaleConfigService             localeConfigService;
 
   @Mock
-  private LocaleConfig           defaultLocaleConfig;
+  private FileService                     fileService;
+
+  @Mock
+  private SettingService                  settingService;
+
+  @Mock
+  private LocaleConfig                    defaultLocaleConfig;
+
+  @Mock
+  private ConfigurationManager            configurationManager;
+
+  @Mock
+  private UserACL                         userACL;
+
+  @Mock
+  private ProgramTranslationImportService programTranslationImportService;
 
   @InjectMocks
-  private DefaultProgramRegistry defaultProgramRegistry;
+  private ProgramImportService            importService;
 
   @Test
   public void testStartWhenNoProgramsExist() {
@@ -79,7 +100,7 @@ public class DefaultProgramRegistryTest extends BaseExoTestCase {
     when(ruleService.createRule(any(RuleDTO.class))).thenReturn(ruleDTO);
     when(ruleService.findRuleByTitle(anyString())).thenReturn(ruleDTO);
 
-    defaultProgramRegistry.start();
+    importService.init();
 
     verify(programService, times(1)).countPrograms(any(ProgramFilter.class));
     verify(programService, times(1)).createProgram(any(ProgramDTO.class));
@@ -92,7 +113,7 @@ public class DefaultProgramRegistryTest extends BaseExoTestCase {
     when(programService.countPrograms(any(ProgramFilter.class))).thenReturn(1);
 
     // When
-    defaultProgramRegistry.start();
+    importService.init();
 
     // Then
     verify(programService, times(1)).countPrograms(any(ProgramFilter.class));

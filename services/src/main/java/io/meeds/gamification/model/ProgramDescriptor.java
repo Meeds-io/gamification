@@ -18,30 +18,36 @@
  */
 package io.meeds.gamification.model;
 
-import io.meeds.gamification.constant.RealizationStatus;
-import io.meeds.gamification.constant.RecurrenceType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DefaultRuleConfig {
+public class ProgramDescriptor {
 
-  private String            event;
+  private String              nameId;
 
-  private int               score;
+  private Map<String, String> names;
 
-  private String            appendEmoji;
+  private String              appendEmoji;
 
-  private String            programTitle;
+  private boolean             enabled;
 
-  private RecurrenceType    recurrence;
+  private String              coverUrl;
 
-  private RealizationStatus defaultRealizationStatus;
+  private List<Description>   descriptions;
 
-  private List<String> prerequisiteRules;
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class Description {
+    private Map<String, String> instruction;
+
+    private String              emoji;
+  }
 }

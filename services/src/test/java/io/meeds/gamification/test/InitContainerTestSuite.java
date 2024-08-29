@@ -20,6 +20,7 @@ import io.meeds.gamification.listener.*;
 import io.meeds.gamification.notification.plugin.ContributionStatusUpdatedNotificationPluginTest;
 import io.meeds.gamification.plugin.*;
 import io.meeds.gamification.service.*;
+import io.meeds.gamification.service.ProgramImportServiceTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -120,7 +121,8 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     EventRegistryTest.class,
     TriggerServiceTest.class,
     ProgramVisibilityUpgradePluginTest.class,
-    DefaultProgramRegistryTest.class
+    ProgramImportServiceTest.class
+
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {

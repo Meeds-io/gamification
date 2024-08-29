@@ -18,6 +18,24 @@
       "prerequisiteRules": ["testEvent"]
 
     }
+  ],
+
+  "descriptors": [
+    {
+      "nameId":"testEvent",
+      "names":{
+        "en":"gamification.defaultProgram.rule.testEvent.title"
+      },
+      "descriptions":{
+        "en":"gamification.defaultProgram.rule.testEvent.description"
+      },
+      "event": "testEvent",
+      "score": 1,
+      "appendEmoji": "\uD83E\uDD17",
+      "programNameId":"sampleProgram",
+      "recurrence": "DAILY",
+      "defaultRealizationStatus": "ACCEPTED"
+    }
   ]
 }
 

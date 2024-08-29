@@ -18,36 +18,17 @@
  */
 package io.meeds.gamification.model;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class DefaultProgramConfig {
-  private String            title;
+@AllArgsConstructor
+public class RuleDescriptorList {
 
-  private String            appendEmoji;
+  private List<RuleDescriptor> descriptors;
 
-  private boolean           enabled;
-
-  private String            coverUrl;
-
-  private String            i18nTitleKey;
-
-  private String            i18nDescriptionKey;
-
-  private List<Instruction> instructions;
-
-  @Data
-  @AllArgsConstructor
-  @NoArgsConstructor
-  public static class Instruction {
-    private String key;
-
-    private String emoji;
-  }
 }
