@@ -52,14 +52,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <portlet-skin>
     <application-name>gamification-portlets</application-name>
-    <portlet-name>myReputation</portlet-name>
-    <skin-name>Enterprise</skin-name>
-    <css-path>/skin/css/badgesOverview.css</css-path>
-    <css-priority>1</css-priority>
-  </portlet-skin>
-
-  <portlet-skin>
-    <application-name>gamification-portlets</application-name>
     <portlet-name>challengesOverview</portlet-name>
     <skin-name>Enterprise</skin-name>
     <css-path>/skin/css/engagementCenter.css</css-path>
@@ -798,38 +790,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <module>eXoVueI18n</module>
     </depends>
   </module>
-
-  <portlet>
-    <name>myReputation</name>
-    <module>
-      <script>
-          <minify>false</minify>
-          <path>/js/myReputation.bundle.js</path>
-        </script>
-       <depends>
-         <module>vue</module>
-       </depends>
-      <depends>
-        <module>vuetify</module>
-      </depends>
-      <depends>
-        <module>commonVueComponents</module>
-      </depends>
-      <depends>
-        <module>jquery</module>
-        <as>$</as>
-      </depends>
-      <depends>
-        <module>eXoVueI18n</module>
-      </depends>
-      <depends>
-        <module>extensionRegistry</module>
-      </depends>
-      <depends>
-        <module>usersLeaderboardCommon</module>
-      </depends>
-    </module>
-  </portlet>
 
   <module>
     <name>ruleComponents</name>
