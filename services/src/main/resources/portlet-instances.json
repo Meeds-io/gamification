@@ -57,25 +57,6 @@
       "spaceApplication":false
     },
     {
-      "nameId":"myReputation",
-      "categoryNameId":"contributions",
-      "portletName":"myReputation",
-      "names":{
-        "en":"layout.portletInstance.myReputation.name"
-      },
-      "descriptions":{
-        "en":"layout.portletInstance.myReputation.description"
-      },
-      "illustrationPath":"war:/../images/portlets/myReputation.webp",
-      "preferences":[
-        
-      ],
-      "permissions":[
-        "*:/platform/users"
-      ],
-      "system":true
-    },
-    {
       "nameId":"myRewards",
       "categoryNameId":"contributions",
       "portletName":"myRewards",
