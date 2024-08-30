@@ -21,10 +21,10 @@
   <v-app>
     <main
       id="rulesList"
-      class="Realizations application-body border-box-sizing"
+      class="Realizations application-body border-box-sizing d-flex flex-column"
       role="main">
       <application-toolbar
-        :center-button-toggle="isProgramManager && !isMobile && {
+        :center-button-toggle="displayOwnedTab && !isMobile && {
           selected: tabName,
           hide: false,
           buttons: [{
@@ -42,9 +42,10 @@
         }"
         :filters-count="filtersCount"
         hide-cone-button
+        class="flex-grow-0"
         @toggle-select="tabName = $event"
         @filter-button-click="$root.$emit('realization-open-filter-drawer')">
-        <template v-if="!$vuetify.breakpoint.mobile" #left>
+        <template v-if="administrationMode && !$vuetify.breakpoint.mobile" #left>
           <engagement-center-realizations-export-button :link="exportFileLink" />
         </template>
         <template #right>
@@ -60,9 +61,13 @@
         indeterminate
         height="2"
         color="primary" />
-      <div v-else-if="!displaySearchResult">
+      <div v-else-if="!displaySearchResult" class="my-auto">
+        <div v-if="$root.hideOwnedTab && !filtersCount" class="d-flex flex-column full-width full-height align-center justify-center">
+          <v-icon color="tertiary" size="60">fa-table</v-icon>
+          <span class="mt-5">{{ $t('gamification.myContributions.title') }}</span>
+        </div>
         <engagement-center-result-not-found
-          v-if="filterActivated || filtersCount"
+          v-else-if="filterActivated || filtersCount"
           :display-back-arrow="false"
           :message-info-one="$t('challenge.realization.noFilterResult.messageOne')"
           :message-info-two="$t('challenge.realization.noFilterResult.messageTwo')"
@@ -123,6 +128,7 @@
           :date-format="mobileDateFormat" />
       </template>
       <v-toolbar
+        v-if="displaySearchResult"
         color="transparent"
         flat>
         <v-btn
@@ -204,6 +210,9 @@ export default {
   computed: {
     administrationMode() {
       return this.tabName === 'OWNED';
+    },
+    displayOwnedTab() {
+      return !this.$root.hideOwnedTab && this.isProgramManager;
     },
     filtersCount() {
       return (this.searchList?.length && 1 || 0)
@@ -370,7 +379,7 @@ export default {
         this.availableSortBy.push(header);
       }
     });
-    if (this.administrationMode && !this.isProgramManager) {
+    if (this.administrationMode && !this.displayOwnedTab) {
       this.tabName = 'YOURS';
     } else if (this.selectedPeriod) {
       this.loadRealizations();
@@ -417,11 +426,12 @@ export default {
         });
     },
     getRealizations() {
-      return this.$realizationService.getRealizations(Object.assign({
+      return this.$realizationService.getRealizations({
         offset: this.offset,
         limit: this.limit,
         returnSize: true,
-      }, this.realizationsFilter))
+        ...this.realizationsFilter,
+      })
         .then(realizations => {
           this.realizations = realizations?.realizations || [];
           this.totalSize = realizations?.size || this.totalSize;

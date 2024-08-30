@@ -42,13 +42,14 @@ const urls = [
 
 document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
 
-export function init(isAdministrator, isProgramManager) {
+export function init(isAdministrator, isProgramManager, hideOwnedTab) {
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
       data: {
         now: Date.now(),
         isAnonymous: !eXo.env.portal.userIdentityId?.length,
+        hideOwnedTab: hideOwnedTab || false,
       },
       computed: {
         isMobile() {
