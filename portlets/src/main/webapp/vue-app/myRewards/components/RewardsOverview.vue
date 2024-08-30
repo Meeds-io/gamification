@@ -30,9 +30,20 @@
     </gamification-overview-widget>
     <gamification-overview-widget
       v-else
-      :title="$t('gamification.overview.rewardsTitle')"
-      :action-url="walletURL"
       :loading="loading">
+      <template #title>
+        <span>{{ $t('gamification.overview.rewardsTitle') }}</span>
+      </template>
+      <template #action>
+        <v-btn
+          height="auto"
+          min-width="auto"
+          class="pa-0"
+          text
+          @click="$root.$emit('wallet-overview-drawer')">
+          <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+        </v-btn>
+      </template>
       <v-card
         v-if="!loading"
         class="my-auto"
@@ -96,9 +107,6 @@ export default {
       return {
         isOverviewDisplay: true,
       };
-    },
-    walletURL() {
-      return this.hasConfiguredWallet && this.walletLink || null;
     },
   },
   created() {
