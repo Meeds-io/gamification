@@ -197,12 +197,15 @@ export default {
             trigger: 'item',
             appendToBody: true,
             formatter: params => `${params.name} <strong style="padding-left: 12px;">${parseInt(params.percent)}%</strong> (${this.format(params.value)})`,
+            position: {
+              top: 0,
+              left: 0,
+            },
           },
           color: this.colors,
           series: [{
             type: 'pie',
             radius: ['50%', '70%'],
-            avoidLabelOverlap: false,
             label: {
               show: false,
             },
