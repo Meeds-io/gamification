@@ -30,18 +30,33 @@
     </gamification-overview-widget>
     <gamification-overview-widget
       v-else
-      :title="$t('gamification.overview.rewardsTitle')"
-      :action-url="walletURL"
       :loading="loading">
+      <template #title>
+        <span>{{ $t('gamification.overview.rewardsTitle') }}</span>
+      </template>
+      <template #action>
+        <v-btn
+          height="auto"
+          min-width="auto"
+          class="pa-0"
+          text
+          @click="$root.$emit('wallet-overview-drawer')">
+          <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+        </v-btn>
+      </template>
       <v-card
         v-if="!loading"
         class="my-auto"
         flat>
         <div class="d-flex">
           <gamification-overview-widget-row
+            :clickable="!!lastReward"
             class="d-flex flex-column col col-6 px-0"
             normal-height
-            dense>
+            dense
+            v-on="lastReward && {
+              open: () => $root.$emit('wallet-overview-drawer', 'rewards'),
+            }">
             <div class="d-flex flex-column align-center justify-center">
               <extension-registry-components
                 :params="params"
@@ -53,9 +68,13 @@
             </div>
           </gamification-overview-widget-row>
           <gamification-overview-widget-row
+            :clickable="!!walletBalance"
             class="d-flex flex-column col col-6 px-0"
             normal-height
-            dense>
+            dense
+            v-on="walletBalance && {
+              open: () => $root.$emit('wallet-overview-drawer', 'transactions'),
+            }">
             <div class="d-flex flex-column align-center justify-center">
               <extension-registry-components
                 :params="params"
@@ -75,6 +94,7 @@
 export default {
   data: () => ({
     walletLink: `${eXo.env.portal.context}/${eXo.env.portal.myCraftSiteName}/wallet`,
+    walletBalance: 0,
     lastReward: 0,
     loading: true,
     hasConfiguredWallet: false,
@@ -97,14 +117,12 @@ export default {
         isOverviewDisplay: true,
       };
     },
-    walletURL() {
-      return this.hasConfiguredWallet && this.walletLink || null;
-    },
   },
   created() {
     document.addEventListener('exo-wallet-api-initialized', this.init);
     document.addEventListener('exo-wallet-settings-loaded', this.checkUserWalletStatus);
     this.$root.$on('wallet-last-reward', this.refreshLastReward);
+    this.$root.$on('wallet-loaded', this.refreshWalletBalance);
   },
   mounted() {
     this.init();
@@ -113,6 +131,7 @@ export default {
     document.removeEventListener('exo-wallet-api-initialized', this.init);
     document.removeEventListener('exo-wallet-settings-loaded', this.checkUserWalletStatus);
     this.$root.$off('wallet-last-reward', this.refreshLastReward);
+    this.$root.$off('wallet-loaded', this.refreshWalletBalance);
   },
   methods: {
     init() {
@@ -128,6 +147,9 @@ export default {
     },
     refreshLastReward(data) {
       this.lastReward = data;
+    },
+    refreshWalletBalance(data) {
+      this.walletBalance = data;
     },
   },
 };
