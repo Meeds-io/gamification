@@ -26,12 +26,13 @@
 <%
 boolean isAdministrator = Utils.isRewardingManager(ConversationState.getCurrent().getIdentity().getUserId());
 boolean isProgramManager = isAdministrator || ExoContainerContext.getService(ProgramService.class).countOwnedPrograms(ConversationState.getCurrent().getIdentity().getUserId()) > 0;
+String hideOwnedTab = request.getAttribute("hideOwnedTab") == null ? "false" : ((String[]) request.getAttribute("hideOwnedTab"))[0];
 %>
 
 <div class="VuetifyApp">
   <div id="EngagementCenterAchievements">
     <script type="text/javascript">
-      window.require(['PORTLET/gamification-portlets/EngagementCenterAchievements'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>));
+      window.require(['PORTLET/gamification-portlets/EngagementCenterAchievements'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>, <%=hideOwnedTab%>));
     </script>
   </div>
 </div>
