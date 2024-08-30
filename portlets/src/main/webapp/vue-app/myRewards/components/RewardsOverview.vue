@@ -20,7 +20,7 @@
         <span></span>
       </template>
       <template #default>
-        <div v-show="!loading" class="d-flex flex-column align-center justify-center full-height full-width">
+        <div v-if="!loading" class="d-flex flex-column align-center justify-center full-height full-width">
           <v-icon color="tertiary" size="60">fa-money-bill</v-icon>
           <span
             v-html="noWalletSummaryText"
@@ -48,7 +48,8 @@
                 name="my-rewards-overview"
                 type="my-rewards-item"
                 class="d-flex flex-row my-auto" />
-              <div class="text-body text-body-1">{{ $t('gamification.overview.rewards.earningsTitle') }}</div>
+              <div v-if="lastReward" class="text-body text-body-1">{{ $t('gamification.overview.rewards.lastReward') }}</div>
+              <div v-else class="text-body text-body-1">{{ $t('gamification.overview.rewards.noRewardYet') }}</div>
             </div>
           </gamification-overview-widget-row>
           <gamification-overview-widget-row
@@ -74,6 +75,7 @@
 export default {
   data: () => ({
     walletLink: `${eXo.env.portal.context}/${eXo.env.portal.myCraftSiteName}/wallet`,
+    lastReward: 0,
     loading: true,
     hasConfiguredWallet: false,
   }),
@@ -102,6 +104,7 @@ export default {
   created() {
     document.addEventListener('exo-wallet-api-initialized', this.init);
     document.addEventListener('exo-wallet-settings-loaded', this.checkUserWalletStatus);
+    this.$root.$on('wallet-last-reward', this.refreshLastReward);
   },
   mounted() {
     this.init();
@@ -109,6 +112,7 @@ export default {
   beforeDestroy() {
     document.removeEventListener('exo-wallet-api-initialized', this.init);
     document.removeEventListener('exo-wallet-settings-loaded', this.checkUserWalletStatus);
+    this.$root.$off('wallet-last-reward', this.refreshLastReward);
   },
   methods: {
     init() {
@@ -121,6 +125,9 @@ export default {
     checkUserWalletStatus() {
       this.hasConfiguredWallet = !!window?.walletSettings?.wallet.address;
       this.loading = false;
+    },
+    refreshLastReward(data) {
+      this.lastReward = data;
     },
   },
 };
