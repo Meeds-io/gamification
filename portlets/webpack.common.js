@@ -40,7 +40,6 @@ module.exports = {
     usersLeaderboard: './src/main/webapp/vue-app/usersLeaderboard/main.js',
     usersLeaderboardCommon: './src/main/webapp/vue-app/usersLeaderboardCommon/main.js',
     badgesOverview: './src/main/webapp/vue-app/badgesOverview/main.js',
-    myRewards: './src/main/webapp/vue-app/myRewards/main.js',
     topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',
     rulesOverview: './src/main/webapp/vue-app/rulesOverview/main.js',
     programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
