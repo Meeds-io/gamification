@@ -57,25 +57,6 @@
       "spaceApplication":false
     },
     {
-      "nameId":"myRewards",
-      "categoryNameId":"contributions",
-      "portletName":"myRewards",
-      "names":{
-        "en":"layout.portletInstance.myRewards.name"
-      },
-      "descriptions":{
-        "en":"layout.portletInstance.myRewards.description"
-      },
-      "illustrationPath":"war:/../images/portlets/myRewards.webp",
-      "preferences":[
-        
-      ],
-      "permissions":[
-        "*:/platform/users"
-      ],
-      "system":true
-    },
-    {
       "nameId":"topChallengers",
       "categoryNameId":"contributions",
       "portletName":"topChallengers",
@@ -172,7 +153,7 @@
     },
     {
       "nameId":"BadgesOverview",
-      "categoryNameId":"profile",
+      "categoryNameId":"contributions",
       "portletName":"BadgesOverview",
       "names":{
         "en":"layout.portletInstance.BadgesOverview.name"
