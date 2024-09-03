@@ -365,10 +365,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <field name="permissions">
               <collection type="java.util.ArrayList">
                 <value>
-                  <string>*:/platform/users</string>
-                </value>
-                <value>
-                  <string>*:/platform/externals</string>
+                  <string>Everyone</string>
                 </value>
               </collection>
             </field>
@@ -412,7 +409,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <field name="permissions">
               <collection type="java.util.ArrayList">
                 <value>
-                  <string>*:/platform/users</string>
+                  <string>Everyone</string>
                 </value>
               </collection>
             </field>
