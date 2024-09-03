@@ -117,7 +117,7 @@ export default {
       return this.activityId && `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.activityId}`;
     },
     streamLink() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/stream`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity`;
     },
     activityTypeExtension() {
       if (this.activity?.type) {
