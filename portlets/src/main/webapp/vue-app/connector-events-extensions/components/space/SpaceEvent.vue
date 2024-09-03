@@ -49,7 +49,7 @@ export default {
   },
   computed: {
     spacesLink() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/spaces`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/spaces`;
     },
   }
 };
