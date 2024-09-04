@@ -55,7 +55,7 @@ export default {
       connectorComponentExtension: null,
       connectorExtension: null,
       selectedConnector: null,
-      connectorsLinkBasePath: '/portal/administration/home/recognition/connectors',
+      connectorsLinkBasePath: '/portal/administration/home/gamification/connectors',
     };
   },
   watch: {
