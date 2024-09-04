@@ -114,25 +114,6 @@
       "system":true
     },
     {
-      "nameId":"PopularSpaces",
-      "categoryNameId":"contributions",
-      "portletName":"PopularSpaces",
-      "names":{
-        "en":"layout.portletInstance.PopularSpaces.name"
-      },
-      "descriptions":{
-        "en":"layout.portletInstance.PopularSpaces.description"
-      },
-      "illustrationPath":"war:/../skin/DefaultSkin/portletIcons/PopularSpaces.png",
-      "preferences":[
-        
-      ],
-      "permissions":[
-        "*:/platform/users"
-      ],
-      "system":true
-    },
-    {
       "nameId":"UsersLeaderboard",
       "categoryNameId":"contributions",
       "portletName":"UsersLeaderboard",
