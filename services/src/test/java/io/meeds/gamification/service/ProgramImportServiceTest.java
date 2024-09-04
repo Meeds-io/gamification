@@ -25,12 +25,16 @@ import io.meeds.gamification.service.injection.ProgramImportService;
 import io.meeds.gamification.service.injection.ProgramTranslationImportService;
 import io.meeds.social.translation.service.TranslationService;
 import org.exoplatform.commons.api.settings.SettingService;
+import org.exoplatform.commons.api.settings.SettingValue;
+import org.exoplatform.commons.api.settings.data.Context;
+import org.exoplatform.commons.api.settings.data.Scope;
 import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.commons.testing.BaseExoTestCase;
 import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.resources.LocaleConfig;
 import org.exoplatform.services.resources.LocaleConfigService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -38,11 +42,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ProgramImportServiceTest extends BaseExoTestCase {
@@ -80,6 +85,28 @@ public class ProgramImportServiceTest extends BaseExoTestCase {
   @InjectMocks
   private ProgramImportService            importService;
 
+  @Before
+  public void setup() {
+    Map<String, String> settingValues = new HashMap<>();
+    doAnswer(invocation -> {
+      Context context = invocation.getArgument(0, Context.class);
+      Scope scope = invocation.getArgument(1, Scope.class);
+      String key = invocation.getArgument(2, String.class);
+      String settingKey = context.getId() + context.getName() + scope.getId() + scope.getName() + key;
+      settingValues.put(settingKey, "1");
+      return null;
+    }).when(settingService).set(any(Context.class), any(Scope.class), anyString(), any(SettingValue.class));
+
+    when(settingService.get(any(Context.class), any(Scope.class), anyString())).thenAnswer(invocation -> {
+      Context context = invocation.getArgument(0, Context.class);
+      Scope scope = invocation.getArgument(1, Scope.class);
+      String key = invocation.getArgument(2, String.class);
+      String settingKey = context.getId() + context.getName() + scope.getId() + scope.getName() + key;
+      String value = settingValues.get(settingKey);
+      return value == null ? null : SettingValue.create(value);
+    });
+  }
+
   @Test
   public void init() {
     try {
@@ -110,6 +137,7 @@ public class ProgramImportServiceTest extends BaseExoTestCase {
       when(ruleService.findRuleByTitle(anyString())).thenReturn(ruleDTO);
       when(ruleService.findRuleById(anyLong())).thenReturn(ruleDTO);
       importService.importPrograms();
+
     } catch (Exception e) {
       fail("Shouldn't stop the container initialization if import default programs fails");
     }
