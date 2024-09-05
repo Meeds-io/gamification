@@ -18,17 +18,33 @@ import './initComponents.js';
 
 // getting language of user
 const lang = eXo?.env?.portal?.language || 'en';
-const resourceBundleName = 'locale.addon.Gamification';
-const url = `/gamification-portlets/i18n/${resourceBundleName}?lang=${lang}`;
+const urls = [
+  `/gamification-portlets/i18n/locale.addon.Gamification?lang=${lang}`,
+  `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`
+];
 
 const appId = 'myContributions';
 
-export function init() {
+export function init(
+  portletStorageId,
+  myContributionsPeriod,
+  myContributionsProgramLimit,
+  myContributionsDisplayLegend,
+  canEdit,
+  pageRef) {
   //getting locale ressources
-  exoi18n.loadLanguageAsync(lang, url)
+  exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       // init Vue app when locale ressources are ready
       new Vue({
+        data: {
+          portletStorageId,
+          myContributionsPeriod,
+          myContributionsProgramLimit,
+          myContributionsDisplayLegend,
+          canEdit,
+          pageRef
+        },
         template: `<my-contributions id="${appId}" />`,
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,

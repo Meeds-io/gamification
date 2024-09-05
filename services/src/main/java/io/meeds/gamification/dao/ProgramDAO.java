@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
@@ -47,7 +48,7 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
 
   public static final String         DOMAIN_TITLE              = "domainTitle";
 
-  private final Map<String, Boolean> filterNamedQueries        = new HashMap<>();
+  private final Map<String, Boolean> filterNamedQueries        = new ConcurrentHashMap<>();
 
   public ProgramEntity findByIdWithOwners(Long id) {
     TypedQuery<ProgramEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findByIdWithOwners",

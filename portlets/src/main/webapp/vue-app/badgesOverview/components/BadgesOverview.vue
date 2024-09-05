@@ -19,73 +19,93 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     v-if="displayWidget"
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
     id="badgesOverview">
-    <div :class="!isOverviewDisplay && 'application-body overflow-hidden'">
-      <div
-        v-if="isOverviewDisplay"
-        v-show="!loading && hasBadges">
-        {{ $t('gamification.overview.badges') }}
-      </div>
-      <v-toolbar
-        v-else
-        id="badgesOverviewHeader"
-        color="transparent"
-        flat
-        class="border-box-sizing"
-        :class="isOverviewDisplay ? 'mb-5' : '64'">
-        <div class="widget-text-header text-truncate">
-          {{ $t('exoplatform.gamification.badgesByDomain') }}
-        </div>
-      </v-toolbar>
-      <v-card
-        v-if="!loading"
-        :class="!loading && 'd-flex'"
-        class="align-center justify-center transparent"
-        min-height="100"
-        flat>
-        <card-carousel
-          v-if="hasBadges"
-          class="d-flex flex-shrink-0 flex-grow-1 align-center justify-center full-height"
-          dense>
-          <badges-overview-item
-            v-for="badge in badges"
-            :key="badge.id"
-            :badge="badge" />
-        </card-carousel>
-        <div v-else class="d-flex flex-column align-center justify-center full-height full-width py-4">
-          <v-icon color="tertiary" size="54">fa-graduation-cap</v-icon>
-          <span
-            v-html="emptyBadgesSummaryText"
-            class="mt-7"></span>
-        </div>
-      </v-card>
-    </div>
-    <badges-overview-drawer />
+    <v-hover v-model="hover">
+      <gamification-overview-widget :loading="loading">
+        <template #title>
+          <div class="d-flex full-width align-center position-relative">
+            <div v-if="hasBadges" class="widget-text-header text-truncate">
+              {{ $t('exoplatform.gamification.badgesByDomain') }}
+            </div>
+            <v-btn
+              v-if="$root.canEdit && hover"
+              :class="{
+                'mt-3': !hasBadges,
+                'l-0': $vuetify.rtl,
+                'r-0': !$vuetify.rtl,
+              }"
+              class="position-absolute absolute-vertical-center z-index-one"
+              icon
+              small
+              @click="$root.$emit('badges-overview-settings')">
+              <v-icon size="18">fa-cog</v-icon>
+            </v-btn>
+          </div>
+        </template>
+        <template #default>
+          <v-card
+            v-if="!loading"
+            :class="!loading && 'd-flex'"
+            class="align-center justify-center transparent flex-grow-0 flex-shrink-0 border-box-sizing px-5 ma-auto"
+            max-width="100%"
+            min-height="100"
+            flat>
+            <card-carousel
+              v-if="hasBadges"
+              class="d-flex width-max-content flex-shrink-0 flex-grow-0 align-center justify-center"
+              dense>
+              <badges-overview-item
+                v-for="(badge, index) in sortedBadges"
+                :key="`${badge.id}_${index}`"
+                :badge="badge" />
+            </card-carousel>
+            <div v-else class="d-flex flex-column align-self-center align-center justify-center full-height full-width">
+              <v-icon color="tertiary" size="60">fa-graduation-cap</v-icon>
+              <span
+                v-html="emptyBadgesSummaryText"
+                class="mt-5"></span>
+            </div>
+          </v-card>
+        </template>
+      </gamification-overview-widget>
+    </v-hover>
+    <badges-overview-drawer
+      v-if="hasBadges" />
+    <badges-overview-settings-drawer
+      v-if="$root.canEdit" />
     <gamification-rules-overview-list-drawer
+      v-if="!hasBadges && !loading"
       ref="listDrawer" />
     <engagement-center-rule-extensions />
   </v-app>
 </template>
-
 <script>
 export default {
-  props: {
-    isOverviewDisplay: {
-      type: Boolean,
-      default: () => false,
-    },
-  },
   data: () => ({
     emptyBadgesActionName: 'gamification-bagdes-check-actions',
     badges: [],
     loading: true,
+    hover: false,
     isCurrentUserProfile: eXo.env.portal.userName === eXo.env.portal.profileOwner,
+    collator: new Intl.Collator(eXo.env.portal.language, {numeric: true, sensitivity: 'base'}),
   }),
   computed: {
+    sortBy() {
+      return this.$root.badgesSortBy;
+    },
+    sortedBadges() {
+      const badges = this.badges.slice();
+      if (this.sortBy === 'alphanumeric') {
+        badges.sort((b1, b2) => this.collator.compare(b1?.badgeLabel?.toLowerCase?.(), b2?.badgeLabel?.toLowerCase?.()));
+      } else {
+        badges.sort((b1, b2) => b2.startScore - b1.startScore);
+      }
+      return badges;
+    },
     hasBadges() {
       return this.badges?.length;
     },
     displayWidget() {
-      return this.isOverviewDisplay || this.isCurrentUserProfile || (!this.loading && this.badges?.length);
+      return this.isCurrentUserProfile || (!this.loading && this.badges?.length);
     },
     emptyBadgesSummaryText() {
       return this.$t('gamification.overview.emptyBadgesMessage', {
@@ -116,13 +136,16 @@ export default {
           }
         })
         .then(data => {
-          this.badges = data || [];
-          document.dispatchEvent(new CustomEvent('badgesCount', {detail: this.badges.length}));
-          this.badges.forEach(badge => {
+          const badges = data || [];
+          badges.forEach(badge => {
             badge.avatar = badge.url;
-            badge.programLabel = badge?.program?.title;
+            if (!badge.programLabel) {
+              badge.programLabel = badge?.program?.title || badge.zone;
+            }
             badge.badgeLabel = badge.title;
           });
+          this.badges = badges;
+          document.dispatchEvent(new CustomEvent('badgesCount', {detail: this.badges.length}));
           return this.$nextTick();
         })
         .finally(() => {

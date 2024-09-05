@@ -30,7 +30,7 @@
     fixed
     right>
     <template #title>
-      {{ $t('gamification.overview.userAchievementsList.drawer.title') }}
+      {{ header }}
     </template>
     <template v-if="drawer && user && programs" #content>
       <div class="pa-5">
@@ -38,18 +38,20 @@
           :user="user"
           no-action />
 
-        <div class="d-flex align-center mb-2 mt-5">
-          <div class="text-header me-2">
-            {{ $t(`gamification.profileStats.${period}`) }}
+        <template v-if="user.score && !programOnly">
+          <div class="d-flex align-center mb-2 mt-5">
+            <div class="text-header me-2">
+              {{ title }}
+            </div>
+            <v-divider />
           </div>
-          <v-divider />
-        </div>
-        <users-leaderboard-profile-stats
-          :user="user"
-          :programs="programs"
-          :period="period"
-          :program-id="programId"
-          @select="programId = $event" />
+          <users-leaderboard-profile-stats
+            :user="user"
+            :programs="programs"
+            :period="period"
+            :program-id="programId"
+            @select="programId = $event" />
+        </template>
 
         <div class="d-flex align-center mb-2 mt-5">
           <div class="text-header me-2">
@@ -68,8 +70,8 @@
     </template>
     <template v-else-if="drawer && !loading" #content>
       <div class="d-flex flex-column full-width full-height align-center justify-center">
-        <v-icon color="tertiary" size="54">fa-chart-pie</v-icon>
-        <span v-html="noResultsText" class="text-body mt-7"></span>
+        <v-icon color="tertiary" size="60">fa-chart-pie</v-icon>
+        <span v-html="noResultsText" class="text-body mt-5"></span>
       </div>
       <gamification-rules-overview-list-drawer
         ref="actionsList"
@@ -95,6 +97,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    programOnly: {
+      type: Boolean,
+      default: false,
+    },
     relative: {
       type: Boolean,
       default: false,
@@ -111,6 +117,22 @@ export default {
     pageSize: Math.max(10, parseInt((window.innerHeight - 560) / 62)),
   }),
   computed: {
+    header() {
+      return this.programOnly ?
+        this.$t('gamification.overview.userProgramAchievementsList.drawer.title', {
+          0: this.programTitle,
+        })
+        : this.$t('gamification.overview.userAchievementsList.drawer.title');
+    },
+    title() {
+      return this.$t(`gamification.profileStats.${this.period.toUpperCase()}`);
+    },
+    program() {
+      return this.programId && this.programs?.find?.(p => p.id === this.programId);
+    },
+    programTitle() {
+      return this.program?.title;
+    },
     noResultsText() {
       return this.$t('gamification.overview.emptyAchievementsMessage', {
         0: '<a class="primary--text font-weight-bold" onclick="window.dispatchEvent(new CustomEvent(\'rules-list-drawer-open\'))">',
@@ -125,26 +147,25 @@ export default {
     window.removeEventListener('rules-list-drawer-open', this.openActionsList);
   },
   methods: {
-    openByIdentityId(identityId, period) {
+    openByIdentityId(identityId, period, programId) {
       this.period = period || 'WEEK';
       this.user = null;
-      this.programId = null;
+      this.programId = programId;
 
       this.$refs.drawer.open();
       this.loading = true;
       this.$leaderboardService.getLeaderboard({
         identityId,
-        period,
         limit: 0,
       })
         .then(data => this.user = data.find(u => Number(u.identityId) === Number(identityId)))
         .then(() => this.retrievePrograms())
         .finally(() => this.loading = false);
     },
-    open(user, period) {
+    open(user, period, programId) {
       this.period = period || 'WEEK';
       this.user = user;
-      this.programId = null;
+      this.programId = programId;
 
       this.$refs.drawer.open();
       this.loading = true;

@@ -1,12 +1,16 @@
 <template>
-  <v-list class="py-0 flex-grow-1 flex-shrink-1 transparent" :disabled="disabled">
+  <v-list
+    :disabled="disabled"
+    class="py-0 transparent">
     <div v-if="$slots.title" class="text-header">
       <slot name="title"></slot>
     </div>
     <v-list-item
-      v-on="clickable ? { click: open } : {}"
       :dense="!normalHeight"
-      class="px-0 flex-grow-1 flex-shrink-1">
+      class="px-0 flex-grow-1 flex-shrink-1"
+      v-on="clickable && !disabled && {
+        click: open,
+      }">
       <v-list-item-action-text v-if="$slots.icon" class="me-4">
         <slot name="icon"></slot>
       </v-list-item-action-text>

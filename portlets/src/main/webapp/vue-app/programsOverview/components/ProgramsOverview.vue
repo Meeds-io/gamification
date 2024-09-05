@@ -15,49 +15,79 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget :loading="loading">
-      <template v-if="programsDisplayed || loading" #title>
-        <div v-if="programsDisplayed" class="d-flex flex-grow-1 full-width">
-          <div class="widget-text-header text-none text-truncate">
-            {{ $t('gamification.overview.programsOverviewTitle') }}
+    <v-hover v-model="hover">
+      <gamification-overview-widget :loading="loading">
+        <template #title>
+          <div class="d-flex flex-grow-1 flex-shrink-1 full-width align-center position-relative">
+            <div
+              v-if="programsDisplayed"
+              class="widget-text-header text-none text-truncate d-flex align-center">
+              {{ $t('gamification.overview.programsOverviewTitle') }}
+            </div>
+            <div
+              :class="{
+                'mt-2 me-2': !programsDisplayed,
+                'l-0': $vuetify.rtl,
+                'r-0': !$vuetify.rtl,
+              }"
+              class="position-absolute absolute-vertical-center z-index-one">
+              <v-btn
+                v-show="programLink"
+                :icon="hoverEdit"
+                :small="hoverEdit"
+                height="auto"
+                min-width="auto"
+                class="pa-0"
+                text
+                @click="$refs.listDrawer.open()">
+                <v-icon
+                  v-if="hoverEdit"
+                  size="18"
+                  color="primary">
+                  fa-external-link-alt
+                </v-icon>
+                <span v-else class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+              </v-btn>
+              <v-fab-transition hide-on-leave>
+                <v-btn
+                  v-show="hoverEdit"
+                  :title="$t('gamification.programs.overviewSettings.editTooltip')"
+                  :class="!programsDisplayed && 'mt-n4 me-n2 z-index-one'"
+                  small
+                  icon
+                  @click="$root.$emit('programs-overview-settings')">
+                  <v-icon size="18">fa-cog</v-icon>
+                </v-btn>
+              </v-fab-transition>
+            </div>
           </div>
-          <v-spacer />
-          <v-btn
-            height="auto"
-            min-width="auto"
-            class="pa-0"
-            text
-            @click="$refs.listDrawer.open()">
-            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
-          </v-btn>
-        </div>
-      </template>
-      <div v-if="programsDisplayed">
-        <gamification-overview-program-item
-          v-for="program in programs" 
-          :key="program.id"
-          :program="program"
-          class="flex-grow-1" />
-        <template v-if="remainingCount">
-          <gamification-overview-widget-empty-row
-            v-for="index in remainingCount"
-            :key="index"
-            class="flex-grow-1" />
         </template>
-      </div>
-      <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
-        <v-icon color="tertiary" size="54">fa-puzzle-piece</v-icon>
-        <span class="mt-7">{{ $t('gamification.overview.programs') }}</span>
-      </div>
-    </gamification-overview-widget>
-    <gamification-program-list-drawer
-      v-if="programsDisplayed"
-      ref="listDrawer" />
-    <gamification-program-detail-drawer
-      v-if="programsDisplayed"
-      :administrators="administrators" />
-    <engagement-center-rule-extensions
-      v-if="programsDisplayed" />
+        <template #default>
+          <div
+            v-if="programsDisplayed"
+            class="flex-grow-1 flex-shrink-1 overflow-hidden">
+            <gamification-overview-program-item
+              v-for="program in programsToDisplay" 
+              :key="program.id"
+              :program="program"
+              class="flex-grow-1" />
+          </div>
+          <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
+            <v-icon color="tertiary" size="60">fa-puzzle-piece</v-icon>
+            <span class="mt-5">{{ $t('gamification.overview.programs') }}</span>
+          </div>
+        </template>
+      </gamification-overview-widget>
+    </v-hover>
+    <div v-if="programsDisplayed">
+      <gamification-program-list-drawer
+        ref="listDrawer" />
+      <gamification-program-detail-drawer
+        :administrators="administrators" />
+      <engagement-center-rule-extensions />
+    </div>
+    <gamification-programs-overview-settings-drawer
+      v-if="$root.canEdit" />
   </v-app>
 </template>
 <script>
@@ -65,19 +95,42 @@ export default {
   data: () => ({
     programs: [],
     administrators: null,
-    limitToLoad: 4,
+    hover: false,
     loading: true,
-    programsDisplayed: false
   }),
   computed: {
+    programsDisplayed() {
+      return !!this.programs?.length;
+    },
+    programsToDisplay() {
+      return this.programs.slice(0, this.$root.limit);
+    },
     programURL() {
       return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`;
     },
     programLink() {
       return this.programsDisplayed && this.programURL || null;
     },
-    remainingCount() {
-      return this.limitToLoad - (this.programs?.length || 0);
+    hoverEdit() {
+      return this.hover && this.$root.canEdit;
+    },
+    limit() {
+      return this.$root.limit || 4;
+    },
+    sortBy() {
+      return this.$root.programsSortBy || 'modifiedDate';
+    },
+  },
+  watch: {
+    limit() {
+      if (!this.loading) {
+        this.retrievePrograms();
+      }
+    },
+    sortBy() {
+      if (!this.loading) {
+        this.retrievePrograms();
+      }
     },
   },
   created() {
@@ -87,18 +140,17 @@ export default {
     retrievePrograms() {
       this.loading = true;
       return this.$programService.getPrograms({
-        limit: this.limitToLoad,
+        sortBy: this.sortBy || 'modifiedDate',
+        sortDescending: this.sortBy !== 'title',
+        limit: this.limit || 4,
         type: 'ALL',
         status: 'ENABLED',
-        sortBy: 'modifiedDate',
-        sortDescending: true,
         lang: eXo.env.portal.language,
         expand: 'countActiveRules,administrators'
       })
         .then((data) => {
           this.administrators = data?.administrators || [];
           this.programs = data?.programs || [];
-          this.programsDisplayed = data.size > 0;
         })
         .finally(() => this.loading = false);
     },

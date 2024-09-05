@@ -453,18 +453,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <field name="contentId">
               <string>gamification-portlets/challengesOverview</string>
             </field>
-            <field name="portletPrefs">
-              <map type="java.util.HashMap">
-                <entry>
-                  <key>
-                    <string>showLocked</string>
-                  </key>
-                  <value>
-                    <string>true</string>
-                  </value>
-                </entry>
-              </map>
-            </field>  
             <field name="permissions">
               <collection type="java.util.ArrayList">
                 <value>
