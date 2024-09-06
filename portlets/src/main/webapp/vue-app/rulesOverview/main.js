@@ -47,6 +47,7 @@ export function init(
           rulesSortBy,
           canEdit: portletStorageId && canEdit || false,
           pageRef,
+          displayNotPublicallyVisible: eXo.env.portal.portalName === 'public' && canEdit,
         },
         template: `<gamification-rules-overview id="${appId}" />`,
         created() {

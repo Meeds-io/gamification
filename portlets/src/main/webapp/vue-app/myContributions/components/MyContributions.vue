@@ -57,7 +57,7 @@
                 <v-btn
                   v-show="hoverEdit"
                   :title="$t('gamification.programs.overviewSettings.editTooltip')"
-                  :class="neverContributed && 'mt-n4 me-n2 z-index-one'"
+                  :class="neverContributed && 'me-n2 z-index-one'"
                   small
                   icon
                   @click="$root.$emit('my-contributions-overview-settings')">
