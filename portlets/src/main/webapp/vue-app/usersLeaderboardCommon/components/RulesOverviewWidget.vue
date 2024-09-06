@@ -280,7 +280,7 @@ export default {
     isHiddenWidget() {
       return this.isHiddenWhenEmpty
         && !this.loading
-        && !this.activeRulesSize;
+        && !this.hasValidRules;
     },
     sortBy() {
       return this.$root.rulesSortBy || (this.spaceId?.length && 'score' || 'createdDate');
