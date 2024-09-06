@@ -39,7 +39,8 @@ export function init(
           topChallengersPeriod,
           topChallengersCurrentPosition,
           canEdit,
-          pageRef
+          pageRef,
+          displayNotPublicallyVisible: eXo.env.portal.portalName === 'public' && canEdit,
         },
         template: `<gamification-overview-top-challengers id="${appId}" />`,
         i18n,

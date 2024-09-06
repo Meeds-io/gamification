@@ -35,6 +35,7 @@ export function init(portletStorageId, limit, programsSortBy, canEdit, pageRef) 
           programsSortBy,
           canEdit: portletStorageId && canEdit || false,
           pageRef,
+          displayNotPublicallyVisible: eXo.env.portal.portalName === 'public' && canEdit,
         },
         template: `<gamification-overview-programs id="${appId}" />`,
         created() {

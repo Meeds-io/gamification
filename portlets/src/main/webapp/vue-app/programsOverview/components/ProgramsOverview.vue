@@ -31,6 +31,23 @@
                 'r-0': !$vuetify.rtl,
               }"
               class="position-absolute absolute-vertical-center z-index-one">
+              <v-tooltip v-if="$root.displayNotPublicallyVisible" top>
+                <template #activator="{attrs, on}">
+                  <v-icon
+                    size="18"
+                    color="warning"
+                    class="me-2"
+                    v-on="on"
+                    v-bind="attrs">
+                    fa-exclamation-triangle
+                  </v-icon>
+                </template>
+                <span>
+                  {{ $t('gamification.publicWidgetHiddenTooltipPart1') }}
+                  <br>
+                  {{ $t('gamification.publicWidgetHiddenTooltipPart2') }}
+                </span>
+              </v-tooltip>
               <v-btn
                 v-show="programLink"
                 :icon="hoverEdit"
