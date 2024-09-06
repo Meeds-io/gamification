@@ -24,6 +24,8 @@
 <%@ page import="org.exoplatform.portal.application.PortalRequestContext"%>
 <%@ page import="org.exoplatform.portal.config.UserACL"%>
 <%@ page import="org.exoplatform.container.ExoContainerContext"%>
+<div class="VuetifyApp">
+  <div id="topChallengers">
 <% if (Utils.canAccessAnonymousResources()) {
   String portletStorageId = ((String) request.getAttribute("portletStorageId"));
   String topChallengersPeriod = request.getAttribute("topChallengersPeriod") == null ? "week" : ((String[]) request.getAttribute("topChallengersPeriod"))[0];
@@ -32,17 +34,19 @@
   boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage);
   String pageRef = currentPage.getPageKey().format();
 %>
-  <div class="VuetifyApp">
-    <div id="topChallengers">
-      <script type="text/javascript">
-        window.require(['PORTLET/gamification-portlets/topChallengers'], app => app.init(
-          '<%=portletStorageId%>',
-          '<%=topChallengersPeriod%>',
-          <%=topChallengersCurrentPosition%>,
-          <%=canEdit%>,
-          '<%=pageRef%>'
-        ));
-      </script>
-    </div>
-  </div>
+    <script type="text/javascript">
+      window.require(['PORTLET/gamification-portlets/topChallengers'], app => app.init(
+        '<%=portletStorageId%>',
+        '<%=topChallengersPeriod%>',
+        <%=topChallengersCurrentPosition%>,
+        <%=canEdit%>,
+        '<%=pageRef%>'
+      ));
+    </script>
+<% } else { %>
+    <script type="text/javascript">
+      require(['SHARED/vue'], () => Vue.prototype.$updateApplicationVisibility(false, document.querySelector('#topChallengers')));
+    </script>
 <% } %>
+  </div>
+</div>
