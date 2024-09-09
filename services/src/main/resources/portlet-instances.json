@@ -57,44 +57,6 @@
       "spaceApplication":false
     },
     {
-      "nameId":"myReputation",
-      "categoryNameId":"contributions",
-      "portletName":"myReputation",
-      "names":{
-        "en":"layout.portletInstance.myReputation.name"
-      },
-      "descriptions":{
-        "en":"layout.portletInstance.myReputation.description"
-      },
-      "illustrationPath":"war:/../images/portlets/myReputation.webp",
-      "preferences":[
-        
-      ],
-      "permissions":[
-        "*:/platform/users"
-      ],
-      "system":true
-    },
-    {
-      "nameId":"myRewards",
-      "categoryNameId":"contributions",
-      "portletName":"myRewards",
-      "names":{
-        "en":"layout.portletInstance.myRewards.name"
-      },
-      "descriptions":{
-        "en":"layout.portletInstance.myRewards.description"
-      },
-      "illustrationPath":"war:/../images/portlets/myRewards.webp",
-      "preferences":[
-        
-      ],
-      "permissions":[
-        "*:/platform/users"
-      ],
-      "system":true
-    },
-    {
       "nameId":"topChallengers",
       "categoryNameId":"contributions",
       "portletName":"topChallengers",
@@ -152,25 +114,6 @@
       "system":true
     },
     {
-      "nameId":"PopularSpaces",
-      "categoryNameId":"contributions",
-      "portletName":"PopularSpaces",
-      "names":{
-        "en":"layout.portletInstance.PopularSpaces.name"
-      },
-      "descriptions":{
-        "en":"layout.portletInstance.PopularSpaces.description"
-      },
-      "illustrationPath":"war:/../skin/DefaultSkin/portletIcons/PopularSpaces.png",
-      "preferences":[
-        
-      ],
-      "permissions":[
-        "*:/platform/users"
-      ],
-      "system":true
-    },
-    {
       "nameId":"UsersLeaderboard",
       "categoryNameId":"contributions",
       "portletName":"UsersLeaderboard",
@@ -191,7 +134,7 @@
     },
     {
       "nameId":"BadgesOverview",
-      "categoryNameId":"profile",
+      "categoryNameId":"contributions",
       "portletName":"BadgesOverview",
       "names":{
         "en":"layout.portletInstance.BadgesOverview.name"

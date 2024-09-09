@@ -18,5 +18,5 @@
 package io.meeds.gamification.constant;
 
 public enum Period {
-  ALL, MONTH, WEEK
+  ALL, QUARTER, MONTH, WEEK
 }

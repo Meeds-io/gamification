@@ -18,12 +18,14 @@ import BadgesOverview from './components/BadgesOverview.vue';
 import BadgesOverviewItem from './components/BadgesOverviewItem.vue';
 import BadgesOverviewDrawer from './components/BadgesOverviewDrawer.vue';
 import BadgesOverviewDrawerItem from './components/BadgesOverviewDrawerItem.vue';
+import BadgesOverviewSettingsDrawer from './components/BadgesOverviewSettingsDrawer.vue';
 
 const components = {
   'badges-overview': BadgesOverview,
   'badges-overview-item': BadgesOverviewItem,
   'badges-overview-drawer': BadgesOverviewDrawer,
   'badges-overview-drawer-item': BadgesOverviewDrawerItem,
+  'badges-overview-settings-drawer': BadgesOverviewSettingsDrawer,
 };
 
 for (const key in components) {

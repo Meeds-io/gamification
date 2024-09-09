@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-layout class="row wrap mx-0 fill-height">
+  <div class="my-auto">
     <div v-if="!isOverviewDisplay && !loading" class="d-flex align-center full-width mt-3 ms-n2">
       <v-btn
         class="pa-0 my-auto"
@@ -26,15 +26,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-icon>
       </v-btn>
       <div class="d-flex flex-grow-1 flex-shrink-1 text-truncate">
-        <span class="widget-text-header text-truncate">{{ $t('homepage.profileStatus.weeklyRank') }}</span>
+        <span class="widget-text-header text-truncate">{{ title }}</span>
       </div>
     </div>
     <div
       v-if="displayPlaceholder"
       :class="!isOverviewDisplay && 'mt-n7'"
       class="d-flex flex-column align-center justify-center full-width fill-height">
-      <v-icon color="tertiary" size="54">fa-trophy</v-icon>
-      <span class="text-body mt-7">{{ $t('gamification.overview.weeklyLeaderboard') }}</span>
+      <v-icon color="tertiary" size="60">fa-trophy</v-icon>
+      <span class="text-body mt-5">{{ placeholder }}</span>
     </div>
     <template v-else-if="!loading">
       <v-flex class="xs12 mb-1">
@@ -45,82 +45,83 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             justify-center
             align-end>
             <v-card
-              v-if="podium[1]"
+              v-if="users[1]"
               class="transparent mx-1 align-center"
               flat
-              @click.prevent.stop="$refs.profileStatsDrawer.open(podium[1], period)">
+              @click.prevent.stop="$refs.profileStatsDrawer.open(users[1], period)">
               <user-avatar
-                :profile-id="podium[1].remoteId"
-                :name="podium[1].fullname"
-                :avatar-url="podium[1].avatarUrl"
-                :popover="podium[1].remoteId"
+                :profile-id="users[1].remoteId"
+                :name="users[1].fullname"
+                :avatar-url="users[1].avatarUrl"
+                :popover="users[1].remoteId"
                 :size="40"
                 extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
                 avatar
                 popover-left-position />
-              <v-card-text
-                class="top2 grey lighten-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
-                style="height: 40px">
-                {{ podium[1].score }}
-              </v-card-text>
+              <v-img
+                src="/gamification-portlets/images/podium/2.webp"
+                class="top2 d-flex white--text justify-center align-center text-title"
+                width="80">
+                {{ users[1].score }}
+              </v-img>
             </v-card>
             <v-card
-              v-if="podium[0]"
+              v-if="users[0]"
               class="transparent mx-1 align-center"
               flat
-              @click.prevent.stop="$refs.profileStatsDrawer.open(podium[0], period)">
+              @click.prevent.stop="$refs.profileStatsDrawer.open(users[0], period)">
               <user-avatar
-                :profile-id="podium[0].remoteId"
-                :name="podium[0].fullname"
-                :avatar-url="podium[0].avatarUrl"
-                :popover="podium[0].remoteId"
+                :profile-id="users[0].remoteId"
+                :name="users[0].fullname"
+                :avatar-url="users[0].avatarUrl"
+                :popover="users[0].remoteId"
                 :size="40"
                 extra-class="ml-2 me-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
                 avatar
                 popover-left-position />
-              <v-card-text
-                class="top1 yellow darken-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
-                style="height: 55px">
-                {{ podium[0].score }}
-              </v-card-text>
+              <v-img
+                src="/gamification-portlets/images/podium/1.webp"
+                class="top1 d-flex white--text justify-center align-center text-title"
+                width="80">
+                {{ users[0].score }}
+              </v-img>
             </v-card>
             <v-card
-              v-if="podium[2]"
+              v-if="users[2]"
               class="transparent mx-1 align-center"
               flat
-              @click.prevent.stop="$refs.profileStatsDrawer.open(podium[2], period)">
+              @click.prevent.stop="$refs.profileStatsDrawer.open(users[2], period)">
               <user-avatar
-                :profile-id="podium[2].remoteId"
-                :name="podium[2].fullname"
-                :avatar-url="podium[2].avatarUrl"
-                :popover="podium[2].remoteId"
+                :profile-id="users[2].remoteId"
+                :name="users[2].fullname"
+                :avatar-url="users[2].avatarUrl"
+                :popover="users[2].remoteId"
                 :size="40"
                 extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
                 avatar
                 popover-left-position />
-              <v-card-text
-                class="top3 amber darken-1 px-3 pb-1 flex d-flex white--text justify-center font-weight-bold pt-2px"
-                style="height: 25px">
-                {{ podium[2].score }}
-              </v-card-text>
+              <v-img
+                src="/gamification-portlets/images/podium/3.webp"
+                class="top3 d-flex white--text justify-center align-center text-title"
+                width="80">
+                {{ users[2].score }}
+              </v-img>
             </v-card>
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex xs12>
-        <v-list class="py-0" min-height="110">
+      <v-flex v-if="currentUser" xs12>
+        <v-list class="py-0">
           <users-leaderboard-profile
-            v-for="user in listBelowPoduim"
-            :key="user.identityId"
-            :user="user"
+            :user="currentUser"
             :selected-identity-id="identityId"
-            @open="$refs.profileStatsDrawer.open(user, period)" />
+            @open="$refs.profileStatsDrawer.open(currentUser, period)" />
         </v-list>
       </v-flex>
       <users-leaderboard-profile-achievements-drawer
         ref="profileStatsDrawer" />
     </template>
-  </v-layout>
+  </div>
 </template>
 <script>
 export default {
@@ -132,27 +133,49 @@ export default {
   },
   data: () => ({
     users: [],
-    listBelowPoduimLimit: 3,
+    allUsers: null,
     podiumLimit: 3,
     identityId: eXo.env.portal.profileOwnerIdentityId,
     loading: true,
   }),
   computed: {
-    podium() {
-      return this.users.slice(0, this.podiumLimit);
+    period() {
+      return this.$root.topChallengersPeriod || 'week';
+    },
+    title() {
+      return this.period === 'all' ?
+        this.$t('homepage.profileStatus.allTimeRank')
+        : this.$t(`homepage.profileStatus.${this.period.toLowerCase()}lyRank`);
     },
     displayPlaceholder() {
       return !this.loading && !this.users?.length;
     },
-    limit() {
-      return this.listBelowPoduimLimit + this.podiumLimit;
+    placeholder() {
+      return this.period === 'all' ?
+        this.$t('gamification.overview.allTimeLeaderboard')
+        : this.$t(`gamification.overview.${this.period.toLowerCase()}lyLeaderboard`);
     },
-    listBelowPoduim() {
-      if (this.users?.length <= this.podiumLimit) {
-        return this.users;
-      } else {
-        return this.users.slice(this.users?.length - this.listBelowPoduimLimit);
+    displayCurrentPosition() {
+      return this.isOverviewDisplay ? (this.$root.topChallengersCurrentPosition || false) : true;
+    },
+    currentUser() {
+      const currentUser = this.identityId
+        && this.allUsers.find(u => u.identityId === Number(this.identityId));
+      if (this.displayCurrentPosition
+          && currentUser?.rank
+          && currentUser?.score
+          && currentUser.rank > this.podiumLimit) {
+        return currentUser;
       }
+      return null;
+    },
+  },
+  watch: {
+    period() {
+      this.getLeaderboard();
+    },
+    displayCurrentPosition() {
+      this.getLeaderboard();
     },
   },
   created() {
@@ -163,26 +186,17 @@ export default {
       this.loading = true;
       return this.$leaderboardService.getLeaderboard({
         identityId: this.identityId,
-        period: 'WEEK',
-        limit: this.limit,
+        period: this.period,
+        limit: this.podiumLimit,
       })
         .then(users => {
-          const currentUser = this.identityId && users.find(u => u.identityId === Number(this.identityId));
-          if (currentUser?.rank && currentUser.rank > (this.limit - 1)) {
-            const listBelowPoduimOffset = currentUser.rank - this.listBelowPoduimLimit;
-            const listBelowPoduimLimit = parseInt((this.listBelowPoduimLimit - 1) / 2) * 3 + 1;
-            return this.$leaderboardService.getLeaderboard({
-              period: 'WEEK',
-              offset: listBelowPoduimOffset,
-              limit: listBelowPoduimLimit,
-            })
-              .then(otherUsers => {
-                this.users = [...users, ...otherUsers]
-                  .sort((v1, v2) => v1.rank - v2.rank)
-                  .filter((v, i, array) => array.findIndex(v2 => v?.identityId === v2?.identityId) === i);
-              });
+          this.allUsers = users;
+          if (users?.length) {
+            this.users = users
+              .filter(u => u.rank <= this.podiumLimit)
+              .slice(0, this.podiumLimit);
           } else {
-            this.users = users.slice(0, this.limit);
+            this.users = [];
           }
         })
         .then(() => document.dispatchEvent(new CustomEvent('listOfRankedConnections', {detail: this.users.length})))
