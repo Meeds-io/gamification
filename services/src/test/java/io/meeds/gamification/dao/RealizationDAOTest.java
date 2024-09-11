@@ -114,7 +114,7 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
   public void testFindActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId() {
     ProgramEntity domainEntity = newDomain();
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
-    assertNotNull(realizationDAO.findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(realizationEntity.getRuleEntity()
+    assertNotNull(realizationDAO.findLastRealizationByRuleIdAndEarnerIdAndReceiverAndObjectId(realizationEntity.getRuleEntity()
                                                                                                                 .getId(),
                                                                                                TEST_USER_EARNER,
                                                                                                TEST_USER_EARNER,

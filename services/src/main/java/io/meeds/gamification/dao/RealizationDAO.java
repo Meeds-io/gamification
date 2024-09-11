@@ -289,24 +289,24 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public Long findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(long ruleId,
-                                                                                         String earnerId,
-                                                                                         String receiverId,
-                                                                                         String objectId,
-                                                                                         String objectType) {
+  public Long findLastRealizationByRuleIdAndEarnerIdAndReceiverAndObjectId(long ruleId,
+                                                                           String earnerId,
+                                                                           String receiverId,
+                                                                           String objectId,
+                                                                           String objectType) {
     TypedQuery<Long> query =
-                                        getEntityManager().createNamedQuery("RealizationEntity.findReadlizationsByRuleIdAndEarnerIdAndReceiverAndObjectId",
-                                                                            Long.class);
+                           getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByRuleIdAndEarnerIdAndReceiverAndObjectId",
+                                                               Long.class);
     query.setParameter(RULE_ID_PARAM_NAME, ruleId)
          .setParameter(EARNER_ID_PARAM_NAME, earnerId)
          .setParameter(RECEIVER_ID_PARAM_NAME, receiverId)
          .setParameter(OBJECT_ID_PARAM_NAME, objectId)
          .setParameter(OBJECT_TYPE_PARAM_NAME, objectType)
-         .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
+         .setParameter(STATUS_PARAM_NAME, List.of(RealizationStatus.ACCEPTED, RealizationStatus.PENDING));
     query.setMaxResults(1);
 
     List<Long> resultList = query.getResultList();
-    return CollectionUtils.isEmpty(resultList) ? null : resultList.get(0);
+    return CollectionUtils.isEmpty(resultList) ? null : resultList.getFirst();
   }
 
   public List<Long> getRealizationsByObjectIdAndObjectType(String objectId, String objectType) {
