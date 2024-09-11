@@ -340,7 +340,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       return Collections.emptyList();
     }
     return rules.stream()
-                .map(rule -> realizationStorage.findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(rule.getId(),
+                .map(rule -> realizationStorage.findLastRealizationByRuleIdAndEarnerIdAndReceiverAndObjectId(rule.getId(),
                                                                                                               earnerIdentityId,
                                                                                                               receiverIdentityId,
                                                                                                               objectId,
