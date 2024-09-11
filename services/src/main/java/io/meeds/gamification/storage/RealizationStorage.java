@@ -131,16 +131,16 @@ public class RealizationStorage {
     return gamificationHistoryDAO.getScoreByIdentityIdsAndBetweenDates(earnersId, fromDate, toDate);
   }
 
-  public RealizationDTO findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(long ruleId,
-                                                                                      String earnerId,
-                                                                                      String receiverId,
-                                                                                      String objectId,
-                                                                                      String objectType) {
-    Long id = gamificationHistoryDAO.findLastReadlizationByRuleIdAndEarnerIdAndReceiverAndObjectId(ruleId,
-                                                                                                   earnerId,
-                                                                                                   receiverId,
-                                                                                                   objectId,
-                                                                                                   objectType);
+  public RealizationDTO findLastRealizationByRuleIdAndEarnerIdAndReceiverAndObjectId(long ruleId,
+                                                                                     String earnerId,
+                                                                                     String receiverId,
+                                                                                     String objectId,
+                                                                                     String objectType) {
+    Long id = gamificationHistoryDAO.findLastRealizationByRuleIdAndEarnerIdAndReceiverAndObjectId(ruleId,
+                                                                                                  earnerId,
+                                                                                                  receiverId,
+                                                                                                  objectId,
+                                                                                                  objectType);
     return id == null || id == 0 ? null : getRealizationById(id);
   }
 
