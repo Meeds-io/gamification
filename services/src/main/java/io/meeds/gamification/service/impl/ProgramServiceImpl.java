@@ -513,25 +513,13 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   private boolean isSpaceManager(long spaceId, String username) {
-    if (spaceService.isSuperManager(username)) {
-      return true;
-    }
     Space space = spaceService.getSpaceById(String.valueOf(spaceId));
-    if (space == null) {
-      return false;
-    }
-    return spaceService.isManager(space, username);
+    return spaceService.canManageSpace(space, username);
   }
 
   private boolean isSpaceMember(long spaceId, String username) {
-    if (StringUtils.isBlank(username)) {
-      return false;
-    }
     Space space = spaceService.getSpaceById(String.valueOf(spaceId));
-    if (space == null) {
-      return false;
-    }
-    return spaceService.isMember(space, username);
+    return spaceService.canViewSpace(space, username);
   }
 
   private boolean isSpaceOpen(long spaceId) {
