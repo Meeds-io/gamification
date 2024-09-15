@@ -105,17 +105,34 @@ public class SpaceServiceMock implements SpaceService {
   public boolean hasRedactor(Space space) {
     return SPACE_PRETTY_NAME.equals(space.getPrettyName());
   }
-
+  
   @Override
   public boolean canRedactOnSpace(Space space, org.exoplatform.services.security.Identity viewer) {
     if (viewer == null) {
       throw new IllegalStateException("User ACL Identity is mandatory");
     }
-    if (space == null) {
-      throw new IllegalStateException("Space is mandatory");
+    return space != null && (!SPACE_PRETTY_NAME.equals(space.getPrettyName())
+                             || SPACE_MANAGERS.contains(viewer.getUserId()));
+  }
+
+  public boolean canPublishOnSpace(Space space, String userId) {
+    if (userId == null) {
+      throw new IllegalStateException("User ACL Identity is mandatory");
     }
-    return !SPACE_PRETTY_NAME.equals(space.getPrettyName())
-        || SPACE_MANAGERS.contains(viewer.getUserId());
+    return space != null && (!SPACE_PRETTY_NAME.equals(space.getPrettyName())
+                             || SPACE_MANAGERS.contains(userId));
+  }
+
+  public boolean canViewSpace(Space space, String userId) {
+    return isMember(space, userId);
+  }
+
+  public boolean isContentManager(String username) {
+    return isSuperManager(username);
+  }
+
+  public boolean isContentPublisher(String username) {
+    return isSuperManager(username);
   }
 
   public Space getSpaceByUrl(String spaceUrl) {
@@ -217,11 +234,11 @@ public class SpaceServiceMock implements SpaceService {
     return existingSpace;
   }
 
-  public Space updateSpaceAvatar(Space existingSpace) {
+  public Space updateSpaceAvatar(Space existingSpace, String username) {
     throw new UnsupportedOperationException();
   }
 
-  public Space updateSpaceBanner(Space existingSpace) {
+  public Space updateSpaceBanner(Space existingSpace, String username) {
     throw new UnsupportedOperationException();
   }
 
@@ -265,7 +282,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isMember(Space space, String userId) {
-    return SPACE_MEMBERS.contains(userId);
+    return space != null && SPACE_MEMBERS.contains(userId);
   }
 
   public void setManager(Space space, String userId, boolean isManager) {
@@ -274,7 +291,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isManager(Space space, String userId) {
-    return SPACE_MANAGERS.contains(userId);
+    return space != null && SPACE_MANAGERS.contains(userId);
   }
 
   public boolean isOnlyManager(Space space, String userId) {
@@ -392,7 +409,7 @@ public class SpaceServiceMock implements SpaceService {
 
   }
 
-  public void renameSpace(String remoteId, Space space, String newDisplayName) throws SpaceException {
+  public void renameSpace(Space space, String newDisplayName, String remoteId) throws SpaceException {
     throw new UnsupportedOperationException();
 
   }
@@ -644,14 +661,6 @@ public class SpaceServiceMock implements SpaceService {
   public void unregisterSpaceLifeCycleListener(SpaceLifeCycleListener listener) {
     throw new UnsupportedOperationException();
 
-  }
-
-  public void setPortletsPrefsRequired(PortletPreferenceRequiredPlugin portletPrefsRequiredPlugin) {
-    // Nothing to do
-  }
-
-  public String[] getPortletsPrefsRequired() {
-    return new String[0];
   }
 
   public ListAccess<Space> getVisitedSpaces(String remoteId, String appId) {
