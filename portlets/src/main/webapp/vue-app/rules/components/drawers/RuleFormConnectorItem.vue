@@ -19,7 +19,10 @@
 
 -->
 <template>
-  <v-list-item dense class="border-color-grey border-radius my-2 ps-3">
+  <v-list-item
+    :id="`${name}ApplicationSubmissionOption`"
+    class="border-color-grey border-radius my-2 ps-3"
+    dense>
     <v-list-item-avatar
       class="mx-2"
       size="25"
