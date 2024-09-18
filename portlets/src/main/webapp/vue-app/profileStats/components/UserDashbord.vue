@@ -154,7 +154,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </v-flex>
 </template>
 <script>
-import {getUserInformations, getSpacesRequests, getConnectionsRequests, getGamificationPoints, getReputationStatus} from '../profilStatsAPI';
+import {getUserInformations, getConnectionsRequests, getGamificationPoints, getReputationStatus} from '../profilStatsAPI';
 export default {
   props: {
     commonsSpaceDefaultSize: {
@@ -214,9 +214,11 @@ export default {
 
     this.profileUrl = this.profileUrl + (this.isCurrentUserProfile ? '' : `/${ eXo.env.portal.profileOwner}`);
 
-    this.loadingWidgets = 5;
+    this.loadingWidgets = this.isCurrentUserProfile && 5 || 4;
     this.retrieveUserData().finally(() => this.loadingWidgets--);
-    this.getSpacesRequestsSize().finally(() => this.loadingWidgets--);
+    if (this.isCurrentUserProfile) {
+      this.getSpacesRequestsSize().finally(() => this.loadingWidgets--);
+    }
     this.getConnectionsRequestsSize().finally(() => this.loadingWidgets--);
     this.getGamificationRank().finally(() => this.loadingWidgets--);
     this.getGamificationPoints().finally(() => this.loadingWidgets--);
@@ -240,7 +242,12 @@ export default {
       });
     },
     getSpacesRequestsSize() {
-      return getSpacesRequests().then(
+      return this.$spaceService.getSpaceMemberships({
+        user: eXo.env.portal.userName,
+        status: 'invited',
+        returnSize: true,
+        limit: 1,
+      }).then(
         (data) => {
           this.spacesRequestsSize = data.size;
           this.$emit('showRequestsSpace', this.spacesRequestsSize);

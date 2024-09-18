@@ -84,20 +84,6 @@ export function getCommonsSpaces(offset, limit) {
   });
 }
 
-export function getSpacesRequests() {
-  return fetch( '/portal/rest/v1/social/spacesMemberships?status=invited&returnSize=true&limit=3', {
-    method: 'GET',
-    credentials: 'include',
-  }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } 
-    else {
-      throw new Error ('Error when getting spaces requests');
-    }
-  });
-}
-
 export function getSuggestionsSpace(){
   return fetch('/portal/rest/homepage/intranet/spaces/suggestions', {
     credentials: 'include'
@@ -108,25 +94,6 @@ export function getSuggestionsSpace(){
       });
     } else {
       return resp.json();
-    }
-  });
-}
-
-export function replyInvitationToJoinSpace(spaceMembershipId, reply) {
-  const data = {status: `${reply}`}; 
-  return fetch(`/portal/rest/v1/social/spacesMemberships/${spaceMembershipId}`, {
-    method: 'PUT',
-    credentials: 'include',
-    body: JSON.stringify(data),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } 
-    else {
-      throw new Error ('Error when replying invitation to join space');
     }
   });
 }
