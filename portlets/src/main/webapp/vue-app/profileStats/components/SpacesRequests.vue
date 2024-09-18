@@ -51,44 +51,45 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-flex
       xs12>
       <v-list>
-        <template v-for="item in sort(spacesRequests)">
-          <v-list-item
-            :key="item.id"
-            class="py-0 px-2">
-            <v-list-item-avatar class="my-1 me-2" size="30">
-              <v-img :src="item.avatar" />
-            </v-list-item-avatar>
+        <v-list-item
+          v-for="item in sort(spacesRequests)"
+          :key="item.id"
+          class="py-0 px-2">
+          <v-list-item-avatar class="my-1 me-2" size="30">
+            <v-img :src="item.avatar" />
+          </v-list-item-avatar>
 
-            <v-list-item-content class="py-0">
-              <v-list-item-title class="request-user-name darken-2" v-text="item.displayName" />
-              <v-list-item-subtitle v-sanitized-html="item.description" />
-            </v-list-item-content>
-            <v-list-item-action>
-              <v-btn-toggle
-                class="transparent"
-                dark>
-                <v-btn 
-                  text
-                  icon
-                  small
-                  min-width="auto"
-                  class="px-0 connexion-accept-btn"
-                  @click="replyInvitationToJoinSpace(item.id, 'approved')">
-                  <v-icon color="primary-color" size="20">mdi-checkbox-marked-circle</v-icon>
-                </v-btn>
-                <v-btn 
-                  text
-                  icon
-                  small
-                  min-width="auto"
-                  class="px-0 connexion-refuse-btn"
-                  @click="replyInvitationToJoinSpace(item.id, 'ignored')">
-                  <v-icon color="grey lighten-1" size="20">mdi-close-circle</v-icon>
-                </v-btn>
-              </v-btn-toggle>
-            </v-list-item-action>
-          </v-list-item>
-        </template>
+          <v-list-item-content class="py-0">
+            <v-list-item-title class="request-user-name darken-2" v-text="item.displayName" />
+            <v-list-item-subtitle v-sanitized-html="item.description" />
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-btn-toggle
+              class="transparent"
+              dark>
+              <v-btn
+                :loading="saving"
+                text
+                icon
+                small
+                min-width="auto"
+                class="px-0 connexion-accept-btn"
+                @click="replyInvitationToJoinSpace(item, 'approved')">
+                <v-icon color="primary-color" size="20">mdi-checkbox-marked-circle</v-icon>
+              </v-btn>
+              <v-btn
+                :loading="saving"
+                text
+                icon
+                small
+                min-width="auto"
+                class="px-0 connexion-refuse-btn"
+                @click="replyInvitationToJoinSpace(item, 'ignored')">
+                <v-icon color="grey lighten-1" size="20">mdi-close-circle</v-icon>
+              </v-btn>
+            </v-btn-toggle>
+          </v-list-item-action>
+        </v-list-item>
       </v-list>
     </v-flex>
     <v-flex
@@ -109,48 +110,51 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </v-layout>
 </template>
 <script>
-import {getSpacesRequests, replyInvitationToJoinSpace} from '../profilStatsAPI';
 export default {
   data() {
     return {
       spacesRequests: [],
       spacesRequestsSize: '',
+      saving: false,
       invitationSpaceUrl: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/spaces/receivedInvitations`
     };
   },
   created(){
     this.getSpacesRequests();
   },
-  
   methods: {
     getSpacesRequests() {
       this.spacesRequests = [];
-      getSpacesRequests().then(
-        (data) => {
-          this.spacesRequestsSize = data.size;
-          this.$emit('showRequestsSpace', this.spacesRequestsSize);
-          if (this.spacesRequestsSize > 0) {
-            for (let i = 0; i < data.spacesMemberships.length; i++) {
-              const spaceRequest = {};
-              spaceRequest.id = data.spacesMemberships[i].id;
-              fetch(`${data.spacesMemberships[i].space}`, {
-                method: 'GET',
-                credentials: 'include',
-              }).then((resp) => {
-                if (resp?.ok) {
-                  return resp.json();
-                }
-                else {
-                  throw new Error ('Error when getting space');
-                }
-              }).then((data) => {
-                spaceRequest.avatar = data.avatarUrl || data.avatarUrl || `/portal/rest/v1/social/spaces/${spaceRequest.id.split(':')[0]}/avatar`;
-                spaceRequest.displayName = data.displayName;
-                this.spacesRequests.splice(i, 0, spaceRequest);
-              });
-            }
+      return this.$spaceService.getSpaceMemberships({
+        user: eXo.env.portal.userName,
+        status: 'invited',
+        returnSize: true,
+        limit: 3,
+      }).then((data) => {
+        this.spacesRequestsSize = data.size;
+        this.$emit('showRequestsSpace', this.spacesRequestsSize);
+        if (this.spacesRequestsSize > 0) {
+          for (let i = 0; i < data.spacesMemberships.length; i++) {
+            const spaceRequest = {};
+            spaceRequest.id = data.spacesMemberships[i].id;
+            fetch(`${data.spacesMemberships[i].space}`, {
+              method: 'GET',
+              credentials: 'include',
+            }).then((resp) => {
+              if (resp?.ok) {
+                return resp.json();
+              }
+              else {
+                throw new Error ('Error when getting space');
+              }
+            }).then((data) => {
+              spaceRequest.avatar = data.avatarUrl || data.avatarUrl || `/portal/rest/v1/social/spaces/${spaceRequest.id.split(':')[0]}/avatar`;
+              spaceRequest.displayName = data.displayName;
+              this.spacesRequests.splice(i, 0, spaceRequest);
+            });
           }
         }
+      }
       );
     },
     sort(array) {
@@ -161,21 +165,23 @@ export default {
     openSpaceRequests() {
       window.location.href = `${this.invitationSpaceUrl}`;
     },
-    replyInvitationToJoinSpace(spaceId, reply) {
-      replyInvitationToJoinSpace(spaceId, reply)
-        .then(() => {
-          if (reply === 'approved') {
-            const confirmedRequest = this.spacesRequests.filter(request => request.id === spaceId)[0];
-            const space = {
-              id: confirmedRequest.id,
-              displayName: confirmedRequest.displayName,
-              avatarUrl: confirmedRequest.avatar,
-
-            };
-            this.$emit('invitationReplied', space);
-          }
-          this.getSpacesRequests();
-        });
+    async replyInvitationToJoinSpace(item, reply) {
+      this.saving = true;
+      try {
+        if (reply === 'approved') {
+          await this.$spaceService.accept(item.space.id);
+          this.$emit('invitationReplied', {
+            id: item.id,
+            displayName: item.space.displayName,
+            avatarUrl: item.space.avatar,
+          });
+        } else if (reply === 'ignored') {
+          await this.$spaceService.deny(item.space.id);
+        }
+        this.getSpacesRequests();
+      } finally {
+        this.saving = false;
+      }
     },
   }
 };
