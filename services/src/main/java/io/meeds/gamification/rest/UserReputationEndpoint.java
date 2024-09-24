@@ -282,11 +282,11 @@ public class UserReputationEndpoint implements ResourceContainer {
             JSONObject reputation = null;
             int index = 0;
             Iterator<BadgeDTO> iterable = allBadges.iterator();
-            while(iterable.hasNext()) {
-                badgeDTO = iterable.next();
-                if (badgeDTO.getNeededScore() < score) {
-                    ++index;
-                }
+            while (iterable.hasNext()) {
+              badgeDTO = iterable.next();
+              if (badgeDTO.getNeededScore() <= score) {
+                ++index;
+              }
             }
             if (index > 0) {
                 badgeDTO = allBadges.get(index - 1);
