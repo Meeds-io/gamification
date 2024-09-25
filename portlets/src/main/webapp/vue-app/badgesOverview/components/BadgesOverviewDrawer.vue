@@ -128,7 +128,16 @@ export default {
             neededScore: this.badge.score,
             avatar: this.user.avatar,
           });
-          badges.sort((a,b) => b.neededScore - a.neededScore);
+          badges.sort((a,b) => {
+            const diff = b.neededScore - a.neededScore;
+            if (diff) {
+              return diff;
+            } else if (b.isCurrent) {
+              return -1;
+            } else {
+              return a.isCurrent ? 1 : 0;
+            }
+          });
           this.badges = badges;
           this.$refs.badgesDrawer.open();
         })
