@@ -28,13 +28,13 @@
           selected: tabName,
           hide: false,
           buttons: [{
-            value: 'YOURS',
-            text: $t('gamification.achievement.yours'),
-            icon: 'fa-user',
-          }, {
             value: 'OWNED',
             text: $t('gamification.achievement.owned'),
             icon: 'fa-users-cog',
+          }, {
+            value: 'YOURS',
+            text: $t('gamification.achievement.yours'),
+            icon: 'fa-user',
           }]
         }"
         :right-filter-button="{
@@ -202,7 +202,7 @@ export default {
     filterActivated: false,
     selected: 'Date',
     programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs`,
-    tabName: window.location.hash === '#hosted' ? 'OWNED' : 'YOURS',
+    tabName: window.location.hash === '#yours' ? 'YOURS' : 'OWNED',
     extensionApp: 'engagementCenterAchievements',
     extensionType: 'achievements-extensions',
     extensions: [],
