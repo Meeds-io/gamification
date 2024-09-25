@@ -96,10 +96,6 @@
     <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
-        <groupId>com.jcabi</groupId>
-        <artifactId>jcabi-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
         <groupId>io.openapitools.swagger</groupId>
         <artifactId>swagger-maven-plugin</artifactId>
         <configuration>
