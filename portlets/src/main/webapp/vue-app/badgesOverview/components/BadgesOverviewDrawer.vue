@@ -133,9 +133,9 @@ export default {
             if (diff) {
               return diff;
             } else if (b.isCurrent) {
-              return -1;
+              return 1;
             } else {
-              return a.isCurrent ? 1 : 0;
+              return a.isCurrent ? -1 : 0;
             }
           });
           this.badges = badges;
