@@ -19,6 +19,26 @@
                     "*:/platform/externals"
                 ]
             }
+        },
+        {
+            "name": "ContributionsReview",
+            "imagePath": "war:/../skin/images/contributionsReview.webp",
+            "overrideMode": "merge",
+            "override": false,
+            "enabled": true,
+            "application": {
+                "title": "Contributions Review",
+                "description": "Contributions Review application",
+                "url": "./contributions/achievements",
+                "system": false,
+                "active": true,
+                "isMandatory": false,
+                "isMobile": true,
+                "permissions": [
+                    "*:/platform/users",
+                    "*:/platform/externals"
+                ]
+            }
         }
     ]
 }
