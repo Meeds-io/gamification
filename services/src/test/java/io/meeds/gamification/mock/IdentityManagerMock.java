@@ -74,14 +74,6 @@ public class IdentityManagerMock implements IdentityManager {
                      .orElse(null);
   }
 
-  public Identity getOrCreateSpaceIdentity(String spacePrettyName) {
-    return getOrCreateIdentity(SpaceIdentityProvider.NAME, spacePrettyName);
-  }
-
-  public Identity getOrCreateUserIdentity(String username) {
-    return getOrCreateIdentity(OrganizationIdentityProvider.NAME, username);
-  }
-
   public Identity getIdentity(String identityId, boolean isProfileLoaded) {
     return identities.stream()
                      .filter(identity -> StringUtils.equals(identity.getId(), identityId))
