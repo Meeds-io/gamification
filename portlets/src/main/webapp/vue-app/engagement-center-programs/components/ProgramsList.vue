@@ -135,7 +135,7 @@ export default {
       originalLimitToFetch: 0,
       term: '',
       spacesURL: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/spaces/`,
-      isExternal: eXo.env.portal.isExternal === 'true',
+      isExternal: eXo.env.portal.isExternal === true,
     };
   },
   computed: {
