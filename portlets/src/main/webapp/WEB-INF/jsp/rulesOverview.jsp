@@ -1,3 +1,4 @@
+<%@page import="org.exoplatform.services.security.ConversationState"%>
 <%
 /**
  * This file is part of the Meeds project (https://meeds.io/).
@@ -34,7 +35,7 @@
    String availableRulesLimit = request.getAttribute("availableRulesLimit") == null ? "4" : ((String[]) request.getAttribute("availableRulesLimit"))[0];
    String upcomingRulesLimit = request.getAttribute("upcomingRulesLimit") == null ? "2" : ((String[]) request.getAttribute("upcomingRulesLimit"))[0];
    Page currentPage = PortalRequestContext.getCurrentInstance().getPage();
-   boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage);
+   boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage, ConversationState.getCurrent().getIdentity());
    String pageRef = currentPage.getPageKey().format();
 %>
     <script type="text/javascript">
