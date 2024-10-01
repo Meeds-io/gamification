@@ -1,3 +1,4 @@
+<%@page import="org.exoplatform.services.security.ConversationState"%>
 <%
 /**
  * This file is part of the Meeds project (https://meeds.io/).
@@ -31,7 +32,7 @@
   String topChallengersPeriod = request.getAttribute("topChallengersPeriod") == null ? "week" : ((String[]) request.getAttribute("topChallengersPeriod"))[0];
   String topChallengersCurrentPosition = request.getAttribute("topChallengersCurrentPosition") == null ? "false" : ((String[]) request.getAttribute("topChallengersCurrentPosition"))[0];
   Page currentPage = PortalRequestContext.getCurrentInstance().getPage();
-  boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage);
+  boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage, ConversationState.getCurrent().getIdentity());
   String pageRef = currentPage.getPageKey().format();
 %>
     <script type="text/javascript">

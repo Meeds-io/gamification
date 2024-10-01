@@ -1,3 +1,4 @@
+<%@page import="org.exoplatform.services.security.ConversationState"%>
 <%
 /**
  * This file is part of the Meeds project (https://meeds.io/).
@@ -29,7 +30,7 @@
   String myContributionsProgramLimit = request.getAttribute("myContributionsProgramLimit") == null ? "5" : ((String[]) request.getAttribute("myContributionsProgramLimit"))[0];
   String myContributionsDisplayLegend = request.getAttribute("myContributionsDisplayLegend") == null ? "true" : ((String[]) request.getAttribute("myContributionsDisplayLegend"))[0];
   Page currentPage = PortalRequestContext.getCurrentInstance().getPage();
-  boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage);
+  boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage, ConversationState.getCurrent().getIdentity());
   String pageRef = currentPage.getPageKey().format();
 %>
 <div class="VuetifyApp">

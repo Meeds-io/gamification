@@ -1,3 +1,4 @@
+<%@page import="org.exoplatform.services.security.ConversationState"%>
 <%
 /**
  * This file is part of the Meeds project (https://meeds.io/).
@@ -35,7 +36,7 @@
     String showName = request.getAttribute("showName") == null ? "false" : ((String[]) request.getAttribute("showName"))[0];
     String sortBy = request.getAttribute("badgesSortBy") == null ? "" : ((String[]) request.getAttribute("badgesSortBy"))[0];
     Page currentPage = PortalRequestContext.getCurrentInstance().getPage();
-    boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage);
+    boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage, ConversationState.getCurrent().getIdentity());
     String pageRef = currentPage.getPageKey().format();
 %>
   <div class="VuetifyApp">
