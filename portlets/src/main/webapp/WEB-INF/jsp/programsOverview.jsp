@@ -1,3 +1,4 @@
+<%@page import="org.exoplatform.services.security.ConversationState"%>
 <%@ page import="io.meeds.gamification.utils.Utils"%>
 <%@ page import="org.exoplatform.portal.config.model.Page"%>
 <%@ page import="org.exoplatform.portal.application.PortalRequestContext"%>
@@ -11,7 +12,7 @@
     String limit = request.getAttribute("limit") == null ? "4" : ((String[]) request.getAttribute("limit"))[0];
     String sortBy = request.getAttribute("programsSortBy") == null ? "" : ((String[]) request.getAttribute("programsSortBy"))[0];
     Page currentPage = PortalRequestContext.getCurrentInstance().getPage();
-    boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage);
+    boolean canEdit = ExoContainerContext.getService(UserACL.class).hasEditPermission(currentPage, ConversationState.getCurrent().getIdentity());
     String pageRef = currentPage.getPageKey().format();
 %>
     <script type="text/javascript">
