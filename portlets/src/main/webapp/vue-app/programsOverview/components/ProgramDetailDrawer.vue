@@ -107,12 +107,14 @@
         </div>
       </v-card>
       <gamification-rules-overview-widget
-        :rules="rules"
-        :page-size="rulesLimit"
-        :loading="loading > 0"
+        v-if="drawer"
+        :program-id="programId"
+        class="mb-4 mx-1"
         hide-empty-placeholder
         go-back-button
-        class="mb-4 mx-1">
+        load-size
+        @rules-size="rulesSize = $event"
+        @has-more="hasMore = $event">
         <template #title>
           <div class="text-header text-truncate">
             {{ $t('programs.label.programActions') }}
@@ -130,7 +132,7 @@
         </template>
       </gamification-rules-overview-widget>
       <gamification-rules-overview-list-drawer
-        v-if="rules.length"
+        v-if="hasMore"
         ref="listDrawer"
         :program-id="programId" />
     </template>
@@ -148,12 +150,8 @@ export default {
   data: () => ({
     drawer: false,
     program: null,
-    loading: 0,
     goBackButton: false,
-    rulesLimit: 10,
-    upcomingRules: [],
-    activeRules: [],
-    endingRules: [],
+    hasMore: false,
     rulesSize: 0,
   }),
   computed: {
@@ -192,101 +190,23 @@ export default {
     ownersCount() {
       return this.owners?.length;
     },
-    rules() {
-      return [...this.upcomingRules, ...this.endingRules, ...this.activeRules]
-        .filter((v, i, array) => array.findIndex(v2 => v?.id === v2?.id) === i);
-    },
-    hasMore() {
-      return this.rulesSize > this.rules.length;
-    },
-  },
-  watch: {
-    loading() {
-      if (this.loading) {
-        this.$refs.drawer.startLoading();
-      } else {
-        this.$refs.drawer.endLoading();
-      }
-    },
   },
   created() {
     this.$root.$on('program-detail-drawer', this.open);
-    this.$root.$on('announcement-added', this.retrieveRules);
-    this.$root.$on('rule-updated', this.retrieveRules);
-    this.$root.$on('rule-deleted', this.retrieveRules);
   },
   methods: {
     open(program, goBackButton) {
       this.program = program;
       this.goBackButton = goBackButton || false;
-      this.rules = [];
+      this.hasMore = false;
+      this.rulesSize = 0;
       this.$refs.drawer.open();
       this.$nextTick()
-        .then(() => {
-          this.$nextTick().then(() => this.retrieveRules());
-          this.collectProgramVisit();
-        });
+        .then(() => this.collectProgramVisit());
     },
     close() {
       this.$refs.drawer.close();
       this.$nextTick().then(() => this.program = null);
-    },
-    retrieveRules() {
-      if (!this.drawer) {
-        return;
-      }
-      this.loading = 3;
-      this.retrieveEndingRules().finally(() => this.loading--);
-      this.retrieveActiveRules().finally(() => this.loading--);
-      this.retrieveUpcomingRules().finally(() => this.loading--);
-    },
-    retrieveEndingRules() {
-      return this.$ruleService.getRules({
-        status: 'ENABLED',
-        programId: this.programId,
-        programStatus: 'ENABLED',
-        dateFilter: 'STARTED_WITH_END',
-        offset: 0,
-        limit: 2,
-        sortBy: 'endDate',
-        sortDescending: false,
-        expand: 'countRealizations',
-        lang: eXo.env.portal.language,
-        returnSize: false,
-      }).then(result => this.endingRules = result?.rules || []);
-    },
-    retrieveActiveRules() {
-      return this.$ruleService.getRules({
-        status: 'ENABLED',
-        programId: this.programId,
-        programStatus: 'ENABLED',
-        dateFilter: 'STARTED',
-        offset: 0,
-        limit: this.rulesLimit,
-        sortBy: 'createdDate',
-        sortDescending: true,
-        expand: 'countRealizations,expandPrerequisites',
-        lang: eXo.env.portal.language,
-        returnSize: true,
-      }).then(result => {
-        this.activeRules = result?.rules || [];
-        this.rulesSize = result?.size || 0;
-      });
-    },
-    retrieveUpcomingRules() {
-      return this.$ruleService.getRules({
-        status: 'ENABLED',
-        programId: this.programId,
-        programStatus: 'ENABLED',
-        dateFilter: 'UPCOMING',
-        offset: 0,
-        limit: 2,
-        sortBy: 'startDate',
-        sortDescending: false,
-        expand: 'countRealizations',
-        lang: eXo.env.portal.language,
-        returnSize: false,
-      }).then(result => this.upcomingRules = result?.rules || []);
     },
     collectProgramVisit() {
       if (this.programId) {
