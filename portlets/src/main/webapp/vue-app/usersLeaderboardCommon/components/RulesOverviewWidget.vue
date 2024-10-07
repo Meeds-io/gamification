@@ -146,6 +146,10 @@
 <script>
 export default {
   props: {
+    programId: {
+      type: String,
+      default: null,
+    },
     hideEmptyPlaceholder: {
       type: Boolean,
       default: false,
@@ -155,6 +159,10 @@ export default {
       default: false,
     },
     hoverEdit: {
+      type: Boolean,
+      default: false,
+    },
+    loadSize: {
       type: Boolean,
       default: false,
     },
@@ -385,6 +393,7 @@ export default {
           programStatus: 'ENABLED',
           dateFilter: 'STARTED_WITH_END',
           spaceId: this.spaceId?.length && [this.spaceId] || null,
+          programId: this.programId,
           offset: 0,
           limit: this.endingRulesLimit,
           sortBy: 'endDate',
@@ -396,17 +405,22 @@ export default {
         || Promise.resolve();
     },
     retrieveActiveRulesSize() {
-      return this.spaceId?.length
+      return (this.spaceId?.length || this.loadSize)
         && this.$ruleService.getRules({
           status: 'ENABLED',
           programStatus: 'ENABLED',
           dateFilter: 'STARTED',
           spaceId: this.spaceId?.length && [this.spaceId] || null,
+          programId: this.programId,
           offset: 0,
           limit: 1,
           lang: eXo.env.portal.language,
           returnSize: true,
-        }).then(result => this.activeRulesSize = result?.size || 0)
+        }).then(result => {
+          this.activeRulesSize = result?.size || 0;
+          this.$emit('rules-size', this.activeRulesSize);
+          this.$emit('has-more', this.activeRulesSize > this.availableRulesLimit);
+        })
         || Promise.resolve();
     },
     retrieveActiveRules() {
@@ -416,6 +430,7 @@ export default {
           programStatus: 'ENABLED',
           dateFilter: this.spaceId?.length && 'ACTIVE' || 'STARTED',
           spaceId: this.spaceId?.length && [this.spaceId] || null,
+          programId: this.programId,
           offset: 0,
           limit: this.activeRulesLimit,
           sortBy: this.sortBy,
@@ -433,6 +448,7 @@ export default {
           programStatus: 'ENABLED',
           dateFilter: 'UPCOMING',
           spaceId: this.spaceId?.length && [this.spaceId] || null,
+          programId: this.programId,
           offset: 0,
           limit: this.upcomingRulesLimit,
           sortBy: 'startDate',
