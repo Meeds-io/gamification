@@ -507,6 +507,11 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
+  public List<Long> getParticipantsBetweenDates(Date fromDate, Date toDate) {
+    return realizationStorage.getParticipantsBetweenDates(fromDate, toDate);
+  }
+
+  @Override
   public long countParticipantsBetweenDates(Date fromDate, Date toDate) {
     return realizationStorage.countParticipantsBetweenDates(fromDate, toDate);
   }
