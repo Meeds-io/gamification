@@ -318,6 +318,13 @@ public interface RealizationService {
   /**
    * @param  fromDate start of period
    * @param  toDate   end of period
+   * @return          List of participant users in a period of time
+   */
+  List<Long> getParticipantsBetweenDates(Date fromDate, Date toDate);
+
+  /**
+   * @param  fromDate start of period
+   * @param  toDate   end of period
    * @return          Count participant users in a period of time
    */
   long countParticipantsBetweenDates(Date fromDate, Date toDate);

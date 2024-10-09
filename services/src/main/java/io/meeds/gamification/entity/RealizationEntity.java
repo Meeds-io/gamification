@@ -214,6 +214,13 @@ import lombok.EqualsAndHashCode;
       " AND g.status = :status"
 )
 
+@NamedQuery(name = "RealizationEntity.getParticipantsBetweenDates",
+  query = "SELECT DISTINCT g.earnerId FROM RealizationEntity g" +
+      " WHERE g.createdDate >= :fromDate" +
+      " AND g.createdDate < :toDate" +
+      " AND g.earnerType = :earnerType" +
+      " AND g.status = :status")
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class RealizationEntity extends AbstractAuditingEntity implements Serializable {
