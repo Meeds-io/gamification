@@ -469,11 +469,13 @@ export default {
       this.$root.$emit('reset-filter-values');
     },
     refreshExtensions() {
-      // Get list of connectors from extensionRegistry
-      this.extensions = extensionRegistry.loadExtensions(this.extensionApp, this.extensionType) || [];
-      this.extensions.forEach(extension => {
-        extension?.init(Date.parse(new Date(this.selectedPeriod?.min).toISOString()) / 1000 , Date.parse(new Date(this.selectedPeriod?.max).toISOString())/ 1000);
-      });
+      if (this.isProgramManager) {
+        // Get list of connectors from extensionRegistry
+        this.extensions = extensionRegistry.loadExtensions(this.extensionApp, this.extensionType) || [];
+        this.extensions.forEach(extension => {
+          extension?.init(Date.parse(new Date(this.selectedPeriod?.min).toISOString()) / 1000 , Date.parse(new Date(this.selectedPeriod?.max).toISOString())/ 1000);
+        });
+      }
     },
   }
 };
