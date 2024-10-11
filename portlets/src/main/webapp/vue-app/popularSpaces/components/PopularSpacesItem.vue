@@ -114,8 +114,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 const randomMax = 10000;
-import * as popularSpacesService from '../js/PopularSpacesService.js';
-
 export default {
   props: {
     space: {
@@ -140,7 +138,7 @@ export default {
   methods: {
     acceptToJoin() {
       this.sendingAction = true;
-      popularSpacesService.accept(this.space.id)
+      this.$spaceService.accept(this.space.id)
         .then(() => this.$emit('refresh'))
         .catch((e) => {
           // eslint-disable-next-line no-console
@@ -152,7 +150,7 @@ export default {
     },
     refuseToJoin() {
       this.sendingSecondAction = true;
-      popularSpacesService.deny(this.space.id)
+      this.$spaceService.deny(this.space.id)
         .then(() => this.$emit('refresh'))
         .catch((e) => {
           // eslint-disable-next-line no-console
@@ -164,7 +162,7 @@ export default {
     },
     join() {
       this.sendingAction = true;
-      popularSpacesService.join(this.space.id)
+      this.$spaceService.join(this.space.id)
         .then(() => this.$emit('refresh'))
         .catch((e) => {
           // eslint-disable-next-line no-console
@@ -176,7 +174,7 @@ export default {
     },
     requestJoin() {
       this.sendingAction = true;
-      popularSpacesService.requestJoin(this.space.id)
+      this.$spaceService.requestJoin(this.space.id)
         .then(() => this.$emit('refresh'))
         .catch((e) => {
           // eslint-disable-next-line no-console
@@ -188,7 +186,7 @@ export default {
     },
     cancelRequest() {
       this.sendingAction = true;
-      popularSpacesService.cancel(this.space.id)
+      this.$spaceService.cancel(this.space.id)
         .then(() => this.$emit('refresh'))
         .catch((e) => {
           // eslint-disable-next-line no-console
