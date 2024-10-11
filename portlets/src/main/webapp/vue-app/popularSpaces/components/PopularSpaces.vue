@@ -43,8 +43,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </v-app>
 </template>
 <script>
-import * as popularSpacesService from '../js/PopularSpacesService.js';
-
 export default {
   props: {
     limit: {
@@ -66,14 +64,14 @@ export default {
   methods: {
     refresh() {
       this.loading = true;
-      return popularSpacesService.getSpaceLeaderBord(this.period, this.limit)
+      return this.$popularSpacesService.getSpaceLeaderBord(this.period, this.limit)
         .then((spacesByPoints) => {
           const promises = [];
           spacesByPoints
             .filter(spaceByPoints => spaceByPoints.technicalId)
             .forEach(spaceByPoints => {
               promises.push(
-                popularSpacesService.getSpace(spaceByPoints.technicalId)
+                this.$spaceService.getSpaceById(spaceByPoints.technicalId)
                   .then(space => {
                     if (space && space.id) {
                       Object.assign(spaceByPoints, space);
