@@ -52,16 +52,16 @@ public class SpaceServiceMock implements SpaceService {
   public static final String       SPACE_ID_2         = "200";
 
   public static final List<String> SPACE_MEMBERS      = Arrays.asList(new String[] {
-      "root",
-      "root10",
-      "root5",
-      "root1"
+                                                                                     "root",
+                                                                                     "root10",
+                                                                                     "root5",
+                                                                                     "root1"
   });
 
   public static final List<String> SPACE_MANAGERS     = Arrays.asList(new String[] {
-      "root",
-      "root5",
-      "root1"
+                                                                                     "root",
+                                                                                     "root5",
+                                                                                     "root1"
   });
 
   public Space getSpaceByDisplayName(String spaceDisplayName) {
@@ -105,7 +105,7 @@ public class SpaceServiceMock implements SpaceService {
   public boolean hasRedactor(Space space) {
     return SPACE_PRETTY_NAME.equals(space.getPrettyName());
   }
-  
+
   @Override
   public boolean canRedactOnSpace(Space space, org.exoplatform.services.security.Identity viewer) {
     if (viewer == null) {
@@ -135,16 +135,12 @@ public class SpaceServiceMock implements SpaceService {
     return isSuperManager(username);
   }
 
-  public Space getSpaceByUrl(String spaceUrl) {
-    throw new UnsupportedOperationException();
+  public boolean isMember(Space space, String userId) {
+    return space != null && SPACE_MEMBERS.contains(userId);
   }
 
-  public ListAccess<Space> getAllSpacesWithListAccess() {
-    throw new UnsupportedOperationException();
-  }
-
-  public ListAccess<Space> getAllSpacesByFilter(SpaceFilter spaceFilter) {
-    throw new UnsupportedOperationException();
+  public boolean isManager(Space space, String userId) {
+    return space != null && SPACE_MANAGERS.contains(userId);
   }
 
   public ListAccess<Space> getMemberSpaces(String username) {
@@ -171,59 +167,6 @@ public class SpaceServiceMock implements SpaceService {
     }
   }
 
-  public ListAccess<Space> getMemberSpacesByFilter(String userId, SpaceFilter spaceFilter) {
-    throw new UnsupportedOperationException();
-  }
-
-  public ListAccess<Space> getAccessibleSpacesWithListAccess(String userId) {
-    throw new UnsupportedOperationException();
-  }
-
-  public ListAccess<Space> getAccessibleSpacesByFilter(String userId, SpaceFilter spaceFilter) {
-    throw new UnsupportedOperationException();
-  }
-
-  public ListAccess<Space> getSettingableSpaces(String userId) {
-    throw new UnsupportedOperationException();
-  }
-
-  public ListAccess<Space> getSettingabledSpacesByFilter(String userId, SpaceFilter spaceFilter) {
-    throw new UnsupportedOperationException();
-  }
-
-  public ListAccess<Space> getInvitedSpacesWithListAccess(String userId) {
-    throw new UnsupportedOperationException();
-  }
-
-  public ListAccess<Space> getInvitedSpacesByFilter(String userId, SpaceFilter spaceFilter) {
-    throw new UnsupportedOperationException();
-  }
-
-  public ListAccess<Space> getPublicSpacesWithListAccess(String userId) {
-    throw new UnsupportedOperationException();
-  }
-
-  public ListAccess<Space> getPublicSpacesByFilter(String userId, SpaceFilter spaceFilter) {
-    throw new UnsupportedOperationException();
-  }
-
-  public ListAccess<Space> getPendingSpacesWithListAccess(String userId) {
-    throw new UnsupportedOperationException();
-  }
-
-  public ListAccess<Space> getPendingSpacesByFilter(String userId, SpaceFilter spaceFilter) {
-    throw new UnsupportedOperationException();
-  }
-
-  public Space createSpace(Space space, String creatorUserId) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public Space createSpace(Space space, String creatorUserId, List<Identity> identitiesToInvite) throws SpaceException {
-    throw new UnsupportedOperationException();
-  }
-
   public Space updateSpace(Space existingSpace) {
     String SpacePrettyName = existingSpace.getPrettyName();
     String description = "updateSpace";
@@ -234,439 +177,6 @@ public class SpaceServiceMock implements SpaceService {
     return existingSpace;
   }
 
-  public Space updateSpaceAvatar(Space existingSpace, String username) {
-    throw new UnsupportedOperationException();
-  }
-
-  public Space updateSpaceBanner(Space existingSpace, String username) {
-    throw new UnsupportedOperationException();
-  }
-
-  public void deleteSpace(Space space) {
-    throw new UnsupportedOperationException();
-  }
-
-  public void addPendingUser(Space space, String userId) {
-    throw new UnsupportedOperationException();
-  }
-
-  public void removePendingUser(Space space, String userId) {
-    throw new UnsupportedOperationException();
-  }
-
-  public boolean isPendingUser(Space space, String userId) {
-    throw new UnsupportedOperationException();
-  }
-
-  public void addInvitedUser(Space space, String userId) {
-    throw new UnsupportedOperationException();
-  }
-
-  public void removeInvitedUser(Space space, String userId) {
-    throw new UnsupportedOperationException();
-  }
-
-  public boolean isInvitedUser(Space space, String userId) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void addMember(Space space, String userId) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void removeMember(Space space, String userId) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public boolean isMember(Space space, String userId) {
-    return space != null && SPACE_MEMBERS.contains(userId);
-  }
-
-  public void setManager(Space space, String userId, boolean isManager) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public boolean isManager(Space space, String userId) {
-    return space != null && SPACE_MANAGERS.contains(userId);
-  }
-
-  public boolean isOnlyManager(Space space, String userId) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public boolean hasAccessPermission(Space space, String userId) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public boolean hasSettingPermission(Space space, String userId) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void registerSpaceListenerPlugin(SpaceListenerPlugin spaceListenerPlugin) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void unregisterSpaceListenerPlugin(SpaceListenerPlugin spaceListenerPlugin) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void setSpaceApplicationConfigPlugin(SpaceApplicationConfigPlugin spaceApplicationConfigPlugin) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public SpaceApplicationConfigPlugin getSpaceApplicationConfigPlugin() {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<Space> getAllSpaces() throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public Space getSpaceByName(String spaceName) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<Space> getSpacesByFirstCharacterOfName(String firstCharacterOfName) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<Space> getSpacesBySearchCondition(String condition) throws Exception {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<Space> getSpaces(String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<Space> getAccessibleSpaces(String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<Space> getVisibleSpaces(String userId, SpaceFilter spaceFilter) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public SpaceListAccess getVisibleSpacesWithListAccess(String userId, SpaceFilter spaceFilter) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public SpaceListAccess getUnifiedSearchSpacesWithListAccess(String userId, SpaceFilter spaceFilter) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<Space> getEditableSpaces(String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<Space> getInvitedSpaces(String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<Space> getPublicSpaces(String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<Space> getPendingSpaces(String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public Space createSpace(Space space, String creator, String invitedGroupId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void saveSpace(Space space, boolean isNew) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void renameSpace(Space space, String newDisplayName) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void renameSpace(Space space, String newDisplayName, String remoteId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void deleteSpace(String spaceId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void initApp(Space space) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void initApps(Space space) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void deInitApps(Space space) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void addMember(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void removeMember(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<String> getMembers(Space space) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<String> getMembers(String spaceId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void setLeader(Space space, String userId, boolean isLeader) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void setLeader(String spaceId, String userId, boolean isLeader) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public boolean isLeader(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public boolean isLeader(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public boolean isOnlyLeader(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public boolean isOnlyLeader(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-  }
-
-  public boolean isMember(String spaceId, String userId) throws SpaceException {
-    return userId.equals("root1") ? true : false;
-  }
-
-  public boolean hasAccessPermission(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-  }
-
-  public boolean hasEditPermission(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-  }
-
-  public boolean hasEditPermission(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-  }
-
-  public boolean isInvited(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-  }
-
-  public boolean isInvited(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-  }
-
-  public boolean isPending(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-  }
-
-  public boolean isPending(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void installApplication(String spaceId, String appId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void installApplication(Space space, String appId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void activateApplication(Space space, String appId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void activateApplication(String spaceId, String appId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void deactivateApplication(Space space, String appId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void deactivateApplication(String spaceId, String appId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void removeApplication(Space space, String appId, String appName) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void removeApplication(String spaceId, String appId, String appName) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void updateSpaceAccessed(String remoteId, Space space) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public List<Space> getLastAccessedSpace(String remoteId, String appId, int offset, int limit) throws SpaceException {
-    throw new UnsupportedOperationException();
-  }
-
-  public List<Space> getLastSpaces(int limit) {
-    throw new UnsupportedOperationException();
-  }
-
-  public ListAccess<Space> getLastAccessedSpace(String remoteId, String appId) {
-    throw new UnsupportedOperationException();
-  }
-
-  public void requestJoin(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void requestJoin(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void revokeRequestJoin(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void revokeRequestJoin(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void inviteMember(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void inviteMember(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void revokeInvitation(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void revokeInvitation(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void acceptInvitation(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void acceptInvitation(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void denyInvitation(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void denyInvitation(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void validateRequest(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void validateRequest(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void declineRequest(Space space, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void declineRequest(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void registerSpaceLifeCycleListener(SpaceLifeCycleListener listener) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public void unregisterSpaceLifeCycleListener(SpaceLifeCycleListener listener) {
-    throw new UnsupportedOperationException();
-
-  }
-
-  public ListAccess<Space> getVisitedSpaces(String remoteId, String appId) {
-    throw new UnsupportedOperationException();
-  }
-
   public boolean isSuperManager(String userId) {
     if ("root".equals(userId)) {
       return true;
@@ -675,16 +185,9 @@ public class SpaceServiceMock implements SpaceService {
     }
   }
 
-  public List<MembershipEntry> getSuperManagersMemberships() {
-    throw new UnsupportedOperationException();
-  }
-
-  public void addSuperManagersMembership(String permissionExpression) {
-    throw new UnsupportedOperationException();
-  }
-
-  public void removeSuperManagersMembership(String permissionExpression) {
-    throw new UnsupportedOperationException();
+  @Override
+  public List<String> findExternalInvitationsSpacesByEmail(String email) {
+    return Collections.emptyList();
   }
 
   private Space getSpace() {
@@ -698,7 +201,7 @@ public class SpaceServiceMock implements SpaceService {
     space.setDisplayName(SPACE_DISPLAY_NAME);
     space.setGroupId("/spaces/" + SPACE_PRETTY_NAME);
     space.setManagers(new String[] {
-        "root1",
+                                     "root1",
     });
     space.setMembers(SPACE_MEMBERS.toArray(new String[0]));
     space.setRegistration(SPACE_ID_1.equals(spaceId) ? Space.VALIDATION : Space.OPEN);
