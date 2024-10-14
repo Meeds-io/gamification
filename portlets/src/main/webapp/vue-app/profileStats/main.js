@@ -24,7 +24,7 @@ const lang = eXo?.env?.portal?.language || 'en';
 const resourceBundleName = 'locale.addon.Gamification';
 const urls = [
   `/gamification-portlets/i18n/${resourceBundleName}?lang=${lang}`,
-  `/social-portlet/i18n/locale.portlet.social.PeopleListApplication?lang=${lang}`
+  `/social/i18n/locale.portlet.social.PeopleListApplication?lang=${lang}`
 ];
 
 const appId = 'profile-stats-portlet';
