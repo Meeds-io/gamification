@@ -31,6 +31,8 @@ public class LeaderboardFilter {
 
   private Period       period       = Period.WEEK;
 
+  private long         medianDateInSeconds;
+
   private int          offset       = 0;
 
   private int          limit        = 10;

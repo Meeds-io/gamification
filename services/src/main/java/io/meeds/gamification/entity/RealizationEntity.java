@@ -59,7 +59,8 @@ import lombok.EqualsAndHashCode;
       + " SELECT earnerId, ROW_NUMBER() OVER() rankIndex FROM " 
       + " (SELECT g.EARNER_ID earnerId, SUM(g.ACTION_SCORE) total"
       + " FROM GAMIFICATION_ACTIONS_HISTORY g"
-      + " WHERE g.CREATED_DATE >= :date"
+      + " WHERE g.CREATED_DATE >= :fromDate"
+      + " AND g.CREATED_DATE < :toDate"
       + " AND g.DOMAIN_ID = :domainId"
       + " AND g.EARNER_TYPE = :earnerType"
       + " AND g.STATUS = :status "
@@ -81,12 +82,13 @@ import lombok.EqualsAndHashCode;
     + ") LEADERBOARD WHERE LEADERBOARD.earnerId = :earnerId"
 )
 @NamedNativeQuery(
-  name = "RealizationEntity.getLeaderboardRankByDate",
+  name = "RealizationEntity.getLeaderboardRankByDates",
   query = "SELECT LEADERBOARD.rankIndex FROM (" 
     + " SELECT earnerId, ROW_NUMBER() OVER() rankIndex FROM " 
     + " (SELECT g.EARNER_ID earnerId, SUM(g.ACTION_SCORE) total"
     + " FROM GAMIFICATION_ACTIONS_HISTORY g"
-    + " WHERE g.CREATED_DATE >= :date"
+    + " WHERE g.CREATED_DATE >= :fromDate"
+    + " AND g.CREATED_DATE < :toDate"
     + " AND g.EARNER_TYPE = :earnerType"
     + " AND g.STATUS = :status "
     + " GROUP BY g.EARNER_ID"
@@ -107,7 +109,8 @@ import lombok.EqualsAndHashCode;
   name = "RealizationEntity.getLeaderboardByDateAndProgramId",
   query = "SELECT new io.meeds.gamification.model.StandardLeaderboard(g.earnerId as earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g"
-    + " WHERE g.createdDate >= :date"
+    + " WHERE g.createdDate >= :fromDate"
+    + " AND g.createdDate < :toDate"
     + " AND g.domainEntity.id = :domainId"
     + " AND g.earnerType = :earnerType"
     + " AND g.status = :status"
@@ -128,7 +131,8 @@ import lombok.EqualsAndHashCode;
   name = "RealizationEntity.getLeaderboardByDate",
   query = "SELECT new io.meeds.gamification.model.StandardLeaderboard(g.earnerId as earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g"
-    + " WHERE g.createdDate >= :date"
+    + " WHERE g.createdDate >= :fromDate"
+    + " AND g.createdDate < :toDate"
     + " AND g.earnerType = :earnerType"
     + " AND g.status = :status"
     + " GROUP BY g.earnerId"
