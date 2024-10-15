@@ -1085,15 +1085,15 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
                                           ACTIVITY_OBJECT_TYPE);
     Date date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-    assertEquals(1, realizationService.getLeaderboardRank(adminIdentityId, date, program.getId()));
+    assertEquals(1, realizationService.getLeaderboardRank(adminIdentityId, date, null, program.getId()));
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
     leaderboardFilter.setIdentityType(IdentityType.USER);
     leaderboardFilter.setProgramId(program.getId());
     leaderboardFilter.setPeriod("WEEK");
     assertEquals(2, realizationService.getLeaderboard(leaderboardFilter, null).size());
 
-    assertEquals(1, realizationService.getLeaderboardRank(adminIdentityId, date, program.getId()));
-    assertEquals(2, realizationService.getLeaderboardRank(spaceMemberIdentityId, date, program.getId()));
+    assertEquals(1, realizationService.getLeaderboardRank(adminIdentityId, date, null, program.getId()));
+    assertEquals(2, realizationService.getLeaderboardRank(spaceMemberIdentityId, date, null, program.getId()));
 
     leaderboardFilter = new LeaderboardFilter();
     leaderboardFilter.setIdentityType(IdentityType.SPACE);
@@ -1101,8 +1101,8 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     leaderboardFilter.setPeriod("WEEK");
     assertEquals(1, realizationService.getLeaderboard(leaderboardFilter, ADMIN_USER).size());
 
-    assertEquals(0, realizationService.getLeaderboardRank(TEST_SPACE2_ID, date, program.getId()));
-    assertEquals(1, realizationService.getLeaderboardRank(TEST_SPACE_ID, date, program.getId()));
+    assertEquals(0, realizationService.getLeaderboardRank(TEST_SPACE2_ID, date, null, program.getId()));
+    assertEquals(1, realizationService.getLeaderboardRank(TEST_SPACE_ID, date, null, program.getId()));
   }
 
   public void testFindUserReputationBySocialId() {

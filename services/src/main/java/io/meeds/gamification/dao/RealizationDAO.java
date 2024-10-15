@@ -90,9 +90,10 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public int getLeaderboardRankByDateAndProgramId(IdentityType earnerType, String earnerIdentityId, Date date, long domainId) {
+  public int getLeaderboardRankByDatesAndProgramId(IdentityType earnerType, String earnerIdentityId, Date fromDate, Date toDate, long domainId) {
     Query query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardRankByDateAndProgramId");
-    query.setParameter(DATE_PARAM_NAME, date, TemporalType.DATE)
+    query.setParameter(FROM_DATE_PARAM_NAME, fromDate, TemporalType.DATE)
+         .setParameter(TO_DATE_PARAM_NAME, toDate, TemporalType.DATE)
          .setParameter(PROGRAM_ID_PARAM_NAME, domainId)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType.ordinal())
          .setParameter(EARNER_ID_PARAM_NAME, Long.parseLong(earnerIdentityId))
@@ -119,9 +120,10 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public int getLeaderboardRankByDate(IdentityType earnerType, String earnerIdentityId, Date fromDate) {
-    Query query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardRankByDate");
-    query.setParameter(DATE_PARAM_NAME, fromDate, TemporalType.DATE)
+  public int getLeaderboardRankByDates(IdentityType earnerType, String earnerIdentityId, Date fromDate, Date toDate) {
+    Query query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardRankByDates");
+    query.setParameter(FROM_DATE_PARAM_NAME, fromDate, TemporalType.DATE)
+         .setParameter(TO_DATE_PARAM_NAME, toDate, TemporalType.DATE)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType.ordinal())
          .setParameter(EARNER_ID_PARAM_NAME, Long.parseLong(earnerIdentityId))
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED.ordinal());
@@ -153,10 +155,11 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     return query.getResultList();
   }
 
-  public List<StandardLeaderboard> getLeaderboardByDate(Date fromDate, IdentityType earnerType, int offset, int limit) {
+  public List<StandardLeaderboard> getLeaderboardByDates(Date fromDate, Date toDate, IdentityType earnerType, int offset, int limit) {
     TypedQuery<StandardLeaderboard> query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardByDate",
                                                                                 StandardLeaderboard.class);
-    query.setParameter(DATE_PARAM_NAME, fromDate)
+    query.setParameter(FROM_DATE_PARAM_NAME, fromDate)
+         .setParameter(TO_DATE_PARAM_NAME, toDate)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     query.setFirstResult(offset);
@@ -164,15 +167,16 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     return query.getResultList();
   }
 
-  public List<StandardLeaderboard> getLeaderboardByDateAndProgramId(Date fromDate,
-                                                                    IdentityType earnerType,
-                                                                    long domainId,
-                                                                    int offset,
-                                                                    int limit) {
+  public List<StandardLeaderboard> getLeaderboardByDatesAndProgramId(Date fromDate,
+                                                                     Date toDate, IdentityType earnerType,
+                                                                     long domainId,
+                                                                     int offset,
+                                                                     int limit) {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardByDateAndProgramId",
                                                                               StandardLeaderboard.class);
-    query.setParameter(DATE_PARAM_NAME, fromDate)
+    query.setParameter(FROM_DATE_PARAM_NAME, fromDate)
+         .setParameter(TO_DATE_PARAM_NAME, toDate)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
          .setParameter(PROGRAM_ID_PARAM_NAME, domainId)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
@@ -192,19 +196,21 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerId, Date fromDate, Date toDate) {
+  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityIdAndDates(String earnerId, Date fromDate, Date toDate) {
     TypedQuery<PiechartLeaderboard> query;
-    if (fromDate != null && toDate != null) {
-      query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardStatsByIdentityIdAndDates",
-                                                  PiechartLeaderboard.class);
-      query.setParameter(EARNER_ID_PARAM_NAME, earnerId)
-           .setParameter(FROM_DATE_PARAM_NAME, fromDate)
-           .setParameter(TO_DATE_PARAM_NAME, toDate)
-           .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
-    } else {
-      query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardStatsByIdentityId", PiechartLeaderboard.class);
-      query.setParameter(EARNER_ID_PARAM_NAME, earnerId).setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
-    }
+    query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardStatsByIdentityIdAndDates",
+                                                PiechartLeaderboard.class);
+    query.setParameter(EARNER_ID_PARAM_NAME, earnerId)
+         .setParameter(FROM_DATE_PARAM_NAME, fromDate)
+         .setParameter(TO_DATE_PARAM_NAME, toDate)
+         .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
+    return query.getResultList();
+  }
+
+  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerId) {
+    TypedQuery<PiechartLeaderboard> query;
+    query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardStatsByIdentityId", PiechartLeaderboard.class);
+    query.setParameter(EARNER_ID_PARAM_NAME, earnerId).setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     return query.getResultList();
   }
 

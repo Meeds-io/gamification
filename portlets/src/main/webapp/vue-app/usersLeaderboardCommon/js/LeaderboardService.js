@@ -71,6 +71,9 @@ export function getLeaderboard(filter) {
   if (filter.identityId) {
     formData.append('identityId', filter.identityId);
   }
+  if (filter.dateInSeconds) {
+    formData.append('dateInSeconds', filter.dateInSeconds);
+  }
   if (filter.offset) {
     formData.append('offset', filter.offset);
   }
@@ -89,8 +92,8 @@ export function getLeaderboard(filter) {
   });
 }
 
-export function getStats(identityId, period) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard/stats/${identityId}?period=${period || 'WEEK'}`, {
+export function getStats(identityId, period, dateInSeconds) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard/stats/${identityId}?period=${period || 'WEEK'}&dateInSeconds=${dateInSeconds || '0'}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
