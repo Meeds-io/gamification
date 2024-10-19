@@ -49,8 +49,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
 
-import io.meeds.gamification.model.EventDTO;
-import io.meeds.gamification.storage.EventStorage;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -60,15 +58,16 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import io.meeds.analytics.utils.AnalyticsUtils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import io.meeds.analytics.utils.AnalyticsUtils;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.Announcement;
+import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.service.RuleService;
