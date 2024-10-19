@@ -21,7 +21,6 @@ import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_S
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_INVITE_USER;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_JOIN;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_AVATAR;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_BANNER;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_DESCRIPTION;
@@ -98,16 +97,6 @@ public class GamificationSpaceListenerTest { // NOSONAR
   }
 
   @Test
-  public void testAddAppLicationSpace() throws Exception {
-    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS, SpaceLifeCycleListener::applicationAdded);
-  }
-
-  @Test
-  public void testRemoveAppLicationSpace() throws Exception {
-    testEventTrigger(GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS, SpaceLifeCycleListener::applicationRemoved);
-  }
-
-  @Test
   public void testSpaceBannerEdited() throws Exception {
     testEventTrigger(GAMIFICATION_SOCIAL_SPACE_UPDATE_BANNER, SpaceLifeCycleListener::spaceBannerEdited);
   }
@@ -149,7 +138,7 @@ public class GamificationSpaceListenerTest { // NOSONAR
 
   private void testEventTrigger(String expectedGamifiedEvent,
                                 BiConsumer<GamificationSpaceListener, SpaceLifeCycleEvent> consumer,
-                                boolean canceled) throws Exception {
+                                boolean canceled) {
     GamificationSpaceListener gamificationSpaceListener = new GamificationSpaceListener(ruleService,
                                                                                         identityManager,
                                                                                         spaceService,
