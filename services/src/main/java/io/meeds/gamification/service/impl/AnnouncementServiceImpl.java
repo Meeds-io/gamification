@@ -1,10 +1,18 @@
 package io.meeds.gamification.service.impl;
 
+import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_COMMENT_TYPE;
+import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM;
+import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ID_TEMPLATE_PARAM;
+import static io.meeds.gamification.utils.Utils.POST_CANCEL_ANNOUNCEMENT_EVENT;
+import static io.meeds.gamification.utils.Utils.POST_CREATE_ANNOUNCEMENT_EVENT;
+import static io.meeds.gamification.utils.Utils.POST_UPDATE_ANNOUNCEMENT_EVENT;
+import static io.meeds.gamification.utils.Utils.REALIZATION_STATUS_TEMPLATE_PARAM;
+import static io.meeds.gamification.utils.Utils.broadcastEvent;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import io.meeds.gamification.constant.RealizationStatus;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -24,8 +32,6 @@ import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.storage.AnnouncementStorage;
-
-import static io.meeds.gamification.utils.Utils.*;
 
 public class AnnouncementServiceImpl implements AnnouncementService {
 
