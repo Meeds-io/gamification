@@ -24,7 +24,6 @@ import java.util.Map;
 import io.meeds.gamification.model.Trigger;
 import io.meeds.gamification.plugin.EventConfigPlugin;
 import org.apache.commons.lang3.StringUtils;
-import org.picocontainer.Startable;
 import io.meeds.gamification.service.EventRegistry;
 
 public class EventRegistryImpl implements EventRegistry {

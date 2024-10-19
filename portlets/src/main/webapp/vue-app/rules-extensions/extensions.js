@@ -87,7 +87,6 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
       'updateSpaceAvatar',
       'updateSpaceBanner',
       'updateSpaceDescription',
-      'updateSpaceApplications',
       'becomeSpaceManager',
       'inviteUserToSpace',
       'joinSpace'

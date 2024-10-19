@@ -15,6 +15,7 @@
  */
 package io.meeds.gamification.analytics;
 
+import static io.meeds.analytics.utils.AnalyticsUtils.addStatisticData;
 import static io.meeds.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
@@ -24,13 +25,11 @@ import static io.meeds.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
 import static io.meeds.gamification.utils.Utils.STATISTICS_RULE_SUBMODULE;
 import static io.meeds.gamification.utils.Utils.STATISTICS_UPDATE_RULE_OPERATION;
 import static io.meeds.gamification.utils.Utils.addRuleStatisticParameters;
-import static io.meeds.analytics.utils.AnalyticsUtils.addStatisticData;
 
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import io.meeds.analytics.model.StatisticData;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
@@ -38,7 +37,7 @@ import org.exoplatform.services.listener.Listener;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-import io.meeds.gamification.constant.EntityType;
+import io.meeds.analytics.model.StatisticData;
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.service.EventService;

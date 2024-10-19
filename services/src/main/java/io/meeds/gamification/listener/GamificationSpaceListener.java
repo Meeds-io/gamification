@@ -20,19 +20,21 @@ import static io.meeds.gamification.constant.GamificationConstant.BROADCAST_GAMI
 import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_ADD;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD;
+import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_INVITE_USER;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_JOIN;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_AVATAR;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_BANNER;
 import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_DESCRIPTION;
-import static io.meeds.gamification.constant.GamificationConstant.*;
+import static io.meeds.gamification.constant.GamificationConstant.IDENTITY_OBJECT_TYPE;
 import static io.meeds.gamification.constant.GamificationConstant.OBJECT_ID_PARAM;
 import static io.meeds.gamification.constant.GamificationConstant.OBJECT_TYPE_PARAM;
 import static io.meeds.gamification.constant.GamificationConstant.RECEIVER_ID;
 import static io.meeds.gamification.constant.GamificationConstant.SENDER_ID;
+import static io.meeds.gamification.constant.GamificationConstant.SPACE_MEMBERSHIP_OBJECT_TYPE;
 import static io.meeds.gamification.listener.GamificationGenericListener.CANCEL_EVENT_NAME;
 import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
-import static io.meeds.gamification.utils.Utils.*;
+import static io.meeds.gamification.utils.Utils.getCurrentUserIdentityId;
+import static io.meeds.gamification.utils.Utils.getUserIdentityId;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,16 +105,6 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     Space space = event.getSpace();
 
     createRealization(username, space, GAMIFICATION_SOCIAL_SPACE_UPDATE_BANNER);
-  }
-
-  @Override
-  public void applicationAdded(SpaceLifeCycleEvent event) {
-    triggerSpaceApplicationCustomizationEvent(event);
-  }
-
-  @Override
-  public void applicationRemoved(SpaceLifeCycleEvent event) {
-    triggerSpaceApplicationCustomizationEvent(event);
   }
 
   @Override
@@ -233,13 +225,6 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     } catch (Exception e) {
       LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
-  }
-
-  private void triggerSpaceApplicationCustomizationEvent(SpaceLifeCycleEvent event) {
-    String username = event.getSource();
-    Space space = event.getSpace();
-
-    createRealization(username, space, GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS);
   }
 
   private String getModifierIdentityId(String username) {

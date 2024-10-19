@@ -12,17 +12,20 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
-import io.meeds.analytics.model.StatisticData;
 import org.exoplatform.commons.api.notification.model.ArgumentLiteral;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -38,7 +41,14 @@ import org.exoplatform.social.rest.api.EntityBuilder;
 import org.exoplatform.social.rest.entity.IdentityEntity;
 import org.exoplatform.web.security.codec.CodecInitializer;
 import org.exoplatform.web.security.security.TokenServiceInitializationException;
+import org.exoplatform.ws.frameworks.json.JsonGenerator;
+import org.exoplatform.ws.frameworks.json.impl.JsonDefaultHandler;
+import org.exoplatform.ws.frameworks.json.impl.JsonException;
+import org.exoplatform.ws.frameworks.json.impl.JsonGeneratorImpl;
+import org.exoplatform.ws.frameworks.json.impl.JsonParserImpl;
+import org.exoplatform.ws.frameworks.json.impl.ObjectBuilder;
 
+import io.meeds.analytics.model.StatisticData;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.EventDTO;
@@ -47,9 +57,6 @@ import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.portal.security.constant.UserRegistrationType;
 import io.meeds.portal.security.service.SecuritySettingService;
-
-import org.exoplatform.ws.frameworks.json.JsonGenerator;
-import org.exoplatform.ws.frameworks.json.impl.*;
 
 @SuppressWarnings("deprecation")
 public class Utils {

@@ -76,8 +76,6 @@ public interface GamificationConstant { // NOSONAR
 
     String GAMIFICATION_SOCIAL_SPACE_UPDATE_DESCRIPTION                                = "updateSpaceDescription";
 
-    String GAMIFICATION_SOCIAL_SPACE_UPDATE_APPLICATIONS                               = "updateSpaceApplications";
-
     /** JOIN SPACE  */
     String GAMIFICATION_SOCIAL_SPACE_JOIN                                              = "joinSpace";
     /** GRANT USER AS LEAD WITHIN SPACE */
