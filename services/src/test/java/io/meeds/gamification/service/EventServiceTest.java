@@ -19,20 +19,17 @@ package io.meeds.gamification.service;
 
 import static org.junit.Assert.assertThrows;
 
-import io.meeds.gamification.entity.EventEntity;
-import io.meeds.gamification.model.EventDTO;
-import io.meeds.gamification.model.filter.EventFilter;
-import io.meeds.gamification.plugin.AnnouncementActivityTypePlugin;
-import io.meeds.gamification.plugin.ConnectorPlugin;
-import io.meeds.gamification.plugin.EventPlugin;
-import io.meeds.gamification.storage.mapper.EventMapper;
-import io.meeds.gamification.test.AbstractServiceTest;
-import org.exoplatform.webui.config.Event;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.meeds.gamification.entity.EventEntity;
+import io.meeds.gamification.model.EventDTO;
+import io.meeds.gamification.model.filter.EventFilter;
+import io.meeds.gamification.plugin.EventPlugin;
+import io.meeds.gamification.storage.mapper.EventMapper;
+import io.meeds.gamification.test.AbstractServiceTest;
 
 public class EventServiceTest extends AbstractServiceTest {
 
