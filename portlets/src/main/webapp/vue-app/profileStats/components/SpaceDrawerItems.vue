@@ -60,11 +60,7 @@ export default {
   },
   computed: {
     url() {
-      if (!this.space || !this.space.groupId) {
-        return '#';
-      }
-      const uri = this.space.groupId.replace(/\//g, ':');
-      return `${eXo.env.portal.context}/g/${uri}/${this.space.prettyName}`;
+      return this.space?.id && `${eXo.env.portal.context}/s/${this.space.id}` || '#';
     },
     avatarUrl() {
       return this.space && this.space.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/spaces/${this.space.avatarUrl}/avatar`;

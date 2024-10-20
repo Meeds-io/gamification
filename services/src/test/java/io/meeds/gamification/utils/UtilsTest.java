@@ -154,30 +154,18 @@ public class UtilsTest extends AbstractServiceTest {
 
   @Test
   public void testGetSpaceFromObjectId() {
-    String ObjectId = "/portal/g/:spaces:" + SPACE_PRETTY_NAME;
+    String objectId = "/portal/g/:spaces:" + SPACE_PRETTY_NAME;
     String spaceDisplayName = Utils.getSpaceFromObjectID("test");
     assertNull(spaceDisplayName);
     spaceDisplayName = Utils.getSpaceFromObjectID("");
     assertNull(spaceDisplayName);
-    spaceDisplayName = Utils.getSpaceFromObjectID(ObjectId);
+    spaceDisplayName = Utils.getSpaceFromObjectID(objectId);
     assertNotNull(spaceDisplayName);
     assertEquals("test space", spaceDisplayName);
   }
 
   @Test
   public void testCreateUser() {
-    String[] spaceMembers = {
-        "root"
-    };
-    Space space = new Space();
-    space.setId("1");
-    space.setPrettyName(SPACE_PRETTY_NAME);
-    space.setDisplayName("test space");
-    space.setGroupId(SPACE_GROUP_ID);
-    space.setManagers(spaceMembers);
-    space.setMembers(spaceMembers);
-    space.setRedactors(new String[0]);
-
     RuleDTO rule = newRuleDTO();
     Identity identity = identityManager.getOrCreateUserIdentity("root1");
 
