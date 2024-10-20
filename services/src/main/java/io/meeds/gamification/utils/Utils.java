@@ -406,13 +406,21 @@ public class Utils {
   }
 
   public static String getSpaceFromObjectID(String objectId) {
-    if (StringUtils.isBlank(objectId) || !objectId.contains("/portal/g/:spaces:")) {
+    if (StringUtils.isBlank(objectId)) {
+      return null;
+    } else if (objectId.contains("/portal/g/:spaces:")) {
+      String groupId = objectId.substring(objectId.indexOf(":")).replace(":", "/");
+      SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+      Space space = spaceService.getSpaceByGroupId(groupId);
+      return space != null ? space.getDisplayName() : null;
+    } else if (objectId.contains("/portal/s/")) {
+      String id = objectId.split("/")[3];
+      SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+      Space space = spaceService.getSpaceById(id);
+      return space != null ? space.getDisplayName() : null;
+    } else {
       return null;
     }
-    String groupID = objectId.substring(objectId.indexOf(":")).replace(":", "/");
-    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    Space space = spaceService.getSpaceByGroupId(groupID);
-    return space != null ? space.getDisplayName() : null;
   }
 
   public static String escapeIllegalCharacterInMessage(String message) {

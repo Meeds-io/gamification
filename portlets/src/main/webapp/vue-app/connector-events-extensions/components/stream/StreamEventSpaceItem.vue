@@ -47,7 +47,7 @@ export default {
       return this.space?.displayName;
     },
     spaceUrl() {
-      return `${eXo.env.portal.context}/g/${this.space?.groupId?.replace(/\//g, ':')}`;
+      return `${eXo.env.portal.context}/s/${this.space?.id}`;
     },
   },
 };
