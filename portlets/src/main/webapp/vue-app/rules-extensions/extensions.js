@@ -97,8 +97,7 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
           .then(identity => identity?.remoteId && identity?.providerId === 'space' && Vue.prototype.$spaceService.getSpaceByPrettyName(identity.remoteId))
           .then(space => {
             if (space.groupId) {
-              const uri = space.groupId.replace(/\//g, ':');
-              realization.link = `${eXo.env.portal.context}/g/${uri}/`;
+              realization.link = `${eXo.env.portal.context}/s/${space.id}`;
               return realization.link;
             }
           }) || null;
@@ -106,8 +105,7 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
         return window?.eXo?.env?.portal?.userName?.length && realization.objectId.includes('-') && Vue.prototype.$spaceService.getSpaceById(realization.objectId.split('-')[0])
           .then(space => {
             if (space.groupId) {
-              const uri = space.groupId.replace(/\//g, ':');
-              realization.link = `${eXo.env.portal.context}/g/${uri}/`;
+              realization.link = `${eXo.env.portal.context}/s/${space.id}`;
               return realization.link;
             }
           }) || null;
@@ -115,8 +113,7 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
         return window?.eXo?.env?.portal?.userName?.length && Vue.prototype.$spaceService.getSpaceByDisplayName(realization.space)
           .then(space => {
             if (space.groupId) {
-              const uri = space.groupId.replace(/\//g, ':');
-              realization.link = `${eXo.env.portal.context}/g/${uri}/`;
+              realization.link = `${eXo.env.portal.context}/s/${space.id}`;
               return realization.link;
             }
           }) || null;
