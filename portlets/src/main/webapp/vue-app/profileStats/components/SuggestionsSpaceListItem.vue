@@ -78,10 +78,7 @@ export default {
       return this.spaceSuggestion && this.spaceSuggestion.spaceAvatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/spaces/${this.spaceSuggestion.spaceUrl}/avatar`;
     },
     url() {
-      if (!this.spaceSuggestion || !this.spaceSuggestion.spaceId) {
-        return '#';
-      }
-      return `${eXo.env.portal.context}/g/:spaces:${this.spaceSuggestion.spaceUrl}/`;
+      return this.spaceSuggestion.spaceId && `${eXo.env.portal.context}/s/${this.spaceSuggestion.spaceId}` || '#';
     },
   },
   methods: {
