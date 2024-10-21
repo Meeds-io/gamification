@@ -75,12 +75,12 @@ public class RealizationStorage {
     return gamificationHistoryDAO.countRealizationsByFilter(realizationFilter) > 0;
   }
 
-  public int getLeaderboardRankByDate(IdentityType identityType, String earnerIdentityId, Date fromDate) {
-    return gamificationHistoryDAO.getLeaderboardRankByDate(identityType, earnerIdentityId, fromDate);
+  public int getLeaderboardRankByDates(IdentityType identityType, String earnerIdentityId, Date fromDate, Date toDate) {
+    return gamificationHistoryDAO.getLeaderboardRankByDates(identityType, earnerIdentityId, fromDate, toDate);
   }
 
-  public int getLeaderboardRankByDateAndProgramId(IdentityType identityType, String earnerIdentityId, Date fromDate, long programId) {
-    return gamificationHistoryDAO.getLeaderboardRankByDateAndProgramId(identityType, earnerIdentityId, fromDate, programId);
+  public int getLeaderboardRankByDatesAndProgramId(IdentityType identityType, String earnerIdentityId, Date fromDate, Date toDate, long programId) {
+    return gamificationHistoryDAO.getLeaderboardRankByDatesAndProgramId(identityType, earnerIdentityId, fromDate, toDate, programId);
   }
 
   public int getLeaderboardRank(IdentityType identityType, String earnerIdentityId) {
@@ -91,20 +91,20 @@ public class RealizationStorage {
     return gamificationHistoryDAO.getLeaderboardRankByProgramId(identityType, earnerIdentityId, programId);
   }
 
-  public List<StandardLeaderboard> getLeaderboardByDate(Date fromDate, IdentityType identityType, int offset, int limit) {
-    return gamificationHistoryDAO.getLeaderboardByDate(fromDate, identityType, offset, limit);
+  public List<StandardLeaderboard> getLeaderboardByDates(Date fromDate, Date toDate, IdentityType identityType, int offset, int limit) {
+    return gamificationHistoryDAO.getLeaderboardByDates(fromDate, toDate, identityType, offset, limit);
   }
 
   public List<StandardLeaderboard> getLeaderboard(IdentityType identityType, int offset, int limit) {
     return gamificationHistoryDAO.getLeaderboard(identityType, offset, limit);
   }
 
-  public List<StandardLeaderboard> getLeaderboardByDateByProgramId(Date fromDate,
-                                                                   IdentityType identityType,
-                                                                   long programId,
-                                                                   int offset,
-                                                                   int limit) {
-    return gamificationHistoryDAO.getLeaderboardByDateAndProgramId(fromDate, identityType, programId, offset, limit);
+  public List<StandardLeaderboard> getLeaderboardByDatesByProgramId(Date fromDate,
+                                                                    Date toDate, IdentityType identityType,
+                                                                    long programId,
+                                                                    int offset,
+                                                                    int limit) {
+    return gamificationHistoryDAO.getLeaderboardByDatesAndProgramId(fromDate, toDate, identityType, programId, offset, limit);
   }
 
   public List<StandardLeaderboard> getLeaderboardByProgramId(long programId, IdentityType identityType, int offset, int limit) {
@@ -115,8 +115,12 @@ public class RealizationStorage {
     return gamificationHistoryDAO.getScorePerProgramByIdentityId(earnerIdentityId);
   }
 
-  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId, Date startDate, Date endDate) {
-    return gamificationHistoryDAO.getLeaderboardStatsByIdentityId(earnerIdentityId, startDate, endDate);
+  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityIdAndDates(String earnerIdentityId, Date startDate, Date endDate) {
+    return gamificationHistoryDAO.getLeaderboardStatsByIdentityIdAndDates(earnerIdentityId, startDate, endDate);
+  }
+
+  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId) {
+    return gamificationHistoryDAO.getLeaderboardStatsByIdentityId(earnerIdentityId);
   }
 
   public long getScoreByIdentityIdAndBetweenDates(String earnerIdentityId, Date fromDate, Date toDate) {
