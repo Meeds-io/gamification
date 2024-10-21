@@ -109,8 +109,8 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
               return realization.link;
             }
           }) || null;
-      } else if (realization.space) {
-        return window?.eXo?.env?.portal?.userName?.length && Vue.prototype.$spaceService.getSpaceByDisplayName(realization.space)
+      } else if (realization.spaceId) {
+        return window?.eXo?.env?.portal?.userName?.length && Vue.prototype.$spaceService.getSpaceById(realization.spaceId)
           .then(space => {
             if (space.groupId) {
               realization.link = `${eXo.env.portal.context}/s/${space.id}`;
