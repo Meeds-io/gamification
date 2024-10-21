@@ -108,6 +108,10 @@ export default {
       type: String,
       default: () => 'WEEK',
     },
+    dateInSeconds: {
+      type: Number,
+      default: () => 0,
+    },
     chartType: {
       type: String,
       default: () => 'pie',
@@ -178,7 +182,7 @@ export default {
       }
 
       return new Promise((resolve, reject) => {
-        this.$leaderboardService.getStats(this.identityId, this.period)
+        this.$leaderboardService.getStats(this.identityId, this.period, this.dateInSeconds)
           .then(stats => {
             let id = 0;
             this.chartData = stats.map(s => {

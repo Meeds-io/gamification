@@ -42,6 +42,14 @@ export default {
       type: Number,
       default: () => 10,
     },
+    fromDateInSecond: {
+      type: Number,
+      default: () => 0,
+    },
+    toDateInSecond: {
+      type: Number,
+      default: () => 0,
+    },
   },
   data: () => ({
     loading: false,
@@ -49,6 +57,7 @@ export default {
     sortBy: 'date',
     sortDescending: true,
     realizations: [],
+    lang: eXo.env.portal.language,
   }),
   computed: {
     hasMore() {
@@ -61,6 +70,8 @@ export default {
         programIds: this.programId && [this.programId],
         allPrograms: true,
         sortBy: this.sortBy,
+        fromDate: this.fromDateInSecond ? new Date(this.fromDateInSecond * 1000).toISOString() : null,
+        toDate: this.toDateInSecond ? new Date(this.toDateInSecond * 1000).toISOString() : null,
         sortDescending: this.sortDescending,
       };
     },

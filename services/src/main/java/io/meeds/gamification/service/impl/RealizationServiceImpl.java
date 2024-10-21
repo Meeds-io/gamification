@@ -2,7 +2,6 @@ package io.meeds.gamification.service.impl;
 
 import static io.meeds.gamification.constant.GamificationConstant.*;
 import static io.meeds.gamification.utils.Utils.*;
-import static java.util.Date.from;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,26 +13,15 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import io.meeds.gamification.constant.*;
+import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.model.*;
 import io.meeds.gamification.plugin.EventPlugin;
 import io.meeds.gamification.service.*;
@@ -179,14 +167,14 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public int getLeaderboardRank(String earnerIdentityId, Date fromDate, Long programId) {
+  public int getLeaderboardRank(String earnerIdentityId, Date fromDate, Date toDate, Long programId) {
     org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId); // NOSONAR
     IdentityType identityType = IdentityType.getType(identity.getProviderId());
-    if (fromDate != null) {
+    if (fromDate != null && toDate != null) {
       if (programId == null || programId <= 0) {
-        return realizationStorage.getLeaderboardRankByDate(identityType, earnerIdentityId, fromDate);
+        return realizationStorage.getLeaderboardRankByDates(identityType, earnerIdentityId, fromDate, toDate);
       } else {
-        return realizationStorage.getLeaderboardRankByDateAndProgramId(identityType, earnerIdentityId, fromDate, programId);
+        return realizationStorage.getLeaderboardRankByDatesAndProgramId(identityType, earnerIdentityId, fromDate, toDate, programId);
       }
     } else {
       if (programId == null || programId <= 0) {
@@ -461,25 +449,27 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     String period = filter.getPeriod();
     long programId = filter.getProgramId() == null ? 0 : filter.getProgramId();
 
-    List<StandardLeaderboard> leaderboardItems = null;
-    Date fromDate = getFromDate(period);
+    List<StandardLeaderboard> leaderboardItems;
+    Date fromDate = getFromDate(period, filter.getMedianDateInSeconds());
+    Date toDate = getToDate(period, filter.getMedianDateInSeconds());
     if (programId <= 0) {
       // Compute date
       if (period.equals(Period.ALL.name())) {
         leaderboardItems = realizationStorage.getLeaderboard(identityType, filter.getOffset(), limit);
       } else {
-        leaderboardItems = realizationStorage.getLeaderboardByDate(fromDate, identityType, filter.getOffset(), limit);
+        leaderboardItems = realizationStorage.getLeaderboardByDates(fromDate, toDate, identityType, filter.getOffset(), limit);
       }
     } else {
       // Check the period
       if (period.equals(Period.ALL.name())) {
         leaderboardItems = realizationStorage.getLeaderboardByProgramId(programId, identityType, filter.getOffset(), limit);
       } else {
-        leaderboardItems = realizationStorage.getLeaderboardByDateByProgramId(fromDate,
-                                                                              identityType,
-                                                                              programId,
-                                                                              filter.getOffset(),
-                                                                              limit);
+        leaderboardItems = realizationStorage.getLeaderboardByDatesByProgramId(fromDate,
+                                                                               new Date(),
+                                                                               identityType,
+                                                                               programId,
+                                                                               filter.getOffset(),
+                                                                               limit);
       }
     }
 
@@ -492,8 +482,15 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId, Date startDate, Date endDate) {
-    return realizationStorage.getLeaderboardStatsByIdentityId(earnerIdentityId, startDate, endDate);
+  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId,
+                                                                   String period,
+                                                                   Date startDate,
+                                                                   Date endDate) {
+    if (Period.ALL.name().equals(period)) {
+      return realizationStorage.getLeaderboardStatsByIdentityId(earnerIdentityId);
+    } else {
+      return realizationStorage.getLeaderboardStatsByIdentityIdAndDates(earnerIdentityId, startDate, endDate);
+    }
   }
 
   @Override
@@ -858,26 +855,6 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       }
       return temp;
     }
-  }
-
-  private Date getFromDate(String period) {
-    Date fromDate = null;
-    LocalDate now = LocalDate.now();
-    if (Period.WEEK.name().equals(period)) {
-      fromDate = from(now.with(DayOfWeek.MONDAY)
-                         .atStartOfDay(ZoneId.systemDefault())
-                         .toInstant());
-    } else if (Period.MONTH.name().equals(period)) {
-      fromDate = from(now.with(TemporalAdjusters.firstDayOfMonth())
-                         .atStartOfDay(ZoneId.systemDefault())
-                         .toInstant());
-    } else if (Period.QUARTER.name().equals(period)) {
-      fromDate = from(now.with(now.getMonth().firstMonthOfQuarter())
-                         .with(TemporalAdjusters.firstDayOfMonth())
-                         .atStartOfDay(ZoneId.systemDefault())
-                         .toInstant());
-    }
-    return fromDate;
   }
 
   private long getSpaceId(String spacePrettyName) {
