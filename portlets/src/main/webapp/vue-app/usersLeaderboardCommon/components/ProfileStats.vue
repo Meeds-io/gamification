@@ -27,6 +27,7 @@
     :period="period"
     :program-id="programId"
     :central-points="centralPoints"
+    :date-in-seconds="dateInSeconds"
     @select="$emit('select', $event)"
     @open="$emit('open')" />
 </template>
@@ -49,6 +50,10 @@ export default {
     period: {
       type: String,
       default: () => 'WEEK',
+    },
+    dateInSeconds: {
+      type: Number,
+      default: () => 0,
     },
     centralPoints: {
       type: Boolean,

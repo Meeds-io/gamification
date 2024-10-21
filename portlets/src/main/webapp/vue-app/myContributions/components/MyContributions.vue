@@ -77,7 +77,6 @@
             :identity-id="user.identityId"
             :score="user.score"
             :period="period"
-            :program-id="programId"
             central-points
             @open="$refs.detailsDrawer.open(user, period)" />
           <users-leaderboard-profile-achievements-drawer
