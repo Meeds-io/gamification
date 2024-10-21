@@ -1,19 +1,20 @@
 package io.meeds.gamification.utils;
 
 import static io.meeds.analytics.utils.AnalyticsUtils.addSpaceStatistics;
+import static java.util.Date.from;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.Normalizer;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
+import io.meeds.gamification.constant.Period;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,7 +23,6 @@ import org.exoplatform.commons.api.notification.model.ArgumentLiteral;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -672,5 +672,52 @@ public class Utils {
       map.put(key, value);
     }
     return map;
+  }
+
+  public static Date getFromDate(String period, long medianDateInSeconds) {
+    LocalDate periodDate;
+    if (medianDateInSeconds > 0) {
+      LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(medianDateInSeconds),
+                                                            TimeZone.getDefault().toZoneId());
+      periodDate = localDateTime.toLocalDate();
+    } else {
+      periodDate = LocalDate.now();
+    }
+    LocalDate now = LocalDate.now();
+    Period periodType = Period.valueOf(period.toUpperCase());
+    return switch (periodType) {
+    case Period.WEEK -> from(periodDate.with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    case Period.MONTH ->
+      from(periodDate.with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    case Period.QUARTER -> from(periodDate.with(now.getMonth().firstMonthOfQuarter())
+                                          .with(TemporalAdjusters.firstDayOfMonth())
+                                          .atStartOfDay(ZoneId.systemDefault())
+                                          .toInstant());
+    default -> null;
+    };
+  }
+
+  public static Date getToDate(String period, long medianDateInSeconds) {
+    LocalDate periodDate;
+    if (medianDateInSeconds > 0) {
+      LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(medianDateInSeconds),
+                                                            TimeZone.getDefault().toZoneId());
+      periodDate = localDateTime.toLocalDate();
+    } else {
+      periodDate = LocalDate.now();
+    }
+    LocalDate now = LocalDate.now();
+    Period periodType = Period.valueOf(period.toUpperCase());
+    return switch (periodType) {
+    case Period.WEEK -> from(periodDate.with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).plusWeeks(1).toInstant());
+    case Period.MONTH ->
+      from(periodDate.with(TemporalAdjusters.firstDayOfMonth()).plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    case Period.QUARTER -> from(periodDate.with(now.getMonth().firstMonthOfQuarter())
+                                          .with(TemporalAdjusters.firstDayOfMonth())
+                                          .plusMonths(3)
+                                          .atStartOfDay(ZoneId.systemDefault())
+                                          .toInstant());
+    default -> null;
+    };
   }
 }

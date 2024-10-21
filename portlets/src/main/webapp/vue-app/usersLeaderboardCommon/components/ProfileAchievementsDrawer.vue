@@ -50,6 +50,7 @@
             :programs="programs"
             :period="period"
             :program-id="programId"
+            :date-in-seconds="dateInSeconds"
             @select="programId = $event" />
         </template>
 
@@ -64,6 +65,8 @@
           :identity-id="user.identityId"
           :program-id="programId"
           :page-size="pageSize"
+          :from-date-in-second="fromDateInSecond"
+          :to-date-in-second="toDateInSecond"
           @loading="loading = $event"
           @has-more="hasMore = $event" />
       </div>
@@ -105,6 +108,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    fromDateInSecond: {
+      type: Number,
+      default: 0,
+    },
+    toDateInSecond: {
+      type: Number,
+      default: 0,
+    },
   },
   data: () => ({
     drawer: false,
@@ -115,6 +126,12 @@ export default {
     programs: null,
     programId: null,
     pageSize: Math.max(10, parseInt((window.innerHeight - 560) / 62)),
+    lang: eXo.env.portal.language,
+    dateFormat: {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    },
   }),
   computed: {
     header() {
@@ -124,8 +141,19 @@ export default {
         })
         : this.$t('gamification.overview.userAchievementsList.drawer.title');
     },
+    rangeDateTimeTitle() {
+      return `${this.fromDateFormat} ${this.$t('gamification.profileStats.to')} ${this.toDateFormat}`;
+    },
+    fromDateFormat() {
+      return new window.Intl.DateTimeFormat(this.lang, this.dateFormat).format(new Date(this.fromDateInSecond * 1000 - new Date().getTimezoneOffset() * 60 * 1000));
+
+    },
+    toDateFormat() {
+      return new window.Intl.DateTimeFormat(this.lang, this.dateFormat)
+        .format(new Date(this.toDateInSecond * 1000 - 86400 * 1000 - new Date().getTimezoneOffset() * 60 * 1000));
+    },
     title() {
-      return this.$t(`gamification.profileStats.${this.period.toUpperCase()}`);
+      return this.dateInSeconds ? this.rangeDateTimeTitle : this.$t(`gamification.profileStats.${this.period.toUpperCase()}`);
     },
     program() {
       return this.programId && this.programs?.find?.(p => p.id === this.programId);
@@ -139,6 +167,9 @@ export default {
         1: '</a>',
       });
     },
+    dateInSeconds() {
+      return (this.fromDateInSecond + this.toDateInSecond) / 2;
+    }
   },
   created() {
     window.addEventListener('rules-list-drawer-open', this.openActionsList);
@@ -156,6 +187,8 @@ export default {
       this.loading = true;
       this.$leaderboardService.getLeaderboard({
         identityId,
+        period: this.period,
+        dateInSeconds: this.dateInSeconds,
         limit: 0,
       })
         .then(data => this.user = data.find(u => Number(u.identityId) === Number(identityId)))

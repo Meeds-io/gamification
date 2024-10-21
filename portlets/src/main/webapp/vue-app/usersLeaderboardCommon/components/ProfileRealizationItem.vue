@@ -94,9 +94,9 @@ export default {
     },
     actionValueExtension() {
       return this.actionEventName
-        && Object.values(this.$root.actionValueExtensions)
-          .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
-          .find(extension => extension?.match?.(this.actionEventName))
+        && this.$root.actionValueExtensions && Object.values(this.$root.actionValueExtensions)
+        .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
+        .find(extension => extension?.match?.(this.actionEventName))
         || null;
     },
     linkExtensionMethod() {
