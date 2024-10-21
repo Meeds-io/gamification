@@ -17,7 +17,7 @@
  */
 package io.meeds.gamification.storage.cached;
 
-import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.cache.future.FutureExoCache;
