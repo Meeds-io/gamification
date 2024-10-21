@@ -18,7 +18,7 @@
  */
 package io.meeds.gamification.listener;
 
-import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.search.index.IndexingService;
 import org.exoplatform.services.listener.Event;
