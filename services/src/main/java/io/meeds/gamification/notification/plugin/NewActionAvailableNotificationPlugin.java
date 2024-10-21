@@ -27,7 +27,7 @@ import static io.meeds.gamification.utils.Utils.RULE_CREATOR_NOTIFICATION_PARAME
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.NotificationInfo;
