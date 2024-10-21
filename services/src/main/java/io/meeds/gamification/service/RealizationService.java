@@ -135,13 +135,15 @@ public interface RealizationService {
    * Retrieves Leaderboard rank of an earner
    * {@link org.exoplatform.social.core.identity.model.Identity} id and
    * {@link ProgramDTO} id for the given date
-   * 
-   * @param  earnerIdentityId
-   * @param  date
-   * @param  programId
-   * @return                  identity leaderboard rank in {@link Integer}
+   *
+   * @param earnerIdentityId earner
+   *          {@link org.exoplatform.social.core.identity.model.Identity} id
+   * @param fromDate From date
+   * @param toDate End Date
+   * @param programId program Id
+   * @return identity leaderboard rank in {@link Integer}
    */
-  int getLeaderboardRank(String earnerIdentityId, Date date, Long programId);
+  int getLeaderboardRank(String earnerIdentityId, Date fromDate, Date toDate, Long programId);
 
   /**
    * Compute User reputation score by program
@@ -285,13 +287,14 @@ public interface RealizationService {
   /**
    * Retrieves scores per doamin of a given
    * {@link org.exoplatform.social.core.identity.model.Identity}
-   * 
-   * @param  earnerIdentityId earner identity id
-   * @param  startDate
-   * @param  endDate
-   * @return                  a list of object of type PiechartLeaderboard
+   *
+   * @param earnerIdentityId earner identity id
+   * @param period Period Type
+   * @param startDate Start Date
+   * @param endDate End Date
+   * @return a list of object of type PiechartLeaderboard
    */
-  List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId, Date startDate, Date endDate);
+  List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId, String period, Date startDate, Date endDate);
 
   /**
    * Retrieves Leaderboard switch designated filter
