@@ -94,6 +94,8 @@ public class RealizationBuilder {
           || !StringUtils.equals(realization.getProgramLabel(), rule.getProgram().getTitle()));
       String spaceDisplayName = programRestEntity != null
           && programRestEntity.getSpace() != null ? programRestEntity.getSpace().getDisplayName() : null;
+      String spaceId = programRestEntity != null
+          && programRestEntity.getSpace() != null ? programRestEntity.getSpace().getId() : null;
       Identity earnerIdentity = identityManager.getIdentity(realization.getEarnerId());
       Identity reviewerIdentity = null;
       if (realization.getReviewerId() != null) {
@@ -111,6 +113,7 @@ public class RealizationBuilder {
                                        realization.getSendingDate(),
                                        realization.getStatus(),
                                        canViewProgram && !anonymous ? spaceDisplayName : null,
+                                       canViewProgram && !anonymous ? spaceId : null,
                                        realization.getObjectId(),
                                        realization.getObjectType(),
                                        realization.getActivityId(),
