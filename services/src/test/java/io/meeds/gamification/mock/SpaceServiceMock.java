@@ -63,14 +63,6 @@ public class SpaceServiceMock implements SpaceService {
                                                                                      "root1"
   });
 
-  public Space getSpaceByDisplayName(String spaceDisplayName) {
-    if (SPACE_DISPLAY_NAME.equals(spaceDisplayName)) {
-      return getSpace();
-    } else {
-      throw new UnsupportedOperationException(spaceDisplayName);
-    }
-  }
-
   public Space getSpaceByPrettyName(String spacePrettyName) {
     if (SPACE_PRETTY_NAME.equals(spacePrettyName)) {
       return getSpace(SPACE_ID_1);
