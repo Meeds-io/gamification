@@ -182,7 +182,7 @@ export default {
       }
 
       return new Promise((resolve, reject) => {
-        this.$leaderboardService.getStats(this.identityId, this.period, this.dateInSeconds)
+        this.$leaderboardService.getStats(this.identityId, this.period, this.dateInSeconds, eXo.env.portal.spaceId)
           .then(stats => {
             let id = 0;
             this.chartData = stats.map(s => {

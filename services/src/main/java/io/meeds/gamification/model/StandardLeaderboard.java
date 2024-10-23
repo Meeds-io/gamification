@@ -27,8 +27,8 @@ public class StandardLeaderboard extends AbstractLeaderboard implements Serializ
 
   private static final long serialVersionUID = -2262354364627051531L;
 
-  public StandardLeaderboard(String earnerId, long reputationScore) {
-    this.earnerId = earnerId;
+  public StandardLeaderboard(long earnerId, long reputationScore) {
+    this.earnerId = String.valueOf(earnerId);
     this.reputationScore = reputationScore;
   }
 

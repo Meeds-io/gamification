@@ -48,12 +48,6 @@ import io.meeds.social.translation.service.TranslationService;
 
 public class LeaderboardBuilder {
 
-  private static final String QUARTER_PERIOD_NAME = "QUARTER";
-
-  private static final String MONTH_PERIOD_NAME   = "MONTH";
-
-  private static final String WEEK_PERIOD_NAME    = "WEEK";
-
   private LeaderboardBuilder() {
     // Utils Class
   }
@@ -65,6 +59,7 @@ public class LeaderboardBuilder {
                                                             List<StandardLeaderboard> standardLeaderboards,
                                                             IdentityType identityType,
                                                             Long identityId,
+                                                            Long spaceId,
                                                             Long programId,
                                                             String period,
                                                             long dateInSeconds,
@@ -86,6 +81,7 @@ public class LeaderboardBuilder {
                                          leaderboardList,
                                          period,
                                          dateInSeconds,
+                                         spaceId,
                                          programId,
                                          identityId,
                                          isAnonymous);
@@ -122,6 +118,7 @@ public class LeaderboardBuilder {
                                           List<LeaderboardInfo> leaderboardList,
                                           String period,
                                           long dateInSeconds,
+                                          Long spaceId,
                                           Long programId,
                                           long identityId,
                                           boolean isAnonymous) {
@@ -129,14 +126,14 @@ public class LeaderboardBuilder {
       // Check if the current user is already in top10
       Date fromDate = getFromDate(period, dateInSeconds);
       Date toDate = getToDate(period, dateInSeconds);
-      int rank = realizationService.getLeaderboardRank(String.valueOf(identityId), fromDate, toDate, programId);
+      int rank = realizationService.getLeaderboardRank(String.valueOf(identityId), fromDate, toDate, spaceId, programId);
       if (rank > 0) {
         Identity identity = identityManager.getIdentity(String.valueOf(identityId));
         LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
         leaderboardInfo.setIdentityId(Long.parseLong(identity.getId()));
         leaderboardInfo.setFullname(identity.getProfile().getFullName());
         leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-        leaderboardInfo.setScore(realizationService.getScoreByIdentityIdAndBetweenDates(identity.getId(), fromDate, toDate));
+        leaderboardInfo.setScore(realizationService.getScoreByIdentityIdAndBetweenDates(identity.getId(), fromDate, toDate, spaceId, programId));
         leaderboardInfo.setRank(rank);
         if (!isAnonymous) {
           leaderboardInfo.setRemoteId(identity.getRemoteId());
