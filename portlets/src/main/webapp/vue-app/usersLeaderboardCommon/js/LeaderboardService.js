@@ -31,6 +31,9 @@ export function getPrograms(filter) {
   if (filter?.query) {
     formData.append('query', filter.query);
   }
+  if (filter?.spaceId) {
+    formData.append('spaceId', filter.spaceId);
+  }
   if (filter?.includeDeleted) {
     formData.append('includeDeleted', 'true');
   }
@@ -68,6 +71,9 @@ export function getLeaderboard(filter) {
   if (filter.programId && filter.programId !== '0') {
     formData.append('programId', filter.programId);
   }
+  if (filter.spaceId && filter.spaceId !== '0') {
+    formData.append('spaceId', filter.spaceId);
+  }
   if (filter.identityId) {
     formData.append('identityId', filter.identityId);
   }
@@ -92,8 +98,17 @@ export function getLeaderboard(filter) {
   });
 }
 
-export function getStats(identityId, period, dateInSeconds) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard/stats/${identityId}?period=${period || 'WEEK'}&dateInSeconds=${dateInSeconds || '0'}`, {
+export function getStats(identityId, period, dateInSeconds, spaceId) {
+  const formData = new FormData();
+  formData.append('period', period || 'WEEK');
+  if (dateInSeconds) {
+    formData.append('dateInSeconds', dateInSeconds);
+  }
+  if (spaceId) {
+    formData.append('spaceId', spaceId);
+  }
+  const params = decodeURIComponent(new URLSearchParams(formData).toString());
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard/stats/${identityId}?${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

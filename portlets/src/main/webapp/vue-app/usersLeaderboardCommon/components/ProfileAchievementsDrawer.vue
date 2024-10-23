@@ -187,6 +187,7 @@ export default {
       this.loading = true;
       this.$leaderboardService.getLeaderboard({
         identityId,
+        spaceId: eXo.env.portal.spaceId || null,
         period: this.period,
         dateInSeconds: this.dateInSeconds,
         limit: 0,
@@ -212,7 +213,9 @@ export default {
       if (this.programs) {
         return Promise.resolve(this.programs);
       } else {
-        return this.$leaderboardService.getPrograms()
+        return this.$leaderboardService.getPrograms({
+          spaceId: eXo.env.portal.spaceId || null,
+        })
           .then(data => this.programs = data?.programs || [])
           .finally(() => this.loading = false);
       }
