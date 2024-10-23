@@ -155,6 +155,7 @@ export default {
     retrieveAllPeriodUserStats() {
       return this.$leaderboardService.getLeaderboard({
         identityId: eXo.env.portal.profileOwnerIdentityId,
+        spaceId: eXo.env.portal.spaceId || null,
         period: 'ALL',
         limit: 0,
       })
@@ -167,6 +168,7 @@ export default {
       this.loading = true;
       return this.$leaderboardService.getLeaderboard({
         identityId: eXo.env.portal.profileOwnerIdentityId,
+        spaceId: eXo.env.portal.spaceId || null,
         period: this.$root.myContributionsPeriod,
         limit: 0,
       })

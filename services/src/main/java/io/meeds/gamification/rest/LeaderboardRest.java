@@ -106,6 +106,9 @@ public class LeaderboardRest implements ResourceContainer {
     @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
   })
   public Response getIdentityLeaderboard( // NOSONAR
+                                         @Parameter(description = "Space audience technical identifier to filter")
+                                         @QueryParam("spaceId")
+                                         Long spaceId,
                                          @Parameter(description = "Program technical identifier to filter")
                                          @QueryParam("programId")
                                          Long programId,
@@ -141,6 +144,7 @@ public class LeaderboardRest implements ResourceContainer {
 
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
     leaderboardFilter.setIdentityType(identityType);
+    leaderboardFilter.setSpaceId(spaceId);
     leaderboardFilter.setProgramId(programId);
     leaderboardFilter.setIdentityId(identityId);
     leaderboardFilter.setPeriod(StringUtils.isBlank(period) ? Period.WEEK.name() : period.toUpperCase());
@@ -161,6 +165,7 @@ public class LeaderboardRest implements ResourceContainer {
                                                                     standardLeaderboards,
                                                                     identityType,
                                                                     identityId,
+                                                                    spaceId,
                                                                     programId,
                                                                     period,
                                                                     dateInSeconds,
@@ -185,6 +190,9 @@ public class LeaderboardRest implements ResourceContainer {
                                    @Parameter(description = "Identity technical identifier")
                                    @PathParam("identityId")
                                    String identityId,
+                                   @Parameter(description = "Space audience technical identifier to filter")
+                                   @QueryParam("spaceId")
+                                   Long spaceId,
                                    @Parameter(description = "Current period to consider. Possible values: WEEK, MONTH or ALL")
                                    @DefaultValue("WEEK")
                                    @QueryParam("period")
@@ -201,6 +209,7 @@ public class LeaderboardRest implements ResourceContainer {
     }
     period = StringUtils.isBlank(period) ? Period.ALL.name() : period.toUpperCase();
     List<PiechartLeaderboard> userStats = realizationService.getLeaderboardStatsByIdentityId(identityId,
+                                                                                             spaceId,
                                                                                              period,
                                                                                              getFromDate(period, dateInSeconds),
                                                                                              getToDate(period, dateInSeconds));

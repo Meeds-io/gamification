@@ -85,51 +85,53 @@ import io.meeds.portal.security.constant.UserRegistrationType;
 import io.meeds.portal.security.service.SecuritySettingService;
 
 @ConfiguredBy({ @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
-    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/configuration.xml"),
-    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/gamification-test-configuration.xml"),
+                @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/configuration.xml"),
+                @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/gamification-test-configuration.xml"),
 })
 public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
 
-  public static final String             GAMIFICATION_DOMAIN = "TeamWork";
+  public static final String             GAMIFICATION_DOMAIN   = "TeamWork";
 
-  public static final String             RULE_NAME           = "createNewTask";
+  public static final String             RULE_NAME             = "createNewTask";
 
-  public static final String             BADGE_NAME          = "TeamLeader";
-
-  /* Space */
-  public static final String             TEST_SPACE_ID       = "150";
+  public static final String             BADGE_NAME            = "TeamLeader";
 
   /* Space */
-  public static final String             TEST_SPACE2_ID      = "152";
+  public static final String             TEST_SPACE_ID         = "150";
+
+  /* Space */
+  public static final String             TEST_SPACE2_ID        = "152";
 
   /* Receiver */
-  public static final String             TEST_USER_RECEIVER  = "10";
+  public static final String             TEST_USER_RECEIVER    = "10";
 
   /* Sender */
-  public static final String             TEST_USER_EARNER    = "1";
+  public static final String             TEST_USER_EARNER      = "1";
+
+  public static final long               TEST_USER_EARNER_LONG = 1;
 
   /* Link to the activity stream */
-  public static final String             ACTIVITY_ID         = "245590";
+  public static final String             ACTIVITY_ID           = "245590";
 
-  public static final String             TEST_GLOBAL_SCORE   = "245590";
+  public static final String             TEST_GLOBAL_SCORE     = "245590";
 
-  public static final String             TEST_SCORE          = "50";
+  public static final String             TEST_SCORE            = "50";
 
-  public static final long               MILLIS_IN_A_DAY     = 1000 * 60 * 60 * 24;           // NOSONAR
+  public static final long               MILLIS_IN_A_DAY       = 1000 * 60 * 60 * 24;           // NOSONAR
 
-  public static final TimeZone           DEFAULT_TIMEZONE    = TimeZone.getDefault();
+  public static final TimeZone           DEFAULT_TIMEZONE      = TimeZone.getDefault();
 
-  public static final int                OFFSET              = 0;
+  public static final int                OFFSET                = 0;
 
-  public static final int                LIMIT               = 3;
+  public static final int                LIMIT                 = 3;
 
-  public static final String             DESCRIPTION         = "Description";
+  public static final String             DESCRIPTION           = "Description";
 
-  public static final String             PROGRAM_CREATOR     = "gamification";
+  public static final String             PROGRAM_CREATOR       = "gamification";
 
-  public static final String             OBJECT_TYPE         = "objectType";
+  public static final String             OBJECT_TYPE           = "objectType";
 
-  public static final String             OBJECT_ID           = "objectId";
+  public static final String             OBJECT_ID             = "objectId";
 
   protected IdentityManager              identityManager;
 
@@ -209,7 +211,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
 
   protected IdentityRegistry             identityRegistry;
 
-  Identity                               userIdentity        = new Identity(TEST_USER_EARNER);
+  Identity                               userIdentity          = new Identity(TEST_USER_EARNER);
 
   protected Date                         fromDate;
 
@@ -618,7 +620,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(TEST_USER_EARNER);
-    gHistory.setEarnerId(TEST_USER_EARNER);
+    gHistory.setEarnerId(TEST_USER_EARNER_LONG);
     gHistory.setEarnerType(IdentityType.USER);
     gHistory.setActionTitle(rule.getTitle());
     gHistory.setActionScore(rule.getScore());
@@ -641,7 +643,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(earnerId);
-    gHistory.setEarnerId(earnerId);
+    gHistory.setEarnerId(Long.valueOf(earnerId));
     gHistory.setEarnerType(IdentityType.USER);
     gHistory.setActionTitle(rule.getTitle());
     gHistory.setActionScore(rule.getScore());
@@ -664,7 +666,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(TEST_USER_EARNER);
-    gHistory.setEarnerId(TEST_USER_EARNER);
+    gHistory.setEarnerId(TEST_USER_EARNER_LONG);
     gHistory.setEarnerType(IdentityType.USER);
     gHistory.setActionTitle(actionTitle);
     gHistory.setActionScore(rule.getScore());
@@ -687,7 +689,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(TEST_USER_EARNER);
-    gHistory.setEarnerId(TEST_USER_EARNER);
+    gHistory.setEarnerId(TEST_USER_EARNER_LONG);
     gHistory.setEarnerType(IdentityType.USER);
     gHistory.setActionTitle(rule.getTitle());
     gHistory.setActionScore(rule.getScore());
@@ -710,7 +712,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(TEST_USER_EARNER);
-    gHistory.setEarnerId(earnerId);
+    gHistory.setEarnerId(Long.valueOf(earnerId));
     gHistory.setEarnerType(IdentityType.USER);
     gHistory.setActionTitle(rule.getTitle());
     gHistory.setActionScore(rule.getScore());
@@ -733,7 +735,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(TEST_USER_EARNER);
-    gHistory.setEarnerId(TEST_USER_EARNER);
+    gHistory.setEarnerId(TEST_USER_EARNER_LONG);
     gHistory.setEarnerType(IdentityType.USER);
     gHistory.setActionTitle(actionTitle);
     gHistory.setActionScore(rule.getScore());

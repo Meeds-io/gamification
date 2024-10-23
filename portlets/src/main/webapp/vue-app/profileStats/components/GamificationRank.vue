@@ -150,10 +150,13 @@ export default {
     displayPlaceholder() {
       return !this.loading && !this.users?.length;
     },
+    placeholderPrefix() {
+      return eXo.env.portal.spaceId && 'gamification.overview.space.' || 'gamification.overview.';
+    },
     placeholder() {
       return this.period === 'all' ?
-        this.$t('gamification.overview.allTimeLeaderboard')
-        : this.$t(`gamification.overview.${this.period.toLowerCase()}lyLeaderboard`);
+        this.$t(`${this.placeholderPrefix}allTimeLeaderboard`)
+        : this.$t(`${this.placeholderPrefix}${this.period.toLowerCase()}lyLeaderboard`);
     },
     displayCurrentPosition() {
       return this.isOverviewDisplay ? (this.$root.topChallengersCurrentPosition || false) : true;
@@ -186,6 +189,7 @@ export default {
       this.loading = true;
       return this.$leaderboardService.getLeaderboard({
         identityId: this.identityId,
+        spaceId: eXo.env.portal.spaceId || null,
         period: this.period,
         limit: this.podiumLimit,
       })

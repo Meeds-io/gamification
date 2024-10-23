@@ -35,8 +35,8 @@ public class RealizationStorage {
                                                       int offset,
                                                       int limit) {
     List<Long> ids = gamificationHistoryDAO.findRealizationsByFilter(realizationFilter,
-                                                                                                  offset,
-                                                                                                  limit);
+                                                                     offset,
+                                                                     limit);
     return ids.stream().map(this::getRealizationById).toList();
   }
 
@@ -79,19 +79,31 @@ public class RealizationStorage {
     return gamificationHistoryDAO.getLeaderboardRankByDates(identityType, earnerIdentityId, fromDate, toDate);
   }
 
-  public int getLeaderboardRankByDatesAndProgramId(IdentityType identityType, String earnerIdentityId, Date fromDate, Date toDate, long programId) {
-    return gamificationHistoryDAO.getLeaderboardRankByDatesAndProgramId(identityType, earnerIdentityId, fromDate, toDate, programId);
+  public int getLeaderboardRankByDatesAndProgramIds(IdentityType identityType,
+                                                    String earnerIdentityId,
+                                                    Date fromDate,
+                                                    Date toDate,
+                                                    Long... programIds) {
+    return gamificationHistoryDAO.getLeaderboardRankByDatesAndProgramIds(identityType,
+                                                                         earnerIdentityId,
+                                                                         fromDate,
+                                                                         toDate,
+                                                                         programIds);
   }
 
   public int getLeaderboardRank(IdentityType identityType, String earnerIdentityId) {
     return gamificationHistoryDAO.getLeaderboardRank(identityType, earnerIdentityId);
   }
 
-  public int getLeaderboardRankByProgramId(IdentityType identityType, String earnerIdentityId, long programId) {
-    return gamificationHistoryDAO.getLeaderboardRankByProgramId(identityType, earnerIdentityId, programId);
+  public int getLeaderboardRankByProgramIds(IdentityType identityType, String earnerIdentityId, Long... programIds) {
+    return gamificationHistoryDAO.getLeaderboardRankByProgramIds(identityType, earnerIdentityId, programIds);
   }
 
-  public List<StandardLeaderboard> getLeaderboardByDates(Date fromDate, Date toDate, IdentityType identityType, int offset, int limit) {
+  public List<StandardLeaderboard> getLeaderboardByDates(Date fromDate,
+                                                         Date toDate,
+                                                         IdentityType identityType,
+                                                         int offset,
+                                                         int limit) {
     return gamificationHistoryDAO.getLeaderboardByDates(fromDate, toDate, identityType, offset, limit);
   }
 
@@ -99,32 +111,39 @@ public class RealizationStorage {
     return gamificationHistoryDAO.getLeaderboard(identityType, offset, limit);
   }
 
-  public List<StandardLeaderboard> getLeaderboardByDatesByProgramId(Date fromDate,
-                                                                    Date toDate, IdentityType identityType,
-                                                                    long programId,
-                                                                    int offset,
-                                                                    int limit) {
-    return gamificationHistoryDAO.getLeaderboardByDatesAndProgramId(fromDate, toDate, identityType, programId, offset, limit);
+  public List<StandardLeaderboard> getLeaderboardByDatesByProgramIds(Date fromDate,
+                                                                     Date toDate,
+                                                                     IdentityType identityType,
+                                                                     int offset,
+                                                                     int limit,
+                                                                     Long... programIds) {
+    return gamificationHistoryDAO.getLeaderboardByDatesAndProgramIds(fromDate, toDate, identityType, offset, limit, programIds);
   }
 
-  public List<StandardLeaderboard> getLeaderboardByProgramId(long programId, IdentityType identityType, int offset, int limit) {
-    return gamificationHistoryDAO.getLeaderboardByProgramId(programId, identityType, offset, limit);
+  public List<StandardLeaderboard> getLeaderboardByProgramIds(IdentityType identityType,
+                                                              int offset,
+                                                              int limit,
+                                                              Long... programIds) {
+    return gamificationHistoryDAO.getLeaderboardByProgramIds(identityType, offset, limit, programIds);
   }
 
   public List<ProfileReputation> getScorePerProgramByIdentityId(String earnerIdentityId) {
     return gamificationHistoryDAO.getScorePerProgramByIdentityId(earnerIdentityId);
   }
 
-  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityIdAndDates(String earnerIdentityId, Date startDate, Date endDate) {
-    return gamificationHistoryDAO.getLeaderboardStatsByIdentityIdAndDates(earnerIdentityId, startDate, endDate);
+  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityIdAndDates(String earnerIdentityId,
+                                                                           Long spaceId,
+                                                                           Date startDate,
+                                                                           Date endDate) {
+    return gamificationHistoryDAO.getLeaderboardStatsByIdentityIdAndDates(earnerIdentityId, spaceId, startDate, endDate);
   }
 
-  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId) {
-    return gamificationHistoryDAO.getLeaderboardStatsByIdentityId(earnerIdentityId);
+  public List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId, Long spaceId) {
+    return gamificationHistoryDAO.getLeaderboardStatsByIdentityId(earnerIdentityId, spaceId);
   }
 
-  public long getScoreByIdentityIdAndBetweenDates(String earnerIdentityId, Date fromDate, Date toDate) {
-    return gamificationHistoryDAO.getScoreByIdentityIdAndBetweenDates(earnerIdentityId, fromDate, toDate);
+  public long getScoreByIdentityIdAndBetweenDates(String earnerIdentityId, Date fromDate, Date toDate, Long ...programIds) {
+    return gamificationHistoryDAO.getScoreByIdentityIdAndBetweenDates(earnerIdentityId, fromDate, toDate, programIds);
   }
 
   public long getScoreByIdentityId(String earnerIdentityId) {
