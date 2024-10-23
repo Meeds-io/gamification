@@ -111,7 +111,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 userReputationScore = realizationService.getScoreByIdentityId(actorId);
 
-                userRank = realizationService.getLeaderboardRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), null, null);
+                userRank = realizationService.getLeaderboardRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), null, null, null);
                 
                 reputation.put("score", userReputationScore);
 
