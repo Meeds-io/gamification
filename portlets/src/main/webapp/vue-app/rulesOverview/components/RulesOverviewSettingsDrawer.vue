@@ -25,8 +25,7 @@
     v-model="drawer"
     :right="!$vuetify.rtl"
     :loading="loading"
-    eager
-    @closed="reset">
+    eager>
     <template slot="title">
       {{ $t('gamification.rules.overviewSettings.title') }}
     </template>
@@ -84,6 +83,12 @@
           :step="1"
           class="ms-auto me-n1 my-0 pa-0" />
       </div>
+      <div class="d-flex align-center px-5 mt-4">
+        <div>{{ $t('gamification.rules.overviewSettings.hideWhenEmpty') }}</div>
+        <v-switch
+          v-model="hideWidgetWhenEmpty"
+          class="ms-auto my-0 pa-0" />
+      </div>
     </template>
     <template #footer>
       <div class="d-flex align-center">
@@ -114,6 +119,7 @@ export default {
     endingRulesLimit: 0,
     availableRulesLimit: 0,
     upcomingRulesLimit: 0,
+    hideWidgetWhenEmpty: false,
     sortBy: 'score',
   }),
   computed: {
@@ -135,13 +141,13 @@ export default {
   },
   created() {
     this.$root.$on('rules-overview-settings', this.open);
+    this.reset();
   },
   beforeDestroy() {
     this.$root.$off('rules-overview-settings', this.open);
   },
   methods: {
     open() {
-      this.reset();
       this.$refs.drawer.open();
     },
     reset() {
@@ -150,17 +156,19 @@ export default {
       this.endingRulesLimit = this.$root.endingRulesLimit;
       this.availableRulesLimit = this.$root.availableRulesLimit;
       this.upcomingRulesLimit = this.$root.upcomingRulesLimit;
+      this.hideWidgetWhenEmpty = this.$root.hideWidgetWhenEmpty;
       this.loading = false;
     },
     close() {
       this.$refs.drawer.close();
     },
     save() {
-      this.loading = true;
       const formData = new FormData();
       formData.append('pageRef', this.$root.pageRef);
       formData.append('applicationId', this.$root.portletStorageId);
       const params = new URLSearchParams(formData).toString();
+
+      this.loading = true;
       return fetch(`/layout/rest/pages/application/preferences?${params}`, {
         method: 'PATCH',
         credentials: 'include',
@@ -181,6 +189,9 @@ export default {
             name: 'upcomingRulesLimit',
             value: String(this.upcomingRulesLimit),
           }, {
+            name: 'hideWidgetWhenEmpty',
+            value: String(this.hideWidgetWhenEmpty),
+          }, {
             name: 'rulesSortBy',
             value: this.sortBy || 'modifiedDate',
           }],
@@ -192,8 +203,10 @@ export default {
           this.$root.endingRulesLimit = this.endingRulesLimit;
           this.$root.availableRulesLimit = this.availableRulesLimit;
           this.$root.upcomingRulesLimit = this.upcomingRulesLimit;
+          window.setTimeout(() => this.$root.hideWidgetWhenEmpty = this.hideWidgetWhenEmpty, 500);
           this.close();
         })
+        .then(() => this.$nextTick())
         .finally(() => this.loading = false);
     },
   },
