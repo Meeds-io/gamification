@@ -144,7 +144,7 @@ export default {
 
       return new Promise((resolve, reject) => {
         this.programs = [];
-        this.$leaderboardService.getStats(this.identityId, this.period)
+        this.$leaderboardService.getStats(this.identityId, this.period, 0, eXo.env.portal.spaceId)
           .then(stats => {
             this.chartData = stats.map(s => {
               this.programs.push({

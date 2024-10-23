@@ -124,7 +124,9 @@ export default {
         });
     },
     retrievePrograms() {
-      return this.$leaderboardService.getPrograms()
+      return this.$leaderboardService.getPrograms({
+        spaceId: eXo.env.portal.spaceId,
+      })
         .then(data => {
           const programs = data?.programs || [];
           const defaultProgram = {

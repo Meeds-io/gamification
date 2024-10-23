@@ -53,6 +53,7 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.model.filter.LeaderboardFilter;
+import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.model.filter.RealizationFilter;
 import io.meeds.gamification.model.filter.RuleFilter;
 import io.meeds.gamification.rest.model.RealizationValidityContext;
@@ -167,21 +168,29 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public int getLeaderboardRank(String earnerIdentityId, Date fromDate, Date toDate, Long programId) {
+  public int getLeaderboardRank(String earnerIdentityId, Date fromDate, Date toDate, Long spaceId, Long programId) {
     org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId); // NOSONAR
     IdentityType identityType = IdentityType.getType(identity.getProviderId());
-    if (fromDate != null && toDate != null) {
-      if (programId == null || programId <= 0) {
-        return realizationStorage.getLeaderboardRankByDates(identityType, earnerIdentityId, fromDate, toDate);
+    if ((programId != null && programId > 0) || (spaceId != null && spaceId > 0)) {
+      List<Long> programIds = (programId != null && programId > 0) ? Collections.singletonList(programId) :
+                                                                   getSpaceProgramIds(spaceId);
+      if (programIds.isEmpty()) {
+        return 0;
+      } else if (fromDate != null && toDate != null) {
+        return realizationStorage.getLeaderboardRankByDatesAndProgramIds(identityType,
+                                                                         earnerIdentityId,
+                                                                         fromDate,
+                                                                         toDate,
+                                                                         programIds.toArray(new Long[programIds.size()]));
       } else {
-        return realizationStorage.getLeaderboardRankByDatesAndProgramId(identityType, earnerIdentityId, fromDate, toDate, programId);
+        return realizationStorage.getLeaderboardRankByProgramIds(identityType,
+                                                                 earnerIdentityId,
+                                                                 programIds.toArray(new Long[programIds.size()]));
       }
+    } else if (fromDate != null && toDate != null) {
+      return realizationStorage.getLeaderboardRankByDates(identityType, earnerIdentityId, fromDate, toDate);
     } else {
-      if (programId == null || programId <= 0) {
-        return realizationStorage.getLeaderboardRank(identityType, earnerIdentityId);
-      } else {
-        return realizationStorage.getLeaderboardRankByProgramId(identityType, earnerIdentityId, programId);
-      }
+      return realizationStorage.getLeaderboardRank(identityType, earnerIdentityId);
     }
   }
 
@@ -259,7 +268,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public void updateRealizationStatus(long realizationId,
+  public void updateRealizationStatus(long realizationId, // NOSONAR
                                       RealizationStatus status,
                                       String username) throws IllegalAccessException, ObjectNotFoundException {
     if (StringUtils.isBlank(username)) {
@@ -329,10 +338,10 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
     return rules.stream()
                 .map(rule -> realizationStorage.findLastRealizationByRuleIdAndEarnerIdAndReceiverAndObjectId(rule.getId(),
-                                                                                                              earnerIdentityId,
-                                                                                                              receiverIdentityId,
-                                                                                                              objectId,
-                                                                                                              objectType))
+                                                                                                             earnerIdentityId,
+                                                                                                             receiverIdentityId,
+                                                                                                             objectId,
+                                                                                                             objectType))
                 .filter(Objects::nonNull)
                 .filter(realization -> !RealizationStatus.CANCELED.name().equals(realization.getStatus()))
                 .map(realization -> {
@@ -448,28 +457,35 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
     String period = filter.getPeriod();
     long programId = filter.getProgramId() == null ? 0 : filter.getProgramId();
+    long spaceId = filter.getSpaceId() == null ? 0 : filter.getSpaceId();
 
     List<StandardLeaderboard> leaderboardItems;
     Date fromDate = getFromDate(period, filter.getMedianDateInSeconds());
     Date toDate = getToDate(period, filter.getMedianDateInSeconds());
-    if (programId <= 0) {
+    if (programId > 0 || spaceId > 0) {
+      List<Long> programIds = programId > 0 ? Collections.singletonList(programId) : getSpaceProgramIds(spaceId);
+      // Check the period
+      if (programIds.isEmpty()) {
+        leaderboardItems = Collections.emptyList();
+      } else if (period.equals(Period.ALL.name())) {
+        leaderboardItems = realizationStorage.getLeaderboardByProgramIds(identityType,
+                                                                         filter.getOffset(),
+                                                                         limit,
+                                                                         programIds.toArray(new Long[programIds.size()]));
+      } else {
+        leaderboardItems = realizationStorage.getLeaderboardByDatesByProgramIds(fromDate,
+                                                                                new Date(),
+                                                                                identityType,
+                                                                                filter.getOffset(),
+                                                                                limit,
+                                                                                programIds.toArray(new Long[programIds.size()]));
+      }
+    } else {
       // Compute date
       if (period.equals(Period.ALL.name())) {
         leaderboardItems = realizationStorage.getLeaderboard(identityType, filter.getOffset(), limit);
       } else {
         leaderboardItems = realizationStorage.getLeaderboardByDates(fromDate, toDate, identityType, filter.getOffset(), limit);
-      }
-    } else {
-      // Check the period
-      if (period.equals(Period.ALL.name())) {
-        leaderboardItems = realizationStorage.getLeaderboardByProgramId(programId, identityType, filter.getOffset(), limit);
-      } else {
-        leaderboardItems = realizationStorage.getLeaderboardByDatesByProgramId(fromDate,
-                                                                               new Date(),
-                                                                               identityType,
-                                                                               programId,
-                                                                               filter.getOffset(),
-                                                                               limit);
       }
     }
 
@@ -483,19 +499,27 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   @Override
   public List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId,
+                                                                   Long spaceId,
                                                                    String period,
                                                                    Date startDate,
                                                                    Date endDate) {
     if (Period.ALL.name().equals(period)) {
-      return realizationStorage.getLeaderboardStatsByIdentityId(earnerIdentityId);
+      return realizationStorage.getLeaderboardStatsByIdentityId(earnerIdentityId, spaceId);
     } else {
-      return realizationStorage.getLeaderboardStatsByIdentityIdAndDates(earnerIdentityId, startDate, endDate);
+      return realizationStorage.getLeaderboardStatsByIdentityIdAndDates(earnerIdentityId, spaceId, startDate, endDate);
     }
   }
 
   @Override
-  public long getScoreByIdentityIdAndBetweenDates(String earnerIdentityId, Date fromDate, Date toDate) {
-    return realizationStorage.getScoreByIdentityIdAndBetweenDates(earnerIdentityId, fromDate, toDate);
+  public long getScoreByIdentityIdAndBetweenDates(String earnerIdentityId,
+                                                  Date fromDate,
+                                                  Date toDate,
+                                                  Long spaceId,
+                                                  Long programId) {
+    spaceId = spaceId == null ? 0 : spaceId.longValue();
+    programId = programId == null ? 0 : programId.longValue();
+    List<Long> programIds = programId > 0 ? Collections.singletonList(programId) : getSpaceProgramIds(spaceId);
+    return realizationStorage.getScoreByIdentityIdAndBetweenDates(earnerIdentityId, fromDate, toDate, programIds.toArray(new Long[programIds.size()]));
   }
 
   @Override
@@ -868,4 +892,15 @@ public class RealizationServiceImpl implements RealizationService, Startable {
       realizationDTO.setActionScore((long) Math.ceil(eventPlugin.getPointsRatio(event.getProperties(), eventDetails) * score));
     }
   }
+
+  private List<Long> getSpaceProgramIds(long spaceId) {
+    if (spaceId <= 0) {
+      return Collections.emptyList();
+    }
+    ProgramFilter programFilter = new ProgramFilter();
+    programFilter.setSpacesIds(Collections.singletonList(spaceId));
+    programFilter.setExcludeOpen(true);
+    return programService.getProgramIds(programFilter, 0, 100);
+  }
+
 }

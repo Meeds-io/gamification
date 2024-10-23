@@ -178,6 +178,7 @@ export default {
       this.loading = true;
       return this.$leaderboardService.getLeaderboard({
         programId: this.programId,
+        spaceId: eXo.env.portal.spaceId || null,
         identityId: eXo.env.portal.profileOwnerIdentityId,
         period: this.selectedPeriod,
         limit,

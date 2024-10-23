@@ -141,9 +141,10 @@ public interface RealizationService {
    * @param fromDate From date
    * @param toDate End Date
    * @param programId program Id
+   * @param spaceId audience space Id
    * @return identity leaderboard rank in {@link Integer}
    */
-  int getLeaderboardRank(String earnerIdentityId, Date fromDate, Date toDate, Long programId);
+  int getLeaderboardRank(String earnerIdentityId, Date fromDate, Date toDate, Long spaceId, Long programId);
 
   /**
    * Compute User reputation score by program
@@ -272,7 +273,22 @@ public interface RealizationService {
    * @param  toDate           End date
    * @return                  total score
    */
-  long getScoreByIdentityIdAndBetweenDates(String earnerIdentityId, Date fromDate, Date toDate);
+  default long getScoreByIdentityIdAndBetweenDates(String earnerIdentityId, Date fromDate, Date toDate) {
+    return getScoreByIdentityIdAndBetweenDates(earnerIdentityId, fromDate, toDate, null, null);
+  }
+
+  /**
+   * Retrieves identities total score between designated dates
+   * 
+   * @param earnerIdentityId
+   *          {@link org.exoplatform.social.core.identity.model.Identity} id
+   * @param fromDate From date
+   * @param toDate End date
+   * @param spaceId Space Id
+   * @param programId Program Id
+   * @return total score
+   */
+  long getScoreByIdentityIdAndBetweenDates(String earnerIdentityId, Date fromDate, Date toDate, Long spaceId, Long programId);
 
   /**
    * Retrieves {@link org.exoplatform.social.core.identity.model.Identity} total
@@ -289,12 +305,30 @@ public interface RealizationService {
    * {@link org.exoplatform.social.core.identity.model.Identity}
    *
    * @param earnerIdentityId earner identity id
+   * @param spaceId Program Audience Space Identifier
    * @param period Period Type
    * @param startDate Start Date
    * @param endDate End Date
    * @return a list of object of type PiechartLeaderboard
    */
-  List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId, String period, Date startDate, Date endDate);
+  List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId, Long spaceId, String period, Date startDate, Date endDate);
+
+  /**
+   * Retrieves scores per doamin of a given
+   * {@link org.exoplatform.social.core.identity.model.Identity}
+   *
+   * @param earnerIdentityId earner identity id
+   * @param period Period Type
+   * @param startDate Start Date
+   * @param endDate End Date
+   * @return a list of object of type PiechartLeaderboard
+   */
+  default List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId,
+                                                                    String period,
+                                                                    Date startDate,
+                                                                    Date endDate) {
+    return getLeaderboardStatsByIdentityId(earnerIdentityId, null, period, startDate, endDate);
+  }
 
   /**
    * Retrieves Leaderboard switch designated filter

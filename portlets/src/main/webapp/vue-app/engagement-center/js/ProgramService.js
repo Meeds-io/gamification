@@ -30,6 +30,9 @@ export function getPrograms(filter) {
   if (filter?.query) {
     formData.append('query', filter.query);
   }
+  if (filter?.spaceId) {
+    formData.append('spaceId', filter.spaceId);
+  }
   if (filter?.includeDeleted) {
     formData.append('includeDeleted', 'true');
   }

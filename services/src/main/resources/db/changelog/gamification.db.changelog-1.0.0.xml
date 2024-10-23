@@ -809,4 +809,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <where>TYPE = 0</where>
         </update>
     </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-76">
+      <createIndex
+        indexName="IDX_GAMIFICATION_ACTIONS_HISTORY_01"
+        tableName="GAMIFICATION_ACTIONS_HISTORY">
+        <column
+          name="EARNER_ID"
+          type="BIGINT" />
+      </createIndex>
+    </changeSet>
 </databaseChangeLog>
