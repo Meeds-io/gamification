@@ -24,7 +24,7 @@
     :loading="loading"
     :right="!$vuetify.rtl">
     <template #title>
-      {{ $t('gamification.overview.programsList') }}
+      {{ spaceId && $t('gamification.overview.space.programsList') || $t('gamification.overview.programsList') }}
     </template>
     <template #titleIcons>
       <v-btn
@@ -51,6 +51,7 @@ export default {
     programs: [],
     limitToLoad: -1,
     loading: false,
+    spaceId: eXo.env.portal.spaceId,
   }),
   computed: {
     actionsPageURL() {
@@ -73,6 +74,7 @@ export default {
       this.loading = true;
       return this.$programService.getPrograms({
         limit: this.limitToLoad,
+        spaceId: this.spaceId,
         type: 'ALL',
         status: 'ENABLED',
         expand: 'countActiveRules',
