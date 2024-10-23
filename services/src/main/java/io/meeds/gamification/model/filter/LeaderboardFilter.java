@@ -23,6 +23,8 @@ import lombok.Data;
 @Data
 public class LeaderboardFilter {
 
+  private Long         spaceId    = null;
+
   private Long         programId    = null;
 
   private Long         identityId   = null;
