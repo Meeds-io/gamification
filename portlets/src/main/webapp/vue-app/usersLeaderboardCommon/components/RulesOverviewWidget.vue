@@ -296,11 +296,10 @@ export default {
       return this.sectionsCount > 0;
     },
     isHiddenWhenEmpty() {
-      return (this.hideIfEmpty && !this.hideEmptyPlaceholder)
-        || this.$root.isAnonymous
-        || (this.spaceId?.length
-            && (eXo.env.portal.hiddenGamOverviewEmptyWidgetBySpace?.[this.spaceId]
-            || !this.activeRulesSize))
+      return this.$root.isAnonymous
+        || this.hideEmptyPlaceholder
+        || this.hideIfEmpty
+        || eXo.env.portal.hiddenGamOverviewEmptyWidgetBySpace?.[this.spaceId]
         || false;
     },
     isHiddenWidget() {
