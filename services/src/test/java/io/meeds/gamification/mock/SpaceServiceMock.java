@@ -181,6 +181,10 @@ public class SpaceServiceMock implements SpaceService {
     return Collections.emptyList();
   }
 
+  @Override
+  public void deleteExternalUserInvitations(String email) {
+  }
+
   private Space getSpace() {
     return getSpace(SPACE_ID_1);
   }

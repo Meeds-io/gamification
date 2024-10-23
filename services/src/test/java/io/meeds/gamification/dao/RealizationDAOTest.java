@@ -60,33 +60,33 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     assertEquals(1, realizationDAO.getLeaderboardRankByDates(IdentityType.USER, TEST_USER_EARNER, fromDate, toDate));
     assertEquals(0, realizationDAO.getLeaderboardRankByDates(IdentityType.USER, TEST_USER_EARNER, toDate, toDate));
 
-    assertEquals(1, realizationDAO.getLeaderboardRankByProgramId(IdentityType.USER, TEST_USER_EARNER, domainEntity2.getId()));
-    assertEquals(0, realizationDAO.getLeaderboardRankByProgramId(IdentityType.USER, TEST_USER_EARNER, domainEntity1.getId()));
+    assertEquals(1, realizationDAO.getLeaderboardRankByProgramIds(IdentityType.USER, TEST_USER_EARNER, domainEntity2.getId()));
+    assertEquals(0, realizationDAO.getLeaderboardRankByProgramIds(IdentityType.USER, TEST_USER_EARNER, domainEntity1.getId()));
 
     assertEquals(0,
-                 realizationDAO.getLeaderboardRankByDatesAndProgramId(IdentityType.USER,
-                                                                      TEST_USER_EARNER,
-                                                                      fromDate,
-                                                                      toDate,
-                                                                      domainEntity1.getId()));
+                 realizationDAO.getLeaderboardRankByDatesAndProgramIds(IdentityType.USER,
+                                                                       TEST_USER_EARNER,
+                                                                       fromDate,
+                                                                       toDate,
+                                                                       domainEntity1.getId()));
     assertEquals(0,
-                 realizationDAO.getLeaderboardRankByDatesAndProgramId(IdentityType.USER,
-                                                                      TEST_USER_EARNER,
-                                                                      toDate,
-                                                                      toDate,
-                                                                      domainEntity2.getId()));
+                 realizationDAO.getLeaderboardRankByDatesAndProgramIds(IdentityType.USER,
+                                                                       TEST_USER_EARNER,
+                                                                       toDate,
+                                                                       toDate,
+                                                                       domainEntity2.getId()));
     assertEquals(1,
-                 realizationDAO.getLeaderboardRankByDatesAndProgramId(IdentityType.USER,
-                                                                      TEST_USER_EARNER,
-                                                                      fromDate,
-                                                                      toDate,
-                                                                      domainEntity2.getId()));
+                 realizationDAO.getLeaderboardRankByDatesAndProgramIds(IdentityType.USER,
+                                                                       TEST_USER_EARNER,
+                                                                       fromDate,
+                                                                       toDate,
+                                                                       domainEntity2.getId()));
     assertEquals(0,
-                 realizationDAO.getLeaderboardRankByDatesAndProgramId(IdentityType.USER,
-                                                                      TEST_USER_EARNER,
-                                                                      toDate,
-                                                                      toDate,
-                                                                      domainEntity1.getId()));
+                 realizationDAO.getLeaderboardRankByDatesAndProgramIds(IdentityType.USER,
+                                                                       TEST_USER_EARNER,
+                                                                       toDate,
+                                                                       toDate,
+                                                                       domainEntity1.getId()));
   }
 
   @Test
@@ -124,22 +124,22 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
   public void testFindAllActionsHistoryByDateByDomain() {
     ProgramEntity domainEntity = newDomain();
     assertEquals(0,
-                 realizationDAO.getLeaderboardByDatesAndProgramId(fromDate,
+                 realizationDAO.getLeaderboardByDatesAndProgramIds(fromDate,
                                                                   new Date(),
                                                                   IdentityType.USER,
-                                                                  domainEntity.getId(),
                                                                   0,
-                                                                  10)
+                                                                  10,
+                                                                  domainEntity.getId())
                                .size());
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    List<StandardLeaderboard> leaderboardList = realizationDAO.getLeaderboardByDatesAndProgramId(fromDate,
+    List<StandardLeaderboard> leaderboardList = realizationDAO.getLeaderboardByDatesAndProgramIds(fromDate,
                                                                                                  new Date(),
                                                                                                  IdentityType.USER,
-                                                                                                 domainEntity.getId(),
                                                                                                  0,
-                                                                                                 10);
+                                                                                                 10,
+                                                                                                 domainEntity.getId());
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.getFirst().getEarnerId(), TEST_USER_EARNER);
     assertEquals(leaderboardList.getFirst().getReputationScore(), Integer.parseInt(TEST_SCORE) * 3L);
@@ -154,16 +154,14 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
   @Test
   public void testFindAllActionsHistoryByDomain() {
     ProgramEntity domainEntity = newDomain();
-    assertEquals(0,
-                 realizationDAO.getLeaderboardByProgramId(domainEntity.getId(), IdentityType.USER, 0, 10).size());
+    assertEquals(0, realizationDAO.getLeaderboardByProgramIds(IdentityType.USER, 0, 10, domainEntity.getId()).size());
     RealizationEntity realizationEntity = newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    List<StandardLeaderboard> leaderboardList = realizationDAO
-                                                              .getLeaderboardByProgramId(domainEntity.getId(),
-                                                                                         IdentityType.USER,
-                                                                                         0,
-                                                                                         10);
+    List<StandardLeaderboard> leaderboardList = realizationDAO.getLeaderboardByProgramIds(IdentityType.USER,
+                                                                                          0,
+                                                                                          10,
+                                                                                          domainEntity.getId());
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_EARNER);
     assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST_SCORE) * 3L);
@@ -220,23 +218,23 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
   @Test
   public void testFindActionsHistoryByDateByDomain() {
     ProgramEntity domainEntity = newDomain();
-    assertEquals(realizationDAO.getLeaderboardByDatesAndProgramId(fromDate,
+    assertEquals(realizationDAO.getLeaderboardByDatesAndProgramIds(fromDate,
                                                                   new Date(),
                                                                   IdentityType.USER,
-                                                                  domainEntity.getId(),
                                                                   0,
-                                                                  LIMIT)
+                                                                  LIMIT,
+                                                                  domainEntity.getId())
                                .size(),
                  0);
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
-    List<StandardLeaderboard> leaderboardList = realizationDAO.getLeaderboardByDatesAndProgramId(fromDate,
-                                                                                                 new Date(),
-                                                                                                 IdentityType.USER,
-                                                                                                 domainEntity.getId(),
-                                                                                                 0,
-                                                                                                 LIMIT);
+    List<StandardLeaderboard> leaderboardList = realizationDAO.getLeaderboardByDatesAndProgramIds(fromDate,
+                                                                                                  new Date(),
+                                                                                                  IdentityType.USER,
+                                                                                                  0,
+                                                                                                  LIMIT,
+                                                                                                  domainEntity.getId());
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.getFirst().getEarnerId(), TEST_USER_EARNER);
     assertEquals(leaderboardList.getFirst().getReputationScore(), Integer.parseInt(TEST_SCORE) * 3L);
@@ -244,14 +242,15 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
 
   @Test
   public void testFindStatsByUserId() {
-    assertEquals(realizationDAO.getLeaderboardStatsByIdentityIdAndDates(TEST_USER_EARNER, fromDate, toDate).size(), 0);
+    assertEquals(realizationDAO.getLeaderboardStatsByIdentityIdAndDates(TEST_USER_EARNER, null, fromDate, toDate).size(), 0);
     ProgramEntity domainEntity = newDomain();
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     newRealizationEntity("rule", domainEntity.getId());
     List<PiechartLeaderboard> pieChartLeaderboardList = realizationDAO.getLeaderboardStatsByIdentityIdAndDates(TEST_USER_EARNER,
-                                                                                                       fromDate,
-                                                                                                       toDate);
+                                                                                                               null,
+                                                                                                               fromDate,
+                                                                                                               toDate);
     assertEquals(pieChartLeaderboardList.size(), 1);
     PiechartLeaderboard piechartLeaderboard = pieChartLeaderboardList.get(0);
     ProgramDTO program = programService.getProgramById(piechartLeaderboard.getProgramId());
@@ -261,20 +260,33 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
 
   @Test
   public void testFindStatsByUserIdWhenProgramDeleted() {
-    assertTrue(realizationDAO.getLeaderboardStatsByIdentityIdAndDates(TEST_USER_EARNER, fromDate, toDate).isEmpty());
+    assertTrue(realizationDAO.getLeaderboardStatsByIdentityIdAndDates(TEST_USER_EARNER,
+                                                                      null,
+                                                                      fromDate,
+                                                                      toDate)
+                             .isEmpty());
     ProgramEntity domainEntity = newDomain();
     RuleEntity rule = newRule("rule", domainEntity.getId());
     RealizationEntity realization1 = newRealizationByRuleByEarnerId(rule, TEST_USER_EARNER);
     RealizationEntity realization2 = newRealizationByRuleByEarnerId(rule, TEST_USER_EARNER);
     RealizationEntity realization3 = newRealizationByRuleByEarnerId(rule, TEST_USER_EARNER);
-    assertEquals(1, realizationDAO.getLeaderboardStatsByIdentityIdAndDates(TEST_USER_EARNER, fromDate, toDate).size());
+    assertEquals(1,
+                 realizationDAO.getLeaderboardStatsByIdentityIdAndDates(TEST_USER_EARNER,
+                                                                        null,
+                                                                        fromDate,
+                                                                        toDate)
+                               .size());
     realization1.setDomainEntity(null);
     realizationDAO.update(realization1);
     realization2.setDomainEntity(null);
     realizationDAO.update(realization2);
     realization3.setDomainEntity(null);
     realizationDAO.update(realization3);
-    assertTrue(realizationDAO.getLeaderboardStatsByIdentityIdAndDates(TEST_USER_EARNER, fromDate, toDate).isEmpty());
+    assertTrue(realizationDAO.getLeaderboardStatsByIdentityIdAndDates(TEST_USER_EARNER,
+                                                                      null,
+                                                                      fromDate,
+                                                                      toDate)
+                             .isEmpty());
   }
 
   @Test

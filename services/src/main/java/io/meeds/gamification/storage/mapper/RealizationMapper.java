@@ -27,7 +27,7 @@ public class RealizationMapper {
       objectId = realizationEntity.getObjectId();
     }
     return new RealizationDTO(realizationEntity.getId(),
-                              realizationEntity.getEarnerId(),
+                              String.valueOf(realizationEntity.getEarnerId()),
                               realizationEntity.getEarnerType().toString(),
                               realizationEntity.getGlobalScore(),
                               realizationEntity.getActionTitle(),
@@ -69,7 +69,7 @@ public class RealizationMapper {
     realizationEntity.setObjectId(realization.getObjectId());
     realizationEntity.setObjectType(realization.getObjectType());
     realizationEntity.setReceiver(realization.getReceiver());
-    realizationEntity.setEarnerId(realization.getEarnerId());
+    realizationEntity.setEarnerId(Long.valueOf(realization.getEarnerId()));
     realizationEntity.setEarnerType(IdentityType.getType(realization.getEarnerType()));
     realizationEntity.setContext(realization.getContext());
     realizationEntity.setComment(realization.getComment());
