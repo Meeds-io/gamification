@@ -28,7 +28,7 @@
         <template #title>
           <div class="d-flex flex-grow-1 full-width position-relative">
             <div v-if="!displayPlaceholder && !loading" class="widget-text-header text-capitalize-first-letter text-truncate">
-              {{ $t('gamification.overview.topChallengersTitle') }}
+              {{ spaceId && $t('gamification.overview.space.topChallengersTitle') || $t('gamification.overview.topChallengersTitle') }}
             </div>
             <div class="spacer"></div>
             <div
@@ -106,6 +106,7 @@ export default {
     registrationSettings: null,
     rankDisplayed: false,
     loading: true,
+    spaceId: eXo.env.portal.spaceId,
     pageSize: Math.max(10, parseInt((window.innerHeight - 122) / 45)),
   }),
   computed: {
