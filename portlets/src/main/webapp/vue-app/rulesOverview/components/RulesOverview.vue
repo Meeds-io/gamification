@@ -20,13 +20,14 @@
     <v-hover v-model="hover">
       <gamification-rules-overview-widget
         :hover-edit="hoverEdit"
+        :hide-empty-placeholder="$root.hideWidgetWhenEmpty"
         @open-list="$refs.listDrawer.open()"
         @hide="hidden = true" />
     </v-hover>
     <gamification-rules-overview-list-drawer
       ref="listDrawer" />
     <gamification-rules-overview-settings-drawer
-      v-if="$root.canEdit" />
+      v-if="$root.canEdit && !hidden" />
     <engagement-center-rule-extensions />
   </v-app>
 </template>
