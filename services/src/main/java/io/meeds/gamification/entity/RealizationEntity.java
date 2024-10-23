@@ -19,6 +19,10 @@ package io.meeds.gamification.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.RealizationStatus;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -28,72 +32,92 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedNativeQuery;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.IdentityType;
-import io.meeds.gamification.constant.RealizationStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity(name = "RealizationEntity")
 @Table(name = "GAMIFICATION_ACTIONS_HISTORY")
-@NamedNativeQuery(
+@NamedQuery(
   name = "RealizationEntity.getLeaderboardRank",
-  query = "SELECT LEADERBOARD.rankIndex FROM (" 
-    + " SELECT earnerId, ROW_NUMBER() OVER() rankIndex FROM " 
-    + " (SELECT g.EARNER_ID earnerId, SUM(g.ACTION_SCORE) total"
-    + " FROM GAMIFICATION_ACTIONS_HISTORY g"
-    + " WHERE g.EARNER_TYPE = :earnerType"
-    + " AND g.STATUS = :status "
-    + " GROUP BY g.EARNER_ID"
-    + " ORDER BY total DESC, earnerId DESC) GROUPED_LEADERBOARD"
-    + ") LEADERBOARD WHERE LEADERBOARD.earnerId = :earnerId"
+  query = """
+    SELECT r.rankIndex FROM (
+      SELECT ROW_NUMBER() OVER() AS rankIndex, l.earnerId AS earnerId FROM (
+        SELECT
+          g.earnerId AS earnerId,
+          SUM(g.actionScore) AS total
+        FROM RealizationEntity AS g
+        WHERE g.earnerType = :earnerType
+        AND g.status = :status
+        GROUP BY g.earnerId
+        ORDER BY total DESC
+     ) AS l
+   ) AS r
+   WHERE r.earnerId = :earnerId
+  """
 )
-@NamedNativeQuery(
-  name = "RealizationEntity.getLeaderboardRankByDateAndProgramId",
-  query = "SELECT LEADERBOARD.rankIndex FROM (" 
-      + " SELECT earnerId, ROW_NUMBER() OVER() rankIndex FROM " 
-      + " (SELECT g.EARNER_ID earnerId, SUM(g.ACTION_SCORE) total"
-      + " FROM GAMIFICATION_ACTIONS_HISTORY g"
-      + " WHERE g.CREATED_DATE >= :date"
-      + " AND g.DOMAIN_ID = :domainId"
-      + " AND g.EARNER_TYPE = :earnerType"
-      + " AND g.STATUS = :status "
-      + " GROUP BY g.EARNER_ID"
-      + " ORDER BY total DESC, earnerId DESC) GROUPED_LEADERBOARD"
-      + " ) LEADERBOARD WHERE LEADERBOARD.earnerId = :earnerId"
+@NamedQuery(
+  name = "RealizationEntity.getLeaderboardRankByDatesAndProgramIds",
+  query = """
+    SELECT r.rankIndex FROM (
+      SELECT ROW_NUMBER() OVER() AS rankIndex, l.earnerId AS earnerId FROM (
+        SELECT
+          g.earnerId AS earnerId,
+          SUM(g.actionScore) AS total
+        FROM RealizationEntity AS g
+        WHERE g.createdDate >= :fromDate
+        AND g.createdDate < :toDate
+        AND g.domainEntity.id IN (:programIds)
+        AND g.earnerType = :earnerType
+        AND g.status = :status
+        GROUP BY g.earnerId
+        ORDER BY total DESC
+     ) AS l
+   ) AS r
+   WHERE r.earnerId = :earnerId
+  """
 )
-@NamedNativeQuery(
-  name = "RealizationEntity.getLeaderboardRankByProgramId",
-  query = "SELECT LEADERBOARD.rankIndex FROM (" 
-    + " SELECT earnerId, ROW_NUMBER() OVER() rankIndex FROM " 
-    + " (SELECT g.EARNER_ID earnerId, SUM(g.ACTION_SCORE) total"
-    + " FROM GAMIFICATION_ACTIONS_HISTORY g"
-    + " WHERE g.DOMAIN_ID = :domainId"
-    + " AND g.EARNER_TYPE = :earnerType"
-    + " AND g.STATUS = :status "
-    + " GROUP BY g.EARNER_ID"
-    + " ORDER BY total DESC, earnerId DESC) GROUPED_LEADERBOARD"
-    + ") LEADERBOARD WHERE LEADERBOARD.earnerId = :earnerId"
+@NamedQuery(
+  name = "RealizationEntity.getLeaderboardRankByProgramIds",
+  query = """
+    SELECT r.rankIndex FROM (
+      SELECT ROW_NUMBER() OVER() AS rankIndex, l.earnerId AS earnerId FROM (
+        SELECT
+          g.earnerId AS earnerId,
+          SUM(g.actionScore) AS total
+        FROM RealizationEntity AS g
+        WHERE g.domainEntity.id IN (:programIds)
+        AND g.earnerType = :earnerType
+        AND g.status = :status
+        GROUP BY g.earnerId
+        ORDER BY total DESC
+     ) AS l
+   ) AS r
+   WHERE r.earnerId = :earnerId
+  """
 )
-@NamedNativeQuery(
-  name = "RealizationEntity.getLeaderboardRankByDate",
-  query = "SELECT LEADERBOARD.rankIndex FROM (" 
-    + " SELECT earnerId, ROW_NUMBER() OVER() rankIndex FROM " 
-    + " (SELECT g.EARNER_ID earnerId, SUM(g.ACTION_SCORE) total"
-    + " FROM GAMIFICATION_ACTIONS_HISTORY g"
-    + " WHERE g.CREATED_DATE >= :date"
-    + " AND g.EARNER_TYPE = :earnerType"
-    + " AND g.STATUS = :status "
-    + " GROUP BY g.EARNER_ID"
-    + " ORDER BY total DESC, earnerId DESC) GROUPED_LEADERBOARD"
-    + ") LEADERBOARD WHERE LEADERBOARD.earnerId = :earnerId"
+@NamedQuery(
+  name = "RealizationEntity.getLeaderboardRankByDates",
+  query = """
+    SELECT r.rankIndex FROM (
+      SELECT ROW_NUMBER() OVER() AS rankIndex, l.earnerId AS earnerId FROM (
+        SELECT
+          g.earnerId AS earnerId,
+          SUM(g.actionScore) AS total
+        FROM RealizationEntity AS g
+        WHERE g.createdDate >= :fromDate
+        AND g.createdDate < :toDate
+        AND g.earnerType = :earnerType
+        AND g.status = :status
+        GROUP BY g.earnerId
+        ORDER BY total DESC
+     ) AS l
+   ) AS r
+   WHERE r.earnerId = :earnerId
+  """
 )
-
 @NamedQuery(
   name = "RealizationEntity.getLeaderboard",
   query = "SELECT new io.meeds.gamification.model.StandardLeaderboard(g.earnerId as earnerId, SUM(g.actionScore) as total)"
@@ -104,21 +128,22 @@ import lombok.EqualsAndHashCode;
     + " ORDER BY total DESC, earnerId DESC"
 )
 @NamedQuery(
-  name = "RealizationEntity.getLeaderboardByDateAndProgramId",
+  name = "RealizationEntity.getLeaderboardByDateAndProgramIds",
   query = "SELECT new io.meeds.gamification.model.StandardLeaderboard(g.earnerId as earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g"
-    + " WHERE g.createdDate >= :date"
-    + " AND g.domainEntity.id = :domainId"
+    + " WHERE g.createdDate >= :fromDate"
+    + " AND g.createdDate < :toDate"
+    + " AND g.domainEntity.id IN (:programIds)"
     + " AND g.earnerType = :earnerType"
     + " AND g.status = :status"
     + " GROUP BY  g.earnerId"
     + " ORDER BY total DESC, earnerId DESC"
 )
 @NamedQuery(
-  name = "RealizationEntity.getLeaderboardByProgramId",
+  name = "RealizationEntity.getLeaderboardByProgramIds",
   query = "SELECT new io.meeds.gamification.model.StandardLeaderboard(g.earnerId as earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g"
-    + " WHERE g.domainEntity.id = :domainId"
+    + " WHERE g.domainEntity.id IN (:programIds)"
     + " AND g.earnerType = :earnerType"
     + " AND g.status = :status"
     + " GROUP BY g.earnerId"
@@ -128,7 +153,8 @@ import lombok.EqualsAndHashCode;
   name = "RealizationEntity.getLeaderboardByDate",
   query = "SELECT new io.meeds.gamification.model.StandardLeaderboard(g.earnerId as earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g"
-    + " WHERE g.createdDate >= :date"
+    + " WHERE g.createdDate >= :fromDate"
+    + " AND g.createdDate < :toDate"
     + " AND g.earnerType = :earnerType"
     + " AND g.status = :status"
     + " GROUP BY g.earnerId"
@@ -138,9 +164,21 @@ import lombok.EqualsAndHashCode;
 @NamedQuery(
   name = "RealizationEntity.getLeaderboardStatsByIdentityId",
   query = "SELECT new io.meeds.gamification.model.PiechartLeaderboard(g.domainEntity.id as domainId, SUM(g.actionScore) as total)"
+      + " FROM RealizationEntity g"
+      + " WHERE g.earnerId = :earnerId"
+      + " AND g.domainEntity IS NOT NULL"
+      + " AND g.actionScore > 0"
+      + " AND g.status = :status"
+      + " GROUP BY g.domainEntity.id"
+      + " ORDER BY total DESC, domainId DESC"
+)
+@NamedQuery(
+  name = "RealizationEntity.getLeaderboardStatsByIdentityIdAndSpaceId",
+  query = "SELECT new io.meeds.gamification.model.PiechartLeaderboard(g.domainEntity.id as domainId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g"
     + " WHERE g.earnerId = :earnerId"
     + " AND g.domainEntity IS NOT NULL"
+    + " AND g.domainEntity.audienceId = :spaceId"
     + " AND g.actionScore > 0"
     + " AND g.status = :status"
     + " GROUP BY g.domainEntity.id"
@@ -159,6 +197,20 @@ import lombok.EqualsAndHashCode;
     + " GROUP BY  g.domainEntity.id"
     + " ORDER BY total DESC, domainId DESC"
 )
+@NamedQuery(
+  name = "RealizationEntity.getLeaderboardStatsByIdentityIdAndDatesAndSpaceId",
+  query = "SELECT new io.meeds.gamification.model.PiechartLeaderboard(g.domainEntity.id as domainId, SUM(g.actionScore) as total)"
+      + " FROM RealizationEntity g"
+      + " WHERE g.earnerId = :earnerId"
+      + " AND g.domainEntity IS NOT NULL"
+      + " AND g.domainEntity.audienceId = :spaceId"
+      + " AND g.actionScore > 0"
+      + " AND g.status = :status"
+      + " AND g.createdDate >= :fromDate"
+      + " AND g.createdDate < :toDate"
+      + " GROUP BY  g.domainEntity.id"
+      + " ORDER BY total DESC, domainId DESC"
+)
 
 @NamedQuery(
   name = "RealizationEntity.getScoreByIdentityId",
@@ -169,6 +221,17 @@ import lombok.EqualsAndHashCode;
 @NamedQuery(name = "RealizationEntity.getScorePerProgramByIdentityId", query = "SELECT"
     + " new io.meeds.gamification.model.ProfileReputation(g.domainEntity.id,SUM(g.actionScore))"
     + " FROM RealizationEntity g WHERE g.earnerId = :earnerId AND g.status = :status AND g.domainEntity IS NOT NULL GROUP BY g.domainEntity.id")
+@NamedQuery(
+  name = "RealizationEntity.getScoreByIdentityIdAndBetweenDatesAndProgramIds",
+  query = """
+    SELECT SUM(g.actionScore) as total
+    FROM RealizationEntity g
+    WHERE g.domainEntity.id IN (:programIds)
+    AND g.earnerId = :earnerId
+    AND g.status = :status
+    AND g.createdDate >= :fromDate
+    AND g.createdDate < :toDate
+  """)
 @NamedQuery(name = "RealizationEntity.getScoreByIdentityIdAndBetweenDates", query = "SELECT SUM(g.actionScore) as total"
     + " FROM RealizationEntity g  WHERE g.earnerId = :earnerId AND g.status = :status AND g.createdDate >= :fromDate AND g.createdDate < :toDate")
 @NamedQuery(name = "RealizationEntity.getScoreByIdentityIdsAndBetweenDates", query = "SELECT g.earnerId,SUM(g.actionScore) as total"
@@ -214,6 +277,13 @@ import lombok.EqualsAndHashCode;
       " AND g.status = :status"
 )
 
+@NamedQuery(name = "RealizationEntity.getParticipantsBetweenDates",
+  query = "SELECT DISTINCT g.earnerId FROM RealizationEntity g" +
+      " WHERE g.createdDate >= :fromDate" +
+      " AND g.createdDate < :toDate" +
+      " AND g.earnerType = :earnerType" +
+      " AND g.status = :status")
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class RealizationEntity extends AbstractAuditingEntity implements Serializable {
@@ -227,7 +297,7 @@ public class RealizationEntity extends AbstractAuditingEntity implements Seriali
   protected Long            id;
 
   @Column(name = "EARNER_ID", nullable = false)
-  private String            earnerId;
+  private long              earnerId;
 
   @Column(name = "EARNER_TYPE", nullable = false)
   private IdentityType      earnerType;

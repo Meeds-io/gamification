@@ -407,15 +407,20 @@ public class RealizationServiceMockTest extends AbstractServiceTest {
                                           ACTIVITY_OBJECT_TYPE);
     Date date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-    int rankUser1 = realizationService.getLeaderboardRank(TEST_USER_EARNER, date, program.getId());
-    int rankUser2 = realizationService.getLeaderboardRank(TEST_USER_RECEIVER, date, program.getId());
+    int rankUser1 = realizationService.getLeaderboardRank(TEST_USER_EARNER, date, null, null, program.getId());
+    int rankUser2 = realizationService.getLeaderboardRank(TEST_USER_RECEIVER, date, null, null, program.getId());
     assertEquals(1, rankUser1);
     assertEquals(2, rankUser2);
 
-    int rankSpace2 = realizationService.getLeaderboardRank(TEST_SPACE2_ID, date, program.getId());
-    int rankSpace1 = realizationService.getLeaderboardRank(TEST_SPACE_ID, date, program.getId());
+    int rankSpace2 = realizationService.getLeaderboardRank(TEST_SPACE2_ID, date, null, null, program.getId());
+    int rankSpace1 = realizationService.getLeaderboardRank(TEST_SPACE_ID, date, null, null, program.getId());
     assertEquals(1, rankSpace2);
     assertEquals(2, rankSpace1);
+
+    rankUser1 = realizationService.getLeaderboardRank(TEST_USER_EARNER, date, null, program.getSpaceId(), null);
+    rankUser2 = realizationService.getLeaderboardRank(TEST_USER_RECEIVER, date, null, program.getSpaceId(), null);
+    assertEquals(1, rankUser1);
+    assertEquals(2, rankUser2);
   }
 
   public void testFindUserReputationBySocialId() {

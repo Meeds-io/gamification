@@ -42,6 +42,14 @@ export default {
       type: Number,
       default: () => 10,
     },
+    fromDateInSecond: {
+      type: Number,
+      default: () => 0,
+    },
+    toDateInSecond: {
+      type: Number,
+      default: () => 0,
+    },
   },
   data: () => ({
     loading: false,
@@ -49,6 +57,8 @@ export default {
     sortBy: 'date',
     sortDescending: true,
     realizations: [],
+    programIds: null,
+    lang: eXo.env.portal.language,
   }),
   computed: {
     hasMore() {
@@ -58,9 +68,11 @@ export default {
       return {
         status: 'ACCEPTED',
         earnerIds: [this.identityId],
-        programIds: this.programId && [this.programId],
+        programIds: this.programIds || (this.programId && [this.programId]),
         allPrograms: true,
         sortBy: this.sortBy,
+        fromDate: this.fromDateInSecond ? new Date(this.fromDateInSecond * 1000).toISOString() : null,
+        toDate: this.toDateInSecond ? new Date(this.toDateInSecond * 1000).toISOString() : null,
         sortDescending: this.sortDescending,
       };
     },
@@ -82,13 +94,25 @@ export default {
     this.retrieveRealizations();
   },
   methods: {
-    retrieveRealizations() {
+    async retrieveRealizations() {
       this.loading = true;
+      if (eXo.env.portal.spaceId && !this.programIds?.length) {
+        const data = await this.$programService.getPrograms({
+          spaceId: eXo.env.portal.spaceId,
+          returnSize: false,
+        });
+        const programs = data?.programs || [];
+        if (!programs.length) {
+          return;
+        }
+        this.programIds = programs?.map?.(p => p.id) || [];
+        await this.$nextTick();
+      }
       return this.$realizationService.getRealizations({
+        ...this.realizationsFilter,
         offset: this.realizations.length,
         limit: this.pageSize,
-        returnSize: true,
-        ...this.realizationsFilter})
+        returnSize: true,})
         .then(data => {
           if (data.realizations.length) {
             this.realizations.push(...data.realizations);

@@ -77,7 +77,6 @@
             :identity-id="user.identityId"
             :score="user.score"
             :period="period"
-            :program-id="programId"
             central-points
             @open="$refs.detailsDrawer.open(user, period)" />
           <users-leaderboard-profile-achievements-drawer
@@ -156,6 +155,7 @@ export default {
     retrieveAllPeriodUserStats() {
       return this.$leaderboardService.getLeaderboard({
         identityId: eXo.env.portal.profileOwnerIdentityId,
+        spaceId: eXo.env.portal.spaceId || null,
         period: 'ALL',
         limit: 0,
       })
@@ -168,6 +168,7 @@ export default {
       this.loading = true;
       return this.$leaderboardService.getLeaderboard({
         identityId: eXo.env.portal.profileOwnerIdentityId,
+        spaceId: eXo.env.portal.spaceId || null,
         period: this.$root.myContributionsPeriod,
         limit: 0,
       })

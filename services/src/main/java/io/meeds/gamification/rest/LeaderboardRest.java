@@ -21,12 +21,10 @@ package io.meeds.gamification.rest;
 
 import static io.meeds.gamification.rest.builder.LeaderboardBuilder.buildLeaderboardInfos;
 import static io.meeds.gamification.rest.builder.LeaderboardBuilder.buildPiechartLeaderboards;
-import static io.meeds.gamification.rest.builder.LeaderboardBuilder.getCurrentPeriodStartDate;
+import static io.meeds.gamification.utils.Utils.getFromDate;
+import static io.meeds.gamification.utils.Utils.getToDate;
 
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -108,6 +106,9 @@ public class LeaderboardRest implements ResourceContainer {
     @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
   })
   public Response getIdentityLeaderboard( // NOSONAR
+                                         @Parameter(description = "Space audience technical identifier to filter")
+                                         @QueryParam("spaceId")
+                                         Long spaceId,
                                          @Parameter(description = "Program technical identifier to filter")
                                          @QueryParam("programId")
                                          Long programId,
@@ -122,6 +123,10 @@ public class LeaderboardRest implements ResourceContainer {
                                          @DefaultValue("WEEK")
                                          @QueryParam("period")
                                          String period,
+                                         @Parameter(description = "Timestamp in seconds of date in the middle of selected period. If not defined, current time will be used.")
+                                         @DefaultValue("0")
+                                         @QueryParam("dateInSeconds")
+                                         long dateInSeconds,
                                          @Parameter(description = "Results offset")
                                          @DefaultValue("0")
                                          @QueryParam("offset")
@@ -139,14 +144,20 @@ public class LeaderboardRest implements ResourceContainer {
 
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
     leaderboardFilter.setIdentityType(identityType);
+    leaderboardFilter.setSpaceId(spaceId);
     leaderboardFilter.setProgramId(programId);
     leaderboardFilter.setIdentityId(identityId);
     leaderboardFilter.setPeriod(StringUtils.isBlank(period) ? Period.WEEK.name() : period.toUpperCase());
     leaderboardFilter.setOffset(offset);
     leaderboardFilter.setLimit(limit < 0 ? DEFAULT_LOAD_CAPACITY : limit);
+    if (dateInSeconds <= 0) {
+      dateInSeconds = System.currentTimeMillis() / 1000;
+    }
+    leaderboardFilter.setMedianDateInSeconds(dateInSeconds);
     try {
-      List<StandardLeaderboard> standardLeaderboards = limit == 0 ? Collections.emptyList() :
-                                                                    realizationService.getLeaderboard(leaderboardFilter, currentUser);
+      List<StandardLeaderboard> standardLeaderboards = limit == 0 ? Collections.emptyList()
+                                                                  : realizationService.getLeaderboard(leaderboardFilter,
+                                                                                                      currentUser);
       List<LeaderboardInfo> leaderboardList = buildLeaderboardInfos(realizationService,
                                                                     identityManager,
                                                                     spaceService,
@@ -154,8 +165,10 @@ public class LeaderboardRest implements ResourceContainer {
                                                                     standardLeaderboards,
                                                                     identityType,
                                                                     identityId,
+                                                                    spaceId,
                                                                     programId,
                                                                     period,
+                                                                    dateInSeconds,
                                                                     isAnonymous);
       return Response.ok(leaderboardList).build();
     } catch (IllegalAccessException e) {
@@ -177,22 +190,34 @@ public class LeaderboardRest implements ResourceContainer {
                                    @Parameter(description = "Identity technical identifier")
                                    @PathParam("identityId")
                                    String identityId,
+                                   @Parameter(description = "Space audience technical identifier to filter")
+                                   @QueryParam("spaceId")
+                                   Long spaceId,
                                    @Parameter(description = "Current period to consider. Possible values: WEEK, MONTH or ALL")
                                    @DefaultValue("WEEK")
                                    @QueryParam("period")
-                                   String period) {
+                                   String period,
+                                   @Parameter(description = "Timestamp in seconds of date in the middle of selected period. If not defined, current time will be used.")
+                                   @DefaultValue("0")
+                                   @QueryParam("dateInSeconds")
+                                   long dateInSeconds) {
     if (!Utils.canAccessAnonymousResources(securitySettingService)) {
       return Response.status(Status.UNAUTHORIZED).build();
     }
+    if (dateInSeconds <= 0) {
+      dateInSeconds = System.currentTimeMillis() / 1000;
+    }
     period = StringUtils.isBlank(period) ? Period.ALL.name() : period.toUpperCase();
     List<PiechartLeaderboard> userStats = realizationService.getLeaderboardStatsByIdentityId(identityId,
-                                                                                  getCurrentPeriodStartDate(period),
-                                                                                  Calendar.getInstance().getTime());
-    userStats = buildPiechartLeaderboards(programService,
-                                          translationService,
-                                          userStats,
-                                          Utils.getCurrentUser(),
-                                          request == null ? Locale.ENGLISH : request.getLocale());
+                                                                                             spaceId,
+                                                                                             period,
+                                                                                             getFromDate(period, dateInSeconds),
+                                                                                             getToDate(period, dateInSeconds));
+    buildPiechartLeaderboards(programService,
+                              translationService,
+                              userStats,
+                              Utils.getCurrentUser(),
+                              request == null ? Locale.ENGLISH : request.getLocale());
     return Response.ok(userStats).build();
   }
 

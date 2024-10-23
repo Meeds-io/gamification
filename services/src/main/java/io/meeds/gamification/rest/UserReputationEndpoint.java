@@ -111,7 +111,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 userReputationScore = realizationService.getScoreByIdentityId(actorId);
 
-                userRank = realizationService.getLeaderboardRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), null);
+                userRank = realizationService.getLeaderboardRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), null, null, null);
                 
                 reputation.put("score", userReputationScore);
 
@@ -421,7 +421,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
 
                 // Find user's stats
-                List<PiechartLeaderboard> userStats = realizationService.getLeaderboardStatsByIdentityId(actorId, null, null);
+                List<PiechartLeaderboard> userStats = realizationService.getLeaderboardStatsByIdentityId(actorId, null, null, null);
 
                 return Response.ok(userStats, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 

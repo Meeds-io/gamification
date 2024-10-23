@@ -135,13 +135,16 @@ public interface RealizationService {
    * Retrieves Leaderboard rank of an earner
    * {@link org.exoplatform.social.core.identity.model.Identity} id and
    * {@link ProgramDTO} id for the given date
-   * 
-   * @param  earnerIdentityId
-   * @param  date
-   * @param  programId
-   * @return                  identity leaderboard rank in {@link Integer}
+   *
+   * @param earnerIdentityId earner
+   *          {@link org.exoplatform.social.core.identity.model.Identity} id
+   * @param fromDate From date
+   * @param toDate End Date
+   * @param programId program Id
+   * @param spaceId audience space Id
+   * @return identity leaderboard rank in {@link Integer}
    */
-  int getLeaderboardRank(String earnerIdentityId, Date date, Long programId);
+  int getLeaderboardRank(String earnerIdentityId, Date fromDate, Date toDate, Long spaceId, Long programId);
 
   /**
    * Compute User reputation score by program
@@ -270,7 +273,22 @@ public interface RealizationService {
    * @param  toDate           End date
    * @return                  total score
    */
-  long getScoreByIdentityIdAndBetweenDates(String earnerIdentityId, Date fromDate, Date toDate);
+  default long getScoreByIdentityIdAndBetweenDates(String earnerIdentityId, Date fromDate, Date toDate) {
+    return getScoreByIdentityIdAndBetweenDates(earnerIdentityId, fromDate, toDate, null, null);
+  }
+
+  /**
+   * Retrieves identities total score between designated dates
+   * 
+   * @param earnerIdentityId
+   *          {@link org.exoplatform.social.core.identity.model.Identity} id
+   * @param fromDate From date
+   * @param toDate End date
+   * @param spaceId Space Id
+   * @param programId Program Id
+   * @return total score
+   */
+  long getScoreByIdentityIdAndBetweenDates(String earnerIdentityId, Date fromDate, Date toDate, Long spaceId, Long programId);
 
   /**
    * Retrieves {@link org.exoplatform.social.core.identity.model.Identity} total
@@ -285,13 +303,32 @@ public interface RealizationService {
   /**
    * Retrieves scores per doamin of a given
    * {@link org.exoplatform.social.core.identity.model.Identity}
-   * 
-   * @param  earnerIdentityId earner identity id
-   * @param  startDate
-   * @param  endDate
-   * @return                  a list of object of type PiechartLeaderboard
+   *
+   * @param earnerIdentityId earner identity id
+   * @param spaceId Program Audience Space Identifier
+   * @param period Period Type
+   * @param startDate Start Date
+   * @param endDate End Date
+   * @return a list of object of type PiechartLeaderboard
    */
-  List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId, Date startDate, Date endDate);
+  List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId, Long spaceId, String period, Date startDate, Date endDate);
+
+  /**
+   * Retrieves scores per doamin of a given
+   * {@link org.exoplatform.social.core.identity.model.Identity}
+   *
+   * @param earnerIdentityId earner identity id
+   * @param period Period Type
+   * @param startDate Start Date
+   * @param endDate End Date
+   * @return a list of object of type PiechartLeaderboard
+   */
+  default List<PiechartLeaderboard> getLeaderboardStatsByIdentityId(String earnerIdentityId,
+                                                                    String period,
+                                                                    Date startDate,
+                                                                    Date endDate) {
+    return getLeaderboardStatsByIdentityId(earnerIdentityId, null, period, startDate, endDate);
+  }
 
   /**
    * Retrieves Leaderboard switch designated filter
@@ -314,6 +351,13 @@ public interface RealizationService {
    *                           id as key and score as value
    */
   Map<Long, Long> getScoresByIdentityIdsAndBetweenDates(List<String> earnerIdentityIds, Date fromDate, Date toDate);
+
+  /**
+   * @param  fromDate start of period
+   * @param  toDate   end of period
+   * @return          List of participant users in a period of time
+   */
+  List<Long> getParticipantsBetweenDates(Date fromDate, Date toDate);
 
   /**
    * @param  fromDate start of period

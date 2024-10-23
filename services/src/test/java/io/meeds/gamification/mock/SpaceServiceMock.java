@@ -27,7 +27,6 @@ import org.exoplatform.commons.utils.ListAccessImpl;
 import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.application.PortletPreferenceRequiredPlugin;
 import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.space.SpaceApplicationConfigPlugin;
 import org.exoplatform.social.core.space.SpaceException;
 import org.exoplatform.social.core.space.SpaceFilter;
 import org.exoplatform.social.core.space.SpaceListAccess;
@@ -63,14 +62,6 @@ public class SpaceServiceMock implements SpaceService {
                                                                                      "root5",
                                                                                      "root1"
   });
-
-  public Space getSpaceByDisplayName(String spaceDisplayName) {
-    if (SPACE_DISPLAY_NAME.equals(spaceDisplayName)) {
-      return getSpace();
-    } else {
-      throw new UnsupportedOperationException(spaceDisplayName);
-    }
-  }
 
   public Space getSpaceByPrettyName(String spacePrettyName) {
     if (SPACE_PRETTY_NAME.equals(spacePrettyName)) {
@@ -188,6 +179,10 @@ public class SpaceServiceMock implements SpaceService {
   @Override
   public List<String> findExternalInvitationsSpacesByEmail(String email) {
     return Collections.emptyList();
+  }
+
+  @Override
+  public void deleteExternalUserInvitations(String email) {
   }
 
   private Space getSpace() {

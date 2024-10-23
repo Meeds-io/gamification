@@ -20,11 +20,9 @@ package io.meeds.gamification.rest.builder;
 
 import static io.meeds.gamification.plugin.ProgramTranslationPlugin.PROGRAM_OBJECT_TYPE;
 import static io.meeds.gamification.plugin.ProgramTranslationPlugin.PROGRAM_TITLE_FIELD_NAME;
+import static io.meeds.gamification.utils.Utils.getFromDate;
+import static io.meeds.gamification.utils.Utils.getToDate;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,12 +48,6 @@ import io.meeds.social.translation.service.TranslationService;
 
 public class LeaderboardBuilder {
 
-  private static final String QUARTER_PERIOD_NAME = "QUARTER";
-
-  private static final String MONTH_PERIOD_NAME   = "MONTH";
-
-  private static final String WEEK_PERIOD_NAME    = "WEEK";
-
   private LeaderboardBuilder() {
     // Utils Class
   }
@@ -67,8 +59,10 @@ public class LeaderboardBuilder {
                                                             List<StandardLeaderboard> standardLeaderboards,
                                                             IdentityType identityType,
                                                             Long identityId,
+                                                            Long spaceId,
                                                             Long programId,
                                                             String period,
+                                                            long dateInSeconds,
                                                             boolean isAnonymous) {
     List<LeaderboardInfo> leaderboardList = new ArrayList<>();
     int rank = offset + 1;
@@ -86,6 +80,8 @@ public class LeaderboardBuilder {
                                          spaceService,
                                          leaderboardList,
                                          period,
+                                         dateInSeconds,
+                                         spaceId,
                                          programId,
                                          identityId,
                                          isAnonymous);
@@ -121,24 +117,23 @@ public class LeaderboardBuilder {
                                           SpaceService spaceService,
                                           List<LeaderboardInfo> leaderboardList,
                                           String period,
+                                          long dateInSeconds,
+                                          Long spaceId,
                                           Long programId,
                                           long identityId,
                                           boolean isAnonymous) {
     if (!isEarnerInTopTen(identityId, leaderboardList)) {
       // Check if the current user is already in top10
-      Date fromDate = getCurrentPeriodStartDate(period);
-      int rank = realizationService.getLeaderboardRank(String.valueOf(identityId),
-                                                       fromDate,
-                                                       programId);
+      Date fromDate = getFromDate(period, dateInSeconds);
+      Date toDate = getToDate(period, dateInSeconds);
+      int rank = realizationService.getLeaderboardRank(String.valueOf(identityId), fromDate, toDate, spaceId, programId);
       if (rank > 0) {
         Identity identity = identityManager.getIdentity(String.valueOf(identityId));
         LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
         leaderboardInfo.setIdentityId(Long.parseLong(identity.getId()));
         leaderboardInfo.setFullname(identity.getProfile().getFullName());
         leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-        leaderboardInfo.setScore(realizationService.getScoreByIdentityIdAndBetweenDates(identity.getId(),
-                                                                                        fromDate,
-                                                                                        new Date()));
+        leaderboardInfo.setScore(realizationService.getScoreByIdentityIdAndBetweenDates(identity.getId(), fromDate, toDate, spaceId, programId));
         leaderboardInfo.setRank(rank);
         if (!isAnonymous) {
           leaderboardInfo.setRemoteId(identity.getRemoteId());
@@ -150,32 +145,6 @@ public class LeaderboardBuilder {
       }
     }
     return null;
-  }
-
-  public static Date getCurrentPeriodStartDate(String period) {
-    Date fromDate;
-    LocalDate now = LocalDate.now();
-    switch (StringUtils.upperCase(period)) {
-    case WEEK_PERIOD_NAME:
-      fromDate = Date.from(now.with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
-      break;
-    case MONTH_PERIOD_NAME:
-      fromDate = Date.from(now
-                              .with(TemporalAdjusters.firstDayOfMonth())
-                              .atStartOfDay(ZoneId.systemDefault())
-                              .toInstant());
-      break;
-    case QUARTER_PERIOD_NAME:
-      fromDate = Date.from(now
-                              .with(now.getMonth().firstMonthOfQuarter())
-                              .with(TemporalAdjusters.firstDayOfMonth())
-                              .atStartOfDay(ZoneId.systemDefault())
-                              .toInstant());
-      break;
-    default:
-      fromDate = null;
-    }
-    return fromDate;
   }
 
   public static LeaderboardInfo toLeaderboardInfo(SpaceService spaceService,

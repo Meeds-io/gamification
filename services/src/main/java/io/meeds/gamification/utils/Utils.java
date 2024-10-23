@@ -1,28 +1,37 @@
 package io.meeds.gamification.utils;
 
 import static io.meeds.analytics.utils.AnalyticsUtils.addSpaceStatistics;
+import static java.util.Date.from;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.Normalizer;
+import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
-import io.meeds.analytics.model.StatisticData;
 import org.exoplatform.commons.api.notification.model.ArgumentLiteral;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -38,8 +47,16 @@ import org.exoplatform.social.rest.api.EntityBuilder;
 import org.exoplatform.social.rest.entity.IdentityEntity;
 import org.exoplatform.web.security.codec.CodecInitializer;
 import org.exoplatform.web.security.security.TokenServiceInitializationException;
+import org.exoplatform.ws.frameworks.json.JsonGenerator;
+import org.exoplatform.ws.frameworks.json.impl.JsonDefaultHandler;
+import org.exoplatform.ws.frameworks.json.impl.JsonException;
+import org.exoplatform.ws.frameworks.json.impl.JsonGeneratorImpl;
+import org.exoplatform.ws.frameworks.json.impl.JsonParserImpl;
+import org.exoplatform.ws.frameworks.json.impl.ObjectBuilder;
 
+import io.meeds.analytics.model.StatisticData;
 import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.ProgramDTO;
@@ -47,9 +64,6 @@ import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.portal.security.constant.UserRegistrationType;
 import io.meeds.portal.security.service.SecuritySettingService;
-
-import org.exoplatform.ws.frameworks.json.JsonGenerator;
-import org.exoplatform.ws.frameworks.json.impl.*;
 
 @SuppressWarnings("deprecation")
 public class Utils {
@@ -392,13 +406,21 @@ public class Utils {
   }
 
   public static String getSpaceFromObjectID(String objectId) {
-    if (StringUtils.isBlank(objectId) || !objectId.contains("/portal/g/:spaces:")) {
+    if (StringUtils.isBlank(objectId)) {
+      return null;
+    } else if (objectId.contains("/portal/g/:spaces:")) {
+      String groupId = objectId.substring(objectId.indexOf(":")).replace(":", "/");
+      SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+      Space space = spaceService.getSpaceByGroupId(groupId);
+      return space != null ? space.getDisplayName() : null;
+    } else if (objectId.contains("/portal/s/")) {
+      String id = objectId.split("/")[3];
+      SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+      Space space = spaceService.getSpaceById(id);
+      return space != null ? space.getDisplayName() : null;
+    } else {
       return null;
     }
-    String groupID = objectId.substring(objectId.indexOf(":")).replace(":", "/");
-    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    Space space = spaceService.getSpaceByGroupId(groupID);
-    return space != null ? space.getDisplayName() : null;
   }
 
   public static String escapeIllegalCharacterInMessage(String message) {
@@ -672,5 +694,52 @@ public class Utils {
       map.put(key, value);
     }
     return map;
+  }
+
+  public static Date getFromDate(String period, long medianDateInSeconds) {
+    LocalDate periodDate;
+    if (medianDateInSeconds > 0) {
+      LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(medianDateInSeconds),
+                                                            TimeZone.getDefault().toZoneId());
+      periodDate = localDateTime.toLocalDate();
+    } else {
+      periodDate = LocalDate.now();
+    }
+    LocalDate now = LocalDate.now();
+    Period periodType = Period.valueOf(period.toUpperCase());
+    return switch (periodType) {
+    case Period.WEEK -> from(periodDate.with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    case Period.MONTH ->
+      from(periodDate.with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    case Period.QUARTER -> from(periodDate.with(now.getMonth().firstMonthOfQuarter())
+                                          .with(TemporalAdjusters.firstDayOfMonth())
+                                          .atStartOfDay(ZoneId.systemDefault())
+                                          .toInstant());
+    default -> null;
+    };
+  }
+
+  public static Date getToDate(String period, long medianDateInSeconds) {
+    LocalDate periodDate;
+    if (medianDateInSeconds > 0) {
+      LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(medianDateInSeconds),
+                                                            TimeZone.getDefault().toZoneId());
+      periodDate = localDateTime.toLocalDate();
+    } else {
+      periodDate = LocalDate.now();
+    }
+    LocalDate now = LocalDate.now();
+    Period periodType = Period.valueOf(period.toUpperCase());
+    return switch (periodType) {
+    case Period.WEEK -> from(periodDate.with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).plusWeeks(1).toInstant());
+    case Period.MONTH ->
+      from(periodDate.with(TemporalAdjusters.firstDayOfMonth()).plusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    case Period.QUARTER -> from(periodDate.with(now.getMonth().firstMonthOfQuarter())
+                                          .with(TemporalAdjusters.firstDayOfMonth())
+                                          .plusMonths(3)
+                                          .atStartOfDay(ZoneId.systemDefault())
+                                          .toInstant());
+    default -> null;
+    };
   }
 }
