@@ -99,6 +99,7 @@ export default {
       };
       const users = await this.$leaderboardService.getLeaderboard({
         identityId: eXo.env.portal.profileOwnerIdentityId,
+        spaceId: eXo.env.portal.spaceId || null,
         programId: this.programId,
         period: this.period,
         limit: 0,

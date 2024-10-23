@@ -21,6 +21,7 @@ import static io.meeds.gamification.utils.Utils.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -192,6 +193,10 @@ public class ProgramRest implements ResourceContainer {
                               @QueryParam("sortDescending")
                               @DefaultValue("true")
                               boolean sortDescending,
+                              @Parameter(description = "Space audience identifier")
+                              @QueryParam("spaceId")
+                              @DefaultValue("0")
+                              long spaceId,
                               @Parameter(description = "Used to retrieve extra information about the program")
                               @QueryParam("expand")
                               String expand) {
@@ -205,6 +210,10 @@ public class ProgramRest implements ResourceContainer {
     programFilter.setStatus(programStatus);
     programFilter.setSortBy(sortField);
     programFilter.setSortDescending(sortDescending);
+    if (spaceId > 0) {
+      programFilter.setSpacesIds(Collections.singletonList(spaceId));
+      programFilter.setExcludeOpen(true);
+    }
     if (StringUtils.isNotEmpty(query)) {
       programFilter.setProgramTitle(query);
     }
