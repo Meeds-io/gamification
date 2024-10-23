@@ -325,6 +325,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </value>
               </collection>
             </field>
+            <field name="portletPrefs">
+              <map type="java.util.HashMap">
+                <entry>
+                  <key>
+                    <string>hideWidgetWhenEmpty</string>
+                  </key>
+                  <value>
+                    <string>true</string>
+                  </value>
+                </entry>
+              </map>
+            </field>
             <field name="title">
               <string>Rules Overview</string>
             </field>
