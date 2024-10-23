@@ -30,6 +30,7 @@ export function init(
   availableRulesLimit,
   upcomingRulesLimit,
   rulesSortBy,
+  hideWidgetWhenEmpty,
   canEdit,
   pageRef) {
   exoi18n.loadLanguageAsync(lang, urls)
@@ -45,6 +46,7 @@ export function init(
           availableRulesLimit,
           upcomingRulesLimit,
           rulesSortBy,
+          hideWidgetWhenEmpty,
           canEdit: portletStorageId && canEdit || false,
           pageRef,
           displayNotPublicallyVisible: eXo.env.portal.portalName === 'public' && canEdit,

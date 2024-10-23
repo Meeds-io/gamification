@@ -30,6 +30,7 @@
  if (Utils.canAccessAnonymousResources()) {
    String portletStorageId = ((String) request.getAttribute("portletStorageId"));
    String sortBy = request.getAttribute("rulesSortBy") == null ? "score" : ((String[]) request.getAttribute("rulesSortBy"))[0];
+   String hideWidgetWhenEmpty = request.getAttribute("hideWidgetWhenEmpty") == null ? "false" : ((String[]) request.getAttribute("hideWidgetWhenEmpty"))[0];
    String lockedRulesLimit = request.getAttribute("lockedRulesLimit") == null ? "2" : ((String[]) request.getAttribute("lockedRulesLimit"))[0];
    String endingRulesLimit = request.getAttribute("endingRulesLimit") == null ? "2" : ((String[]) request.getAttribute("endingRulesLimit"))[0];
    String availableRulesLimit = request.getAttribute("availableRulesLimit") == null ? "4" : ((String[]) request.getAttribute("availableRulesLimit"))[0];
@@ -46,6 +47,7 @@
         <%=availableRulesLimit%>,
         <%=upcomingRulesLimit%>,
         '<%=sortBy%>',
+        <%=hideWidgetWhenEmpty%>,
         <%=canEdit%>,
         '<%=pageRef%>'
       ));

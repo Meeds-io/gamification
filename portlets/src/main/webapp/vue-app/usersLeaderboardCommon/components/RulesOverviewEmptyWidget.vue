@@ -45,7 +45,7 @@
   </gamification-overview-widget-row>
   <div v-else class="d-flex flex-column align-center justify-center full-width full-height">
     <v-icon color="tertiary" size="60">fa-rocket</v-icon>
-    <span class="text-body mt-5">{{ $t('gamification.overview.actions') }}</span>
+    <span class="text-body mt-5">{{ spaceId && $t('gamification.overview.space.actions') || $t('gamification.overview.actions') }}</span>
   </div>
 </template>
 <script>
@@ -56,6 +56,9 @@ export default {
       default: false,
     },
   },
+  data: () => ({
+    spaceId: eXo.env.portal.spaceId,
+  }),
   computed: {
     completedRulesImageIndex() {
       return (Number(eXo.env.portal.spaceId || '0') + Number(eXo.env.portal.userIdentityId)) % 8 + 1;

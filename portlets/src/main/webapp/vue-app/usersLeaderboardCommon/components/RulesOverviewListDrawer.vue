@@ -24,7 +24,7 @@
     :right="!$vuetify.rtl"
     :go-back-button="goBackButton">
     <template #title>
-      {{ $t('gamification.overview.actionsList') }}
+      {{ spaceId && $t('gamification.overview.space.actionsList') || $t('gamification.overview.actionsList') }}
     </template>
     <template #titleIcons>
       <v-btn
