@@ -91,7 +91,7 @@
           </div>
           <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
             <v-icon color="tertiary" size="60">fa-puzzle-piece</v-icon>
-            <span class="mt-5">{{ $t('gamification.overview.programs') }}</span>
+            <span class="mt-5">{{ spaceId && $t('gamification.overview.space.programs') || $t('gamification.overview.programs') }}</span>
           </div>
         </template>
       </gamification-overview-widget>
@@ -113,6 +113,7 @@ export default {
     programs: [],
     administrators: null,
     registrationSettings: null,
+    spaceId: eXo.env.portal.spaceId,
     hover: false,
     loading: true,
   }),
@@ -166,6 +167,7 @@ export default {
       return this.$programService.getPrograms({
         sortBy: this.sortBy || 'modifiedDate',
         sortDescending: this.sortBy !== 'title',
+        spaceId: this.spaceId,
         limit: this.limit || 4,
         type: 'ALL',
         status: 'ENABLED',
