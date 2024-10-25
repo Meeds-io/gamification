@@ -32,7 +32,8 @@
       },
       "illustrationPath":"war:/../images/portlets/contributionsList.webp",
       "permissions":[
-        "*:/platform/users"
+        "*:/platform/administrators",
+        "*:/platform/web-contributors"
       ],
       "system":true
     },
