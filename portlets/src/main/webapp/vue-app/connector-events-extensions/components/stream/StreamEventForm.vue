@@ -49,9 +49,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :placeholder="$t('gamification.event.detail.activityLink.placeholder')"
       type="text"
       class="ignore-vuetify-classes full-width"
-      required
-      @input="handleActivity"
-      @change="checkActivityLink(activityLink)">
+      required>
     <v-card-text class="ps-0 py-0" />
     <v-list-item-action-text v-if="!isValidLink" class="d-flex py-0 me-0 me-sm-8">
       <span class="error--text">{{ $t('gamification.event.detail.activityLink.error') }}</span>
@@ -77,7 +75,7 @@ export default {
       selected: [],
       activity: 'ANY',
       activityLink: null,
-      isValidLink: true,
+      activityId: null,
       startTypingKeywordTimeout: 0,
       startSearchAfterInMilliseconds: 300,
       endTypingKeywordTimeout: 50,
@@ -99,6 +97,9 @@ export default {
         noDataLabel: this.$t('activity.composer.audience.noDataLabel'),
       };
     },
+    isValidLink() {
+      return this.activity !== 'ONE_ACTIVITY' || this.activityId;
+    },
   },
   watch: {
     selected() {
@@ -111,9 +112,11 @@ export default {
         document.dispatchEvent(new CustomEvent('event-form-unfilled'));
       }
     },
+    activityLink() {
+      this.checkActivityId();
+    },
     trigger() {
       this.activity = 'ANY';
-      this.isValidLink = true;
       document.dispatchEvent(new CustomEvent('event-form-filled'));
     },
   },
@@ -149,6 +152,7 @@ export default {
   methods: {
     changeSelection() {
       this.selected = null;
+      this.activityId = null;
       this.activityLink = null;
       if (this.activity === 'ANY') {
         document.dispatchEvent(new CustomEvent('event-form-filled'));
@@ -156,22 +160,25 @@ export default {
         document.dispatchEvent(new CustomEvent('event-form-unfilled'));
       }
     },
-    handleActivity() {
+    checkActivityId() {
       if (this.activityLink) {
         this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
         if (!this.typing) {
           this.typing = true;
           this.waitForEndTyping();
         }
+      } else {
+        this.activityId = null;
       }
     },
     waitForEndTyping() {
       window.setTimeout(() => {
         if (Date.now() > this.startTypingKeywordTimeout) {
           this.typing = false;
-          if (this.checkActivityLink(this.activityLink) && this.activityLink !== this.properties?.activity) {
+          this.activityId = this.getActivityIdFromUrl(this.activityLink);
+          if (this.activityId) {
             const eventProperties = {
-              activityId: this.getActivityIdFromUrl(this.activityLink)
+              activityId: this.activityId,
             };
             document.dispatchEvent(new CustomEvent('event-form-filled', {detail: eventProperties}));
           } else {
@@ -181,11 +188,6 @@ export default {
           this.waitForEndTyping();
         }
       }, this.endTypingKeywordTimeout);
-    },
-    checkActivityLink(activityLink) {
-      const activityUrlRegex = /^http(s)?:\/\/[^/]+\/portal\/meeds\/activity\?id=\d+$/;
-      this.isValidLink = activityUrlRegex.test(activityLink);
-      return this.isValidLink;
     },
     getActivityIdFromUrl(activityLink) {
       const match = activityLink.match(/\/activity\?id=(\d+)/);
