@@ -36,10 +36,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="BADGE_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_BADGES"/>
             </column>
-            <column name="TITLE" type="NVARCHAR(50)">
+            <column name="TITLE" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="DESCRIPTION" type="NVARCHAR(255)">
+            <column name="DESCRIPTION" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="NEEDED_SCORE" type="BIGINT">
@@ -70,7 +70,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="LAST_MODIFIED_DATE" type="timestamp"/>
         </createTable>
         <modifySql dbms="mysql">
-            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+            <append value=" ENGINE=INNODB CHARSET=UTF8MB4 COLLATE utf8mb4_0900_ai_ci"/>
         </modifySql>
     </changeSet>
     <changeSet author="task" id="1.0.0-2" dbms="oracle,postgresql">
@@ -82,16 +82,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="ID" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="TITLE" type="NVARCHAR(70)">
+            <column name="TITLE" type="VARCHAR(70)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="DESCRIPTION" type="NVARCHAR(255)">
+            <column name="DESCRIPTION" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="SCORE" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="AREA" type="NVARCHAR(32)">
+            <column name="AREA" type="VARCHAR(32)">
                 <constraints nullable="true"/>
             </column>
             <column name="ENABLED" type="BOOLEAN" defaultValueBoolean="false">
@@ -107,10 +107,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="LAST_MODIFIED_DATE" type="timestamp"/>
         </createTable>
         <modifySql dbms="mysql">
-            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+            <append value=" ENGINE=INNODB CHARSET=UTF8MB4 COLLATE utf8mb4_0900_ai_ci"/>
         </modifySql>
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-3" runOnChange="true">
+    <changeSet author="exo-gamification" id="1.0.0-3">
+        <validCheckSum>9:29cb7f97c6971f4bfea3166a7f593dbc</validCheckSum>
         <createTable tableName="GAMIFICATION_USER_REPUTATION">
             <column autoIncrement="${autoIncrement}" name="ID" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>
@@ -121,10 +122,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </column>
         </createTable>
         <modifySql dbms="mysql">
-            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+            <append value=" ENGINE=INNODB CHARSET=UTF8MB4 COLLATE utf8mb4_0900_ai_ci"/>
         </modifySql>
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-4" runOnChange="true">
+    <changeSet author="exo-gamification" id="1.0.0-4">
+        <validCheckSum>9:83402a03674b28cab1fc39693178a368</validCheckSum>
         <createTable tableName="GAMIFICATION_CONTEXT_ITEMS">
             <column autoIncrement="${autoIncrement}" name="ID" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>
@@ -138,24 +140,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </column>
         </createTable>
         <modifySql dbms="mysql">
-            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+            <append value=" ENGINE=INNODB CHARSET=UTF8MB4 COLLATE utf8mb4_0900_ai_ci"/>
         </modifySql>
     </changeSet>
 
-    <changeSet author="exo-gamification" id="1.0.0-5" runOnChange="true">
+    <changeSet author="exo-gamification" id="1.0.0-5">
         <addForeignKeyConstraint baseColumnNames="GAMIFICATION_USER_ID" baseTableName="GAMIFICATION_CONTEXT_ITEMS"
                                  constraintName="FK_GAMIFICATION_CONTEXT_ITEM_CONTEXT_01" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="ID" referencedTableName="GAMIFICATION_USER_REPUTATION"/>
     </changeSet>
 
-    <changeSet author="exo-gamification" id="1.0.0-7" runOnChange="true">
+    <changeSet author="exo-gamification" id="1.0.0-7">
         <createIndex tableName="GAMIFICATION_CONTEXT_ITEMS" indexName="IDX_GAME_CONTEXT_ITEM_01">
             <column name="GAMIFICATION_USER_ID"/>
         </createIndex>
     </changeSet>
 
-    <changeSet author="exo-gamification" id="1.0.0-8" runOnChange="true">
+    <changeSet author="exo-gamification" id="1.0.0-8">
+        <validCheckSum>9:95c1795e63a4fd5edb4f0651fcee3d8c</validCheckSum>
+        <validCheckSum>9:e1731c81f22b97f907ec3311fc7a664a</validCheckSum>
         <createTable tableName="GAMIFICATION_ACTIONS_HISTORY">
             <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_ACTION_HISTORY"/>
@@ -171,27 +175,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <constraints nullable="false"/>
             </column>
 
-            <column name="ACTION_TITLE" type="NVARCHAR(70)">
+            <column name="ACTION_TITLE" type="VARCHAR(70)">
                 <constraints nullable="false"/>
             </column>
-            <column name="DOMAIN" type="NVARCHAR(32)">
+            <column name="DOMAIN" type="VARCHAR(32)">
                 <constraints nullable="false"/>
             </column>
-            <column name="CONTEXT" type="NVARCHAR(200)">
+            <column name="CONTEXT" type="VARCHAR(200)">
                 <constraints nullable="true"/>
             </column>
             <column name="ACTION_SCORE" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="CREATED_BY" type="NVARCHAR(200)">
+            <column name="CREATED_BY" type="VARCHAR(200)">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
-            <column name="LAST_MODIFIED_BY" type="NVARCHAR(200)"/>
+            <column name="LAST_MODIFIED_BY" type="VARCHAR(200)"/>
             <column name="LAST_MODIFIED_DATE" type="TIMESTAMP"/>
         </createTable>
         <modifySql dbms="mysql">
-            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+            <append value=" ENGINE=INNODB CHARSET=UTF8MB4 COLLATE utf8mb4_0900_ai_ci"/>
         </modifySql>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-9" dbms="oracle,postgresql">
@@ -206,10 +210,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </changeSet>
 
     <changeSet  author="exo-gamification" id="1.0.0-11">
+        <validCheckSum>9:0a499f6f743f90bb8dfb8752cb7750bc</validCheckSum>
         <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
-            <column name="RECEIVER" type="NVARCHAR(200)">
+            <column name="RECEIVER" type="VARCHAR(200)">
             </column>
-            <column name="OBJECT_ID" type="NVARCHAR(500)">
+            <column name="OBJECT_ID" type="VARCHAR(500)">
             </column>
         </addColumn>
     </changeSet>
@@ -236,7 +241,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="LAST_MODIFIED_DATE" type="timestamp"/>
         </createTable>
         <modifySql dbms="mysql">
-            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+            <append value=" ENGINE=INNODB CHARSET=UTF8MB4 COLLATE utf8mb4_0900_ai_ci"/>
         </modifySql>
     </changeSet>
 
@@ -260,8 +265,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
     <changeSet  author="exo-gamification" id="1.0.0-14">
+        <validCheckSum>9:2b39672d51a1dce37911a6e88c23ef6f</validCheckSum>
         <addColumn tableName="GAMIFICATION_RULE">
-            <column name="EVENT" type="NVARCHAR(70)">
+            <column name="EVENT" type="VARCHAR(70)">
             </column>
         </addColumn>
     </changeSet>
@@ -295,9 +301,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-17">
+        <validCheckSum>9:7f65b5d6feb0413f6c4818b0d3df65b4</validCheckSum>
         <modifyDataType tableName="GAMIFICATION_ACTIONS_HISTORY"
                         columnName="USER_SOCIAL_ID"
-                        newDataType="NVARCHAR(200)"
+                        newDataType="VARCHAR(200)"
         />
     </changeSet>
 
@@ -338,6 +345,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-24">
+        <validCheckSum>9:846210cba4aa5fd04ac9b7e8d5511cef</validCheckSum>
         <createTable tableName="CHALLENGE_MANAGER_RULE">
             <column name="CHALLENGE_MANAGER_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_CHALLENGE_MANAGER_RULE_ID"/>
@@ -351,11 +359,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </column>
         </createTable>
         <modifySql dbms="mysql">
-            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+            <append value=" ENGINE=INNODB CHARSET=UTF8MB4 COLLATE utf8mb4_0900_ai_ci"/>
         </modifySql>
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-25" onValidationFail="MARK_RAN">
+        <validCheckSum>9:f25784f085798c6e970c027e1fea6c38</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="GAMIFICATION_ACTIONS_HISTORY" columnName="RULE_ID" />
@@ -366,7 +375,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
             <column name="RULE_ID" type="BIGINT"/>
             <column name="ACTIVITY_ID" type="BIGINT"/>
-            <column name="COMMENT" type="NVARCHAR(2000)"/>
+            <column name="COMMENT" type="VARCHAR(2000)"/>
         </addColumn>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-26">
@@ -375,8 +384,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </addColumn>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-27">
+        <validCheckSum>9:224e5521575180245798b76a933acb00</validCheckSum>
         <addColumn tableName="GAMIFICATION_RULE">
-            <column name="NEW_TITLE" type="NVARCHAR(2000)" valueComputed="TITLE">
+            <column name="NEW_TITLE" type="VARCHAR(2000)" valueComputed="TITLE">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -385,13 +395,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <dropColumn tableName="GAMIFICATION_RULE" columnName="TITLE" />
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-29">
-        <renameColumn tableName="GAMIFICATION_RULE" columnDataType="NVARCHAR(2000)" oldColumnName="NEW_TITLE" newColumnName="TITLE" />
+        <validCheckSum>9:d149209522d9fae968a4a5c106b5d4c4</validCheckSum>
+        <renameColumn tableName="GAMIFICATION_RULE" columnDataType="VARCHAR(2000)" oldColumnName="NEW_TITLE" newColumnName="TITLE" />
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-30">
-        <modifyDataType tableName="GAMIFICATION_RULE" columnName="DESCRIPTION" newDataType="NVARCHAR(2000)"/>
+        <validCheckSum>9:64a43bdcf0d7d1b23cc024a80c7af6c2</validCheckSum>
+        <modifyDataType tableName="GAMIFICATION_RULE" columnName="DESCRIPTION" newDataType="VARCHAR(2000)"/>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-31">
-        <modifyDataType tableName="GAMIFICATION_ACTIONS_HISTORY" columnName="ACTION_TITLE" newDataType="NVARCHAR(2000)"/>
+        <validCheckSum>9:2e513ca6b2192e7da578d8e93df47765</validCheckSum>
+        <modifyDataType tableName="GAMIFICATION_ACTIONS_HISTORY" columnName="ACTION_TITLE" newDataType="VARCHAR(2000)"/>
     </changeSet>
     <changeSet  author="exo-gamification" id="1.0.0-32">
         <validCheckSum>ANY</validCheckSum>
@@ -402,7 +415,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </addColumn>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-33">
-        <modifyDataType tableName="GAMIFICATION_RULE" columnName="EVENT" newDataType="NVARCHAR(2000)"/>
+        <validCheckSum>9:d150169db1957d38bfd1c20785ba4e47</validCheckSum>
+        <modifyDataType tableName="GAMIFICATION_RULE" columnName="EVENT" newDataType="VARCHAR(2000)"/>
     </changeSet>
     <changeSet id="1.0.0-34" author="exo-gamification">
         <createIndex tableName="GAMIFICATION_ACTIONS_HISTORY" indexName="IDX_GAMIFICATION_ACTIONS_HISTORY_RULE_ID">
@@ -471,7 +485,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </column>
       </createTable>
       <modifySql dbms="mysql">
-        <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci" />
+        <append value=" ENGINE=INNODB CHARSET=UTF8MB4 COLLATE utf8mb4_0900_ai_ci" />
       </modifySql>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-41">
@@ -486,7 +500,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <column name="DOMAIN_ID" type="BIGINT"/>
       </createIndex>
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-42">
+    <changeSet author="exo-gamification" id="1.0.0-42" dbms="oracle,postgresql,hsqldb">
       <createSequence sequenceName="SEQ_GAMIFICATION_DOMAIN_OWNER_ID" startValue="1" />
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-43" dbms="oracle,postgresql,mssql,h2,sybase,db2,hsqldb">
@@ -647,8 +661,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <dropColumn tableName="GAMIFICATION_BADGES" columnName="DOMAIN" />
     </changeSet>
     <changeSet  author="exo-gamification" id="1.0.0-56">
+        <validCheckSum>9:dd40a4a3726560fe61cae5ad9490cd78</validCheckSum>
         <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
-            <column name="OBJECT_TYPE" type="NVARCHAR(100)">
+            <column name="OBJECT_TYPE" type="VARCHAR(100)">
             </column>
         </addColumn>
     </changeSet>
@@ -671,7 +686,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </column>
       </createTable>
       <modifySql dbms="mysql">
-        <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci" />
+        <append value=" ENGINE=INNODB CHARSET=UTF8MB4 COLLATE utf8mb4_0900_ai_ci" />
       </modifySql>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-59">
@@ -699,14 +714,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-63">
+      <validCheckSum>9:c112f0024fb14691caae25133a1f2ed1</validCheckSum>
       <createTable tableName="GAMIFICATION_CONNECTOR_ACCOUNTS">
         <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
           <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_CONNECTOR_ACCOUNTS"/>
         </column>
-        <column name="CONNECTOR_NAME" type="NVARCHAR(250)">
+        <column name="CONNECTOR_NAME" type="VARCHAR(250)">
           <constraints nullable="false"/>
         </column>
-        <column name="REMOTE_ID" type="NVARCHAR(250)"/>
+        <column name="REMOTE_ID" type="VARCHAR(250)"/>
         <column name="USER_ID" type="BIGINT">
           <constraints nullable="false"/>
         </column>
@@ -717,18 +733,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <createSequence sequenceName="SEQ_GAMIFICATION_CONNECTOR_ACCOUNTS_ID" startValue="1" />
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-65">
+        <validCheckSum>9:a1c2553fe92333a127ce65a07d87eb71</validCheckSum>
         <createTable tableName="GAMIFICATION_EVENTS">
             <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_EVENTS"/>
             </column>
-            <column name="TITLE" type="NVARCHAR(250)">
+            <column name="TITLE" type="VARCHAR(250)">
                 <constraints nullable="false"/>
             </column>
-            <column name="TYPE" type="NVARCHAR(250)">
+            <column name="TYPE" type="VARCHAR(250)">
                 <constraints nullable="false"/>
             </column>
-            <column name="CANCELLER_EVENTS" type="NVARCHAR(2000)"/>
-            <column name="EVENT_TRIGGER" type="NVARCHAR(250)">
+            <column name="CANCELLER_EVENTS" type="VARCHAR(2000)"/>
+            <column name="EVENT_TRIGGER" type="VARCHAR(250)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -737,11 +754,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <createSequence sequenceName="SEQ_GAMIFICATION_EVENTS_ID" startValue="1"/>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-67">
+        <validCheckSum>9:b07652696ee5bbaaf11bf78c46c81de2</validCheckSum>
+        <validCheckSum>9:9f0111784a8acefbc8b495bf8b621906</validCheckSum>
         <createTable tableName="GAMIFICATION_EVENT_SETTINGS">
             <column name="ID" type="BIGINT">
                 <constraints foreignKeyName="FK_GAMIFICATION_EVENT_SETTINGS" references="GAMIFICATION_EVENTS(ID)" deferrable="false" initiallyDeferred="false" deleteCascade="true" />
             </column>
-            <column name="NAME" type="NVARCHAR(255)">
+            <column name="NAME" type="VARCHAR(255)">
                 <constraints nullable="false" />
             </column>
             <column name="VALUE" type="LONGTEXT">
@@ -749,14 +768,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </column>
         </createTable>
         <modifySql dbms="mysql">
-            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci" />
+            <append value=" ENGINE=INNODB CHARSET=UTF8MB4 COLLATE utf8mb4_0900_ai_ci" />
         </modifySql>
     </changeSet>
 
     <!--
       Merged to Table definition, thus 1.0.0-68 is skipped
       <changeSet author="exo-gamification" id="1.0.0-68">
-          <renameColumn tableName="GAMIFICATION_EVENTS" columnDataType="NVARCHAR(250)" oldColumnName="TRIGGER" newColumnName="EVENT_TRIGGER" />
+          <renameColumn tableName="GAMIFICATION_EVENTS" columnDataType="VARCHAR(250)" oldColumnName="TRIGGER" newColumnName="EVENT_TRIGGER" />
       </changeSet>
     -->
 
@@ -767,12 +786,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </changeSet>
 
     <changeSet  author="exo-gamification" id="1.0.0-70">
+        <validCheckSum>9:cc5d29c42809b786f96a6b8ae408a5d8</validCheckSum>
         <addColumn tableName="GAMIFICATION_RULE">
             <column name="EVENT_ID" type="BIGINT">
                 <constraints foreignKeyName="FK_GAMIFICATION_RULES_EVENT" references="GAMIFICATION_EVENTS(ID)" />
             </column>
         </addColumn>
-        <sql>UPDATE GAMIFICATION_RULE
+        <sql dbms="mysql">UPDATE GAMIFICATION_RULE
+            SET EVENT_ID=(SELECT ID FROM GAMIFICATION_EVENTS WHERE GAMIFICATION_EVENTS.TITLE = GAMIFICATION_RULE.EVENT COLLATE utf8mb4_0900_ai_ci)
+            WHERE EVENT IS NOT NULL
+        </sql>
+        <sql dbms="!mysql">UPDATE GAMIFICATION_RULE
             SET EVENT_ID=(SELECT ID FROM GAMIFICATION_EVENTS WHERE GAMIFICATION_EVENTS.TITLE = GAMIFICATION_RULE.EVENT)
             WHERE EVENT IS NOT NULL
         </sql>
@@ -808,5 +832,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="DEFAULT_REALIZATION_STATUS" valueNumeric="0"/>
             <where>TYPE = 0</where>
         </update>
+    </changeSet>
+
+    <changeSet author="exo-gamification" id="1.0.0-76" >
+        <sql dbms="mysql">
+            ALTER TABLE GAMIFICATION_BADGES CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+            ALTER TABLE GAMIFICATION_RULE CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+            ALTER TABLE GAMIFICATION_USER_REPUTATION CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+            ALTER TABLE GAMIFICATION_CONTEXT_ITEMS CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+            ALTER TABLE GAMIFICATION_ACTIONS_HISTORY CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+            ALTER TABLE GAMIFICATION_DOMAIN CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+            ALTER TABLE CHALLENGE_MANAGER_RULE CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+            ALTER TABLE GAMIFICATION_DOMAIN_OWNERS CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+            ALTER TABLE GAMIFICATION_DOMAIN_OWNERS CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+            ALTER TABLE GAMIFICATION_PREREQUISITE_RULES CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+            ALTER TABLE GAMIFICATION_EVENT_SETTINGS CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+        </sql>
     </changeSet>
 </databaseChangeLog>
