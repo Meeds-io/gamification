@@ -326,7 +326,7 @@ export default {
       return this.isAdministrator && {
         filterType: 'all',
       } || {
-        filterType: 'manager',
+        filterType: 'editable',
       };
     },
     programId() {
