@@ -66,6 +66,9 @@ export default {
       hour: 'numeric',
       minute: 'numeric',
     },
+    actionValueExtensions: {},
+    extensionApp: 'engagementCenterActions',
+    actionValueExtensionType: 'user-actions',
   }),
   computed: {
     isManualType() {
@@ -93,8 +96,7 @@ export default {
       return this.realization?.objectType;
     },
     actionValueExtension() {
-      return this.actionEventName
-        && this.$root.actionValueExtensions && Object.values(this.$root.actionValueExtensions)
+      return this.actionEventName && Object.values(this.actionValueExtensions)
         .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
         .find(extension => extension?.match?.(this.actionEventName))
         || null;
@@ -113,12 +115,17 @@ export default {
     },
   },
   created() {
+    this.$root.$on('rule-actions-updated', this.refreshExtensions);
+    this.refreshExtensions();
     Promise.resolve(this.retrieveRealizationLink())
       .finally(() => {
         if (!this.realizationLink) {
           this.realizationLink = this.realization?.link || this.realization?.url;
         }
       });
+  },
+  beforeDestroy() {
+    this.$root.$off('rule-actions-updated', this.refreshExtensions);
   },
   methods: {
     retrieveRealizationLink() {
@@ -128,6 +135,19 @@ export default {
         return this.linkExtensionMethod(this.realization);
       } else if (this.realization?.objectId?.startsWith?.('http')) {
         this.realizationLink = this.realization.objectId;
+      }
+    },
+    refreshExtensions() {
+      if (this.$root.actionValueExtensions && Object.keys(this.$root.actionValueExtensions).length) {
+        this.actionValueExtensions = this.$root.actionValueExtensions;
+      } else {
+        this.$utils.includeExtensions('engagementCenterActions');
+        const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
+        extensions.forEach(extension => {
+          if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
+            this.$set(this.actionValueExtensions, extension.type, extension.options);
+          }
+        });
       }
     },
   }
