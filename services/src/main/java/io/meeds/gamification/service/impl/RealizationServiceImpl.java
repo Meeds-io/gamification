@@ -237,10 +237,13 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
     EventPlugin eventPlugin = eventService.getEventPlugin(event);
     if (eventPlugin != null) {
-      rules = rules.stream()
-                   .filter(ruleDTO -> MapUtils.isEmpty(ruleDTO.getEvent().getProperties())
-                                      || eventPlugin.isValidEvent(ruleDTO.getEvent().getProperties(), eventDetails))
-                   .toList();
+      rules = rules.stream().filter(ruleDTO -> {
+        if(ruleDTO.getEvent().getProperties() != null) {
+          ruleDTO.getEvent().getProperties().put("ruleId", ruleDTO.getId().toString());
+        }
+        return MapUtils.isEmpty(ruleDTO.getEvent().getProperties())
+            || eventPlugin.isValidEvent(ruleDTO.getEvent().getProperties(), eventDetails);
+      }).toList();
     }
     return rules.stream()
                 .distinct()
