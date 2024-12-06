@@ -127,6 +127,7 @@
             <v-radio :label="$t('realization.label.filter.status.accepted')" value="ACCEPTED" />
             <v-radio :label="$t('realization.label.filter.status.pending')" value="PENDING" />
             <v-radio :label="$t('realization.label.filter.status.rejected')" value="REJECTED" />
+            <v-radio :label="$t('realization.label.filter.status.canceled')" value="CANCELED" />
           </v-radio-group>
         </v-card-text>
       </form>

@@ -141,9 +141,9 @@ public class RealizationRest implements ResourceContainer {
                                   @DefaultValue("USER")
                                   @QueryParam("identityType")
                                   IdentityType identityType,
-                                  @Parameter(description = "Realization status. Possible values: ACCEPTED, PENDING, REJECTED, CANCELED, DELETED", required = false)
-                                  @QueryParam("status")
-                                  RealizationStatus status,
+                                  @Parameter(description = "Realization status list. Possible values: ACCEPTED, PENDING, REJECTED, CANCELED, DELETED", required = false)
+                                  @QueryParam("statuses")
+                                  List<RealizationStatus> statuses,
                                   @Parameter(description = "Program technical identifiers. that will be used to filter achievements", required = false)
                                   @QueryParam("programIds")
                                   List<Long> programIds,
@@ -183,7 +183,7 @@ public class RealizationRest implements ResourceContainer {
                                                      owned,
                                                      fromDate,
                                                      toDate,
-                                                     status,
+                                                     statuses,
                                                      identityType,
                                                      programIds,
                                                      ruleIds,

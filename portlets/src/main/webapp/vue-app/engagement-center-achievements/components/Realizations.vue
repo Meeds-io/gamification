@@ -172,7 +172,7 @@ export default {
     ownedPrograms: [],
     earnerIds: [],
     reviewerIds: [],
-    status: null,
+    statuses: [],
     ruleIds: [],
     offset: 0,
     limit: 25,
@@ -219,7 +219,7 @@ export default {
         + (this.ruleIds?.length && 1 || 0)
         + (this.earnerIds?.length && 1 || 0)
         + (this.reviewerIds?.length && 1 || 0)
-        + (this.status !== null && this.status !== 'ALL'? 1 : 0)  ;
+        + (this.statuses?.length && 1 || 0);
     },
     hasMore() {
       return this.limit < this.totalSize;
@@ -244,7 +244,7 @@ export default {
         programIds: this.searchList,
         ruleIds: this.ruleIds,
         owned: this.administrationMode,
-        status: this.status,
+        statuses: this.statuses,
       };
     },
     exportFileLink() {
@@ -441,7 +441,7 @@ export default {
     realizationUpdated(updatedRealization) {
       const index = this.realizations?.findIndex(realization => realization.id === updatedRealization.id);
       this.$set(this.realizations, index, updatedRealization);
-      if (this.status !== null && this.status !== 'ALL' && this.status !== updatedRealization.status) {
+      if (this.statuses?.length && !this.statuses.includes(updatedRealization.status)) {
         this.realizations.splice(index, 1);
       }
     },
@@ -453,7 +453,13 @@ export default {
       this.ruleIds = rules.map(rule => rule.id);
       this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
       this.reviewerIds = reviewers.map(reviewer => reviewer.identity.identityId);
-      this.status = status !== null && status !== 'ALL' ? status : null;
+      if (status === 'CANCELED') {
+        this.statuses = ['CANCELED', 'DELETED'];
+      } else if (status !== null && status !== 'ALL') {
+        this.statuses = [status];
+      } else {
+        this.statuses = [];
+      }
       this.loadRealizations();
     },
     onResize () {

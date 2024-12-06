@@ -32,31 +32,31 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RealizationFilter implements Serializable {
 
-  private static final long serialVersionUID = 7863115218512008696L;
+  private static final long       serialVersionUID = 7863115218512008696L;
 
-  private List<String>      earnerIds;
+  private List<String>            earnerIds;
 
-  private String            sortField;
+  private String                  sortField;
 
-  private boolean           sortDescending;
+  private boolean                 sortDescending;
 
-  private boolean           owned;
+  private boolean                 owned;
 
-  private Date              fromDate;
+  private Date                    fromDate;
 
-  private Date              toDate;
+  private Date                    toDate;
 
-  private RealizationStatus status;
+  private List<RealizationStatus> statuses;
 
-  private IdentityType      earnerType;
+  private IdentityType            earnerType;
 
-  private List<Long>        programIds;
+  private List<Long>              programIds;
 
-  private List<Long>        ruleIds;
+  private List<Long>              ruleIds;
 
-  private List<Long>        reviewerIds;
+  private List<Long>              reviewerIds;
 
-  private boolean           allPrograms;
+  private boolean                 allPrograms;
 
   public RealizationFilter(List<String> earnerIds, // NOSONAR
                            String sortField,
@@ -64,7 +64,7 @@ public class RealizationFilter implements Serializable {
                            Date fromDate,
                            Date toDate,
                            IdentityType identityType,
-                           RealizationStatus status,
+                           List<RealizationStatus> status,
                            List<Long> ruleIds,
                            List<Long> reviewerIds) {
     this.earnerIds = earnerIds;
@@ -73,7 +73,7 @@ public class RealizationFilter implements Serializable {
     this.fromDate = fromDate;
     this.toDate = toDate;
     this.earnerType = identityType;
-    this.status = status;
+    this.statuses = status;
     this.ruleIds = ruleIds;
     this.reviewerIds = reviewerIds;
   }
@@ -86,7 +86,7 @@ public class RealizationFilter implements Serializable {
                                  owned,
                                  fromDate,
                                  toDate,
-                                 status,
+                                 statuses,
                                  earnerType,
                                  programIds == null ? null : new ArrayList<>(programIds),
                                  ruleIds == null ? null : new ArrayList<>(ruleIds),
