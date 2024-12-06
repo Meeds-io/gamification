@@ -62,6 +62,10 @@ export default {
       type: Object,
       default: null,
     },
+    isMobile: {
+      type: Boolean,
+      default: () => false
+    },
   },
   computed: {
     rule() {
@@ -72,9 +76,6 @@ export default {
     },
     canAnnounce() {
       return this.rule?.userInfo?.context?.validForIdentity && this.rule?.type === 'MANUAL';
-    },
-    isMobile() {
-      return this.$vuetify.breakpoint.name === 'sm' || this.$vuetify.breakpoint.name === 'xs';
     },
   },
   methods: {
