@@ -250,7 +250,7 @@ public class RuleBuilder {
                                  periodType.getFromDate(),
                                  periodType.getToDate(),
                                  IdentityType.USER,
-                                 RealizationStatus.ACCEPTED,
+                                 Collections.singletonList(RealizationStatus.ACCEPTED),
                                  Collections.singletonList(ruleId),
                                  null);
   }

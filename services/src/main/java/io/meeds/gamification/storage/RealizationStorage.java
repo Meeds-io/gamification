@@ -70,7 +70,7 @@ public class RealizationStorage {
     RealizationFilter realizationFilter = new RealizationFilter();
     realizationFilter.setEarnerIds(new ArrayList<>(Collections.singleton(earnerIdentityId)));
     realizationFilter.setEarnerType(IdentityType.USER);
-    realizationFilter.setStatus(RealizationStatus.PENDING);
+    realizationFilter.setStatuses(Collections.singletonList(RealizationStatus.PENDING));
     realizationFilter.setRuleIds(new ArrayList<>(Collections.singleton(ruleId)));
     return gamificationHistoryDAO.countRealizationsByFilter(realizationFilter) > 0;
   }

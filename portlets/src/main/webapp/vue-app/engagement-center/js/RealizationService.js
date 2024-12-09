@@ -114,8 +114,10 @@ function getRealizationsFormData(filter) {
   if (filter?.identityType) {
     formData.append('identityType', filter.identityType.toUpperCase());
   }
-  if (filter?.status) {
-    formData.append('status', filter.status);
+  if (filter?.statuses?.length > 0) {
+    for (const status of filter.statuses) {
+      formData.append('statuses', status);
+    }
   }
   if (filter?.sortBy) {
     formData.append('sortBy', filter.sortBy);
