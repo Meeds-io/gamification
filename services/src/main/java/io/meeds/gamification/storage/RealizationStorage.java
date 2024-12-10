@@ -23,6 +23,8 @@ public class RealizationStorage {
 
   private RealizationDAO gamificationHistoryDAO;
 
+  private static final List<RealizationStatus> PENDING_STATUS = Collections.singletonList(RealizationStatus.PENDING);
+
   public RealizationStorage(ProgramStorage programStorage,
                             RuleStorage ruleStorage,
                             RealizationDAO gamificationHistoryDAO) {
@@ -70,7 +72,7 @@ public class RealizationStorage {
     RealizationFilter realizationFilter = new RealizationFilter();
     realizationFilter.setEarnerIds(new ArrayList<>(Collections.singleton(earnerIdentityId)));
     realizationFilter.setEarnerType(IdentityType.USER);
-    realizationFilter.setStatus(RealizationStatus.PENDING);
+    realizationFilter.setStatuses(PENDING_STATUS);
     realizationFilter.setRuleIds(new ArrayList<>(Collections.singleton(ruleId)));
     return gamificationHistoryDAO.countRealizationsByFilter(realizationFilter) > 0;
   }

@@ -79,6 +79,13 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
 
   private String              internalUserIdentityId;
 
+  private static final List<RealizationStatus> REJECTED_STATUS = Collections.singletonList(RealizationStatus.REJECTED);
+
+  private static final List<RealizationStatus> ACCEPTED_STATUS = Collections.singletonList(RealizationStatus.ACCEPTED);
+
+  private static final List<RealizationStatus> CANCELED_STATUS = Collections.singletonList(RealizationStatus.CANCELED);
+
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -723,7 +730,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     filter.setEarnerType(null);
     filter.setEarnerIds(null);
     filter.setRuleIds(null);
-    filter.setStatus(RealizationStatus.ACCEPTED);
+    filter.setStatuses(ACCEPTED_STATUS);
     assertEquals(2, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
     assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
     assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
@@ -751,13 +758,13 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
     assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
 
-    filter.setStatus(RealizationStatus.REJECTED);
+    filter.setStatuses(REJECTED_STATUS);
     assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
     assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
     assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
     assertEquals(0, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
 
-    filter.setStatus(RealizationStatus.CANCELED);
+    filter.setStatuses(CANCELED_STATUS);
     assertEquals(0, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
     assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
     assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
@@ -971,7 +978,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     filter.setEarnerType(null);
     filter.setEarnerIds(null);
     filter.setRuleIds(null);
-    filter.setStatus(RealizationStatus.ACCEPTED);
+    filter.setStatuses(ACCEPTED_STATUS);
     assertEquals(2, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
     assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
     assertEquals(2, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
@@ -1007,13 +1014,13 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
     assertEquals(1, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
 
-    filter.setStatus(RealizationStatus.REJECTED);
+    filter.setStatuses(REJECTED_STATUS);
     assertEquals(1, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
     assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
     assertEquals(1, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
     assertEquals(1, realizationService.countRealizationsByFilter(filter, internalUserAclIdentity));
 
-    filter.setStatus(RealizationStatus.CANCELED);
+    filter.setStatuses(CANCELED_STATUS);
     assertEquals(0, realizationService.countRealizationsByFilter(filter, adminAclIdentity));
     assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceHostAclIdentity));
     assertEquals(0, realizationService.countRealizationsByFilter(filter, spaceMemberAclIdentity));
@@ -1217,7 +1224,7 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     lastRealization = realizations.getFirst();
     assertEquals(RealizationStatus.DELETED.name(), lastRealization.getStatus());
 
-    identityFilter.setStatus(RealizationStatus.ACCEPTED);
+    identityFilter.setStatuses(ACCEPTED_STATUS);
     realizations = realizationService.getRealizationsByFilter(identityFilter, 0, 1);
     assertNotNull(realizations);
     assertEquals(0, realizations.size());

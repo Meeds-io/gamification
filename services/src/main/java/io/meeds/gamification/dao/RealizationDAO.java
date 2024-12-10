@@ -66,6 +66,8 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   private static final String        EARNER_TYPE_PARAM_NAME  = "earnerType";
 
   public static final String         STATUS_PARAM_NAME       = "status";
+  
+  public static final String         STATUSES_PARAM_NAME     = "statuses";
 
   private static final String        RULE_ID_PARAM_NAME      = "ruleId";
 
@@ -426,9 +428,9 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
       suffixes.add("ReviewerIds");
       predicates.add("g.reviewerId IN (:" + REVIEWER_IDS_PARAM_NAME + ")");
     }
-    if (filter.getStatus() != null) {
+    if (filter.getStatuses() != null) {
       suffixes.add("Status");
-      predicates.add("g.status = :" + STATUS_PARAM_NAME);
+      predicates.add("g.status IN (:" + STATUSES_PARAM_NAME + ")");
     }
 
     suffixes.add(getSortField(filter));
@@ -488,8 +490,8 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     if (CollectionUtils.isNotEmpty(filter.getReviewerIds())) {
       query.setParameter(REVIEWER_IDS_PARAM_NAME, filter.getReviewerIds());
     }
-    if (filter.getStatus() != null) {
-      query.setParameter(STATUS_PARAM_NAME, filter.getStatus());
+    if (filter.getStatuses() != null) {
+      query.setParameter(STATUSES_PARAM_NAME, filter.getStatuses());
     }
   }
 
