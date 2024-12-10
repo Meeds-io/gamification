@@ -25,23 +25,26 @@
       height="230"
       max-height="230"
       outlined
-      hover
       @click="$root.$emit('rule-detail-drawer', ruleWithProgram)">
       <div v-if="!isValid">
-        <div v-show="hover" class="d-flex position-absolute full-width z-index-drawer">
+        <div v-show="hover" class="d-flex position-absolute full-width z-index-two">
           <div class="ms-auto mb-auto mt-4 me-4">
-            <div
+            <v-card
               v-if="isProgramMember"
               v-show="hover"
               :class="hover && 'd-inline-flex'"
-              class="my-auto">
+              width="28"
+              height="8"
+              class="my-auto position-relative"
+              flat>
               <rule-favorite-button
                 :rule-id="rule.id"
                 :space-id="rule.spaceId"
                 :favorite.sync="rule.favorite"
                 type="rule"
-                type-label="rules" />
-            </div>
+                type-label="rules"
+                class="absolute-vertical-center" />
+            </v-card>
             <engagement-center-rule-menu
               v-if="canEdit"
               :rule="ruleWithProgram"
