@@ -164,19 +164,38 @@ export default {
     },
     enableDisableButtonLabel() {
       return this.isEnabled ? this.$t('programs.details.rule.button.disable') : this.$t('programs.details.rule.button.enable');
-    }
+    },
+  },
+  watch: {
+    showMenu() {
+      if (this.showMenu) {
+        document.addEventListener('modalOpened', this.closeMenu);
+        document.addEventListener('drawerOpened', this.closeMenu);
+        document.addEventListener('closeAllDrawers', this.closeMenu);
+        document.addEventListener('closeDisplayedDrawer', this.closeMenu);
+      } else {
+        document.removeEventListener('modalOpened', this.closeMenu);
+        document.removeEventListener('drawerOpened', this.closeMenu);
+        document.removeEventListener('closeAllDrawers', this.closeMenu);
+        document.removeEventListener('closeDisplayedDrawer', this.closeMenu);
+      }
+    },
   },
   created() {
     // Workaround to fix closing menu when clicking outside
-    $(document).mousedown(() => {
+    document.addEventListener('mousedown', this.closeMenu);
+  },
+  beforeDestroy() {
+    document.removeEventListener('mousedown', this.closeMenu);
+  },
+  methods: {
+    closeMenu() {
       if (this.showMenu) {
         window.setTimeout(() => {
           this.showMenu = false;
         }, 200);
       }
-    });
-  },
-  methods: {
+    },
     editRule(event) {
       if (event) {
         event.preventDefault();
