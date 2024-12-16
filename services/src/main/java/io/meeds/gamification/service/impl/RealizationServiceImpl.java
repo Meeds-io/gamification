@@ -873,8 +873,8 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     Cell hashCell = row.createCell(cellIndex);
     String contributionURL = null;
     if (realization.getType() == EntityType.MANUAL) {
-      long activityId = realization.getActivityId();
-      if (activityId > 0) {
+      Long activityId = realization.getActivityId();
+      if (activityId != null && activityId > 0) {
         contributionURL = Util.getBaseUrl() + LinkProvider.getRedirectUri("activity?id=" + activityId);
       }
       hashCell.setCellValue(TemplateUtils.cleanHtmlTags(realization.getComment()));
