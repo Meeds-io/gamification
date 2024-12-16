@@ -824,43 +824,46 @@ public class RealizationServiceTest extends AbstractServiceTest { // NOSONAR
     assertEquals(3, sheet.getLastRowNum());
     Row header = sheet.getRow(0);
     assertNotNull(header);
-    assertEquals(7, header.getLastCellNum());
+    assertEquals(8, header.getLastCellNum());
     assertTrue(StringUtils.isNotBlank(header.getCell(header.getFirstCellNum()).getStringCellValue()));
     assertTrue(StringUtils.isNotBlank(header.getCell(header.getLastCellNum() - 1).getStringCellValue()));
 
     Row row1 = sheet.getRow(1);
     assertNotNull(row1);
-    assertEquals(7, row1.getLastCellNum());
+    assertEquals(8, row1.getLastCellNum());
     int cellIndex = 0;
     assertEquals(realization1.getCreatedDate(), row1.getCell(cellIndex++).getStringCellValue());
     assertEquals(Utils.getUserFullName(realization1.getEarnerId()), row1.getCell(cellIndex++).getStringCellValue());
     assertEquals(rule.getType().name(), row1.getCell(cellIndex++).getStringCellValue());
     assertEquals(realization1.getProgramLabel(), row1.getCell(cellIndex++).getStringCellValue());
     assertEquals(realization1.getActionTitle(), row1.getCell(cellIndex++).getStringCellValue());
+    assertEquals("", row1.getCell(cellIndex++).getStringCellValue());
     assertEquals(realization1.getActionScore(), row1.getCell(cellIndex++).getNumericCellValue(), 0d);
     assertEquals(realization1.getStatus(), row1.getCell(cellIndex).getStringCellValue());
 
     Row row2 = sheet.getRow(2);
     assertNotNull(row2);
-    assertEquals(7, row2.getLastCellNum());
+    assertEquals(8, row2.getLastCellNum());
     cellIndex = 0;
     assertEquals(realization2.getCreatedDate(), row2.getCell(cellIndex++).getStringCellValue());
     assertEquals(Utils.getUserFullName(realization2.getEarnerId()), row2.getCell(cellIndex++).getStringCellValue());
     assertEquals(rule.getType().name(), row2.getCell(cellIndex++).getStringCellValue());
     assertEquals(realization2.getProgramLabel(), row2.getCell(cellIndex++).getStringCellValue());
     assertEquals(realization2.getActionTitle(), row2.getCell(cellIndex++).getStringCellValue());
+    assertEquals("", row2.getCell(cellIndex++).getStringCellValue());
     assertEquals(realization2.getActionScore(), row2.getCell(cellIndex++).getNumericCellValue(), 0d);
     assertEquals(realization2.getStatus(), row2.getCell(cellIndex).getStringCellValue());
 
     Row row3 = sheet.getRow(3);
     assertNotNull(row3);
-    assertEquals(7, row3.getLastCellNum());
+    assertEquals(8, row3.getLastCellNum());
     cellIndex = 0;
     assertEquals(realization3.getCreatedDate(), row3.getCell(cellIndex++).getStringCellValue());
     assertEquals(Utils.getUserFullName(realization3.getEarnerId()), row3.getCell(cellIndex++).getStringCellValue());
     assertEquals(EntityType.MANUAL.name(), row3.getCell(cellIndex++).getStringCellValue());
     assertEquals(realization3.getProgramLabel(), row3.getCell(cellIndex++).getStringCellValue());
     assertEquals(realization3.getActionTitle(), row3.getCell(cellIndex++).getStringCellValue());
+    assertEquals("", row3.getCell(cellIndex++).getStringCellValue());
     assertEquals(realization3.getActionScore(), row3.getCell(cellIndex++).getNumericCellValue(), 0d);
     assertEquals(realization3.getStatus(), row3.getCell(cellIndex).getStringCellValue());
   }
