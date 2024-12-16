@@ -18,12 +18,15 @@
  */
 package io.meeds.gamification.plugin;
 
+import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.service.EventService;
 import org.exoplatform.container.component.BaseComponentPlugin;
+import org.exoplatform.social.core.service.LinkProvider;
 
 import java.util.List;
 import java.util.Map;
 
+import static io.meeds.gamification.utils.Utils.getBaseUrl;
 import static io.meeds.gamification.utils.Utils.stringToMap;
 
 /**
@@ -46,6 +49,18 @@ public abstract class EventPlugin extends BaseComponentPlugin {
    * Check if event properties match properties coming from an external trigger
    */
   public abstract boolean isValidEvent(Map<String, String> eventProperties, String triggerDetails);
+
+  /**
+   * get contribution link
+   *
+   * @return the contribution link
+   */
+  public String getLink(RealizationDTO realizationDTO) {
+    if (realizationDTO.getObjectId() != null && (realizationDTO.getObjectId().startsWith("http://") || realizationDTO.getObjectId().startsWith("https://"))) {
+      return realizationDTO.getObjectId();
+    }
+    return getBaseUrl() + LinkProvider.getRedirectUri("activity?id=" + realizationDTO.getObjectId());
+  }
 
   /**
    * get points ration using event properties and properties coming from an

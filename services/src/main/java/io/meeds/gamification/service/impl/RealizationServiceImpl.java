@@ -29,14 +29,15 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.PluginKey;
 import org.exoplatform.commons.notification.impl.NotificationContextImpl;
+import org.exoplatform.commons.notification.template.TemplateUtils;
+import org.exoplatform.social.core.service.LinkProvider;
 import org.picocontainer.Startable;
 
 import org.exoplatform.commons.api.persistence.ExoTransactional;
@@ -68,7 +69,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
 
   // File header
   private static final String[] COLUMNS                       = new String[] { "date", "grantee", "actionType", "programLabel",
-                                                                               "actionLabel", "points", "status" };
+                                                                               "actionLabel", "contribution", "points", "status" };
 
   private static final String   SHEETNAME                     = "Achivements Report";
 
@@ -850,18 +851,43 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                                      ruleService.findRuleByTitle(realization.getActionTitle());
 
       String eventTitle = rule == null || rule.getEvent() == null ? null : rule.getEvent().getTitle();
+      String eventTrigger = rule == null || rule.getEvent() == null ? null : rule.getEvent().getTrigger();
       String actionLabel = realization.getActionTitle() != null ? realization.getActionTitle() : eventTitle;
       String programTitle = escapeIllegalCharacterInMessage(realization.getProgramLabel());
       int cellIndex = 0;
       row.createCell(cellIndex++).setCellValue(helper.createRichTextString(realization.getCreatedDate()));
-      row.createCell(cellIndex++).setCellValue(Utils.getUserFullName(realization.getEarnerId()));
+      row.createCell(cellIndex++).setCellValue(getUserFullName(realization.getEarnerId()));
       row.createCell(cellIndex++).setCellValue(rule != null ? rule.getType().name() : "-");
       row.createCell(cellIndex++).setCellValue(programTitle);
       row.createCell(cellIndex++).setCellValue(actionLabel);
+      appendContributionCells(row, cellIndex++, helper, realization, eventTrigger);
       row.createCell(cellIndex++).setCellValue(realization.getActionScore());
       row.createCell(cellIndex).setCellValue(realization.getStatus());
     } catch (Exception e) {
       LOG.error("Error when computing to XLSX ", e);
+    }
+  }
+
+  private void appendContributionCells(Row row, int cellIndex, CreationHelper helper, RealizationDTO realization, String eventTrigger) {
+    Cell hashCell = row.createCell(cellIndex);
+    String contributionURL = null;
+    if (realization.getType() == EntityType.MANUAL) {
+      Long activityId = realization.getActivityId();
+      if (activityId != null && activityId > 0) {
+        contributionURL = Utils.getBaseUrl() + LinkProvider.getRedirectUri("activity?id=" + activityId);
+      }
+      hashCell.setCellValue(TemplateUtils.cleanHtmlTags(realization.getComment()));
+    } else {
+      EventPlugin eventPlugin = eventService.getEventPlugin(eventTrigger);
+      if (eventPlugin != null) {
+        contributionURL = eventPlugin.getLink(realization);
+      }
+      hashCell.setCellValue(contributionURL != null ? contributionURL : "");
+    }
+    if (contributionURL != null && (contributionURL.startsWith("http://") || contributionURL.startsWith("https://"))) {
+      Hyperlink link = helper.createHyperlink(HyperlinkType.URL);
+      link.setAddress(contributionURL);
+      hashCell.setHyperlink(link);
     }
   }
 
