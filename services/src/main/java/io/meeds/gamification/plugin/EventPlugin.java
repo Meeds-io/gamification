@@ -56,7 +56,10 @@ public abstract class EventPlugin extends BaseComponentPlugin {
    * @return the contribution link
    */
   public String getLink(RealizationDTO realizationDTO) {
-    return Util.getBaseUrl() + LinkProvider.getRedirectUri("activity?id=" + realizationDTO.getObjectId());
+    if (realizationDTO.getObjectId() != null && (realizationDTO.getObjectId().startsWith("http://") || realizationDTO.getObjectId().startsWith("https://"))) {
+      return realizationDTO.getObjectId();
+    }
+    return Util.getBaseUrl() + LinkProvider.getRedirectUri("activity?id=" + realizationDTO.getActivityId());
   }
 
   /**
