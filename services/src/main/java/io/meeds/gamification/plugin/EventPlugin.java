@@ -22,11 +22,11 @@ import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.service.EventService;
 import org.exoplatform.container.component.BaseComponentPlugin;
 import org.exoplatform.social.core.service.LinkProvider;
-import org.exoplatform.social.service.rest.Util;
 
 import java.util.List;
 import java.util.Map;
 
+import static io.meeds.gamification.utils.Utils.getBaseUrl;
 import static io.meeds.gamification.utils.Utils.stringToMap;
 
 /**
@@ -59,7 +59,7 @@ public abstract class EventPlugin extends BaseComponentPlugin {
     if (realizationDTO.getObjectId() != null && (realizationDTO.getObjectId().startsWith("http://") || realizationDTO.getObjectId().startsWith("https://"))) {
       return realizationDTO.getObjectId();
     }
-    return Util.getBaseUrl() + LinkProvider.getRedirectUri("activity?id=" + realizationDTO.getObjectId());
+    return getBaseUrl() + LinkProvider.getRedirectUri("activity?id=" + realizationDTO.getObjectId());
   }
 
   /**
