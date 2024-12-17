@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -35,6 +36,7 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.IdentityConstants;
@@ -501,6 +503,20 @@ public class Utils {
   public static String getBaseURLProgramRest() {
     return "/" + PortalContainer.getCurrentPortalContainerName() + "/" + PortalContainer.getCurrentRestContextName()
         + BASE_URL_PROGRAMS_REST_API;
+  }
+
+  public static HttpServletRequest getCurrentServletRequest() {
+    EnvironmentContext environmentContext = EnvironmentContext.getCurrent();
+    return (HttpServletRequest) environmentContext.get(HttpServletRequest.class);
+  }
+
+  public static String getBaseUrl() {
+    HttpServletRequest currentServletRequest = getCurrentServletRequest();
+    String scheme = currentServletRequest.getScheme();
+    String serverName = currentServletRequest.getServerName();
+    int serverPort = currentServletRequest.getServerPort();
+    boolean isDefaultPort = (scheme.equals("http") && serverPort == 80) || (scheme.equals("https") && serverPort == 443);
+    return isDefaultPort ? scheme + "://" + serverName : scheme + "://" + serverName + ":" + serverPort;
   }
 
   public static void broadcastEvent(ListenerService listenerService, String eventName, Object source, Object data) {
