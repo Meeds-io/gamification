@@ -22,10 +22,12 @@ const appId = 'connectorUserSettings';
 const lang = eXo.env.portal.language || 'en';
 
 //should expose the locale ressources as REST API 
-const url = `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`;
-
+const urls = [
+  `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`,
+  `/gamification-portlets/i18n/locale.addon.Gamification?lang=${lang}`
+];
 export function init() {
-  exoi18n.loadLanguageAsync(lang, url)
+  exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       Vue.createApp({
         template: `<gamification-user-connector-settings id="${appId}" />`,
