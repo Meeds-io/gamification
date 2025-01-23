@@ -310,7 +310,7 @@ export default {
         ruleModel.defaultRealizationStatus = rule.defaultRealizationStatus;
       }
       if (rule.prerequisiteRules?.length) {
-        ruleModel.prerequisiteRuleIds = rule.prerequisiteRules.map(r => r.id).filter(id => id);
+        ruleModel.prerequisiteRules = rule.prerequisiteRules;
       }
       return ruleModel;
     },

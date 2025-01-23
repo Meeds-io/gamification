@@ -213,7 +213,6 @@ export default {
     },
     retrieveRules(limit) {
       this.loadingSuggestions++;
-      this.rules = [];
       return this.$ruleService.getRules({
         term: this.searchTerm || null,
         programId: this.programId,
