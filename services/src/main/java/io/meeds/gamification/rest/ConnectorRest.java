@@ -94,6 +94,35 @@ public class ConnectorRest implements ResourceContainer {
   }
 
   @GET
+  @Produces(MediaType.TEXT_PLAIN)
+  @RolesAllowed("users")
+  @Path("username/{connectorName}")
+  @Operation(summary = "Retrieve the username associated with a connector user identifier.", description = "Fetches the username corresponding to the given connector user identifier.", method = "GET")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "404", description = "No associated username found"),
+      @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  public Response getUsernameByConnectorUserId(
+                                              @Parameter(description = "Connector name", required = true)
+                                              @PathParam("connectorName")
+                                              String connectorName,
+                                              @Parameter(description = "Connector user identifier", required = true)
+                                              @QueryParam("connectorUserId")
+                                              String connectorUserId) {
+    if (StringUtils.isAnyBlank(connectorName, connectorUserId)) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Both connector name and connector user identifier are required.").build();
+    }
+    String username = connectorService.getAssociatedUsername(connectorName, connectorUserId);
+    if (StringUtils.isBlank(username)) {
+      return Response.status(Response.Status.NOT_FOUND).entity("No associated username found for the provided connector user identifier.").build();
+    }
+    return Response.ok(username).build();
+  }
+
+  @GET
   @Produces(MediaType.TEXT_HTML)
   @RolesAllowed("users")
   @Path("oauthCallback/{connectorName}")
