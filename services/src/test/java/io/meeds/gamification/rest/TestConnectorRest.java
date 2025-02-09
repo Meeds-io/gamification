@@ -62,6 +62,18 @@ public class TestConnectorRest extends AbstractServiceTest { // NOSONAR
   }
 
   @Test
+  public void testGetUsernameByConnectorUserId() throws Exception {
+    startSessionAs("user");
+    ContainerResponse response = getResponse("GET", getURLResource("connectors/username/connectorName?connectorUserId=user"), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+
+    response = getResponse("GET", getURLResource("connectors/username/connectorName"), null);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+  }
+
+  @Test
   public void testConnect() throws Exception {
     startSessionAs("root1");
     setConnectorPlugin();
