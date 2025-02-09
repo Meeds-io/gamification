@@ -95,7 +95,7 @@ public class ConnectorRest implements ResourceContainer {
 
   @GET
   @Produces(MediaType.TEXT_PLAIN)
-  @RolesAllowed("users")
+  @RolesAllowed("administrators")
   @Path("username/{connectorName}")
   @Operation(summary = "Retrieve the username associated with a connector user identifier.", description = "Fetches the username corresponding to the given connector user identifier.", method = "GET")
   @ApiResponses(value = {
