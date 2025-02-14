@@ -32,23 +32,7 @@
             'r-0': !$vuetify.rtl,
           }"
           class="position-absolute absolute-vertical-center z-index-one">
-          <v-tooltip v-if="$root.displayNotPublicallyVisible && !hubAccessOpen" top>
-            <template #activator="{attrs, on}">
-              <v-icon
-                class="me-2"
-                color="warning"
-                size="18"
-                v-on="on"
-                v-bind="attrs">
-                fa-exclamation-triangle
-              </v-icon>
-            </template>
-            <span>
-              {{ $t('gamification.publicWidgetHiddenTooltipPart1') }}
-              <br>
-              {{ $t('gamification.publicWidgetHiddenTooltipPart2') }}
-            </span>
-          </v-tooltip>
+          <public-widget-hidden-warning v-if="$root.canEdit" />
           <v-btn
             v-if="hasValidRules"
             :icon="hoverEdit"
@@ -182,7 +166,6 @@ export default {
     endingRulesList: [],
     activeRulesSize: 0,
     initialized: false,
-    registrationSettings: null,
   }),
   computed: {
     title() {
@@ -313,9 +296,6 @@ export default {
     limit() {
       return this.$root.lockedRulesLimit + this.$root.endingRulesLimit + this.$root.availableRulesLimit + this.$root.upcomingRulesLimit;
     },
-    hubAccessOpen() {
-      return !this.registrationSettings || this.registrationSettings?.type === 'OPEN';
-    },
   },
   watch: {
     isHiddenWidget: {
@@ -352,9 +332,6 @@ export default {
     this.$root.$on('rule-deleted', this.retrieveRules);
     this.refreshLimit();
     this.retrieveRules();
-    if (this.$root.displayNotPublicallyVisible) {
-      this.initRegistration();
-    }
   },
   beforeDestroy() {
     this.$root.$off('announcement-added', this.retrieveRules);
@@ -519,22 +496,6 @@ export default {
                 || prop === 'validPrerequisites'
                 || prop === 'validDates'
                 || rule.userInfo.context[prop]);
-    },
-    initRegistration() {
-      return this.getRegistrationSettings()
-        .then(data => this.registrationSettings = data);
-    },
-    getRegistrationSettings() {
-      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/registration/settings`, {
-        method: 'GET',
-        credentials: 'include',
-      }).then((resp) => {
-        if (resp?.ok) {
-          return resp.json();
-        } else {
-          throw new Error('Error while getting Registration settings');
-        }
-      });
     },
   },
 };
