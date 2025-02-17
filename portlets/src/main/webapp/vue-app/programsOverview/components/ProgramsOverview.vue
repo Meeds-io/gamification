@@ -31,23 +31,7 @@
                 'r-0': !$vuetify.rtl,
               }"
               class="position-absolute absolute-vertical-center z-index-one">
-              <v-tooltip v-if="$root.displayNotPublicallyVisible && !hubAccessOpen" top>
-                <template #activator="{attrs, on}">
-                  <v-icon
-                    size="18"
-                    color="warning"
-                    class="me-2"
-                    v-on="on"
-                    v-bind="attrs">
-                    fa-exclamation-triangle
-                  </v-icon>
-                </template>
-                <span>
-                  {{ $t('gamification.publicWidgetHiddenTooltipPart1') }}
-                  <br>
-                  {{ $t('gamification.publicWidgetHiddenTooltipPart2') }}
-                </span>
-              </v-tooltip>
+              <public-widget-hidden-warning v-if="$root.canEdit" />
               <v-btn
                 v-show="programLink"
                 :icon="hoverEdit"
@@ -112,7 +96,6 @@ export default {
   data: () => ({
     programs: [],
     administrators: null,
-    registrationSettings: null,
     spaceId: eXo.env.portal.spaceId,
     hover: false,
     loading: true,
@@ -139,9 +122,6 @@ export default {
     sortBy() {
       return this.$root.programsSortBy || 'modifiedDate';
     },
-    hubAccessOpen() {
-      return !this.registrationSettings || this.registrationSettings?.type === 'OPEN';
-    },
   },
   watch: {
     limit() {
@@ -157,9 +137,6 @@ export default {
   },
   created() {
     this.retrievePrograms();
-    if (this.$root.displayNotPublicallyVisible) {
-      this.initRegistration();
-    }
   },
   methods: {
     retrievePrograms() {
@@ -179,22 +156,6 @@ export default {
           this.programs = data?.programs || [];
         })
         .finally(() => this.loading = false);
-    },
-    initRegistration() {
-      return this.getRegistrationSettings()
-        .then(data => this.registrationSettings = data);
-    },
-    getRegistrationSettings() {
-      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/registration/settings`, {
-        method: 'GET',
-        credentials: 'include',
-      }).then((resp) => {
-        if (resp?.ok) {
-          return resp.json();
-        } else {
-          throw new Error('Error while getting Registration settings');
-        }
-      });
     },
   },
 };
