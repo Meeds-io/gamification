@@ -36,11 +36,11 @@ import org.exoplatform.commons.api.notification.model.MessageInfo;
 import org.exoplatform.commons.api.notification.model.NotificationInfo;
 import org.exoplatform.commons.api.notification.service.template.TemplateContext;
 import org.exoplatform.commons.notification.template.TemplateUtils;
+import org.exoplatform.commons.utils.TimeConvertUtils;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.notification.LinkProviderUtils;
 import org.exoplatform.social.notification.plugin.SocialNotificationUtils;
-import org.exoplatform.webui.utils.TimeConvertUtils;
 
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.Announcement;
