@@ -818,4 +818,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           type="BIGINT" />
       </createIndex>
     </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-77" dbms="postgresql">
+      <modifyDataType columnName="EARNER_ID" newDataType="BIGINT" tableName="GAMIFICATION_ACTIONS_HISTORY" />
+    </changeSet>
 </databaseChangeLog>
