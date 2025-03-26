@@ -27,7 +27,7 @@
         class="d-flex">
         <template #title>
           <div class="d-flex flex-grow-1 full-width position-relative">
-            <div v-if="!displayPlaceholder && !loading" class="widget-text-header text-capitalize-first-letter text-truncate">
+            <div v-if="!displayPlaceholder && !loading" class="widget-text-header text-truncate">
               {{ spaceId && $t('gamification.overview.space.topChallengersTitle') || $t('gamification.overview.topChallengersTitle') }}
             </div>
             <div class="spacer"></div>
