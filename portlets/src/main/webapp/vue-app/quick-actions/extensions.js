@@ -37,8 +37,18 @@ extensionRegistry.registerExtension('QuickAction', 'Extension', {
   }),
 });
 
+extensionRegistry.registerExtension('QuickAction', 'Extension', {
+  id: 'leaderboard',
+  icon: 'fa-medal',
+  name: 'quickActions.leaderboard.name',
+  description: 'quickActions.leaderboard.description',
+  click: () => new Promise(resolve => {
+    window.require(['SHARED/eXoVueI18n', 'PORTLET/gamification-portlets/topChallengers'], exoi18n => initLeaderboardDrawer(exoi18n, resolve));
+  }),
+});
+
 async function initProgramListDrawer(exoi18n, callback) {
-  const appId = 'about-programs-list-actions';
+  const appId = 'programs-list-actions';
   if (!document.querySelector(`#${appId}`)) {
     const parent = document.createElement('div');
     parent.id = appId;
@@ -49,7 +59,7 @@ async function initProgramListDrawer(exoi18n, callback) {
 }
 
 async function initActionListDrawer(exoi18n, callback) {
-  const appId = 'about-action-list-actions';
+  const appId = 'action-list-actions';
   if (!document.querySelector(`#${appId}`)) {
     const parent = document.createElement('div');
     parent.id = appId;
@@ -58,6 +68,52 @@ async function initActionListDrawer(exoi18n, callback) {
   }
   document.dispatchEvent(new CustomEvent('quick-action-actions-list-drawer'));
   callback();
+}
+
+async function initLeaderboardDrawer(exoi18n, callback) {
+  const appId = 'leaderboard-quick-action';
+  if (!document.querySelector(`#${appId}`)) {
+    const parent = document.createElement('div');
+    parent.id = appId;
+    document.querySelector('#vuetify-apps').appendChild(parent);
+    await initLeaderboardDrawerApp(appId, exoi18n);
+  }
+  document.dispatchEvent(new CustomEvent('quick-action-leaderboard-drawer'));
+  callback();
+}
+
+function initLeaderboardDrawerApp(appId, exoi18n) {
+  const lang = eXo.env.portal.language;
+  const urls = [
+    `/gamification-portlets/i18n/locale.addon.Gamification?lang=${lang}`,
+    `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`
+  ];
+  return new Promise(resolve => exoi18n.loadLanguageAsync(lang, urls)
+    .then(i18n => Vue.createApp({
+      template: `
+        <div id="${appId}">
+          <gamification-overview-leaderboard-drawer ref="drawer" :page-size="20" />
+          <engagement-center-rule-extensions />
+        </div>
+      `,
+      created() {
+        document.addEventListener('quick-action-leaderboard-drawer', this.openDrawer);
+      },
+      mounted() {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+        resolve();
+      },
+      beforeDestroy() {
+        document.removeEventListener('quick-action-leaderboard-drawer', this.openDrawer);
+      },
+      methods: {
+        openDrawer(event) {
+          this.$refs.drawer.open();
+        },
+      },
+      vuetify: Vue.prototype.vuetifyOptions,
+      i18n,
+    }, `#${appId}`, 'Leaderboard Quick Action')));
 }
 
 function initActionListDrawerApp(appId, exoi18n) {
