@@ -49,7 +49,8 @@ module.exports = {
     connectorAdminSettings: './src/main/webapp/vue-app/connector-admin-settings/main.js',
     connectorEvents: './src/main/webapp/vue-app/connector-events-extensions/main.js',
     connectorExtensions: './src/main/webapp/vue-app/connectors-extensions/main.js',
-    connectorUserExtensions: './src/main/webapp/vue-app/connector-user-extensions/main.js'
+    connectorUserExtensions: './src/main/webapp/vue-app/connector-user-extensions/main.js',
+    gamificationQuickActionExtensions: "./src/main/webapp/vue-app/quick-actions/extensions.js",
   },
   plugins: [
     new ESLintPlugin({
