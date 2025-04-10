@@ -47,6 +47,16 @@ extensionRegistry.registerExtension('QuickAction', 'Extension', {
   }),
 });
 
+extensionRegistry.registerExtension('QuickAction', 'Extension', {
+  id: 'achievements',
+  icon: 'fa-trophy',
+  name: 'quickActions.achievements.name',
+  description: 'quickActions.achievements.description',
+  click: () => new Promise(resolve => {
+    window.require(['SHARED/eXoVueI18n', 'PORTLET/gamification-portlets/myContributions'], exoi18n => initAchievementsDrawer(exoi18n, resolve));
+  }),
+});
+
 async function initProgramListDrawer(exoi18n, callback) {
   const appId = 'programs-list-actions';
   if (!document.querySelector(`#${appId}`)) {
@@ -80,6 +90,52 @@ async function initLeaderboardDrawer(exoi18n, callback) {
   }
   document.dispatchEvent(new CustomEvent('quick-action-leaderboard-drawer'));
   callback();
+}
+
+async function initAchievementsDrawer(exoi18n, callback) {
+  const appId = 'achievments-quick-action';
+  if (!document.querySelector(`#${appId}`)) {
+    const parent = document.createElement('div');
+    parent.id = appId;
+    document.querySelector('#vuetify-apps').appendChild(parent);
+    await initAchievementsDrawerApp(appId, exoi18n);
+  }
+  document.dispatchEvent(new CustomEvent('quick-action-achievments-drawer'));
+  callback();
+}
+
+function initAchievementsDrawerApp(appId, exoi18n) {
+  const lang = eXo.env.portal.language;
+  const urls = [
+    `/gamification-portlets/i18n/locale.addon.Gamification?lang=${lang}`,
+    `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`
+  ];
+  return new Promise(resolve => exoi18n.loadLanguageAsync(lang, urls)
+    .then(i18n => Vue.createApp({
+      template: `
+        <div id="${appId}">
+          <users-leaderboard-profile-achievements-drawer ref="drawer" />
+          <engagement-center-rule-extensions />
+        </div>
+      `,
+      created() {
+        document.addEventListener('quick-action-achievments-drawer', this.openDrawer);
+      },
+      mounted() {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+        resolve();
+      },
+      beforeDestroy() {
+        document.removeEventListener('quick-action-achievments-drawer', this.openDrawer);
+      },
+      methods: {
+        openDrawer() {
+          this.$refs.drawer.openByIdentityId(eXo.env.portal.userIdentityId);
+        },
+      },
+      vuetify: Vue.prototype.vuetifyOptions,
+      i18n,
+    }, `#${appId}`, 'User Achievments Quick Action')));
 }
 
 function initLeaderboardDrawerApp(appId, exoi18n) {
