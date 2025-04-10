@@ -13,7 +13,7 @@
                 "system": false,
                 "active": true,
                 "mobile": false,
-                "default": true,
+                "default": false,
                 "pwa": true,
                 "permissions": [
                     "*:/platform/users",
