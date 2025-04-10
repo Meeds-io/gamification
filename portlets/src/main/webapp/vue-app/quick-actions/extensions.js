@@ -27,6 +27,16 @@ extensionRegistry.registerExtension('QuickAction', 'Extension', {
   }),
 });
 
+extensionRegistry.registerExtension('QuickAction', 'Extension', {
+  id: 'listActions',
+  icon: 'fa-trophy',
+  name: 'quickActions.listActions.name',
+  description: 'quickActions.listActions.description',
+  click: () => new Promise(resolve => {
+    window.require(['SHARED/eXoVueI18n', 'PORTLET/gamification-portlets/challengesOverview'], exoi18n => initActionListDrawer(exoi18n, resolve));
+  }),
+});
+
 async function initProgramListDrawer(exoi18n, callback) {
   const appId = 'about-programs-list-actions';
   if (!document.querySelector(`#${appId}`)) {
@@ -36,6 +46,52 @@ async function initProgramListDrawer(exoi18n, callback) {
     await initProgramListDrawerApp(appId, exoi18n);
   }
   document.dispatchEvent(new CustomEvent('quick-action-programs-list-drawer', {detail: callback}));
+}
+
+async function initActionListDrawer(exoi18n, callback) {
+  const appId = 'about-action-list-actions';
+  if (!document.querySelector(`#${appId}`)) {
+    const parent = document.createElement('div');
+    parent.id = appId;
+    document.querySelector('#vuetify-apps').appendChild(parent);
+    await initActionListDrawerApp(appId, exoi18n);
+  }
+  document.dispatchEvent(new CustomEvent('quick-action-actions-list-drawer'));
+  callback();
+}
+
+function initActionListDrawerApp(appId, exoi18n) {
+  const lang = eXo.env.portal.language;
+  const urls = [
+    `/gamification-portlets/i18n/locale.addon.Gamification?lang=${lang}`,
+    `/gamification-portlets/i18n/locale.portlet.Challenges?lang=${lang}`
+  ];
+  return new Promise(resolve => exoi18n.loadLanguageAsync(lang, urls)
+    .then(i18n => Vue.createApp({
+      template: `
+        <div id="${appId}">
+          <gamification-rules-overview-list-drawer ref="drawer" />
+          <engagement-center-rule-extensions />
+        </div>
+      `,
+      created() {
+        document.addEventListener('quick-action-actions-list-drawer', this.openDrawer);
+      },
+      mounted() {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+        resolve();
+      },
+      beforeDestroy() {
+        document.removeEventListener('quick-action-actions-list-drawer', this.openDrawer);
+      },
+      methods: {
+        openDrawer(event) {
+          this.$refs.drawer.open();
+        },
+      },
+      vuetify: Vue.prototype.vuetifyOptions,
+      i18n,
+    }, `#${appId}`, 'Actions List Quick Action')));
 }
 
 function initProgramListDrawerApp(appId, exoi18n) {
