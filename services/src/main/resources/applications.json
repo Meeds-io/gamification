@@ -11,7 +11,7 @@
                 "description": "Access your contributions and review some as program owner",
                 "url": "./contributions/achievements",
                 "system": false,
-                "active": true,
+                "active": false,
                 "mobile": false,
                 "default": false,
                 "shortcut": "?",
