@@ -8,7 +8,6 @@
             "enabled": true,
             "application": {
                 "title": "Contributions Review",
-                "description": "Access your contributions and review some as program owner",
                 "url": "./contributions/achievements",
                 "system": false,
                 "active": false,
