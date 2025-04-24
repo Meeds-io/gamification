@@ -135,7 +135,7 @@ export default {
       this.loading = true;
       this.$realizationService.getRealizations({
         identityType: this.identityType,
-        status: this.status,
+        statuses: [this.status],
         ruleIds: [this.ruleId],
         sortBy: 'date',
         sortDescending: true,
