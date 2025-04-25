@@ -66,7 +66,7 @@ export default {
     },
     realizationsFilter() {
       return {
-        status: 'ACCEPTED',
+        statuses: ['ACCEPTED'],
         earnerIds: [this.identityId],
         programIds: this.programIds || (this.programId && [this.programId]),
         allPrograms: true,
