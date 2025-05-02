@@ -52,8 +52,8 @@
         v-for="(item, index) in programsToDisplay"
         :key="index"
         :id="`${id}-${item.id}`"
-        class="text-truncate-2 my-1"
-        flat>
+        class="text-truncate-2 my-1 clickable"
+        @click="$emit('open', item)">
         <div class="d-inline-block">
           <v-card
             :color="colors[index % colors.length]"
@@ -212,6 +212,12 @@ export default {
             data: this.chartData,
           }]
         }, true);
+        this.chart.on('click', (params) => {
+          const item = this.programs.find(p => p.id === params.data.id);
+          if (item) {
+            this.$emit('open', item);
+          }
+        });
       });
     },
   }
