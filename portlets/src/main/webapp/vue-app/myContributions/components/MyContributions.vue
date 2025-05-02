@@ -78,7 +78,7 @@
             :score="user.score"
             :period="period"
             central-points
-            @open="$refs.detailsDrawer.open(user, period)" />
+            @open="openAchievementsDrawer" />
           <users-leaderboard-profile-achievements-drawer
             ref="detailsDrawer" />
           <my-contributions-settings-drawer
@@ -180,6 +180,9 @@ export default {
         })
         .then(() => this.$nextTick())
         .finally(() => this.loading = false);
+    },
+    openAchievementsDrawer(item) {
+      this.$refs.detailsDrawer.open(this.user, this.period, item?.id);
     },
   }
 };
