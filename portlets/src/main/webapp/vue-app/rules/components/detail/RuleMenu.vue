@@ -81,6 +81,20 @@
       <v-list-item
         v-if="canEdit"
         dense
+        @click="duplicateRule">
+        <v-list-item-avatar
+          min-width="15"
+          width="15"
+          class="mt-0 mb-auto">
+          <v-icon size="13" class="icon-default-color">fas fa-copy</v-icon>
+        </v-list-item-avatar>
+        <v-list-item-title class="text-start">
+          {{ $t('programs.details.rule.button.duplicate') }}
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        v-if="canEdit"
+        dense
         @click.prevent.stop="enableDisableRule">
         <v-list-item-avatar
           min-width="15"
@@ -203,6 +217,11 @@ export default {
       }
       this.$ruleService.getRuleById(this.rule?.id)
         .then(rule => this.$root.$emit('rule-form-drawer', rule));
+    },
+    duplicateRule() {
+      delete this.rule.id;
+      this.rule.published = false;
+      this.$root.$emit('rule-form-drawer', this.rule);
     },
     copyLink(event) {
       if (event) {
