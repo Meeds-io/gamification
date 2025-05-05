@@ -220,6 +220,7 @@ export default {
     },
     duplicateRule() {
       delete this.rule.id;
+      this.rule.published = false;
       this.$root.$emit('rule-form-drawer', this.rule);
     },
     copyLink(event) {
