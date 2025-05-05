@@ -204,7 +204,7 @@ export default {
             this.$nextTick().then(() => {
               this.trigger = this.selectedTrigger;
             });
-          } else if (this.ruleId) {
+          } else if (this.ruleId || this.ruleTitle) {
             this.selectedConnectorIndex = 0;
           }
         })
