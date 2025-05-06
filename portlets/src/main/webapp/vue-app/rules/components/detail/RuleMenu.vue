@@ -219,9 +219,11 @@ export default {
         .then(rule => this.$root.$emit('rule-form-drawer', rule));
     },
     duplicateRule() {
-      delete this.rule.id;
-      this.rule.published = false;
-      this.$root.$emit('rule-form-drawer', this.rule);
+      const ruleId = this.rule.id;
+      const duplicatedRule = { ...this.rule };
+      delete duplicatedRule.id;
+      duplicatedRule.published = false;
+      this.$root.$emit('rule-form-drawer', duplicatedRule, null, ruleId);
     },
     copyLink(event) {
       if (event) {

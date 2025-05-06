@@ -87,7 +87,7 @@ export default {
       this.$root.$emit('announcement-added', event?.detail);
     },
     emitOpenRuleFormDrawerInternaly(event) {
-      this.$root.$emit('rule-form-drawer-event', event?.detail?.rule, event?.detail?.program);
+      this.$root.$emit('rule-form-drawer-event', event?.detail?.rule, event?.detail?.program, event?.detail?.ruleId);
     },
     emitProgramOwnersDrawerInternaly(event) {
       this.$root.$emit('open-owners-drawer-event', event?.detail?.avatars, event?.detail?.backIcon);
@@ -100,10 +100,11 @@ export default {
         updatePath,
       }}));
     },
-    emitOpenRuleFormDrawerGlobally(rule, program) {
+    emitOpenRuleFormDrawerGlobally(rule, program, ruleId) {
       document.dispatchEvent(new CustomEvent('rule-form-drawer-event', {detail: {
         rule,
         program,
+        ruleId
       }}));
     },
     emitOpenRuleDrawerByIdGlobally(ruleId, openAnnouncement, goBackButton, updatePath) {
