@@ -88,7 +88,7 @@
                         ref="ruleDescriptionTranslation"
                         v-model="ruleDescriptionTranslations"
                         :field-value.sync="ruleDescription"
-                        :object-id="ruleId"
+                        :object-id="translationObjectId"
                         :maxlength="maxDescriptionLength"
                         :no-expand-icon="!expanded"
                         class="ma-1px mt-4"
@@ -388,6 +388,10 @@ export default {
     },
     originalRuleTitleTranslations: {
       type: Object,
+      default: null
+    },
+    translationObjectId: {
+      type: String,
       default: null
     },
   },
