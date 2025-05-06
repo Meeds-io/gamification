@@ -149,6 +149,23 @@
         "*:/platform/web-contributors"
       ],
       "system":true
+    },
+    {
+      "nameId":"EngagementCenterPrograms",
+      "categoryNameId":"contributions",
+      "portletName":"EngagementCenterPrograms",
+      "names":{
+        "en":"layout.portletInstance.engagementCenterPrograms.name"
+      },
+      "descriptions":{
+        "en":"layout.portletInstance.engagementCenterPrograms.description"
+      },
+      "illustrationPath":"war:/../images/portlets/programsList.webp",
+      "permissions":[
+        "*:/platform/users",
+        "*:/platform/web-contributors"
+      ],
+      "system":true
     }
   ]
 }
