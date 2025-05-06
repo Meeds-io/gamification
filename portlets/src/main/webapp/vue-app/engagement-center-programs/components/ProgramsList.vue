@@ -205,6 +205,7 @@ export default {
         sortBy: 'title',
         sortDescending: false,
         query: this.term,
+        spaceId: eXo.env.portal.spaceId || 0,
         expand: 'countActiveRulesWhenDisabled,administrators',
         lang: eXo.env.portal.language,
       })
