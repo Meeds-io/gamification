@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :field-value.sync="ruleTitle"
           :placeholder="$t('rule.form.label.rules.placeholder')"
           :maxlength="maxTitleLength"
-          :object-id="ruleId"
+          :object-id="translationObjectId"
           no-expand-icon
           object-type="rule"
           field-name="title"
@@ -93,6 +93,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :connector="selectedConnector"
         :rule-title-translations="ruleTitleTranslations"
         :original-rule-title-translations="originalRuleTitleTranslations"
+        :translation-object-id="translationObjectId"
         @contentChanged="contentChanged = $event"
         @saved="save"
         @closed="close" />
@@ -104,6 +105,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   data: () => ({
     rule: {},
+    originalRuleId: null,
     program: null,
     ruleDescription: null,
     value: '',
@@ -168,7 +170,10 @@ export default {
         title: this.ruleTitleTranslations,
         triggerType: this.triggerType
       }));
-    }
+    },
+    translationObjectId() {
+      return this.ruleId || this.originalRuleId;
+    },
   },
   watch: {
     selectedConnectorIndex() {
@@ -204,7 +209,7 @@ export default {
             this.$nextTick().then(() => {
               this.trigger = this.selectedTrigger;
             });
-          } else if (this.ruleId) {
+          } else if (this.ruleId || this.ruleTitle) {
             this.selectedConnectorIndex = 0;
           }
         })
@@ -223,7 +228,8 @@ export default {
         }
       });
     },
-    open(rule, program) {
+    open(rule, program, ruleId) {
+      this.originalRuleId = ruleId;
       this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
         score: 20,
         enabled: true,
