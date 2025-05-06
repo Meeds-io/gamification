@@ -59,7 +59,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :badge="badge" />
             </card-carousel>
             <div v-else class="d-flex flex-column align-self-center align-center justify-center full-height full-width">
-              <v-icon color="tertiary" size="60">fa-graduation-cap</v-icon>
+              <v-icon 
+                color="tertiary" 
+                :alt="$t('exoplatform.gamification.badge.alt',{0: 'Distinguished'})"
+                size="60">
+                fa-graduation-cap
+              </v-icon>
               <span
                 v-html="emptyBadgesSummaryText"
                 class="mt-5"></span>

@@ -32,7 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             tile>
             <img 
               :src="badge.avatar"
-              alt="">
+              :alt="$t('exoplatform.gamification.badge.alt', {0: badgeLabel})">
           </v-avatar>
           <div v-if="$root.showName" class="text-center mt-2 clickable text-truncate-2">
             {{ badgeLabel }}
