@@ -24,15 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.commons.utils.ListAccessImpl;
-import org.exoplatform.services.security.MembershipEntry;
-import org.exoplatform.social.core.application.PortletPreferenceRequiredPlugin;
-import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.space.SpaceException;
-import org.exoplatform.social.core.space.SpaceFilter;
-import org.exoplatform.social.core.space.SpaceListAccess;
-import org.exoplatform.social.core.space.SpaceListenerPlugin;
 import org.exoplatform.social.core.space.model.Space;
-import org.exoplatform.social.core.space.spi.SpaceLifeCycleListener;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 @SuppressWarnings("all")
@@ -104,6 +96,14 @@ public class SpaceServiceMock implements SpaceService {
     }
     return space != null && (!SPACE_PRETTY_NAME.equals(space.getPrettyName())
                              || SPACE_MANAGERS.contains(viewer.getUserId()));
+  }
+
+  @Override
+  public boolean canManageSpace(Space space, String username) {
+    if (space != null && !SPACE_ID_1.equals(space.getSpaceId()) && !SPACE_ID_2.equals(space.getSpaceId()) && SPACE_MANAGERS.contains(username)) {
+      return true;
+    }
+    return false;
   }
 
   public boolean canPublishOnSpace(Space space, String userId) {
