@@ -42,7 +42,7 @@ const urls = [
 
 document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
 
-export function init(isAdministrator, isProgramManager) {
+export function init(isAdministrator, isProgramManager, isSpaceManager) {
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
@@ -64,7 +64,7 @@ export function init(isAdministrator, isProgramManager) {
           window.clearInterval(this.interval);
         }
       },
-      template: `<engagement-center-programs id="${appId}" :is-administrator="${isAdministrator}" :is-program-manager="${isProgramManager}" />`,
+      template: `<engagement-center-programs id="${appId}" :is-administrator="${isAdministrator}" :is-program-manager="${isProgramManager}" :is-space-manager="${isSpaceManager}" />`,
       vuetify,
       i18n
     }, `#${appId}`, 'EngagementCenter');
