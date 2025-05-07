@@ -24,19 +24,21 @@
 <%@ page import="org.exoplatform.services.security.ConversationState" %>
 <%@ page import="java.util.List" %>
 <%@ page import="org.exoplatform.social.core.space.spi.SpaceService" %>
-<%@ page import="org.apache.commons.collections4.CollectionUtils" %>
 
 <%
 String username = ConversationState.getCurrent().getIdentity().getUserId();
 boolean isAdministrator = Utils.isRewardingManager(username);
-List<String> managedSpaceIds = ExoContainerContext.getService(SpaceService.class).getManagerSpacesIds(username, 0, -1);
+List<String> memberSpaceIds = ExoContainerContext.getService(SpaceService.class).getMemberSpacesIds(username, 0, -1);
+boolean isSpaceManager = memberSpaceIds.stream()
+        .map(id -> ExoContainerContext.getService(SpaceService.class).getSpaceById(id))
+        .anyMatch(space -> ExoContainerContext.getService(SpaceService.class).canManageSpace(space, username));
 boolean isProgramManager = isAdministrator || ExoContainerContext.getService(ProgramService.class).countOwnedPrograms(ConversationState.getCurrent().getIdentity().getUserId()) > 0;
 %>
 
 <div class="VuetifyApp">
   <div id="EngagementCenterPrograms">
     <script type="text/javascript">
-      window.require(['PORTLET/gamification-portlets/EngagementCenterPrograms'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>, <%=CollectionUtils.isNotEmpty(managedSpaceIds)%>));
+      window.require(['PORTLET/gamification-portlets/EngagementCenterPrograms'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>, <%=isSpaceManager%>));
     </script>
   </div>
 </div>
