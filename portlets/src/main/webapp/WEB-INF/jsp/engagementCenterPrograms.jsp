@@ -22,16 +22,31 @@
 <%@ page import="org.exoplatform.container.ExoContainerContext"%>
 <%@ page import="io.meeds.gamification.utils.Utils" %>
 <%@ page import="org.exoplatform.services.security.ConversationState" %>
+<%@ page import="java.util.List" %>
+<%@ page import="org.exoplatform.social.core.space.spi.SpaceService" %>
+<%@ page import="org.exoplatform.social.core.space.SpaceUtils" %>
+<%@ page import="org.exoplatform.social.core.space.model.Space" %>
 
 <%
-boolean isAdministrator = Utils.isRewardingManager(ConversationState.getCurrent().getIdentity().getUserId());
+String username = ConversationState.getCurrent().getIdentity().getUserId();
+boolean isAdministrator = Utils.isRewardingManager(username);
+Space currentSpace = SpaceUtils.getSpaceByContext();
+boolean isSpaceManager;
+if (currentSpace != null) {
+  isSpaceManager = ExoContainerContext.getService(SpaceService.class).canManageSpace(currentSpace, username);
+} else {
+  List<String> memberSpaceIds = ExoContainerContext.getService(SpaceService.class).getMemberSpacesIds(username, 0, -1);
+  isSpaceManager = memberSpaceIds.stream()
+         .map(id -> ExoContainerContext.getService(SpaceService.class).getSpaceById(id))
+         .anyMatch(space -> ExoContainerContext.getService(SpaceService.class).canManageSpace(space, username));
+}
 boolean isProgramManager = isAdministrator || ExoContainerContext.getService(ProgramService.class).countOwnedPrograms(ConversationState.getCurrent().getIdentity().getUserId()) > 0;
 %>
 
 <div class="VuetifyApp">
   <div id="EngagementCenterPrograms">
     <script type="text/javascript">
-      window.require(['PORTLET/gamification-portlets/EngagementCenterPrograms'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>));
+      window.require(['PORTLET/gamification-portlets/EngagementCenterPrograms'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>, <%=isSpaceManager%>));
     </script>
   </div>
 </div>
