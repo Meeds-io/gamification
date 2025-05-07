@@ -162,7 +162,7 @@
       },
       "illustrationPath":"war:/../images/portlets/programsList.webp",
       "permissions":[
-        "*:/platform/administrators",
+        "*:/platform/users",
         "*:/platform/web-contributors"
       ],
       "system":true
