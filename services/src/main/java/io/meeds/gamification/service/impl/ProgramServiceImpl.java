@@ -179,7 +179,7 @@ public class ProgramServiceImpl implements ProgramService {
     if (program.isDeleted()) {
       throw new IllegalArgumentException("program to create can't be marked as deleted");
     }
-    if (!canAddProgram(aclIdentity)) {
+    if (!canAddProgram(aclIdentity, program.getSpaceId())) {
       throw new IllegalAccessException("The user is not authorized to create a program");
     }
     ProgramDTO createdProgram = createProgram(program, aclIdentity.getUserId());
@@ -365,8 +365,8 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public boolean canAddProgram(Identity aclIdentity) {
-    return aclIdentity != null && Utils.isRewardingManager(aclIdentity.getUserId());
+  public boolean canAddProgram(Identity aclIdentity, long spaceId) {
+    return aclIdentity != null && (Utils.isRewardingManager(aclIdentity.getUserId()) || isSpaceManager(spaceId, aclIdentity.getUserId()));
   }
 
   @Override

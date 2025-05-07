@@ -160,7 +160,7 @@
                   <span class="d-flex align-center">
                     {{ $t('programs.label.audienceSpace') }}
                   </span>
-                  <div class="mt-4">
+                  <div class="mt-4" v-if="isAdministrator">
                     <div class="d-flex align-center">
                       <span class="me-auto">{{ $t('programs.label.programAudience.all') }}</span>
                       <v-switch
@@ -283,6 +283,10 @@
 export default {
   props: {
     isAdministrator: {
+      type: Boolean,
+      default: false,
+    },
+    isSpaceManager: {
       type: Boolean,
       default: false,
     },
