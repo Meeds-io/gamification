@@ -53,17 +53,22 @@ public class ProgramServiceTest extends AbstractServiceTest {
 
   private static final String SPACE_MEMBER_USER = "root10";
 
+  private static final String SPACE_MANGER_USER = "root5";
+
   private static final String ADMIN_USER        = "root1";
 
   private Identity            adminAclIdentity;
 
   private Identity            spaceMemberAclIdentity;
 
+  private Identity            spaceManagerAclIdentity;
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
     adminAclIdentity = registerAdministratorUser(ADMIN_USER);
     spaceMemberAclIdentity = registerInternalUser(SPACE_MEMBER_USER);
+    spaceManagerAclIdentity = registerInternalUser(SPACE_MANGER_USER);
     registerInternalUser(INTERNAL_USER);
   }
 
@@ -628,9 +633,11 @@ public class ProgramServiceTest extends AbstractServiceTest {
 
   @Test
   public void testCanAddProgram() {
-    assertFalse(programService.canAddProgram(null));
-    assertFalse(programService.canAddProgram(spaceMemberAclIdentity));
-    assertTrue(programService.canAddProgram(adminAclIdentity));
+    assertFalse(programService.canAddProgram(null, 0));
+    assertFalse(programService.canAddProgram(spaceMemberAclIdentity, 0));
+    assertTrue(programService.canAddProgram(adminAclIdentity, 0));
+    assertFalse(programService.canAddProgram(spaceMemberAclIdentity, 1));
+    assertTrue(programService.canAddProgram(spaceManagerAclIdentity, 1));
   }
 
   @Test
