@@ -140,6 +140,7 @@ export default {
       term: '',
       spacesURL: `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/spaces/`,
       isExternal: eXo.env.portal.isExternal === true,
+      spaceId: eXo.env.portal.spaceId
     };
   },
   computed: {
@@ -171,7 +172,7 @@ export default {
       return this.status === 'DISABLED';
     },
     canManageProgram() {
-      return this.isProgramManager || this.isSpaceManager;
+      return this.spaceId ? this.isSpaceManager : this.isProgramManager;
     },
     canAddProgram() {
       return this.isAdministrator || this.isSpaceManager;
