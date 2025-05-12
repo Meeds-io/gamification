@@ -634,10 +634,10 @@ public class ProgramServiceTest extends AbstractServiceTest {
   @Test
   public void testCanAddProgram() {
     assertFalse(programService.canAddProgram(null, 0));
-    assertFalse(programService.canAddProgram(spaceMemberAclIdentity, 0));
-    assertTrue(programService.canAddProgram(adminAclIdentity, 0));
-    assertFalse(programService.canAddProgram(spaceMemberAclIdentity, 1));
-    assertTrue(programService.canAddProgram(spaceManagerAclIdentity, 1));
+    assertFalse(programService.canAddProgram(spaceMemberAclIdentity.getUserId(), 0));
+    assertTrue(programService.canAddProgram(adminAclIdentity.getUserId(), 0));
+    assertFalse(programService.canAddProgram(spaceMemberAclIdentity.getUserId(), 1));
+    assertTrue(programService.canAddProgram(spaceManagerAclIdentity.getUserId(), 1));
   }
 
   @Test
