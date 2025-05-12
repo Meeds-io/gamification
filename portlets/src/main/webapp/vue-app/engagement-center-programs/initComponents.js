@@ -29,12 +29,6 @@ import ProgramDisabledMaskContent from './components/card/ProgramDisabledMaskCon
 import ProgramDetail from './components/detail/ProgramDetail.vue';
 import ProgramCreatedPlaceholder from './components/detail/ProgramCreatedPlaceholder.vue';
 
-import ProgramDrawer from './components/form/ProgramDrawer.vue';
-import ProgramOwnerAssignment from './components/form/ProgramOwnerAssignment.vue';
-import ProgramImageSelector from './components/form/ProgramImageSelector.vue';
-import ProgramImageSelectorButtons from './components/form/ProgramImageSelectorButtons.vue';
-import ProgramColorPicker from './components/form/ProgramColorPicker.vue';
-import ProgramColorPickerDrawer from './components/form/ProgramColorPickerDrawer.vue';
 
 import RulesToolbar from './components/rules/RulesToolbar.vue';
 import NoRuleFound from './components/rules/NoRuleFound.vue';
@@ -46,15 +40,9 @@ const components = {
   'engagement-center-programs-list': ProgramsList,
   'engagement-center-program-card': ProgramCard,
   'engagement-center-program-menu': ProgramMenu,
-  'engagement-center-program-drawer': ProgramDrawer,
   'engagement-center-program-detail': ProgramDetail,
   'engagement-center-program-created-placeholder': ProgramCreatedPlaceholder,
-  'engagement-center-program-owner-assignment': ProgramOwnerAssignment,
-  'engagement-center-program-image-selector': ProgramImageSelector,
-  'engagement-center-program-image-selector-buttons': ProgramImageSelectorButtons,
   'engagement-center-program-disabled-mask-content': ProgramDisabledMaskContent,
-  'engagement-center-program-color-picker': ProgramColorPicker,
-  'engagement-center-program-color-picker-drawer': ProgramColorPickerDrawer,
   'engagement-center-program-rules-toolbar': RulesToolbar,
   'engagement-center-program-rule-item': RuleItem,
   'engagement-center-program-rule-title': RuleTitle,

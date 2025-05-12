@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         id="engagementCenterProgramsTab"
         :is-administrator="isAdministrator"
         :is-program-manager="isProgramManager"
-        :is-space-manager="isSpaceManager"
+        :can-add-program="canAddProgram"
         @administrators-loaded="administrators = $event" />
       <engagement-center-program-detail
         v-if="displayProgramDetail"
@@ -33,10 +33,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         @updated="program = $event" />
     </main>
     <engagement-center-rule-extensions />
-    <engagement-center-program-drawer
+    <gamification-program-drawer
       ref="programDrawer"
-      :is-administrator="isAdministrator"
-      :is-space-manager="isSpaceManager"/>
+      :is-administrator="isAdministrator" />
   </v-app>
 </template>
 
@@ -51,7 +50,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    isSpaceManager: {
+    canAddProgram: {
       type: Boolean,
       default: false,
     },
