@@ -2,7 +2,7 @@
 
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2025 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,7 @@
         </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
-    <engagement-center-program-color-picker-drawer
+    <gamification-program-color-picker-drawer
       ref="programColorDrawer"
       :value="value"
       :program="program"

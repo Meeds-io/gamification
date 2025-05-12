@@ -34,6 +34,7 @@ import io.meeds.gamification.service.*;
 import io.meeds.gamification.service.impl.EventRegistryImpl;
 import io.meeds.gamification.storage.EventStorage;
 import io.meeds.gamification.storage.mapper.*;
+import io.meeds.social.space.template.service.SpaceTemplateService;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.web.security.codec.CodecInitializer;
@@ -205,6 +206,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
 
   protected SpaceService                 spaceService;
 
+  protected SpaceTemplateService         spaceTemplateService;
+
   protected SettingService               settingService;
 
   protected CodecInitializer             codecInitializer;
@@ -259,6 +262,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     triggerService = ExoContainerContext.getService(TriggerService.class);
     eventRegistry = ExoContainerContext.getService(EventRegistryImpl.class);
     spaceService = ExoContainerContext.getService(SpaceService.class);
+    spaceTemplateService = ExoContainerContext.getService(SpaceTemplateService.class);
     settingService = ExoContainerContext.getService(SettingService.class);
     codecInitializer = ExoContainerContext.getService(CodecInitializer.class);
     identityRegistry = ExoContainerContext.getService(IdentityRegistry.class);
