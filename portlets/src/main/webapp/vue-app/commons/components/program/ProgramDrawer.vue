@@ -1,20 +1,21 @@
 <!--
 
-  This file is part of the Meeds project (https://meeds.io/).
+ This file is part of the Meeds project (https://meeds.io/).
 
-  Copyright (C) 2023 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2025 Meeds Association contact@meeds.io
 
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 3 of the License, or (at your option) any later version.
-  This program is distributed in the hope that it will be useful,5
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program; if not, write to the Free Software Foundation,
-  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 3 of the License, or (at your option) any later version.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 -->
 <template>
@@ -62,7 +63,7 @@
               <div v-show="expanded || stepper === 1" class="px-6">
                 <div class="pt-2">
                   {{ $t('programs.label.programCover') }}
-                  <engagement-center-program-image-selector
+                  <gamification-program-image-selector
                     id="engagementCenterProgramDrawerImageSelector"
                     ref="programCover"
                     v-model="program.coverUrl"
@@ -73,7 +74,7 @@
                 </div>
                 <div class="pt-4">
                   {{ $t('programs.label.programAvatar') }}
-                  <engagement-center-program-image-selector
+                  <gamification-program-image-selector
                     id="engagementCenterProgramDrawerImageSelector"
                     ref="programAvatar"
                     v-model="program.avatarUrl"
@@ -85,7 +86,7 @@
                   <span class="d-flex align-center">
                     {{ $t('program.form.programColorTitle') }}
                   </span>
-                  <engagement-center-program-color-picker
+                  <gamification-program-color-picker
                     id="engagementCenterProgramColorPicker"
                     v-model="program.color"
                     :program="program"
@@ -187,7 +188,8 @@
                     :labels="suggesterLabels"
                     :width="220"
                     sugester-class="ma-0 no-box-shadow border-color"
-                    include-spaces />
+                    include-spaces
+                    only-manager />
                   <div v-if="openSpace !== null" class="text-subtitle mt-2">
                     {{ openSpace && $t('programs.label.openSpaceSubtitle') || $t('programs.label.restrictedSpaceSubtitle') }}
                   </div>
@@ -214,7 +216,7 @@
                 <v-chip v-else-if="openProgram" class="mt-4">
                   {{ $t('programs.label.anyRewardAdmin') }}
                 </v-chip>
-                <engagement-center-program-owner-assignment
+                <gamification-program-owner-assignment
                   v-if="audience || openProgram"
                   id="engagementCenterProgramOwnerAssignee"
                   ref="programAssignment"
@@ -283,10 +285,6 @@
 export default {
   props: {
     isAdministrator: {
-      type: Boolean,
-      default: false,
-    },
-    isSpaceManager: {
       type: Boolean,
       default: false,
     },
