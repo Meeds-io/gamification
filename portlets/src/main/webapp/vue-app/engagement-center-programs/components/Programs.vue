@@ -33,10 +33,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         @updated="program = $event" />
     </main>
     <engagement-center-rule-extensions />
-    <engagement-center-program-drawer
+    <gamification-program-drawer
       ref="programDrawer"
       :is-administrator="isAdministrator"
-      :is-space-manager="isSpaceManager"/>
+      :is-space-manager="isSpaceManager" />
   </v-app>
 </template>
 
