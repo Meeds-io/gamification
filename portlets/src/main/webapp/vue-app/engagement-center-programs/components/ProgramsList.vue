@@ -116,7 +116,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    isSpaceManager: {
+    canAddProgram: {
       type: Boolean,
       default: false,
     },
@@ -172,11 +172,8 @@ export default {
       return this.status === 'DISABLED';
     },
     canManageProgram() {
-      return this.spaceId ? this.isSpaceManager : this.isProgramManager;
+      return this.spaceId ? this.canAddProgram : this.isProgramManager;
     },
-    canAddProgram() {
-      return this.isAdministrator || this.isSpaceManager;
-    }
   },
   watch: {
     administrators() {
