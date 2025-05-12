@@ -85,6 +85,9 @@
         ref="listDrawer" />
       <gamification-program-detail-drawer
         :administrators="administrators" />
+      <gamification-program-drawer
+        ref="programDrawer"
+        :is-administrator="$root.isAdministrator" />
       <engagement-center-rule-extensions />
     </div>
     <gamification-programs-overview-settings-drawer

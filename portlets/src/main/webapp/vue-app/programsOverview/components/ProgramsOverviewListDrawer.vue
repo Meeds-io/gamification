@@ -28,6 +28,12 @@
     </template>
     <template #titleIcons>
       <v-btn
+        v-if="canAddProgram"
+        icon
+        @click="$root.$emit('program-form-open')">
+        <v-icon size="24">fa-plus</v-icon>
+      </v-btn>
+      <v-btn
         :href="actionsPageURL"
         icon>
         <v-icon size="24">fa-external-link-alt</v-icon>
@@ -57,6 +63,9 @@ export default {
     actionsPageURL() {
       return eXo.env.portal.portalName === 'public' && '/portal/public/overview/actions' || `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`;
     },
+    canAddProgram() {
+      return this.$root.canAddProgram;
+    }
   },
   created() {
     this.$root.$on('programs-overview-list-drawer', this.open);

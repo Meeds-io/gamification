@@ -106,6 +106,14 @@ public class SpaceServiceMock implements SpaceService {
     return false;
   }
 
+  public int getManagerSpacesCount(String username) {
+    if (SPACE_MANAGERS.contains(username)) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
   public boolean canPublishOnSpace(Space space, String userId) {
     if (userId == null) {
       throw new IllegalStateException("User ACL Identity is mandatory");

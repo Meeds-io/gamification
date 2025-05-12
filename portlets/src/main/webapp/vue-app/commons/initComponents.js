@@ -20,6 +20,12 @@ import WidgetEmptyRow from './components/overview/WidgetEmptyRow.vue';
 import ProgramSuggester from './components/program/ProgramSuggester.vue';
 import ProgramItem from './components/program/ProgramItem.vue';
 import RuleItem from './components/program/RuleItem.vue';
+import ProgramColorPicker from './components/program/ProgramColorPicker.vue';
+import ProgramColorPickerDrawer from './components/program/ProgramColorPickerDrawer.vue';
+import ProgramDrawer from './components/program/ProgramDrawer.vue';
+import ProgramImageSelector from './components/program/ProgramImageSelector.vue';
+import ProgramImageSelectorButtons from './components/program/ProgramImageSelectorButtons.vue';
+import ProgramOwnerAssignment from './components/program/ProgramOwnerAssignment.vue';
 
 const components = {
   'gamification-overview-widget': Widget,
@@ -27,6 +33,14 @@ const components = {
   'gamification-overview-widget-empty-row': WidgetEmptyRow,
   'gamification-program-suggester': ProgramSuggester,
   'gamification-program-item': ProgramItem,
+
+  'gamification-program-color-picker': ProgramColorPicker,
+  'gamification-program-color-picker-drawer': ProgramColorPickerDrawer,
+  'gamification-program-drawer': ProgramDrawer,
+  'gamification-program-image-selector': ProgramImageSelector,
+  'gamification-program-image-selector-buttons': ProgramImageSelectorButtons,
+  'gamification-program-owner-assignment': ProgramOwnerAssignment,
+
   'gamification-rule-item': RuleItem,
 };
 
