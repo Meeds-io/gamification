@@ -22,10 +22,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import io.meeds.social.space.template.service.SpaceTemplateService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.IdentityConstants;
@@ -42,19 +44,22 @@ import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.storage.ProgramStorage;
 import io.meeds.gamification.utils.Utils;
+import org.exoplatform.ws.frameworks.cometd.ContinuationService;
 
 @SuppressWarnings("deprecation")
 public class ProgramServiceImpl implements ProgramService {
 
-  private static final String     PROGRAM_DOESN_T_EXIST = "Program doesn't exist";
+  private static final String          PROGRAM_DOESN_T_EXIST = "Program doesn't exist";
 
-  protected final ProgramStorage  programStorage;
+  protected final ProgramStorage       programStorage;
 
-  protected final ListenerService listenerService;
+  protected final ListenerService      listenerService;
 
-  protected final IdentityManager identityManager;
+  protected final IdentityManager      identityManager;
 
-  protected final SpaceService    spaceService;
+  protected final SpaceService         spaceService;
+
+  protected SpaceTemplateService spaceTemplateService;
 
   public ProgramServiceImpl(ProgramStorage programStorage,
                             ListenerService listenerService,
@@ -179,7 +184,7 @@ public class ProgramServiceImpl implements ProgramService {
     if (program.isDeleted()) {
       throw new IllegalArgumentException("program to create can't be marked as deleted");
     }
-    if (!canAddProgram(aclIdentity, program.getSpaceId())) {
+    if (!canAddProgram(aclIdentity.getUserId(), program.getSpaceId())) {
       throw new IllegalAccessException("The user is not authorized to create a program");
     }
     ProgramDTO createdProgram = createProgram(program, aclIdentity.getUserId());
@@ -365,8 +370,18 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public boolean canAddProgram(Identity aclIdentity, long spaceId) {
-    return aclIdentity != null && (Utils.isRewardingManager(aclIdentity.getUserId()) || isSpaceManager(spaceId, aclIdentity.getUserId()));
+  public boolean canAddProgram(String username, long spaceId) {
+    if (StringUtils.isBlank(username)) {
+      return false;
+    }
+    return spaceId > 0 ? isSpaceManager(spaceId, username)
+                       : (spaceService.getManagerSpacesCount(username) > 0
+                           || getSpaceTemplateService().countManagingSpaceTemplates(username) > 0);
+  }
+
+  @Override
+  public boolean canAddProgram(String username) {
+    return canAddProgram(username, 0);
   }
 
   @Override
@@ -584,6 +599,13 @@ public class ProgramServiceImpl implements ProgramService {
     }
     Utils.broadcastEvent(listenerService, PROGRAM_UPDATED_LISTENER, program, username);
     return getProgramById(program.getId());
+  }
+
+  private SpaceTemplateService getSpaceTemplateService() {
+    if (spaceTemplateService == null) {
+      spaceTemplateService = CommonsUtils.getService(SpaceTemplateService.class);
+    }
+    return spaceTemplateService;
   }
 
 }
