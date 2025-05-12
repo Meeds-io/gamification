@@ -289,13 +289,20 @@ public interface ProgramService {
   /**
    * Check whether user can add programs or not
    *
-   * @param aclIdentity Security identity of user
-   * @param spaceId     space technical identifier
-   * @return true if user has enough privileges to create a program,
-   * else false
+   * @param username User name
+   * @param spaceId space technical identifier
+   * @return true if user has enough privileges to create a program, else false
    */
-  boolean canAddProgram(Identity aclIdentity, long spaceId);
+  boolean canAddProgram(String username, long spaceId);
 
+
+  /**
+   * Check whether user can add programs or not
+   *
+   * @param username User name
+   * @return true if user has enough privileges to create a program, else false
+   */
+  boolean canAddProgram(String username);
   /**
    * Return true if the color isn't used by any other program, else return false
    * 

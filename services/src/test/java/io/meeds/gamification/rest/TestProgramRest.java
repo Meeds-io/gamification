@@ -140,7 +140,7 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     assertNotNull(response);
     assertEquals(401, response.getStatus());
 
-    startSessionAs("root1");
+    startSessionAs("root10");
     response = getResponse("POST", getURLResource("programs"), domainData.toString());
     assertNotNull(response);
     assertEquals(401, response.getStatus());
