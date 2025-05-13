@@ -376,11 +376,15 @@ public class ProgramServiceImpl implements ProgramService {
 
   @Override
   public boolean isProgramOwner(long programId, String username, boolean checkDeleted) {
+    ProgramDTO program = programStorage.getProgramById(programId);
+    return isProgramOwner(program, username, checkDeleted);
+  }
+
+  private boolean isProgramOwner(ProgramDTO program, String username, boolean checkDeleted) {
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
       return false;
     }
-    ProgramDTO program = programStorage.getProgramById(programId);
     if (program == null || (checkDeleted && program.isDeleted())) {
       return false;
     }
@@ -425,6 +429,12 @@ public class ProgramServiceImpl implements ProgramService {
   public boolean canViewProgram(long programId, String username) {
     ProgramDTO program = getProgramById(programId);
     return canViewProgram(program, username);
+  }
+
+  @Override
+  public boolean canEditProgram(long programId, String username) {
+    ProgramDTO program = getProgramById(programId);
+    return program != null && isProgramOwner(program, username, true);
   }
 
   @Override

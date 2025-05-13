@@ -355,6 +355,15 @@ public interface ProgramService {
   boolean canViewProgram(long programId, String username);
 
   /**
+   * Check whether user can edit program details or not
+   * 
+   * @param programId technical identifier of program
+   * @param username user name
+   * @return true if user has enough privileges to edit the program, else false
+   */
+  boolean canEditProgram(long programId, String username);
+
+  /**
    * @return {@link List} user names, member of rewarding administrators
    */
   List<String> getAdministrators();
