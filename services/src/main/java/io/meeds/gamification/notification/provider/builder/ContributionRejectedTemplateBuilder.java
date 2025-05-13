@@ -27,6 +27,7 @@ import java.io.Writer;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.api.notification.NotificationContext;
@@ -98,7 +99,7 @@ public class ContributionRejectedTemplateBuilder extends AbstractTemplateBuilder
     String language = getLanguage(notification);
     TemplateContext templateContext = TemplateContext.newChannelInstance(templateProvider.getChannelKey(), pluginId, language);
 
-    Locale userLocale = new Locale(language);
+    Locale userLocale = LocaleUtils.toLocale(language);
     String ruleTitle = translationService.getTranslationLabel(RULE_OBJECT_TYPE, ruleId, RULE_TITLE_FIELD_NAME, userLocale);
     if (StringUtils.isBlank(ruleTitle)) {
       ruleTitle = rule.getTitle();

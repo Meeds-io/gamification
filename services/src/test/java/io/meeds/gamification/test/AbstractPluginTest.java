@@ -22,6 +22,8 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.LocaleUtils;
+
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.channel.AbstractChannel;
 import org.exoplatform.commons.api.notification.channel.template.AbstractTemplateBuilder;
@@ -84,7 +86,7 @@ public abstract class AbstractPluginTest extends AbstractServiceTest { // NOSONA
     // set default locale to en (used for notification wording) to have
     // deterministic tests
     initialDefaultLocale = Locale.getDefault();
-    Locale.setDefault(new Locale("en", "US"));
+    Locale.setDefault(LocaleUtils.toLocale("en"));
 
     turnON(getPlugin());
     notificationService.clearAll();
@@ -153,7 +155,7 @@ public abstract class AbstractPluginTest extends AbstractServiceTest { // NOSONA
    */
   protected void assertBody(MessageInfo message, String includedString) {
     assertTrue("body = '" + message.getBody() + "' \r\n doesn't contain\r\n " + includedString,
-               message.getBody().indexOf(includedString) > 0);
+               message.getBody().contains(includedString));
   }
 
   /**
@@ -163,7 +165,7 @@ public abstract class AbstractPluginTest extends AbstractServiceTest { // NOSONA
    * @param includedString
    */
   protected void assertDigest(Writer writer, String includedString) {
-    assertEquals(includedString, writer.toString().replaceAll("\\<.*?>", ""));
+    assertEquals(includedString, writer.toString().replaceAll("\\<.*>", ""));
   }
 
   /**
