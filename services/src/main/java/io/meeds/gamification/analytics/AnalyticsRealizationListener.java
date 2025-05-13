@@ -18,6 +18,7 @@
  */
 package io.meeds.gamification.analytics;
 
+import static io.meeds.analytics.utils.AnalyticsUtils.addStatisticData;
 import static io.meeds.gamification.utils.Utils.POST_CANCEL_ANNOUNCEMENT_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_CREATE_ANNOUNCEMENT_EVENT;
 import static io.meeds.gamification.utils.Utils.POST_REALIZATION_CANCEL_EVENT;
@@ -30,10 +31,7 @@ import static io.meeds.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
 import static io.meeds.gamification.utils.Utils.STATISTICS_REALIZATION_SUBMODULE;
 import static io.meeds.gamification.utils.Utils.STATISTICS_UPDATE_REALIZATION_OPERATION;
 import static io.meeds.gamification.utils.Utils.addRealizationStatisticParameters;
-import static io.meeds.analytics.utils.AnalyticsUtils.addStatisticData;
 
-
-import io.meeds.analytics.model.StatisticData;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
@@ -41,10 +39,10 @@ import org.exoplatform.services.listener.Listener;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import io.meeds.analytics.model.StatisticData;
 import io.meeds.gamification.model.Announcement;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
-import io.meeds.gamification.service.EventService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 
@@ -57,17 +55,13 @@ public class AnalyticsRealizationListener extends Listener<Object, Object> {
 
   private IdentityManager    identityManager;
 
-  private EventService       eventService;
-
   private SpaceService       spaceService;
 
   public AnalyticsRealizationListener(RuleService ruleService,
-                                      EventService eventService,
                                       RealizationService realizationService,
                                       IdentityManager identityManager,
                                       SpaceService spaceService) {
     this.ruleService = ruleService;
-    this.eventService = eventService;
     this.realizationService = realizationService;
     this.identityManager = identityManager;
     this.spaceService = spaceService;

@@ -83,7 +83,7 @@ public class RuleServiceImpl implements RuleService {
 
   private final ListenerService     listenerService;
 
-  public RuleServiceImpl(ProgramService programService,
+  public RuleServiceImpl(ProgramService programService, // NOSONAR
                          EventService eventService, RuleStorage ruleStorage,
                          RuleSearchConnector ruleSearchConnector,
                          SpaceService spaceService,
@@ -124,15 +124,36 @@ public class RuleServiceImpl implements RuleService {
     if (rule.isDeleted()) {
       throw new ObjectNotFoundException("Rule has been deleted");
     }
-    if (!isRuleManager(rule, username)
-        && (rule.getProgram() == null
-            || !programService.canViewProgram(rule.getProgram().getId(), username))) {
+    if (!canViewRule(rule, username)) {
       throw new IllegalAccessException("Rule isn't accessible");
     }
     if (rule.getProgram() != null) {
       computeActivity(rule, 0, null, false, null, null, true);
     }
     return rule;
+  }
+
+  @Override
+  public boolean canViewRule(RuleDTO rule, String username) {
+    return rule != null
+           && !rule.isDeleted()
+           && (canEditRule(rule, username)
+               || (rule.getProgram() != null
+                   && programService.canViewProgram(rule.getProgram().getId(), username)));
+  }
+
+  @Override
+  public boolean canEditRule(RuleDTO rule, String username) {
+    if (rule == null || rule.isDeleted()) {
+      return false;
+    } else {
+      ProgramDTO program = rule.getProgram();
+      if (program == null || StringUtils.isBlank(username)) {
+        return false;
+      } else {
+        return programService.isProgramOwner(program.getId(), username);
+      }
+    }
   }
 
   @Override
@@ -227,7 +248,7 @@ public class RuleServiceImpl implements RuleService {
     if (rule == null) {
       throw new ObjectNotFoundException("Rule with id " + ruleId + " is not found");
     }
-    if (!isRuleManager(rule, username)) {
+    if (!canEditRule(rule, username)) {
       throw new IllegalAccessException("The user is not authorized to delete a rule");
     }
     return deleteRule(ruleId, username);
@@ -257,7 +278,7 @@ public class RuleServiceImpl implements RuleService {
     if (rule == null) {
       throw new ObjectNotFoundException("Rule with id " + ruleId + " is not found");
     }
-    if (!isRuleManager(rule, username)) {
+    if (!canEditRule(rule, username)) {
       throw new IllegalAccessException("The user is not authorized to update a rule status");
     }
     rule.setEnabled(!rule.isEnabled());
@@ -328,7 +349,7 @@ public class RuleServiceImpl implements RuleService {
     if (rule.getProgram() == null) {
       throw new IllegalArgumentException("Program for rule with id " + rule.getId() + " wasn't found");
     }
-    if (!isRuleManager(storedRule, username)) {
+    if (!canEditRule(storedRule, username)) {
       throw new IllegalAccessException("The user is not authorized to update a rule");
     }
     checkPermissionAndDates(storedRule, username); // Test if user was manager
@@ -400,7 +421,7 @@ public class RuleServiceImpl implements RuleService {
   }
 
   private void checkPermissionAndDates(RuleDTO rule, String username) throws IllegalAccessException {
-    if (!isRuleManager(rule, username)) {
+    if (!canEditRule(rule, username)) {
       if (rule.getId() != null && rule.getId() > 0) {
         throw new IllegalAccessException("User " + username + " is not allowed to update the rule with id " + rule.getId());
       } else {
@@ -449,15 +470,6 @@ public class RuleServiceImpl implements RuleService {
       Utils.broadcastEvent(listenerService, POST_CREATE_RULE_EVENT, savedRule.getId(), username);
     }
     return savedRule;
-  }
-
-  private boolean isRuleManager(RuleDTO rule, String username) {
-    ProgramDTO program = rule.getProgram();
-    if (program == null || StringUtils.isBlank(username)) {
-      return false;
-    } else {
-      return programService.isProgramOwner(program.getId(), username);
-    }
   }
 
   private RuleDTO deleteRule(Long ruleId, String username) throws ObjectNotFoundException {
@@ -600,7 +612,7 @@ public class RuleServiceImpl implements RuleService {
   private Identity getUserIdentity(String identityId) {
     Identity identity = identityManager.getOrCreateUserIdentity(identityId);
     if (identity == null && NumberUtils.isDigits(identityId)) {
-      identity = identityManager.getIdentity(identityId); // NOSONAR
+      identity = identityManager.getIdentity(Long.parseLong(identityId));
     }
     return identity;
   }

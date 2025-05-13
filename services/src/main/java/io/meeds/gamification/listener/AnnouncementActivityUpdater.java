@@ -109,6 +109,7 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
     }
   }
 
+  @SuppressWarnings("removal")
   private boolean isActivityAnnouncementType(ExoSocialActivity activity) {
     return StringUtils.equals(activity.getType(), ANNOUNCEMENT_ACTIVITY_TYPE)
         || StringUtils.equals(activity.getType(), ANNOUNCEMENT_COMMENT_TYPE);

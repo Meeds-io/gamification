@@ -90,6 +90,7 @@
         class="flex my-3"
         autofocus
         tag-enabled
+        content-link-enabled
         @validity-updated="validMessage = $event"
         @attachments-edited="$emit('attachments-edited')" />
     </template>

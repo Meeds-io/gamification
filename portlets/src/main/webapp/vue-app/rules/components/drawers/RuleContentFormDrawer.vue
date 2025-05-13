@@ -98,6 +98,7 @@
                         back-icon
                         rich-editor
                         rich-editor-oembed
+                        content-link-enabled
                         @initialized="setFormInitialized">
                         <template #title>
                           {{ $t('rule.form.label.description') }}
@@ -110,6 +111,7 @@
                           :max-length="maxDescriptionLength"
                           :tag-enabled="false"
                           ck-editor-type="rule"
+                          content-link-enabled
                           oembed
                           @validity-updated="validDescription = $event" />
                       </translation-text-field>

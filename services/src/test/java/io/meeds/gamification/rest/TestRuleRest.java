@@ -21,7 +21,6 @@ import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
 
-import io.meeds.gamification.model.EventDTO;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.junit.Before;
@@ -712,7 +711,6 @@ public class TestRuleRest extends AbstractServiceTest { // NOSONAR
     response = getResponse("PUT", getURLResource("rules"), data.toString());
     assertEquals(404, response.getStatus());
 
-    EventDTO event = newEventDTO("event");
     JSONObject eventData = new JSONObject();
     eventData.put("id", ruleDTO.getEvent().getId());
     eventData.put("title", ruleDTO.getEvent().getTitle());
