@@ -17,37 +17,49 @@
  */
 package io.meeds.gamification.plugin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
 
+import org.junit.Test;
+
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.MembershipEntry;
 
+import io.meeds.gamification.AbstractSpringConfigurationTest;
 import io.meeds.gamification.model.RuleDTO;
-import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 import io.meeds.social.translation.model.TranslationField;
 import io.meeds.social.translation.service.TranslationService;
 
-public class RuleTranslationPluginTest extends AbstractServiceTest {
-  private final Identity     adminAclIdentity =
-                                              new Identity("root1",
-                                                           Arrays.asList(new MembershipEntry(Utils.ADMINS_GROUP)));
+public class RuleTranslationPluginTest extends AbstractSpringConfigurationTest {
 
-  private TranslationService translationService;
+  private static final String LABEL            = "label";
+
+  private static final String USER             = "root2";
+
+  private static final String TITLE            = "title";
+
+  private final Identity      adminAclIdentity =
+                                               new Identity("root1",
+                                                            Arrays.asList(new MembershipEntry(Utils.ADMINS_GROUP)));
+
+  private TranslationService  translationService;
 
   @Override
-  public void setUp() throws Exception {
+  public void setUp() {
     super.setUp();
     identityRegistry.register(adminAclIdentity);
     translationService = ExoContainerContext.getService(TranslationService.class);
   }
 
+  @Test
   public void testManageTranslations() throws IllegalAccessException, ObjectNotFoundException {
     RuleDTO rule = newRuleDTO();
     assertNotNull(rule);
@@ -56,47 +68,47 @@ public class RuleTranslationPluginTest extends AbstractServiceTest {
     assertThrows(IllegalAccessException.class,
                  () -> translationService.saveTranslationLabels(RuleTranslationPlugin.RULE_OBJECT_TYPE,
                                                                 ruleId,
-                                                                "title",
-                                                                Collections.singletonMap(Locale.ENGLISH, "label"),
-                                                                "root2"));
-    assertThrows(ObjectNotFoundException.class,
+                                                                TITLE,
+                                                                Collections.singletonMap(Locale.ENGLISH, LABEL),
+                                                                USER));
+    assertThrows(IllegalAccessException.class,
                  () -> translationService.saveTranslationLabels(RuleTranslationPlugin.RULE_OBJECT_TYPE,
                                                                 5555l,
-                                                                "title",
-                                                                Collections.singletonMap(Locale.ENGLISH, "label"),
-                                                                "root2"));
+                                                                TITLE,
+                                                                Collections.singletonMap(Locale.ENGLISH, LABEL),
+                                                                USER));
     assertThrows(IllegalArgumentException.class, // NOSONAR
                  () -> translationService.saveTranslationLabels(RuleTranslationPlugin.RULE_OBJECT_TYPE,
                                                                 0,
-                                                                "title",
-                                                                Collections.singletonMap(Locale.ENGLISH, "label"),
-                                                                "root2"));
+                                                                TITLE,
+                                                                Collections.singletonMap(Locale.ENGLISH, LABEL),
+                                                                USER));
     assertThrows(IllegalArgumentException.class, // NOSONAR
                  () -> translationService.saveTranslationLabels(RuleTranslationPlugin.RULE_OBJECT_TYPE,
                                                                 ruleId,
                                                                 null,
-                                                                Collections.singletonMap(Locale.ENGLISH, "label"),
-                                                                "root2"));
+                                                                Collections.singletonMap(Locale.ENGLISH, LABEL),
+                                                                USER));
     assertThrows(IllegalAccessException.class, // NOSONAR
                  () -> translationService.saveTranslationLabels(RuleTranslationPlugin.RULE_OBJECT_TYPE,
                                                                 ruleId,
-                                                                "title",
-                                                                Collections.singletonMap(Locale.ENGLISH, "label"),
+                                                                TITLE,
+                                                                Collections.singletonMap(Locale.ENGLISH, LABEL),
                                                                 null));
 
     translationService.saveTranslationLabels(RuleTranslationPlugin.RULE_OBJECT_TYPE,
                                              ruleId,
-                                             "title",
-                                             Collections.singletonMap(Locale.ENGLISH, "label"),
+                                             TITLE,
+                                             Collections.singletonMap(Locale.ENGLISH, LABEL),
                                              adminAclIdentity.getUserId());
     TranslationField translationField = translationService.getTranslationField(RuleTranslationPlugin.RULE_OBJECT_TYPE,
                                                                                ruleId,
-                                                                               "title",
+                                                                               TITLE,
                                                                                adminAclIdentity.getUserId());
     assertNotNull(translationField);
     assertEquals(ruleId, translationField.getObjectId());
     assertEquals(RuleTranslationPlugin.RULE_OBJECT_TYPE, translationField.getObjectType());
-    assertEquals(translationField.getLabels().get(Locale.ENGLISH), "label");
+    assertEquals(translationField.getLabels().get(Locale.ENGLISH), LABEL);
   }
 
 }

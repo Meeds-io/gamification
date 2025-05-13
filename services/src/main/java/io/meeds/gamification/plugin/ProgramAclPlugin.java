@@ -25,19 +25,18 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.security.Identity;
 
-import io.meeds.gamification.model.RuleDTO;
-import io.meeds.gamification.service.RuleService;
+import io.meeds.gamification.service.ProgramService;
 import io.meeds.portal.plugin.AclPlugin;
 
 import jakarta.annotation.PostConstruct;
 
 @Component
-public class RuleAclPlugin implements AclPlugin {
+public class ProgramAclPlugin implements AclPlugin {
 
-  public static final String OBJECT_TYPE = RuleTranslationPlugin.RULE_OBJECT_TYPE;
+  public static final String OBJECT_TYPE = ProgramTranslationPlugin.PROGRAM_OBJECT_TYPE;
 
   @Autowired
-  private RuleService        ruleService;
+  private ProgramService     programService;
 
   @Autowired
   private PortalContainer    container;
@@ -55,13 +54,12 @@ public class RuleAclPlugin implements AclPlugin {
   @Override
   public boolean hasPermission(String objectId, String permissionType, Identity identity) {
     String username = identity == null ? null : identity.getUserId();
-    RuleDTO rule = ruleService.findRuleById(Long.parseLong(objectId));
     return switch (permissionType) {
     case VIEW_PERMISSION_TYPE: {
-      yield ruleService.canViewRule(rule, username);
+      yield programService.canViewProgram(Long.parseLong(objectId), username);
     }
     case EDIT_PERMISSION_TYPE, DELETE_PERMISSION_TYPE: {
-      yield ruleService.canEditRule(rule, username);
+      yield programService.canEditProgram(Long.parseLong(objectId), username);
     }
     default:
       yield false;
