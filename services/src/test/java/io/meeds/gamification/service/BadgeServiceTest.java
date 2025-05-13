@@ -99,7 +99,7 @@ public class BadgeServiceTest extends AbstractServiceTest {
     ProgramEntity domainEntity = newDomain();
     BadgeEntity badge = newBadge(domainEntity.getId());
     badge.setDescription("Desc_2");
-    badgeService.updateBadge(BadgeMapper.fromEntity(domainStorage, badge));
+    badgeService.updateBadge(BadgeMapper.fromEntity(programStorage, badge));
     BadgeDTO badge_ = badgeService.findBadgeByTitle(BADGE_NAME);
     assertNotNull(badge_);
     assertEquals(badge_.getDescription(), "Desc_2");
