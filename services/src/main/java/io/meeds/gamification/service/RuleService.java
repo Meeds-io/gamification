@@ -187,4 +187,18 @@ public interface RuleService {
    */
   List<RuleDTO> getPrerequisiteRules(long ruleId);
 
+  /**
+   * @param rule {@link RuleDTO}
+   * @param username User login
+   * @return true if rule is visible else false
+   */
+  boolean canViewRule(RuleDTO rule, String username);
+
+  /**
+   * @param rule {@link RuleDTO}
+   * @param username User login
+   * @return true if rule is editable for designated user else false
+   */
+  boolean canEditRule(RuleDTO rule, String username);
+
 }

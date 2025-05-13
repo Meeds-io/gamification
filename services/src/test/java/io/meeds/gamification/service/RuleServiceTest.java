@@ -20,7 +20,8 @@ package io.meeds.gamification.service;
 import static io.meeds.gamification.constant.GamificationConstant.ACTIVITY_OBJECT_TYPE;
 import static io.meeds.gamification.utils.Utils.POST_PUBLISH_RULE_EVENT;
 import static io.meeds.gamification.utils.Utils.RULE_ACTIVITY_OBJECT_TYPE;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThrows;
 
 import java.util.Collections;
 import java.util.Date;
@@ -52,18 +53,33 @@ import io.meeds.gamification.model.filter.RuleFilter;
 import io.meeds.gamification.storage.mapper.RuleMapper;
 import io.meeds.gamification.test.AbstractServiceTest;
 
+import lombok.SneakyThrows;
+
 public class RuleServiceTest extends AbstractServiceTest {
+
+  private static final String ROOT1             = "root1";
+
+  private static final String RULE2             = "rule2";
+
+  private static final String RULE1             = "rule1";
+
+  private static final String PROGRAM1          = "domain1";
+
+  private static final String PROGRAM2          = "domain2";
+
+  private static final String RULE_DESCRIPTION  = "Description";
 
   private static final String INTERNAL_USER     = "root50";
 
   private static final String SPACE_MEMBER_USER = "root10";
 
-  private static final String ADMIN_USER        = "root1";
+  private static final String ADMIN_USER        = ROOT1;
 
   private Identity            adminAclIdentity;
 
   @Override
-  public void setUp() throws Exception {
+  @SneakyThrows
+  public void setUp() {
     super.setUp();
     adminAclIdentity = registerAdministratorUser(ADMIN_USER);
     registerInternalUser(SPACE_MEMBER_USER);
@@ -173,7 +189,8 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testDeleteRule() throws Exception {
+  @SneakyThrows
+  public void testDeleteRule() {
     RuleEntity ruleEntity = newRule();
     assertFalse(ruleEntity.isDeleted());
     ruleService.deleteRuleById(ruleEntity.getId(), ADMIN_USER);
@@ -182,7 +199,8 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testDeleteNotEndedRule() throws Exception {
+  @SneakyThrows
+  public void testDeleteNotEndedRule() {
     RuleEntity ruleEntity = newRule();
     assertFalse(ruleEntity.isDeleted());
 
@@ -222,13 +240,14 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCreateRule() throws Exception {
+  @SneakyThrows
+  public void testCreateRule() {
     assertEquals(ruleDAO.findAll().size(), 0);
     assertThrows(IllegalArgumentException.class, () -> ruleService.createRule(null, SPACE_MEMBER_USER));
     RuleEntity rule = new RuleEntity();
     rule.setScore(Integer.parseInt(TEST_SCORE));
     rule.setTitle(RULE_NAME);
-    rule.setDescription("Description");
+    rule.setDescription(RULE_DESCRIPTION);
     rule.setEnabled(true);
     rule.setDeleted(false);
     rule.setEventEntity(newEvent(RULE_NAME));
@@ -244,13 +263,14 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCreateRuleWithNoEvent() throws Exception {
+  @SneakyThrows
+  public void testCreateRuleWithNoEvent() {
     assertEquals(ruleDAO.findAll().size(), 0);
     assertThrows(IllegalArgumentException.class, () -> ruleService.createRule(null, SPACE_MEMBER_USER));
     RuleEntity rule = new RuleEntity();
     rule.setScore(Integer.parseInt(TEST_SCORE));
     rule.setTitle(RULE_NAME);
-    rule.setDescription("Description");
+    rule.setDescription(RULE_DESCRIPTION);
     rule.setEnabled(true);
     rule.setDeleted(false);
     rule.setCreatedBy(TEST_USER_EARNER);
@@ -267,7 +287,8 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testUpdateRule() throws Exception {
+  @SneakyThrows
+  public void testUpdateRule() {
     assertEquals(ruleDAO.findAll().size(), 0);
     assertThrows(ObjectNotFoundException.class, () -> ruleService.updateRule(new RuleDTO(), "root"));
     RuleDTO createdRule = ruleService.findRuleById(newRuleDTO().getId(), ADMIN_USER);
@@ -310,11 +331,12 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCreateRuleWithPublication() throws Exception {
+  @SneakyThrows
+  public void testCreateRuleWithPublication() {
     AtomicInteger triggerCount = new AtomicInteger(0);
     listenerService.addListener(POST_PUBLISH_RULE_EVENT, new Listener<RuleDTO, String>() {
       @Override
-      public void onEvent(Event<RuleDTO, String> event) throws Exception {
+      public void onEvent(Event<RuleDTO, String> event) {
         triggerCount.incrementAndGet();
       }
     });
@@ -323,7 +345,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     RulePublication rule = new RulePublication();
     rule.setScore(Integer.parseInt(TEST_SCORE));
     rule.setTitle(RULE_NAME);
-    rule.setDescription("Description");
+    rule.setDescription(RULE_DESCRIPTION);
     rule.setEnabled(true);
     rule.setDeleted(false);
     rule.setEvent(newEventDTO(RULE_NAME));
@@ -352,11 +374,12 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCreateRuleWithoutPublication() throws Exception {
+  @SneakyThrows
+  public void testCreateRuleWithoutPublication() {
     AtomicInteger triggerCount = new AtomicInteger(0);
     listenerService.addListener(POST_PUBLISH_RULE_EVENT, new Listener<RuleDTO, String>() {
       @Override
-      public void onEvent(Event<RuleDTO, String> event) throws Exception {
+      public void onEvent(Event<RuleDTO, String> event) {
         triggerCount.incrementAndGet();
       }
     });
@@ -366,7 +389,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     RulePublication rule = new RulePublication();
     rule.setScore(Integer.parseInt(TEST_SCORE));
     rule.setTitle(RULE_NAME);
-    rule.setDescription("Description");
+    rule.setDescription(RULE_DESCRIPTION);
     rule.setEnabled(true);
     rule.setDeleted(false);
     rule.setEvent(newEventDTO(RULE_NAME));
@@ -393,14 +416,15 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetRulesByAdmin() throws Exception {
+  @SneakyThrows
+  public void testGetRulesByAdmin() {
     newRuleDTO();
-    ProgramEntity domainEntity1 = newDomain("domain1");
-    ProgramEntity domainEntity2 = newDomain("domain2");
-    RuleDTO ruleDTO1 = newRuleDTO("rule1", domainEntity1.getId());
+    ProgramEntity domainEntity1 = newDomain(PROGRAM1);
+    ProgramEntity domainEntity2 = newDomain(PROGRAM2);
+    RuleDTO ruleDTO1 = newRuleDTO(RULE1, domainEntity1.getId());
     ruleDTO1.setEnabled(false);
     ruleService.updateRule(ruleDTO1, ADMIN_USER);
-    RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
+    RuleDTO ruleDTO2 = newRuleDTO(RULE2, domainEntity2.getId());
     ruleDTO2.setEnabled(false);
     ruleService.updateRule(ruleDTO2, ADMIN_USER);
     RuleFilter filter = new RuleFilter();
@@ -430,14 +454,15 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetRulesBySpaceMember() throws Exception {
+  @SneakyThrows
+  public void testGetRulesBySpaceMember() {
     newRuleDTO();
-    ProgramEntity domainEntity1 = newDomain("domain1");
-    ProgramEntity domainEntity2 = newDomain("domain2");
-    RuleDTO ruleDTO1 = newRuleDTO("rule1", domainEntity1.getId());
+    ProgramEntity domainEntity1 = newDomain(PROGRAM1);
+    ProgramEntity domainEntity2 = newDomain(PROGRAM2);
+    RuleDTO ruleDTO1 = newRuleDTO(RULE1, domainEntity1.getId());
     ruleDTO1.setEnabled(false);
     ruleService.updateRule(ruleDTO1, ADMIN_USER);
-    RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
+    RuleDTO ruleDTO2 = newRuleDTO(RULE2, domainEntity2.getId());
     ruleDTO2.setEnabled(false);
     ruleService.updateRule(ruleDTO2, ADMIN_USER);
     RuleFilter filter = new RuleFilter();
@@ -459,14 +484,15 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetRulesByNonMemberUser() throws Exception {
+  @SneakyThrows
+  public void testGetRulesByNonMemberUser() {
     newRuleDTO();
-    ProgramEntity domainEntity1 = newDomain("domain1");
-    ProgramEntity domainEntity2 = newDomain("domain2");
-    RuleDTO ruleDTO1 = newRuleDTO("rule1", domainEntity1.getId());
+    ProgramEntity domainEntity1 = newDomain(PROGRAM1);
+    ProgramEntity domainEntity2 = newDomain(PROGRAM2);
+    RuleDTO ruleDTO1 = newRuleDTO(RULE1, domainEntity1.getId());
     ruleDTO1.setEnabled(false);
     ruleService.updateRule(ruleDTO1, ADMIN_USER);
-    RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
+    RuleDTO ruleDTO2 = newRuleDTO(RULE2, domainEntity2.getId());
     ruleDTO2.setEnabled(false);
     ruleService.updateRule(ruleDTO2, ADMIN_USER);
     RuleFilter filter = new RuleFilter();
@@ -488,27 +514,28 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetOpenRulesByInternalUser() throws Exception {
+  @SneakyThrows
+  public void testGetOpenRulesByInternalUser() {
     RuleDTO ruleDTO = newRuleDTO();
     ProgramDTO program = ruleDTO.getProgram();
     program.setOpen(true);
     programService.updateProgram(program, adminAclIdentity);
 
-    ProgramEntity domainEntity1 = newOpenProgram("domain1");
-    ProgramEntity domainEntity2 = newOpenProgram("domain2");
-    RuleDTO rule1 = newRuleDTO("rule1", domainEntity1.getId());
-    rule1 = ruleService.findRuleById(rule1.getId(), "root1");
+    ProgramEntity domainEntity1 = newOpenProgram(PROGRAM1);
+    ProgramEntity domainEntity2 = newOpenProgram(PROGRAM2);
+    RuleDTO rule1 = newRuleDTO(RULE1, domainEntity1.getId());
+    rule1 = ruleService.findRuleById(rule1.getId(), ROOT1);
     assertTrue(rule1.getActivityId() > 0);
     ExoSocialActivity activity = activityManager.getActivity(String.valueOf(rule1.getActivityId()));
     assertNotNull(activity);
     assertTrue(activity.isHidden());
     assertTrue(StringUtils.isBlank(activity.getTitle()));
     assertTrue(activity.getActivityStream().isUser());
-    assertEquals("root1", activity.getActivityStream().getPrettyId());
+    assertEquals(ROOT1, activity.getActivityStream().getPrettyId());
 
     rule1.setEnabled(false);
     ruleService.updateRule(rule1, ADMIN_USER);
-    RuleDTO ruleDTO2 = newRuleDTO("rule2", domainEntity2.getId());
+    RuleDTO ruleDTO2 = newRuleDTO(RULE2, domainEntity2.getId());
     ruleDTO2.setEnabled(false);
     ruleService.updateRule(ruleDTO2, ADMIN_USER);
     RuleFilter filter = new RuleFilter();

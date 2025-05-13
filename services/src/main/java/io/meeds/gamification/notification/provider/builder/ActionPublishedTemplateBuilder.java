@@ -28,6 +28,7 @@ import java.io.Writer;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.api.notification.NotificationContext;
@@ -100,7 +101,7 @@ public class ActionPublishedTemplateBuilder extends AbstractTemplateBuilder {
                                                                          pluginId,
                                                                          language);
 
-    Locale userLocale = new Locale(language);
+    Locale userLocale = LocaleUtils.toLocale(language);
     String ruleTitle = translationService.getTranslationLabel(RULE_OBJECT_TYPE,
                                                               Long.parseLong(ruleId),
                                                               RULE_TITLE_FIELD_NAME,
