@@ -174,7 +174,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
 
   protected ProgramDAO                   programDAO;
 
-  protected ProgramStorage               domainStorage;
+  protected ProgramStorage               programStorage;
 
   protected FileService                  fileService;
 
@@ -234,7 +234,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     realizationDAO = ExoContainerContext.getService(RealizationDAO.class);
     connectorAccountDAO = ExoContainerContext.getService(ConnectorAccountDAO.class);
     identityManager = ExoContainerContext.getService(IdentityManager.class);
-    domainStorage = ExoContainerContext.getService(ProgramStorage.class);
+    programStorage = ExoContainerContext.getService(ProgramStorage.class);
     fileService = ExoContainerContext.getService(FileService.class);
     ruleStorage = ExoContainerContext.getService(RuleStorage.class);
     activityManager = ExoContainerContext.getService(ActivityManager.class);
@@ -303,7 +303,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
       programDAO.deleteAll();
       connectorAccountDAO.deleteAll();
       eventDAO.deleteAll();
-      domainStorage.clearCache();
+      programStorage.clearCache();
       ruleStorage.clearCache();
       end();
     }
@@ -482,7 +482,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     owners.add(1L);
     domain.setOwners(owners);
     domain = programDAO.create(domain);
-    domainStorage.clearCache();
+    programStorage.clearCache();
     return domain;
   }
 
@@ -516,7 +516,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     domain.setAudienceId(audienceId);
     domain.setOwners(owners);
     ProgramEntity createdDomain = programDAO.create(domain);
-    domainStorage.clearCache();
+    programStorage.clearCache();
     restartTransaction();
     return createdDomain;
   }
@@ -537,7 +537,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     domain.setType(EntityType.AUTOMATIC);
     domain.setCreatedDate(new Date());
     domain = programDAO.create(domain);
-    domainStorage.clearCache();
+    programStorage.clearCache();
     restartTransaction();
     return domain;
   }
@@ -555,7 +555,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     domain.setCreatedDate(new Date());
     domain.setAudienceId(1L);
     domain = programDAO.create(domain);
-    domainStorage.clearCache();
+    programStorage.clearCache();
     restartTransaction();
     return domain;
   }
@@ -756,15 +756,15 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
 
   protected RealizationDTO newRealizationDTO() {
     ProgramEntity domainEntity = newDomain();
-    return RealizationMapper.fromEntity(domainStorage, newRealizationEntity("rule", domainEntity.getId()));
+    return RealizationMapper.fromEntity(programStorage, newRealizationEntity("rule", domainEntity.getId()));
   }
 
   protected RuleDTO newRuleDTO() {
-    return RuleMapper.fromEntity(domainStorage, eventStorage, newRule());
+    return RuleMapper.fromEntity(programStorage, eventStorage, newRule());
   }
 
   protected RuleDTO newRuleDTO(String name, long domainId) {
-    return RuleMapper.fromEntity(domainStorage, eventStorage, newRule(name, domainId));
+    return RuleMapper.fromEntity(programStorage, eventStorage, newRule(name, domainId));
   }
 
   protected ProgramDTO newProgram() {
@@ -780,7 +780,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
   }
 
   protected BadgeDTO newBadgeDTO() {
-    return BadgeMapper.fromEntity(domainStorage, newBadge(1L));
+    return BadgeMapper.fromEntity(programStorage, newBadge(1L));
   }
 
   public boolean isThisDateWithinThisRange(Date date) {
