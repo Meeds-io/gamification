@@ -141,6 +141,11 @@ function getRealizationsFormData(filter) {
       formData.append('programIds', programId);
     }
   }
+  if (filter?.spaceIds?.length > 0) {
+    for (const spaceId of filter.spaceIds) {
+      formData.append('spaceIds', spaceId);
+    }
+  }
   if (filter?.ruleIds?.length > 0) {
     for (const ruleId of filter.ruleIds) {
       formData.append('ruleIds', ruleId);
