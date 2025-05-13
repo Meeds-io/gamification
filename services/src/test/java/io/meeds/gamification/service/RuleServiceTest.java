@@ -258,7 +258,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setDomainEntity(newDomain(GAMIFICATION_DOMAIN));
     rule.setType(EntityType.AUTOMATIC);
     rule.setRecurrence(RecurrenceType.NONE);
-    ruleService.createRule(RuleMapper.fromEntity(domainStorage, eventStorage, rule), ADMIN_USER);
+    ruleService.createRule(RuleMapper.fromEntity(programStorage, eventStorage, rule), ADMIN_USER);
     assertEquals(ruleDAO.findAll().size(), 1);
   }
 
@@ -280,9 +280,9 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setDomainEntity(newDomain(GAMIFICATION_DOMAIN));
     rule.setType(EntityType.AUTOMATIC);
     rule.setRecurrence(RecurrenceType.NONE);
-    ruleService.createRule(RuleMapper.fromEntity(domainStorage, eventStorage, rule), ADMIN_USER);
+    ruleService.createRule(RuleMapper.fromEntity(programStorage, eventStorage, rule), ADMIN_USER);
     assertEquals(ruleDAO.findAll().size(), 1);
-    ruleService.createRule(RuleMapper.fromEntity(domainStorage, eventStorage, rule), ADMIN_USER);
+    ruleService.createRule(RuleMapper.fromEntity(programStorage, eventStorage, rule), ADMIN_USER);
     assertEquals(ruleDAO.findAll().size(), 2);
   }
 

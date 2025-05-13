@@ -127,6 +127,7 @@
                   class="width-auto flex-grow-1 pt-4"
                   back-icon
                   rich-editor
+                  content-link-enabled
                   @initialized="setFormInitialized">
                   <template #title>
                     {{ $t('programs.label.describeProgram') }}
@@ -139,6 +140,7 @@
                     :max-length="maxDescriptionLength"
                     :tag-enabled="false"
                     ck-editor-type="program"
+                    content-link-enabled
                     @validity-updated="validDescription = $event" />
                 </translation-text-field>
               </div>

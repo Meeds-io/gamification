@@ -19,17 +19,28 @@
  */
 package io.meeds.gamification.plugin;
 
+import static io.meeds.portal.plugin.AclPlugin.EDIT_PERMISSION_TYPE;
+import static io.meeds.portal.plugin.AclPlugin.VIEW_PERMISSION_TYPE;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.gamification.model.RuleDTO;
-import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.social.translation.plugin.TranslationPlugin;
+import io.meeds.social.translation.service.TranslationService;
 
+import jakarta.annotation.PostConstruct;
+
+@Component
 public class RuleTranslationPlugin extends TranslationPlugin {
 
   public static final String RULE_OBJECT_TYPE            = "rule";
@@ -38,22 +49,24 @@ public class RuleTranslationPlugin extends TranslationPlugin {
 
   public static final String RULE_TITLE_FIELD_NAME       = "title";
 
+  @Autowired
   private RuleService        ruleService;
 
-  private ProgramService     programService;
-
+  @Autowired
   private SpaceService       spaceService;
 
+  @Autowired
   private IdentityManager    identityManager;
 
-  public RuleTranslationPlugin(ProgramService programService,
-                               RuleService ruleService,
-                               SpaceService spaceService,
-                               IdentityManager identityManager) {
-    this.programService = programService;
-    this.ruleService = ruleService;
-    this.spaceService = spaceService;
-    this.identityManager = identityManager;
+  @Autowired
+  private UserACL            userACL;
+
+  @Autowired
+  private PortalContainer    container;
+
+  @PostConstruct
+  public void init() {
+    container.getComponentInstanceOfType(TranslationService.class).addPlugin(this);
   }
 
   @Override
@@ -63,22 +76,12 @@ public class RuleTranslationPlugin extends TranslationPlugin {
 
   @Override
   public boolean hasAccessPermission(long ruleId, String username) throws ObjectNotFoundException {
-    try {
-      RuleDTO rule = this.ruleService.findRuleById(ruleId, username);
-      return rule != null && programService.canViewProgram(rule.getProgramId(), username);
-    } catch (IllegalAccessException e) {
-      return false;
-    }
+    return userACL.hasPermission(RULE_OBJECT_TYPE, String.valueOf(ruleId), VIEW_PERMISSION_TYPE, username);
   }
 
   @Override
   public boolean hasEditPermission(long ruleId, String username) throws ObjectNotFoundException {
-    try {
-      RuleDTO rule = this.ruleService.findRuleById(ruleId, username);
-      return rule != null && programService.isProgramOwner(rule.getProgramId(), username);
-    } catch (IllegalAccessException e) {
-      return false;
-    }
+    return userACL.hasPermission(RULE_OBJECT_TYPE, String.valueOf(ruleId), EDIT_PERMISSION_TYPE, username);
   }
 
   @Override
