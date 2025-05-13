@@ -472,6 +472,7 @@ export default {
       if (this.interval) {
         window.clearInterval(this.interval);
       }
+      this.$emit('closed');
     },
     clear() {
       this.rule = {};
