@@ -191,17 +191,17 @@ public class RuleBuilder {
     if (rule == null || locale == null) {
       return;
     }
-    String translatedTitle = translationService.getTranslationLabel(RULE_OBJECT_TYPE,
-                                                                    rule.getId(),
-                                                                    RULE_TITLE_FIELD_NAME,
-                                                                    locale);
+    String translatedTitle = translationService.getTranslationLabelOrDefault(RULE_OBJECT_TYPE,
+                                                                             rule.getId(),
+                                                                             RULE_TITLE_FIELD_NAME,
+                                                                             locale);
     if (StringUtils.isNotBlank(translatedTitle)) {
       rule.setTitle(translatedTitle);
     }
-    String translatedDescription = translationService.getTranslationLabel(RULE_OBJECT_TYPE,
-                                                                          rule.getId(),
-                                                                          RULE_DESCRIPTION_FIELD_NAME,
-                                                                          locale);
+    String translatedDescription = translationService.getTranslationLabelOrDefault(RULE_OBJECT_TYPE,
+                                                                                   rule.getId(),
+                                                                                   RULE_DESCRIPTION_FIELD_NAME,
+                                                                                   locale);
     if (StringUtils.isNotBlank(translatedDescription)) {
       rule.setDescription(translatedDescription);
     }
