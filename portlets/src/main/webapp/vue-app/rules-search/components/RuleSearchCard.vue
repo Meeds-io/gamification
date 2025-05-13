@@ -16,84 +16,112 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card
-    class="d-flex flex-column border-radius box-shadow rule-search-card overflow-hidden"
-    flat
-    min-height="227">
-    <v-card-text class="px-2 pt-2 pb-0">
-      <div class="d-flex flex-nowrap align-center overflow-hidden">
-        <rule-icon
-          :size="36"
-          :rule-event="eventName"
-          class="align-start me-3 flex-grow-0 flex-shrink-0" />
-        <div
-          v-sanitized-html="ruleTitle"
-          :title="rule.title"
-          class="text-truncate-2 text-start text-color flex-grow-1 flex-shrink-1 me-3"></div>
-        <favorite-button
-          :favorite="isFavorite"
-          :id="rule.id"
-          type="rule"
-          type-label="rules"
-          top="0"
-          right="0"
-          absolute
-          class="align-start"
-          @removed="$emit('refresh-favorite')" />
-      </div>
-    </v-card-text>
-    <div class="d-flex flex-column flex-grow-1 flex-shrink-1 full-width mx-auto px-3 pt-2 overflow-hidden">
-      <div
-        v-sanitized-html="ruleDescription"
-        class="text-wrap text-break caption text-truncate-3">
-      </div>
-      <div class="d-flex flex-nowrap align-center overflow-hidden mt-auto pb-2 pt-1">
-        <v-chip
-          color="tertiary"
-          class="content-box-sizing white--text me-2"
-          small>
-          <span>+ {{ rule.score }}</span>
-        </v-chip>
-        <div class="d-flex flex-nowrap justify-center">
-          <v-tooltip top>
-            <template #activator="{on}">
+  <v-hover v-slot="{ hover }">
+    <v-card
+      flat
+      class="pa-0"
+      @click="openRuleDetailsDrawer()">
+      <v-list class="pa-0" :class="hover && 'light-grey-background-color no-border-radius' || ''">
+        <v-list-item>
+          <v-list-item-icon class="ms-n1 me-2">
+            <v-icon size="32" class="icon-default-color mt-2">fas fa-trophy</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title class="d-flex flex-row full-width align-center" :title="newsTitle">
+              <p
+                :title="rule.title"
+                class="flex-grow-1 title font-weight-bold pt-1 mb-0 ps-0 my-auto align-center text-start text-truncate"
+                v-sanitized-html="ruleTitle"></p>
+              <span v-show="hover || isMobile" class="ml-2">
+                <v-btn icon @click="openRuleDetailsDrawer(true)">
+                  <v-icon class="icon-default-color" size="16">
+                    fa fa-bullhorn
+                  </v-icon>
+                </v-btn>
+                <favorite-button
+                  :favorite="isFavorite"
+                  :id="rule.id"
+                  type="rule"
+                  type-label="rules"
+                  top="0"
+                  right="0"
+                  class="align-start"
+                  @removed="$emit('refresh-favorite')" />
+              </span>
+            </v-list-item-title>
+
+            <v-list-item-subtitle class="d-flex flex-column">
+              <span class="d-flex flex-row align-center mx-auto full-width">
+                <v-avatar
+                  v-if="!isMobile"
+                  size="24"
+                  rounded
+                  class="rule-program-cover border-color primary--text">
+                  <img
+                    class="object-fit-cover ma-auto"
+                    :style="programStyle"
+                    :src="programAvatarUrl">
+                </v-avatar>
+                <span v-if="!isMobile" class="text-subtitle px-2">{{ programTitle }}</span>
+                <v-icon
+                  v-if="!isMobile"
+                  size="3"
+                  class="icon-default-color mx-3">
+                  fas fa-circle
+                </v-icon>
+                <v-chip
+                  color="primary"
+                  class="content-box-sizing white--text me-2"
+                  justify-center
+                  x-small>
+                  <span>+ {{ rule.score }}</span>
+                </v-chip>
+                <v-icon
+                  v-if="!isMobile"
+                  size="3"
+                  class="icon-default-color mx-3">
+                  fas fa-circle
+                </v-icon>
+                <v-tooltip top v-if="!isMobile">
+                  <template #activator="{on}">
+                    <div
+                      v-sanitized-html="recurrenceTitle"
+                      class="text-subtitle"
+                      v-on="on">
+                    </div>
+                    <v-icon size="12" class="pe-1">
+                      fas fa-redo
+                    </v-icon>
+                  </template>
+                  <span>{{ recurrenceTooltip }}</span>
+                </v-tooltip>
+              </span>
               <div
-                v-sanitized-html="recurrenceTitle"
-                class="text-wrap font-weight-bold"
-                v-on="on">
-              </div>
-            </template>
-            <span>{{ recurrenceTooltip }}</span>
-          </v-tooltip>
-        </div>
+                class="pt-2 text-wrap text-body text-break"
+                :title="ruleDescription"
+                :class="{
+                  'text-truncate-2': isMobile,
+                  'text-truncate-3': !isMobile,
+                }"
+                v-sanitized-html="ruleDescription"></div>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+      <div v-if="drawer">
+        <engagement-center-rule-detail-drawer ref="searchResultRuleDetailsDrawer" @closed="close" />
+        <engagement-center-rule-extensions />
       </div>
-    </div>
-    <v-list class="light-grey-background flex-grow-0 border-top-color no-border-radius pa-0">
-      <v-list-item :href="ruleLink" class="px-0 pt-1 pb-2">
-        <v-list-item-avatar
-          class="mx-3 my-auto"
-          tile
-          rounded>
-          <v-img
-            src="/gamification-portlets/skin/images/contributionCenterIcon.webp"
-            contain />
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title :title="activityReactions">
-            {{ realizationsCount }} {{ $t('gamification.overview.label.participations') }}
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            {{ programTitle }}
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-    </v-list>
-    <engagement-center-rule-extensions />
-  </v-card>
+    </v-card>
+  </v-hover>
 </template>
 
 <script>
 export default {
+  data: () => ({
+    drawer: false,
+  }),
   props: {
     term: {
       type: String,
@@ -105,8 +133,8 @@ export default {
     },
   },
   computed: {
-    isComment() {
-      return this.result && this.result.comment;
+    programAvatarUrl() {
+      return this.result?.program?.avatarUrl;
     },
     rule() {
       return this.result || {};
@@ -120,14 +148,11 @@ export default {
     ruleDescription() {
       return this.rule.descriptionExcerpt || this.rule.description || '';
     },
-    ruleLink() {
-      return `/${eXo.env.portal.containerName}/${eXo.env.portal.engagementSiteName}/contributions/actions/${this.rule.id}`;
-    },
     isFavorite() {
       return this.rule.favorite;
     },
     program() {
-      return this.rule.program;
+      return this.rule?.program;
     },
     programTitle() {
       return this.program?.title || '';
@@ -163,6 +188,24 @@ export default {
         return null;
       }
     },
+    isMobile() {
+      return this.$vuetify?.breakpoint?.smAndDown;
+    },
+    programStyle() {
+      return this.rule?.program?.color && `border: 1px solid ${this.rule.program.color} !important;` || '';
+    },
   },
+  methods: {
+    async openRuleDetailsDrawer(displayAnnouncementForm) {
+      this.drawer = true;
+      await this.$nextTick();
+      this.$refs.searchResultRuleDetailsDrawer.open(this.rule, displayAnnouncementForm || false);
+    },
+    async close() {
+      this.$refs.searchResultRuleDetailsDrawer.close();
+      await this.$nextTick();
+      this.drawer = false;
+    },
+  }
 };
 </script>
