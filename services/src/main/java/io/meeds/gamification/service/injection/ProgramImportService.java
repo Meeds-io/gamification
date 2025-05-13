@@ -18,28 +18,23 @@
  */
 package io.meeds.gamification.service.injection;
 
+import static io.meeds.gamification.utils.Utils.getUserAclIdentity;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-import io.meeds.gamification.constant.EntityStatusType;
-import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.model.*;
-import io.meeds.gamification.model.filter.ProgramFilter;
-import io.meeds.gamification.plugin.ProgramTranslationPlugin;
-import io.meeds.gamification.plugin.RuleTranslationPlugin;
-import io.meeds.gamification.service.ProgramService;
-import io.meeds.gamification.service.RuleService;
-import io.meeds.gamification.utils.Utils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.commons.file.model.FileItem;
-import org.exoplatform.commons.file.services.FileService;
-import org.exoplatform.portal.config.UserACL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -48,17 +43,33 @@ import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
-import org.exoplatform.container.configuration.ConfigurationManager;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.commons.file.model.FileItem;
+import org.exoplatform.commons.file.services.FileService;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
 
 import io.meeds.common.ContainerTransactional;
+import io.meeds.gamification.constant.EntityStatusType;
+import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.model.EventDTO;
+import io.meeds.gamification.model.ProgramDTO;
+import io.meeds.gamification.model.ProgramDescriptor;
+import io.meeds.gamification.model.ProgramDescriptorList;
+import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.model.RuleDescriptor;
+import io.meeds.gamification.model.RuleDescriptorList;
+import io.meeds.gamification.model.filter.ProgramFilter;
+import io.meeds.gamification.plugin.ProgramTranslationPlugin;
+import io.meeds.gamification.plugin.RuleTranslationPlugin;
+import io.meeds.gamification.service.ProgramService;
+import io.meeds.gamification.service.RuleService;
+import io.meeds.gamification.utils.Utils;
 
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
-
-import static io.meeds.gamification.utils.Utils.getUserAclIdentity;
 
 @Component
 public class ProgramImportService {
@@ -87,9 +98,6 @@ public class ProgramImportService {
 
   @Autowired
   private SettingService                  settingService;
-
-  @Autowired
-  private ConfigurationManager            configurationManager;
 
   @Autowired
   private UserACL                         userAcl;

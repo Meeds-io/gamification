@@ -71,6 +71,7 @@
         object-type="activity"
         ck-editor-type="activityComment"
         class="flex my-3"
+        content-link-enabled
         autofocus
         @validity-updated="validLength = $event" />
     </div>

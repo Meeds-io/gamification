@@ -46,7 +46,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
 
-import io.meeds.gamification.model.EventDTO;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -56,20 +55,20 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import io.meeds.analytics.utils.AnalyticsUtils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import io.meeds.analytics.utils.AnalyticsUtils;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.RealizationStatus;
+import io.meeds.gamification.model.EventDTO;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
-import io.meeds.gamification.service.EventService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 
@@ -111,9 +110,6 @@ public class AnalyticsRealizationListenerTest {
   private RuleService                         ruleService;
 
   @Mock
-  private EventService                        eventService;
-
-  @Mock
   private RealizationService                  realizationService;
 
   @Mock
@@ -149,7 +145,7 @@ public class AnalyticsRealizationListenerTest {
     ANALYTICS_UTILS.when(() -> AnalyticsUtils.addSpaceStatistics(any(), any())).thenCallRealMethod();
     when(event.getSource()).thenReturn(realization);
     when(ruleService.findRuleById(CHALLENGE_ID)).thenReturn(ruleDTO);
-    realizationListener = new AnalyticsRealizationListener(ruleService, eventService, null, identityManager, spaceService);
+    realizationListener = new AnalyticsRealizationListener(ruleService, null, identityManager, spaceService);
   }
 
   @Test
@@ -254,11 +250,11 @@ public class AnalyticsRealizationListenerTest {
   }
 
   private EventDTO newEvent() {
-    EventDTO event = new EventDTO();
-    event.setTitle(EVENT_NAME);
-    event.setTrigger(EVENT_NAME);
-    event.setType("eventType");
-    return event;
+    EventDTO eventDto = new EventDTO();
+    eventDto.setTitle(EVENT_NAME);
+    eventDto.setTrigger(EVENT_NAME);
+    eventDto.setType("eventType");
+    return eventDto;
   }
 
 }
