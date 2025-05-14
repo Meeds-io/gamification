@@ -51,6 +51,7 @@ module.exports = {
     connectorExtensions: './src/main/webapp/vue-app/connectors-extensions/main.js',
     connectorUserExtensions: './src/main/webapp/vue-app/connector-user-extensions/main.js',
     gamificationQuickActionExtensions: "./src/main/webapp/vue-app/quick-actions/extensions.js",
+    gamificationContentLinkExtensions: "./src/main/webapp/vue-app/content-link/extensions.js",
   },
   plugins: [
     new ESLintPlugin({
