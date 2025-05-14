@@ -60,7 +60,8 @@ public class RuleContentLinkPlugin implements ContentLinkPlugin {
   private static final ContentLinkExtension EXTENSION   = new ContentLinkExtension(OBJECT_TYPE,
                                                                                    TITLE_KEY,
                                                                                    ICON,
-                                                                                   COMMAND);
+                                                                                   COMMAND,
+                                                                                   true);
 
   @Autowired
   private RuleService                       ruleService;
@@ -124,7 +125,8 @@ public class RuleContentLinkPlugin implements ContentLinkPlugin {
     return new ContentLinkSearchResult(OBJECT_TYPE,
                                        String.valueOf(rule.getId()),
                                        getRuleTitle(rule, locale),
-                                       EXTENSION.getIcon());
+                                       EXTENSION.getIcon(),
+                                       EXTENSION.isDrawer());
   }
 
   private String getRuleTitle(RuleDTO rule, Locale locale) {
