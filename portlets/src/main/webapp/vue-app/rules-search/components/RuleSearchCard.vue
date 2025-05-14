@@ -28,27 +28,27 @@
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title class="d-flex flex-row full-width align-center" :title="newsTitle">
+            <v-list-item-title class="d-flex flex-row full-width align-center">
               <p
-                :title="rule.title"
+                :title="ruleTitle"
                 class="flex-grow-1 title font-weight-bold pt-1 mb-0 ps-0 my-auto align-center text-start text-truncate"
                 v-sanitized-html="ruleTitle"></p>
-              <span v-show="hover || isMobile" class="ml-2">
-                <v-btn icon @click="openRuleDetailsDrawer(true)">
+              <div v-show="hover || isMobile" class="ml-2 pt-1">
+                <span  class="d-flex d-inline-flex">
+                <v-btn icon small @click="openRuleDetailsDrawer(true)">
                   <v-icon class="icon-default-color" size="16">
                     fa fa-bullhorn
                   </v-icon>
                 </v-btn>
                 <favorite-button
-                  :favorite="isFavorite"
-                  :id="rule.id"
-                  type="rule"
-                  type-label="rules"
-                  top="0"
-                  right="0"
-                  class="align-start"
-                  @removed="$emit('refresh-favorite')" />
+                    :favorite="isFavorite"
+                    :id="rule.id"
+                    type="rule"
+                    type-label="rules"
+                    class="ps-1"
+                    @removed="$emit('refresh-favorite')" />
               </span>
+              </div>
             </v-list-item-title>
 
             <v-list-item-subtitle class="d-flex flex-column">
@@ -71,19 +71,19 @@
                   fas fa-circle
                 </v-icon>
                 <v-chip
-                  color="primary"
+                  color="tertiary"
                   class="content-box-sizing white--text me-2"
                   justify-center
                   x-small>
                   <span>+ {{ rule.score }}</span>
                 </v-chip>
                 <v-icon
-                  v-if="!isMobile"
+                  v-if="!isMobile && recurrenceTitle"
                   size="3"
                   class="icon-default-color mx-3">
                   fas fa-circle
                 </v-icon>
-                <v-tooltip top v-if="!isMobile">
+                <v-tooltip top v-if="!isMobile && recurrenceTitle">
                   <template #activator="{on}">
                     <div
                       v-sanitized-html="recurrenceTitle"
@@ -141,9 +141,6 @@ export default {
     },
     ruleTitle() {
       return this.rule.titleExcerpt || this.rule.title || '';
-    },
-    eventName() {
-      return this.rule.event?.title;
     },
     ruleDescription() {
       return this.rule.descriptionExcerpt || this.rule.description || '';
