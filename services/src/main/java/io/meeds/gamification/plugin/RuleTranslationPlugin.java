@@ -19,9 +19,6 @@
  */
 package io.meeds.gamification.plugin;
 
-import static io.meeds.portal.plugin.AclPlugin.EDIT_PERMISSION_TYPE;
-import static io.meeds.portal.plugin.AclPlugin.VIEW_PERMISSION_TYPE;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -76,12 +73,12 @@ public class RuleTranslationPlugin extends TranslationPlugin {
 
   @Override
   public boolean hasAccessPermission(long ruleId, String username) throws ObjectNotFoundException {
-    return userACL.hasPermission(RULE_OBJECT_TYPE, String.valueOf(ruleId), VIEW_PERMISSION_TYPE, username);
+    return userACL.hasAccessPermission(RULE_OBJECT_TYPE, String.valueOf(ruleId), username);
   }
 
   @Override
   public boolean hasEditPermission(long ruleId, String username) throws ObjectNotFoundException {
-    return userACL.hasPermission(RULE_OBJECT_TYPE, String.valueOf(ruleId), EDIT_PERMISSION_TYPE, username);
+    return userACL.hasEditPermission(RULE_OBJECT_TYPE, String.valueOf(ruleId), username);
   }
 
   @Override
