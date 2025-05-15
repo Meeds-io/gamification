@@ -22,6 +22,8 @@
     ProgramService programService = ExoContainerContext.getService(ProgramService.class);
     boolean isAdministrator = Utils.isRewardingManager(username);
 
+    boolean isProgramManager = isAdministrator || programService.countOwnedPrograms(username) > 0;
+
     Space currentSpace = SpaceUtils.getSpaceByContext();
     boolean canAddProgram = programService.canAddProgram(username, currentSpace != null ? currentSpace.getSpaceId() : 0);
 %>
@@ -33,6 +35,7 @@
         <%=canEdit%>,
         '<%=pageRef%>',
         <%=isAdministrator%>,
+        <%=isProgramManager%>,
         <%=canAddProgram%>
       ));
     </script>
