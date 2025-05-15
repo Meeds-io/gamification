@@ -20,9 +20,10 @@
   <exo-drawer
     id="programsOverviewListDrawer"
     ref="drawer"
-    v-model="drawer"
     :loading="loading"
-    :right="!$vuetify.rtl">
+    :right="!$vuetify.rtl"
+    allow-expand
+    @expand-updated="expanded = $event">
     <template #title>
       {{ spaceId && $t('gamification.overview.space.programsList') || $t('gamification.overview.programsList') }}
     </template>
@@ -33,14 +34,14 @@
         @click="$root.$emit('program-form-open')">
         <v-icon size="24">fa-plus</v-icon>
       </v-btn>
-      <v-btn
-        :href="actionsPageURL"
-        icon>
-        <v-icon size="24">fa-external-link-alt</v-icon>
-      </v-btn>
     </template>
     <template #content>
-      <gamification-overview-widget height="auto">
+      <engagement-center-programs
+        v-if="expanded"
+        :is-administrator="isAdministrator"
+        :is-program-manager="isProgramManager"
+        :can-add-program="canAddProgram" />
+      <gamification-overview-widget v-else height="auto">
         <gamification-overview-program-item
           v-for="program in programs" 
           :key="program.id"
@@ -58,13 +59,17 @@ export default {
     limitToLoad: -1,
     loading: false,
     spaceId: eXo.env.portal.spaceId,
+    expanded: false,
   }),
   computed: {
-    actionsPageURL() {
-      return eXo.env.portal.portalName === 'public' && '/portal/public/overview/actions' || `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions`;
-    },
     canAddProgram() {
       return this.$root.canAddProgram;
+    },
+    isAdministrator() {
+      return this.$root.isAdministrator;
+    },
+    isProgramManager() {
+      return this.$root.isProgramManager;
     }
   },
   created() {
