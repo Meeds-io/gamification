@@ -161,6 +161,9 @@ public class RealizationRest implements ResourceContainer {
                                   @QueryParam("allPrograms")
                                   @DefaultValue("false")
                                   boolean allPrograms,
+                                  @Parameter(description = "Used to filter realizations by space audience")
+                                  @QueryParam("spaceIds")
+                                  List<Long> spaceIds,
                                   @Parameter(description = "If true, this will return the total count of filtered realizations. Possible values = true or false. Default value = false.", required = false)
                                   @QueryParam("returnSize")
                                   @DefaultValue("false")
@@ -188,7 +191,8 @@ public class RealizationRest implements ResourceContainer {
                                                      programIds,
                                                      ruleIds,
                                                      reviewerIds,
-                                                     allPrograms);
+                                                     allPrograms,
+                                                     spaceIds);
 
     boolean isXlsx = StringUtils.isNotBlank(returnType) && returnType.equals("xlsx");
     if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXlsx) {
