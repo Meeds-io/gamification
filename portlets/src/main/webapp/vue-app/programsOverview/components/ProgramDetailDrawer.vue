@@ -24,15 +24,17 @@
     ref="drawer"
     v-model="drawer"
     :right="!$vuetify.rtl"
-    :go-back-button="goBackButton">
+    :go-back-button="goBackButton"
+    allow-expand
+    @expand-updated="expanded = $event">
     <template #title>
       <span
         :title="$t('rule.detail.letsSeeWhatToDo')"
         class="text-truncate">
-        {{ $t('programs.label.programSummary') }}
+        {{ drawerTitle }}
       </span>
     </template>
-    <template v-if="!$root.isAnonymous" #titleIcons>
+    <template v-if="!$root.isAnonymous && !expanded" #titleIcons>
       <v-btn
         :href="programLink"
         icon>
@@ -40,101 +42,109 @@
       </v-btn>
     </template>
     <template v-if="program && drawer" #content>
-      <v-card
-        class="pa-5"
-        transparent
-        flat>
-        <div class="text-header-title dark-grey-color text-truncate-2">
-          {{ program.title }}
-        </div>
-        <v-avatar
-          id="programImageCover"
-          height="auto"
-          max-width="100%"
-          min-width="100%"
-          class="align-start flex-grow-0 content-box-sizing border-color rounded position-relative mt-2"
-          tile>
-          <img
-            id="engagementCenterImgSelectorImg"
-            :src="program.coverUrl"
-            class="full-width"
-            role="presentation"
-            alt="">
-        </v-avatar>
-        <div class="text-header mt-5">
-          {{ $t('programs.details.label.description') }}
-        </div>
-        <div
-          class="text-color text-wrap text-start text-break rich-editor-content mt-2"
-          v-sanitized-html="program.description">
-        </div>
-        <div v-if="!$root.isAnonymous" class="d-flex flex-column mt-5">
-          <div class="d-flex flex-row">
-            <div class="text-header flex-start text-start flex-grow-1 flex-shrink-1 text-truncate">
-              {{ $t('programs.details.label.audienceSpace') }}
-            </div>
-            <div class="text-header flex-end text-end flex-grow-0 flex-shrink-0">
-              {{ $t('programs.details.label.programOwners') }}
-            </div>
+      <engagement-center-program-detail
+        v-if="expanded"
+        :program="program"
+        :administrators="administrators"
+        :is-administrator="isAdministrator"
+        @updated="program = $event" />
+      <template v-else>
+        <v-card
+          class="pa-5"
+          transparent
+          flat>
+          <div class="text-header-title dark-grey-color text-truncate-2">
+            {{ program.title }}
           </div>
-          <div class="d-flex flex-row">
-            <div class="flex-start text-start flex-grow-1 flex-shrink-1 text-truncate">
-              <exo-space-avatar
-                v-if="program.space"
-                :space="program.space"
-                :size="32"
-                class="text-truncate mt-2"
-                popover />
-              <div v-else-if="!program.spaceId">
-                {{ $t('programs.details.label.programOpenToParticipate') }}
-              </div>
-            </div>
-            <div class="flex-end text-end flex-grow-0 flex-shrink-0">
-              <div v-if="owners.length">
-                <engagement-center-avatars-list
-                  :avatars="owners"
-                  :max-avatars-to-show="3"
-                  :avatars-count="ownersCount"
-                  :size="25"
-                  class="d-flex justify-sm-end pt-2"
-                  @open-avatars-drawer="$root.$emit('open-owners-drawer', owners, true)" />
-              </div>
-              <v-chip v-else class="ms-sm-auto mt-2">
-                {{ $t('programs.label.rewardAdmins') }}
-              </v-chip>
-            </div>
-          </div>
-        </div>
-      </v-card>
-      <gamification-rules-overview-widget
-        v-if="drawer"
-        :program-id="programId"
-        class="mb-4 mx-1"
-        hide-empty-placeholder
-        go-back-button
-        load-size
-        @rules-size="rulesSize = $event"
-        @has-more="hasMore = $event">
-        <template #title>
-          <div class="text-header text-truncate">
-            {{ $t('programs.label.programActions') }}
-          </div>
-        </template>
-        <template v-if="hasMore" #action>
-          <v-btn
+          <v-avatar
+            id="programImageCover"
             height="auto"
-            min-width="auto"
-            class="pa-0"
-            text
-            @click="$refs.listDrawer.open()">
-            <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
-          </v-btn>
-        </template>
-      </gamification-rules-overview-widget>
-      <gamification-rules-overview-list-drawer
-        v-if="hasMore"
-        ref="listDrawer"
-        :program-id="programId" />
+            max-width="100%"
+            min-width="100%"
+            class="align-start flex-grow-0 content-box-sizing border-color rounded position-relative mt-2"
+            tile>
+            <img
+              id="engagementCenterImgSelectorImg"
+              :src="program.coverUrl"
+              class="full-width"
+              role="presentation"
+              alt="">
+          </v-avatar>
+          <div class="text-header mt-5">
+            {{ $t('programs.details.label.description') }}
+          </div>
+          <div
+            class="text-color text-wrap text-start text-break rich-editor-content mt-2"
+            v-sanitized-html="program.description">
+          </div>
+          <div v-if="!$root.isAnonymous" class="d-flex flex-column mt-5">
+            <div class="d-flex flex-row">
+              <div class="text-header flex-start text-start flex-grow-1 flex-shrink-1 text-truncate">
+                {{ $t('programs.details.label.audienceSpace') }}
+              </div>
+              <div class="text-header flex-end text-end flex-grow-0 flex-shrink-0">
+                {{ $t('programs.details.label.programOwners') }}
+              </div>
+            </div>
+            <div class="d-flex flex-row">
+              <div class="flex-start text-start flex-grow-1 flex-shrink-1 text-truncate">
+                <exo-space-avatar
+                  v-if="program.space"
+                  :space="program.space"
+                  :size="32"
+                  class="text-truncate mt-2"
+                  popover />
+                <div v-else-if="!program.spaceId">
+                  {{ $t('programs.details.label.programOpenToParticipate') }}
+                </div>
+              </div>
+              <div class="flex-end text-end flex-grow-0 flex-shrink-0">
+                <div v-if="owners.length">
+                  <engagement-center-avatars-list
+                    :avatars="owners"
+                    :max-avatars-to-show="3"
+                    :avatars-count="ownersCount"
+                    :size="25"
+                    class="d-flex justify-sm-end pt-2"
+                    @open-avatars-drawer="$root.$emit('open-owners-drawer', owners, true)" />
+                </div>
+                <v-chip v-else class="ms-sm-auto mt-2">
+                  {{ $t('programs.label.rewardAdmins') }}
+                </v-chip>
+              </div>
+            </div>
+          </div>
+        </v-card>
+        <gamification-rules-overview-widget
+          v-if="drawer"
+          :program-id="programId"
+          class="mb-4 mx-1"
+          hide-empty-placeholder
+          go-back-button
+          load-size
+          @rules-size="rulesSize = $event"
+          @has-more="hasMore = $event">
+          <template #title>
+            <div class="text-header text-truncate">
+              {{ $t('programs.label.programActions') }}
+            </div>
+          </template>
+          <template v-if="hasMore" #action>
+            <v-btn
+              height="auto"
+              min-width="auto"
+              class="pa-0"
+              text
+              @click="$refs.listDrawer.open()">
+              <span class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+            </v-btn>
+          </template>
+        </gamification-rules-overview-widget>
+        <gamification-rules-overview-list-drawer
+          v-if="hasMore"
+          ref="listDrawer"
+          :program-id="programId" />
+      </template>
     </template>
   </exo-drawer>
 </template>
@@ -153,6 +163,7 @@ export default {
     goBackButton: false,
     hasMore: false,
     rulesSize: 0,
+    expanded: false
   }),
   computed: {
     programLink() {
@@ -190,6 +201,12 @@ export default {
     ownersCount() {
       return this.owners?.length;
     },
+    isAdministrator() {
+      return this.$root.isAdministrator;
+    },
+    drawerTitle() {
+      return !this.expanded ? this.$t('programs.label.programSummary') : this.$t('programs.label.programDetail');
+    }
   },
   created() {
     this.$root.$on('program-detail-drawer', this.open);
