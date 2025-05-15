@@ -245,6 +245,7 @@ export default {
         ruleIds: this.ruleIds,
         owned: this.administrationMode,
         statuses: this.statuses,
+        spaceIds: eXo.env.portal.spaceId ? [eXo.env.portal.spaceId] : []
       };
     },
     exportFileLink() {
