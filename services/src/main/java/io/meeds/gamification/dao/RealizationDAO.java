@@ -62,7 +62,9 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   private static final String        PROGRAM_IDS_PARAM_NAME  = "programIds";
 
   private static final String        RULE_IDS_PARAM_NAME     = "ruleIds";
-  
+
+  private static final String        SPACE_IDS_PARAM_NAME    = "spaceIds";
+
   private static final String        EARNER_TYPE_PARAM_NAME  = "earnerType";
 
   public static final String         STATUS_PARAM_NAME       = "status";
@@ -424,6 +426,10 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
       suffixes.add("RuleIds");
       predicates.add("g.ruleEntity.id IN (:" + RULE_IDS_PARAM_NAME + ")");
     }
+    if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
+      suffixes.add("SpaceIds");
+      predicates.add("g.domainEntity.audienceId IN (:" + SPACE_IDS_PARAM_NAME + ")");
+    }
     if (CollectionUtils.isNotEmpty(filter.getReviewerIds())) {
       suffixes.add("ReviewerIds");
       predicates.add("g.reviewerId IN (:" + REVIEWER_IDS_PARAM_NAME + ")");
@@ -486,6 +492,9 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
     if (CollectionUtils.isNotEmpty(filter.getRuleIds())) {
       query.setParameter(RULE_IDS_PARAM_NAME, filter.getRuleIds());
+    }
+    if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
+      query.setParameter(SPACE_IDS_PARAM_NAME, filter.getSpacesIds());
     }
     if (CollectionUtils.isNotEmpty(filter.getReviewerIds())) {
       query.setParameter(REVIEWER_IDS_PARAM_NAME, filter.getReviewerIds());

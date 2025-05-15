@@ -58,6 +58,8 @@ public class RealizationFilter implements Serializable {
 
   private boolean                 allPrograms;
 
+  private List<Long>              spacesIds;
+
   public RealizationFilter(List<String> earnerIds, // NOSONAR
                            String sortField,
                            boolean sortDescending,
@@ -91,7 +93,8 @@ public class RealizationFilter implements Serializable {
                                  programIds == null ? null : new ArrayList<>(programIds),
                                  ruleIds == null ? null : new ArrayList<>(ruleIds),
                                  reviewerIds == null ? null : new ArrayList<>(reviewerIds),
-                                 allPrograms);
+                                 allPrograms,
+                                 spacesIds);
   }
 
 }
