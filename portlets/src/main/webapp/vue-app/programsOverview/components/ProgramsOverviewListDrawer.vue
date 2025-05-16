@@ -23,7 +23,7 @@
     :loading="loading"
     :right="!$vuetify.rtl"
     allow-expand
-    @expand-updated="expanded = $event">
+    @expand-updated="expandedUpdated">
     <template #title>
       {{ spaceId && $t('gamification.overview.space.programsList') || $t('gamification.overview.programsList') }}
     </template>
@@ -99,6 +99,10 @@ export default {
         .then((data) => this.programs = data?.programs || [])
         .finally(() => this.loading = false);
     },
+    expandedUpdated(event) {
+      this.expanded = event;
+      this.$emit('expand-updated', this.expanded);
+    }
   },
 };
 </script>
