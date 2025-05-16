@@ -34,13 +34,6 @@
         {{ drawerTitle }}
       </span>
     </template>
-    <template v-if="!$root.isAnonymous && !expanded" #titleIcons>
-      <v-btn
-        :href="programLink"
-        icon>
-        <v-icon size="24">fa-external-link-alt</v-icon>
-      </v-btn>
-    </template>
     <template v-if="program && drawer" #content>
       <engagement-center-program-detail
         v-if="expanded"
@@ -166,9 +159,6 @@ export default {
     expanded: false
   }),
   computed: {
-    programLink() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.program.id}`;
-    },
     programId() {
       return this.program?.id;
     },
