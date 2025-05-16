@@ -26,13 +26,20 @@
     :right="!$vuetify.rtl"
     :go-back-button="goBackButton"
     allow-expand
-    @expand-updated="expanded = $event">
+    @expand-updated="expandedUpdated">
     <template #title>
       <span
         :title="$t('rule.detail.letsSeeWhatToDo')"
         class="text-truncate">
         {{ drawerTitle }}
       </span>
+    </template>
+    <template #titleIcons>
+      <v-btn
+        icon
+        @click="$root.$emit('program-form-open', program)">
+        <v-icon size="20">fas fa-edit</v-icon>
+      </v-btn>
     </template>
     <template v-if="program && drawer" #content>
       <engagement-center-program-detail
@@ -241,6 +248,10 @@ export default {
         }));
       }
     },
+    expandedUpdated(event) {
+      this.expanded = event;
+      this.$emit('expand-updated', this.expanded);
+    }
   }
 };
 </script>
