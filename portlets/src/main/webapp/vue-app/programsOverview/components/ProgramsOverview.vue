@@ -82,9 +82,15 @@
     </v-hover>
     <div v-if="programsDisplayed">
       <gamification-program-list-drawer
-        ref="listDrawer" />
+        ref="listDrawer"
+        @expand-updated="expandedUpdated" />
       <gamification-program-detail-drawer
-        :administrators="administrators" />
+        :administrators="administrators"
+        @expand-updated="expandedUpdated" />
+      <gamification-program-drawer
+        v-if="!drawerExpanded"
+        ref="programDrawer"
+        :is-administrator="$root.isAdministrator" />
       <engagement-center-rule-extensions />
     </div>
     <gamification-programs-overview-settings-drawer
@@ -99,6 +105,7 @@ export default {
     spaceId: eXo.env.portal.spaceId,
     hover: false,
     loading: true,
+    drawerExpanded: false
   }),
   computed: {
     programsDisplayed() {
@@ -157,6 +164,9 @@ export default {
         })
         .finally(() => this.loading = false);
     },
+    expandedUpdated(event) {
+      this.drawerExpanded = event;
+    }
   },
 };
 </script>
