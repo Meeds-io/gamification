@@ -36,11 +36,21 @@
       </v-btn>
     </template>
     <template #content>
-      <engagement-center-programs
+      <v-card
         v-if="expanded"
-        :is-administrator="isAdministrator"
-        :is-program-manager="isProgramManager"
-        :can-add-program="canAddProgram" />
+        class="d-flex flex-column light-grey-background-color pa-4"
+        min-height="100%"
+        flat>
+        <v-card
+          class="singlePageApplication pa-0 flex-grow-1 d-flex flex-column fill-height white overflow-hidden"
+          min-height="100%"
+          flat>
+          <engagement-center-programs
+            :is-administrator="isAdministrator"
+            :is-program-manager="isProgramManager"
+            :can-add-program="canAddProgram" />
+        </v-card>
+      </v-card>
       <gamification-overview-widget v-else height="auto">
         <gamification-overview-program-item
           v-for="program in programs" 
