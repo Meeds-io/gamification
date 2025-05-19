@@ -329,6 +329,7 @@ export default {
     this.$root.$on('announcement-added', this.retrieveRules);
     this.$root.$on('rule-updated', this.retrieveRules);
     this.$root.$on('rule-deleted', this.retrieveRules);
+    this.$root.$on('rule-created', this.retrieveRules);
     this.refreshLimit();
     this.retrieveRules();
   },
