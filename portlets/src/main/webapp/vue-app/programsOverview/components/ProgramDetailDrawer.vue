@@ -42,12 +42,23 @@
       </v-btn>
     </template>
     <template v-if="program && drawer" #content>
-      <engagement-center-program-detail
+      <v-card
         v-if="expanded"
-        :program="program"
-        :administrators="administrators"
-        :is-administrator="isAdministrator"
-        @updated="program = $event" />
+        class="d-flex flex-column light-grey-background-color pa-4"
+        min-height="100%"
+        flat>
+        <v-card
+          class="singlePageApplication pa-0 flex-grow-1 d-flex flex-column fill-height white overflow-hidden"
+          min-height="100%"
+          flat>
+          <engagement-center-program-detail
+            v-if="expanded"
+            :program="program"
+            :administrators="administrators"
+            :is-administrator="isAdministrator"
+            @updated="program = $event" />
+        </v-card>
+      </v-card>
       <template v-else>
         <v-card
           class="pa-5"
