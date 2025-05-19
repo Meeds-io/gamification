@@ -136,8 +136,13 @@
           @rules-size="rulesSize = $event"
           @has-more="hasMore = $event">
           <template #title>
-            <div class="text-header text-truncate">
-              {{ $t('programs.label.programActions') }}
+            <div class="flex-grow-1 d-flex flex-wrap justify-space-between width-full">
+              <div class="text-header text-truncate">
+                {{ $t('programs.label.programActions') }}
+              </div>
+              <v-btn icon @click="$root.$emit('rule-form-drawer', null, program)">
+                <v-icon color="primary" size="20">fa-plus</v-icon>
+              </v-btn>
             </div>
           </template>
           <template v-if="hasMore" #action>
