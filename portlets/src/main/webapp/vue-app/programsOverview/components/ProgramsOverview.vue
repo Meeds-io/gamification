@@ -85,8 +85,7 @@
         ref="listDrawer"
         @expand-updated="expandedUpdated" />
       <gamification-program-detail-drawer
-        :administrators="administrators"
-        @expand-updated="expandedUpdated" />
+        :administrators="administrators" />
       <gamification-program-drawer
         v-if="!drawerExpanded"
         ref="programDrawer"
@@ -143,7 +142,11 @@ export default {
     },
   },
   created() {
+    this.$root.$on('program-added', this.openCreatedProgramDetail);
     this.retrievePrograms();
+  },
+  beforeDestroy() {
+    this.$root.$off('program-added', this.openCreatedProgramDetail);
   },
   methods: {
     retrievePrograms() {
@@ -166,6 +169,12 @@ export default {
     },
     expandedUpdated(event) {
       this.drawerExpanded = event;
+    },
+    async openCreatedProgramDetail(program) {
+      this.$refs.listDrawer.close();
+      this.$refs.programDrawer.close();
+      await this.$nextTick();
+      this.$root.$emit('program-detail-drawer', program, true, true);
     }
   },
 };
