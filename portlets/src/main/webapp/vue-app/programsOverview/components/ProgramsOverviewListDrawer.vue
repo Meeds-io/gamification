@@ -96,6 +96,9 @@ export default {
       this.retrievePrograms();
       this.$refs.drawer.open();
     },
+    close() {
+      this.$refs.drawer.close();
+    },
     retrievePrograms() {
       this.loading = true;
       return this.$programService.getPrograms({

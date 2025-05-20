@@ -26,7 +26,7 @@
     :right="!$vuetify.rtl"
     :go-back-button="goBackButton"
     allow-expand
-    @expand-updated="expandedUpdated">
+    @expand-updated="expanded = $event">
     <template #title>
       <span
         :title="$t('rule.detail.letsSeeWhatToDo')"
@@ -223,6 +223,7 @@ export default {
   },
   created() {
     this.$root.$on('program-detail-drawer', this.open);
+    this.$root.$on('rule-created', this.updateOpenedProgram);
   },
   methods: {
     open(program, goBackButton, expanded) {
@@ -269,18 +270,25 @@ export default {
         }));
       }
     },
-    expandedUpdated(event) {
-      this.expanded = event;
-      this.$emit('expand-updated', this.expanded);
+    updateOpenedProgram() {
+      this.openProgramDetailById(this.program.id);
+    },
+    openProgramDetailById(id) {
+      this.$programService.getProgramById(id, {
+        lang: eXo.env.portal.language,
+        expand: 'countActiveRulesWhenDisabled',
+      })
+        .then(program => {
+          if (program?.id) {
+            this.program = program;
+          }
+        });
     },
     async expandDrawer() {
-      if (this.$root.isMobile) {
-        this.$refs.mobileDrawer.open();
-      } else {
-        this.expanded = true;
-        await this.$nextTick();
-        this.$refs.drawer.toogleExpand();
-      }
+      this.expanded = true;
+      await this.$nextTick();
+      this.$refs.drawer.toogleExpand();
+      this.$emit('expand-updated', this.expanded);
     },
   }
 };
