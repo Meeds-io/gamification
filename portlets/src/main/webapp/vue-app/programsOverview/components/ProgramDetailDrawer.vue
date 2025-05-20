@@ -225,14 +225,19 @@ export default {
     this.$root.$on('program-detail-drawer', this.open);
   },
   methods: {
-    open(program, goBackButton) {
+    open(program, goBackButton, expanded) {
       this.program = program;
       this.goBackButton = goBackButton || false;
       this.hasMore = false;
       this.rulesSize = 0;
       this.$refs.drawer.open();
       this.$nextTick()
-        .then(() => this.collectProgramVisit());
+        .then(() => {
+          this.collectProgramVisit();
+          if (expanded) {
+            this.expandDrawer();
+          }
+        });
     },
     close() {
       this.$refs.drawer.close();
@@ -267,7 +272,16 @@ export default {
     expandedUpdated(event) {
       this.expanded = event;
       this.$emit('expand-updated', this.expanded);
-    }
+    },
+    async expandDrawer() {
+      if (this.$root.isMobile) {
+        this.$refs.mobileDrawer.open();
+      } else {
+        this.expanded = true;
+        await this.$nextTick();
+        this.$refs.drawer.toogleExpand();
+      }
+    },
   }
 };
 </script>
