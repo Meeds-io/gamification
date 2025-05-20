@@ -143,7 +143,11 @@ export default {
     },
   },
   created() {
+    this.$root.$on('program-added', this.openCreatedProgramDetail);
     this.retrievePrograms();
+  },
+  beforeDestroy() {
+    this.$root.$off('program-added', this.openCreatedProgramDetail);
   },
   methods: {
     retrievePrograms() {
@@ -166,6 +170,9 @@ export default {
     },
     expandedUpdated(event) {
       this.drawerExpanded = event;
+    },
+    openCreatedProgramDetail(program) {
+      this.$root.$emit('program-detail-drawer', program, false, true);
     }
   },
 };

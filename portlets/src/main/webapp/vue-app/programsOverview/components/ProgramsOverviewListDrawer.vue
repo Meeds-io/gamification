@@ -84,9 +84,11 @@ export default {
   },
   created() {
     this.$root.$on('programs-overview-list-drawer', this.open);
+    this.$root.$on('program-added', this.retrievePrograms);
   },
   beforeDestroy() {
     this.$root.$off('programs-overview-list-drawer', this.open);
+    this.$root.$off('program-added', this.retrievePrograms);
   },
   methods: {
     open() {
