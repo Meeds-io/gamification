@@ -82,8 +82,7 @@
     </v-hover>
     <div v-if="programsDisplayed">
       <gamification-program-list-drawer
-        ref="listDrawer"
-        @expand-updated="expandedUpdated" />
+        ref="listDrawer" />
       <gamification-program-detail-drawer
         :administrators="administrators"
         @expand-updated="expandedUpdated" />
@@ -171,8 +170,10 @@ export default {
     expandedUpdated(event) {
       this.drawerExpanded = event;
     },
-    openCreatedProgramDetail(program) {
-      this.$root.$emit('program-detail-drawer', program, false, true);
+    async openCreatedProgramDetail(program) {
+      this.$refs.listDrawer.close();
+      await this.$nextTick();
+      this.$root.$emit('program-detail-drawer', program, true, true);
     }
   },
 };
