@@ -22,19 +22,28 @@
     v-model="drawer"
     :loading="loading > 0"
     :right="!$vuetify.rtl"
-    :go-back-button="goBackButton">
+    :go-back-button="goBackButton"
+    allow-expand
+    @expand-updated="expanded = $event">
     <template #title>
       {{ spaceId && $t('gamification.overview.space.actionsList') || $t('gamification.overview.actionsList') }}
     </template>
-    <template #titleIcons>
-      <v-btn
-        :href="pageLink"
-        icon>
-        <v-icon size="24">fa-external-link-alt</v-icon>
-      </v-btn>
-    </template>
     <template #content>
-      <gamification-overview-widget height="auto">
+      <v-card
+        v-if="expanded"
+        class="d-flex flex-column light-grey-background-color pa-4"
+        min-height="100%"
+        flat>
+        <v-card
+          class="singlePageApplication pa-0 flex-grow-1 d-flex flex-column fill-height white overflow-hidden"
+          min-height="100%"
+          flat>
+          <engagement-center-rules
+            :is-administrator="isAdministrator"
+            :is-program-manager="isProgramManager" />
+        </v-card>
+      </v-card>
+      <gamification-overview-widget v-else height="auto">
         <template v-if="endingRulesCount">
           <div class="d-flex align-center">
             <span class="me-2">{{ $t('gamification.overview.endingActionsTitle') }}</span>
@@ -81,7 +90,7 @@
     </template>
     <template #footer>
       <div
-        v-if="hasMore"
+        v-if="hasMore && !expanded"
         class="d-flex justify-center">
         <v-btn
           :loading="loading > 0"
@@ -118,6 +127,7 @@ export default {
     endingRules: [],
     spaceId: eXo.env.portal.spaceId,
     weekInMs: 604800000,
+    expanded: false
   }),
   computed: {
     endingRulesToDisplay() {
@@ -168,6 +178,12 @@ export default {
     hasMore() {
       return this.rulesSize > this.limit;
     },
+    isAdministrator() {
+      return this.$root.isAdministrator;
+    },
+    isProgramManager() {
+      return this.$root.isProgramManager;
+    }
   },
   created() {
     document.addEventListener('rules-overview-list-drawer', this.open);
