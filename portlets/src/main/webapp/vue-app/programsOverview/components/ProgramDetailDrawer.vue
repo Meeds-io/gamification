@@ -285,10 +285,8 @@ export default {
         });
     },
     async expandDrawer() {
-      this.expanded = true;
       await this.$nextTick();
       this.$refs.drawer.toogleExpand();
-      this.$emit('expand-updated', this.expanded);
     },
   }
 };
