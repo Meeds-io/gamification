@@ -171,8 +171,12 @@ export default {
       this.drawerExpanded = event;
     },
     async openCreatedProgramDetail(program) {
-      this.$refs.listDrawer.close();
-      this.$refs.programDrawer.close();
+      if (this.$refs.listDrawer) {
+        this.$refs.listDrawer.close();
+      }
+      if (this.$refs.programDrawer) {
+        this.$refs.programDrawer.close();
+      }
       await this.$nextTick();
       this.$root.$emit('program-detail-drawer', program, true, true);
     }
