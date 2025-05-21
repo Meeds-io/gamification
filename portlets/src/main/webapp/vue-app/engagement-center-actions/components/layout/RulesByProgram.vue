@@ -135,6 +135,7 @@ export default {
         groupByProgram: true,
         sortBy: 'title',
         limit,
+        spaceId: eXo.env.portal.spaceId ? [eXo.env.portal.spaceId] : [],
         expand: 'countRealizations,favorites',
         lang: eXo.env.portal.language,
       })
