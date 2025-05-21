@@ -90,7 +90,7 @@
     </template>
     <template #footer>
       <div
-        v-if="hasMore"
+        v-if="hasMore && !expanded"
         class="d-flex justify-center">
         <v-btn
           :loading="loading > 0"
