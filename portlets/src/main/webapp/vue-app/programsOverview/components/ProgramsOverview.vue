@@ -170,14 +170,7 @@ export default {
     expandedUpdated(event) {
       this.drawerExpanded = event;
     },
-    async openCreatedProgramDetail(program) {
-      if (this.$refs.listDrawer) {
-        this.$refs.listDrawer.close();
-      }
-      if (this.$refs.programDrawer) {
-        this.$refs.programDrawer.close();
-      }
-      await this.$nextTick();
+    openCreatedProgramDetail(program) {
       this.$root.$emit('program-detail-drawer', program, true, true);
     }
   },
