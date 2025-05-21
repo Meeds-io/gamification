@@ -82,10 +82,10 @@
     </v-hover>
     <div v-if="programsDisplayed">
       <gamification-program-list-drawer
-        ref="listDrawer" />
-      <gamification-program-detail-drawer
-        :administrators="administrators"
+        ref="listDrawer"
         @expand-updated="expandedUpdated" />
+      <gamification-program-detail-drawer
+        :administrators="administrators" />
       <gamification-program-drawer
         v-if="!drawerExpanded"
         ref="programDrawer"
@@ -172,6 +172,7 @@ export default {
     },
     async openCreatedProgramDetail(program) {
       this.$refs.listDrawer.close();
+      this.$refs.programDrawer.close();
       await this.$nextTick();
       this.$root.$emit('program-detail-drawer', program, true, true);
     }
