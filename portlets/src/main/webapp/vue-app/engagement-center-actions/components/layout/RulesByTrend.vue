@@ -162,6 +162,7 @@ export default {
         sortBy: 'endDate',
         sortDescending: false,
         expand: 'countRealizations,favorites',
+        spaceId: eXo.env.portal.spaceId ? [eXo.env.portal.spaceId] : [],
         returnSize: false,
         lang: eXo.env.portal.language,
       })
@@ -179,6 +180,7 @@ export default {
         sortBy: 'createdDate',
         sortDescending: true,
         expand: 'countRealizations,favorites',
+        spaceId: eXo.env.portal.spaceId ? [eXo.env.portal.spaceId] : [],
         returnSize: false,
         lang: eXo.env.portal.language,
       })
@@ -196,6 +198,7 @@ export default {
         sortBy: 'startDate',
         sortDescending: true,
         expand: 'countRealizations,favorites',
+        spaceId: eXo.env.portal.spaceId ? [eXo.env.portal.spaceId] : [],
         returnSize: false,
         lang: eXo.env.portal.language,
       })
