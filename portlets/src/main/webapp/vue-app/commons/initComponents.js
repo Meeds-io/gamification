@@ -22,7 +22,7 @@ import ProgramItem from './components/program/ProgramItem.vue';
 import RuleItem from './components/program/RuleItem.vue';
 import ProgramColorPicker from './components/program/ProgramColorPicker.vue';
 import ProgramColorPickerDrawer from './components/program/ProgramColorPickerDrawer.vue';
-import ProgramDrawer from './components/program/ProgramDrawer.vue';
+import ProgramDrawer from '../rules/components/drawers/ProgramDrawer.vue';
 import ProgramImageSelector from './components/program/ProgramImageSelector.vue';
 import ProgramImageSelectorButtons from './components/program/ProgramImageSelectorButtons.vue';
 import ProgramOwnerAssignment from './components/program/ProgramOwnerAssignment.vue';

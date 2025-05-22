@@ -40,6 +40,8 @@ import RuleDrawers from './components/RuleDrawers.vue';
 import RuleExtensions from './components/RuleExtensions.vue';
 
 import AvatarsList from './components/detail/AvatarsList.vue';
+import ProgramDetailDrawer from './components/drawers/ProgramDetailDrawer.vue';
+import ProgramDrawer from './components/drawers/ProgramDrawer.vue';
 
 const components = {
   'engagement-center-button-group-item': ButtonGroupItem,
@@ -82,6 +84,8 @@ const components = {
 
   'engagement-center-rule-achievements-drawer': RuleAchievementsDrawer,
   'engagement-center-program-owners-drawer': ProgramOwnersDrawer,
+  'engagement-center-program-detail-drawer': ProgramDetailDrawer,
+  'engagement-center-program-drawer': ProgramDrawer,
   'engagement-center-rule-drawers': RuleDrawers,
 
   'rule-favorite-button': RuleFavoriteAction,
