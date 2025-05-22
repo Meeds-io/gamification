@@ -23,6 +23,11 @@
       ref="ruleFormDrawer" />
     <engagement-center-program-owners-drawer
       ref="ownersDetails" />
+    <engagement-center-program-detail-drawer
+      ref="programDetails" />
+    <engagement-center-program-drawer
+      ref="programDrawer"
+      :is-administrator="$root.isAdministrator" />
     <exo-confirm-dialog
       ref="deleteRuleConfirmDialog"
       :title="$t('programs.details.title.confirmDeleteRule')"
