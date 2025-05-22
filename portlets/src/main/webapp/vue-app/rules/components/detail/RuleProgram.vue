@@ -21,10 +21,10 @@
 <template>
   <v-list-item
     v-if="programId"
-    :href="programUrl"
     class="rule-program pa-0"
     dense
-    ripple>
+    ripple
+    @click="openProgramDetails">
     <v-list-item-avatar class="me-2" tile>
       <v-avatar
         :size="programCoverSize"
@@ -53,21 +53,29 @@ export default {
     programCoverSize: 35,
   }),
   computed: {
+    program() {
+      return this.rule?.program;
+    },
     programId() {
-      return this.rule?.program?.id;
+      return this.program?.id;
     },
     programAvatarUrl() {
-      return this.rule?.program?.avatarUrl;
+      return this.program?.avatarUrl;
     },
     programTitle() {
-      return this.rule?.program?.title;
+      return this.program?.title;
     },
     programUrl() {
       return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.programId}`;
     },
     programStyle() {
-      return this.rule?.program?.color && `border: 1px solid ${this.rule?.program.color} !important;` || '';
+      return this.program?.color && `border: 1px solid ${this.rule?.program.color} !important;` || '';
     },
   },
+  methods: {
+    openProgramDetails() {
+      this.$root.$emit('program-detail-drawer', this.program);
+    }
+  }
 };
 </script>
