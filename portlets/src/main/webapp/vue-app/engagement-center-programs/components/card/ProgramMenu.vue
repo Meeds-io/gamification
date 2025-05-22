@@ -4,6 +4,7 @@
     v-model="showMenu"
     :left="!$vuetify.rtl"
     :right="$vuetify.rtl"
+    :attach="attachMenu"
     bottom
     offset-y>
     <template #activator="{ on, attrs }">
@@ -54,6 +55,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    attachMenu: {
+      type: Boolean,
+      default: false,
+    }
   },
   data: () => ({
     showMenu: false,
