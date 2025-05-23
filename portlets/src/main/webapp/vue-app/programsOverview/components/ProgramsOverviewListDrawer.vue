@@ -32,7 +32,7 @@
         v-if="canAddProgram"
         icon
         @click="$root.$emit('program-form-open')">
-        <v-icon size="24">fa-plus</v-icon>
+        <v-icon size="20">fa-plus</v-icon>
       </v-btn>
     </template>
     <template #content>

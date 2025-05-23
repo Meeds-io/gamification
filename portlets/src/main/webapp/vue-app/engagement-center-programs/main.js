@@ -40,9 +40,9 @@ const urls = [
   `/gamification-portlets/i18n/locale.addon.Gamification?lang=${lang}`
 ];
 
-document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
-
 export function init(isAdministrator, isProgramManager, canAddProgram) {
+  document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
