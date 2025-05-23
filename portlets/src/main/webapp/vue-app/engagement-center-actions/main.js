@@ -55,7 +55,6 @@ export function init(isAdministrator, isProgramManager) {
         },
       },
       created() {
-        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
         window.setInterval(() => this.now = Date.now(), 1000);
       },
       beforeDestroy() {
@@ -70,5 +69,6 @@ export function init(isAdministrator, isProgramManager) {
   }).finally(() =>{
     Vue.prototype.$utils.includeExtensions('engagementCenterActions');
     Vue.prototype.$utils.includeExtensions('engagementCenterConnectors');
+    document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
   });
 }
