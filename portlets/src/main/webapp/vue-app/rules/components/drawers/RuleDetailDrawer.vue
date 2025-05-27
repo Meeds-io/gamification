@@ -231,7 +231,8 @@ export default {
     connectorsEventComponentsExtensions: [],
     extensionEventApp: 'engagementCenterEvent',
     connectorEventExtensionType: 'connector-event-extensions',
-    connectorValueExtensions: []
+    connectorValueExtensions: [],
+    currentPath: window.location.pathname,
   }),
   computed: {
     now() {
@@ -478,6 +479,7 @@ export default {
       this.validAnnouncement = false;
       this.sending = false;
       this.announcementFormOpened = false;
+      this.appUrl = this.currentPath;
       if (this.$refs.ruleAnnouncementForm) {
         this.$refs.ruleAnnouncementForm.clear();
       }
