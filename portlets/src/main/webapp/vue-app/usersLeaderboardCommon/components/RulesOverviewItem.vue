@@ -75,7 +75,7 @@ export default {
     },
     updateUrl: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     goBackButton: {
       type: Boolean,
