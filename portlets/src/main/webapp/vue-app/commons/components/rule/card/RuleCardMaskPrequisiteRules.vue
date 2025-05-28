@@ -19,7 +19,7 @@
 
 -->
 <template>
-  <engagement-center-rule-card-mask-content
+  <gamification-rule-card-mask-content
     v-if="hasRemainingPrerequisitesCount"
     :title="rule.title"
     icon="fas fa-lock"
@@ -28,7 +28,7 @@
       v-sanitized-html="prerequisitesTitle"
       class="white--text text-wrap px-2 text-truncate-2">
     </div>
-  </engagement-center-rule-card-mask-content>
+  </gamification-rule-card-mask-content>
 </template>
 <script>
 export default {
