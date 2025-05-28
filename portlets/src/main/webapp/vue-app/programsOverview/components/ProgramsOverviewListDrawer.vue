@@ -45,7 +45,7 @@
           class="singlePageApplication pa-0 flex-grow-1 d-flex flex-column fill-height white overflow-hidden"
           min-height="100%"
           flat>
-          <engagement-center-programs
+          <gamification-programs
             :is-administrator="isAdministrator"
             :is-program-manager="isProgramManager"
             :can-add-program="canAddProgram" />

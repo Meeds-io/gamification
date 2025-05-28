@@ -84,7 +84,7 @@
       <gamification-program-list-drawer
         ref="listDrawer"
         @expand-updated="expandedUpdated" />
-      <gamification-program-detail-drawer
+      <engagement-center-program-detail-drawer
         :administrators="administrators" />
       <gamification-program-drawer
         v-if="!drawerExpanded"

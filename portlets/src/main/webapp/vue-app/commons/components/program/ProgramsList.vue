@@ -46,7 +46,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           cols="12"
           sm="6"
           lg="4">
-          <engagement-center-program-card
+          <gamification-program-card
             :program="program"
             :is-administrator="isAdministrator"
             :administrators="administrators" />
