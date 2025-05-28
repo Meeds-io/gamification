@@ -38,7 +38,7 @@
           class="singlePageApplication pa-0 flex-grow-1 d-flex flex-column fill-height white overflow-hidden"
           min-height="100%"
           flat>
-          <engagement-center-rules
+          <gamification-rules
             :is-administrator="isAdministrator"
             :is-program-manager="isProgramManager" />
         </v-card>

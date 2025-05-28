@@ -27,7 +27,7 @@
         cols="12"
         sm="6"
         lg="4">
-        <engagement-center-rule-card
+        <gamification-rule-card
           :rule="rule"
           :program="program"
           :category-id="categoryId" />
