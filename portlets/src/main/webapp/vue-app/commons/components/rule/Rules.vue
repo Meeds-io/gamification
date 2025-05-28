@@ -71,7 +71,7 @@
           :message-title="welcomeMessage"
           :message-info-one="notFoundInfoMessage" />
   
-        <engagement-center-rules-by-program
+        <gamification-rules-by-program
           v-if="tabName === 'ALL'"
           :term="term"
           :type="type"
@@ -79,12 +79,12 @@
           :is-administrator="isAdministrator"
           @loading="loading = $event"
           @initialized="setRulesSize" />
-        <engagement-center-rules-by-trend
+        <gamification-rules-by-trend
           v-else-if="tabName === 'TRENDS'"
           @loading="loading = $event"
           @initialized="setRulesSize" />
       </v-card>
-      <engagement-center-rules-filter-drawer
+      <gamification-rules-filter-drawer
         ref="rulesFilterDrawer"
         :is-administrator="isAdministrator"
         @apply="applyFilter" />
