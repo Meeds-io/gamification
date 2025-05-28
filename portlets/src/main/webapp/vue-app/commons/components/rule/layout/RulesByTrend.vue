@@ -23,13 +23,13 @@
       v-for="category in categories"
       :key="category.id"
       class="pt-2 pb-6">
-      <engagement-center-rules-category
+      <gamification-rules-category
         :category="category"
         disabled-collapsing>
         <v-card-title class="px-0 py-1 text-title text-break">
           {{ category.title }}
         </v-card-title>
-      </engagement-center-rules-category>
+      </gamification-rules-category>
     </v-list>
   </v-card>
 </template>

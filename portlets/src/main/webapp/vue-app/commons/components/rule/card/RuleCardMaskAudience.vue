@@ -19,13 +19,11 @@
 
 -->
 <template>
-  <engagement-center-rule-card-mask-content
+  <gamification-rule-card-mask-content
     :title="rule.title"
-    :icon="alreadyEnded && 'fas fa-calendar-check' || 'fas fa-calendar-plus'"
-    class="rule-card-mask-dates">
-    <engagement-center-rule-date-info-chip
-      :rule="rule" />
-  </engagement-center-rule-card-mask-content>
+    :text="$t('programs.label.ruleDeactivatedDueToMissingAudience')"
+    icon="fas fa-times-circle error--text"
+    class="rule-card-mask-audience" />
 </template>
 <script>
 export default {
@@ -34,34 +32,6 @@ export default {
       type: Object,
       default: null,
     },
-  },
-  data: () => ({
-    time: Date.now(),
-    interval: null,
-  }),
-  computed: {
-    now() {
-      return this.$root.now || this.time;
-    },
-    endDateMillis() {
-      return this.rule?.endDate && new Date(this.rule?.endDate).getTime() || 0;
-    },
-    alreadyEnded() {
-      return this.endDateMillis && this.endDateMillis < this.now;
-    },
-  },
-  created() {
-    if (!this.$root.now) {
-      this.time = Date.now();
-      this.interval = window.setInterval(() => {
-        this.time = Date.now();
-      }, 1000);
-    }
-  },
-  beforeDestroy() {
-    if (this.interval) {
-      window.clearInterval(this.interval);
-    }
   },
 };
 </script>
