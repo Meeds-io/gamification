@@ -40,14 +40,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </div>
       <div class="position-relative">
         <engagement-center-card-mask v-if="!enabled" class="z-index-one rounded">
-          <engagement-center-program-disabled-mask-content
+          <gamification-program-disabled-mask-content
             :is-administrator="isAdministrator"
             :program="program" />
         </engagement-center-card-mask>
         <div class="d-flex flex-column flex-grow-1">
           <div class="position-relative d-flex flex-column align-end full-width">
             <div class="position-absolute z-index-one">
-              <engagement-center-program-menu
+              <gamification-program-menu
                 :is-administrator="isAdministrator"
                 :program="program"
                 :attach-menu="true" />
@@ -126,11 +126,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-list-item-title class="text-header">
               {{ $t('programs.details.label.rulesOfProgram') }}
             </v-list-item-title>
-            <engagement-center-program-created-placeholder
+            <gamification-program-created-placeholder
               v-if="newlyCreated"
               @add="$root.$emit('rule-form-drawer', null, program)" />
             <template v-else>
-              <engagement-center-program-rules-toolbar
+              <gamification-program-rules-toolbar
                 :can-manage-rule="canManageRule"
                 :keyword="keyword"
                 :program="program"
@@ -148,12 +148,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   hide-default-footer
                   disable-sort>
                   <template slot="item" slot-scope="props">
-                    <engagement-center-program-rule-item
+                    <gamification-program-rule-item
                       :rule="props.item"
                       :can-manage-rule="canManageRule" />
                   </template>
                   <template slot="no-data">
-                    <engagement-center-program-no-rule-found
+                    <gamification-program-no-rule-found
                       v-if="keyword"
                       @keyword-changed="keyword = $event" />
                     <span v-else>

@@ -17,14 +17,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-app class="application-body">
     <main>
-      <engagement-center-programs-list
+      <gamification-programs-list
         v-show="!displayProgramDetail"
         id="engagementCenterProgramsTab"
         :is-administrator="isAdministrator"
         :is-program-manager="isProgramManager"
         :can-add-program="canAddProgram"
         @administrators-loaded="administrators = $event" />
-      <engagement-center-program-detail
+      <gamification-program-detail
         v-if="displayProgramDetail"
         :program="program"
         :administrators="administrators"
