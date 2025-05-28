@@ -62,6 +62,9 @@
             <field name="uiComponent">
               <string>engagement-center-rule-search-card</string>
             </field>
+            <field name="icon">
+              <string>fas fa-trophy</string>
+            </field>
           </object>
         </object-param>
       </init-params>
