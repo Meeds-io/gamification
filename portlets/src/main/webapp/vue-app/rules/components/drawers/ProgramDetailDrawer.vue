@@ -51,7 +51,7 @@
           class="singlePageApplication pa-0 flex-grow-1 d-flex flex-column fill-height white overflow-hidden"
           min-height="100%"
           flat>
-          <engagement-center-program-detail
+          <gamification-program-detail
             v-if="expanded"
             :program="program"
             :administrators="administrators"
@@ -61,7 +61,7 @@
       </v-card>
       <template v-else>
         <v-card
-          class="pa-5"
+          class="pa-4"
           transparent
           flat>
           <div class="text-header-title dark-grey-color text-truncate-2">
@@ -129,14 +129,14 @@
         <gamification-rules-overview-widget
           v-if="drawer"
           :program-id="programId"
-          class="mb-4 mx-1"
+          class="mb-4 ma-n1"
           hide-empty-placeholder
           go-back-button
           load-size
           @rules-size="rulesSize = $event"
           @has-more="hasMore = $event">
           <template #title>
-            <div class="flex-grow-1 d-flex flex-wrap justify-space-between width-full">
+            <div class="flex-grow-1 d-flex flex-wrap justify-space-between width-full align-center">
               <div class="text-header text-truncate">
                 {{ $t('programs.label.programActions') }}
               </div>

@@ -217,7 +217,7 @@ function initProgramListDrawerApp(appId, exoi18n) {
       template: `
         <div id="${appId}">
           <gamification-program-list-drawer ref="drawer" />
-          <gamification-program-detail-drawer :administrators="administrators" />
+          <engagement-center-program-detail-drawer :administrators="administrators" />
           <engagement-center-rule-extensions />
         </div>
       `,

@@ -86,8 +86,52 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <portlet>
     <name>EngagementCenterPrograms</name>
     <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/engagementCenterPrograms.bundle.js</path>
+      </script>
       <depends>
-        <module>engagementCenterProgramsBundle</module>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>applicationToolbarComponent</module>
+      </depends>
+      <depends>
+        <module>ruleComponents</module>
+      </depends>
+      <depends>
+        <module>connectorExtensions</module>
+      </depends>
+      <depends>
+        <module>gamificationConnectorEvents</module>
+      </depends>
+      <depends>
+        <module>gamificationUserConnectors</module>
+      </depends>
+      <depends>
+        <module>usersLeaderboardCommon</module>
+      </depends>
+      <depends>
+        <module>translationField</module>
+      </depends>
+      <depends>
+        <module>imageCropper</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
       </depends>
     </module>
   </portlet>
@@ -95,8 +139,52 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <portlet>
     <name>EngagementCenterActions</name>
     <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/engagementCenterActions.bundle.js</path>
+      </script>
       <depends>
-        <module>engagementCenterActionsBundle</module>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>applicationToolbarComponent</module>
+      </depends>
+      <depends>
+        <module>ruleComponents</module>
+      </depends>
+      <depends>
+        <module>connectorExtensions</module>
+      </depends>
+      <depends>
+        <module>gamificationConnectorEvents</module>
+      </depends>
+      <depends>
+        <module>gamificationUserConnectors</module>
+      </depends>
+      <depends>
+        <module>usersLeaderboardCommon</module>
+      </depends>
+      <depends>
+        <module>translationField</module>
+      </depends>
+      <depends>
+        <module>imageCropper</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
       </depends>
     </module>
   </portlet>
@@ -434,12 +522,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <depends>
         <module>usersLeaderboardCommon</module>
       </depends>
-      <depends>
-        <module>engagementCenterProgramsBundle</module>
-      </depends>
-      <depends>
-        <module>engagementCenterActionsBundle</module>
-      </depends>
     </module>
   </portlet>
 
@@ -623,111 +705,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>ruleExtensions</module>
-    </depends>
-  </module>
-
-  <module>
-    <name>engagementCenterProgramsBundle</name>
-    <script>
-      <minify>false</minify>
-      <path>/js/engagementCenterPrograms.bundle.js</path>
-    </script>
-    <depends>
-      <module>commonVueComponents</module>
-    </depends>
-    <depends>
-      <module>applicationToolbarComponent</module>
-    </depends>
-    <depends>
-      <module>ruleComponents</module>
-    </depends>
-    <depends>
-      <module>connectorExtensions</module>
-    </depends>
-    <depends>
-      <module>gamificationConnectorEvents</module>
-    </depends>
-    <depends>
-      <module>gamificationUserConnectors</module>
-    </depends>
-    <depends>
-      <module>usersLeaderboardCommon</module>
-    </depends>
-    <depends>
-      <module>translationField</module>
-    </depends>
-    <depends>
-      <module>imageCropper</module>
-    </depends>
-    <depends>
-      <module>extensionRegistry</module>
-    </depends>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>vuetify</module>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
-    </depends>
-  </module>
-
-  <module>
-    <name>engagementCenterActionsBundle</name>
-    <script>
-      <minify>false</minify>
-      <path>/js/engagementCenterActions.bundle.js</path>
-    </script>
-    <depends>
-      <module>commonVueComponents</module>
-    </depends>
-    <depends>
-      <module>applicationToolbarComponent</module>
-    </depends>
-    <depends>
-      <module>ruleComponents</module>
-    </depends>
-    <depends>
-      <module>connectorExtensions</module>
-    </depends>
-    <depends>
-      <module>gamificationConnectorEvents</module>
-    </depends>
-    <depends>
-      <module>gamificationUserConnectors</module>
-    </depends>
-    <depends>
-      <module>usersLeaderboardCommon</module>
-    </depends>
-    <depends>
-      <module>engagementCenterProgramsBundle</module>
-    </depends>
-    <depends>
-      <module>translationField</module>
-    </depends>
-    <depends>
-      <module>imageCropper</module>
-    </depends>
-    <depends>
-      <module>extensionRegistry</module>
-    </depends>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>vuetify</module>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
     </depends>
   </module>
 

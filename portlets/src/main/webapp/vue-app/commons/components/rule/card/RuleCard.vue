@@ -53,27 +53,27 @@
           </div>
         </div>
         <engagement-center-card-mask class="z-index-one pa-2">
-          <engagement-center-rule-card-mask-content
+          <gamification-rule-card-mask-content
             v-if="!isEnabled"
             :title="rule.title"
             :text="rule.enabled && $t('actions.label.disabledProgram') || $t('actions.label.disabled')"
             class="rule-card-mask-disabled" />
-          <engagement-center-rule-card-mask-audience
+          <gamification-rule-card-mask-audience
             v-else-if="!isValidAudience"
             :rule="ruleWithProgram" />
-          <engagement-center-rule-card-mask-whitelist
+          <gamification-rule-card-mask-whitelist
             v-else-if="!isValidWhitelist"
             :rule="ruleWithProgram" />
-          <engagement-center-rule-card-mask-remaining-dates
+          <gamification-rule-card-mask-remaining-dates
             v-else-if="!isValidDates"
             :rule="ruleWithProgram" />
-          <engagement-center-rule-card-mask-recurrence
+          <gamification-rule-card-mask-recurrence
             v-else-if="!isValidRecurrence"
             :rule="ruleWithProgram" />
-          <engagement-center-rule-card-mask-prequisite-rules
+          <gamification-rule-card-mask-prequisite-rules
             v-else-if="!isValidPrerequities"
             :rule="ruleWithProgram" />
-          <engagement-center-rule-card-mask-connector
+          <gamification-rule-card-mask-connector
             v-else-if="isRequireConnectorConnection"
             :extension="connectorValueExtension"
             :title="rule.title" />
@@ -116,15 +116,15 @@
         <template v-if="isEnabled">
           <v-spacer />
           <v-card-text class="d-flex align-center pt-0">
-            <engagement-center-rule-card-points
+            <gamification-rule-card-points
               :rule="ruleWithProgram"
               :target-item-label="targetItemLabel" />
-            <engagement-center-rule-card-recurrence
+            <gamification-rule-card-recurrence
               v-if="rule.recurrence" 
               :rule="ruleWithProgram"
               class="ms-2" />
             <v-spacer />
-            <engagement-center-rule-card-remaining-dates
+            <gamification-rule-card-remaining-dates
               :rule="ruleWithProgram" />
           </v-card-text>
         </template>

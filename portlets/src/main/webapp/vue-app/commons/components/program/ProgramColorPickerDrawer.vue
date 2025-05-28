@@ -38,7 +38,7 @@
             class="d-flex mx-auto"
             max-width="280"
             flat>
-            <engagement-center-rule-card
+            <gamification-rule-card
               v-if="initialized"
               :rule="rule"
               no-validation />

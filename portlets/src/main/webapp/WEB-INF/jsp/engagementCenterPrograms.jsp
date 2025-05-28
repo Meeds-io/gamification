@@ -38,7 +38,7 @@
 <div class="VuetifyApp">
   <div id="EngagementCenterPrograms">
     <script type="text/javascript">
-      window.require(['SHARED/engagementCenterProgramsBundle'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>, <%=canAddProgram%>));
+      window.require(['PORTLET/gamification-portlets/EngagementCenterPrograms'], app => app.init(<%=isAdministrator%>, <%=isProgramManager%>, <%=canAddProgram%>));
     </script>
   </div>
 </div>

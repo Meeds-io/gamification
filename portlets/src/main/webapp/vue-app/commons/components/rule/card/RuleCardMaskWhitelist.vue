@@ -19,7 +19,7 @@
 
 -->
 <template>
-  <engagement-center-rule-card-mask-content
+  <gamification-rule-card-mask-content
     :title="rule.title"
     :text="$t('programs.label.ruleDeactivatedDueToNotWhitelisted')"
     icon="fas fa-times-circle"
