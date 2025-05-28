@@ -19,7 +19,7 @@
 -->
 <template>
   <div>
-    <engagement-center-rules-category
+    <gamification-rules-category
       v-for="category in validCategories"
       :key="category.id"
       :category="category"

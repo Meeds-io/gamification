@@ -50,7 +50,7 @@
       </v-list-item-title>
     </template>
     <v-list-item class="ma-0">
-      <engagement-center-rules-list
+      <gamification-rules-list
         :category-id="category.id"
         :rules="rulesToDisplay"
         :program="program"
