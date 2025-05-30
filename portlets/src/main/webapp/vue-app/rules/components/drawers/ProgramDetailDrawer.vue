@@ -179,7 +179,8 @@ export default {
     goBackButton: false,
     hasMore: false,
     rulesSize: 0,
-    expanded: false
+    expanded: false,
+    originalUrl: null,
   }),
   computed: {
     programId() {
@@ -219,6 +220,22 @@ export default {
     },
     drawerTitle() {
       return !this.expanded ? this.$t('programs.label.programSummary') : this.$t('programs.label.programDetail');
+    },
+    programLink() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.programId}`;
+    },
+  },
+  watch: {
+    expanded(val) {
+      if (val && this.programId) {
+        this.originalUrl = window.location.pathname;
+        if (window.location.pathname !== this.programLink) {
+          window.history.pushState({}, '', this.programLink);
+        }
+      } else if (!val && this.originalUrl) {
+        window.history.replaceState({}, '', this.originalUrl);
+        this.originalUrl = null;
+      }
     }
   },
   created() {
