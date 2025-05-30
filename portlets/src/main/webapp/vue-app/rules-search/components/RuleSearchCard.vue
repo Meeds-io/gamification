@@ -31,7 +31,7 @@
             <v-list-item-title class="d-flex flex-row full-width align-center">
               <p
                 :title="ruleTitle"
-                class="flex-grow-1 title font-weight-bold pt-1 mb-0 ps-0 my-auto align-center text-start text-truncate"
+                class="flex-grow-1 title pt-1 mb-0 ps-0 my-auto align-center text-start text-truncate"
                 v-sanitized-html="ruleTitle"></p>
               <div v-show="hover || isMobile" class="ml-2 pt-1">
                 <span  class="d-flex d-inline-flex">
