@@ -55,7 +55,7 @@
         </v-list-item>
       </template>
       <template slot="selection" slot-scope="{item}">
-        <gamification-rule-item :rule="item" @remove="remove(item)" />
+        <gamification-rule-chip :rule="item" @remove="remove(item)" />
       </template>
       <template slot="item" slot-scope="{ item }">
         <v-list-item-title class="text-truncate identitySuggestionMenuItemText">

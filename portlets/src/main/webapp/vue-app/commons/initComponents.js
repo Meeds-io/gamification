@@ -19,7 +19,7 @@ import WidgetRow from './components/overview/WidgetRow.vue';
 import WidgetEmptyRow from './components/overview/WidgetEmptyRow.vue';
 import ProgramSuggester from './components/program/ProgramSuggester.vue';
 import ProgramItem from './components/program/ProgramItem.vue';
-import RuleItem from './components/program/RuleItem.vue';
+import RuleChip from './components/program/RuleChip.vue';
 import ProgramColorPicker from './components/program/ProgramColorPicker.vue';
 import ProgramColorPickerDrawer from './components/program/ProgramColorPickerDrawer.vue';
 import ProgramDrawer from '../rules/components/drawers/ProgramDrawer.vue';
@@ -37,6 +37,7 @@ import ProgramDisabledMaskContent from './components/program/card/ProgramDisable
 import RulesToolbar from './components/program/rules/RulesToolbar.vue';
 import RuleTitle from './components/program/rules/RuleTitle.vue';
 import NoRuleFound from './components/program/rules/NoRuleFound.vue';
+import ProgramRuleItem from './components/program/rules/RuleItem.vue';
 
 import Rules from './components/rule/Rules.vue';
 import RuleCategory from './components/rule/category/Category.vue';
@@ -69,8 +70,8 @@ const components = {
   'gamification-program-image-selector': ProgramImageSelector,
   'gamification-program-image-selector-buttons': ProgramImageSelectorButtons,
   'gamification-program-owner-assignment': ProgramOwnerAssignment,
+  'gamification-program-rule-item': ProgramRuleItem,
 
-  'gamification-rule-item': RuleItem,
   'gamification-rules': Rules,
   'gamification-rules-category': RuleCategory,
   'gamification-rules-list': RulesList,
@@ -97,7 +98,7 @@ const components = {
   'gamification-program-created-placeholder': ProgramCreatedPlaceholder,
   'gamification-program-disabled-mask-content': ProgramDisabledMaskContent,
   'gamification-program-rules-toolbar': RulesToolbar,
-  'gamification-program-rule-item': RuleItem,
+  'gamification-rule-chip': RuleChip,
   'gamification-program-rule-title': RuleTitle,
   'gamification-program-no-rule-found': NoRuleFound,
 };
