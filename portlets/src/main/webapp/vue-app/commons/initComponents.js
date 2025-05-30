@@ -37,6 +37,7 @@ import ProgramDisabledMaskContent from './components/program/card/ProgramDisable
 import RulesToolbar from './components/program/rules/RulesToolbar.vue';
 import RuleTitle from './components/program/rules/RuleTitle.vue';
 import NoRuleFound from './components/program/rules/NoRuleFound.vue';
+import ProgramRuleItem from './components/program/rules/RuleItem.vue';
 
 import Rules from './components/rule/Rules.vue';
 import RuleCategory from './components/rule/category/Category.vue';
@@ -69,8 +70,8 @@ const components = {
   'gamification-program-image-selector': ProgramImageSelector,
   'gamification-program-image-selector-buttons': ProgramImageSelectorButtons,
   'gamification-program-owner-assignment': ProgramOwnerAssignment,
+  'gamification-program-rule-item': ProgramRuleItem,
 
-  'gamification-rule-item': RuleItem,
   'gamification-rules': Rules,
   'gamification-rules-category': RuleCategory,
   'gamification-rules-list': RulesList,
@@ -97,7 +98,7 @@ const components = {
   'gamification-program-created-placeholder': ProgramCreatedPlaceholder,
   'gamification-program-disabled-mask-content': ProgramDisabledMaskContent,
   'gamification-program-rules-toolbar': RulesToolbar,
-  'gamification-program-rule-item': RuleItem,
+  'gamification-rule-item': RuleItem,
   'gamification-program-rule-title': RuleTitle,
   'gamification-program-no-rule-found': NoRuleFound,
 };
