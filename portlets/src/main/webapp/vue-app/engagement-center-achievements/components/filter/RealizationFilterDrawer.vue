@@ -65,7 +65,7 @@
             :excluded-ids="ruleIds"
             :include-deleted="includeDisabledRules" />
           <div v-if="rules && rules.length" class="identitySuggester no-border mt-0">
-            <gamification-rule-item
+            <gamification-rule-chip
               v-for="(rule, index) in rules"
               :key="rule.id"
               :rule="rule"
