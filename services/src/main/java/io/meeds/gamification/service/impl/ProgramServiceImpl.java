@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.IdentityConstants;
@@ -49,26 +50,30 @@ import org.exoplatform.ws.frameworks.cometd.ContinuationService;
 @SuppressWarnings("deprecation")
 public class ProgramServiceImpl implements ProgramService {
 
-  private static final String          PROGRAM_DOESN_T_EXIST = "Program doesn't exist";
+  private static final String     PROGRAM_DOESN_T_EXIST = "Program doesn't exist";
 
-  protected final ProgramStorage       programStorage;
+  protected final ProgramStorage  programStorage;
 
-  protected final ListenerService      listenerService;
+  protected final ListenerService listenerService;
 
-  protected final IdentityManager      identityManager;
+  protected final IdentityManager identityManager;
 
-  protected final SpaceService         spaceService;
+  protected final SpaceService    spaceService;
 
-  protected SpaceTemplateService spaceTemplateService;
+  protected final UserACL         userACL;
+
+  protected SpaceTemplateService  spaceTemplateService;
 
   public ProgramServiceImpl(ProgramStorage programStorage,
                             ListenerService listenerService,
                             IdentityManager identityManager,
-                            SpaceService spaceService) {
+                            SpaceService spaceService,
+                            UserACL userACL) {
     this.programStorage = programStorage;
     this.listenerService = listenerService;
     this.identityManager = identityManager;
     this.spaceService = spaceService;
+    this.userACL = userACL;
   }
 
   @Override
@@ -148,7 +153,7 @@ public class ProgramServiceImpl implements ProgramService {
 
   @Override
   public int countOwnedPrograms(String username) {
-    if (StringUtils.isBlank(username)) {
+    if (userACL.isAnonymousUser(username)) {
       return 0;
     }
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
@@ -159,7 +164,7 @@ public class ProgramServiceImpl implements ProgramService {
 
   @Override
   public int countMemberPrograms(String username) {
-    if (StringUtils.isBlank(username)) {
+    if (userACL.isAnonymousUser(username)) {
       return 0;
     }
     ProgramFilter programFilter = computeMemberProgramsFilter(username);
