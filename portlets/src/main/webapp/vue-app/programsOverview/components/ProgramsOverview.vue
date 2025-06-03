@@ -171,7 +171,9 @@ export default {
       this.drawerExpanded = event;
     },
     openCreatedProgramDetail(program) {
-      this.$root.$emit('program-detail-drawer', program, true, true);
+      if (!this.drawerExpanded) {
+        this.$root.$emit('program-detail-drawer', program, true, true, true);
+      }
     }
   },
 };
