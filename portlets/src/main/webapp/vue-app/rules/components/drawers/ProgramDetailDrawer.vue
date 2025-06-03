@@ -56,6 +56,7 @@
             :program="program"
             :administrators="administrators"
             :is-administrator="isAdministrator"
+            :newly-created="newlyCreated"
             @updated="program = $event" />
         </v-card>
       </v-card>
@@ -181,6 +182,7 @@ export default {
     rulesSize: 0,
     expanded: false,
     originalUrl: null,
+    newlyCreated: false,
   }),
   computed: {
     programId() {
@@ -243,8 +245,9 @@ export default {
     this.$root.$on('rule-created', this.updateOpenedProgram);
   },
   methods: {
-    open(program, goBackButton, expanded) {
+    open(program, goBackButton, expanded, newlyCreated ) {
       this.program = program;
+      this.newlyCreated = newlyCreated;
       this.goBackButton = goBackButton || false;
       this.hasMore = false;
       this.rulesSize = 0;
