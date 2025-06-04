@@ -143,7 +143,7 @@ export default {
       return this.rule.titleExcerpt || this.rule.title || '';
     },
     ruleDescription() {
-      return this.$utils.htmlToText(this.rule.descriptionExcerpt || this.rule.description || '');
+      return this.rule.descriptionExcerpt || this.rule.description || '';
     },
     isFavorite() {
       return this.rule.favorite;
