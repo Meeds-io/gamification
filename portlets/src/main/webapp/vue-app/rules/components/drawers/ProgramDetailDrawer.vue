@@ -89,43 +89,6 @@
             class="text-color text-wrap text-start text-break rich-editor-content mt-2"
             v-sanitized-html="program.description">
           </div>
-          <div v-if="!$root.isAnonymous" class="d-flex flex-column mt-5">
-            <div class="d-flex flex-row">
-              <div class="text-header flex-start text-start flex-grow-1 flex-shrink-1 text-truncate">
-                {{ $t('programs.details.label.audienceSpace') }}
-              </div>
-              <div class="text-header flex-end text-end flex-grow-0 flex-shrink-0">
-                {{ $t('programs.details.label.programOwners') }}
-              </div>
-            </div>
-            <div class="d-flex flex-row">
-              <div class="flex-start text-start flex-grow-1 flex-shrink-1 text-truncate">
-                <exo-space-avatar
-                  v-if="program.space"
-                  :space="program.space"
-                  :size="32"
-                  class="text-truncate mt-2"
-                  popover />
-                <div v-else-if="!program.spaceId">
-                  {{ $t('programs.details.label.programOpenToParticipate') }}
-                </div>
-              </div>
-              <div class="flex-end text-end flex-grow-0 flex-shrink-0">
-                <div v-if="owners.length">
-                  <engagement-center-avatars-list
-                    :avatars="owners"
-                    :max-avatars-to-show="3"
-                    :avatars-count="ownersCount"
-                    :size="25"
-                    class="d-flex justify-sm-end pt-2"
-                    @open-avatars-drawer="$root.$emit('open-owners-drawer', owners, true)" />
-                </div>
-                <v-chip v-else class="ms-sm-auto mt-2">
-                  {{ $t('programs.label.rewardAdmins') }}
-                </v-chip>
-              </div>
-            </div>
-          </div>
         </v-card>
         <gamification-rules-overview-widget
           v-if="drawer"
@@ -213,9 +176,6 @@ export default {
     owners() {
       return [...this.addedOwners, ...this.spaceManagersList, ...this.administratorUsernames]
         .filter((v, i, array) => array.findIndex(v2 => v?.userName === v2?.userName) === i);
-    },
-    ownersCount() {
-      return this.owners?.length;
     },
     isAdministrator() {
       return this.$root.isAdministrator;
