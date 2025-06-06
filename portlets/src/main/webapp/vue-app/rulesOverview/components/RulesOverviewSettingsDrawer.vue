@@ -69,7 +69,7 @@
         <div class="font-weight-bold">{{ $t('gamification.rules.overviewSettings.actionsAvailable') }}</div>
         <number-input
           v-model="availableRulesLimit"
-          :min="1"
+          :min="0"
           :max="25"
           :step="1"
           class="ms-auto me-n1 my-0 pa-0" />
@@ -101,6 +101,7 @@
         </v-btn>
         <v-btn
           :loading="loading"
+          :disabled="disabled"
           color="primary"
           elevation="0"
           @click="save()">
@@ -138,6 +139,9 @@ export default {
         label: this.$t('gamification.rules.overviewSettings.sortByModifiedDate'),
       }];
     },
+    disabled() {
+      return this.availableRulesLimit === 0 && this.upcomingRulesLimit === 0 && this.endingRulesLimit === 0 && this.lockedRulesLimit === 0;
+    }
   },
   created() {
     this.$root.$on('rules-overview-settings', this.open);
