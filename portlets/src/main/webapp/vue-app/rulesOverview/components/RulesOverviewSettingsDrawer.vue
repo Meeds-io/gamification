@@ -140,7 +140,7 @@ export default {
       }];
     },
     disabled() {
-      return this.availableRulesLimit === 0;
+      return this.availableRulesLimit === 0 && this.upcomingRulesLimit === 0 && this.endingRulesLimit === 0 && this.lockedRulesLimit === 0;
     }
   },
   created() {
