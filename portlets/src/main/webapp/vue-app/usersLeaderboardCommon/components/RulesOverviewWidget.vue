@@ -230,11 +230,10 @@ export default {
       }
       const lockedRulesToDisplay = this.lockedRulesLimit && this.lockedRules.slice(0, this.lockedRulesLimit) || [];
       const endingRulesToDisplay = this.endingRulesLimit && this.endingRules.slice(0, this.endingRulesLimit) || [];
-      const validRules = this.rules
+      return  this.rules
         .filter(r => (r?.userInfo?.context?.valid || this.isRuleValidButLocked(r))
             && !lockedRulesToDisplay.find(lr => lr.id === r.id)
             && !endingRulesToDisplay.find(er => er.id === r.id));
-      return validRules;
     },
     upcomingRules() {
       if (!this.hasRules || !this.upcomingRulesLimit) {
@@ -473,16 +472,29 @@ export default {
       }
     },
     isRuleValidButLocked(rule) {
-      return rule?.prerequisiteRules?.length // has locked rules
-          // Check that all other rule conditions are valid
-          && !rule?.userInfo?.context?.valid
-          && Object.keys(rule.userInfo.context)
-            .every(prop => !prop.includes('valid')
-                || prop === 'valid'
-                || !prop.includes('validForIdentity')
-                || prop === 'validForIdentity'
-                || prop === 'validPrerequisites'
-                || rule.userInfo.context[prop]);
+      if (!rule?.prerequisiteRules?.length) {
+        return false;
+      }
+      const context = rule.userInfo?.context || {};
+
+      // Check that the rule is currently invalid
+      if (context.valid === true) {
+        return false;
+      }
+      const allValidConditionsMet = Object.entries(context)
+        .every(([key, value]) => {
+          const exceptions = ['valid', 'validForIdentity', 'validPrerequisites'];
+          if (!key.startsWith('valid') || exceptions.includes(key)) {
+            return true;
+          }
+          return value === true;
+        });
+
+      if (!allValidConditionsMet) {return false;}
+      // Check that all values inside `validPrerequisites` are true
+      const prerequisites = context.validPrerequisites || {};
+      return Object.values(prerequisites)
+        .every(v => v === true);
     },
     isRuleValidButUpcoming(rule) {
       return !rule.userInfo.context.validDates // not valid dates yet
