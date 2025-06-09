@@ -47,9 +47,17 @@ export default {
       default: false
     }
   },
+  data() {
+    return {
+      eventTypes: {
+        NOTIFICATION_SETTING: ['addUserProfileNotificationSetting'],
+        RELATIONSHIP: ['receiveRelationshipRequest', 'sendRelationshipRequest'],
+      },
+    };
+  },
   computed: {
-    isProfileEvent() {
-      return !['receiveRelationshipRequest', 'sendRelationshipRequest'].includes(this.trigger);
+    eventType() {
+      return this.getEventType(this.trigger);
     },
     profileLink() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${eXo.env.portal.userName}`;
@@ -57,11 +65,41 @@ export default {
     peopleLink() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/people`;
     },
+    userNotificationSettingLink() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/settings#notifications`;
+    },
+    eventConfig() {
+      return {
+        NOTIFICATION_SETTING: {
+          button: this.$t('gamification.event.display.profileNotificationSettingAdded'),
+          link: this.userNotificationSettingLink
+        },
+        RELATIONSHIP: {
+          button: this.$t('gamification.event.display.connectWithOthers'),
+          link: this.peopleLink
+        },
+        PROFILE: {
+          button: this.$t('gamification.event.display.yourProfile'),
+          link: this.profileLink
+        }
+      };
+    },
     buttonLabel() {
-      return this.isProfileEvent ? this.$t('gamification.event.display.yourProfile') : this.$t('gamification.event.display.connectWithOthers');
+      return this.eventConfig[this.eventType].button;
     },
     buttonLink() {
-      return this.isProfileEvent ? this.profileLink : this.peopleLink;
+      return this.eventConfig[this.eventType].link;
+    }
+  },
+  methods: {
+    getEventType(trigger) {
+      if (this.eventTypes.NOTIFICATION_SETTING.includes(trigger)) {
+        return 'NOTIFICATION_SETTING';
+      }
+      if (this.eventTypes.RELATIONSHIP.includes(trigger)) {
+        return 'RELATIONSHIP';
+      }
+      return 'PROFILE';
     }
   }
 };
