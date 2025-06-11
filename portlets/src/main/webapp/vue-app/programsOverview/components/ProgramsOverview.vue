@@ -51,6 +51,17 @@
               </v-btn>
               <v-fab-transition hide-on-leave>
                 <v-btn
+                  v-show="displayAddProgram"
+                  :class="!$root.canEdit && 'me-n2'"
+                  class="z-index-one"
+                  small
+                  icon
+                  @click="$root.$emit('program-form-open')">
+                  <v-icon size="18">fa-plus</v-icon>
+                </v-btn>
+              </v-fab-transition>
+              <v-fab-transition hide-on-leave>
+                <v-btn
                   v-show="hoverEdit"
                   :title="$t('gamification.programs.overviewSettings.editTooltip')"
                   :class="!programsDisplayed && 'me-n2 z-index-one'"
@@ -84,14 +95,14 @@
       <gamification-program-list-drawer
         ref="listDrawer"
         @expand-updated="expandedUpdated" />
-      <engagement-center-program-detail-drawer
-        :administrators="administrators" />
-      <gamification-program-drawer
-        v-if="!drawerExpanded"
-        ref="programDrawer"
-        :is-administrator="$root.isAdministrator" />
-      <engagement-center-rule-extensions />
     </div>
+    <engagement-center-rule-extensions />
+    <engagement-center-program-detail-drawer
+      :administrators="administrators" />
+    <gamification-program-drawer
+      v-if="!drawerExpanded"
+      ref="programDrawer"
+      :is-administrator="$root.isAdministrator" />
     <gamification-programs-overview-settings-drawer
       v-if="$root.canEdit" />
   </v-app>
@@ -122,6 +133,9 @@ export default {
     hoverEdit() {
       return this.hover && this.$root.canEdit;
     },
+    displayAddProgram() {
+      return this.hover && this.$root.canAddProgram && !this.programsDisplayed;
+    },
     limit() {
       return this.$root.limit || 4;
     },
@@ -143,6 +157,7 @@ export default {
   },
   created() {
     this.$root.$on('program-added', this.openCreatedProgramDetail);
+    this.$root.$on('program-updated', this.retrievePrograms);
     this.retrievePrograms();
   },
   beforeDestroy() {

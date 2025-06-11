@@ -127,7 +127,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               {{ $t('programs.details.label.rulesOfProgram') }}
             </v-list-item-title>
             <gamification-program-created-placeholder
-              v-if="newlyCreated"
+              v-if="newlyCreated && !totalSize"
               @add="$root.$emit('rule-form-drawer', null, program)" />
             <template v-else>
               <gamification-program-rules-toolbar
@@ -417,8 +417,7 @@ export default {
         lang: eXo.env.portal.language,
       })
         .then((data) => {
-          this.programRules = data.rules || [];
-          this.programRules.forEach(rule => rule.program = this.program);
+          this.programRules = [...data.rules];
           this.totalSize = data.size || 0;
           return this.$nextTick();
         })
