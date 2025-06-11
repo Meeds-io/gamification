@@ -20,8 +20,9 @@
     <v-card
       flat
       class="pa-0"
+      :href="ruleUrl"
       :aria-label="$t('search.access.to.result', {0 :ruleTitle})"
-      @click="openRuleDetailsDrawer()">
+      @click.stop.prevent="openRuleDetailsDrawer()">
       <v-list class="pa-0" :class="hover && 'light-grey-background-color no-border-radius' || ''">
         <v-list-item>
           <v-list-item-icon class="ms-n1 me-2">
@@ -30,9 +31,9 @@
 
           <v-list-item-content>
             <v-list-item-title class="d-flex flex-row full-width align-center">
-              <p
+              <h1
                 class="flex-grow-1 title pt-1 mb-0 ps-0 my-auto align-center text-start text-truncate"
-                v-sanitized-html="ruleTitle"></p>
+                v-sanitized-html="ruleTitle"></h1>
               <div v-show="hover || isMobile" class="ml-2 pt-1">
                 <span  class="d-flex d-inline-flex">
                 <v-btn icon small @click="openRuleDetailsDrawer(true)">
@@ -191,6 +192,9 @@ export default {
     programStyle() {
       return this.rule?.program?.color && `border: 1px solid ${this.rule.program.color} !important;` || '';
     },
+    ruleUrl() {
+      return `/${eXo.env.portal.containerName}/${eXo.env.portal.metaPortalName}/contributions/actions/${this.result.id}`;
+    }
   },
   methods: {
     async openRuleDetailsDrawer(displayAnnouncementForm) {
