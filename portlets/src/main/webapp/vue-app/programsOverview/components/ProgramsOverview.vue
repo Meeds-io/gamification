@@ -51,7 +51,7 @@
               </v-btn>
               <v-fab-transition hide-on-leave>
                 <v-btn
-                  v-show="hoverAdd && !programsDisplayed"
+                  v-show="displayAddProgram"
                   :class="!$root.canEdit && 'me-n2'"
                   class="z-index-one"
                   small
@@ -133,8 +133,8 @@ export default {
     hoverEdit() {
       return this.hover && this.$root.canEdit;
     },
-    hoverAdd() {
-      return this.hover && this.$root.canAddProgram;
+    displayAddProgram() {
+      return this.hover && this.$root.canAddProgram && !this.programsDisplayed;
     },
     limit() {
       return this.$root.limit || 4;
