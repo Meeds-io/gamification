@@ -251,7 +251,7 @@ export default {
       return this.lockedRules.length;
     },
     validRulesCount() {
-      return this.validRules.length;
+      return this.validRules.length && this.availableRulesLimit > 0;
     },
     upcomingRulesCount() {
       return this.upcomingRules.length;
@@ -408,7 +408,7 @@ export default {
           spaceId: this.spaceId?.length && [this.spaceId] || null,
           programId: this.programId,
           offset: 0,
-          limit: this.activeRulesLimit,
+          limit: 50, // Maximum reachable (availableRulesLimit + lockedRulesLimit)
           sortBy: this.sortBy,
           sortDescending: this.sortBy !== 'title',
           expand: 'countRealizations,expandPrerequisites',
