@@ -471,7 +471,7 @@ export default {
     isRuleValidButLocked(rule) {
       return rule?.prerequisiteRules?.length // has locked rules
           // Check that all other rule conditions are valid
-          && rule?.userInfo?.context?.valid
+          && !rule?.userInfo?.context?.valid
           && Object.keys(rule.userInfo.context)
             .every(prop => !prop.includes('valid')
                   || prop === 'valid'
