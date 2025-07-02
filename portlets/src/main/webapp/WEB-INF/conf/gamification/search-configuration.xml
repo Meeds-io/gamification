@@ -65,6 +65,9 @@
             <field name="icon">
               <string>fas fa-trophy</string>
             </field>
+            <field name="spaceFilterEnabled">
+              <boolean>true</boolean>
+            </field>
           </object>
         </object-param>
       </init-params>
