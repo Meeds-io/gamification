@@ -32,7 +32,7 @@
           <v-list-item-content>
             <v-list-item-title class="d-flex flex-row full-width align-center">
               <h1
-                class="flex-grow-1 title pt-1 mb-0 ps-0 my-auto align-center text-start text-truncate"
+                class="flex-grow-1 title font-weight-bold primary--text pt-1 mb-0 ps-0 my-auto align-center text-start text-truncate"
                 v-sanitized-html="ruleTitle"></h1>
               <div v-show="hover || isMobile" class="ml-2 pt-1">
                 <span  class="d-flex d-inline-flex">
@@ -99,7 +99,7 @@
                 </v-tooltip>
               </span>
               <div
-                class="pt-2 text-wrap text-body text-break"
+                class="pt-2 text-wrap text-body-2 text-color text-break"
                 :class="{
                   'text-truncate-2': isMobile,
                   'text-truncate-3': !isMobile,
@@ -141,7 +141,7 @@ export default {
       return this.result || {};
     },
     ruleTitle() {
-      return this.rule.titleExcerpt || this.rule.title || '';
+      return this.rule?.title || '';
     },
     ruleDescription() {
       return this.rule.descriptionExcerpt || this.rule.description || '';
