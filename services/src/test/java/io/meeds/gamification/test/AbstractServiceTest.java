@@ -170,6 +170,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
 
   protected RealizationService           realizationService;
 
+  protected RealizationComputingService  realizationComputingService;
+
   protected BadgeDAO                     badgeStorage;
 
   protected ProgramDAO                   programDAO;
@@ -246,6 +248,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase { // NOSONAR
     ruleService = ExoContainerContext.getService(RuleService.class);
     listenerService = ExoContainerContext.getService(ListenerService.class);
     realizationService = ExoContainerContext.getService(RealizationService.class);
+    realizationComputingService = ExoContainerContext.getService(RealizationComputingService.class);
     entityManagerService = ExoContainerContext.getService(EntityManagerService.class);
     manageBadgesEndpoint = ExoContainerContext.getService(BadgeRest.class);
     manageDomainsEndpoint = ExoContainerContext.getService(ProgramRest.class);

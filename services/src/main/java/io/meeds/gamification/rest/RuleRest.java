@@ -39,6 +39,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.rest.http.PATCH;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -57,6 +58,7 @@ import io.meeds.gamification.rest.model.ProgramWithRulesRestEntity;
 import io.meeds.gamification.rest.model.RuleList;
 import io.meeds.gamification.rest.model.RuleRestEntity;
 import io.meeds.gamification.service.ProgramService;
+import io.meeds.gamification.service.RealizationComputingService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.utils.Utils;
@@ -74,29 +76,34 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "/gamification/rules", description = "Manages rules")
 public class RuleRest implements ResourceContainer {
 
-  private final CacheControl       cacheControl;
+  private final CacheControl            cacheControl;
 
-  protected ProgramService         programService;
+  protected PortalContainer             container;
 
-  protected RuleService            ruleService;
+  protected ProgramService              programService;
 
-  protected RealizationService     realizationService;
+  protected RuleService                 ruleService;
 
-  protected TranslationService     translationService;
+  protected RealizationService          realizationService;
 
-  protected FavoriteService        favoriteService;
+  protected TranslationService          translationService;
 
-  protected IdentityManager        identityManager;
+  protected FavoriteService             favoriteService;
 
-  protected SecuritySettingService securitySettingService;
+  protected IdentityManager             identityManager;
 
-  protected ActivityManager        activityManager;
+  protected RealizationComputingService realizationComputingService;
 
-  protected XMLProcessor           xmlProcessor;
+  protected SecuritySettingService      securitySettingService;
 
-  protected UserACL                userAcl;
+  protected ActivityManager             activityManager;
 
-  public RuleRest(ProgramService programService, // NOSONAR
+  protected XMLProcessor                xmlProcessor;
+
+  protected UserACL                     userAcl;
+
+  public RuleRest(PortalContainer container, // NOSONAR
+                  ProgramService programService,
                   RuleService ruleService,
                   RealizationService realizationService,
                   TranslationService translationService,
@@ -106,9 +113,7 @@ public class RuleRest implements ResourceContainer {
                   ActivityManager activityManager,
                   XMLProcessor xmlProcessor,
                   UserACL userAcl) {
-    cacheControl = new CacheControl();
-    cacheControl.setNoCache(true);
-    cacheControl.setNoStore(true);
+    this.container = container;
     this.programService = programService;
     this.ruleService = ruleService;
     this.realizationService = realizationService;
@@ -119,16 +124,19 @@ public class RuleRest implements ResourceContainer {
     this.activityManager = activityManager;
     this.userAcl = userAcl;
     this.xmlProcessor = xmlProcessor;
+    this.cacheControl = new CacheControl();
+    this.cacheControl.setNoCache(true);
+    this.cacheControl.setNoStore(true);
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Operation(summary = "Retrieves the list of available rules", method = "GET")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
-      @ApiResponse(responseCode = "400", description = "Invalid query input"),
-      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"),
+    @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+    @ApiResponse(responseCode = "400", description = "Invalid query input"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+    @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response getRules(// NOSONAR
                            @Context
@@ -213,13 +221,16 @@ public class RuleRest implements ResourceContainer {
                            @QueryParam("returnSize")
                            @DefaultValue("false")
                            boolean returnSize,
+                           @Parameter(description = "If true, the rules to do first by the user in order to unlock other rules will be returned at first. Possible values = true or false. Default value = false.")
+                           @QueryParam("lockingRules")
+                           @DefaultValue("false")
+                           boolean lockingRules,
                            @Parameter(description = "Used to retrieve the title and description in requested language")
                            @QueryParam("lang")
                            String lang,
                            @Parameter(description = "Asking for a full representation of a specific subresource, ex: userRealizations")
                            @QueryParam("expand")
                            String expand) {
-
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -252,7 +263,7 @@ public class RuleRest implements ResourceContainer {
     ruleFilter.setSortBy(sortField);
     ruleFilter.setSortDescending(sortDescending);
     ruleFilter.setIncludeDeleted(includeDeleted);
-    List<String> expandFields =  Utils.getExpandOptions(expand);
+    List<String> expandFields = Utils.getExpandOptions(expand);
 
     try {
       ResponseBuilder responseBuilder = Response.status(200);
@@ -263,6 +274,7 @@ public class RuleRest implements ResourceContainer {
                                                      periodType,
                                                      locale,
                                                      expandFields,
+                                                     lockingRules,
                                                      currentUser,
                                                      offset,
                                                      limit,
@@ -288,6 +300,7 @@ public class RuleRest implements ResourceContainer {
                                                        periodType,
                                                        locale,
                                                        expandFields,
+                                                       lockingRules,
                                                        currentUser,
                                                        offset,
                                                        limit,
@@ -313,10 +326,10 @@ public class RuleRest implements ResourceContainer {
   @Path("{id}")
   @Operation(summary = "Retrieves the list of available rules", method = "GET")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
-      @ApiResponse(responseCode = "404", description = "Object not found"),
-      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+    @ApiResponse(responseCode = "404", description = "Object not found"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+    @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   public Response getRule(
                           @Context
@@ -341,7 +354,7 @@ public class RuleRest implements ResourceContainer {
     String currentUser = getCurrentUser();
     try {
       RuleDTO rule = ruleService.findRuleById(id, currentUser);
-      List<String> expandFields =  Utils.getExpandOptions(expand);
+      List<String> expandFields = Utils.getExpandOptions(expand);
       RuleRestEntity ruleEntity = RuleBuilder.toRestEntity(programService,
                                                            ruleService,
                                                            realizationService,
@@ -374,10 +387,10 @@ public class RuleRest implements ResourceContainer {
   @RolesAllowed("users")
   @Operation(summary = "Creates a rule", method = "POST")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
-      @ApiResponse(responseCode = "400", description = "Invalid query input"),
-      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"),
+    @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+    @ApiResponse(responseCode = "400", description = "Invalid query input"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+    @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response createRule(
                              @Context
@@ -404,11 +417,11 @@ public class RuleRest implements ResourceContainer {
   @RolesAllowed("users")
   @Operation(summary = "Updates a rule", method = "PUT")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "204", description = "Request fulfilled"),
-      @ApiResponse(responseCode = "404", description = "Object not found"),
-      @ApiResponse(responseCode = "400", description = "Invalid query input"),
-      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"),
+    @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+    @ApiResponse(responseCode = "404", description = "Object not found"),
+    @ApiResponse(responseCode = "400", description = "Invalid query input"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+    @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response updateRule(
                              @Context
@@ -436,11 +449,11 @@ public class RuleRest implements ResourceContainer {
   @RolesAllowed("users")
   @Operation(summary = "Deletes a rule", method = "DELETE")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
-      @ApiResponse(responseCode = "404", description = "Object not found"),
-      @ApiResponse(responseCode = "400", description = "Invalid query input"),
-      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"),
+    @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+    @ApiResponse(responseCode = "404", description = "Object not found"),
+    @ApiResponse(responseCode = "400", description = "Invalid query input"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+    @ApiResponse(responseCode = "500", description = "Internal server error"),
   })
   public Response deleteRule(
                              @Context
@@ -467,7 +480,8 @@ public class RuleRest implements ResourceContainer {
   @RolesAllowed("users")
   @Operation(summary = "Change enablement status of rule", description = "Change enablement status rule", method = "PATCH")
   @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled") })
-  public Response updateRuleStatus(@Context HttpServletRequest request,
+  public Response updateRuleStatus(@Context
+  HttpServletRequest request,
                                    @Parameter(description = "Rule Id", required = true)
                                    @PathParam("ruleId")
                                    long ruleId) {
@@ -498,6 +512,7 @@ public class RuleRest implements ResourceContainer {
                                         PeriodType periodType,
                                         Locale locale,
                                         List<String> expandFields,
+                                        boolean lockingRules,
                                         String username,
                                         int offset,
                                         int limit,
@@ -506,7 +521,12 @@ public class RuleRest implements ResourceContainer {
     List<String> times = new ArrayList<>();
     long startTime = System.currentTimeMillis();
 
-    List<RuleDTO> rules = ruleService.getRules(filter, username, offset, limit);
+    List<RuleDTO> rules;
+    if (lockingRules) {
+      rules = getRealizationComputingService().getLockingRules(filter, username, offset, limit);
+    } else {
+      rules = ruleService.getRules(filter, username, offset, limit);
+    }
 
     times.add("list;dur=" + (System.currentTimeMillis() - startTime));
     startTime = System.currentTimeMillis();
@@ -561,4 +581,12 @@ public class RuleRest implements ResourceContainer {
                                     isAnonymous(),
                                     PeriodType.ALL);
   }
+
+  public RealizationComputingService getRealizationComputingService() {
+    if (realizationComputingService == null) {
+      realizationComputingService = container.getComponentInstanceOfType(RealizationComputingService.class);
+    }
+    return realizationComputingService;
+  }
+
 }

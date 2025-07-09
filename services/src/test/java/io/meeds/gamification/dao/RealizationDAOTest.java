@@ -43,47 +43,47 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
 
   @Test
   public void testGetLeaderboardRank() {
-    assertEquals(0, realizationDAO.getLeaderboardRank(IdentityType.USER, TEST_USER_EARNER));
+    assertEquals(0, realizationDAO.getLeaderboardRank(IdentityType.USER, Long.parseLong(TEST_USER_EARNER)));
     ProgramEntity domainEntity1 = newDomain();
     RealizationEntity realizationEntity1 = newRealizationEntity("rule", domainEntity1.getId());
-    assertEquals(1, realizationDAO.getLeaderboardRank(IdentityType.USER, TEST_USER_EARNER));
+    assertEquals(1, realizationDAO.getLeaderboardRank(IdentityType.USER, Long.parseLong(TEST_USER_EARNER)));
 
     realizationEntity1.setStatus(RealizationStatus.REJECTED);
     realizationDAO.update(realizationEntity1);
     restartTransaction();
-    assertEquals(0, realizationDAO.getLeaderboardRank(IdentityType.USER, TEST_USER_EARNER));
+    assertEquals(0, realizationDAO.getLeaderboardRank(IdentityType.USER, Long.parseLong(TEST_USER_EARNER)));
 
     ProgramEntity domainEntity2 = newDomain();
     newRealizationEntity("rule", domainEntity2.getId());
-    assertEquals(1, realizationDAO.getLeaderboardRank(IdentityType.USER, TEST_USER_EARNER));
+    assertEquals(1, realizationDAO.getLeaderboardRank(IdentityType.USER, Long.parseLong(TEST_USER_EARNER)));
 
-    assertEquals(1, realizationDAO.getLeaderboardRankByDates(IdentityType.USER, TEST_USER_EARNER, fromDate, toDate));
-    assertEquals(0, realizationDAO.getLeaderboardRankByDates(IdentityType.USER, TEST_USER_EARNER, toDate, toDate));
+    assertEquals(1, realizationDAO.getLeaderboardRankByDates(IdentityType.USER, Long.parseLong(TEST_USER_EARNER), fromDate, toDate));
+    assertEquals(0, realizationDAO.getLeaderboardRankByDates(IdentityType.USER, Long.parseLong(TEST_USER_EARNER), toDate, toDate));
 
-    assertEquals(1, realizationDAO.getLeaderboardRankByProgramIds(IdentityType.USER, TEST_USER_EARNER, domainEntity2.getId()));
-    assertEquals(0, realizationDAO.getLeaderboardRankByProgramIds(IdentityType.USER, TEST_USER_EARNER, domainEntity1.getId()));
+    assertEquals(1, realizationDAO.getLeaderboardRankByProgramIds(IdentityType.USER, Long.parseLong(TEST_USER_EARNER), domainEntity2.getId()));
+    assertEquals(0, realizationDAO.getLeaderboardRankByProgramIds(IdentityType.USER, Long.parseLong(TEST_USER_EARNER), domainEntity1.getId()));
 
     assertEquals(0,
                  realizationDAO.getLeaderboardRankByDatesAndProgramIds(IdentityType.USER,
-                                                                       TEST_USER_EARNER,
+                                                                       Long.parseLong(TEST_USER_EARNER),
                                                                        fromDate,
                                                                        toDate,
                                                                        domainEntity1.getId()));
     assertEquals(0,
                  realizationDAO.getLeaderboardRankByDatesAndProgramIds(IdentityType.USER,
-                                                                       TEST_USER_EARNER,
+                                                                       Long.parseLong(TEST_USER_EARNER),
                                                                        toDate,
                                                                        toDate,
                                                                        domainEntity2.getId()));
     assertEquals(1,
                  realizationDAO.getLeaderboardRankByDatesAndProgramIds(IdentityType.USER,
-                                                                       TEST_USER_EARNER,
+                                                                       Long.parseLong(TEST_USER_EARNER),
                                                                        fromDate,
                                                                        toDate,
                                                                        domainEntity2.getId()));
     assertEquals(0,
                  realizationDAO.getLeaderboardRankByDatesAndProgramIds(IdentityType.USER,
-                                                                       TEST_USER_EARNER,
+                                                                       Long.parseLong(TEST_USER_EARNER),
                                                                        toDate,
                                                                        toDate,
                                                                        domainEntity1.getId()));

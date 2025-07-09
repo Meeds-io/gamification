@@ -169,7 +169,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public int getLeaderboardRank(String earnerIdentityId, Date fromDate, Date toDate, Long spaceId, Long programId) {
+  public int getLeaderboardRank(long earnerIdentityId, Date fromDate, Date toDate, Long spaceId, Long programId) {
     org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(earnerIdentityId); // NOSONAR
     IdentityType identityType = IdentityType.getType(identity.getProviderId());
     if ((programId != null && programId > 0) || (spaceId != null && spaceId > 0)) {
@@ -245,7 +245,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
     return rules.stream()
                 .distinct()
-                .filter(rule -> getRealizationValidityContext(rule, earnerIdentity.getId()).isValidForIdentity())
+                .filter(rule -> getRealizationValidityContext(rule, earnerIdentity.getIdentityId()).isValidForIdentity())
                 .map(rule -> toRealization(rule, earnerIdentity, receiverIdentityId, objectId, objectType, eventDetails))
                 .map(r -> {
                   r = realizationStorage.createRealization(r);
@@ -384,7 +384,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
   }
 
   @Override
-  public RealizationValidityContext getRealizationValidityContext(RuleDTO rule, String earnerIdentityId) { // NOSONAR
+  public RealizationValidityContext getRealizationValidityContext(RuleDTO rule, long earnerIdentityId) { // NOSONAR
     RealizationValidityContext realizationRestriction = new RealizationValidityContext();
     if (rule == null || rule.isDeleted() || !rule.isEnabled()) {
       realizationRestriction.setValidRule(false);
@@ -705,7 +705,7 @@ public class RealizationServiceImpl implements RealizationService, Startable {
                                                            int limit) {
     result = result.stream().filter(spacePoint -> {
       String spaceIdentityId = spacePoint.getEarnerId();
-      org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(spaceIdentityId);
+      org.exoplatform.social.core.identity.model.Identity identity = identityManager.getIdentity(Long.parseLong(spaceIdentityId));
       if (identity == null) {
         LOG.debug("Space Identity with id {} was deleted, ignore it", spaceIdentityId);
         return false;
@@ -722,12 +722,12 @@ public class RealizationServiceImpl implements RealizationService, Startable {
     }
   }
 
-  private boolean isRecurrenceValid(RuleDTO rule, String earnerIdentityId) {
+  private boolean isRecurrenceValid(RuleDTO rule, long earnerIdentityId) {
     return rule.getRecurrence() == null || rule.getRecurrence() == RecurrenceType.NONE
            || hasNoRealizationInPeriod(earnerIdentityId, rule.getId(), rule.getRecurrence().getPeriodStartDate());
   }
 
-  private boolean hasNoRealizationInPeriod(String earnerIdentityId, Long ruleId, Date sinceDate) {
+  private boolean hasNoRealizationInPeriod(long earnerIdentityId, Long ruleId, Date sinceDate) {
     return realizationStorage.countRealizationsInPeriod(earnerIdentityId, ruleId, sinceDate) == 0;
   }
 

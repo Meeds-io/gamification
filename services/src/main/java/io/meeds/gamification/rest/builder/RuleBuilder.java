@@ -214,7 +214,7 @@ public class RuleBuilder {
                                               String username) {
     UserInfoContext userContext = ProgramBuilder.toUserContext(programService, rule.getProgram(), username);
     RealizationValidityContext realizationRestriction = realizationService.getRealizationValidityContext(rule,
-                                                                                                         String.valueOf(Utils.getUserIdentityId(username)));
+                                                                                                         Utils.getUserIdentityId(username));
     userContext.setContext(realizationRestriction);
     userContext.setAllowedToRealize(realizationRestriction.isValidForIdentity());
     return userContext;

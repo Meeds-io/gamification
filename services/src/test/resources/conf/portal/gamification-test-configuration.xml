@@ -30,6 +30,12 @@
     <key>io.meeds.gamification.service.ProgramService</key>
     <type>io.meeds.gamification.service.impl.ProgramServiceImpl</type>
   </component>
+
+  <component>
+    <key>io.meeds.gamification.service.RealizationComputingService</key>
+    <type>io.meeds.gamification.service.impl.RealizationComputingServiceImpl</type>
+  </component>
+
     <!-- Domains storage Layer-->
   <component>
     <key>io.meeds.gamification.storage.ProgramStorage</key>
