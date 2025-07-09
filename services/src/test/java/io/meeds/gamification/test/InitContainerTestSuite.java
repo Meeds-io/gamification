@@ -64,6 +64,7 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
 @SuiteClasses({
     PublicActionAccessFilterTest.class,
     RealizationServiceTest.class,
+    RealizationComputingServiceTest.class,
     BadgeServiceTest.class,
     BadgeRegistryTest.class,
     ProgramServiceTest.class,

@@ -53,13 +53,25 @@ public class RealizationValidityContext implements Cloneable {
   }
 
   public boolean isValid() {
+    return isValidNoPrerequisites()
+           && isValidPrerequisites();
+  }
+
+  public boolean isValidButLocked() {
+    return isValidNoPrerequisites() && !isValidPrerequisites();
+  }
+
+  private boolean isValidPrerequisites() {
+    return MapUtils.isEmpty(validPrerequisites) || validPrerequisites.values().stream().allMatch(Boolean::booleanValue);
+  }
+
+  public boolean isValidNoPrerequisites() {
     return validProgram
-        && validAudience
-        && validRule
-        && validDates
-        && validRecurrence
-        && validWhitelist
-        && (MapUtils.isEmpty(validPrerequisites) || validPrerequisites.values().stream().allMatch(Boolean::booleanValue));
+           && validAudience
+           && validRule
+           && validDates
+           && validRecurrence
+           && validWhitelist;
   }
 
   @Override

@@ -126,7 +126,7 @@ public class LeaderboardBuilder {
       // Check if the current user is already in top10
       Date fromDate = getFromDate(period, dateInSeconds);
       Date toDate = getToDate(period, dateInSeconds);
-      int rank = realizationService.getLeaderboardRank(String.valueOf(identityId), fromDate, toDate, spaceId, programId);
+      int rank = realizationService.getLeaderboardRank(identityId, fromDate, toDate, spaceId, programId);
       if (rank > 0) {
         Identity identity = identityManager.getIdentity(String.valueOf(identityId));
         LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
