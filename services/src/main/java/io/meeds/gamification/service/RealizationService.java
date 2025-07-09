@@ -144,7 +144,7 @@ public interface RealizationService {
    * @param spaceId audience space Id
    * @return identity leaderboard rank in {@link Integer}
    */
-  int getLeaderboardRank(String earnerIdentityId, Date fromDate, Date toDate, Long spaceId, Long programId);
+  int getLeaderboardRank(long earnerIdentityId, Date fromDate, Date toDate, Long spaceId, Long programId);
 
   /**
    * Compute User reputation score by program
@@ -262,7 +262,7 @@ public interface RealizationService {
    * @return                  {@link RealizationValidityContext} if can not
    *                          create a realization, else null
    */
-  RealizationValidityContext getRealizationValidityContext(RuleDTO rule, String earnerIdentityId);
+  RealizationValidityContext getRealizationValidityContext(RuleDTO rule, long earnerIdentityId);
 
   /**
    * Retrieves identities total score between designated dates

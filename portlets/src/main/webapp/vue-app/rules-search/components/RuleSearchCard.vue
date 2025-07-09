@@ -35,20 +35,23 @@
                 class="flex-grow-1 title font-weight-bold primary--text pt-1 mb-0 ps-0 my-auto align-center text-start text-truncate"
                 v-sanitized-html="ruleTitle"></h1>
               <div v-show="hover || isMobile" class="ml-2 pt-1">
-                <span  class="d-flex d-inline-flex">
-                <v-btn icon small @click="openRuleDetailsDrawer(true)">
-                  <v-icon class="icon-default-color" size="16">
-                    fa fa-bullhorn
-                  </v-icon>
-                </v-btn>
-                <favorite-button
+                <span class="d-flex d-inline-flex">
+                  <v-btn
+                    icon
+                    small
+                    @click="openRuleDetailsDrawer(true)">
+                    <v-icon class="icon-default-color" size="16">
+                      fa fa-bullhorn
+                    </v-icon>
+                  </v-btn>
+                  <favorite-button
                     :favorite="isFavorite"
                     :id="rule.id"
                     type="rule"
                     type-label="rules"
                     class="ps-1"
                     @removed="$emit('refresh-favorite')" />
-              </span>
+                </span>
               </div>
             </v-list-item-title>
 

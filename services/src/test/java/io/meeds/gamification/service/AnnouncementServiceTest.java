@@ -152,7 +152,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identity.isEnable()).thenReturn(true);
     UTILS.when(() -> Utils.getIdentityByTypeAndId(any(), any()))
          .thenReturn(identity);
-    when(identity.getId()).thenReturn("1");
+    when(identity.getIdentityId()).thenReturn(1l);
 
     Map<String, String> templateParams = new HashMap<>();
 
@@ -178,7 +178,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     rule.setType(EntityType.MANUAL);
     RealizationValidityContext validityContext = new RealizationValidityContext();
     validityContext.setValidAudience(false);
-    when(realizationService.getRealizationValidityContext(rule, identity.getId())).thenReturn(validityContext);
+    when(realizationService.getRealizationValidityContext(rule, identity.getIdentityId())).thenReturn(validityContext);
     assertThrows(IllegalAccessException.class,
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
     when(identityManager.getIdentity("1")).thenReturn(identity);
@@ -247,9 +247,9 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     Map<String, String> templateParams = new HashMap<>();
 
     when(ruleService.findRuleById(anyLong())).thenReturn(rule);
-    when(identityManager.getIdentity("1")).thenReturn(identity);
+    when(identityManager.getIdentity(1)).thenReturn(identity);
     when(announcementStorage.getAnnouncementById(announcementId)).thenReturn(announcement);
-    when(identityManager.getIdentity(userIdentity.getId())).thenReturn(userIdentity);
+    when(identityManager.getIdentity(userIdentity.getIdentityId())).thenReturn(userIdentity);
     when(ruleService.findRuleById(rule.getId(), userIdentity.getRemoteId())).thenReturn(rule);
     when(activityManager.getActivity(String.valueOf(rule.getActivityId()))).thenReturn(activity);
     doAnswer(invocation -> {
@@ -268,7 +268,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                                          null,
                                                                          null);
 
-    when(identityManager.getIdentity(userIdentity.getId())).thenReturn(userIdentity);
+    when(identityManager.getIdentity(userIdentity.getIdentityId())).thenReturn(userIdentity);
     when(ruleService.findRuleById(rule.getId(), userIdentity.getRemoteId())).thenReturn(rule);
     doAnswer(invocation -> {
       ExoSocialActivityImpl comment = invocation.getArgument(1);
@@ -277,7 +277,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
       return null;
     }).when(activityManager).saveComment(any(), any());
     when(realizationService.getRealizationValidityContext(rule,
-                                                          userIdentity.getId())).thenReturn(new RealizationValidityContext());
+                                                          userIdentity.getIdentityId())).thenReturn(new RealizationValidityContext());
 
     Announcement newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root");
     assertNotNull(newAnnouncement);
@@ -324,7 +324,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(announcementStorage.getAnnouncementById(1L)).thenReturn(createdAnnouncement);
 
     when(ruleService.findRuleById(rule.getId(), "root")).thenReturn(rule);
-    when(identityManager.getIdentity("1")).thenReturn(identity);
+    when(identityManager.getIdentity(1)).thenReturn(identity);
 
     assertThrows(IllegalArgumentException.class, () -> announcementService.updateAnnouncementComment(0, "comment"));
     assertThrows(IllegalArgumentException.class, () -> announcementService.updateAnnouncementComment(2l, null));
@@ -376,7 +376,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                          null);
 
     when(ruleService.findRuleById(rule.getId(), username)).thenReturn(rule);
-    when(identityManager.getIdentity("1")).thenReturn(identity);
+    when(identityManager.getIdentity(1)).thenReturn(identity);
     when(announcementStorage.getAnnouncementById(createdAnnouncement.getId())).thenReturn(createdAnnouncement);
     when(announcementStorage.deleteAnnouncement(createdAnnouncement.getId())).thenReturn(canceledAnnouncement);
 

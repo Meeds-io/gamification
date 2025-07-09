@@ -81,10 +81,10 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
 
   private final Map<String, Boolean> filterNamedQueries      = new ConcurrentHashMap<>();
 
-  public int getLeaderboardRank(IdentityType earnerType, String earnerIdentityId) {
+  public int getLeaderboardRank(IdentityType earnerType, long earnerIdentityId) {
     Query query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardRank");
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
-         .setParameter(EARNER_ID_PARAM_NAME, Long.parseLong(earnerIdentityId))
+         .setParameter(EARNER_ID_PARAM_NAME, earnerIdentityId)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     try {
       Object result = query.getSingleResult();
@@ -95,7 +95,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   }
 
   public int getLeaderboardRankByDatesAndProgramIds(IdentityType earnerType,
-                                                    String earnerIdentityId,
+                                                    long earnerIdentityId,
                                                     Date fromDate,
                                                     Date toDate,
                                                     Long ...programIds) {
@@ -104,7 +104,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
          .setParameter(TO_DATE_PARAM_NAME, toDate)
          .setParameter(PROGRAM_IDS_PARAM_NAME, Arrays.asList(programIds))
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
-         .setParameter(EARNER_ID_PARAM_NAME, Long.parseLong(earnerIdentityId))
+         .setParameter(EARNER_ID_PARAM_NAME, earnerIdentityId)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     try {
       Object result = query.getSingleResult();
@@ -114,11 +114,11 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public int getLeaderboardRankByProgramIds(IdentityType earnerType, String earnerIdentityId, Long... programIds) {
+  public int getLeaderboardRankByProgramIds(IdentityType earnerType, long earnerIdentityId, Long... programIds) {
     Query query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardRankByProgramIds");
     query.setParameter(PROGRAM_IDS_PARAM_NAME,  Arrays.asList(programIds))
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
-         .setParameter(EARNER_ID_PARAM_NAME, Long.parseLong(earnerIdentityId))
+         .setParameter(EARNER_ID_PARAM_NAME, earnerIdentityId)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     try {
       Object result = query.getSingleResult();
@@ -128,12 +128,12 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public int getLeaderboardRankByDates(IdentityType earnerType, String earnerIdentityId, Date fromDate, Date toDate) {
+  public int getLeaderboardRankByDates(IdentityType earnerType, long earnerIdentityId, Date fromDate, Date toDate) {
     Query query = getEntityManager().createNamedQuery("RealizationEntity.getLeaderboardRankByDates");
     query.setParameter(FROM_DATE_PARAM_NAME, fromDate)
          .setParameter(TO_DATE_PARAM_NAME, toDate)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
-         .setParameter(EARNER_ID_PARAM_NAME, Long.parseLong(earnerIdentityId))
+         .setParameter(EARNER_ID_PARAM_NAME, earnerIdentityId)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     try {
       Object result = query.getSingleResult();
@@ -275,11 +275,11 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                 .collect(Collectors.toMap(tuple -> tuple.get(0, Long.class), tuple -> tuple.get(1, Long.class)));
   }
 
-  public int countRealizationsByRuleIdAndEarnerId(String earnerIdentityId, long ruleId) {
+  public int countRealizationsByRuleIdAndEarnerId(long earnerIdentityId, long ruleId) {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("RealizationEntity.countRealizationsByRuleIdAndEarnerId",
                                                                  Long.class);
     query.setParameter(RULE_ID_PARAM_NAME, ruleId)
-         .setParameter(EARNER_ID_PARAM_NAME, Long.parseLong(earnerIdentityId))
+         .setParameter(EARNER_ID_PARAM_NAME, earnerIdentityId)
          .setParameter(STATUS_PARAM_NAME, RealizationStatus.ACCEPTED);
     try {
       Long count = query.getSingleResult();
@@ -316,11 +316,11 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     }
   }
 
-  public int countRealizationsInPeriod(String earnerIdentityId, long ruleId, Date sinceDate) {
+  public int countRealizationsInPeriod(long earnerIdentityId, long ruleId, Date sinceDate) {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("RealizationEntity.countRealizationsInPeriod", Long.class);
     query.setParameter(DATE_PARAM_NAME, sinceDate)
          .setParameter(RULE_ID_PARAM_NAME, ruleId)
-         .setParameter(EARNER_ID_PARAM_NAME, Long.parseLong(earnerIdentityId))
+         .setParameter(EARNER_ID_PARAM_NAME, earnerIdentityId)
          .setParameter(STATUS_PARAM_NAME, List.of(RealizationStatus.ACCEPTED, RealizationStatus.PENDING));
     try {
       Long count = query.getSingleResult();
