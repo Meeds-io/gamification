@@ -17,6 +17,11 @@
  */
 
 export function initExtensions() {
+  extensionRegistry.registerExtension('favorite', 'favorite-type', {
+    rank: 50,
+    id: 'rule',
+    icon: 'fa-trophy',
+  });
   extensionRegistry.registerComponent('favorite-rule', 'favorite-drawer-item', {
     id: 'rule',
     vueComponent: Vue.options.components['rule-favorite-item'],
