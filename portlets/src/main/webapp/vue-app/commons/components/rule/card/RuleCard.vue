@@ -52,7 +52,7 @@
               small />
           </div>
         </div>
-        <engagement-center-card-mask class="z-index-one pa-2">
+        <gamification-card-mask class="z-index-one pa-2">
           <gamification-rule-card-mask-content
             v-if="!isEnabled"
             :title="rule.title"
@@ -77,7 +77,7 @@
             v-else-if="isRequireConnectorConnection"
             :extension="connectorValueExtension"
             :title="rule.title" />
-        </engagement-center-card-mask>
+        </gamification-card-mask>
       </div>
       <v-card
         :class="!isValid && 'filter-blur-3'"

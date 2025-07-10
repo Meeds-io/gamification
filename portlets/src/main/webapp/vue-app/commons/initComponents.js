@@ -57,12 +57,15 @@ import RuleCardRecurrence from './components/rule/card/RuleCardRecurrence.vue';
 import RuleCardPoints from './components/rule/card/RuleCardPoints.vue';
 import RuleCardRemainingDates from './components/rule/card/RuleCardRemainingDates.vue';
 
+import CardMask from './components/common/CardMask.vue';
+
 const components = {
   'gamification-overview-widget': Widget,
   'gamification-overview-widget-row': WidgetRow,
   'gamification-overview-widget-empty-row': WidgetEmptyRow,
   'gamification-program-suggester': ProgramSuggester,
   'gamification-program-item': ProgramItem,
+  'gamification-card-mask': CardMask,
 
   'gamification-program-color-picker': ProgramColorPicker,
   'gamification-program-color-picker-drawer': ProgramColorPickerDrawer,
