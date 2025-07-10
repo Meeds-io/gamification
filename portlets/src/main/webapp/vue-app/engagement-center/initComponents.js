@@ -19,11 +19,9 @@
  */
  
 import ResultNotFound from './components/ResultNotFound.vue';
-import CardMask from './components/CardMask.vue';
 
 const components = {
   'engagement-center-result-not-found': ResultNotFound,
-  'engagement-center-card-mask': CardMask,
 };
 
 for (const key in components) {
