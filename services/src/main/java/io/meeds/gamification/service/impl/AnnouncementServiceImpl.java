@@ -92,7 +92,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       throw new IllegalStateException("Rule with id '" + announcement.getChallengeId() + "' isn't a challenge");
     }
     Identity identity = identityManager.getOrCreateUserIdentity(username);
-    if (identity == null || !canAnnounce(rule, identity.getId())) {
+    if (identity == null || !canAnnounce(rule, identity.getIdentityId())) {
       throw new IllegalAccessException("user " + username + " is not allowed to announce a challenge on space with id "
           + rule.getSpaceId());
     }
@@ -108,7 +108,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public boolean canAnnounce(RuleDTO rule, String earnerIdentityId) {
+  public boolean canAnnounce(RuleDTO rule, long earnerIdentityId) {
     return realizationService.getRealizationValidityContext(rule, earnerIdentityId).isValidForIdentity();
   }
 

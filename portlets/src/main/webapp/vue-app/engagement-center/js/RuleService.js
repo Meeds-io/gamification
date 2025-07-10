@@ -48,6 +48,9 @@ export function getRules(filter) {
   if (filter?.orderByRealizations) {
     formData.append('orderByRealizations', 'true');
   }
+  if (filter?.lockingRules) {
+    formData.append('lockingRules', 'true');
+  }
   if (filter?.includeDeleted) {
     formData.append('includeDeleted', 'true');
   }

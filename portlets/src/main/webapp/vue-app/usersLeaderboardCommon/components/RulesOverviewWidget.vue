@@ -90,13 +90,13 @@
             :rule="rule"
             :go-back-button="goBackButton" />
         </template>
-        <template v-if="lockedRulesCount">
+        <template v-if="lockingRulesCount">
           <div class="d-flex align-center">
             <span class="me-2">{{ $t('gamification.overview.firstActionsToDoTitle') }}</span>
             <v-divider />
           </div>
           <gamification-rules-overview-item
-            v-for="rule in lockedRulesToDisplay"
+            v-for="rule in lockingRulesToDisplay"
             :key="rule.id"
             :rule="rule"
             :go-back-button="goBackButton" />
@@ -158,10 +158,11 @@ export default {
     spaceId: eXo.env.portal.spaceId,
     weekInMs: 604800000,
     endingRulesLimit: 2,
-    lockedRulesLimit: 0,
+    lockingRulesLimit: 0,
     availableRulesLimit: 10,
     upcomingRulesLimit: 2,
     upcomingRulesList: [],
+    lockingRules: [],
     activeRulesList: [],
     endingRulesList: [],
     activeRulesSize: 0,
@@ -174,7 +175,7 @@ export default {
         || this.$t('gamification.overview.suggestedRulesTitle');
     },
     activeRulesLimit() {
-      return this.availableRulesLimit + this.lockedRulesLimit;
+      return this.availableRulesLimit + this.lockingRulesLimit;
     },
     rules() {
       const rules = [...this.upcomingRulesList, ...this.endingRulesList];
@@ -191,35 +192,13 @@ export default {
     hasRules() {
       return this.rules?.length;
     },
-    lockedRules() {
-      if (!this.hasRules || !this.lockedRulesLimit) {
-        return [];
-      }
-      const result = [];
-      const lockedRules = this.rules.filter(r => this.isRuleValidButLocked(r));
-      lockedRules.sort((r1, r2) => r2.title.localeCompare(r1.title));
-      lockedRules
-        .forEach(r => {
-          try {
-            this.addLockedRule(result, r);
-          } catch (e) {
-            // Invalid Rule Tree, avoid adding it in the list of
-            // Locked Rules to unlock
-            // eslint-disable-next-line no-console
-            console.debug(e);
-          }
-        });
-      result.sort((r1, r2) => (!r1.prerequisiteRules?.length && -1) || (!r2.prerequisiteRules?.length && 1) || 0);
-      return result;
-    },
     endingRules() {
       if (!this.hasRules || !this.endingRulesLimit) {
         return [];
       }
-      const lockedRulesToDisplay = this.lockedRulesLimit && this.lockedRules.slice(0, this.lockedRulesLimit) || [];
       const endingRules = this.rules
         .filter(r => r?.userInfo?.context?.valid
-            && !lockedRulesToDisplay.find(lr => lr.id === r.id)
+            && !this.lockingRulesToDisplay.find(lr => lr.id === r.id)
             && r.endDate
             && (new Date(r.endDate).getTime() - Date.now()) < this.weekInMs);
       return endingRules;
@@ -228,11 +207,10 @@ export default {
       if (!this.hasRules) {
         return [];
       }
-      const lockedRulesToDisplay = this.lockedRulesLimit && this.lockedRules.slice(0, this.lockedRulesLimit) || [];
       const endingRulesToDisplay = this.endingRulesLimit && this.endingRules.slice(0, this.endingRulesLimit) || [];
       return  this.rules
         .filter(r => (r?.userInfo?.context?.valid || this.isRuleValidButLocked(r))
-            && !lockedRulesToDisplay.find(lr => lr.id === r.id)
+            && !this.lockingRulesToDisplay.find(lr => lr.id === r.id)
             && !endingRulesToDisplay.find(er => er.id === r.id));
     },
     upcomingRules() {
@@ -247,8 +225,8 @@ export default {
     endingRulesCount() {
       return this.endingRules.length;
     },
-    lockedRulesCount() {
-      return this.lockedRules.length;
+    lockingRulesCount() {
+      return this.lockingRules?.length;
     },
     validRulesCount() {
       return this.validRules.length && this.availableRulesLimit > 0;
@@ -256,8 +234,8 @@ export default {
     upcomingRulesCount() {
       return this.upcomingRules.length;
     },
-    lockedRulesToDisplay() {
-      return this.lockedRulesLimit && this.lockedRules.slice(0, this.lockedRulesLimit) || [];
+    lockingRulesToDisplay() {
+      return this.lockingRulesLimit && this.lockingRules?.slice?.(0, this.lockingRulesLimit) || [];
     },
     endingRulesToDisplay() {
       return this.endingRulesLimit && this.endingRules.slice(0, this.endingRulesLimit) || [];
@@ -271,7 +249,7 @@ export default {
     sectionsCount() {
       return (this.validRulesCount && 1 || 0)
         + (this.endingRulesCount && 1 || 0)
-        + (this.lockedRulesCount && 1 || 0)
+        + (this.lockingRulesCount && 1 || 0)
         + (this.upcomingRulesCount && 1 || 0);
     },
     hasValidRules() {
@@ -341,7 +319,7 @@ export default {
   methods: {
     refreshLimit() {
       if (typeof this.$root.lockedRulesLimit !== 'undefined') {
-        this.lockedRulesLimit = this.$root.lockedRulesLimit || 0;
+        this.lockingRulesLimit = this.$root.lockedRulesLimit || 0;
       }
       if (typeof this.$root.endingRulesLimit !== 'undefined') {
         this.endingRulesLimit = this.$root.endingRulesLimit || 0;
@@ -356,6 +334,7 @@ export default {
     retrieveRules() {
       this.loading = true;
       Promise.all([
+        this.retrieveLockingRules(),
         this.retrieveActiveRules(),
         this.retrieveEndingRules(),
         this.retrieveUpcomingRules(),
@@ -371,7 +350,7 @@ export default {
           spaceId: this.spaceId?.length && [this.spaceId] || null,
           programId: this.programId,
           offset: 0,
-          limit: this.endingRulesLimit,
+          limit: this.endingRulesLimit + this.lockingRulesLimit,
           sortBy: 'endDate',
           sortDescending: false,
           expand: 'countRealizations',
@@ -400,7 +379,7 @@ export default {
         || Promise.resolve();
     },
     retrieveActiveRules() {
-      return this.activeRulesLimit
+      return this.availableRulesLimit
         && this.$ruleService.getRules({
           status: 'ENABLED',
           programStatus: 'ENABLED',
@@ -408,13 +387,32 @@ export default {
           spaceId: this.spaceId?.length && [this.spaceId] || null,
           programId: this.programId,
           offset: 0,
-          limit: 50, // Maximum reachable (availableRulesLimit + lockedRulesLimit)
+          limit: this.availableRulesLimit + this.lockingRulesLimit,
           sortBy: this.sortBy,
           sortDescending: this.sortBy !== 'title',
           expand: 'countRealizations,expandPrerequisites',
           lang: eXo.env.portal.language,
           returnSize: false,
         }).then(result => this.activeRulesList = result?.rules || [])
+        || Promise.resolve();
+    },
+    retrieveLockingRules() {
+      return this.lockingRulesLimit
+        && this.$ruleService.getRules({
+          status: 'ENABLED',
+          programStatus: 'ENABLED',
+          dateFilter: this.spaceId?.length && 'ACTIVE' || 'STARTED',
+          spaceId: this.spaceId?.length && [this.spaceId] || null,
+          programId: this.programId,
+          offset: 0,
+          limit: this.lockingRulesLimit,
+          sortBy: this.sortBy,
+          sortDescending: this.sortBy !== 'title',
+          expand: 'countRealizations,expandPrerequisites',
+          lang: eXo.env.portal.language,
+          lockingRules: true,
+          returnSize: false,
+        }).then(result => this.lockingRules = result?.rules || [])
         || Promise.resolve();
     },
     retrieveUpcomingRules() {
@@ -438,35 +436,6 @@ export default {
     hideEmptyWidget() {
       this.$root.$emit('hide-empty-widget');
       this.hideIfEmpty = true;
-    },
-    addLockedRule(ruleLocks, lockedRule) {
-      if (!lockedRule || ruleLocks.find(r => r.id === lockedRule.id)) {
-        return;
-      } else if (lockedRule?.userInfo?.context?.valid) {
-        ruleLocks.unshift(lockedRule);
-      } else if (this.isRuleValidButLocked(lockedRule)) {
-        lockedRule.prerequisiteRules
-          .filter(r => r && lockedRule.userInfo.context.validPrerequisites[r.id] === false)
-          .map(prerequisiteRule => {
-            if (!prerequisiteRule?.userInfo?.context) {
-              const rule = this.rules.find(rule => prerequisiteRule.id === rule.id);
-              if (rule) {
-                prerequisiteRule = rule;
-              }
-            }
-            if (!prerequisiteRule || this.isRuleValidButLocked(prerequisiteRule)) {
-              return prerequisiteRule;
-            } else if (!prerequisiteRule?.userInfo?.context?.valid) {
-              // The Prerequisite Rule doesn't exist or isn't valid, thus can't be done
-              // So, delete the display of Prerequisite Rule
-              throw new Error(`Prerequisite rule ${prerequisiteRule.id} seems invalid, avoid adding parent rule to the list`);
-            } else {
-              return prerequisiteRule;
-            }
-          })
-          .filter(r => r)
-          .forEach(r => this.addLockedRule(ruleLocks, r));
-      }
     },
     isRuleValidButLocked(rule) {
       return rule?.prerequisiteRules?.length // has locked rules

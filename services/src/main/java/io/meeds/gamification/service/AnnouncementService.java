@@ -28,11 +28,11 @@ public interface AnnouncementService {
                                   String username) throws IllegalAccessException, ObjectNotFoundException;
 
   /**
-   * @param  rule     {@link RuleDTO}
-   * @param  username User name willing to announce a realization
-   * @return          true if can announce it else returns false
+   * @param rule {@link RuleDTO}
+   * @param identityId User identityId willing to announce a realization
+   * @return true if can announce it else returns false
    */
-  boolean canAnnounce(RuleDTO rule, String username);
+  boolean canAnnounce(RuleDTO rule, long identityId);
 
   /**
    * Update announcement

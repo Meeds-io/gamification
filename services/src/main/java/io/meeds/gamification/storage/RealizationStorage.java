@@ -77,12 +77,12 @@ public class RealizationStorage {
     return gamificationHistoryDAO.countRealizationsByFilter(realizationFilter) > 0;
   }
 
-  public int getLeaderboardRankByDates(IdentityType identityType, String earnerIdentityId, Date fromDate, Date toDate) {
+  public int getLeaderboardRankByDates(IdentityType identityType, long earnerIdentityId, Date fromDate, Date toDate) {
     return gamificationHistoryDAO.getLeaderboardRankByDates(identityType, earnerIdentityId, fromDate, toDate);
   }
 
   public int getLeaderboardRankByDatesAndProgramIds(IdentityType identityType,
-                                                    String earnerIdentityId,
+                                                    long earnerIdentityId,
                                                     Date fromDate,
                                                     Date toDate,
                                                     Long... programIds) {
@@ -93,11 +93,11 @@ public class RealizationStorage {
                                                                          programIds);
   }
 
-  public int getLeaderboardRank(IdentityType identityType, String earnerIdentityId) {
+  public int getLeaderboardRank(IdentityType identityType, long earnerIdentityId) {
     return gamificationHistoryDAO.getLeaderboardRank(identityType, earnerIdentityId);
   }
 
-  public int getLeaderboardRankByProgramIds(IdentityType identityType, String earnerIdentityId, Long... programIds) {
+  public int getLeaderboardRankByProgramIds(IdentityType identityType, long earnerIdentityId, Long... programIds) {
     return gamificationHistoryDAO.getLeaderboardRankByProgramIds(identityType, earnerIdentityId, programIds);
   }
 
@@ -169,11 +169,11 @@ public class RealizationStorage {
     return id == null || id == 0 ? null : getRealizationById(id);
   }
 
-  public int countRealizationsByRuleIdAndEarnerId(String earnerIdentityId, long ruleId) {
+  public int countRealizationsByRuleIdAndEarnerId(long earnerIdentityId, long ruleId) {
     return gamificationHistoryDAO.countRealizationsByRuleIdAndEarnerId(earnerIdentityId, ruleId);
   }
 
-  public int countRealizationsInPeriod(String earnerIdentityId, long ruleId, Date sinceDate) {
+  public int countRealizationsInPeriod(long earnerIdentityId, long ruleId, Date sinceDate) {
     return gamificationHistoryDAO.countRealizationsInPeriod(earnerIdentityId, ruleId, sinceDate);
   }
 

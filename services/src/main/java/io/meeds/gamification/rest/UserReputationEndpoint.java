@@ -100,18 +100,18 @@ public class UserReputationEndpoint implements ResourceContainer {
         if (StringUtils.isNotBlank(profileOwner)) {
             try {
                 // Compute user id
-                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner);
-                if (id == null) {
+                Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner);
+                if (identity == null) {
                   return Response.status(Response.Status.NOT_FOUND).entity("User " + profileOwner + " not found").build();
                 }
 
-                String actorId = id.getId();
+                String actorId = identity.getId();
 
                 JSONObject reputation = new JSONObject();
 
                 userReputationScore = realizationService.getScoreByIdentityId(actorId);
 
-                userRank = realizationService.getLeaderboardRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), null, null, null);
+                userRank = realizationService.getLeaderboardRank(identity.getIdentityId(), Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), null, null, null);
                 
                 reputation.put("score", userReputationScore);
 
