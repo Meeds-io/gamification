@@ -1,5 +1,9 @@
 <template>
-  <v-list-item :href="ruleUrl">
+  <v-list-item
+    :href="ruleUrl"
+    @keydown.enter="setAsViewed"
+    @auxclick="setAsViewed"
+    @click="setAsViewed">
     <v-list-item-icon
       size="28"
       class="ms-n1 me-3 my-auto">
@@ -33,6 +37,14 @@ export default {
     id: {
       type: String,
       default: () => null,
+    },
+    clickCallback: {
+      type: Function,
+      default: null,
+    },
+    expanded: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({ 
@@ -76,6 +88,11 @@ export default {
         message,
         type: type || 'success',
       }}));
+    },
+    setAsViewed(event) {
+      if (event.which === 1 || event.which === 2) {
+        this.clickCallback('rule', this.id);
+      }
     },
   },
 };
