@@ -17,8 +17,13 @@
  */
 
 import RuleFavoriteItem from './components/RuleFavoriteItem.vue';
+import RuleFavoriteProgram from './components/RuleFavoriteProgram.vue';
+import RuleFavoriteRecurrence from './components/RuleFavoriteRecurrence.vue';
+
 const components = {
   'rule-favorite-item': RuleFavoriteItem,
+  'rule-favorite-program': RuleFavoriteProgram,
+  'rule-favorite-recurrence': RuleFavoriteRecurrence,
 };
 
 for (const key in components) {
