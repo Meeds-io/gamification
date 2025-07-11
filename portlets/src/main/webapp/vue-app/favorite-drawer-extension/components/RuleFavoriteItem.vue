@@ -15,6 +15,27 @@
     </v-list-item-icon>
     <v-list-item-content>
       <v-list-item-title class="text-truncate">{{ ruleTitle }}</v-list-item-title>
+      <v-list-item-subtitle v-if="expanded" class="d-flex align-center full-width overflow-hidden pt-2px">
+        <div class="flex-grow-0 flex-shrink-1 overflow-hidden">
+          <rule-favorite-program
+            :rule="rule" />
+        </div>
+        <v-icon class="flex-grow-0 flex-shrink-0 mx-2" size="2">fa-circle</v-icon>
+        <v-chip
+          color="tertiary"
+          class="flex-grow-0 flex-shrink-0 content-box-sizing white--text"
+          small>
+          <span>+ {{ ruleScore }}</span>
+        </v-chip>
+        <template v-if="hasRecurrence">
+          <v-icon class="flex-grow-0 flex-shrink-0 mx-2" size="2">fa-circle</v-icon>
+          <div class="flex-grow-1 flex-shrink-1 overflow-hidden">
+            <rule-favorite-recurrence
+              :rule="rule"
+              class="text-truncate" />
+          </div>
+        </template>
+      </v-list-item-subtitle>
     </v-list-item-content>
     <v-list-item-action>
       <favorite-button
@@ -59,13 +80,19 @@ export default {
       return this.rule?.spaceId;
     },
     ruleTitle() {
-      return this.rule?.title || '';
+      return this.rule?.title && this.$utils.htmlToText(this.rule?.title) || '';
     },
     ruleEvent() {
       return this.rule?.event?.title;
     },
     ruleUrl() {
       return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/actions/${this.ruleId}`;
+    },
+    ruleScore() {
+      return this.rule?.score;
+    },
+    hasRecurrence() {
+      return this.rule?.recurrence && this.rule?.recurrence !== 'NONE' || false;
     },
   },
   created() {
