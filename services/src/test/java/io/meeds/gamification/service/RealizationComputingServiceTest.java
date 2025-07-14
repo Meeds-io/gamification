@@ -103,6 +103,16 @@ public class RealizationComputingServiceTest extends AbstractServiceTest { // NO
     assertEquals(lockingRule21.getId(), lockingRules.get(0).getId());
     assertEquals(lockingRule2.getId(), lockingRules.get(1).getId());
 
+    lockingRules = realizationComputingService.getLockingRules(filter, ADMIN_USER, 1, 10);
+    assertNotNull(lockingRules);
+    assertEquals(1, lockingRules.size());
+    assertEquals(lockingRule2.getId(), lockingRules.get(0).getId());
+
+    lockingRules = realizationComputingService.getLockingRules(filter, ADMIN_USER, 0, 1);
+    assertNotNull(lockingRules);
+    assertEquals(1, lockingRules.size());
+    assertEquals(lockingRule21.getId(), lockingRules.get(0).getId());
+
     achieveRule(lockingRule2);
     achieveRule(lockingRule21);
 

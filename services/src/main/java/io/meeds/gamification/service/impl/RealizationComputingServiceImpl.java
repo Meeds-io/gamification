@@ -19,6 +19,7 @@
 package io.meeds.gamification.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,46 +64,52 @@ public class RealizationComputingServiceImpl implements RealizationComputingServ
     Map<Long, RuleDTO> filteredRules = new LinkedHashMap<>();
     // Rules valid but have non-achieved prerequesites by current user
     List<RuleDTO> matchingParentRules = new ArrayList<>();
+    Map<Long, RealizationValidityContext> realizationValidityContexts = new HashMap<>();
     int pageOffset = 0;
-    int pageSize = 10;
+    int pageSize = 50;
     int rulesSize = ruleService.countRules(ruleFilter, username);
     Identity identity = identityManager.getOrCreateUserIdentity(username);
     long identityId = identity.getIdentityId();
     while (pageOffset < rulesSize) {
       List<RuleDTO> rules = ruleService.getRules(ruleFilter, username, pageOffset, pageSize);
-      pageOffset += pageSize;
       rules.forEach(r -> {
         filteredRules.put(r.getId(), r);
         // Retrieve rules valid but having prerequisites not achieved yet
-        RealizationValidityContext realizationValidityContext = realizationService.getRealizationValidityContext(r, identityId);
+        RealizationValidityContext realizationValidityContext = getRealizationValidityContext(r,
+                                                                                              identityId,
+                                                                                              realizationValidityContexts);
         if (realizationValidityContext.isValidButLocked()
             && CollectionUtils.isNotEmpty(r.getPrerequisiteRuleIds())) {
           matchingParentRules.add(r);
         }
       });
+      pageOffset += pageSize;
     }
 
+    int maxItems = offset + limit;
     List<Long> lockingRuleIds = new ArrayList<>();
     matchingParentRules.forEach(r -> {
       Set<Long> prerequisiteRuleIds = r.getPrerequisiteRuleIds();
-      if (CollectionUtils.isNotEmpty(prerequisiteRuleIds)) {
-        realizationService.getRealizationValidityContext(r, identityId)
-                          .getValidPrerequisites()
-                          .entrySet()
-                          .stream()
-                          // Not achieved prerequisite yet
-                          .filter(e -> !e.getValue().booleanValue())
-                          .map(Entry<String, Boolean>::getKey)
-                          .map(Long::parseLong)
-                          .filter(filteredRules::containsKey)
-                          .map(filteredRules::get)
-                          // Check if prerequisite can be done
-                          .filter(prerequesiteRule -> realizationService.getRealizationValidityContext(prerequesiteRule,
-                                                                                                       identityId)
-                                                                        .isValid())
-                          .map(RuleDTO::getId)
-                          // Prerequisite to do first
-                          .forEach(lockingRuleIds::add);
+      int remainingLimit = maxItems - lockingRuleIds.size();
+      if (remainingLimit > 0 && CollectionUtils.isNotEmpty(prerequisiteRuleIds)) {
+        RealizationValidityContext validityContext = getRealizationValidityContext(r, identityId, realizationValidityContexts);
+        validityContext.getValidPrerequisites()
+                       .entrySet()
+                       .stream()
+                       // Not achieved prerequisite yet
+                       .filter(e -> !e.getValue().booleanValue())
+                       .map(Entry<String, Boolean>::getKey)
+                       .map(Long::parseLong)
+                       .filter(filteredRules::containsKey)
+                       .map(filteredRules::get)
+                       // Check if prerequisite can be done
+                       .filter(prerequesiteRule -> getRealizationValidityContext(prerequesiteRule,
+                                                                                 identityId,
+                                                                                 realizationValidityContexts).isValid())
+                       .limit(remainingLimit)
+                       .map(RuleDTO::getId)
+                       // Prerequisite to do first
+                       .forEach(lockingRuleIds::add);
       }
     });
     // Use Same Sort as Matched rules
@@ -112,6 +119,14 @@ public class RealizationComputingServiceImpl implements RealizationComputingServ
                         .skip(offset)
                         .limit(limit)
                         .toList();
+  }
+
+  private RealizationValidityContext getRealizationValidityContext(RuleDTO rule,
+                                                                   long identityId,
+                                                                   Map<Long, RealizationValidityContext> realizationValidityContexts) {
+    return realizationValidityContexts.computeIfAbsent(rule.getId(),
+                                                       id -> realizationService.getRealizationValidityContext(rule,
+                                                                                                              identityId));
   }
 
 }
