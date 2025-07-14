@@ -207,11 +207,10 @@ export default {
       if (!this.hasRules) {
         return [];
       }
-      const endingRulesToDisplay = this.endingRulesLimit && this.endingRules.slice(0, this.endingRulesLimit) || [];
       return  this.rules
         .filter(r => (r?.userInfo?.context?.valid || this.isRuleValidButLocked(r))
             && !this.lockingRulesToDisplay.find(lr => lr.id === r.id)
-            && !endingRulesToDisplay.find(er => er.id === r.id));
+            && !this.endingRulesToDisplay.find(er => er.id === r.id));
     },
     upcomingRules() {
       if (!this.hasRules || !this.upcomingRulesLimit) {
@@ -390,7 +389,7 @@ export default {
           limit: this.availableRulesLimit + this.lockingRulesLimit,
           sortBy: this.sortBy,
           sortDescending: this.sortBy !== 'title',
-          expand: 'countRealizations,expandPrerequisites',
+          expand: 'countRealizations',
           lang: eXo.env.portal.language,
           returnSize: false,
         }).then(result => this.activeRulesList = result?.rules || [])
@@ -408,7 +407,7 @@ export default {
           limit: this.lockingRulesLimit,
           sortBy: this.sortBy,
           sortDescending: this.sortBy !== 'title',
-          expand: 'countRealizations,expandPrerequisites',
+          expand: 'countRealizations',
           lang: eXo.env.portal.language,
           lockingRules: true,
           returnSize: false,
