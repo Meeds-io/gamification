@@ -302,7 +302,7 @@
                 </v-stepper-items>
               </div>
             </div>
-            <div :class="expanded && 'pt-6'">
+            <div v-if="enablePublication" :class="expanded && 'pt-6'">
               <div :class="!expanded && 'pt-6'">
                 <v-stepper-step
                   :step="4"
