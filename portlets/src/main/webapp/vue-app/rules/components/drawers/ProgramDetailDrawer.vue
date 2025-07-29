@@ -104,7 +104,10 @@
               <div class="text-header text-truncate">
                 {{ $t('programs.label.programActions') }}
               </div>
-              <v-btn icon @click="$root.$emit('rule-form-drawer', null, program)">
+              <v-btn
+                v-if="isProgramManager"
+                icon
+                @click="$root.$emit('rule-form-drawer', null, program)">
                 <v-icon color="primary" size="20">fa-plus</v-icon>
               </v-btn>
             </div>
@@ -186,6 +189,9 @@ export default {
     programLink() {
       return `${eXo.env.portal.context}/${eXo.env.portal.engagementSiteName}/contributions/programs/${this.programId}`;
     },
+    isProgramManager() {
+      return this.$root.isProgramManager;
+    }
   },
   watch: {
     expanded(val) {
