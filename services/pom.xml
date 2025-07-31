@@ -21,7 +21,7 @@
   <parent>
     <groupId>io.meeds.gamification</groupId>
     <artifactId>gamification</artifactId>
-    <version>7.1.0-exo-20250730</version>
+    <version>7.1.x-exo-SNAPSHOT</version>
   </parent>
 
   <artifactId>gamification-services</artifactId>
