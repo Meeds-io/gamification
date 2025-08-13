@@ -155,10 +155,9 @@ public class RuleBuilder {
                                                                            Utils.getCurrentUser());
     translatedLabels(translationService, rule, locale);
 
-    String description = rule.getDescription();
     return new RuleRestEntity(rule.getId(),
                               rule.getTitle(),
-                              processRichEditorContent(xmlProcessor, description),
+                              rule.getDescription(),
                               rule.getScore(),
                               program,
                               rule.isEnabled(),
@@ -218,10 +217,6 @@ public class RuleBuilder {
     userContext.setContext(realizationRestriction);
     userContext.setAllowedToRealize(realizationRestriction.isValidForIdentity());
     return userContext;
-  }
-
-  public static String processRichEditorContent(XMLProcessor xmlProcessor, String content) {
-    return xmlProcessor == null ? content : (String) xmlProcessor.process(content);
   }
 
   private static List<RealizationDTO> getRealizations(RealizationService realizationService,
