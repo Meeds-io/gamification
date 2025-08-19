@@ -86,6 +86,25 @@ public class RuleSearchConnector {
 
   private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"*~&|#%@";
 
+  private static final String          DEFAULT_SORTING_QUERY        = """
+      {
+        "_score": {
+          "order": "desc"
+        }
+      }
+      """;
+
+  private static final String          SORTING_QUERY                = """
+      {
+        "@sortField@": {
+          "order": "@sortOrder@"
+        }
+      },
+      "_score"
+      """;
+
+  private static final String          SORT_REPLACEMENT             = "@sortQuery@";
+
   private final ConfigurationManager   configurationManager;
 
   private final ElasticSearchingClient client;
@@ -135,10 +154,12 @@ public class RuleSearchConnector {
   private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
     String queryTemplate = retrieveSearchQuery();
     String filterQuery = computeFilterQuery(filter);
+    String sortQuery = buildSortQuery(filter);
     return queryTemplate.replace(LANG, filter.getLocale().toLanguageTag())
                         .replace("@search_filtering@", filterQuery)
                         .replace("@offset@", String.valueOf(offset))
-                        .replace("@limit@", String.valueOf(limit));
+                        .replace("@limit@", String.valueOf(limit))
+                        .replace(SORT_REPLACEMENT, sortQuery);
   }
 
   private String computeFilterQuery(RuleFilter filter) {
@@ -273,5 +294,18 @@ public class RuleSearchConnector {
       }
     }
     return this.searchQuery;
+  }
+
+  private String buildSortQuery(RuleFilter filter) {
+    if (StringUtils.isBlank(filter.getSortBy())) {
+      return DEFAULT_SORTING_QUERY;
+    }
+    String sortFiled = filter.getSortBy();
+    String sortDirection = filter.isSortDescending() ? "desc" : "asc";
+    return switch (sortFiled) {
+    case "date" -> SORTING_QUERY.replace("@sortField@", "lastUpdatedDate").replace("@sortOrder@", sortDirection);
+    case "score" -> DEFAULT_SORTING_QUERY;
+    default -> SORTING_QUERY.replace("@sortField@", sortFiled).replace("@sortOrder@", sortDirection);
+    };
   }
 }

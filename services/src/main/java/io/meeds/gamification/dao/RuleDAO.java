@@ -274,7 +274,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     case "id", "createdDate": {
       yield "r.id";
     }
-    case "modifiedDate": {
+    case "date", "modifiedDate": {
       yield "r.lastModifiedDate";
     }
     case "startDate": {
