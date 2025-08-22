@@ -304,8 +304,7 @@ public class RuleSearchConnector {
     String sortDirection = filter.isSortDescending() ? "desc" : "asc";
     return switch (sortFiled) {
     case "date" -> SORTING_QUERY.replace("@sortField@", "lastUpdatedDate").replace("@sortOrder@", sortDirection);
-    case "score" -> DEFAULT_SORTING_QUERY;
-    default -> SORTING_QUERY.replace("@sortField@", sortFiled).replace("@sortOrder@", sortDirection);
+    default -> DEFAULT_SORTING_QUERY;
     };
   }
 }
