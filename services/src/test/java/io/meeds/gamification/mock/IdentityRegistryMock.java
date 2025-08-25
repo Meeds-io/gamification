@@ -18,7 +18,7 @@ package io.meeds.gamification.mock;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.IdentityRegistry;
 
@@ -26,8 +26,8 @@ public class IdentityRegistryMock extends IdentityRegistry {
 
   private Map<String, Identity> identities = new ConcurrentHashMap<>();
 
-  public IdentityRegistryMock(InitParams params) {
-    super(params);
+  public IdentityRegistryMock(CacheService cacheService) {
+    super(cacheService);
   }
 
   @Override
