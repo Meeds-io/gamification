@@ -19,6 +19,7 @@
 package io.meeds.gamification.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import org.exoplatform.social.core.identity.model.Identity;
@@ -61,6 +63,9 @@ public class RealizationComputingServiceImpl implements RealizationComputingServ
                                        String username,
                                        int offset,
                                        int limit) {
+    if (StringUtils.isBlank(username)) {
+      return Collections.emptyList();
+    }
     Map<Long, RuleDTO> filteredRules = new LinkedHashMap<>();
     // Rules valid but have non-achieved prerequesites by current user
     List<RuleDTO> matchingParentRules = new ArrayList<>();
@@ -69,6 +74,9 @@ public class RealizationComputingServiceImpl implements RealizationComputingServ
     int pageSize = 50;
     int rulesSize = ruleService.countRules(ruleFilter, username);
     Identity identity = identityManager.getOrCreateUserIdentity(username);
+    if (identity == null) {
+      return Collections.emptyList();
+    }
     long identityId = identity.getIdentityId();
     while (pageOffset < rulesSize) {
       List<RuleDTO> rules = ruleService.getRules(ruleFilter, username, pageOffset, pageSize);
