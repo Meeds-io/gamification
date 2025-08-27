@@ -495,7 +495,7 @@ export default {
     }
   },
   methods: {
-    open(program, freshInstance) {
+    async open(program, freshInstance) {
       if (program && !freshInstance) {
         this.initiliazing = true;
         this.$refs.programDrawer.open();
@@ -522,8 +522,9 @@ export default {
       this.defaultCover = !this.program?.id || !this.program?.coverUrl || this.program.coverUrl.includes('default');
       this.defaultAvatar = !this.program?.id || !this.program?.avatarUrl || this.program.avatarUrl.includes('default');
 
-      if (this.program?.id && this.program?.space) {
-        const space = this.program?.space;
+      if ((this.program?.id && this.program?.space)
+          || (!this.program?.id && eXo.env.portal.spaceId)) {
+        const space = this.program?.id ? this.program?.space : (await this.$spaceService.getSpaceById(eXo.env.portal.spaceId));
         this.audience = {
           id: `space:${space.prettyName}`,
           profile: {
@@ -532,8 +533,8 @@ export default {
           },
           providerId: 'space',
           remoteId: space.prettyName,
-          spaceId: this.program.space.id,
-          displayName: this.program.space.displayName,
+          spaceId: space.id,
+          displayName: space.displayName,
           notToChange: true,
         };
       } else {
