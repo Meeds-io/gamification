@@ -73,6 +73,10 @@ public class SpaceServiceMock implements SpaceService {
     }
   }
 
+  public Space getSpaceById(long spaceId) {
+    return getSpaceById(String.valueOf(spaceId));
+  }
+
   public Space getSpaceById(String spaceId) {
     if (!SPACE_ID_1.equals(spaceId) && !SPACE_ID_2.equals(spaceId)) {
       return null;

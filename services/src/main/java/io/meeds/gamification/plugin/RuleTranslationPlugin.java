@@ -72,17 +72,17 @@ public class RuleTranslationPlugin extends TranslationPlugin {
   }
 
   @Override
-  public boolean hasAccessPermission(long ruleId, String username) throws ObjectNotFoundException {
-    return userACL.hasAccessPermission(RULE_OBJECT_TYPE, String.valueOf(ruleId), username);
+  public boolean hasAccessPermission(String ruleId, String username) throws ObjectNotFoundException {
+    return userACL.hasAccessPermission(RULE_OBJECT_TYPE, ruleId, username);
   }
 
   @Override
-  public boolean hasEditPermission(long ruleId, String username) throws ObjectNotFoundException {
-    return userACL.hasEditPermission(RULE_OBJECT_TYPE, String.valueOf(ruleId), username);
+  public boolean hasEditPermission(String ruleId, String username) throws ObjectNotFoundException {
+    return userACL.hasEditPermission(RULE_OBJECT_TYPE, ruleId, username);
   }
 
   @Override
-  public long getAudienceId(long ruleId) throws ObjectNotFoundException {
+  public long getAudienceId(String ruleId) throws ObjectNotFoundException {
     long spaceId = getSpaceId(ruleId);
     if (spaceId == 0) {
       return 0;
@@ -97,8 +97,8 @@ public class RuleTranslationPlugin extends TranslationPlugin {
   }
 
   @Override
-  public long getSpaceId(long ruleId) throws ObjectNotFoundException {
-    RuleDTO rule = this.ruleService.findRuleById(ruleId);
+  public long getSpaceId(String ruleId) throws ObjectNotFoundException {
+    RuleDTO rule = this.ruleService.findRuleById(Long.parseLong(ruleId));
     if (rule == null) {
       throw new ObjectNotFoundException(String.format("Rule with id %s wasn't found",
                                                       ruleId));
