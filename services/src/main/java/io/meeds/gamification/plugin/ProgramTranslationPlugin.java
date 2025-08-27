@@ -72,22 +72,22 @@ public class ProgramTranslationPlugin extends TranslationPlugin {
   }
 
   @Override
-  public boolean hasAccessPermission(long programId, String username) throws ObjectNotFoundException {
-    return userACL.hasAccessPermission(PROGRAM_OBJECT_TYPE, String.valueOf(programId), username);
+  public boolean hasAccessPermission(String programId, String username) throws ObjectNotFoundException {
+    return userACL.hasAccessPermission(PROGRAM_OBJECT_TYPE, programId, username);
   }
 
   @Override
-  public boolean hasEditPermission(long programId, String username) throws ObjectNotFoundException {
-    return userACL.hasEditPermission(PROGRAM_OBJECT_TYPE, String.valueOf(programId), username);
+  public boolean hasEditPermission(String programId, String username) throws ObjectNotFoundException {
+    return userACL.hasEditPermission(PROGRAM_OBJECT_TYPE, programId, username);
   }
 
   @Override
-  public long getAudienceId(long programId) throws ObjectNotFoundException {
+  public long getAudienceId(String programId) throws ObjectNotFoundException {
     long spaceId = getSpaceId(programId);
     if (spaceId == 0) {
       return 0;
     }
-    Space space = spaceService.getSpaceById(String.valueOf(spaceId));
+    Space space = spaceService.getSpaceById(spaceId);
     if (space == null) {
       throw new ObjectNotFoundException(String.format("Space with id %s wasn't found",
                                                       spaceId));
@@ -97,8 +97,8 @@ public class ProgramTranslationPlugin extends TranslationPlugin {
   }
 
   @Override
-  public long getSpaceId(long programId) throws ObjectNotFoundException {
-    ProgramDTO program = this.programService.getProgramById(programId);
+  public long getSpaceId(String programId) throws ObjectNotFoundException {
+    ProgramDTO program = this.programService.getProgramById(Long.parseLong(programId));
     if (program == null) {
       throw new ObjectNotFoundException(String.format("Program with id %s wasn't found",
                                                       programId));
