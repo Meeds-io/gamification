@@ -106,7 +106,7 @@ public class RuleTranslationPluginTest extends AbstractSpringConfigurationTest {
                                                                                TITLE,
                                                                                adminAclIdentity.getUserId());
     assertNotNull(translationField);
-    assertEquals(ruleId, translationField.getObjectId());
+    assertEquals(String.valueOf(ruleId), translationField.getObjectId());
     assertEquals(RuleTranslationPlugin.RULE_OBJECT_TYPE, translationField.getObjectType());
     assertEquals(translationField.getLabels().get(Locale.ENGLISH), LABEL);
   }

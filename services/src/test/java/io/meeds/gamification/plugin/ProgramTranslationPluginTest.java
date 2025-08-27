@@ -108,7 +108,7 @@ public class ProgramTranslationPluginTest extends AbstractSpringConfigurationTes
                                                                                TITLE,
                                                                                adminAclIdentity.getUserId());
     assertNotNull(translationField);
-    assertEquals(programId, translationField.getObjectId());
+    assertEquals(String.valueOf(programId), translationField.getObjectId());
     assertEquals(ProgramTranslationPlugin.PROGRAM_OBJECT_TYPE, translationField.getObjectType());
     assertEquals(translationField.getLabels().get(Locale.ENGLISH), LABEL);
   }
