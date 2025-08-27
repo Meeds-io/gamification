@@ -1,5 +1,6 @@
 <template>
   <v-list-item
+    v-if="rule"
     :href="ruleUrl"
     @keydown.enter="setAsViewed"
     @auxclick="setAsViewed"
@@ -76,7 +77,7 @@ export default {
   },
   data: () => ({ 
     isFavorite: true,
-    rule: {},
+    rule: null,
   }),
   computed: {
     iconWidth() {
@@ -110,10 +111,14 @@ export default {
       return this.expanded ? 22 : 16;
     },
   },
-  created() {
-    this.$ruleService.getRuleById(this.ruleId, {
-      lang: eXo.env.portal.language,
-    }).then(rule => this.rule = rule);
+  async created() {
+    try {
+      this.rule = await this.$ruleService.getRuleById(this.ruleId, {
+        lang: eXo.env.portal.language,
+      });
+    } catch {
+      this.$root.$emit('favorite-removed', 'rule', this.id);
+    }
   },
   methods: {
     removed() {
