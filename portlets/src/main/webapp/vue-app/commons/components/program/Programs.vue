@@ -66,9 +66,9 @@ export default {
   watch: {
     displayProgramDetail() {
       if (this.displayProgramDetail && this.program?.id) {
-        window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${this.programsLinkBasePath}/${this.program.id}`);
+        window.history.pushState('programs', this.$t('engagementCenter.label.programs'), `${this.programsLinkBasePath}/${this.program.id}`);
       } else {
-        window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${this.programsLinkBasePath}`);
+        window.history.pushState('programs', this.$t('engagementCenter.label.programs'), `${this.programsLinkBasePath}`);
       }
     },
   },
