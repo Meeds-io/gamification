@@ -18,23 +18,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <div id="engagementCenterProgramDetail" class="px-4">
     <div v-if="!isDeleted">
       <div class="py-2 py-sm-5 d-flex align-center">
-        <v-tooltip :disabled="$root.isMobile" bottom>
-          <template #activator="{ on }">
-            <v-card
-              class="d-flex align-center"
-              flat
-              v-on="on"
-              @click="backToProgramList">
-              <v-btn
-                class="width-auto ms-n3"
-                icon>
-                <v-icon size="18" class="icon-default-color mx-2">fa-arrow-left</v-icon>
-              </v-btn>
-              <div class="text-header-title"> {{ programTitle }}</div>
-            </v-card>
-          </template>
-          <span>{{ $t('programs.details.label.BackToList') }}</span>
-        </v-tooltip>
+        <v-card
+          class="d-flex align-center"
+          flat>
+          <div class="text-header-title"> {{ programTitle }}</div>
+        </v-card>
         <v-spacer />
         <span class="text-header-title d-none d-sm-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
       </div>
