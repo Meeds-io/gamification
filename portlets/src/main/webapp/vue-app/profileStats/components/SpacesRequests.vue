@@ -50,47 +50,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-flex>
     <v-flex
       xs12>
-      <v-list>
-        <v-list-item
-          v-for="item in sort(spacesRequests)"
-          :key="item.id"
-          class="py-0 px-2">
-          <v-list-item-avatar class="my-1 me-2" size="30">
-            <v-img :src="item.avatarUrl" />
-          </v-list-item-avatar>
-
-          <v-list-item-content class="py-0">
-            <v-list-item-title class="request-user-name darken-2" v-text="item.displayName" />
-            <v-list-item-subtitle v-sanitized-html="item.description" />
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-btn-toggle
-              class="transparent"
-              dark>
-              <v-btn
-                :loading="saving"
-                text
-                icon
-                small
-                min-width="auto"
-                class="px-0 connexion-accept-btn"
-                @click="replyInvitationToJoinSpace(item, 'approved')">
-                <v-icon color="success" size="20">mdi-checkbox-marked-circle</v-icon>
-              </v-btn>
-              <v-btn
-                :loading="saving"
-                text
-                icon
-                small
-                min-width="auto"
-                class="px-0 connexion-refuse-btn"
-                @click="replyInvitationToJoinSpace(item, 'ignored')">
-                <v-icon color="error" size="20">mdi-close-circle</v-icon>
-              </v-btn>
-            </v-btn-toggle>
-          </v-list-item-action>
-        </v-list-item>
-      </v-list>
+      <space-request-item
+        v-for="space in sort(spacesRequests)"
+        :key="space.id"
+        :space="space"
+        :saving="saving"
+        @replyInvitation="replyInvitationToJoinSpace" />
     </v-flex>
     <v-flex
       d-flex
@@ -145,17 +110,17 @@ export default {
     openSpaceRequests() {
       window.location.href = `${this.invitationSpaceUrl}`;
     },
-    async replyInvitationToJoinSpace(item, reply) {
+    async replyInvitationToJoinSpace(item, accept) {
       this.saving = true;
       try {
-        if (reply === 'approved') {
+        if (accept) {
           await this.$spaceService.accept(item.id);
           this.$emit('invitationReplied', {
             id: item.id,
             displayName: item.displayName,
             avatarUrl: item.avatarUrl,
           });
-        } else if (reply === 'ignored') {
+        } else {
           await this.$spaceService.deny(item.id);
         }
         this.getSpacesRequests();
