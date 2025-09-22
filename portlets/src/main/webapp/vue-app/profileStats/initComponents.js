@@ -25,12 +25,14 @@ import PeopleListItem from './components/PeopleListItem.vue';
 import SpaceDrawer from './components/SpaceDrawer.vue';
 import SpaceDrawerItems from './components/SpaceDrawerItems.vue';
 import SuggestionsSpaceListItem from './components/SuggestionsSpaceListItem.vue';
+import SpaceRequestItem from './components/SpaceRequestItem.vue';
 
 const components = {
   'profile-stats': ProfileStats,
   'connections-requests': ConnectionsRequests,
   'gamification-rank': GamificationRank,
   'spaces-requests': SpacesRequests,
+  'space-request-item': SpaceRequestItem,
   'user-dashbord': UserDashbord,
   'connections-drawer': ConnectionsDrawer,
   'space-drawer': SpaceDrawer,
