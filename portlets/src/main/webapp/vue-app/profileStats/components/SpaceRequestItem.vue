@@ -16,7 +16,7 @@
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-list-item class="py-0 px-2">
+  <v-list-item role="listitem" class="py-0 px-2">
     <v-list-item-avatar class="my-1 me-2" size="30">
       <v-img :src="avatarUrl" />
     </v-list-item-avatar>
