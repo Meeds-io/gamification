@@ -50,12 +50,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-flex>
     <v-flex
       xs12>
-      <space-request-item
-        v-for="space in sort(spacesRequests)"
-        :key="space.id"
-        :space="space"
-        :saving="saving"
-        @replyInvitation="replyInvitationToJoinSpace" />
+      <div role="list">
+        <space-request-item
+          v-for="space in sort(spacesRequests)"
+          :key="space.id"
+          :space="space"
+          :saving="saving"
+          @replyInvitation="replyInvitationToJoinSpace" />
+      </div>
     </v-flex>
     <v-flex
       d-flex
