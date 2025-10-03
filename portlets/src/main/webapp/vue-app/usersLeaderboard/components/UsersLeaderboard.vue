@@ -22,8 +22,9 @@
 <template>
   <v-app>
     <v-card
-      flat
-      class="pa-5 application-body">
+      :min-height="'calc(100% - 40px)'"
+      class="pa-5 application-body"
+      flat>
       <div class="d-flex UserGamificationHeader text-color">
         <div
           class="d-inline-block widget-text-header text-truncate">
