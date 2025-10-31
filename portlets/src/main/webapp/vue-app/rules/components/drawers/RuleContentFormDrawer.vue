@@ -650,7 +650,7 @@ export default {
       this.saving = true;
       if (this.rule.id) {
         this.$translationService.saveTranslations('rule', this.rule.id, 'title', this.ruleTitleTranslations)
-          .then(() => this.$translationService.saveTranslations('rule', this.rule.id, 'description', this.ruleDescriptionTranslations))
+          .then(() => this.$translationService.saveRichTranslations('rule', this.rule.id, 'description', this.ruleDescriptionTranslations))
           .then(() => this.$refs?.rulePublishInput?.saveAttachments())
           .then(() => this.$ruleService.updateRule(this.ruleToSave))
           .then(rule => {
@@ -692,7 +692,7 @@ export default {
             this.$root.$emit('rule-created-event', rule);
             return this.$translationService.saveTranslations('rule', this.originalRule.id, 'title', this.ruleTitleTranslations);
           })
-          .then(() => this.$translationService.saveTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
+          .then(() => this.$translationService.saveRichTranslations('rule', this.originalRule.id, 'description', this.ruleDescriptionTranslations))
           .then(() => {
             this.metadataObjectId = String(this.originalRule.id);
             return this.$nextTick();

@@ -232,7 +232,7 @@ public class ProgramImportService {
   }
 
   protected void saveDescriptions(RuleDescriptor d, RuleDTO ruleDTO) {
-    programTranslationImportService.saveTranslationLabels(RuleTranslationPlugin.RULE_OBJECT_TYPE,
+    programTranslationImportService.saveRichTranslationLabels(RuleTranslationPlugin.RULE_OBJECT_TYPE,
                                                           ruleDTO.getId(),
                                                           RuleTranslationPlugin.RULE_DESCRIPTION_FIELD_NAME,
                                                           d.getDescriptions(),
