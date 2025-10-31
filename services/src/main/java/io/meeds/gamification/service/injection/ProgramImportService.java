@@ -228,7 +228,8 @@ public class ProgramImportService {
                                                           ruleDTO.getId(),
                                                           RuleTranslationPlugin.RULE_TITLE_FIELD_NAME,
                                                           d.getNames(),
-                                                          d.getAppendEmoji());
+                                                          d.getAppendEmoji(),
+                                                          false);
   }
 
   protected void saveDescriptions(RuleDescriptor d, RuleDTO ruleDTO) {
@@ -236,7 +237,8 @@ public class ProgramImportService {
                                                           ruleDTO.getId(),
                                                           RuleTranslationPlugin.RULE_DESCRIPTION_FIELD_NAME,
                                                           d.getDescriptions(),
-                                                          null);
+                                                          null,
+                                                          true);
   }
 
   protected void saveProgramNames(ProgramDescriptor d, ProgramDTO programDTO) {
@@ -244,7 +246,8 @@ public class ProgramImportService {
                                                           programDTO.getId(),
                                                           ProgramTranslationPlugin.PROGRAM_TITLE_FIELD_NAME,
                                                           d.getNames(),
-                                                          d.getAppendEmoji());
+                                                          d.getAppendEmoji(),
+                                                          false);
   }
 
   protected void saveProgramDescriptions(ProgramDescriptor d, ProgramDTO programDTO) {
