@@ -75,7 +75,8 @@ public class ProgramTranslationImportService {
                                     long objectId,
                                     String fieldName,
                                     Map<String, String> labels,
-                                    String appendEmoji) {
+                                    String appendEmoji,
+                                    boolean isRichText) {
     // Make Heavy processing made at the end or import process
     postImportProcessors.computeIfAbsent(objectType, k -> new ArrayList<>())
                         .add(() -> saveTranslationLabelsForAllLanguages(objectType,
@@ -83,7 +84,8 @@ public class ProgramTranslationImportService {
                                                                         fieldName,
                                                                         labels,
                                                                         appendEmoji,
-                                                                        getI18NLabel(labels.get("en"), Locale.ENGLISH)));
+                                                                        getI18NLabel(labels.get("en"), Locale.ENGLISH),
+                                                                        isRichText));
   }
 
   public void postImport(String objectType) {
@@ -126,9 +128,10 @@ public class ProgramTranslationImportService {
                        .forEach(config -> translations.put(config.getLocale(),
                                                            getProgramDescriptionLabel(descriptions, config.getLocale())));
     translationService.saveTranslationLabels(ProgramTranslationPlugin.PROGRAM_OBJECT_TYPE,
-                                             objectId,
+                                             objectId == 0 ? null : String.valueOf(objectId),
                                              ProgramTranslationPlugin.PROGRAM_DESCRIPTION_FIELD_NAME,
-                                             translations);
+                                             translations,
+                                             true);
   }
 
   @SneakyThrows
@@ -138,7 +141,8 @@ public class ProgramTranslationImportService {
                                                     String fieldName,
                                                     Map<String, String> labels,
                                                     String appendEmoji,
-                                                    String defaultLabel) {
+                                                    String defaultLabel,
+                                                    boolean isRichText) {
     String i18nKey = labels.get("en");
     Map<Locale, String> translations = new HashMap<>();
     localeConfigService.getLocalConfigs()
@@ -152,7 +156,7 @@ public class ProgramTranslationImportService {
                                                                                : getI18NLabel(i18nKey,
                                                                                               config.getLocale(),
                                                                                               defaultLabel)));
-    translationService.saveTranslationLabels(objectType, objectId, fieldName, translations);
+    translationService.saveTranslationLabels(objectType, objectId == 0 ? null : String.valueOf(objectId), fieldName, translations, isRichText);
   }
 
   private String getI18NLabel(String label, Locale locale, String defaultLabel) {

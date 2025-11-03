@@ -582,7 +582,7 @@ export default {
       if (this.program?.id) {
         this.$programService.updateProgram(this.programToSave)
           .then(() => this.$translationService.saveTranslations('program', this.program.id, 'title', this.programTitleTranslations))
-          .then(() => this.$translationService.saveTranslations('program', this.program.id, 'description', this.programDescriptionTranslations))
+          .then(() => this.$translationService.saveRichTranslations('program', this.program.id, 'description', this.programDescriptionTranslations))
           .then(() => {
             if (this.deleteCover) {
               return this.$programService.deleteProgramCover(this.program.id)
@@ -622,7 +622,7 @@ export default {
             this.originalProgram = program;
             return this.$translationService.saveTranslations('program', this.originalProgram.id, 'title', this.programTitleTranslations);
           })
-          .then(() => this.$translationService.saveTranslations('program', this.originalProgram.id, 'description', this.programDescriptionTranslations))
+          .then(() => this.$translationService.saveRichTranslations('program', this.originalProgram.id, 'description', this.programDescriptionTranslations))
           .then(() => {
             this.$root.$emit('alert-message-html', `
                 <div class="text-start">
