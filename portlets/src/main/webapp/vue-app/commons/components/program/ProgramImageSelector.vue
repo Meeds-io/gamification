@@ -59,8 +59,7 @@
       :max-image-width="maxImageWidth"
       :no-expand-icon="noExpand"
       back-icon
-      @input="updateUploadId"
-      @data="imageData = $event" />
+      @apply="updateImage" />
   </v-card>
 </template>
 <script>
@@ -143,6 +142,10 @@ export default {
       this.$emit('input', this.defaultImageUrl);
       this.$emit('deleted');
     },
+    updateImage(image) {
+      this.imageData = image.src;
+      this.updateUploadId(image.uploadId);
+    }
   },
 };
 </script>
