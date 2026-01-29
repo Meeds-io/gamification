@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.collections4.CollectionUtils;
 
 import org.exoplatform.commons.cache.future.FutureCache;
 import org.exoplatform.commons.cache.future.FutureExoCache;
@@ -36,6 +35,7 @@ import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.RootContainer.PortalContainerPostCreateTask;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.cache.CachedObjectSelector;
 import org.exoplatform.services.cache.ExoCache;
@@ -64,6 +64,8 @@ import lombok.SneakyThrows;
 public class ProgramCachedStorage extends ProgramStorage {
 
   public static final String                        PROGRAM_CACHE_NAME = "gamification.domain";
+
+  private UserACL                                   userAcl;
 
   private FutureExoCache<Long, ProgramDTO, Object>  programFutureCache;
 
@@ -218,10 +220,9 @@ public class ProgramCachedStorage extends ProgramStorage {
     @ContainerTransactional
     public void clearCachedAdministrator(User user) {
       if (administrators != null
+          && user != null
           && (administrators.stream().anyMatch(u -> StringUtils.equals(u, user.getUserName()))
-              || CollectionUtils.isNotEmpty(organizationService.getMembershipHandler()
-                                                               .findMembershipsByUserAndGroup(user.getUserName(),
-                                                                                              Utils.REWARDING_GROUP)))) {
+              || userAcl.getUserIdentity(user.getUserName()).isMemberOf(Utils.REWARDING_GROUP))) {
         administrators = null;
       }
     }
