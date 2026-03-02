@@ -89,7 +89,8 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
       'updateSpaceDescription',
       'becomeSpaceManager',
       'inviteUserToSpace',
-      'joinSpace'
+      'joinSpace',
+      'userJoinedSpaceByInvitationLink'
     ].includes(actionLabel),
     getLink: realization => {
       if (realization.objectType === 'identity') {
