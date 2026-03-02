@@ -82,8 +82,11 @@ public interface GamificationConstant { // NOSONAR
     String GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD                                     = "becomeSpaceManager";
     /** GRANT USER AS LEAD WITHIN SPACE */
     String GAMIFICATION_SOCIAL_SPACE_INVITE_USER                                       = "inviteUserToSpace";
+    /** USER JOINED SPACE BY INVITATION LINK*/
+    String GAMIFICATION_SOCIAL_SPACE_JOIN_BY_INVITATION_LINK                           = "userJoinedSpaceByInvitationLink";
 
-    /***************************************************************************************************************************************************/
+
+  /***************************************************************************************************************************************************/
     /*********************************************** CONSTANTS TO MANAGE RELATIONSHIP GAMIFICATION PROCESS *********************************************/
     /***************************************************************************************************************************************************/
     /** SEND RELATIONSHIP REQUEST */
