@@ -16,21 +16,7 @@
  */
 package io.meeds.gamification.listener;
 
-import static io.meeds.gamification.constant.GamificationConstant.BROADCAST_GAMIFICATION_EVENT_ERROR;
-import static io.meeds.gamification.constant.GamificationConstant.EVENT_NAME;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_ADD;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_INVITE_USER;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_JOIN;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_AVATAR;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_BANNER;
-import static io.meeds.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_UPDATE_DESCRIPTION;
-import static io.meeds.gamification.constant.GamificationConstant.IDENTITY_OBJECT_TYPE;
-import static io.meeds.gamification.constant.GamificationConstant.OBJECT_ID_PARAM;
-import static io.meeds.gamification.constant.GamificationConstant.OBJECT_TYPE_PARAM;
-import static io.meeds.gamification.constant.GamificationConstant.RECEIVER_ID;
-import static io.meeds.gamification.constant.GamificationConstant.SENDER_ID;
-import static io.meeds.gamification.constant.GamificationConstant.SPACE_MEMBERSHIP_OBJECT_TYPE;
+import static io.meeds.gamification.constant.GamificationConstant.*;
 import static io.meeds.gamification.listener.GamificationGenericListener.CANCEL_EVENT_NAME;
 import static io.meeds.gamification.listener.GamificationGenericListener.GENERIC_EVENT_NAME;
 import static io.meeds.gamification.utils.Utils.getCurrentUserIdentityId;
@@ -39,6 +25,7 @@ import static io.meeds.gamification.utils.Utils.getUserIdentityId;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.meeds.social.space.plugin.SpaceInvitationLifeCycleEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.services.listener.ListenerService;
@@ -121,6 +108,13 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     Space space = event.getSpace();
 
     cancelRealization(username, space, GAMIFICATION_SOCIAL_SPACE_JOIN);
+  }
+
+  @Override
+  public void userJoinedByInvitationLink(SpaceInvitationLifeCycleEvent event) {
+    String username = event.getInviterId();
+    Space space = event.getSpace();
+    createRealization(username, space, GAMIFICATION_SOCIAL_SPACE_JOIN_BY_INVITATION_LINK);
   }
 
   @Override
