@@ -38,6 +38,9 @@
             <field name="name">
               <string>rules</string>
             </field>
+            <field name="contentType">
+              <string>rule</string>
+            </field>
             <field name="uri">
               <string><![CDATA[/portal/rest/gamification/rules?status=ENABLED&programStatus=ENABLED&type=ALL&dateFilter=STARTED&expand=countRealizations,favorites&limit={limit}&term={keyword}&sortBy={sortField}&sortDescending={sortDescending}]]></string>
             </field>
