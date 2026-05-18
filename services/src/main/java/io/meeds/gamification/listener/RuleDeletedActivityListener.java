@@ -18,7 +18,6 @@
  */
 package io.meeds.gamification.listener;
 
-import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
@@ -38,7 +37,6 @@ public class RuleDeletedActivityListener extends Listener<RuleDTO, String> {
   }
 
   @Override
-  @ExoTransactional
   public void onEvent(Event<RuleDTO, String> event) throws Exception {
     RuleDTO rule = event.getSource();
     try {
