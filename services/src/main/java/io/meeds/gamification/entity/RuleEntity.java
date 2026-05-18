@@ -20,7 +20,11 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+import io.meeds.common.persistence.PortableSequence;
+import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.RealizationStatus;
+import io.meeds.gamification.constant.RecurrenceType;
+
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -28,17 +32,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.RecurrenceType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -122,8 +120,7 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
   private static final long   serialVersionUID = 1L;
 
   @Id
-  @SequenceGenerator(name = "SEQ_GAMIFICATION_RULE_ID", sequenceName = "SEQ_GAMIFICATION_RULE_ID", allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_GAMIFICATION_RULE_ID")
+  @PortableSequence(name = "SEQ_GAMIFICATION_RULE_ID")
   protected Long              id;
 
   @Column(name = "TITLE", unique = true, nullable = false)

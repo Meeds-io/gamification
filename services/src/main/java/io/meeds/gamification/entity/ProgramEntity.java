@@ -20,11 +20,21 @@ package io.meeds.gamification.entity;
 import java.io.Serializable;
 import java.util.Set;
 
-import jakarta.persistence.*;
-
+import io.meeds.common.persistence.PortableSequence;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.EntityVisibility;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -42,8 +52,7 @@ public class ProgramEntity extends AbstractAuditingEntity implements Serializabl
   private static final long serialVersionUID = 6578902752036385060L;
 
   @Id
-  @SequenceGenerator(name = "SEQ_GAMIFICATION_DOMAIN_ID", sequenceName = "SEQ_GAMIFICATION_DOMAIN_ID", allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_GAMIFICATION_DOMAIN_ID")
+  @PortableSequence(name = "SEQ_GAMIFICATION_DOMAIN_ID")
   protected Long             id;
 
   @Column(name = "TITLE", unique = true, nullable = false)
