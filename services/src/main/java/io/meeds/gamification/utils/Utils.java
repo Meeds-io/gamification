@@ -557,13 +557,13 @@ public class Utils {
     if (program == null) {
       return;
     }
-    statisticData.addParameter(STATISTICS_PROGRAM_ID_PARAM, program.getId());
-    statisticData.addParameter(STATISTICS_PROGRAM_TITLE_PARAM, program.getTitle());
-    statisticData.addParameter(STATISTICS_PROGRAM_BUDGET_PARAM, program.getBudget());
-    statisticData.addParameter(STATISTICS_PROGRAM_TYPE_PARAM, program.getType());
-    statisticData.addParameter(STATISTICS_PROGRAM_COVER_FILEID_PARAM, program.getCoverFileId());
-    statisticData.addParameter(STATISTICS_PROGRAM_AVATAR_FILEID_PARAM, program.getAvatarFileId());
-    statisticData.addParameter(STATISTICS_PROGRAM_OWNERS_PARAM, program.getOwnerIds());
+    statisticData.addKeyword(STATISTICS_PROGRAM_ID_PARAM, program.getId());
+    statisticData.addKeyword(STATISTICS_PROGRAM_TITLE_PARAM, program.getTitle());
+    statisticData.addLong(STATISTICS_PROGRAM_BUDGET_PARAM, program.getBudget());
+    statisticData.addKeyword(STATISTICS_PROGRAM_TYPE_PARAM, program.getType());
+    statisticData.addKeyword(STATISTICS_PROGRAM_COVER_FILEID_PARAM, program.getCoverFileId());
+    statisticData.addKeyword(STATISTICS_PROGRAM_AVATAR_FILEID_PARAM, program.getAvatarFileId());
+    statisticData.addKeywords(STATISTICS_PROGRAM_OWNERS_PARAM, program.getOwnerIds());
     if (program.getSpaceId() > 0) {
       Space space = spaceService.getSpaceById(String.valueOf(program.getSpaceId()));
       if (space != null) {
@@ -587,23 +587,23 @@ public class Utils {
     if (rule == null) {
       return;
     }
-    statisticData.addParameter(STATISTICS_RULE_ID_PARAM, rule.getId());
-    statisticData.addParameter(STATISTICS_RULE_ECTIVITY_ID_PARAM, rule.getActivityId());
-    statisticData.addParameter(STATISTICS_RULE_TITLE_PARAM, rule.getTitle());
-    statisticData.addParameter(STATISTICS_RULE_DESCRIPTION_PARAM, rule.getDescription());
-    statisticData.addParameter(STATISTICS_RULE_SCORE_PARAM, rule.getScore());
-    statisticData.addParameter(STATISTICS_RULE_TYPE_PARAM, rule.getType());
+    statisticData.addKeyword(STATISTICS_RULE_ID_PARAM, rule.getId());
+    statisticData.addKeyword(STATISTICS_RULE_ECTIVITY_ID_PARAM, rule.getActivityId());
+    statisticData.addKeyword(STATISTICS_RULE_TITLE_PARAM, rule.getTitle());
+    statisticData.addKeyword(STATISTICS_RULE_DESCRIPTION_PARAM, rule.getDescription());
+    statisticData.addKeyword(STATISTICS_RULE_SCORE_PARAM, rule.getScore());
+    statisticData.addKeyword(STATISTICS_RULE_TYPE_PARAM, rule.getType());
     if (event != null) {
-      statisticData.addParameter(STATISTICS_EVENT_ID_PARAM, event.getId());
-      statisticData.addParameter(STATISTICS_EVENT_TYPE_PARAM, event.getType());
-      statisticData.addParameter(STATISTICS_EVENT_TRIGGER_PARAM, event.getTrigger());
-      statisticData.addParameter(STATISTICS_EVENT_TITLE_PARAM, event.getTitle());
+      statisticData.addKeyword(STATISTICS_EVENT_ID_PARAM, event.getId());
+      statisticData.addKeyword(STATISTICS_EVENT_TYPE_PARAM, event.getType());
+      statisticData.addKeyword(STATISTICS_EVENT_TRIGGER_PARAM, event.getTrigger());
+      statisticData.addKeyword(STATISTICS_EVENT_TITLE_PARAM, event.getTitle());
       Map<String, String> properties = event.getProperties();
       if (properties != null) {
         properties.forEach((k, v) -> {
           if (!statisticData.getParameters().containsKey(k)) {
             String[] values = StringUtils.split(v, ",");
-            statisticData.addParameter(k, Arrays.asList(values));
+            statisticData.addKeywords(k, Arrays.asList(values));
           }
         });
       }
@@ -621,10 +621,10 @@ public class Utils {
     if (rule == null || announcement == null) {
       return;
     }
-    statisticData.addParameter(STATISTICS_ANNOUNCE_ID_PARAM, announcement.getId());
-    statisticData.addParameter(STATISTICS_ANNOUNCE_ACTIVITY_PARAM, announcement.getActivityId());
-    statisticData.addParameter(STATISTICS_ANNOUNCE_ASSIGNEE_PARAM, announcement.getAssignee());
-    statisticData.addParameter(STATISTICS_ANNOUNCE_COMMENT_PARAM, announcement.getComment());
+    statisticData.addKeyword(STATISTICS_ANNOUNCE_ID_PARAM, announcement.getId());
+    statisticData.addKeyword(STATISTICS_ANNOUNCE_ACTIVITY_PARAM, announcement.getActivityId());
+    statisticData.addKeyword(STATISTICS_ANNOUNCE_ASSIGNEE_PARAM, announcement.getAssignee());
+    statisticData.addKeyword(STATISTICS_ANNOUNCE_COMMENT_PARAM, announcement.getComment());
 
     addRuleStatisticParameters(identityManager, spaceService, rule, null, statisticData, username);
   }
@@ -642,24 +642,24 @@ public class Utils {
           && StringUtils.isNumeric(realization.getEarnerId())) {
         statisticData.setUserId(Long.parseLong(realization.getEarnerId()));
       }
-      statisticData.addParameter(STATISTICS_REALIZATION_ID_PARAM, realization.getId());
-      statisticData.addParameter(STATISTICS_EARNER_TYPE, realization.getEarnerType());
-      statisticData.addParameter(STATISTICS_EARNER_ID_PARAM, realization.getEarnerId());
-      statisticData.addParameter(STATISTICS_ACTIVITY_PARAM, realization.getActivityId());
-      statisticData.addParameter(STATISTICS_RECEIVED_ID, realization.getReceiver());
-      statisticData.addParameter(STATISTICS_REALIZATION_STATUS_PARAM, realization.getStatus());
-      statisticData.addParameter(STATISTICS_REVIEWER_ID_PARAM, realization.getReviewerId());
-      statisticData.addParameter(STATISTICS_OBJECT_ID_PARAM, "_" + realization.getObjectId());
-      statisticData.addParameter(STATISTICS_OBJECT_TYPE_PARAM, realization.getObjectType());
+      statisticData.addKeyword(STATISTICS_REALIZATION_ID_PARAM, realization.getId());
+      statisticData.addKeyword(STATISTICS_EARNER_TYPE, realization.getEarnerType());
+      statisticData.addKeyword(STATISTICS_EARNER_ID_PARAM, realization.getEarnerId());
+      statisticData.addKeyword(STATISTICS_ACTIVITY_PARAM, realization.getActivityId());
+      statisticData.addKeyword(STATISTICS_RECEIVED_ID, realization.getReceiver());
+      statisticData.addKeyword(STATISTICS_REALIZATION_STATUS_PARAM, realization.getStatus());
+      statisticData.addKeyword(STATISTICS_REVIEWER_ID_PARAM, realization.getReviewerId());
+      statisticData.addKeyword(STATISTICS_OBJECT_ID_PARAM, "_" + realization.getObjectId());
+      statisticData.addKeyword(STATISTICS_OBJECT_TYPE_PARAM, realization.getObjectType());
       Date sendingDate = parseRFC3339Date(realization.getSendingDate());
       if (sendingDate != null) {
-        statisticData.addParameter(STATISTICS_STATUS_UPDATE_DURATION,
-                                   ChronoUnit.SECONDS.between(sendingDate.toInstant(), new Date().toInstant()));
+        statisticData.addLong(STATISTICS_STATUS_UPDATE_DURATION,
+                              ChronoUnit.SECONDS.between(sendingDate.toInstant(), new Date().toInstant()));
       }
       Date lastModifiedDate = parseRFC3339Date(realization.getLastModifiedDate());
       if (lastModifiedDate != null) {
-        statisticData.addParameter(STATISTICS_UPDATE_SINCE_LAST_DURATION,
-                                   ChronoUnit.SECONDS.between(lastModifiedDate.toInstant(), new Date().toInstant()));
+        statisticData.addLong(STATISTICS_UPDATE_SINCE_LAST_DURATION,
+                              ChronoUnit.SECONDS.between(lastModifiedDate.toInstant(), new Date().toInstant()));
       }
     }
     if (StringUtils.isNotBlank(realization.getEarnerType())) {
