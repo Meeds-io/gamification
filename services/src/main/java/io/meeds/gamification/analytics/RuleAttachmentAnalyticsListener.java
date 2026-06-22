@@ -70,9 +70,9 @@ public class RuleAttachmentAnalyticsListener extends BaseAttachmentAnalyticsList
     if (rule != null) {
       ProgramDTO program = rule.getProgram();
       if (program != null) {
-        statisticData.addParameter("programTitle", rule.getProgram().getTitle());
+        statisticData.addKeyword("programTitle", rule.getProgram().getTitle());
       }
-      statisticData.addParameter("ruleTitle", rule.getTitle());
+      statisticData.addKeyword("ruleTitle", rule.getTitle());
     }
   }
 
