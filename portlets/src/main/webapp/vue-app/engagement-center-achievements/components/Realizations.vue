@@ -49,9 +49,20 @@
           <engagement-center-realizations-export-button :link="exportFileLink" />
         </template>
         <template #right>
-          <engagement-center-realizations-select-period
+          <select-period
             v-model="selectedPeriod"
+            :labels="{
+              from: $t('realization.label.from'),
+              to: $t('realization.label.to'),
+              today: $t('realization.label.today'),
+              thisWeek: $t('realization.label.thisWeek'),
+              thisMonth: $t('realization.label.thisMonth'),
+              thisQuarter: $t('realization.label.thisQuarter'),
+              thisSemester: $t('realization.label.thisSemester'),
+              thisYear: $t('realization.label.thisYear'),
+            }"
             :left="!$vuetify.breakpoint.mobile"
+            hide-time
             class="mx-2 border-box-sizing" />
         </template>
       </application-toolbar>
