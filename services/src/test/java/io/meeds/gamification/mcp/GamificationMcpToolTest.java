@@ -48,12 +48,18 @@ import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.mcp.model.AnnouncementModel;
+import io.meeds.gamification.mcp.model.BadgeModel;
 import io.meeds.gamification.mcp.model.CampaignModel;
 import io.meeds.gamification.mcp.model.LeaderboardEntryModel;
+import io.meeds.gamification.mcp.model.PointsTotalModel;
+import io.meeds.gamification.mcp.model.QuestAvailabilityModel;
 import io.meeds.gamification.mcp.model.QuestModel;
 import io.meeds.gamification.mcp.model.RealizationModel;
+import io.meeds.gamification.mcp.model.ScoreBreakdownEntryModel;
 import io.meeds.gamification.mcp.model.ScoreModel;
 import io.meeds.gamification.model.Announcement;
+import io.meeds.gamification.model.BadgeDTO;
+import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.ProfileReputation;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
@@ -61,7 +67,9 @@ import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.model.filter.RuleFilter;
+import io.meeds.gamification.rest.model.RealizationValidityContext;
 import io.meeds.gamification.service.AnnouncementService;
+import io.meeds.gamification.service.BadgeService;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
@@ -84,6 +92,8 @@ public class GamificationMcpToolTest {
 
   private AnnouncementService announcementService;
 
+  private BadgeService        badgeService;
+
   private IdentityManager     identityManager;
 
   private Identity            currentIdentity;
@@ -96,12 +106,14 @@ public class GamificationMcpToolTest {
     ruleService = mock(RuleService.class);
     realizationService = mock(RealizationService.class);
     announcementService = mock(AnnouncementService.class);
+    badgeService = mock(BadgeService.class);
     identityManager = mock(IdentityManager.class);
     currentIdentity = new Identity(USERNAME);
     tool = new GamificationMcpTool(programService,
                                    ruleService,
                                    realizationService,
                                    announcementService,
+                                   badgeService,
                                    identityManager) {
       @Override
       public Identity getCurrentUserAclIdentity() {
@@ -698,6 +710,270 @@ public class GamificationMcpToolTest {
   @Test
   public void cancelQuestAnnouncementInvalidIdFails() {
     assertThrows(IllegalArgumentException.class, () -> tool.cancelQuestAnnouncement(0L));
+  }
+
+  // --- list_campaign_badges ------------------------------------------------
+
+  private BadgeDTO badge(long id, String title, int neededScore, long iconFileId) {
+    BadgeDTO badge = new BadgeDTO();
+    badge.setId(id);
+    badge.setTitle(title);
+    badge.setDescription("Reach " + neededScore + " points");
+    badge.setNeededScore(neededScore);
+    badge.setIconFileId(iconFileId);
+    badge.setEnabled(true);
+    return badge;
+  }
+
+  @Test
+  public void listCampaignBadgesOrdersByNeededScore() throws Exception {
+    when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program(CAMPAIGN_ID));
+    // returned out of order to prove the tool sorts them by needed score
+    when(badgeService.findEnabledBadgesByProgramId(CAMPAIGN_ID))
+        .thenReturn(List.of(badge(2L, "Gold", 300, 20L), badge(1L, "Silver", 100, 10L)));
+
+    List<BadgeModel> badges = tool.listCampaignBadges(CAMPAIGN_ID);
+
+    assertEquals(2, badges.size());
+    assertEquals("Silver", badges.get(0).getTitle());
+    assertEquals(1, badges.get(0).getLevel());
+    assertEquals(100, badges.get(0).getNeededScore());
+    assertEquals(10L, badges.get(0).getIconFileId());
+    assertEquals("Gold", badges.get(1).getTitle());
+    assertEquals(2, badges.get(1).getLevel());
+  }
+
+  @Test
+  public void listCampaignBadgesEmpty() throws Exception {
+    when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program(CAMPAIGN_ID));
+    when(badgeService.findEnabledBadgesByProgramId(CAMPAIGN_ID)).thenReturn(List.of());
+
+    List<BadgeModel> badges = tool.listCampaignBadges(CAMPAIGN_ID);
+
+    assertTrue(badges.isEmpty());
+  }
+
+  @Test
+  public void listCampaignBadgesUnknownCampaignFails() throws Exception {
+    when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenThrow(new ObjectNotFoundException("missing"));
+    assertThrows(ObjectNotFoundException.class, () -> tool.listCampaignBadges(CAMPAIGN_ID));
+  }
+
+  @Test
+  public void listCampaignBadgesInvalidIdFails() {
+    assertThrows(IllegalArgumentException.class, () -> tool.listCampaignBadges(0L));
+  }
+
+  // --- get_my_campaigns ----------------------------------------------------
+
+  @Test
+  public void getMyCampaignsUnionsMemberAndOwned() throws Exception {
+    stubCurrentUserIdentity();
+    when(programService.getMemberProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(5L, 6L));
+    when(programService.getOwnedProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(6L, 7L));
+    when(programService.getProgramById(5L, USERNAME)).thenReturn(program(5L));
+    when(programService.getProgramById(6L, USERNAME)).thenReturn(program(6L));
+    when(programService.getProgramById(7L, USERNAME)).thenReturn(program(7L));
+
+    List<CampaignModel> campaigns = tool.getMyCampaigns(null, null);
+
+    // 5, 6, 7 deduped (6 appears in both lists)
+    assertEquals(3, campaigns.size());
+  }
+
+  @Test
+  public void getMyCampaignsSkipsUnviewable() throws Exception {
+    stubCurrentUserIdentity();
+    when(programService.getMemberProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(5L, 8L));
+    when(programService.getOwnedProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of());
+    when(programService.getProgramById(5L, USERNAME)).thenReturn(program(5L));
+    when(programService.getProgramById(8L, USERNAME)).thenThrow(new IllegalAccessException("denied"));
+
+    List<CampaignModel> campaigns = tool.getMyCampaigns(10, 0);
+
+    assertEquals(1, campaigns.size());
+    assertEquals(5L, campaigns.get(0).getId());
+  }
+
+  @Test
+  public void getMyCampaignsEmpty() {
+    stubCurrentUserIdentity();
+    when(programService.getMemberProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(null);
+    when(programService.getOwnedProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(null);
+
+    List<CampaignModel> campaigns = tool.getMyCampaigns(null, null);
+
+    assertTrue(campaigns.isEmpty());
+  }
+
+  // --- list_joinable_campaigns ---------------------------------------------
+
+  @Test
+  public void listJoinableCampaigns() throws Exception {
+    when(programService.getPublicProgramIds(anyInt(), anyInt())).thenReturn(List.of(5L, 6L));
+    when(programService.getProgramById(5L, USERNAME)).thenReturn(program(5L));
+    when(programService.getProgramById(6L, USERNAME)).thenReturn(program(6L));
+
+    List<CampaignModel> campaigns = tool.listJoinableCampaigns(null, null);
+
+    assertEquals(2, campaigns.size());
+  }
+
+  @Test
+  public void listJoinableCampaignsEmpty() {
+    when(programService.getPublicProgramIds(anyInt(), anyInt())).thenReturn(null);
+
+    List<CampaignModel> campaigns = tool.listJoinableCampaigns(null, null);
+
+    assertTrue(campaigns.isEmpty());
+  }
+
+  // --- get_my_points_total -------------------------------------------------
+
+  @Test
+  public void getMyPointsTotal() {
+    stubCurrentUserIdentity();
+    when(realizationService.getScoreByIdentityIdAndBetweenDates(eq(String.valueOf(OWN_ID)),
+                                                                any(),
+                                                                any(),
+                                                                isNull(),
+                                                                eq(CAMPAIGN_ID))).thenReturn(240L);
+
+    PointsTotalModel total = tool.getMyPointsTotal("2026-01-01", "2026-02-01", CAMPAIGN_ID);
+
+    assertEquals(240L, total.getTotalPoints());
+    assertEquals("2026-01-01", total.getFromDate());
+    assertEquals("2026-02-01", total.getToDate());
+    assertEquals(Long.valueOf(CAMPAIGN_ID), total.getCampaignId());
+  }
+
+  @Test
+  public void getMyPointsTotalNoDatesNoCampaign() {
+    stubCurrentUserIdentity();
+    when(realizationService.getScoreByIdentityIdAndBetweenDates(eq(String.valueOf(OWN_ID)),
+                                                                isNull(),
+                                                                isNull(),
+                                                                isNull(),
+                                                                isNull())).thenReturn(500L);
+
+    PointsTotalModel total = tool.getMyPointsTotal(null, null, null);
+
+    assertEquals(500L, total.getTotalPoints());
+    assertEquals(null, total.getCampaignId());
+  }
+
+  @Test
+  public void getMyPointsTotalInvalidDateFails() {
+    stubCurrentUserIdentity();
+    assertThrows(IllegalArgumentException.class, () -> tool.getMyPointsTotal("not-a-date", null, null));
+  }
+
+  // --- get_my_score_breakdown ----------------------------------------------
+
+  @Test
+  public void getMyScoreBreakdown() throws Exception {
+    stubCurrentUserIdentity();
+    PiechartLeaderboard slice = new PiechartLeaderboard(CAMPAIGN_ID, 80L);
+    when(realizationService.getLeaderboardStatsByIdentityId(eq(String.valueOf(OWN_ID)), isNull(), eq("MONTH"), any(), any()))
+        .thenReturn(List.of(slice));
+    when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program(CAMPAIGN_ID));
+
+    List<ScoreBreakdownEntryModel> breakdown = tool.getMyScoreBreakdown("MONTH");
+
+    assertEquals(1, breakdown.size());
+    assertEquals(CAMPAIGN_ID, breakdown.get(0).getCampaignId());
+    assertEquals(80L, breakdown.get(0).getPoints());
+    assertEquals("Campaign 5", breakdown.get(0).getLabel());
+  }
+
+  @Test
+  public void getMyScoreBreakdownDefaultsToAll() {
+    stubCurrentUserIdentity();
+    when(realizationService.getLeaderboardStatsByIdentityId(eq(String.valueOf(OWN_ID)), isNull(), eq("ALL"), isNull(), isNull()))
+        .thenReturn(List.of());
+
+    List<ScoreBreakdownEntryModel> breakdown = tool.getMyScoreBreakdown(null);
+
+    assertTrue(breakdown.isEmpty());
+  }
+
+  @Test
+  public void getMyScoreBreakdownInvalidPeriodFails() {
+    stubCurrentUserIdentity();
+    assertThrows(IllegalArgumentException.class, () -> tool.getMyScoreBreakdown("DECADE"));
+  }
+
+  // --- check_quest_availability --------------------------------------------
+
+  @Test
+  public void checkQuestAvailabilityAvailable() throws Exception {
+    stubCurrentUserIdentity();
+    RuleDTO existing = rule(QUEST_ID, program(CAMPAIGN_ID));
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(existing);
+    when(realizationService.hasPendingRealization(QUEST_ID, String.valueOf(OWN_ID))).thenReturn(false);
+    when(realizationService.getRealizationValidityContext(existing, OWN_ID)).thenReturn(new RealizationValidityContext());
+
+    QuestAvailabilityModel result = tool.checkQuestAvailability(QUEST_ID);
+
+    assertTrue(result.isAvailable());
+    assertEquals(QUEST_ID, result.getQuestId());
+    assertEquals("Quest 7", result.getQuestTitle());
+  }
+
+  @Test
+  public void checkQuestAvailabilityPendingNotAvailable() throws Exception {
+    stubCurrentUserIdentity();
+    RuleDTO existing = rule(QUEST_ID, program(CAMPAIGN_ID));
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(existing);
+    when(realizationService.hasPendingRealization(QUEST_ID, String.valueOf(OWN_ID))).thenReturn(true);
+    when(realizationService.getRealizationValidityContext(existing, OWN_ID)).thenReturn(new RealizationValidityContext());
+
+    QuestAvailabilityModel result = tool.checkQuestAvailability(QUEST_ID);
+
+    assertTrue(!result.isAvailable());
+    assertTrue(result.getReason().toLowerCase().contains("pending"));
+  }
+
+  @Test
+  public void checkQuestAvailabilityOutsideDatesNotAvailable() throws Exception {
+    stubCurrentUserIdentity();
+    RuleDTO existing = rule(QUEST_ID, program(CAMPAIGN_ID));
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(existing);
+    when(realizationService.hasPendingRealization(QUEST_ID, String.valueOf(OWN_ID))).thenReturn(false);
+    RealizationValidityContext context = new RealizationValidityContext();
+    context.setValidDates(false);
+    when(realizationService.getRealizationValidityContext(existing, OWN_ID)).thenReturn(context);
+
+    QuestAvailabilityModel result = tool.checkQuestAvailability(QUEST_ID);
+
+    assertTrue(!result.isAvailable());
+    assertTrue(result.getReason().toLowerCase().contains("dates"));
+  }
+
+  @Test
+  public void checkQuestAvailabilityAutomaticNotAvailable() throws Exception {
+    stubCurrentUserIdentity();
+    RuleDTO existing = rule(QUEST_ID, program(CAMPAIGN_ID));
+    existing.setType(EntityType.AUTOMATIC);
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(existing);
+    when(realizationService.hasPendingRealization(QUEST_ID, String.valueOf(OWN_ID))).thenReturn(false);
+    when(realizationService.getRealizationValidityContext(existing, OWN_ID)).thenReturn(new RealizationValidityContext());
+
+    QuestAvailabilityModel result = tool.checkQuestAvailability(QUEST_ID);
+
+    assertTrue(!result.isAvailable());
+    assertTrue(result.getReason().toLowerCase().contains("automatic"));
+  }
+
+  @Test
+  public void checkQuestAvailabilityUnknownQuestFails() throws Exception {
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenThrow(new ObjectNotFoundException("missing"));
+    assertThrows(ObjectNotFoundException.class, () -> tool.checkQuestAvailability(QUEST_ID));
+  }
+
+  @Test
+  public void checkQuestAvailabilityInvalidIdFails() {
+    assertThrows(IllegalArgumentException.class, () -> tool.checkQuestAvailability(0L));
   }
 
 }
