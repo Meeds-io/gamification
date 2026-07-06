@@ -56,6 +56,7 @@ public class GamificationMcpToolKernelTest extends AbstractServiceTest {
                                    ruleService,
                                    realizationService,
                                    announcementService,
+                                   badgeService,
                                    identityManager);
   }
 

@@ -21,9 +21,11 @@ package io.meeds.gamification.mcp;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -40,15 +42,22 @@ import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.constant.IdentityType;
+import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.constant.RealizationStatus;
 import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.mcp.model.AnnouncementModel;
+import io.meeds.gamification.mcp.model.BadgeModel;
 import io.meeds.gamification.mcp.model.CampaignModel;
 import io.meeds.gamification.mcp.model.LeaderboardEntryModel;
+import io.meeds.gamification.mcp.model.PointsTotalModel;
+import io.meeds.gamification.mcp.model.QuestAvailabilityModel;
 import io.meeds.gamification.mcp.model.QuestModel;
 import io.meeds.gamification.mcp.model.RealizationModel;
+import io.meeds.gamification.mcp.model.ScoreBreakdownEntryModel;
 import io.meeds.gamification.mcp.model.ScoreModel;
 import io.meeds.gamification.model.Announcement;
+import io.meeds.gamification.model.BadgeDTO;
+import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.ProfileReputation;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
@@ -58,10 +67,13 @@ import io.meeds.gamification.model.filter.LeaderboardFilter;
 import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.model.filter.RealizationFilter;
 import io.meeds.gamification.model.filter.RuleFilter;
+import io.meeds.gamification.rest.model.RealizationValidityContext;
 import io.meeds.gamification.service.AnnouncementService;
+import io.meeds.gamification.service.BadgeService;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
+import io.meeds.gamification.utils.Utils;
 import io.meeds.mcp.server.plugin.McpToolPlugin;
 
 /**
@@ -87,17 +99,21 @@ public class GamificationMcpTool implements McpToolPlugin {
 
   private final AnnouncementService announcementService;
 
+  private final BadgeService        badgeService;
+
   private final IdentityManager     identityManager;
 
   public GamificationMcpTool(ProgramService programService,
                              RuleService ruleService,
                              RealizationService realizationService,
                              AnnouncementService announcementService,
+                             BadgeService badgeService,
                              IdentityManager identityManager) {
     this.programService = programService;
     this.ruleService = ruleService;
     this.realizationService = realizationService;
     this.announcementService = announcementService;
+    this.badgeService = badgeService;
     this.identityManager = identityManager;
   }
 
@@ -299,6 +315,120 @@ public class GamificationMcpTool implements McpToolPlugin {
       }
     }
     return result;
+  }
+
+  /**
+   * Lists the badges (levels) of a campaign and the score needed to reach each.
+   * A badge is a milestone unlocked once the user accumulates enough campaign
+   * points; the returned {@code level} ranks the badges by that score threshold.
+   * The campaign is view-gated so a campaign the user cannot see is rejected.
+   */
+  public List<BadgeModel> listCampaignBadges(Long campaignId) throws IllegalAccessException, ObjectNotFoundException {
+    ProgramDTO program = resolveProgram(campaignId);
+    List<BadgeDTO> badges = badgeService.findEnabledBadgesByProgramId(program.getId());
+    List<BadgeDTO> sorted = new ArrayList<>(badges == null ? List.of() : badges);
+    sorted.sort(Comparator.comparingInt(BadgeDTO::getNeededScore));
+    List<BadgeModel> result = new ArrayList<>();
+    int level = 1;
+    for (BadgeDTO badge : sorted) {
+      result.add(new BadgeModel(badge.getId() == null ? 0 : badge.getId(),
+                                badge.getTitle(),
+                                badge.getDescription(),
+                                level++,
+                                badge.getNeededScore(),
+                                badge.getIconFileId()));
+    }
+    return result;
+  }
+
+  /**
+   * Lists the campaigns the current user is a member of or owns (as opposed to
+   * list_campaigns which lists every campaign visible to the user). This is
+   * always scoped to the current user.
+   */
+  public List<CampaignModel> getMyCampaigns(Integer limit, Integer offset) {
+    String currentUser = getCurrentUserName();
+    int clampedOffset = clampOffset(offset);
+    int clampedLimit = clampLimit(limit);
+    Set<Long> ids = new LinkedHashSet<>();
+    List<Long> memberIds = programService.getMemberProgramIds(currentUser, clampedOffset, clampedLimit);
+    List<Long> ownedIds = programService.getOwnedProgramIds(currentUser, clampedOffset, clampedLimit);
+    if (memberIds != null) {
+      ids.addAll(memberIds);
+    }
+    if (ownedIds != null) {
+      ids.addAll(ownedIds);
+    }
+    return resolveCampaigns(ids, currentUser);
+  }
+
+  /**
+   * Lists the open (public) campaigns the current user can join and participate
+   * in.
+   */
+  public List<CampaignModel> listJoinableCampaigns(Integer limit, Integer offset) {
+    String currentUser = getCurrentUserName();
+    List<Long> ids = programService.getPublicProgramIds(clampOffset(offset), clampLimit(limit));
+    return resolveCampaigns(ids == null ? Set.of() : new LinkedHashSet<>(ids), currentUser);
+  }
+
+  /**
+   * Returns the total gamification points the current user earned within a date
+   * range, optionally scoped to a single campaign. Always scoped to the current
+   * user. For the per-event list use list_my_realizations.
+   */
+  public PointsTotalModel getMyPointsTotal(String fromDate, String toDate, Long campaignId) {
+    Date from = parseDate(fromDate, "from_date");
+    Date to = parseDate(toDate, "to_date");
+    Long programId = (campaignId != null && campaignId > 0) ? campaignId : null;
+    long total = realizationService.getScoreByIdentityIdAndBetweenDates(String.valueOf(currentUserIdentityId()),
+                                                                        from,
+                                                                        to,
+                                                                        null,
+                                                                        programId);
+    return new PointsTotalModel(total, StringUtils.trimToNull(fromDate), StringUtils.trimToNull(toDate), programId);
+  }
+
+  /**
+   * Breaks down the current user's points by campaign for a period
+   * (WEEK/MONTH/QUARTER/ALL). Always scoped to the current user.
+   */
+  public List<ScoreBreakdownEntryModel> getMyScoreBreakdown(String period) {
+    String resolvedPeriod = parsePeriod(period);
+    String earnerId = String.valueOf(currentUserIdentityId());
+    Date startDate = Utils.getFromDate(resolvedPeriod, 0);
+    Date endDate = Utils.getToDate(resolvedPeriod, 0);
+    List<PiechartLeaderboard> stats = realizationService.getLeaderboardStatsByIdentityId(earnerId,
+                                                                                         null,
+                                                                                         resolvedPeriod,
+                                                                                         startDate,
+                                                                                         endDate);
+    List<ScoreBreakdownEntryModel> result = new ArrayList<>();
+    if (stats != null) {
+      String currentUser = getCurrentUserName();
+      for (PiechartLeaderboard entry : stats) {
+        result.add(new ScoreBreakdownEntryModel(entry.getProgramId(),
+                                                 resolveCampaignLabel(entry, currentUser),
+                                                 entry.getValue()));
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Checks whether the current user can complete/announce a given quest right
+   * now, and explains why not. This is the pre-check for announce_quest. Always
+   * evaluated for the current user.
+   */
+  public QuestAvailabilityModel checkQuestAvailability(Long questId) throws IllegalAccessException, ObjectNotFoundException {
+    RuleDTO rule = resolveRule(questId);
+    long earnerIdentityId = currentUserIdentityId();
+    boolean pending = realizationService.hasPendingRealization(rule.getId(), String.valueOf(earnerIdentityId));
+    RealizationValidityContext context = realizationService.getRealizationValidityContext(rule, earnerIdentityId);
+    boolean isManual = rule.getType() == EntityType.MANUAL;
+    boolean available = isManual && !pending && context.isValidForIdentity();
+    String reason = buildAvailabilityReason(rule, context, isManual, pending);
+    return new QuestAvailabilityModel(available, reason, rule.getId() == null ? 0 : rule.getId(), rule.getTitle());
   }
 
   // --------------------------------------------------------------- WRITES ----
@@ -535,6 +665,86 @@ public class GamificationMcpTool implements McpToolPlugin {
 
   private boolean canManageCampaign(ProgramDTO program, String username) {
     return programService.isProgramOwner(program.getId(), username) || programService.canEditProgram(program.getId(), username);
+  }
+
+  /**
+   * Resolves a set of program ids into {@link CampaignModel}s as the given user,
+   * silently skipping any that no longer exist or that the user can no longer
+   * view.
+   */
+  private List<CampaignModel> resolveCampaigns(Set<Long> ids, String currentUser) {
+    List<CampaignModel> result = new ArrayList<>();
+    for (Long id : ids) {
+      if (id == null || id <= 0) {
+        continue;
+      }
+      try {
+        result.add(toCampaign(programService.getProgramById(id, currentUser)));
+      } catch (ObjectNotFoundException | IllegalAccessException e) {
+        // Skip campaigns that vanished or are no longer viewable by the user.
+      }
+    }
+    return result;
+  }
+
+  private String resolveCampaignLabel(PiechartLeaderboard entry, String currentUser) {
+    if (StringUtils.isNotBlank(entry.getLabel())) {
+      return entry.getLabel();
+    }
+    try {
+      ProgramDTO program = programService.getProgramById(entry.getProgramId(), currentUser);
+      return program == null ? null : program.getTitle();
+    } catch (ObjectNotFoundException | IllegalAccessException e) {
+      return null;
+    }
+  }
+
+  private String buildAvailabilityReason(RuleDTO rule, RealizationValidityContext context, boolean isManual, boolean pending) {
+    if (!isManual) {
+      return "This is an automatic quest: it is awarded by the platform when its event happens, not announced by the user.";
+    }
+    if (pending) {
+      return "You have already announced this quest and it is pending review, so it cannot be announced again yet.";
+    }
+    if (!context.isValidNoPrerequisites()) {
+      if (!context.isValidProgram()) {
+        return "This quest's campaign is not active.";
+      }
+      if (!context.isValidRule()) {
+        return "This quest is disabled.";
+      }
+      if (!context.isValidDates()) {
+        return "This quest is not open right now (it is outside its start/end dates).";
+      }
+      if (!context.isValidRecurrence()) {
+        return "You already completed this quest for the current recurrence window; wait for the next occurrence.";
+      }
+      if (!context.isValidAudience()) {
+        return "You are not part of this quest's audience (you may need to join the campaign's space).";
+      }
+      if (!context.isValidWhitelist()) {
+        return "You are not on this quest's list of allowed participants.";
+      }
+      return "This quest is not available to you right now.";
+    }
+    if (!context.isValidForIdentity() && context.isValidButLocked()) {
+      return "You must first complete a prerequisite quest before this one becomes available.";
+    }
+    if (!context.isValidForIdentity()) {
+      return "Your identity is not eligible to earn on this quest.";
+    }
+    return "You can complete and announce this quest now.";
+  }
+
+  private String parsePeriod(String period) {
+    if (StringUtils.isBlank(period)) {
+      return Period.ALL.name();
+    }
+    try {
+      return Period.valueOf(period.trim().toUpperCase()).name();
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Invalid period '" + period + "'. Allowed values are: WEEK, MONTH, QUARTER, ALL.");
+    }
   }
 
   private long currentUserIdentityId() {

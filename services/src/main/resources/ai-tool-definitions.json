@@ -265,6 +265,154 @@
       }
     },
     {
+      "name": "list_campaign_badges",
+      "title": "List campaign badges",
+      "description": "List the badges (levels) of a campaign and the total number of campaign points needed to reach each one. A campaign is a gamification program; a badge is a milestone level a user unlocks by accumulating enough points in that campaign. Badges are returned ordered by the score needed (level 1 = easiest). Resolve the campaign id with list_campaigns.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "campaign_id": {
+            "type": "integer",
+            "description": "Technical id of the campaign (program) whose badges to list (required)."
+          }
+        },
+        "required": [
+          "campaign_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_my_campaigns",
+      "title": "Get my campaigns",
+      "description": "List the campaigns (gamification programs) the current user is a member of or owns. Use this to answer 'my campaigns' questions, as opposed to list_campaigns which lists every campaign the user can see. This is always scoped to the current user.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of campaigns to return (default 10, max 50)."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Offset for pagination (default 0)."
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_joinable_campaigns",
+      "title": "List joinable campaigns",
+      "description": "List the open (public) campaigns (gamification programs) the current user can join and participate in to start earning points. Use this to suggest campaigns the user is not yet part of.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of campaigns to return (default 10, max 50)."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Offset for pagination (default 0)."
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_my_points_total",
+      "title": "Get my points total",
+      "description": "Get the total gamification points the current user earned within a date range, optionally within one campaign (program). This returns a single total number; for the per-event breakdown use list_my_realizations, and for the per-campaign split use get_my_score_breakdown. Always scoped to the current user.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "from_date": {
+            "type": "string",
+            "description": "Optional start date in yyyy-MM-dd format (inclusive). Omit for all time."
+          },
+          "to_date": {
+            "type": "string",
+            "description": "Optional end date in yyyy-MM-dd format. Omit for up to now."
+          },
+          "campaign_id": {
+            "type": "integer",
+            "description": "Optional campaign (program) id to only count points earned in that campaign."
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_my_score_breakdown",
+      "title": "Get my score breakdown",
+      "description": "Break down the current user's gamification points by campaign (program) for a period. Returns one entry per campaign with the campaign label and the points earned there. Always scoped to the current user.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "period": {
+            "type": "string",
+            "enum": [
+              "WEEK",
+              "MONTH",
+              "QUARTER",
+              "ALL"
+            ],
+            "description": "Period to break the points down over (default ALL)."
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "check_quest_availability",
+      "title": "Check quest availability",
+      "description": "Check whether the current user can complete/announce a given quest (a gamification action/rule) right now, and explain why not (for example: already announced and pending, outside the quest's dates, current recurrence window already used, a prerequisite quest not yet completed, or the user is not in the audience). Use this as the pre-check before calling announce_quest. Resolve the quest id with list_quests. Always evaluated for the current user.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "quest_id": {
+            "type": "integer",
+            "description": "Technical id of the quest to check (required)."
+          }
+        },
+        "required": [
+          "quest_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "create_campaign",
       "title": "Create a campaign",
       "description": "Create a new campaign (a gamification program that groups quests). Requires rewarding-admin rights, or manager rights on the target space when a space id is given. Resolve a space id with get_my_spaces.",
