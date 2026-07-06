@@ -259,6 +259,36 @@ public class GamificationMcpTool implements McpToolPlugin {
     return result;
   }
 
+  /**
+   * Lists the current user's own quest announcements (challenges they
+   * announced), most recent first. Optionally scoped to a single quest. Each
+   * entry exposes the announcement id needed by cancel_quest_announcement. This
+   * only ever returns the current user's own announcements.
+   */
+  public List<AnnouncementModel> listMyAnnouncements(Long questId,
+                                                     Integer limit,
+                                                     Integer offset) throws IllegalAccessException {
+    RealizationFilter filter = new RealizationFilter();
+    filter.setEarnerIds(List.of(String.valueOf(currentUserIdentityId())));
+    filter.setEarnerType(IdentityType.USER);
+    if (questId != null && questId > 0) {
+      filter.setRuleIds(List.of(questId));
+    }
+    List<RealizationDTO> realizations = realizationService.getRealizationsByFilter(filter,
+                                                                                   getCurrentUserAclIdentity(),
+                                                                                   clampOffset(offset),
+                                                                                   clampLimit(limit));
+    List<AnnouncementModel> result = new ArrayList<>();
+    for (RealizationDTO realization : realizations) {
+      // Only manual-quest realizations with an author are announcements;
+      // automatic point awards have no creator and are excluded.
+      if (realization.getCreator() != null) {
+        result.add(toAnnouncement(realization));
+      }
+    }
+    return result;
+  }
+
   // --------------------------------------------------------------- WRITES ----
 
   /**
@@ -432,7 +462,9 @@ public class GamificationMcpTool implements McpToolPlugin {
       return new AnnouncementModel(created.getId(),
                                    created.getChallengeId(),
                                    created.getComment(),
-                                   created.getActivityId());
+                                   created.getActivityId(),
+                                   created.getCreator(),
+                                   created.getCreatedDate());
     } catch (IllegalStateException e) {
       throw new IllegalStateException("This quest is not a manual challenge, so it cannot be announced."
           + " Only MANUAL quests can be announced; automatic quests are rewarded by the platform.");
@@ -537,6 +569,15 @@ public class GamificationMcpTool implements McpToolPlugin {
                                 realization.getActionScore(),
                                 realization.getStatus(),
                                 realization.getCreatedDate());
+  }
+
+  private AnnouncementModel toAnnouncement(RealizationDTO realization) {
+    return new AnnouncementModel(realization.getId() == null ? 0 : realization.getId(),
+                                 realization.getRuleId(),
+                                 realization.getComment(),
+                                 realization.getActivityId(),
+                                 realization.getCreator(),
+                                 realization.getCreatedDate());
   }
 
   private EntityVisibility parseVisibility(String visibility, Long spaceId) {

@@ -347,6 +347,73 @@ public class GamificationMcpToolTest {
     assertThrows(IllegalArgumentException.class, () -> tool.listMyRealizations(null, null, null, "BOGUS", null, null));
   }
 
+  // --- list_my_announcements -----------------------------------------------
+
+  private RealizationDTO announcementRealization(long id, Long ruleId) {
+    return new RealizationDTO(id,
+                              String.valueOf(OWN_ID),
+                              "USER",
+                              0,
+                              "Quest title",
+                              program(CAMPAIGN_ID),
+                              null,
+                              null,
+                              30,
+                              null,
+                              null,
+                              null,
+                              ruleId,
+                              55L,
+                              "I did it",
+                              OWN_ID,
+                              null,
+                              "2026-01-02T00:00:00",
+                              null,
+                              null,
+                              null,
+                              "ACCEPTED",
+                              EntityType.MANUAL,
+                              null);
+  }
+
+  @Test
+  public void listMyAnnouncementsExcludesNonAnnouncements() throws Exception {
+    stubCurrentUserIdentity();
+    // second realization has a null creator (automatic award) and must be filtered out
+    when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt()))
+        .thenReturn(List.of(announcementRealization(1L, QUEST_ID), realization(2L, QUEST_ID, program(CAMPAIGN_ID))));
+
+    List<AnnouncementModel> announcements = tool.listMyAnnouncements(null, null, null);
+
+    assertEquals(1, announcements.size());
+    assertEquals(1L, announcements.get(0).getId());
+    assertEquals(QUEST_ID, announcements.get(0).getQuestId().longValue());
+    assertEquals(Long.valueOf(OWN_ID), announcements.get(0).getCreator());
+    assertEquals(Long.valueOf(55L), announcements.get(0).getActivityId());
+    assertEquals("I did it", announcements.get(0).getComment());
+  }
+
+  @Test
+  public void listMyAnnouncementsForQuest() throws Exception {
+    stubCurrentUserIdentity();
+    when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt()))
+        .thenReturn(List.of(announcementRealization(1L, QUEST_ID)));
+
+    List<AnnouncementModel> announcements = tool.listMyAnnouncements(QUEST_ID, 20, 0);
+
+    assertEquals(1, announcements.size());
+  }
+
+  @Test
+  public void listMyAnnouncementsEmpty() throws Exception {
+    stubCurrentUserIdentity();
+    when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt())).thenReturn(List.of());
+
+    List<AnnouncementModel> announcements = tool.listMyAnnouncements(null, null, null);
+
+    assertTrue(announcements.isEmpty());
+  }
+
   // --- create_campaign -----------------------------------------------------
 
   @Test
