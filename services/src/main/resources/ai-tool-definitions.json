@@ -1,0 +1,488 @@
+{
+  "tools": [
+    {
+      "name": "list_campaigns",
+      "title": "List campaigns",
+      "description": "List the campaigns (gamification programs) the current user can see. A campaign is a gamification program that groups quests (actions/rules) users complete to earn points. Optionally filter by a search term or by a space id (resolve a space with get_my_spaces).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string",
+            "description": "Optional text to search campaigns by title."
+          },
+          "space_id": {
+            "type": "integer",
+            "description": "Optional space technical id to only list campaigns of that space."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of campaigns to return (default 10, max 50)."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Offset for pagination (default 0)."
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_campaign",
+      "title": "Get a campaign",
+      "description": "Get a single campaign (gamification program) by its id. Resolve the campaign id with list_campaigns.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "campaign_id": {
+            "type": "integer",
+            "description": "Technical id of the campaign (required)."
+          }
+        },
+        "required": [
+          "campaign_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_quests",
+      "title": "List quests",
+      "description": "List the quests (gamification actions/rules) of a campaign, or across all accessible campaigns when no campaign id is given. A quest is an action inside a campaign that awards points; MANUAL quests are challenges the user announces, AUTOMATIC quests are triggered by platform events. Resolve a campaign id with list_campaigns.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "campaign_id": {
+            "type": "integer",
+            "description": "Optional campaign (program) id to list only its quests."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "MANUAL",
+              "AUTOMATIC",
+              "ALL"
+            ],
+            "description": "Optional quest type filter (default ALL)."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ENABLED",
+              "DISABLED",
+              "ALL"
+            ],
+            "description": "Optional status filter (default ALL)."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of quests to return (default 10, max 50)."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Offset for pagination (default 0)."
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_quest",
+      "title": "Get a quest",
+      "description": "Get a single quest (a gamification action/rule) by its id, including its prerequisite quests. Resolve the quest id with list_quests.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "quest_id": {
+            "type": "integer",
+            "description": "Technical id of the quest (required)."
+          }
+        },
+        "required": [
+          "quest_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_my_gamification_score",
+      "title": "Get my gamification score",
+      "description": "Get the current user's gamification score: the overall total points, the overall leaderboard rank and the points earned per campaign. Pass a campaign id to also get the user's rank and score within that campaign.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "campaign_id": {
+            "type": "integer",
+            "description": "Optional campaign (program) id to scope the rank and score to that campaign."
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_gamification_leaderboard",
+      "title": "Get the gamification leaderboard",
+      "description": "Get the gamification leaderboard (top earners ranked by points), optionally scoped to a campaign and/or a space, for a given period. Resolve a campaign id with list_campaigns and a space id with get_my_spaces.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "campaign_id": {
+            "type": "integer",
+            "description": "Optional campaign (program) id to scope the leaderboard."
+          },
+          "space_id": {
+            "type": "integer",
+            "description": "Optional space id to scope the leaderboard."
+          },
+          "period": {
+            "type": "string",
+            "enum": [
+              "WEEK",
+              "MONTH",
+              "YEAR",
+              "ALL"
+            ],
+            "description": "Period to rank over (default WEEK)."
+          },
+          "identity_type": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "SPACE"
+            ],
+            "description": "Whether to rank users or spaces (default USER)."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of leaderboard rows to return (default 10, max 50)."
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_my_realizations",
+      "title": "List my realizations",
+      "description": "List the current user's own realizations (gamification achievements: points earned by completing quests). Optionally filter by date range (yyyy-MM-dd), campaign and/or status. This only ever returns the current user's own achievements.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "from_date": {
+            "type": "string",
+            "description": "Optional start date in yyyy-MM-dd format."
+          },
+          "to_date": {
+            "type": "string",
+            "description": "Optional end date in yyyy-MM-dd format."
+          },
+          "campaign_id": {
+            "type": "integer",
+            "description": "Optional campaign (program) id to filter achievements."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACCEPTED",
+              "REJECTED",
+              "CANCELED",
+              "PENDING"
+            ],
+            "description": "Optional achievement status filter."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of realizations to return (default 10, max 50)."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Offset for pagination (default 0)."
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "create_campaign",
+      "title": "Create a campaign",
+      "description": "Create a new campaign (a gamification program that groups quests). Requires rewarding-admin rights, or manager rights on the target space when a space id is given. Resolve a space id with get_my_spaces.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the campaign (required)."
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description of the campaign."
+          },
+          "space_id": {
+            "type": "integer",
+            "description": "Optional space id the campaign belongs to. When set, the campaign defaults to RESTRICTED visibility for that space."
+          },
+          "budget": {
+            "type": "integer",
+            "description": "Optional total points budget for the campaign."
+          },
+          "open": {
+            "type": "boolean",
+            "description": "Whether the campaign is open to everyone who can see it (default true)."
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "RESTRICTED"
+            ],
+            "description": "Visibility of the campaign. Defaults to RESTRICTED when a space id is given, otherwise OPEN."
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "require_approval": true
+    },
+    {
+      "name": "create_quest",
+      "title": "Create a quest",
+      "description": "Create a new quest (a gamification action/rule) inside a campaign. Only MANUAL quests (challenges the user announces) are supported here; AUTOMATIC (event-triggered) quests are rejected. Requires being an owner of the campaign. Resolve the campaign id with list_campaigns.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "campaign_id": {
+            "type": "integer",
+            "description": "Id of the campaign (program) the quest belongs to (required)."
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the quest (required)."
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description of the quest."
+          },
+          "score": {
+            "type": "integer",
+            "description": "Points awarded when the quest is completed (required, positive)."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "MANUAL",
+              "AUTOMATIC"
+            ],
+            "description": "Quest type. Defaults to MANUAL. AUTOMATIC is not supported via chat and will be rejected."
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Optional start date in yyyy-MM-dd format."
+          },
+          "end_date": {
+            "type": "string",
+            "description": "Optional end date in yyyy-MM-dd format."
+          },
+          "recurrence": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "ONCE",
+              "DAILY",
+              "WEEKLY",
+              "MONTHLY"
+            ],
+            "description": "Optional recurrence of the quest (default NONE)."
+          }
+        },
+        "required": [
+          "campaign_id",
+          "title",
+          "score"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "require_approval": true
+    },
+    {
+      "name": "update_quest",
+      "title": "Update a quest",
+      "description": "Update an existing quest (a gamification action/rule). Only the fields you pass are changed; the others keep their current values. Requires being an owner of the quest's campaign. Resolve the quest id with list_quests.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "quest_id": {
+            "type": "integer",
+            "description": "Technical id of the quest to update (required)."
+          },
+          "title": {
+            "type": "string",
+            "description": "New title (optional)."
+          },
+          "description": {
+            "type": "string",
+            "description": "New description (optional)."
+          },
+          "score": {
+            "type": "integer",
+            "description": "New points awarded (optional, positive)."
+          },
+          "start_date": {
+            "type": "string",
+            "description": "New start date in yyyy-MM-dd format (optional)."
+          },
+          "end_date": {
+            "type": "string",
+            "description": "New end date in yyyy-MM-dd format (optional)."
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the quest is enabled (optional)."
+          },
+          "recurrence": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "ONCE",
+              "DAILY",
+              "WEEKLY",
+              "MONTHLY"
+            ],
+            "description": "New recurrence (optional)."
+          }
+        },
+        "required": [
+          "quest_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "require_approval": true
+    },
+    {
+      "name": "delete_quest",
+      "title": "Delete a quest",
+      "description": "Delete a quest (a gamification action/rule). Requires being an owner of the quest's campaign. Resolve the quest id with list_quests.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "quest_id": {
+            "type": "integer",
+            "description": "Technical id of the quest to delete (required)."
+          }
+        },
+        "required": [
+          "quest_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "require_approval": true
+    },
+    {
+      "name": "announce_quest",
+      "title": "Announce a quest",
+      "description": "Announce, as the current user, that they completed a manual quest (a challenge), so it can be reviewed and rewarded with points. Only MANUAL quests can be announced. Resolve the quest id with list_quests.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "quest_id": {
+            "type": "integer",
+            "description": "Technical id of the manual quest (challenge) to announce (required)."
+          },
+          "comment": {
+            "type": "string",
+            "description": "Optional comment describing what the user did."
+          }
+        },
+        "required": [
+          "quest_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "require_approval": true
+    },
+    {
+      "name": "cancel_quest_announcement",
+      "title": "Cancel a quest announcement",
+      "description": "Cancel (delete) a quest announcement previously made by the current user. Only the author can cancel their own announcement. Find the announcement id from list_my_realizations.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "announcement_id": {
+            "type": "integer",
+            "description": "Technical id of the announcement to cancel (required)."
+          }
+        },
+        "required": [
+          "announcement_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "require_approval": true
+    }
+  ]
+}
