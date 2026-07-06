@@ -71,6 +71,13 @@
       <artifactId>analytics-api</artifactId>
       <scope>provided</scope>
     </dependency>
+
+    <!-- MCP Server API -->
+    <dependency>
+      <groupId>io.meeds.mcp-server</groupId>
+      <artifactId>mcp-server-tools</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>io.meeds.analytics</groupId>
       <artifactId>analytics-listeners</artifactId>
@@ -101,6 +108,15 @@
   <build>
     <finalName>${project.artifactId}</finalName>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgs>
+            <arg>-parameters</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>io.openapitools.swagger</groupId>
         <artifactId>swagger-maven-plugin</artifactId>
