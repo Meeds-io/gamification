@@ -43,4 +43,12 @@ public class AnnouncementModel {
   @JsonProperty("activity_id")
   private Long   activityId;
 
+  /**
+   * Social identity id of the announcement's author (the current user).
+   */
+  private Long   creator;
+
+  @JsonProperty("created_date")
+  private String createdDate;
+
 }
