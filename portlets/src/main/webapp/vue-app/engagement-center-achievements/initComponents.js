@@ -28,13 +28,10 @@ import RealizationExportButton from './components/action/RealizationExportButton
 
 import RealizationFilterDrawer from './components/filter/RealizationFilterDrawer.vue';
 import GranteeAttendeeItem from './components/filter/GranteeAttendeeItem.vue';
-import SelectPeriod from './components/filter/SelectPeriod.vue';
-
 const components = {
   'engagement-center-realizations': Realizations,
   'engagement-center-realization-item': RealizationItem,
   'engagement-center-realization-item-mobile': RealizationItemMobile,
-  'engagement-center-realizations-select-period': SelectPeriod,
   'engagement-center-realizations-filter-drawer': RealizationFilterDrawer,
   'engagement-center-realizations-grantee-attendee-item': GranteeAttendeeItem,
   'engagement-center-realizations-export-button': RealizationExportButton,
