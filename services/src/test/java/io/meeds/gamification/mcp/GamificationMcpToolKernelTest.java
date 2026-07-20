@@ -22,12 +22,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
 
+import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.EntityVisibility;
+import io.meeds.gamification.entity.ProgramEntity;
+import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.mcp.model.CampaignModel;
 import io.meeds.gamification.mcp.model.QuestModel;
+import io.meeds.gamification.mock.SpaceServiceMock;
 import io.meeds.gamification.test.AbstractServiceTest;
 
 /**
@@ -121,5 +127,44 @@ public class GamificationMcpToolKernelTest extends AbstractServiceTest {
 
     // And the campaign is still retrievable.
     assertNotNull(tool.getCampaign(campaign.getId()));
+  }
+
+  /**
+   * ACL-scoping regression: with no id, list_campaigns / list_quests must NOT
+   * leak a RESTRICTED program (nor its quests) that lives in a space the caller
+   * is not a member of. Before the fix the tool built the filter with
+   * allSpaces=true when no id was passed, which made the DAO drop the
+   * "(audienceId IS NULL OR visibility = OPEN)" restriction and leak the
+   * restricted content. "user" is a plain internal user, not a rewarding
+   * admin, and a member of no space, so it must only see OPEN/no-audience
+   * content.
+   */
+  @Test
+  public void testListDoesNotLeakRestrictedContentToNonMember() throws Exception {
+    // A RESTRICTED program whose audience is a space the caller is NOT a member of.
+    ProgramEntity restricted = newDomain(EntityType.MANUAL,
+                                         "Secret-EVA-Program",
+                                         true,
+                                         Collections.emptySet(),
+                                         Long.parseLong(SpaceServiceMock.SPACE_ID_2));
+    restricted.setVisibility(EntityVisibility.RESTRICTED);
+    programDAO.update(restricted);
+    programStorage.clearCache();
+    restartTransaction();
+
+    // A quest inside that restricted program.
+    RuleEntity restrictedRule = newManualRule("secret-quest", restricted.getId());
+    ruleStorage.clearCache();
+    restartTransaction();
+
+    startSessionAs("user");
+
+    List<CampaignModel> campaigns = tool.listCampaigns(null, null, null, null);
+    assertTrue("list_campaigns must NOT leak a RESTRICTED program from a space the caller is not a member of",
+               campaigns.stream().noneMatch(c -> c.getId() == restricted.getId()));
+
+    List<QuestModel> quests = tool.listQuests(null, null, null, null, null);
+    assertTrue("list_quests must NOT leak a quest of a RESTRICTED program from a space the caller is not a member of",
+               quests.stream().noneMatch(q -> q.getId() == restrictedRule.getId()));
   }
 }

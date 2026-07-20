@@ -111,7 +111,13 @@ public class GamificationMcpTool implements McpToolPlugin {
                                            Long spaceId,
                                            Integer limit,
                                            Integer offset) throws IllegalAccessException {
-    ProgramFilter filter = new ProgramFilter(spaceId == null);
+    // Mirror ProgramRest#getPrograms: always build the filter with
+    // allSpaces=false (the no-arg ProgramFilter default) so the DAO keeps the
+    // "(audienceId IS NULL OR visibility = OPEN)" visibility restriction and
+    // the service scopes to the caller's member spaces. Passing allSpaces=true
+    // (the previous spaceId==null default) would leak RESTRICTED programs from
+    // spaces the caller is not a member of.
+    ProgramFilter filter = new ProgramFilter();
     filter.setStatus(EntityStatusType.ALL);
     if (StringUtils.isNotBlank(term)) {
       filter.setProgramTitle(term.trim());
@@ -143,7 +149,13 @@ public class GamificationMcpTool implements McpToolPlugin {
                                      String status,
                                      Integer limit,
                                      Integer offset) {
-    RuleFilter filter = new RuleFilter(campaignId == null);
+    // Mirror RuleRest#getRules: always build the filter with allSpaces=false
+    // (the no-arg RuleFilter default) so the DAO keeps the "(audienceId IS NULL
+    // OR visibility = OPEN)" visibility restriction and the service scopes to
+    // the caller's member spaces. Passing allSpaces=true (the previous
+    // campaignId==null default) would leak RESTRICTED quests from spaces the
+    // caller is not a member of.
+    RuleFilter filter = new RuleFilter();
     if (campaignId != null && campaignId > 0) {
       filter.setProgramId(campaignId);
     }
