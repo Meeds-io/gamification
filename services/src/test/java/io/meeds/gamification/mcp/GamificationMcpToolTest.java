@@ -19,6 +19,7 @@
 package io.meeds.gamification.mcp;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -36,6 +37,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
@@ -57,6 +59,8 @@ import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.StandardLeaderboard;
+import io.meeds.gamification.model.filter.ProgramFilter;
+import io.meeds.gamification.model.filter.RuleFilter;
 import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
@@ -188,6 +192,21 @@ public class GamificationMcpToolTest {
     assertEquals(1, campaigns.size());
   }
 
+  @Test
+  public void listCampaignsDoesNotBypassSpaceAcls() throws Exception {
+    // Regression for the ACL bypass: with no space id the tool must NOT set
+    // allSpaces=true on the ProgramFilter, otherwise the DAO drops the
+    // "(audienceId IS NULL OR visibility = OPEN)" restriction and leaks
+    // RESTRICTED programs from spaces the caller is not a member of.
+    when(programService.getPrograms(any(), eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(program(CAMPAIGN_ID)));
+
+    tool.listCampaigns(null, null, null, null);
+
+    ArgumentCaptor<ProgramFilter> captor = ArgumentCaptor.forClass(ProgramFilter.class);
+    verify(programService).getPrograms(captor.capture(), eq(USERNAME), anyInt(), anyInt());
+    assertFalse("listCampaigns must not set allSpaces=true (ACL bypass)", captor.getValue().isAllSpaces());
+  }
+
   // --- get_campaign --------------------------------------------------------
 
   @Test
@@ -235,6 +254,21 @@ public class GamificationMcpToolTest {
   @Test
   public void listQuestsInvalidTypeFails() {
     assertThrows(IllegalArgumentException.class, () -> tool.listQuests(null, "BOGUS", null, null, null));
+  }
+
+  @Test
+  public void listQuestsDoesNotBypassSpaceAcls() {
+    // Regression for the ACL bypass: with no campaign id the tool must NOT set
+    // allSpaces=true on the RuleFilter, otherwise the DAO drops the
+    // "(audienceId IS NULL OR visibility = OPEN)" restriction and leaks
+    // RESTRICTED quests from spaces the caller is not a member of.
+    when(ruleService.getRules(any(), eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(rule(QUEST_ID, program(CAMPAIGN_ID))));
+
+    tool.listQuests(null, null, null, null, null);
+
+    ArgumentCaptor<RuleFilter> captor = ArgumentCaptor.forClass(RuleFilter.class);
+    verify(ruleService).getRules(captor.capture(), eq(USERNAME), anyInt(), anyInt());
+    assertFalse("listQuests must not set allSpaces=true (ACL bypass)", captor.getValue().isAllSpaces());
   }
 
   // --- get_quest -----------------------------------------------------------
