@@ -806,6 +806,31 @@ public class GamificationMcpToolTest {
     assertTrue(campaigns.isEmpty());
   }
 
+  @Test
+  public void getMyCampaignsPaginatesOnceOverTheDedupedUnion() throws Exception {
+    stubCurrentUserIdentity();
+    // member ∪ owned = {1,2,3,4,5,6} (4 is in both), 6 distinct ids >= limit.
+    when(programService.getMemberProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(1L, 2L, 3L, 4L));
+    when(programService.getOwnedProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(4L, 5L, 6L));
+    for (long id = 1; id <= 6; id++) {
+      when(programService.getProgramById(id, USERNAME)).thenReturn(program(id));
+    }
+
+    // First page: exactly `limit` items, no duplicates, sorted union order.
+    List<CampaignModel> page1 = tool.getMyCampaigns(3, 0);
+    assertEquals("must return exactly limit items over the union, not up to 2x limit", 3, page1.size());
+    List<Long> page1Ids = page1.stream().map(CampaignModel::getId).toList();
+    assertEquals(List.of(1L, 2L, 3L), page1Ids);
+    assertEquals("no duplicates", 3, page1Ids.stream().distinct().count());
+
+    // Second page: offset applied ONCE over the union, no overlap with page 1.
+    List<CampaignModel> page2 = tool.getMyCampaigns(3, 3);
+    List<Long> page2Ids = page2.stream().map(CampaignModel::getId).toList();
+    assertEquals(3, page2.size());
+    assertEquals(List.of(4L, 5L, 6L), page2Ids);
+    assertTrue("pages must not overlap", page1Ids.stream().noneMatch(page2Ids::contains));
+  }
+
   // --- list_joinable_campaigns ---------------------------------------------
 
   @Test

@@ -348,18 +348,27 @@ public class GamificationMcpTool implements McpToolPlugin {
    */
   public List<CampaignModel> getMyCampaigns(Integer limit, Integer offset) {
     String currentUser = getCurrentUserName();
-    int clampedOffset = clampOffset(offset);
-    int clampedLimit = clampLimit(limit);
-    Set<Long> ids = new LinkedHashSet<>();
-    List<Long> memberIds = programService.getMemberProgramIds(currentUser, clampedOffset, clampedLimit);
-    List<Long> ownedIds = programService.getOwnedProgramIds(currentUser, clampedOffset, clampedLimit);
+    // Fetch the FULL member and owned id sets (offset 0, unbounded limit -1),
+    // union and dedup them, sort deterministically (ascending id), then apply
+    // offset/limit ONCE over the union. Paginating each source list
+    // independently and then unioning would return up to 2x limit items and
+    // make offset paging over the union unsound.
+    Set<Long> unionIds = new HashSet<>();
+    List<Long> memberIds = programService.getMemberProgramIds(currentUser, 0, -1);
+    List<Long> ownedIds = programService.getOwnedProgramIds(currentUser, 0, -1);
     if (memberIds != null) {
-      ids.addAll(memberIds);
+      unionIds.addAll(memberIds);
     }
     if (ownedIds != null) {
-      ids.addAll(ownedIds);
+      unionIds.addAll(ownedIds);
     }
-    return resolveCampaigns(ids, currentUser);
+    List<Long> pagedIds = unionIds.stream()
+                                  .filter(id -> id != null && id > 0)
+                                  .sorted()
+                                  .skip(clampOffset(offset))
+                                  .limit(clampLimit(limit))
+                                  .toList();
+    return resolveCampaigns(new LinkedHashSet<>(pagedIds), currentUser);
   }
 
   /**
