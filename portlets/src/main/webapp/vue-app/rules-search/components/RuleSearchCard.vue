@@ -65,7 +65,8 @@
                   <img
                     class="object-fit-cover ma-auto"
                     :style="programStyle"
-                    :src="programAvatarUrl">
+                    :src="programAvatarUrl"
+                    alt="">
                 </v-avatar>
                 <span v-if="!isMobile" class="text-subtitle px-2">{{ programTitle }}</span>
                 <v-icon
