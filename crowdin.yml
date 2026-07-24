@@ -98,7 +98,7 @@ files: [
     "escape_quotes" : 0,
   },
   {
-    "source" : "/portlets/src/main/resources/locale/addon/appcenter_en.properties",
+    "source" : "/services/src/main/resources/locale/addon/appcenter_en.properties",
 
     "translation" : "%original_path%/%file_name%!_%locale_with_underscore%.%file_extension%",
     "translation_replace" : {YML_CROWDIN_LANGUAGES_ARG},
@@ -108,7 +108,7 @@ files: [
     "escape_quotes" : 0,
   },
   {
-    "source" : "/portlets/src/main/resources/locale/addon/ContentLink_en.properties",
+    "source" : "/portlets/src/main/resources/locale/portlet/ContentLink_en.properties",
 
     "translation" : "%original_path%/%file_name%!_%locale_with_underscore%.%file_extension%",
     "translation_replace" : {YML_CROWDIN_LANGUAGES_ARG},
@@ -118,7 +118,7 @@ files: [
     "escape_quotes" : 0,
   },
   {
-    "source" : "/portlets/src/main/resources/locale/addon/Portlets_en.properties",
+    "source" : "/portlets/src/main/resources/locale/portlet/Portlets_en.properties",
 
     "translation" : "%original_path%/%file_name%!_%locale_with_underscore%.%file_extension%",
     "translation_replace" : {YML_CROWDIN_LANGUAGES_ARG},
