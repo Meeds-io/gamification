@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-hover v-model="hover">
       <gamification-overview-widget :loading="loading">
         <template #title>
-          <div class="d-flex full-width align-center position-relative">
+          <div class="d-flex full-width align-center min-width-0 position-relative">
             <div v-if="hasBadges" class="text-header">
               <span class="text-truncate">{{ $t('exoplatform.gamification.badgesByDomain') }}</span>
             </div>
