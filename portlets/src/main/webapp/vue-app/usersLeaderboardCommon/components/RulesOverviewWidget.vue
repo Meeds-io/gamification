@@ -22,7 +22,7 @@
     min-width="auto">
     <template #title>
       <slot v-if="$slots.title && hasValidRules" name="title"></slot>
-      <div v-else class="d-flex flex-grow-1 full-width position-relative">
+      <div v-else class="d-flex flex-grow-1 min-width-0 full-width position-relative">
         <div v-if="hasValidRules" class="text-header text-none">
           <span class="text-truncate">{{ title }}</span>
         </div>
