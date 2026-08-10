@@ -24,7 +24,7 @@
     <v-hover v-model="hover">
       <gamification-overview-widget :loading="loading">
         <template #title>
-          <div class="d-flex flex-grow-1 full-width position-relative">
+          <div class="d-flex flex-grow-1 min-width-0 full-width position-relative">
             <div v-if="!neverContributed && !loading" class="text-header">
               <span class="text-truncate">{{ $t('gamification.myContributions.title') }}</span>
             </div>
