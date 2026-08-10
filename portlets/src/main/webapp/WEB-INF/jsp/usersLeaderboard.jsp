@@ -43,8 +43,8 @@
       <div class="pa-5 v-card v-card--flat v-sheet theme--light card-border-radius">
         <div class="UserGamificationHeader text-color d-flex">
           <div class="align-start d-flex">
-            <div class="d-inline-block widget-text-header text-truncate">
-              <%=bundle.getString("exoplatform.gamification.userLeaderboard.title")%>
+            <div class="d-inline-block text-header">
+              <span class="text-truncate"><%=bundle.getString("exoplatform.gamification.userLeaderboard.title")%></span>
             </div>
           </div>
         </div>

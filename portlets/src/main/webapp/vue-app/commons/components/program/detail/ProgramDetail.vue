@@ -21,10 +21,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-card
           class="d-flex align-center"
           flat>
-          <div class="text-header-title"> {{ programTitle }}</div>
+          <div class="text-title"> {{ programTitle }}</div>
         </v-card>
         <v-spacer />
-        <span class="text-header-title d-none d-sm-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+        <span class="text-title d-none d-sm-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
       </div>
       <div class="position-relative">
         <gamification-card-mask v-if="!enabled" class="z-index-one rounded">

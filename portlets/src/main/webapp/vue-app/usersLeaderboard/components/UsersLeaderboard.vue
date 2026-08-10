@@ -27,8 +27,8 @@
       flat>
       <div class="d-flex UserGamificationHeader text-color">
         <div
-          class="d-inline-block widget-text-header text-truncate">
-          {{ $t('exoplatform.gamification.userLeaderboard.title') }}
+          class="d-inline-block text-header">
+          <span class="text-truncate">{{ $t('exoplatform.gamification.userLeaderboard.title') }}</span>
         </div>
       </div>
       <users-leaderboard-tabs />
