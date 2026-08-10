@@ -65,8 +65,8 @@
           class="pa-4"
           transparent
           flat>
-          <div class="text-header-title dark-grey-color text-truncate-2">
-            {{ program.title }}
+          <div class="text-title dark-grey-color">
+            <span class="text-truncate-2">{{ program.title }}</span>
           </div>
           <v-avatar
             id="programImageCover"

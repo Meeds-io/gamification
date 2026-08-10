@@ -25,8 +25,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           {{ $vuetify.rtl && 'mdi-arrow-right' || 'mdi-arrow-left' }}
         </v-icon>
       </v-btn>
-      <div class="d-flex flex-grow-1 flex-shrink-1 text-truncate">
-        <span class="widget-text-header text-truncate">{{ title }}</span>
+      <div class="d-flex flex-grow-1 flex-shrink-1 min-width-0">
+        <span class="text-header">
+          <span class="text-truncate">{{ title }}</span>
+        </span>
       </div>
     </div>
     <div
