@@ -18,7 +18,7 @@
     <v-hover v-model="hover">
       <gamification-overview-widget :loading="loading">
         <template #title>
-          <div class="d-flex flex-grow-1 flex-shrink-1 full-width align-center position-relative">
+          <div class="d-flex flex-grow-1 flex-shrink-1 min-width-0 full-width align-center position-relative">
             <div
               v-if="programsDisplayed"
               class="text-header text-none d-flex align-center min-width-0">
