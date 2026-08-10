@@ -25,8 +25,8 @@
       <gamification-overview-widget :loading="loading">
         <template #title>
           <div class="d-flex flex-grow-1 full-width position-relative">
-            <div v-if="!neverContributed && !loading" class="widget-text-header text-truncate">
-              {{ $t('gamification.myContributions.title') }}
+            <div v-if="!neverContributed && !loading" class="text-header">
+              <span class="text-truncate">{{ $t('gamification.myContributions.title') }}</span>
             </div>
             <div class="spacer"></div>
             <div
