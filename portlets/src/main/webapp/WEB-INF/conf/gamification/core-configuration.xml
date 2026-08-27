@@ -125,7 +125,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <properties-param>
           <name>constructor.params</name>
           <property name="index_alias" value="rule_alias"/>
-          <property name="index_current" value="rule_v1"/>
+          <property name="index_current" value="rule_v2"/>
+          <property name="index_previous" value="rule_v1" />
         </properties-param>
       </init-params>
     </component-plugin>
