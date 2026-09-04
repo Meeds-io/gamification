@@ -21,7 +21,6 @@ import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-
 import lombok.Data;
 
 /**

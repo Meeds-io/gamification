@@ -20,8 +20,18 @@ package io.meeds.gamification.entity;
 import java.io.Serializable;
 import java.util.Map;
 
-import jakarta.persistence.*;
+import io.meeds.common.persistence.PortableSequence;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity(name = "EventEntity")
@@ -38,8 +48,7 @@ public class EventEntity implements Serializable {
   private static final long serialVersionUID = 5354086158209637891L;
 
   @Id
-  @SequenceGenerator(name = "SEQ_GAMIFICATION_EVENTS_ID", sequenceName = "SEQ_GAMIFICATION_EVENTS_ID", allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_GAMIFICATION_EVENTS_ID")
+  @PortableSequence(name = "SEQ_GAMIFICATION_EVENTS_ID")
   @Column(name = "ID")
   private Long            id;
 

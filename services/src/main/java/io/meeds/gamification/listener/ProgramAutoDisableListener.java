@@ -17,7 +17,6 @@
  */
 package io.meeds.gamification.listener;
 
-import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
@@ -44,7 +43,6 @@ public class ProgramAutoDisableListener extends Listener<Object, String> {
   }
 
   @Override
-  @ExoTransactional
   public void onEvent(Event<Object, String> event) throws Exception {
     Object object = event.getSource();
     try {

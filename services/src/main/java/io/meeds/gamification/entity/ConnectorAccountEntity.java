@@ -18,8 +18,13 @@ package io.meeds.gamification.entity;
 
 import java.io.Serializable;
 
-import jakarta.persistence.*;
+import io.meeds.common.persistence.PortableSequence;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity(name = "GamificationConnectorAccount")
@@ -54,8 +59,7 @@ public class ConnectorAccountEntity implements Serializable {
   private static final long serialVersionUID = -8256376309023098995L;
 
   @Id
-  @SequenceGenerator(name = "SEQ_GAMIFICATION_CONNECTOR_ACCOUNTS_ID", sequenceName = "SEQ_GAMIFICATION_CONNECTOR_ACCOUNTS_ID", allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_GAMIFICATION_CONNECTOR_ACCOUNTS_ID")
+  @PortableSequence(name = "SEQ_GAMIFICATION_CONNECTOR_ACCOUNTS_ID")
   @Column(name = "ID")
   private Long   id;
 
