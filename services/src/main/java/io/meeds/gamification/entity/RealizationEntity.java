@@ -47,7 +47,7 @@ import lombok.EqualsAndHashCode;
           g.earnerId AS earnerId,
           SUM(g.actionScore) AS total
         FROM RealizationEntity AS g
-        WHERE g.earnerType = :earnerType
+        WHERE g.earnerType = :earnerType AND NOT EXISTS (SELECT i.id FROM SocIdentityEntity i WHERE i.id = g.earnerId AND (i.enabled = false OR i.deleted = true))
         AND g.status = :status
         GROUP BY g.earnerId
         ORDER BY total DESC
@@ -68,7 +68,7 @@ import lombok.EqualsAndHashCode;
         WHERE g.createdDate >= :fromDate
         AND g.createdDate < :toDate
         AND g.domainEntity.id IN (:programIds)
-        AND g.earnerType = :earnerType
+        AND g.earnerType = :earnerType AND NOT EXISTS (SELECT i.id FROM SocIdentityEntity i WHERE i.id = g.earnerId AND (i.enabled = false OR i.deleted = true))
         AND g.status = :status
         GROUP BY g.earnerId
         ORDER BY total DESC
@@ -87,7 +87,7 @@ import lombok.EqualsAndHashCode;
           SUM(g.actionScore) AS total
         FROM RealizationEntity AS g
         WHERE g.domainEntity.id IN (:programIds)
-        AND g.earnerType = :earnerType
+        AND g.earnerType = :earnerType AND NOT EXISTS (SELECT i.id FROM SocIdentityEntity i WHERE i.id = g.earnerId AND (i.enabled = false OR i.deleted = true))
         AND g.status = :status
         GROUP BY g.earnerId
         ORDER BY total DESC
@@ -107,7 +107,7 @@ import lombok.EqualsAndHashCode;
         FROM RealizationEntity AS g
         WHERE g.createdDate >= :fromDate
         AND g.createdDate < :toDate
-        AND g.earnerType = :earnerType
+        AND g.earnerType = :earnerType AND NOT EXISTS (SELECT i.id FROM SocIdentityEntity i WHERE i.id = g.earnerId AND (i.enabled = false OR i.deleted = true))
         AND g.status = :status
         GROUP BY g.earnerId
         ORDER BY total DESC
@@ -120,7 +120,7 @@ import lombok.EqualsAndHashCode;
   name = "RealizationEntity.getLeaderboard",
   query = "SELECT new io.meeds.gamification.model.StandardLeaderboard(g.earnerId as earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g"
-    + " WHERE g.earnerType = :earnerType"
+    + " WHERE g.earnerType = :earnerType AND NOT EXISTS (SELECT i.id FROM SocIdentityEntity i WHERE i.id = g.earnerId AND (i.enabled = false OR i.deleted = true))"
     + " AND g.status = :status"
     + " GROUP BY g.earnerId"
     + " ORDER BY total DESC, earnerId DESC"
@@ -132,7 +132,7 @@ import lombok.EqualsAndHashCode;
     + " WHERE g.createdDate >= :fromDate"
     + " AND g.createdDate < :toDate"
     + " AND g.domainEntity.id IN (:programIds)"
-    + " AND g.earnerType = :earnerType"
+    + " AND g.earnerType = :earnerType AND NOT EXISTS (SELECT i.id FROM SocIdentityEntity i WHERE i.id = g.earnerId AND (i.enabled = false OR i.deleted = true))"
     + " AND g.status = :status"
     + " GROUP BY  g.earnerId"
     + " ORDER BY total DESC, earnerId DESC"
@@ -142,7 +142,7 @@ import lombok.EqualsAndHashCode;
   query = "SELECT new io.meeds.gamification.model.StandardLeaderboard(g.earnerId as earnerId, SUM(g.actionScore) as total)"
     + " FROM RealizationEntity g"
     + " WHERE g.domainEntity.id IN (:programIds)"
-    + " AND g.earnerType = :earnerType"
+    + " AND g.earnerType = :earnerType AND NOT EXISTS (SELECT i.id FROM SocIdentityEntity i WHERE i.id = g.earnerId AND (i.enabled = false OR i.deleted = true))"
     + " AND g.status = :status"
     + " GROUP BY g.earnerId"
     + " ORDER BY total DESC, earnerId DESC"
@@ -153,7 +153,7 @@ import lombok.EqualsAndHashCode;
     + " FROM RealizationEntity g"
     + " WHERE g.createdDate >= :fromDate"
     + " AND g.createdDate < :toDate"
-    + " AND g.earnerType = :earnerType"
+    + " AND g.earnerType = :earnerType AND NOT EXISTS (SELECT i.id FROM SocIdentityEntity i WHERE i.id = g.earnerId AND (i.enabled = false OR i.deleted = true))"
     + " AND g.status = :status"
     + " GROUP BY g.earnerId"
     + " ORDER BY total DESC, earnerId DESC"
