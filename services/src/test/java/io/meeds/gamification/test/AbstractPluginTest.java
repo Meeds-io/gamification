@@ -125,18 +125,19 @@ public abstract class AbstractPluginTest extends AbstractServiceTest { // NOSONA
 
   /**
    * It will be invoked after make Activity, Relationship and New User also.
-   * Makes the notification message and retrieve from MockNotificationService
+   * Makes the notification message and retrieves it from the instant store of
+   * MockNotificationService (the legacy digest store is gone, eXIP 7.3.0.22)
    * 
    * @return
    */
   protected NotificationInfo getNotificationInfo(String username) {
-    List<NotificationInfo> list = notificationService.storeDigest(username);
+    List<NotificationInfo> list = notificationService.storeInstantly(username);
     assertFalse(list.isEmpty());
     return list.get(0);
   }
 
   protected List<NotificationInfo> getNotificationInfos(String username) {
-    return notificationService.storeDigest(username);
+    return notificationService.storeInstantly(username);
   }
 
   /**
@@ -168,33 +169,6 @@ public abstract class AbstractPluginTest extends AbstractServiceTest { // NOSONA
    */
   protected void assertDigest(Writer writer, String includedString) {
     assertEquals(includedString, writer.toString().replaceAll("\\<.*>", ""));
-  }
-
-  /**
-   * Asserts the number of notification what made by the plugins.
-   * 
-   * @param number
-   */
-  protected void assertMadeMailDigestNotifications(int number) {
-    UserSetting setting = userSettingService.get(rootIdentity.getRemoteId());
-    if (setting.isInDaily(getPlugin().getKey().getId())) {
-      assertEquals(number, notificationService.sizeOfStoredDigest());
-    }
-  }
-
-  /**
-   * Asserts the number of notification what made by the plugins.
-   * 
-   * @param number
-   */
-  protected List<NotificationInfo> assertMadeMailDigestNotifications(String username, int number) {
-    UserSetting setting = userSettingService.get(username);
-    List<NotificationInfo> got = notificationService.storeDigest(username);
-    if (setting.isActive(MailChannel.ID, getPlugin().getKey().getId())) {
-      got = notificationService.storeInstantly(username);
-      assertEquals(number, got.size());
-    }
-    return got;
   }
 
   /**
@@ -261,38 +235,6 @@ public abstract class AbstractPluginTest extends AbstractServiceTest { // NOSONA
     userSettingService.save(userSetting);
   }
 
-  /**
-   * Make Daily setting
-   * 
-   * @param userId
-   * @param settings
-   */
-  protected void setDailySetting(String userId, List<String> settings) {
-    UserSetting userSetting = userSettingService.get(userId);
-
-    if (userSetting == null) {
-      userSetting = UserSetting.getInstance();
-      userSetting.setUserId(userId);
-    }
-    userSetting.setChannelActive(MailChannel.ID);
-
-    userSetting.setDailyPlugins(settings);
-    userSettingService.save(userSetting);
-  }
-
-  protected void setWeeklySetting(String userId, List<String> settings) {
-    UserSetting userSetting = userSettingService.get(userId);
-
-    if (userSetting == null) {
-      userSetting = UserSetting.getInstance();
-      userSetting.setUserId(userId);
-    }
-    userSetting.setChannelActive(MailChannel.ID);
-
-    userSetting.setWeeklyPlugins(settings);
-    userSettingService.save(userSetting);
-  }
-
   protected AbstractTemplateBuilder getTemplateBuilder(NotificationContext ctx) {
     AbstractChannel channel = ctx.getChannelManager().getChannel(ChannelKey.key(MailChannel.ID));
     assertNotNull(channel);
@@ -307,14 +249,6 @@ public abstract class AbstractPluginTest extends AbstractServiceTest { // NOSONA
     MessageInfo massage = templateBuilder.buildMessage(ctx);
     assertNotNull(massage);
     return massage;
-  }
-
-  protected void buildDigest(NotificationContext ctx, Writer writer) {
-    AbstractTemplateBuilder templateBuilder = getTemplateBuilder();
-    if (templateBuilder == null) {
-      templateBuilder = getTemplateBuilder(ctx);
-    }
-    templateBuilder.buildDigest(ctx, writer);
   }
 
   public abstract AbstractTemplateBuilder getTemplateBuilder();
