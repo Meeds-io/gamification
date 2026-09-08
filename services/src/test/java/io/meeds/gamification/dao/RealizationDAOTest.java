@@ -26,6 +26,11 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.jpa.storage.dao.IdentityDAO;
+import org.exoplatform.social.core.jpa.storage.entity.IdentityEntity;
+
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.RealizationStatus;
@@ -106,6 +111,46 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     assertEquals(1, leaderboardList.size());
     assertEquals(TEST_USER_EARNER, leaderboardList.get(0).getEarnerId());
     assertEquals(Integer.parseInt(TEST_SCORE) * 2L, leaderboardList.get(0).getReputationScore());
+  }
+
+  @Test
+  public void testGetLeaderboardExcludesDeactivatedEarners() {
+    ProgramEntity domainEntity = newDomain();
+    RuleEntity rule = newRule("rule", domainEntity.getId());
+    // an earner backed by a real social identity row (TEST_USER_EARNER has none)
+    IdentityDAO identityDAO = ExoContainerContext.getService(IdentityDAO.class);
+    IdentityEntity earnerEntity = new IdentityEntity();
+    earnerEntity.setProviderId(OrganizationIdentityProvider.NAME);
+    earnerEntity.setRemoteId("leaderboardEarner");
+    earnerEntity.setEnabled(true);
+    earnerEntity.setDeleted(false);
+    earnerEntity = identityDAO.create(earnerEntity);
+    restartTransaction();
+    String earnerId = String.valueOf(earnerEntity.getId());
+    try {
+      newRealizationByRuleByEarnerId(rule, earnerId);
+      List<String> earners = realizationDAO.getLeaderboard(IdentityType.USER, 0, 10)
+                                           .stream()
+                                           .map(StandardLeaderboard::getEarnerId)
+                                           .toList();
+      assertTrue(earners.contains(earnerId));
+      assertEquals(1, realizationDAO.getLeaderboardRank(IdentityType.USER, earnerEntity.getId()));
+
+      // a deactivated (or deleted) account must leave the leaderboard and its ranking
+      earnerEntity = identityDAO.find(earnerEntity.getId());
+      earnerEntity.setEnabled(false);
+      identityDAO.update(earnerEntity);
+      restartTransaction();
+      earners = realizationDAO.getLeaderboard(IdentityType.USER, 0, 10)
+                              .stream()
+                              .map(StandardLeaderboard::getEarnerId)
+                              .toList();
+      assertFalse(earners.contains(earnerId));
+      assertEquals(0, realizationDAO.getLeaderboardRank(IdentityType.USER, earnerEntity.getId()));
+    } finally {
+      identityDAO.delete(identityDAO.find(earnerEntity.getId()));
+      restartTransaction();
+    }
   }
 
   @Test
