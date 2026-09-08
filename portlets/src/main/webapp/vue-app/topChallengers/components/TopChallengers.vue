@@ -26,9 +26,9 @@
         :loading="loading"
         class="d-flex">
         <template #title>
-          <div class="d-flex flex-grow-1 full-width position-relative">
-            <div v-if="!displayPlaceholder && !loading" class="widget-text-header text-truncate">
-              {{ spaceId && $t('gamification.overview.space.topChallengersTitle') || $t('gamification.overview.topChallengersTitle') }}
+          <div class="d-flex flex-grow-1 min-width-0 full-width position-relative">
+            <div v-if="!displayPlaceholder && !loading" class="text-header">
+              <span class="text-truncate">{{ spaceId && $t('gamification.overview.space.topChallengersTitle') || $t('gamification.overview.topChallengersTitle') }}</span>
             </div>
             <div class="spacer"></div>
             <div
