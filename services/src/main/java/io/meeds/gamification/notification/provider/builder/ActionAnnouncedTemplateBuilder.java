@@ -23,7 +23,6 @@ import static io.meeds.gamification.plugin.RuleTranslationPlugin.RULE_TITLE_FIEL
 import static io.meeds.gamification.utils.Utils.ANNOUNCEMENT_ID_NOTIFICATION_PARAM;
 import static io.meeds.gamification.utils.Utils.getIdentityById;
 
-import java.io.Writer;
 import java.util.Date;
 import java.util.Locale;
 
@@ -161,11 +160,6 @@ public class ActionAnnouncedTemplateBuilder extends AbstractTemplateBuilder {
     messageInfo.body(TemplateUtils.processGroovy(templateContext));
     ctx.setException(templateContext.getException());
     return messageInfo.end();
-  }
-
-  @Override
-  protected boolean makeDigest(NotificationContext ctx, Writer writer) {
-    return false;
   }
 
 }
