@@ -22,7 +22,6 @@ import static io.meeds.gamification.plugin.RuleTranslationPlugin.RULE_OBJECT_TYP
 import static io.meeds.gamification.plugin.RuleTranslationPlugin.RULE_TITLE_FIELD_NAME;
 import static io.meeds.gamification.utils.Utils.*;
 
-import java.io.Writer;
 import java.util.Date;
 import java.util.Locale;
 
@@ -134,11 +133,6 @@ public class ContributionAcceptedTemplateBuilder extends AbstractTemplateBuilder
     messageInfo.body(TemplateUtils.processGroovy(templateContext));
     ctx.setException(templateContext.getException());
     return messageInfo.end();
-  }
-
-  @Override
-  protected boolean makeDigest(NotificationContext ctx, Writer writer) {
-    return false;
   }
 
 }
