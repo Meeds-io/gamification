@@ -24,7 +24,6 @@ import static io.meeds.gamification.utils.Utils.RULE_ID_NOTIFICATION_PARAM;
 import static io.meeds.gamification.utils.Utils.RULE_CREATOR_NOTIFICATION_PARAM;
 import static io.meeds.gamification.utils.Utils.getUserIdentity;
 
-import java.io.Writer;
 import java.util.Date;
 import java.util.Locale;
 
@@ -149,11 +148,6 @@ public class ActionPublishedTemplateBuilder extends AbstractTemplateBuilder {
     messageInfo.body(TemplateUtils.processGroovy(templateContext));
     ctx.setException(templateContext.getException());
     return messageInfo.end();
-  }
-
-  @Override
-  protected boolean makeDigest(NotificationContext ctx, Writer writer) {
-    return false;
   }
 
 }
