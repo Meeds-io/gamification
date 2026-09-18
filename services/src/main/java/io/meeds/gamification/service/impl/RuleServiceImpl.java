@@ -406,7 +406,7 @@ public class RuleServiceImpl implements RuleService {
    * Narrows a filter to what the user may see, as
    * {@code ProgramServiceImpl#computeUserSpaces} does for programs: a listing
    * scoped to spaces the caller shares none of is narrowed to those spaces'
-   * <b>open</b> content ({@link RuleFilter#isOpenAudienceOnly()}), which is
+   * <b>open</b> content ({@code RuleFilter#isOpenAudienceOnly()}), which is
    * nothing at all for a restricted space.
    */
   @SuppressWarnings("unchecked")

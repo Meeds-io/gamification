@@ -129,8 +129,8 @@ public class ProgramStorage {
    * differences are deliberate and the caller should know them: it is
    * <b>enabled-only</b> (every query hard-codes {@code domain.isEnabled = true}
    * and {@code rule.isEnabled = true}), so it honours neither
-   * {@link ProgramFilter#getStatus()} nor
-   * {@link ProgramFilter#isIncludeDeleted()}; and it returns only programs that
+   * {@code ProgramFilter#getStatus()} nor
+   * {@code ProgramFilter#isIncludeDeleted()}; and it returns only programs that
    * <b>have at least one rule</b>, since the queries select through
    * {@code Rule}. {@code countPrograms} goes through the predicates, so a count
    * taken beside this list can legitimately differ.

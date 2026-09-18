@@ -503,7 +503,7 @@ public class ProgramServiceImpl implements ProgramService {
   /**
    * Narrows a filter to what the user may see. A listing scoped to spaces the
    * caller shares none of is narrowed to those spaces' <b>open</b> programs
-   * ({@link ProgramFilter#isOpenAudienceOnly()}) — what the spaces show to
+   * ({@code ProgramFilter#isOpenAudienceOnly()}) — what the spaces show to
    * everyone, which is nothing for a restricted space.
    */
   @SuppressWarnings("unchecked")
