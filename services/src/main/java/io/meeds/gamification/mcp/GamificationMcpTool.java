@@ -40,7 +40,6 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
-import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.constant.IdentityType;
 import io.meeds.gamification.constant.Period;
 import io.meeds.gamification.constant.RealizationStatus;
@@ -60,6 +59,7 @@ import io.meeds.gamification.model.BadgeDTO;
 import io.meeds.gamification.model.PiechartLeaderboard;
 import io.meeds.gamification.model.ProfileReputation;
 import io.meeds.gamification.model.ProgramDTO;
+import io.meeds.gamification.model.RulePublication;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.StandardLeaderboard;
@@ -82,6 +82,15 @@ import io.meeds.mcp.server.plugin.McpToolPlugin;
  * and a <b>quest</b> is a gamification action/rule inside a campaign. Every
  * method acts as the current user, so program ownership, rewarding-admin rights
  * and rule visibility are enforced by the underlying services.
+ * <p>
+ * One public method is one MCP tool and its parameter list is the tool's input
+ * schema, which is why this class is wide (Sonar S107 and S6539 are accepted
+ * here by decision, EXO-90210) and why what remains in it beyond the delegation
+ * is presentation only — ranking badges by their score threshold and turning a
+ * {@link RealizationValidityContext} into a sentence, the same job a REST
+ * {@code EntityBuilder} does. Business logic belongs to the services: the
+ * member/owned campaign union lives in
+ * {@link ProgramService#getMyProgramIds(String, int, int)}, not here.
  */
 @Service
 @Profile("mcp-server")
@@ -139,7 +148,13 @@ public class GamificationMcpTool implements McpToolPlugin {
       filter.setProgramTitle(term.trim());
     }
     if (spaceId != null && spaceId > 0) {
+      // Mirror ProgramRest#getPrograms: excludeOpen, or the DAO predicate keeps
+      // the platform-wide campaigns alongside the space's own. Who may see that
+      // space's campaigns is the service's decision, not this layer's —
+      // ProgramServiceImpl#computeUserSpaces answers "nothing" to a caller who
+      // shares none of the requested spaces.
       filter.setSpacesIds(List.of(spaceId));
+      filter.setExcludeOpen(true);
     }
     List<ProgramDTO> programs = programService.getPrograms(filter, getCurrentUserName(), clampOffset(offset), clampLimit(limit));
     List<CampaignModel> result = new ArrayList<>();
@@ -237,7 +252,7 @@ public class GamificationMcpTool implements McpToolPlugin {
       try {
         filter.setPeriod(period.trim());
       } catch (IllegalArgumentException e) {
-        throw new IllegalArgumentException("Invalid period '" + period + "'. Allowed values are: WEEK, MONTH, YEAR, ALL.");
+        throw new IllegalArgumentException("Invalid period '" + period + "'. Allowed values are: WEEK, MONTH, QUARTER, ALL.");
       }
     }
     if (StringUtils.isNotBlank(identityType)) {
@@ -268,6 +283,10 @@ public class GamificationMcpTool implements McpToolPlugin {
     RealizationFilter filter = new RealizationFilter();
     filter.setEarnerIds(List.of(String.valueOf(currentUserIdentityId())));
     filter.setEarnerType(IdentityType.USER);
+    // The DAO sorts on the default 'date' field, ascending unless asked
+    // otherwise: without this the "most recent first" contract of the tool
+    // definition would be answered with the oldest realizations.
+    filter.setSortDescending(true);
     filter.setFromDate(parseDate(fromDate, "from_date"));
     filter.setToDate(parseDate(toDate, "to_date"));
     if (campaignId != null && campaignId > 0) {
@@ -299,6 +318,13 @@ public class GamificationMcpTool implements McpToolPlugin {
     RealizationFilter filter = new RealizationFilter();
     filter.setEarnerIds(List.of(String.valueOf(currentUserIdentityId())));
     filter.setEarnerType(IdentityType.USER);
+    // Only manual-quest realizations with an author are announcements; automatic
+    // point awards have no creator. This is a query predicate, not a post-pass
+    // over the page: filtering after pagination made the documented way of
+    // resolving an announcement_id answer "none" to any user whose latest
+    // realizations happen to be automatic awards.
+    filter.setAnnouncementsOnly(true);
+    filter.setSortDescending(true);
     if (questId != null && questId > 0) {
       filter.setRuleIds(List.of(questId));
     }
@@ -308,11 +334,7 @@ public class GamificationMcpTool implements McpToolPlugin {
                                                                                    clampLimit(limit));
     List<AnnouncementModel> result = new ArrayList<>();
     for (RealizationDTO realization : realizations) {
-      // Only manual-quest realizations with an author are announcements;
-      // automatic point awards have no creator and are excluded.
-      if (realization.getCreator() != null) {
-        result.add(toAnnouncement(realization));
-      }
+      result.add(toAnnouncement(realization));
     }
     return result;
   }
@@ -348,27 +370,10 @@ public class GamificationMcpTool implements McpToolPlugin {
    */
   public List<CampaignModel> getMyCampaigns(Integer limit, Integer offset) {
     String currentUser = getCurrentUserName();
-    // Fetch the FULL member and owned id sets (offset 0, unbounded limit -1),
-    // union and dedup them, sort deterministically (ascending id), then apply
-    // offset/limit ONCE over the union. Paginating each source list
-    // independently and then unioning would return up to 2x limit items and
-    // make offset paging over the union unsound.
-    Set<Long> unionIds = new HashSet<>();
-    List<Long> memberIds = programService.getMemberProgramIds(currentUser, 0, -1);
-    List<Long> ownedIds = programService.getOwnedProgramIds(currentUser, 0, -1);
-    if (memberIds != null) {
-      unionIds.addAll(memberIds);
-    }
-    if (ownedIds != null) {
-      unionIds.addAll(ownedIds);
-    }
-    List<Long> pagedIds = unionIds.stream()
-                                  .filter(id -> id != null && id > 0)
-                                  .sorted()
-                                  .skip(clampOffset(offset))
-                                  .limit(clampLimit(limit))
-                                  .toList();
-    return resolveCampaigns(new LinkedHashSet<>(pagedIds), currentUser);
+    // The union, its deduplication, its pagination and the exclusion of
+    // soft-deleted programs belong to the service, not to this layer.
+    List<Long> ids = programService.getMyProgramIds(currentUser, clampOffset(offset), clampLimit(limit));
+    return resolveCampaigns(ids == null ? Set.of() : new LinkedHashSet<>(ids), currentUser);
   }
 
   /**
@@ -436,47 +441,58 @@ public class GamificationMcpTool implements McpToolPlugin {
     RealizationValidityContext context = realizationService.getRealizationValidityContext(rule, earnerIdentityId);
     boolean isManual = rule.getType() == EntityType.MANUAL;
     boolean available = isManual && !pending && context.isValidForIdentity();
-    String reason = buildAvailabilityReason(rule, context, isManual, pending);
+    String reason = buildAvailabilityReason(context, isManual, pending);
     return new QuestAvailabilityModel(available, reason, rule.getId() == null ? 0 : rule.getId(), rule.getTitle());
   }
 
   // --------------------------------------------------------------- WRITES ----
 
   /**
-   * Creates a new campaign (gamification program). Requires rewarding-admin
-   * rights, or space-manager rights when a space is targeted.
+   * Creates a new campaign (gamification program). With a space id the campaign
+   * is scoped to that space's audience and requires space-manager rights; with
+   * no space id it is a platform-wide campaign open to everyone and requires
+   * rewarding-admin rights. The visibility is <b>computed by the service</b>
+   * from the target space (OPEN when the space is open and not hidden,
+   * RESTRICTED otherwise) — no caller can influence it.
    */
   public CampaignModel createCampaign(String title,
                                       String description,
                                       Long spaceId,
-                                      Long budget,
-                                      Boolean open,
-                                      String visibility) throws IllegalAccessException, ObjectNotFoundException {
+                                      Long budget) throws IllegalAccessException {
     if (StringUtils.isBlank(title)) {
       throw new IllegalArgumentException("title is required. A campaign must have a title.");
     }
     String currentUser = getCurrentUserName();
-    boolean allowed = (spaceId != null && spaceId > 0) ? programService.canAddProgram(currentUser, spaceId)
-                                                       : programService.canAddProgram(currentUser);
+    boolean spaceScoped = spaceId != null && spaceId > 0;
+    boolean allowed = spaceScoped ? programService.canAddProgram(currentUser, spaceId)
+                                  : programService.canAddProgram(currentUser);
     if (!allowed) {
-      throw new IllegalStateException("You need rewarding-admin rights (or to be a manager of the target space) to create a campaign.");
+      throw new IllegalAccessException("You need rewarding-admin rights (or to be a manager of the target space) to create a campaign.");
     }
-    boolean isOpen = open == null || open;
     ProgramDTO program = new ProgramDTO();
     program.setTitle(title.trim());
-    program.setDescription(StringUtils.trimToNull(description));
-    if (spaceId != null && spaceId > 0) {
+    // GAMIFICATION_DOMAIN.DESCRIPTION is NOT NULL (changelog 1.0.0-12): a null
+    // description makes the insert fail on commit, so an omitted one is empty.
+    program.setDescription(StringUtils.trimToEmpty(description));
+    // 'open' is not a caller's choice, it is the inverse of "has a space
+    // audience": ProgramServiceImpl#createProgram resets the audience to 0 for
+    // an open program and then computes the visibility from that audience, so
+    // an open program carrying a space id becomes a platform-wide, everyone-
+    // visible campaign. The entity mapper stores an audience only for a
+    // non-open program too (ProgramMapper), which makes 'open' entirely
+    // derivable from the space id — hence no open/visibility parameter here.
+    program.setOpen(!spaceScoped);
+    if (spaceScoped) {
       program.setSpaceId(spaceId);
     }
     program.setBudget(budget == null ? 0 : budget);
-    program.setOpen(isOpen);
     program.setEnabled(true);
-    program.setVisibility(parseVisibility(visibility, spaceId));
     program.setOwnerIds(new HashSet<>(Set.of(currentUserIdentityId())));
     try {
       return toCampaign(programService.createProgram(program, getCurrentUserAclIdentity()));
     } catch (IllegalAccessException e) {
-      throw new IllegalStateException("You need rewarding-admin rights (or to be a manager of the target space) to create a campaign.");
+      // Same ACL signal, an LLM-readable message instead of the service's own.
+      throw new IllegalAccessException("You need rewarding-admin rights (or to be a manager of the target space) to create a campaign.");
     }
   }
 
@@ -484,15 +500,19 @@ public class GamificationMcpTool implements McpToolPlugin {
    * Creates a new quest (gamification action/rule) inside a campaign. Only
    * MANUAL quests (challenges the user announces) are supported; AUTOMATIC
    * (event-triggered) quests are rejected. Requires ownership of the campaign.
+   * When {@code publish} is true the quest is announced in the campaign's
+   * stream, exactly as RuleRest does it with a {@link RulePublication}; when it
+   * is false (the default) the quest's activity stays hidden.
    */
-  public QuestModel createQuest(Long campaignId,
+  public QuestModel createQuest(Long campaignId, // NOSONAR: the parameter list IS the MCP tool's input schema
                                 String title,
                                 String description,
                                 Integer score,
                                 String type,
                                 String startDate,
                                 String endDate,
-                                String recurrence) throws IllegalAccessException, ObjectNotFoundException {
+                                String recurrence,
+                                Boolean publish) throws IllegalAccessException, ObjectNotFoundException {
     if (campaignId == null || campaignId <= 0) {
       throw new IllegalArgumentException("campaign_id is required. Resolve it with list_campaigns.");
     }
@@ -510,11 +530,13 @@ public class GamificationMcpTool implements McpToolPlugin {
     String currentUser = getCurrentUserName();
     ProgramDTO program = resolveProgram(campaignId);
     if (!canManageCampaign(program, currentUser)) {
-      throw new IllegalStateException("You need to be an owner of this campaign to add a quest to it.");
+      throw new IllegalAccessException("You need to be an owner of this campaign to add a quest to it.");
     }
     RuleDTO rule = new RuleDTO();
     rule.setTitle(title.trim());
-    rule.setDescription(StringUtils.trimToNull(description));
+    // GAMIFICATION_RULE.DESCRIPTION is NOT NULL (changelog 1.0.0-4) — same as
+    // the campaign's: an omitted description is empty, never null.
+    rule.setDescription(StringUtils.trimToEmpty(description));
     rule.setScore(score);
     rule.setProgram(program);
     rule.setType(EntityType.MANUAL);
@@ -522,10 +544,17 @@ public class GamificationMcpTool implements McpToolPlugin {
     rule.setStartDate(parseRuleDate(startDate, "start_date"));
     rule.setEndDate(parseRuleDate(endDate, "end_date"));
     rule.setRecurrence(parseRecurrence(recurrence));
+    // The publication type is the mechanism, not decoration: the rule service
+    // computes the quest's activity only for a publication instance, so a plain
+    // rule leaves it to the lazy back-fill of the first read, which always
+    // creates it hidden and empty. Same call shape as RuleRest.
+    boolean publishActivity = publish != null && publish;
+    String message = publishActivity ? StringUtils.defaultIfBlank(StringUtils.trimToNull(description), title.trim()) : null;
+    RulePublication publication = new RulePublication(rule, 0, message, null, publishActivity);
     try {
-      return toQuest(ruleService.createRule(rule, currentUser));
+      return toQuest(ruleService.createRule(publication, currentUser));
     } catch (IllegalAccessException e) {
-      throw new IllegalStateException("You need to be an owner of this campaign to add a quest to it.");
+      throw new IllegalAccessException("You need to be an owner of this campaign to add a quest to it.");
     }
   }
 
@@ -534,7 +563,7 @@ public class GamificationMcpTool implements McpToolPlugin {
    * fields are changed; the others keep their current values. Requires
    * ownership of the campaign the quest belongs to.
    */
-  public QuestModel updateQuest(Long questId,
+  public QuestModel updateQuest(Long questId, // NOSONAR: the parameter list IS the MCP tool's input schema
                                 String title,
                                 String description,
                                 Integer score,
@@ -548,13 +577,13 @@ public class GamificationMcpTool implements McpToolPlugin {
     String currentUser = getCurrentUserName();
     RuleDTO rule = resolveRule(questId);
     if (!ruleService.canEditRule(rule, currentUser)) {
-      throw new IllegalStateException("You need to be an owner of this quest's campaign to edit it.");
+      throw new IllegalAccessException("You need to be an owner of this quest's campaign to edit it.");
     }
     if (StringUtils.isNotBlank(title)) {
       rule.setTitle(title.trim());
     }
     if (description != null) {
-      rule.setDescription(StringUtils.trimToNull(description));
+      rule.setDescription(StringUtils.trimToEmpty(description));
     }
     if (score != null && score > 0) {
       rule.setScore(score);
@@ -574,7 +603,7 @@ public class GamificationMcpTool implements McpToolPlugin {
     try {
       return toQuest(ruleService.updateRule(rule, currentUser));
     } catch (IllegalAccessException e) {
-      throw new IllegalStateException("You need to be an owner of this quest's campaign to edit it.");
+      throw new IllegalAccessException("You need to be an owner of this quest's campaign to edit it.");
     }
   }
 
@@ -582,14 +611,14 @@ public class GamificationMcpTool implements McpToolPlugin {
    * Deletes a quest (gamification action/rule). Requires ownership of the
    * campaign the quest belongs to.
    */
-  public String deleteQuest(Long questId) throws ObjectNotFoundException {
+  public String deleteQuest(Long questId) throws ObjectNotFoundException, IllegalAccessException {
     if (questId == null || questId <= 0) {
       throw new IllegalArgumentException("quest_id is required. Resolve it with list_quests.");
     }
     try {
       ruleService.deleteRuleById(questId, getCurrentUserName());
     } catch (IllegalAccessException e) {
-      throw new IllegalStateException("You need to be an owner of this quest's campaign to delete it.");
+      throw new IllegalAccessException("You need to be an owner of this quest's campaign to delete it.");
     } catch (ObjectNotFoundException e) {
       throw new ObjectNotFoundException("No quest found with id " + questId + ". It may have already been deleted.");
     }
@@ -602,8 +631,14 @@ public class GamificationMcpTool implements McpToolPlugin {
    */
   public AnnouncementModel announceQuest(Long questId,
                                          String comment) throws IllegalAccessException, ObjectNotFoundException {
-    if (questId == null || questId <= 0) {
-      throw new IllegalArgumentException("quest_id is required. Resolve it with list_quests.");
+    // Resolved up front for the readable 404/403 this layer owes its caller; the
+    // type check then lets any other illegal state keep its own message, where a
+    // catch around createAnnouncement labelled every one of them
+    // "not a manual challenge".
+    RuleDTO rule = resolveRule(questId);
+    if (rule.getType() != EntityType.MANUAL) {
+      throw new IllegalStateException("This quest is not a manual challenge, so it cannot be announced."
+          + " Only MANUAL quests can be announced; automatic quests are rewarded by the platform.");
     }
     Announcement announcement = new Announcement();
     announcement.setChallengeId(questId);
@@ -616,11 +651,8 @@ public class GamificationMcpTool implements McpToolPlugin {
                                    created.getActivityId(),
                                    created.getCreator(),
                                    created.getCreatedDate());
-    } catch (IllegalStateException e) {
-      throw new IllegalStateException("This quest is not a manual challenge, so it cannot be announced."
-          + " Only MANUAL quests can be announced; automatic quests are rewarded by the platform.");
     } catch (IllegalAccessException e) {
-      throw new IllegalStateException("You cannot announce this quest. It may be disabled, over, or you may not be"
+      throw new IllegalAccessException("You cannot announce this quest. It may be disabled, over, or you may not be"
           + " a member of the campaign's space.");
     } catch (ObjectNotFoundException e) {
       throw new ObjectNotFoundException("No quest found with id " + questId + ".");
@@ -630,14 +662,14 @@ public class GamificationMcpTool implements McpToolPlugin {
   /**
    * Cancels (deletes) a quest announcement previously made by the current user.
    */
-  public String cancelQuestAnnouncement(Long announcementId) throws ObjectNotFoundException {
+  public String cancelQuestAnnouncement(Long announcementId) throws ObjectNotFoundException, IllegalAccessException {
     if (announcementId == null || announcementId <= 0) {
       throw new IllegalArgumentException("announcement_id is required and must be a positive number.");
     }
     try {
       announcementService.deleteAnnouncement(announcementId, getCurrentUserName());
     } catch (IllegalAccessException e) {
-      throw new IllegalStateException("You can only cancel an announcement that you made yourself.");
+      throw new IllegalAccessException("You can only cancel an announcement that you made yourself.");
     } catch (ObjectNotFoundException e) {
       throw new ObjectNotFoundException("No announcement found with id " + announcementId + ". It may have already been cancelled.");
     }
@@ -651,11 +683,18 @@ public class GamificationMcpTool implements McpToolPlugin {
       throw new IllegalArgumentException("campaign_id is required. Resolve it with list_campaigns.");
     }
     try {
-      return programService.getProgramById(campaignId, getCurrentUserName());
+      ProgramDTO program = programService.getProgramById(campaignId, getCurrentUserName());
+      // Guard, not a live case: ProgramServiceImpl throws ObjectNotFoundException
+      // for a program it cannot find, so this branch is unreachable today and
+      // only holds if that contract ever changes.
+      if (program == null) {
+        throw new ObjectNotFoundException("No campaign found with id " + campaignId + ". Resolve it with list_campaigns.");
+      }
+      return program;
     } catch (ObjectNotFoundException e) {
       throw new ObjectNotFoundException("No campaign found with id " + campaignId + ". Resolve it with list_campaigns.");
     } catch (IllegalAccessException e) {
-      throw new IllegalStateException("You are not allowed to view this campaign.");
+      throw new IllegalAccessException("You are not allowed to view this campaign.");
     }
   }
 
@@ -664,16 +703,25 @@ public class GamificationMcpTool implements McpToolPlugin {
       throw new IllegalArgumentException("quest_id is required. Resolve it with list_quests.");
     }
     try {
-      return ruleService.findRuleById(questId, getCurrentUserName());
+      RuleDTO rule = ruleService.findRuleById(questId, getCurrentUserName());
+      // Guard, not a live case: RuleServiceImpl throws ObjectNotFoundException
+      // for a rule it cannot find. It matters here because announceQuest reads
+      // the returned rule's type, so a null would be an NPE rather than a 404.
+      if (rule == null) {
+        throw new ObjectNotFoundException("No quest found with id " + questId + ". Resolve it with list_quests.");
+      }
+      return rule;
     } catch (ObjectNotFoundException e) {
       throw new ObjectNotFoundException("No quest found with id " + questId + ". Resolve it with list_quests.");
     } catch (IllegalAccessException e) {
-      throw new IllegalStateException("You are not allowed to view this quest.");
+      throw new IllegalAccessException("You are not allowed to view this quest.");
     }
   }
 
   private boolean canManageCampaign(ProgramDTO program, String username) {
-    return programService.isProgramOwner(program.getId(), username) || programService.canEditProgram(program.getId(), username);
+    // ProgramServiceImpl#canEditProgram resolves to the very same
+    // isProgramOwner(program, username, true), so it can never add anything.
+    return programService.isProgramOwner(program.getId(), username);
   }
 
   /**
@@ -708,7 +756,7 @@ public class GamificationMcpTool implements McpToolPlugin {
     }
   }
 
-  private String buildAvailabilityReason(RuleDTO rule, RealizationValidityContext context, boolean isManual, boolean pending) {
+  private String buildAvailabilityReason(RealizationValidityContext context, boolean isManual, boolean pending) {
     if (!isManual) {
       return "This is an automatic quest: it is awarded by the platform when its event happens, not announced by the user.";
     }
@@ -809,17 +857,6 @@ public class GamificationMcpTool implements McpToolPlugin {
                                  realization.getActivityId(),
                                  realization.getCreator(),
                                  realization.getCreatedDate());
-  }
-
-  private EntityVisibility parseVisibility(String visibility, Long spaceId) {
-    if (StringUtils.isBlank(visibility)) {
-      return (spaceId != null && spaceId > 0) ? EntityVisibility.RESTRICTED : EntityVisibility.OPEN;
-    }
-    try {
-      return EntityVisibility.valueOf(visibility.trim().toUpperCase());
-    } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("Invalid visibility '" + visibility + "'. Allowed values are: OPEN, RESTRICTED.");
-    }
   }
 
   private EntityType parseEntityType(String type) {

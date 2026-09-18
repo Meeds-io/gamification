@@ -241,6 +241,38 @@ public class RealizationDAOTest extends AbstractServiceTest { // NOSONAR
     assertEquals(Integer.parseInt(TEST_SCORE) * 2, leaderboardList.getFirst().getReputationScore());
   }
 
+  /**
+   * The announcements-only predicate must be executed by the engine and applied
+   * BEFORE pagination: the tool that lists a user's announcements used to filter
+   * the page it received, so a page full of automatic point awards answered
+   * "you have no announcement".
+   */
+  @Test
+  public void testFindRealizationsByFilterAnnouncementsOnly() {
+    ProgramEntity domainEntity = newDomain();
+    RealizationEntity automaticAward = newRealizationEntity("automatic-rule", domainEntity.getId());
+    RealizationEntity announcement = newRealizationEntity("manual-rule", domainEntity.getId(), true);
+    // AnnouncementStorage is the only writer of the creator column, which is
+    // what makes a realization an announcement.
+    announcement.setCreator(TEST_USER_EARNER_LONG);
+    realizationDAO.update(announcement);
+    restartTransaction();
+
+    RealizationFilter filter = new RealizationFilter();
+    filter.setEarnerIds(Collections.singletonList(TEST_USER_EARNER));
+    filter.setEarnerType(IdentityType.USER);
+
+    // Ascending by id, so the automatic award is the first row of the page.
+    List<Long> firstPage = realizationDAO.findRealizationsByFilter(filter, 0, 1);
+    assertEquals(Collections.singletonList(automaticAward.getId()), firstPage);
+    assertEquals(2, realizationDAO.countRealizationsByFilter(filter));
+
+    filter.setAnnouncementsOnly(true);
+    assertEquals(Collections.singletonList(announcement.getId()),
+                 realizationDAO.findRealizationsByFilter(filter, 0, 1));
+    assertEquals(1, realizationDAO.countRealizationsByFilter(filter));
+  }
+
   @Test
   public void testFindAllActionsHistory() {
     assertEquals(realizationDAO.getLeaderboard(IdentityType.USER, 0, LIMIT).size(), 0);

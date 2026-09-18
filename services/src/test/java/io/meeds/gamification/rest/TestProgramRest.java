@@ -49,6 +49,89 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     return ProgramRest.class;
   }
 
+  /**
+   * A listing scoped to a space the caller is not a member of: the service
+   * intersects the requested space with the caller's spaces and leaves none, so
+   * the DAO emits its open-audience predicate — whose parameter was not bound
+   * when excludeOpen was set, answering this request with
+   * "No argument for named parameter ':openVisibility'" and an HTTP 500
+   * (EXO-90210).
+   */
+  @Test
+  public void testGetProgramsOfASpaceTheUserIsNotAMemberOf() throws Exception {
+    long spaceId = Long.parseLong(SpaceServiceMock.SPACE_ID_2);
+    ProgramEntity spaceOpenProgram = newDomain(EntityType.MANUAL, "space-open-program", true, Collections.emptySet(), spaceId);
+    spaceOpenProgram.setVisibility(EntityVisibility.OPEN);
+    programDAO.update(spaceOpenProgram);
+    ProgramEntity spaceRestrictedProgram = newDomain(EntityType.MANUAL,
+                                                     "space-restricted-program",
+                                                     true,
+                                                     Collections.emptySet(),
+                                                     spaceId);
+    spaceRestrictedProgram.setVisibility(EntityVisibility.RESTRICTED);
+    programDAO.update(spaceRestrictedProgram);
+    ProgramEntity platformWide = newDomain(EntityType.MANUAL, "platform-wide-program", true, Collections.emptySet());
+    platformWide.setAudienceId(null);
+    platformWide.setVisibility(EntityVisibility.OPEN);
+    programDAO.update(platformWide);
+    programStorage.clearCache();
+    restartTransaction();
+
+    startSessionAs("user");
+
+    ContainerResponse response = getResponse("GET",
+                                             getURLResource("programs?spaceId=" + spaceId
+                                                 + "&offset=0&limit=10&returnSize=true"),
+                                             null);
+
+    // The endpoint answered this with an HTTP 500 before the DAO's binding fix,
+    // then with every platform-wide program: it answers with what that space
+    // shows to everyone, and only that.
+    assertNotNull(response);
+    assertEquals(String.valueOf(response.getEntity()), 200, response.getStatus());
+    ProgramList programList = (ProgramList) response.getEntity();
+    assertEquals(1, programList.getPrograms().size());
+    assertEquals(1, programList.getSize());
+    assertEquals(spaceOpenProgram.getId().longValue(), programList.getPrograms().get(0).getId());
+  }
+
+  @Test
+  public void testGetProgramsOfASpaceSortedByBudgetForANonMember() throws Exception {
+    long spaceId = Long.parseLong(SpaceServiceMock.SPACE_ID_2);
+    ProgramEntity spaceOpen = newDomain(EntityType.MANUAL, "budget-rest-open", true, Collections.emptySet(), spaceId);
+    spaceOpen.setVisibility(EntityVisibility.OPEN);
+    programDAO.update(spaceOpen);
+    newRule("budget-rest-open-rule", spaceOpen.getId());
+    ProgramEntity spaceRestricted = newDomain(EntityType.MANUAL,
+                                              "budget-rest-restricted",
+                                              true,
+                                              Collections.emptySet(),
+                                              spaceId);
+    spaceRestricted.setVisibility(EntityVisibility.RESTRICTED);
+    programDAO.update(spaceRestricted);
+    newRule("budget-rest-restricted-rule", spaceRestricted.getId());
+    programStorage.clearCache();
+    ruleStorage.clearCache();
+    restartTransaction();
+
+    startSessionAs("user");
+
+    // sortByBudget takes a different query path than the plain listing; the
+    // endpoint must answer the same question on both, and its returnSize must
+    // agree with the list it returns.
+    ContainerResponse response = getResponse("GET",
+                                             getURLResource("programs?spaceId=" + spaceId
+                                                 + "&sortByBudget=true&offset=0&limit=10&returnSize=true"),
+                                             null);
+
+    assertNotNull(response);
+    assertEquals(String.valueOf(response.getEntity()), 200, response.getStatus());
+    ProgramList programList = (ProgramList) response.getEntity();
+    assertEquals(1, programList.getPrograms().size());
+    assertEquals(1, programList.getSize());
+    assertEquals(spaceOpen.getId().longValue(), programList.getPrograms().get(0).getId());
+  }
+
   private ProgramDTO autoDomain;
 
   private ProgramDTO manualDomain;

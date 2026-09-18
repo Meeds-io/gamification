@@ -19,8 +19,10 @@ package io.meeds.gamification.service.impl;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import io.meeds.social.space.template.service.SpaceTemplateService;
 import org.apache.commons.collections.CollectionUtils;
@@ -123,6 +125,36 @@ public class ProgramServiceImpl implements ProgramService {
     }
     ProgramFilter programFilter = computeMemberProgramsFilter(username);
     return getProgramIds(programFilter, offset, limit);
+  }
+
+  @Override
+  public List<Long> getMyProgramIds(String username, int offset, int limit) {
+    if (StringUtils.isBlank(username)) {
+      return Collections.emptyList();
+    }
+    // Unbounded on both halves: a union cannot be paginated soundly from two
+    // paginated halves, so pagination happens once, below. The two filters are
+    // the same query for a rewarding manager, hence the equality check.
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
+    ProgramFilter memberFilter = computeMemberProgramsFilter(username);
+    ProgramFilter ownedFilter = computeOwnedProgramsFilter(userIdentity.getRemoteId(),
+                                                           Long.parseLong(userIdentity.getId()));
+    Set<Long> unionIds = new HashSet<>(getProgramIds(memberFilter, 0, -1));
+    if (!ownedFilter.equals(memberFilter)) {
+      unionIds.addAll(getProgramIds(ownedFilter, 0, -1));
+    }
+    Stream<Long> ids = unionIds.stream()
+                               .filter(id -> id != null && id > 0)
+                               .sorted()
+                               .filter(id -> {
+                                 ProgramDTO program = getProgramById(id);
+                                 return program != null && !program.isDeleted();
+                               })
+                               .skip(offset > 0 ? offset : 0);
+    if (limit > 0) {
+      ids = ids.limit(limit);
+    }
+    return ids.toList();
   }
 
   @Override
@@ -468,9 +500,18 @@ public class ProgramServiceImpl implements ProgramService {
                || (program.getVisibility() == EntityVisibility.OPEN || isProgramMember(program.getId(), username, false)));
   }
 
+  /**
+   * Narrows a filter to what the user may see. A listing scoped to spaces the
+   * caller shares none of is narrowed to those spaces' <b>open</b> programs
+   * ({@code ProgramFilter#isOpenAudienceOnly()}) — what the spaces show to
+   * everyone, which is nothing for a restricted space.
+   */
   @SuppressWarnings("unchecked")
   private ProgramFilter computeUserSpaces(ProgramFilter programFilter, String username) throws IllegalAccessException { // NOSONAR
     programFilter = programFilter.clone();
+    // Read after the clone, so the branches below hand back the clone's own
+    // copy and not the caller's list.
+    List<Long> requestedSpacesIds = programFilter.getSpacesIds();
     if (Utils.isRewardingManager(username)) {
       programFilter.setOwnerId(0);
       programFilter.setAllSpaces(true);
@@ -491,10 +532,27 @@ public class ProgramServiceImpl implements ProgramService {
         }
         programFilter.setSpacesIds(managedSpaceIds);
       }
-    } else if (StringUtils.isNotBlank(username)) {
-      List<Long> memberSpacesIds = spaceService.getMemberSpacesIds(username, 0, -1).stream().map(Long::parseLong).toList();
-      if (CollectionUtils.isNotEmpty(programFilter.getSpacesIds())) {
-        memberSpacesIds = (List<Long>) CollectionUtils.intersection(memberSpacesIds, programFilter.getSpacesIds());
+    } else {
+      // An anonymous caller (ProgramRest admits one, with a blank username) is a
+      // member of no space, so the narrowing below applies to them too.
+      List<Long> memberSpacesIds = StringUtils.isBlank(username) ? Collections.emptyList()
+                                                                 : spaceService.getMemberSpacesIds(username, 0, -1)
+                                                                               .stream()
+                                                                               .map(Long::parseLong)
+                                                                               .toList();
+      if (CollectionUtils.isNotEmpty(requestedSpacesIds)) {
+        memberSpacesIds = (List<Long>) CollectionUtils.intersection(memberSpacesIds, requestedSpacesIds);
+        if (CollectionUtils.isEmpty(memberSpacesIds)) {
+          // Shares none of the requested spaces: answer with what those spaces
+          // show to everyone, so a restricted space answers nothing. A rewarding
+          // manager never reaches this branch (the early return above lifts the
+          // narrowing), and the owner branch is left alone on purpose: its
+          // spaces are OR-ed with the ownership predicate, they do not restrict
+          // it.
+          programFilter.setSpacesIds(requestedSpacesIds);
+          programFilter.setOpenAudienceOnly(true);
+          return programFilter;
+        }
       }
       programFilter.setSpacesIds(memberSpacesIds);
     }

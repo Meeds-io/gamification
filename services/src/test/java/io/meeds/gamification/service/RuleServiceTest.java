@@ -41,6 +41,7 @@ import org.exoplatform.social.core.space.model.Space;
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.constant.RecurrenceType;
 import io.meeds.gamification.entity.ProgramEntity;
 import io.meeds.gamification.entity.RuleEntity;
@@ -49,6 +50,7 @@ import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.RulePublication;
 import io.meeds.gamification.model.filter.RealizationFilter;
+import io.meeds.gamification.mock.SpaceServiceMock;
 import io.meeds.gamification.model.filter.RuleFilter;
 import io.meeds.gamification.storage.mapper.RuleMapper;
 import io.meeds.gamification.test.AbstractServiceTest;
@@ -84,6 +86,67 @@ public class RuleServiceTest extends AbstractServiceTest {
     adminAclIdentity = registerAdministratorUser(ADMIN_USER);
     registerInternalUser(SPACE_MEMBER_USER);
     registerInternalUser(INTERNAL_USER);
+  }
+
+  /**
+   * "The quests of space X" asked by someone who shares none of the requested
+   * spaces is answered with what that space shows to everyone — the rules of its
+   * OPEN programs — and with nothing else: not the rules of its RESTRICTED
+   * programs, and not every platform-wide rule, which is what the audience-free
+   * predicate used to answer (EXO-90210).
+   */
+  @Test
+  public void testGetRulesOfASpaceTheUserSharesNone() {
+    long otherSpaceId = Long.parseLong(SpaceServiceMock.SPACE_ID_2);
+    ProgramEntity openSpaceProgram = newDomain(EntityType.MANUAL, "space-open", true, Collections.emptySet(), otherSpaceId);
+    openSpaceProgram.setVisibility(EntityVisibility.OPEN);
+    programDAO.update(openSpaceProgram);
+    RuleEntity openSpaceRule = newRule("space-open-rule", openSpaceProgram.getId());
+    ProgramEntity restrictedSpaceProgram = newDomain(EntityType.MANUAL,
+                                                     "space-restricted",
+                                                     true,
+                                                     Collections.emptySet(),
+                                                     otherSpaceId);
+    restrictedSpaceProgram.setVisibility(EntityVisibility.RESTRICTED);
+    programDAO.update(restrictedSpaceProgram);
+    RuleEntity restrictedSpaceRule = newRule("space-restricted-rule", restrictedSpaceProgram.getId());
+    ProgramEntity platformWideProgram = newDomain(EntityType.MANUAL, "platform-wide", true, Collections.emptySet());
+    platformWideProgram.setAudienceId(null);
+    platformWideProgram.setVisibility(EntityVisibility.OPEN);
+    programDAO.update(platformWideProgram);
+    RuleEntity platformWideRule = newRule("platform-wide-rule", platformWideProgram.getId());
+    programStorage.clearCache();
+    ruleStorage.clearCache();
+    restartTransaction();
+
+    RuleFilter filter = new RuleFilter();
+    filter.setStatus(EntityStatusType.ALL);
+    filter.setSpaceIds(Collections.singletonList(otherSpaceId));
+    // The shape RuleRest#getRules builds for a space-scoped listing
+    // (setExcludeNoSpace(isNotEmpty(spaceIds))), the analogue of ProgramFilter's
+    // excludeOpen.
+    filter.setExcludeNoSpace(true);
+
+    // SPACE_MEMBER_USER is a member of space 1 only, so it shares none of the
+    // requested spaces.
+    List<Long> asNonMember = ruleService.getRules(filter, SPACE_MEMBER_USER, 0, 10).stream().map(RuleDTO::getId).toList();
+    assertEquals(Collections.singletonList(openSpaceRule.getId()), asNonMember);
+    assertEquals(1, ruleService.countRules(filter, SPACE_MEMBER_USER));
+    assertFalse("a RESTRICTED program's quest is not shown to a non-member",
+                asNonMember.contains(restrictedSpaceRule.getId()));
+    assertFalse("a platform-wide quest is not a quest of that space", asNonMember.contains(platformWideRule.getId()));
+
+    // An anonymous visitor is answered the same way.
+    List<Long> anonymous = ruleService.getRules(filter, null, 0, 10).stream().map(RuleDTO::getId).toList();
+    assertEquals(Collections.singletonList(openSpaceRule.getId()), anonymous);
+
+    // A rewarding manager is not narrowed to their own spaces, so the question
+    // keeps its full answer for them — both of that space's quests, and still
+    // not the platform-wide one.
+    List<Long> asAdmin = ruleService.getRules(filter, ADMIN_USER, 0, 10).stream().map(RuleDTO::getId).toList();
+    assertEquals(2, asAdmin.size());
+    assertTrue(asAdmin.containsAll(List.of(openSpaceRule.getId(), restrictedSpaceRule.getId())));
+    assertFalse("a platform-wide quest is not a quest of that space", asAdmin.contains(platformWideRule.getId()));
   }
 
   @Test
