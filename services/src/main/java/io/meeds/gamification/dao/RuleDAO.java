@@ -62,56 +62,56 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public List<Long> findHighestBudgetProgramIds(int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIds", Tuple.class);
     query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
-    List<Tuple> result = query.getResultList();
-    if (result == null) {
-      return Collections.emptyList();
-    } else {
-      Stream<Long> resultStream = result.stream().map(tuple -> tuple.get(0, Long.class));
-      if (offset > 0) {
-        resultStream = resultStream.skip(offset);
-      }
-      if (limit > 0) {
-        resultStream = resultStream.limit(limit);
-      }
-      return resultStream.toList();
-    }
+    return pagedProgramIds(query, offset, limit);
   }
 
   public List<Long> findHighestBudgetOpenProgramIds(int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetOpenDomainIds", Tuple.class);
+    query.setParameter("visibility", EntityVisibility.OPEN);
     query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
-    List<Tuple> result = query.getResultList();
-    if (result == null) {
-      return Collections.emptyList();
-    } else {
-      Stream<Long> resultStream = result.stream().map(tuple -> tuple.get(0, Long.class));
-      if (offset > 0) {
-        resultStream = resultStream.skip(offset);
-      }
-      if (limit > 0) {
-        resultStream = resultStream.limit(limit);
-      }
-      return resultStream.toList();
-    }
+    return pagedProgramIds(query, offset, limit);
   }
 
   public List<Long> findHighestBudgetProgramIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIdsBySpacesIds", Tuple.class);
     query.setParameter("spacesIds", spacesIds);
+    query.setParameter("visibility", EntityVisibility.OPEN);
     query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
+    return pagedProgramIds(query, offset, limit);
+  }
+
+  /** Budget-ordered counterpart of {@code ProgramDAO}'s "AudienceOpenOnly" predicate. */
+  public List<Long> findHighestBudgetOpenProgramIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
+    TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetOpenDomainIdsBySpacesIds",
+                                                                  Tuple.class);
+    query.setParameter("spacesIds", spacesIds);
+    query.setParameter("visibility", EntityVisibility.OPEN);
+    query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
+    return pagedProgramIds(query, offset, limit);
+  }
+
+  /** Budget-ordered counterpart of {@code ProgramDAO}'s "AudienceExcludeOpen" predicate. */
+  public List<Long> findHighestBudgetProgramIdsByStrictSpacesIds(List<Long> spacesIds, int offset, int limit) {
+    TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIdsByStrictSpacesIds",
+                                                                  Tuple.class);
+    query.setParameter("spacesIds", spacesIds);
+    query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
+    return pagedProgramIds(query, offset, limit);
+  }
+
+  private List<Long> pagedProgramIds(TypedQuery<Tuple> query, int offset, int limit) {
     List<Tuple> result = query.getResultList();
     if (result == null) {
       return Collections.emptyList();
-    } else {
-      Stream<Long> resultStream = result.stream().map(tuple -> tuple.get(0, Long.class));
-      if (offset > 0) {
-        resultStream = resultStream.skip(offset);
-      }
-      if (limit > 0) {
-        resultStream = resultStream.limit(limit);
-      }
-      return resultStream.toList();
     }
+    Stream<Long> resultStream = result.stream().map(tuple -> tuple.get(0, Long.class));
+    if (offset > 0) {
+      resultStream = resultStream.skip(offset);
+    }
+    if (limit > 0) {
+      resultStream = resultStream.limit(limit);
+    }
+    return resultStream.toList();
   }
 
   public RuleEntity findRuleByTitle(String ruleTitle) throws PersistenceException {
@@ -221,7 +221,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
       query.setParameter("filterType", EntityType.valueOf(filter.getType().name()));
     }
-    if ((CollectionUtils.isNotEmpty(filter.getSpaceIds()) && !filter.isExcludeNoSpace())
+    // Must stay the exact complement of the branches of buildPredicates that
+    // emit :openVisibility (see RuleDAOTest#testEveryFilterShapeIsRunnable).
+    if ((CollectionUtils.isNotEmpty(filter.getSpaceIds()) && (filter.isOpenAudienceOnly() || !filter.isExcludeNoSpace()))
         || (CollectionUtils.isEmpty(filter.getSpaceIds()) && !filter.isAllSpaces())) {
       query.setParameter("openVisibility", EntityVisibility.OPEN);
     }
@@ -322,7 +324,12 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       predicates.add("r.domainEntity.id = :domainId");
     }
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
-      if (filter.isExcludeNoSpace()) {
+      if (filter.isOpenAudienceOnly()) {
+        // What the requested spaces show to everyone, for a caller who shares
+        // none of them.
+        suffixes.add("AudienceOpenOnly");
+        predicates.add("(r.domainEntity.audienceId in (:ids) AND r.domainEntity.visibility = :openVisibility)");
+      } else if (filter.isExcludeNoSpace()) {
         suffixes.add("StrictAudience");
         predicates.add("r.domainEntity.audienceId in (:ids)");
       } else {

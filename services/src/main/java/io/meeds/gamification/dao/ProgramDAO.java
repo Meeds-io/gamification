@@ -120,9 +120,14 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
       query.setParameter("spacesIds", filter.getSpacesIds());
     }
-    if (filter.getOwnerId() == 0
-        && !filter.isExcludeOpen()
-        && (CollectionUtils.isNotEmpty(filter.getSpacesIds()) || !filter.isAllSpaces())) {
+    // Must stay the exact complement of the branches of buildPredicates that
+    // emit :openVisibility — an emitted parameter left unbound is a query the
+    // engine refuses at run time. ProgramDAOTest#testEveryFilterShapeIsRunnable
+    // pins that pairing over every filter shape.
+    boolean predicateHasOpenVisibility = filter.getOwnerId() == 0
+        && (CollectionUtils.isNotEmpty(filter.getSpacesIds()) ? (filter.isOpenAudienceOnly() || !filter.isExcludeOpen())
+                                                              : !filter.isAllSpaces());
+    if (predicateHasOpenVisibility) {
       query.setParameter("openVisibility", EntityVisibility.OPEN);
     }
     EntityFilterType type = filter.getType();
@@ -178,7 +183,12 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
         predicates.add("(:ownerId member of d.owners OR d.audienceId in (:spacesIds))");
       }
     } else if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
-      if (filter.isExcludeOpen()) {
+      if (filter.isOpenAudienceOnly()) {
+        // What the requested spaces show to everyone, for a caller who shares
+        // none of them.
+        suffixes.add("AudienceOpenOnly");
+        predicates.add("(d.audienceId in (:spacesIds) AND d.visibility = :openVisibility)");
+      } else if (filter.isExcludeOpen()) {
         suffixes.add("AudienceExcludeOpen");
         predicates.add("d.audienceId in (:spacesIds)");
       } else {

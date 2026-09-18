@@ -90,7 +90,38 @@ import lombok.EqualsAndHashCode;
     " INNER JOIN rule.domainEntity domain" +
     "   ON domain.isEnabled = true" +
     "  AND domain.isDeleted = false" +
-    "  AND domain.audienceId IS NULL" +
+    "  AND (domain.audienceId IS NULL OR domain.visibility = :visibility)" +
+    " WHERE rule.isEnabled = true" +
+    "   AND rule.isDeleted = false" +
+    "   AND (rule.startDate IS NULL OR rule.startDate <= :date)" +
+    "   AND (rule.endDate IS NULL OR rule.endDate > :date)" +
+    " GROUP BY rule.domainEntity.id " +
+    " ORDER BY totalScore DESC"
+)
+@NamedQuery(
+  name = "Rule.getHighestBudgetOpenDomainIdsBySpacesIds",
+  query =
+    " SELECT rule.domainEntity.id, SUM(rule.score) as totalScore FROM Rule rule" +
+    " INNER JOIN rule.domainEntity domain" +
+    "   ON domain.isEnabled = true" +
+    "  AND domain.isDeleted = false" +
+    "  AND domain.audienceId in (:spacesIds)" +
+    "  AND domain.visibility = :visibility" +
+    " WHERE rule.isEnabled = true" +
+    "   AND rule.isDeleted = false" +
+    "   AND (rule.startDate IS NULL OR rule.startDate <= :date)" +
+    "   AND (rule.endDate IS NULL OR rule.endDate > :date)" +
+    " GROUP BY rule.domainEntity.id " +
+    " ORDER BY totalScore DESC"
+)
+@NamedQuery(
+  name = "Rule.getHighestBudgetDomainIdsByStrictSpacesIds",
+  query =
+    " SELECT rule.domainEntity.id, SUM(rule.score) as totalScore FROM Rule rule" +
+    " INNER JOIN rule.domainEntity domain" +
+    "   ON domain.isEnabled = true" +
+    "  AND domain.isDeleted = false" +
+    "  AND domain.audienceId in (:spacesIds)" +
     " WHERE rule.isEnabled = true" +
     "   AND rule.isDeleted = false" +
     "   AND (rule.startDate IS NULL OR rule.startDate <= :date)" +
@@ -105,7 +136,9 @@ import lombok.EqualsAndHashCode;
     " INNER JOIN rule.domainEntity domain" +
     "   ON domain.isEnabled = true" +
     "  AND domain.isDeleted = false" +
-    "  AND (domain.audienceId IS NULL OR domain.audienceId in (:spacesIds))" +
+    "  AND (domain.audienceId IS NULL" +
+    "       OR domain.visibility = :visibility" +
+    "       OR domain.audienceId in (:spacesIds))" +
     " WHERE rule.isEnabled = true" +
     "   AND rule.isDeleted = false" +
     "   AND (rule.startDate IS NULL OR rule.startDate <= :date)" +

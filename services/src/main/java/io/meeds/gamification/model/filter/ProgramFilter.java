@@ -62,6 +62,15 @@ public class ProgramFilter implements Serializable {
 
   private boolean           sortDescending   = true;
 
+  /**
+   * Restricts the result to the programs whose audience is one of
+   * {@link #spacesIds} <b>and</b> whose visibility is OPEN, i.e. what those
+   * spaces show to everyone. Used for a caller who shares none of the requested
+   * spaces: a public space still answers with its open programs, a restricted
+   * one answers with nothing.
+   */
+  private boolean           openAudienceOnly;
+
   public ProgramFilter(boolean allSpaces) {
     this.allSpaces = allSpaces;
   }
@@ -77,7 +86,8 @@ public class ProgramFilter implements Serializable {
                              allSpaces,
                              excludeOpen,
                              sortBy,
-                             sortDescending);
+                             sortDescending,
+                             openAudienceOnly);
   }
 
 }

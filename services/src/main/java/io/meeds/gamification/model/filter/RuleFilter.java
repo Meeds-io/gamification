@@ -77,6 +77,15 @@ public class RuleFilter implements Serializable {
 
   private long              identityId;
 
+  /**
+   * Restricts the result to the rules of the programs whose audience is one of
+   * {@link #spaceIds} <b>and</b> whose visibility is OPEN, i.e. what those
+   * spaces show to everyone. Used for a caller who shares none of the requested
+   * spaces: a public space still answers with its open rules, a restricted one
+   * answers with nothing.
+   */
+  private boolean           openAudienceOnly;
+
   public RuleFilter(boolean allSpaces) {
     this.allSpaces = allSpaces;
   }
@@ -102,7 +111,8 @@ public class RuleFilter implements Serializable {
                           sortDescending,
                           allSpaces,
                           tagNames,
-                          identityId);
+                          identityId,
+                          openAudienceOnly);
   }
 
 }
