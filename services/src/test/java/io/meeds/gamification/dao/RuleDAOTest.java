@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.List;
 
 import io.meeds.gamification.constant.*;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
 import io.meeds.gamification.entity.ProgramEntity;
@@ -33,6 +35,44 @@ import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 
 public class RuleDAOTest extends AbstractServiceTest {
+
+  /**
+   * The rules counterpart of ProgramDAOTest#testEveryFilterShapeIsRunnable: a
+   * predicate referencing a named parameter the binding does not set is refused
+   * by the engine, so the pairing between buildPredicates and
+   * addQueryFilterParameters is pinned here rather than described in a comment.
+   */
+  @Test
+  public void testEveryFilterShapeIsRunnable() {
+    newRule();
+    restartTransaction();
+
+    for (boolean withSpaces : new boolean[] { false, true }) {
+      for (boolean excludeNoSpace : new boolean[] { false, true }) {
+        for (boolean openAudienceOnly : new boolean[] { false, true }) {
+          for (boolean allSpaces : new boolean[] { false, true }) {
+            RuleFilter filter = new RuleFilter();
+            filter.setStatus(EntityStatusType.ALL);
+            filter.setSpaceIds(withSpaces ? Collections.singletonList(1L) : null);
+            filter.setExcludeNoSpace(excludeNoSpace);
+            filter.setOpenAudienceOnly(openAudienceOnly);
+            filter.setAllSpaces(allSpaces);
+            String shape = String.format("spaces=%s excludeNoSpace=%s openAudienceOnly=%s allSpaces=%s",
+                                         withSpaces,
+                                         excludeNoSpace,
+                                         openAudienceOnly,
+                                         allSpaces);
+            try {
+              ruleDAO.findRulesIdsByFilter(filter, 0, 10);
+              ruleDAO.countRulesByFilter(filter);
+            } catch (Exception e) { // NOSONAR: the shape is what the failure must name
+              fail("filter shape refused by the engine [" + shape + "]: " + e.getMessage());
+            }
+          }
+        }
+      }
+    }
+  }
 
   @Test
   public void testFindRuleByTitle() {

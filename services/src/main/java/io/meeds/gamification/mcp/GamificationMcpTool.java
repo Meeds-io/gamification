@@ -370,11 +370,8 @@ public class GamificationMcpTool implements McpToolPlugin {
    */
   public List<CampaignModel> getMyCampaigns(Integer limit, Integer offset) {
     String currentUser = getCurrentUserName();
-    // The member/owned union, its deduplication, its single pagination and the
-    // exclusion of soft-deleted programs all belong to the service: both
-    // underlying id queries include deleted programs, and resolving a deleted
-    // one by id broadcasts a program-deleted event on a read path and then
-    // fails, which used to return a short page.
+    // The union, its deduplication, its pagination and the exclusion of
+    // soft-deleted programs belong to the service, not to this layer.
     List<Long> ids = programService.getMyProgramIds(currentUser, clampOffset(offset), clampLimit(limit));
     return resolveCampaigns(ids == null ? Set.of() : new LinkedHashSet<>(ids), currentUser);
   }
@@ -547,11 +544,10 @@ public class GamificationMcpTool implements McpToolPlugin {
     rule.setStartDate(parseRuleDate(startDate, "start_date"));
     rule.setEndDate(parseRuleDate(endDate, "end_date"));
     rule.setRecurrence(parseRecurrence(recurrence));
-    // RuleServiceImpl only creates the quest's activity for a RulePublication;
-    // a plain RuleDTO leaves the activity to the lazy back-fill of the first
-    // read, which runs with publish=false and therefore always yields a hidden,
-    // empty-bodied activity. Passing the publication explicitly is what makes
-    // the published/unpublished choice the caller's, as in RuleRest.
+    // The publication type is the mechanism, not decoration: the rule service
+    // computes the quest's activity only for a publication instance, so a plain
+    // rule leaves it to the lazy back-fill of the first read, which always
+    // creates it hidden and empty. Same call shape as RuleRest.
     boolean publishActivity = publish != null && publish;
     String message = publishActivity ? StringUtils.defaultIfBlank(StringUtils.trimToNull(description), title.trim()) : null;
     RulePublication publication = new RulePublication(rule, 0, message, null, publishActivity);
@@ -635,10 +631,10 @@ public class GamificationMcpTool implements McpToolPlugin {
    */
   public AnnouncementModel announceQuest(Long questId,
                                          String comment) throws IllegalAccessException, ObjectNotFoundException {
-    // Resolve the quest first (404/403 with a readable message) and check its
-    // type here: catching IllegalStateException around createAnnouncement
-    // labelled EVERY such failure "not a manual challenge", hiding the real
-    // cause of any other one.
+    // Resolved up front for the readable 404/403 this layer owes its caller; the
+    // type check then lets any other illegal state keep its own message, where a
+    // catch around createAnnouncement labelled every one of them
+    // "not a manual challenge".
     RuleDTO rule = resolveRule(questId);
     if (rule.getType() != EntityType.MANUAL) {
       throw new IllegalStateException("This quest is not a manual challenge, so it cannot be announced."

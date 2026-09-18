@@ -123,26 +123,20 @@ public class ProgramStorage {
 
   /**
    * The budget-ordered listing. Its five branches mirror
-   * {@code ProgramDAO#buildPredicates}' audience predicates one for one, but it
-   * reaches them through {@code Rule.getHighestBudget…} <b>named queries</b>, so
-   * a narrowing expressed only in those predicates does not apply here — that is
-   * how a space's RESTRICTED programs once reached a caller sharing none of its
-   * spaces (EXO-90210). Two deliberate differences remain, and the caller should
-   * know them: this path is <b>enabled-only</b> (every query hard-codes
-   * {@code domain.isEnabled = true} and {@code rule.isEnabled = true}), so it
-   * honours neither {@link ProgramFilter#getStatus()} nor
-   * {@link ProgramFilter#isIncludeDeleted()}; and it only ever returns programs
-   * that <b>have at least one rule</b>, since the queries select through
-   * {@code Rule}. {@code countPrograms} goes through the predicates instead, so a
-   * count taken beside this list can legitimately differ.
+   * {@code ProgramDAO#buildPredicates}' audience predicates one for one, but
+   * through {@code Rule.getHighestBudget…} <b>named queries</b>: a narrowing
+   * expressed only in those predicates does not reach this path. Two
+   * differences are deliberate and the caller should know them: it is
+   * <b>enabled-only</b> (every query hard-codes {@code domain.isEnabled = true}
+   * and {@code rule.isEnabled = true}), so it honours neither
+   * {@link ProgramFilter#getStatus()} nor
+   * {@link ProgramFilter#isIncludeDeleted()}; and it returns only programs that
+   * <b>have at least one rule</b>, since the queries select through
+   * {@code Rule}. {@code countPrograms} goes through the predicates, so a count
+   * taken beside this list can legitimately differ.
    */
   public List<Long> findHighestBudgetProgramIdsBySpacesIds(ProgramFilter programFilter, int offset, int limit) {
     if (CollectionUtils.isNotEmpty(programFilter.getSpacesIds())) {
-      // Mirror ProgramDAO#buildPredicates' three space branches: this
-      // budget-ordered path goes through named queries instead of those
-      // predicates, so a narrowing expressed only there would not apply here —
-      // which is how a space's RESTRICTED programs reached a caller who shares
-      // none of its spaces (EXO-90210).
       if (programFilter.isOpenAudienceOnly()) {
         return ruleDAO.findHighestBudgetOpenProgramIdsBySpacesIds(programFilter.getSpacesIds(), offset, limit);
       } else if (programFilter.isExcludeOpen()) {

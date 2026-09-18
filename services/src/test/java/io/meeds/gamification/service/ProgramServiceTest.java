@@ -296,7 +296,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
    * binding the parameter, and the query died in the engine (EXO-90210).
    */
   @Test
-  public void testGetProgramsExcludeOpenWithNoSpaceLeftToFilterOn() throws IllegalAccessException {
+  public void testGetProgramsExcludeOpenWithNoSpaceLeftToFilterOn() {
     ProgramEntity openProgram = newDomain(EntityType.MANUAL, "open-program", true, new HashSet<>());
     openProgram.setAudienceId(null);
     programDAO.update(openProgram);
@@ -308,7 +308,6 @@ public class ProgramServiceTest extends AbstractServiceTest {
     filter.setExcludeOpen(true);
 
     assertEquals(Collections.singletonList(openProgram.getId()), programService.getProgramIds(filter, 0, 10));
-
   }
 
   /**
@@ -713,6 +712,13 @@ public class ProgramServiceTest extends AbstractServiceTest {
     assertEquals(Collections.singletonList(ownedOnly.getId()), programService.getMyProgramIds(SPACE_MEMBER_USER, 1, 1));
     assertEquals(2, programService.getMyProgramIds(SPACE_MEMBER_USER, 0, -1).size());
     assertTrue(programService.getMyProgramIds(null, 0, 10).isEmpty());
+
+    // A rewarding manager's "member of" and "owns" filters are the same query,
+    // so only one of them is run — the answer must still be every program,
+    // deleted ones excluded.
+    List<Long> asAdmin = programService.getMyProgramIds(ADMIN_USER, 0, 10);
+    assertEquals(Arrays.asList(memberAndOwned.getId(), ownedOnly.getId()), asAdmin);
+    assertFalse("a soft-deleted program is not one of my campaigns", asAdmin.contains(deleted.getId()));
   }
 
   @Test

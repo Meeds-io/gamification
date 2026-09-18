@@ -80,11 +80,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     return pagedProgramIds(query, offset, limit);
   }
 
-  /**
-   * The budget-ordered counterpart of {@code ProgramDAO}'s "AudienceOpenOnly"
-   * predicate: the programs of the given spaces that those spaces show to
-   * everyone. Used for a caller who shares none of the requested spaces.
-   */
+  /** Budget-ordered counterpart of {@code ProgramDAO}'s "AudienceOpenOnly" predicate. */
   public List<Long> findHighestBudgetOpenProgramIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetOpenDomainIdsBySpacesIds",
                                                                   Tuple.class);
@@ -94,11 +90,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     return pagedProgramIds(query, offset, limit);
   }
 
-  /**
-   * The budget-ordered counterpart of {@code ProgramDAO}'s "AudienceExcludeOpen"
-   * predicate: the programs of the given spaces only, without the platform-wide
-   * ones a space-scoped listing never asked for.
-   */
+  /** Budget-ordered counterpart of {@code ProgramDAO}'s "AudienceExcludeOpen" predicate. */
   public List<Long> findHighestBudgetProgramIdsByStrictSpacesIds(List<Long> spacesIds, int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIdsByStrictSpacesIds",
                                                                   Tuple.class);
@@ -229,9 +221,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
       query.setParameter("filterType", EntityType.valueOf(filter.getType().name()));
     }
-    // Bind openVisibility exactly when buildPredicates emitted it: its
-    // "AudienceOpenOnly" and "Audience" branches (spaces requested) and its
-    // "OpenAudience" branch (no space requested, not allSpaces).
+    // Must stay the exact complement of the branches of buildPredicates that
+    // emit :openVisibility (see RuleDAOTest#testEveryFilterShapeIsRunnable).
     if ((CollectionUtils.isNotEmpty(filter.getSpaceIds()) && (filter.isOpenAudienceOnly() || !filter.isExcludeNoSpace()))
         || (CollectionUtils.isEmpty(filter.getSpaceIds()) && !filter.isAllSpaces())) {
       query.setParameter("openVisibility", EntityVisibility.OPEN);
@@ -334,10 +325,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
       if (filter.isOpenAudienceOnly()) {
-        // What the requested spaces show to everyone: their open programs' rules
-        // and nothing else. A caller who shares none of those spaces gets this
-        // instead of the audience-free predicate below, which would have
-        // answered a question about one space with every platform-wide rule.
+        // What the requested spaces show to everyone, for a caller who shares
+        // none of them.
         suffixes.add("AudienceOpenOnly");
         predicates.add("(r.domainEntity.audienceId in (:ids) AND r.domainEntity.visibility = :openVisibility)");
       } else if (filter.isExcludeNoSpace()) {

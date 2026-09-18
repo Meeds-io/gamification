@@ -69,11 +69,15 @@ public class RealizationFilter implements Serializable {
 
   /**
    * Preserves the all-arguments signature this filter had before
-   * {@link #announcementsOnly} was added: the flag defaults to false (every
-   * realization kind). {@code RealizationRest} is its only caller in this
-   * repository — it is kept for consumers compiled against the previous
+   * {@link #announcementsOnly} was added; the flag defaults to false, i.e. every
+   * realization kind. Kept for consumers compiled against the previous
    * signature, since this model is part of the addon's published API.
+   *
+   * @deprecated use the all-arguments constructor that takes
+   *               {@code announcementsOnly}; since 7.3.0, not for removal while
+   *               published consumers may still be compiled against this shape.
    */
+  @Deprecated(forRemoval = false, since = "7.3.0")
   public RealizationFilter(List<String> earnerIds, // NOSONAR
                            String sortField,
                            boolean sortDescending,

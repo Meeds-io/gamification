@@ -578,9 +578,9 @@ public class GamificationMcpToolTest {
     assertEquals(QUEST_ID, quest.getId());
     ArgumentCaptor<RuleDTO> captor = ArgumentCaptor.forClass(RuleDTO.class);
     verify(ruleService).createRule(captor.capture(), eq(USERNAME));
-    // RuleServiceImpl only computes the quest's activity for a RulePublication;
-    // with a plain RuleDTO the activity is left to the lazy back-fill of the
-    // first read, which always creates it hidden and empty.
+    // The rule service computes the quest's activity only for a publication
+    // instance; a plain rule leaves it to the lazy back-fill of the first read,
+    // which always creates it hidden and empty.
     assertTrue("create_quest must pass a RulePublication so the publication is a decision, not a side effect",
                captor.getValue() instanceof RulePublication);
     assertFalse("an EVA-created quest is not published unless asked", ((RulePublication) captor.getValue()).isPublish());
