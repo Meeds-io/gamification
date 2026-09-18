@@ -24,8 +24,6 @@ import java.util.Date;
 import java.util.List;
 
 import io.meeds.gamification.constant.*;
-import static org.junit.Assert.fail;
-
 import org.junit.Test;
 
 import io.meeds.gamification.entity.ProgramEntity;

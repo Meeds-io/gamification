@@ -16,8 +16,6 @@
  */
 package io.meeds.gamification.dao;
 
-import static org.junit.Assert.fail;
-
 import java.util.Collections;
 import java.util.HashSet;
 
