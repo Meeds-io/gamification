@@ -19,8 +19,10 @@ package io.meeds.gamification.service.impl;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import io.meeds.social.space.template.service.SpaceTemplateService;
 import org.apache.commons.collections.CollectionUtils;
@@ -123,6 +125,38 @@ public class ProgramServiceImpl implements ProgramService {
     }
     ProgramFilter programFilter = computeMemberProgramsFilter(username);
     return getProgramIds(programFilter, offset, limit);
+  }
+
+  @Override
+  public List<Long> getMyProgramIds(String username, int offset, int limit) {
+    if (StringUtils.isBlank(username)) {
+      return Collections.emptyList();
+    }
+    // The member and owned id lists are two different queries, and they are
+    // fetched UNBOUNDED on purpose: the union cannot be paginated soundly from
+    // two paginated halves, and neither list can be reproduced by a single
+    // ProgramFilter (computeOwnedProgramsFilter grants a space manager their
+    // spaces' programs and a rewarding manager every program). Fetch both in
+    // full (offset 0, unbounded limit -1), union and dedup them, drop the
+    // soft-deleted programs (both underlying filters set includeDeleted), then
+    // paginate ONCE over the sorted union. Paginating each source list and
+    // unioning afterwards would return up to 2x limit ids and make offset
+    // paging over the union unsound.
+    Set<Long> unionIds = new HashSet<>();
+    unionIds.addAll(getMemberProgramIds(username, 0, -1));
+    unionIds.addAll(getOwnedProgramIds(username, 0, -1));
+    Stream<Long> ids = unionIds.stream()
+                               .filter(id -> id != null && id > 0)
+                               .sorted()
+                               .filter(id -> {
+                                 ProgramDTO program = getProgramById(id);
+                                 return program != null && !program.isDeleted();
+                               })
+                               .skip(offset > 0 ? offset : 0);
+    if (limit > 0) {
+      ids = ids.limit(limit);
+    }
+    return ids.toList();
   }
 
   @Override
@@ -468,8 +502,17 @@ public class ProgramServiceImpl implements ProgramService {
                || (program.getVisibility() == EntityVisibility.OPEN || isProgramMember(program.getId(), username, false)));
   }
 
+  /**
+   * Narrows a filter to what the user may see. A listing scoped to spaces the
+   * caller shares none of is narrowed to those spaces' <b>open</b> programs
+   * ({@link ProgramFilter#isOpenAudienceOnly()}) — what the spaces show to
+   * everyone, which is nothing for a restricted space — instead of falling
+   * through to the audience-free predicate and answering a question about one
+   * space with every platform-wide program.
+   */
   @SuppressWarnings("unchecked")
   private ProgramFilter computeUserSpaces(ProgramFilter programFilter, String username) throws IllegalAccessException { // NOSONAR
+    List<Long> requestedSpacesIds = programFilter.getSpacesIds();
     programFilter = programFilter.clone();
     if (Utils.isRewardingManager(username)) {
       programFilter.setOwnerId(0);
@@ -491,11 +534,39 @@ public class ProgramServiceImpl implements ProgramService {
         }
         programFilter.setSpacesIds(managedSpaceIds);
       }
-    } else if (StringUtils.isNotBlank(username)) {
-      List<Long> memberSpacesIds = spaceService.getMemberSpacesIds(username, 0, -1).stream().map(Long::parseLong).toList();
-      if (CollectionUtils.isNotEmpty(programFilter.getSpacesIds())) {
-        memberSpacesIds = (List<Long>) CollectionUtils.intersection(memberSpacesIds, programFilter.getSpacesIds());
+    } else {
+      // An anonymous caller is a member of no space — and a blank username is
+      // never handed to SpaceService. Treating them as such is what closes the
+      // case below for them too: asking for a space's programs used to carry the
+      // requested audience untouched into the DAO, which answered with that
+      // space's programs, RESTRICTED ones included, to a visitor
+      // (ProgramRest#getPrograms admits an anonymous caller and passes its blank
+      // current user here).
+      List<Long> memberSpacesIds = StringUtils.isBlank(username) ? Collections.emptyList()
+                                                                 : spaceService.getMemberSpacesIds(username, 0, -1)
+                                                                               .stream()
+                                                                               .map(Long::parseLong)
+                                                                               .toList();
+      if (CollectionUtils.isNotEmpty(requestedSpacesIds)) {
+        memberSpacesIds = (List<Long>) CollectionUtils.intersection(memberSpacesIds, requestedSpacesIds);
+        if (CollectionUtils.isEmpty(memberSpacesIds)) {
+          // The caller asked about specific spaces and shares none of them —
+          // a non-member of those spaces, or an anonymous visitor: answer with
+          // what those spaces show to everyone, their open programs, and
+          // nothing else. A restricted space therefore answers nothing, which is
+          // what closes the RESTRICTED-program exposure on the anonymous path.
+          // (A rewarding manager never reaches this branch: the early return
+          // above keeps the requested spaces and lifts the restriction. The
+          // owner branch is deliberately left alone: its spaces are OR-ed with
+          // the ownership predicate, they do not restrict it.)
+          programFilter.setSpacesIds(requestedSpacesIds);
+          programFilter.setOpenAudienceOnly(true);
+          return programFilter;
+        }
       }
+      // Unchanged for a caller who asked for no space in particular, anonymous
+      // included: an empty space list leaves the DAO's open-audience predicate,
+      // i.e. the platform-wide and OPEN programs.
       programFilter.setSpacesIds(memberSpacesIds);
     }
     return programFilter;

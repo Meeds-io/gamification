@@ -120,9 +120,19 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
     if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
       query.setParameter("spacesIds", filter.getSpacesIds());
     }
-    if (filter.getOwnerId() == 0
-        && !filter.isExcludeOpen()
-        && (CollectionUtils.isNotEmpty(filter.getSpacesIds()) || !filter.isAllSpaces())) {
+    // Bind openVisibility exactly when buildPredicates emitted it, i.e. for its
+    // "Audience" branch (spaces requested, open ones not excluded) AND for its
+    // "OpenAudience" branch (no space left to filter on, not allSpaces), which
+    // emits it whatever excludeOpen says. Keying this on !excludeOpen alone left
+    // the second branch's parameter unbound, so a listing scoped to a space the
+    // caller is not a member of — computeUserSpaces empties spacesIds for them —
+    // died with "No argument for named parameter ':openVisibility'": HTTP 500 on
+    // GET /gamification/programs?spaceId=X, and an unmapped exception on the MCP
+    // list_campaigns path (EXO-90210).
+    boolean predicateHasOpenVisibility = filter.getOwnerId() == 0
+        && (CollectionUtils.isNotEmpty(filter.getSpacesIds()) ? (filter.isOpenAudienceOnly() || !filter.isExcludeOpen())
+                                                              : !filter.isAllSpaces());
+    if (predicateHasOpenVisibility) {
       query.setParameter("openVisibility", EntityVisibility.OPEN);
     }
     EntityFilterType type = filter.getType();
@@ -178,7 +188,14 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
         predicates.add("(:ownerId member of d.owners OR d.audienceId in (:spacesIds))");
       }
     } else if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
-      if (filter.isExcludeOpen()) {
+      if (filter.isOpenAudienceOnly()) {
+        // What the requested spaces show to everyone: their open programs and
+        // nothing else. A caller who shares none of those spaces gets this
+        // instead of the audience-free predicate below, which would have
+        // answered a question about one space with every platform-wide program.
+        suffixes.add("AudienceOpenOnly");
+        predicates.add("(d.audienceId in (:spacesIds) AND d.visibility = :openVisibility)");
+      } else if (filter.isExcludeOpen()) {
         suffixes.add("AudienceExcludeOpen");
         predicates.add("d.audienceId in (:spacesIds)");
       } else {

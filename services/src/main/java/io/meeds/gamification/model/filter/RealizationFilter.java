@@ -60,6 +60,49 @@ public class RealizationFilter implements Serializable {
 
   private List<Long>              spacesIds;
 
+  /**
+   * When true, only the realizations that are announcements (a manual quest
+   * declared by a user, i.e. a realization carrying a creator) are returned.
+   * The discrimination is a query predicate, so it applies BEFORE pagination.
+   */
+  private boolean                 announcementsOnly;
+
+  /**
+   * Preserves the all-arguments signature this filter had before
+   * {@link #announcementsOnly} was added: the flag defaults to false (every
+   * realization kind). {@code RealizationRest} is its only caller in this
+   * repository — it is kept for consumers compiled against the previous
+   * signature, since this model is part of the addon's published API.
+   */
+  public RealizationFilter(List<String> earnerIds, // NOSONAR
+                           String sortField,
+                           boolean sortDescending,
+                           boolean owned,
+                           Date fromDate,
+                           Date toDate,
+                           List<RealizationStatus> statuses,
+                           IdentityType earnerType,
+                           List<Long> programIds,
+                           List<Long> ruleIds,
+                           List<Long> reviewerIds,
+                           boolean allPrograms,
+                           List<Long> spacesIds) {
+    this(earnerIds,
+         sortField,
+         sortDescending,
+         owned,
+         fromDate,
+         toDate,
+         statuses,
+         earnerType,
+         programIds,
+         ruleIds,
+         reviewerIds,
+         allPrograms,
+         spacesIds,
+         false);
+  }
+
   public RealizationFilter(List<String> earnerIds, // NOSONAR
                            String sortField,
                            boolean sortDescending,
@@ -94,7 +137,8 @@ public class RealizationFilter implements Serializable {
                                  ruleIds == null ? null : new ArrayList<>(ruleIds),
                                  reviewerIds == null ? null : new ArrayList<>(reviewerIds),
                                  allPrograms,
-                                 spacesIds);
+                                 spacesIds,
+                                 announcementsOnly);
   }
 
 }

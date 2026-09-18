@@ -21,6 +21,7 @@ package io.meeds.gamification.mcp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +31,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -64,8 +66,10 @@ import io.meeds.gamification.model.ProfileReputation;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RealizationDTO;
 import io.meeds.gamification.model.RuleDTO;
+import io.meeds.gamification.model.RulePublication;
 import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.ProgramFilter;
+import io.meeds.gamification.model.filter.RealizationFilter;
 import io.meeds.gamification.model.filter.RuleFilter;
 import io.meeds.gamification.rest.model.RealizationValidityContext;
 import io.meeds.gamification.service.AnnouncementService;
@@ -202,6 +206,13 @@ public class GamificationMcpToolTest {
     List<CampaignModel> campaigns = tool.listCampaigns(null, 3L, 5, 0);
 
     assertEquals(1, campaigns.size());
+    ArgumentCaptor<ProgramFilter> captor = ArgumentCaptor.forClass(ProgramFilter.class);
+    verify(programService).getPrograms(captor.capture(), eq(USERNAME), anyInt(), anyInt());
+    assertEquals(List.of(3L), captor.getValue().getSpacesIds());
+    // Same as ProgramRest#getPrograms: without excludeOpen the DAO answers "the
+    // campaigns of space 3" with every platform-wide campaign too.
+    assertTrue("a space-scoped listing must exclude the platform-wide campaigns",
+               captor.getValue().isExcludeOpen());
   }
 
   @Test
@@ -246,7 +257,7 @@ public class GamificationMcpToolTest {
   @Test
   public void getCampaignDeniedFails() throws Exception {
     when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenThrow(new IllegalAccessException("denied"));
-    assertThrows(IllegalStateException.class, () -> tool.getCampaign(CAMPAIGN_ID));
+    assertThrows(IllegalAccessException.class, () -> tool.getCampaign(CAMPAIGN_ID));
   }
 
   // --- list_quests ---------------------------------------------------------
@@ -357,6 +368,22 @@ public class GamificationMcpToolTest {
   // --- list_my_realizations ------------------------------------------------
 
   @Test
+  public void listMyRealizationsIsSortedNewestFirst() throws Exception {
+    stubCurrentUserIdentity();
+    when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt()))
+        .thenReturn(List.of(realization(1L, QUEST_ID, program(CAMPAIGN_ID))));
+
+    tool.listMyRealizations(null, null, null, null, null, null);
+
+    ArgumentCaptor<RealizationFilter> captor = ArgumentCaptor.forClass(RealizationFilter.class);
+    verify(realizationService).getRealizationsByFilter(captor.capture(), eq(currentIdentity), anyInt(), anyInt());
+    // The DAO's default sort field is 'date' and its direction is ascending
+    // unless asked otherwise, so without this the tool would answer with the
+    // OLDEST realizations.
+    assertTrue(captor.getValue().isSortDescending());
+  }
+
+  @Test
   public void listMyRealizationsDefaultsToSelf() throws Exception {
     stubCurrentUserIdentity();
     when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt()))
@@ -423,14 +450,21 @@ public class GamificationMcpToolTest {
   }
 
   @Test
-  public void listMyAnnouncementsExcludesNonAnnouncements() throws Exception {
+  public void listMyAnnouncementsSelectsAnnouncementsInTheQuery() throws Exception {
     stubCurrentUserIdentity();
-    // second realization has a null creator (automatic award) and must be filtered out
+    // The page returned by the DAO is already announcements-only: the tool must
+    // NOT discriminate after pagination (that made a full page of automatic
+    // awards answer "you have no announcement"), so it asks the query to.
     when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt()))
-        .thenReturn(List.of(announcementRealization(1L, QUEST_ID), realization(2L, QUEST_ID, program(CAMPAIGN_ID))));
+        .thenReturn(List.of(announcementRealization(1L, QUEST_ID)));
 
     List<AnnouncementModel> announcements = tool.listMyAnnouncements(null, null, null);
 
+    ArgumentCaptor<RealizationFilter> captor = ArgumentCaptor.forClass(RealizationFilter.class);
+    verify(realizationService).getRealizationsByFilter(captor.capture(), eq(currentIdentity), anyInt(), anyInt());
+    assertTrue("list_my_announcements must select announcements in the query, not after pagination",
+               captor.getValue().isAnnouncementsOnly());
+    assertTrue("list_my_announcements is documented 'most recent first'", captor.getValue().isSortDescending());
     assertEquals(1, announcements.size());
     assertEquals(1L, announcements.get(0).getId());
     assertEquals(QUEST_ID, announcements.get(0).getQuestId().longValue());
@@ -468,40 +502,56 @@ public class GamificationMcpToolTest {
     when(programService.canAddProgram(USERNAME)).thenReturn(true);
     when(programService.createProgram(any(ProgramDTO.class), eq(currentIdentity))).thenReturn(program(CAMPAIGN_ID));
 
-    CampaignModel campaign = tool.createCampaign("New campaign", "desc", null, 500L, true, null);
+    CampaignModel campaign = tool.createCampaign("New campaign", "desc", null, 500L);
 
     assertNotNull(campaign);
     assertEquals(CAMPAIGN_ID, campaign.getId());
-    verify(programService).createProgram(any(ProgramDTO.class), eq(currentIdentity));
+    ArgumentCaptor<ProgramDTO> captor = ArgumentCaptor.forClass(ProgramDTO.class);
+    verify(programService).createProgram(captor.capture(), eq(currentIdentity));
+    // No space id: a platform-wide campaign, which IS what "open" means.
+    assertTrue(captor.getValue().isOpen());
+    assertEquals(0, captor.getValue().getSpaceId());
+    assertNull("the visibility is the service's to compute, never the caller's", captor.getValue().getVisibility());
   }
 
   @Test
-  public void createCampaignInSpace() throws Exception {
+  public void createCampaignInSpaceStaysInThatSpace() throws Exception {
     stubCurrentUserIdentity();
     when(programService.canAddProgram(USERNAME, 3L)).thenReturn(true);
     when(programService.createProgram(any(ProgramDTO.class), eq(currentIdentity))).thenReturn(program(CAMPAIGN_ID));
 
-    CampaignModel campaign = tool.createCampaign("New campaign", null, 3L, null, null, "RESTRICTED");
+    CampaignModel campaign = tool.createCampaign("New campaign", null, 3L, null);
 
     assertNotNull(campaign);
-    verify(programService).createProgram(any(ProgramDTO.class), eq(currentIdentity));
+    ArgumentCaptor<ProgramDTO> captor = ArgumentCaptor.forClass(ProgramDTO.class);
+    verify(programService).createProgram(captor.capture(), eq(currentIdentity));
+    assertEquals(3L, captor.getValue().getSpaceId());
+    // GAMIFICATION_DOMAIN.DESCRIPTION is NOT NULL: an omitted description must
+    // be empty, not null, or the insert fails on commit.
+    assertEquals("", captor.getValue().getDescription());
+    // An OPEN program has its audience reset to 0 by ProgramServiceImpl and its
+    // visibility computed from space 0 (i.e. OPEN): a space-scoped campaign
+    // must therefore never be created open, or it becomes a platform-wide,
+    // everyone-visible campaign.
+    assertFalse("a campaign targeting a space must not be created open", captor.getValue().isOpen());
+    assertNull("the visibility is the service's to compute, never the caller's", captor.getValue().getVisibility());
   }
 
   @Test
   public void createCampaignNotAdminFails() {
     when(programService.canAddProgram(USERNAME)).thenReturn(false);
-    assertThrows(IllegalStateException.class, () -> tool.createCampaign("New campaign", null, null, null, null, null));
+    assertThrows(IllegalAccessException.class, () -> tool.createCampaign("New campaign", null, null, null));
+  }
+
+  @Test
+  public void createCampaignNotSpaceManagerFails() {
+    when(programService.canAddProgram(USERNAME, 3L)).thenReturn(false);
+    assertThrows(IllegalAccessException.class, () -> tool.createCampaign("New campaign", null, 3L, null));
   }
 
   @Test
   public void createCampaignBlankTitleFails() {
-    assertThrows(IllegalArgumentException.class, () -> tool.createCampaign("  ", null, null, null, null, null));
-  }
-
-  @Test
-  public void createCampaignInvalidVisibilityFails() {
-    when(programService.canAddProgram(USERNAME)).thenReturn(true);
-    assertThrows(IllegalArgumentException.class, () -> tool.createCampaign("Title", null, null, null, null, "SECRET"));
+    assertThrows(IllegalArgumentException.class, () -> tool.createCampaign("  ", null, null, null));
   }
 
   @Test
@@ -510,7 +560,7 @@ public class GamificationMcpToolTest {
     when(programService.canAddProgram(USERNAME)).thenReturn(true);
     when(programService.createProgram(any(ProgramDTO.class), eq(currentIdentity)))
         .thenThrow(new IllegalAccessException("denied"));
-    assertThrows(IllegalStateException.class, () -> tool.createCampaign("Title", null, null, null, null, null));
+    assertThrows(IllegalAccessException.class, () -> tool.createCampaign("Title", null, null, null));
   }
 
   // --- create_quest --------------------------------------------------------
@@ -522,42 +572,71 @@ public class GamificationMcpToolTest {
     when(programService.isProgramOwner(CAMPAIGN_ID, USERNAME)).thenReturn(true);
     when(ruleService.createRule(any(RuleDTO.class), eq(USERNAME))).thenReturn(rule(QUEST_ID, program));
 
-    QuestModel quest = tool.createQuest(CAMPAIGN_ID, "Do it", "desc", 50, null, "2026-01-01", "2026-03-01", "DAILY");
+    QuestModel quest = tool.createQuest(CAMPAIGN_ID, "Do it", "desc", 50, null, "2026-01-01", "2026-03-01", "DAILY", null);
 
     assertNotNull(quest);
     assertEquals(QUEST_ID, quest.getId());
-    verify(ruleService).createRule(any(RuleDTO.class), eq(USERNAME));
+    ArgumentCaptor<RuleDTO> captor = ArgumentCaptor.forClass(RuleDTO.class);
+    verify(ruleService).createRule(captor.capture(), eq(USERNAME));
+    // RuleServiceImpl only computes the quest's activity for a RulePublication;
+    // with a plain RuleDTO the activity is left to the lazy back-fill of the
+    // first read, which always creates it hidden and empty.
+    assertTrue("create_quest must pass a RulePublication so the publication is a decision, not a side effect",
+               captor.getValue() instanceof RulePublication);
+    assertFalse("an EVA-created quest is not published unless asked", ((RulePublication) captor.getValue()).isPublish());
+  }
+
+  @Test
+  public void createQuestPublishesWhenAsked() throws Exception {
+    ProgramDTO program = program(CAMPAIGN_ID);
+    when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program);
+    when(programService.isProgramOwner(CAMPAIGN_ID, USERNAME)).thenReturn(true);
+    when(ruleService.createRule(any(RuleDTO.class), eq(USERNAME))).thenReturn(rule(QUEST_ID, program));
+
+    tool.createQuest(CAMPAIGN_ID, "Do it", "desc", 50, null, null, null, null, true);
+
+    ArgumentCaptor<RuleDTO> captor = ArgumentCaptor.forClass(RuleDTO.class);
+    verify(ruleService).createRule(captor.capture(), eq(USERNAME));
+    RulePublication publication = (RulePublication) captor.getValue();
+    assertTrue(publication.isPublish());
+    // RuleServiceImpl#setActivityParams blanks the activity title/body when the
+    // message is blank, so a published quest needs one.
+    assertEquals("desc", publication.getMessage());
   }
 
   @Test
   public void createQuestAutomaticRejected() throws Exception {
     when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program(CAMPAIGN_ID));
     assertThrows(IllegalStateException.class,
-                 () -> tool.createQuest(CAMPAIGN_ID, "Do it", null, 50, "AUTOMATIC", null, null, null));
+                 () -> tool.createQuest(CAMPAIGN_ID, "Do it", null, 50, "AUTOMATIC", null, null, null, null));
   }
 
   @Test
   public void createQuestNotOwnerFails() throws Exception {
     when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program(CAMPAIGN_ID));
     when(programService.isProgramOwner(CAMPAIGN_ID, USERNAME)).thenReturn(false);
-    when(programService.canEditProgram(CAMPAIGN_ID, USERNAME)).thenReturn(false);
-    assertThrows(IllegalStateException.class, () -> tool.createQuest(CAMPAIGN_ID, "Do it", null, 50, null, null, null, null));
+    assertThrows(IllegalAccessException.class,
+                 () -> tool.createQuest(CAMPAIGN_ID, "Do it", null, 50, null, null, null, null, null));
   }
 
   @Test
   public void createQuestBlankTitleFails() {
-    assertThrows(IllegalArgumentException.class, () -> tool.createQuest(CAMPAIGN_ID, " ", null, 50, null, null, null, null));
+    assertThrows(IllegalArgumentException.class,
+                 () -> tool.createQuest(CAMPAIGN_ID, " ", null, 50, null, null, null, null, null));
   }
 
   @Test
   public void createQuestInvalidScoreFails() {
-    assertThrows(IllegalArgumentException.class, () -> tool.createQuest(CAMPAIGN_ID, "Do it", null, 0, null, null, null, null));
-    assertThrows(IllegalArgumentException.class, () -> tool.createQuest(CAMPAIGN_ID, "Do it", null, null, null, null, null, null));
+    assertThrows(IllegalArgumentException.class,
+                 () -> tool.createQuest(CAMPAIGN_ID, "Do it", null, 0, null, null, null, null, null));
+    assertThrows(IllegalArgumentException.class,
+                 () -> tool.createQuest(CAMPAIGN_ID, "Do it", null, null, null, null, null, null, null));
   }
 
   @Test
   public void createQuestMissingCampaignFails() {
-    assertThrows(IllegalArgumentException.class, () -> tool.createQuest(null, "Do it", null, 50, null, null, null, null));
+    assertThrows(IllegalArgumentException.class,
+                 () -> tool.createQuest(null, "Do it", null, 50, null, null, null, null, null));
   }
 
   @Test
@@ -566,7 +645,8 @@ public class GamificationMcpToolTest {
     when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program);
     when(programService.isProgramOwner(CAMPAIGN_ID, USERNAME)).thenReturn(true);
     when(ruleService.createRule(any(RuleDTO.class), eq(USERNAME))).thenThrow(new IllegalAccessException("denied"));
-    assertThrows(IllegalStateException.class, () -> tool.createQuest(CAMPAIGN_ID, "Do it", null, 50, null, null, null, null));
+    assertThrows(IllegalAccessException.class,
+                 () -> tool.createQuest(CAMPAIGN_ID, "Do it", null, 50, null, null, null, null, null));
   }
 
   // --- update_quest --------------------------------------------------------
@@ -593,7 +673,8 @@ public class GamificationMcpToolTest {
     RuleDTO existing = rule(QUEST_ID, program(CAMPAIGN_ID));
     when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(existing);
     when(ruleService.canEditRule(existing, USERNAME)).thenReturn(false);
-    assertThrows(IllegalStateException.class, () -> tool.updateQuest(QUEST_ID, "Renamed", null, null, null, null, null, null));
+    assertThrows(IllegalAccessException.class,
+                 () -> tool.updateQuest(QUEST_ID, "Renamed", null, null, null, null, null, null));
   }
 
   @Test
@@ -607,7 +688,8 @@ public class GamificationMcpToolTest {
     when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(existing);
     when(ruleService.canEditRule(existing, USERNAME)).thenReturn(true);
     when(ruleService.updateRule(any(RuleDTO.class), eq(USERNAME))).thenThrow(new IllegalAccessException("denied"));
-    assertThrows(IllegalStateException.class, () -> tool.updateQuest(QUEST_ID, "Renamed", null, null, null, null, null, null));
+    assertThrows(IllegalAccessException.class,
+                 () -> tool.updateQuest(QUEST_ID, "Renamed", null, null, null, null, null, null));
   }
 
   // --- delete_quest --------------------------------------------------------
@@ -625,7 +707,7 @@ public class GamificationMcpToolTest {
   @Test
   public void deleteQuestNotOwnerFails() throws Exception {
     doThrow(new IllegalAccessException("denied")).when(ruleService).deleteRuleById(QUEST_ID, USERNAME);
-    assertThrows(IllegalStateException.class, () -> tool.deleteQuest(QUEST_ID));
+    assertThrows(IllegalAccessException.class, () -> tool.deleteQuest(QUEST_ID));
   }
 
   @Test
@@ -648,6 +730,7 @@ public class GamificationMcpToolTest {
     created.setChallengeId(QUEST_ID);
     created.setComment("done");
     created.setActivityId(100L);
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(rule(QUEST_ID, program(CAMPAIGN_ID)));
     when(announcementService.createAnnouncement(any(Announcement.class), any(), eq(USERNAME))).thenReturn(created);
 
     AnnouncementModel result = tool.announceQuest(QUEST_ID, "done");
@@ -659,22 +742,51 @@ public class GamificationMcpToolTest {
 
   @Test
   public void announceQuestNotChallengeFails() throws Exception {
+    RuleDTO automatic = rule(QUEST_ID, program(CAMPAIGN_ID));
+    automatic.setType(EntityType.AUTOMATIC);
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(automatic);
+
+    IllegalStateException e = assertThrows(IllegalStateException.class, () -> tool.announceQuest(QUEST_ID, "done"));
+
+    assertTrue(e.getMessage().contains("not a manual challenge"));
+  }
+
+  @Test
+  public void announceQuestKeepsAnUnrelatedIllegalStateMessage() throws Exception {
+    // The previous catch labelled ANY IllegalStateException "not a manual
+    // challenge", hiding the real cause of every other failure.
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(rule(QUEST_ID, program(CAMPAIGN_ID)));
     when(announcementService.createAnnouncement(any(Announcement.class), any(), eq(USERNAME)))
-        .thenThrow(new IllegalStateException("Rule with id '7' isn't a challenge"));
-    assertThrows(IllegalStateException.class, () -> tool.announceQuest(QUEST_ID, "done"));
+        .thenThrow(new IllegalStateException("endDate must be greater than startDate"));
+
+    IllegalStateException e = assertThrows(IllegalStateException.class, () -> tool.announceQuest(QUEST_ID, "done"));
+
+    assertEquals("endDate must be greater than startDate", e.getMessage());
   }
 
   @Test
   public void announceQuestNotAllowedFails() throws Exception {
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(rule(QUEST_ID, program(CAMPAIGN_ID)));
     when(announcementService.createAnnouncement(any(Announcement.class), any(), eq(USERNAME)))
         .thenThrow(new IllegalAccessException("not allowed"));
-    assertThrows(IllegalStateException.class, () -> tool.announceQuest(QUEST_ID, "done"));
+    assertThrows(IllegalAccessException.class, () -> tool.announceQuest(QUEST_ID, "done"));
   }
 
   @Test
   public void announceQuestNotFoundFails() throws Exception {
-    when(announcementService.createAnnouncement(any(Announcement.class), any(), eq(USERNAME)))
-        .thenThrow(new ObjectNotFoundException("missing"));
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenThrow(new ObjectNotFoundException("missing"));
+    assertThrows(ObjectNotFoundException.class, () -> tool.announceQuest(QUEST_ID, "done"));
+  }
+
+  /**
+   * Covers a guard, not a live path: RuleServiceImpl throws
+   * ObjectNotFoundException rather than returning null, so this pins the tool's
+   * behaviour if that service contract ever changes — announceQuest reads the
+   * rule's type and would otherwise NPE.
+   */
+  @Test
+  public void announceQuestUnknownQuestFails() throws Exception {
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(null);
     assertThrows(ObjectNotFoundException.class, () -> tool.announceQuest(QUEST_ID, "done"));
   }
 
@@ -698,7 +810,7 @@ public class GamificationMcpToolTest {
   @Test
   public void cancelQuestAnnouncementNotAuthorFails() throws Exception {
     doThrow(new IllegalAccessException("denied")).when(announcementService).deleteAnnouncement(42L, USERNAME);
-    assertThrows(IllegalStateException.class, () -> tool.cancelQuestAnnouncement(42L));
+    assertThrows(IllegalAccessException.class, () -> tool.cancelQuestAnnouncement(42L));
   }
 
   @Test
@@ -767,25 +879,30 @@ public class GamificationMcpToolTest {
   // --- get_my_campaigns ----------------------------------------------------
 
   @Test
-  public void getMyCampaignsUnionsMemberAndOwned() throws Exception {
-    stubCurrentUserIdentity();
-    when(programService.getMemberProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(5L, 6L));
-    when(programService.getOwnedProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(6L, 7L));
+  public void getMyCampaignsDelegatesTheUnionToTheService() throws Exception {
+    // The member/owned union, its deduplication, its single pagination and the
+    // exclusion of soft-deleted programs are ProgramService's job (see
+    // ProgramServiceTest#testGetMyProgramIds*): the tool must not rebuild them,
+    // and must not resolve a deleted program by id — that broadcasts a
+    // program-deleted event on a read path and then fails, which is what used
+    // to shorten the page.
+    when(programService.getMyProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(5L, 6L, 7L));
     when(programService.getProgramById(5L, USERNAME)).thenReturn(program(5L));
     when(programService.getProgramById(6L, USERNAME)).thenReturn(program(6L));
     when(programService.getProgramById(7L, USERNAME)).thenReturn(program(7L));
 
-    List<CampaignModel> campaigns = tool.getMyCampaigns(null, null);
+    List<CampaignModel> campaigns = tool.getMyCampaigns(3, 0);
 
-    // 5, 6, 7 deduped (6 appears in both lists)
     assertEquals(3, campaigns.size());
+    assertEquals(List.of(5L, 6L, 7L), campaigns.stream().map(CampaignModel::getId).toList());
+    verify(programService).getMyProgramIds(USERNAME, 0, 3);
+    verify(programService, never()).getMemberProgramIds(any(), anyInt(), anyInt());
+    verify(programService, never()).getOwnedProgramIds(any(), anyInt(), anyInt());
   }
 
   @Test
   public void getMyCampaignsSkipsUnviewable() throws Exception {
-    stubCurrentUserIdentity();
-    when(programService.getMemberProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(5L, 8L));
-    when(programService.getOwnedProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of());
+    when(programService.getMyProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(5L, 8L));
     when(programService.getProgramById(5L, USERNAME)).thenReturn(program(5L));
     when(programService.getProgramById(8L, USERNAME)).thenThrow(new IllegalAccessException("denied"));
 
@@ -797,38 +914,11 @@ public class GamificationMcpToolTest {
 
   @Test
   public void getMyCampaignsEmpty() {
-    stubCurrentUserIdentity();
-    when(programService.getMemberProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(null);
-    when(programService.getOwnedProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(null);
+    when(programService.getMyProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(null);
 
     List<CampaignModel> campaigns = tool.getMyCampaigns(null, null);
 
     assertTrue(campaigns.isEmpty());
-  }
-
-  @Test
-  public void getMyCampaignsPaginatesOnceOverTheDedupedUnion() throws Exception {
-    stubCurrentUserIdentity();
-    // member ∪ owned = {1,2,3,4,5,6} (4 is in both), 6 distinct ids >= limit.
-    when(programService.getMemberProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(1L, 2L, 3L, 4L));
-    when(programService.getOwnedProgramIds(eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(4L, 5L, 6L));
-    for (long id = 1; id <= 6; id++) {
-      when(programService.getProgramById(id, USERNAME)).thenReturn(program(id));
-    }
-
-    // First page: exactly `limit` items, no duplicates, sorted union order.
-    List<CampaignModel> page1 = tool.getMyCampaigns(3, 0);
-    assertEquals("must return exactly limit items over the union, not up to 2x limit", 3, page1.size());
-    List<Long> page1Ids = page1.stream().map(CampaignModel::getId).toList();
-    assertEquals(List.of(1L, 2L, 3L), page1Ids);
-    assertEquals("no duplicates", 3, page1Ids.stream().distinct().count());
-
-    // Second page: offset applied ONCE over the union, no overlap with page 1.
-    List<CampaignModel> page2 = tool.getMyCampaigns(3, 3);
-    List<Long> page2Ids = page2.stream().map(CampaignModel::getId).toList();
-    assertEquals(3, page2.size());
-    assertEquals(List.of(4L, 5L, 6L), page2Ids);
-    assertTrue("pages must not overlap", page1Ids.stream().noneMatch(page2Ids::contains));
   }
 
   // --- list_joinable_campaigns ---------------------------------------------

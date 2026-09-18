@@ -164,7 +164,7 @@
             "enum": [
               "WEEK",
               "MONTH",
-              "YEAR",
+              "QUARTER",
               "ALL"
             ],
             "description": "Period to rank over (default WEEK)."
@@ -193,7 +193,7 @@
     {
       "name": "list_my_realizations",
       "title": "List my realizations",
-      "description": "List the current user's own realizations (gamification achievements: points earned by completing quests). Optionally filter by date range (yyyy-MM-dd), campaign and/or status. This only ever returns the current user's own achievements.",
+      "description": "List the current user's own realizations (gamification achievements: points earned by completing quests), most recent first. Optionally filter by date range (yyyy-MM-dd), campaign and/or status. This only ever returns the current user's own achievements.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -415,7 +415,7 @@
     {
       "name": "create_campaign",
       "title": "Create a campaign",
-      "description": "Create a new campaign (a gamification program that groups quests). Requires rewarding-admin rights, or manager rights on the target space when a space id is given. Resolve a space id with get_my_spaces.",
+      "description": "Create a new campaign (a gamification program that groups quests). With a space id the campaign belongs to that space and requires manager rights on it; without one it is platform-wide and requires rewarding-admin rights. Resolve a space id with get_my_spaces.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -429,23 +429,11 @@
           },
           "space_id": {
             "type": "integer",
-            "description": "Optional space id the campaign belongs to. When set, the campaign defaults to RESTRICTED visibility for that space."
+            "description": "Optional space id the campaign belongs to: the campaign is then scoped to that space's audience and requires manager rights on it. Without a space id the campaign is platform-wide and visible to everyone. The visibility (OPEN or RESTRICTED) is computed from the space by the platform and cannot be chosen."
           },
           "budget": {
             "type": "integer",
             "description": "Optional total points budget for the campaign."
-          },
-          "open": {
-            "type": "boolean",
-            "description": "Whether the campaign is open to everyone who can see it (default true)."
-          },
-          "visibility": {
-            "type": "string",
-            "enum": [
-              "OPEN",
-              "RESTRICTED"
-            ],
-            "description": "Visibility of the campaign. Defaults to RESTRICTED when a space id is given, otherwise OPEN."
           }
         },
         "required": [
@@ -463,7 +451,7 @@
     {
       "name": "create_quest",
       "title": "Create a quest",
-      "description": "Create a new quest (a gamification action/rule) inside a campaign. Only MANUAL quests (challenges the user announces) are supported here; AUTOMATIC (event-triggered) quests are rejected. Requires being an owner of the campaign. Resolve the campaign id with list_campaigns.",
+      "description": "Create a new quest (a gamification action/rule) inside a campaign. Only MANUAL quests (challenges the user announces) are supported here; AUTOMATIC (event-triggered) quests are rejected. Requires being an owner of the campaign. Resolve the campaign id with list_campaigns. Pass publish=true to also announce it in the campaign's space stream (on your own stream when the campaign is platform-wide).",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -509,6 +497,10 @@
               "MONTHLY"
             ],
             "description": "Optional recurrence of the quest (default NONE)."
+          },
+          "publish": {
+            "type": "boolean",
+            "description": "Whether to announce the new quest in the campaign's space stream, or on your own stream when the campaign is platform-wide (default false). When false the quest exists but no activity is published."
           }
         },
         "required": [

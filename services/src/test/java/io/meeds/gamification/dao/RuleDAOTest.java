@@ -104,6 +104,16 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertTrue(ruleDAO.findHighestBudgetProgramIdsBySpacesIds(new ArrayList<>(Collections.singleton(10L)), 0, 3).isEmpty());
     assertEquals(secondDomain.getId(),
                  ruleDAO.findHighestBudgetProgramIdsBySpacesIds(new ArrayList<>(Collections.singleton(1L)), 0, 3).get(0));
+
+    // A non-positive limit means "no limit", and an offset past the end means
+    // "nothing": the paging branch all five budget queries now share, which no
+    // assertion held while each of them carried its own copy of it.
+    List<Long> allByBudget = ruleDAO.findHighestBudgetProgramIds(0, 3);
+    assertEquals(3, allByBudget.size());
+    assertEquals(allByBudget, ruleDAO.findHighestBudgetProgramIds(0, 0));
+    assertEquals(allByBudget, ruleDAO.findHighestBudgetProgramIds(0, -1));
+    assertEquals(allByBudget.subList(1, 3), ruleDAO.findHighestBudgetProgramIds(1, 0));
+    assertTrue(ruleDAO.findHighestBudgetProgramIds(99, 3).isEmpty());
   }
 
   @Test
