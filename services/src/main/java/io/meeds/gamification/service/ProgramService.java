@@ -102,6 +102,21 @@ public interface ProgramService {
   List<Long> getMemberProgramIds(String username, int offset, int limit);
 
   /**
+   * Retrieves the ids of the programs the user is a member of <b>or</b> owns,
+   * as one deduplicated, ascending-id ordered list paginated <b>once</b> over
+   * the union. Soft-deleted programs are excluded, so the caller never has to
+   * resolve a deleted program by id (which broadcasts a program-deleted event
+   * and fails).
+   *
+   * @param  username user name
+   * @param  offset   start index for fetch, over the union
+   * @param  limit    limit to fetch, over the union; a value &lt;= 0 returns
+   *                    the whole union
+   * @return          {@link List} of program ids the user is member of or owns
+   */
+  List<Long> getMyProgramIds(String username, int offset, int limit);
+
+  /**
    * @param offset start index for fetch
    * @param limit limit to fetch
    * @return {@link List} of {@link ProgramDTO} id of programs publically

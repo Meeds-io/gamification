@@ -402,19 +402,38 @@ public class RuleServiceImpl implements RuleService {
             && ruleFilter.getLocale() != null);
   }
 
+  /**
+   * Narrows a filter to what the user may see, as
+   * {@code ProgramServiceImpl#computeUserSpaces} does for programs: a listing
+   * scoped to spaces the caller shares none of is narrowed to those spaces'
+   * <b>open</b> content ({@code RuleFilter#isOpenAudienceOnly()}), which is
+   * nothing at all for a restricted space.
+   */
   @SuppressWarnings("unchecked")
   private RuleFilter computeUserSpaces(RuleFilter ruleFilter, String username) {
     ruleFilter = ruleFilter.clone();
+    // Read after the clone, so the branch below hands back the clone's own copy
+    // and not the caller's list.
+    List<Long> requestedSpaceIds = ruleFilter.getSpaceIds();
     if (Utils.isRewardingManager(username)) {
       ruleFilter.setAllSpaces(CollectionUtils.isEmpty(ruleFilter.getSpaceIds()));
       return ruleFilter;
     }
-    List<Long> memberSpacesIds = spaceService.getMemberSpacesIds(username, 0, -1)
-                                             .stream()
-                                             .map(Long::parseLong)
-                                             .toList();
-    if (CollectionUtils.isNotEmpty(ruleFilter.getSpaceIds())) {
-      memberSpacesIds = (List<Long>) CollectionUtils.intersection(memberSpacesIds, ruleFilter.getSpaceIds());
+    // An anonymous caller is a member of no space.
+    List<Long> memberSpacesIds = StringUtils.isBlank(username) ? Collections.emptyList()
+                                                               : spaceService.getMemberSpacesIds(username, 0, -1)
+                                                                             .stream()
+                                                                             .map(Long::parseLong)
+                                                                             .toList();
+    if (CollectionUtils.isNotEmpty(requestedSpaceIds)) {
+      memberSpacesIds = (List<Long>) CollectionUtils.intersection(memberSpacesIds, requestedSpaceIds);
+      if (CollectionUtils.isEmpty(memberSpacesIds)) {
+        // Shares none of the requested spaces: what those spaces show to
+        // everyone, and nothing else.
+        ruleFilter.setSpaceIds(requestedSpaceIds);
+        ruleFilter.setOpenAudienceOnly(true);
+        return ruleFilter;
+      }
     }
     ruleFilter.setSpaceIds(memberSpacesIds);
     return ruleFilter;

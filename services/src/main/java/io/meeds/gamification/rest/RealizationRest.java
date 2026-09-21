@@ -192,7 +192,8 @@ public class RealizationRest implements ResourceContainer {
                                                      ruleIds,
                                                      reviewerIds,
                                                      allPrograms,
-                                                     spaceIds);
+                                                     spaceIds,
+                                                     false);
 
     boolean isXlsx = StringUtils.isNotBlank(returnType) && returnType.equals("xlsx");
     if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXlsx) {

@@ -16,6 +16,9 @@
  */
 package io.meeds.gamification.dao;
 
+import java.util.Collections;
+import java.util.HashSet;
+
 import org.junit.Test;
 
 import io.meeds.gamification.constant.EntityFilterType;
@@ -26,6 +29,50 @@ import io.meeds.gamification.test.AbstractServiceTest;
 
 @SuppressWarnings("deprecation")
 public class ProgramDAOTest extends AbstractServiceTest {
+
+  /**
+   * Every filter shape must produce a query the engine will run: a predicate
+   * that references a named parameter the binding does not set is refused at
+   * run time, and that is exactly how a space-scoped listing by a non-member
+   * became an HTTP 500. This sweep is the pin for the pairing between
+   * buildPredicates and addQueryFilterParameters — add a branch on one side
+   * without the other and it fails here, naming the shape.
+   */
+  @Test
+  public void testEveryFilterShapeIsRunnable() {
+    newDomain(EntityType.MANUAL, "shape-sweep-program", true, new HashSet<>());
+    restartTransaction();
+
+    for (boolean withSpaces : new boolean[] { false, true }) {
+      for (boolean excludeOpen : new boolean[] { false, true }) {
+        for (boolean openAudienceOnly : new boolean[] { false, true }) {
+          for (boolean allSpaces : new boolean[] { false, true }) {
+            for (long ownerId : new long[] { 0L, 1L }) {
+              ProgramFilter filter = new ProgramFilter();
+              filter.setStatus(EntityStatusType.ALL);
+              filter.setSpacesIds(withSpaces ? Collections.singletonList(1L) : null);
+              filter.setExcludeOpen(excludeOpen);
+              filter.setOpenAudienceOnly(openAudienceOnly);
+              filter.setAllSpaces(allSpaces);
+              filter.setOwnerId(ownerId);
+              String shape = String.format("spaces=%s excludeOpen=%s openAudienceOnly=%s allSpaces=%s ownerId=%s",
+                                           withSpaces,
+                                           excludeOpen,
+                                           openAudienceOnly,
+                                           allSpaces,
+                                           ownerId);
+              try {
+                programDAO.getProgramIdsByFilter(0, 10, filter);
+                programDAO.countPrograms(filter);
+              } catch (Exception e) { // NOSONAR: the shape is what the failure must name
+                fail("filter shape refused by the engine [" + shape + "]: " + e.getMessage());
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   @Test
   public void testGetProgramsByFilter() {

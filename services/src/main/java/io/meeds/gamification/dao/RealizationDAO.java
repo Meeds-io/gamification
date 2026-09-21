@@ -438,6 +438,14 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
       suffixes.add("Status");
       predicates.add("g.status IN (:" + STATUSES_PARAM_NAME + ")");
     }
+    if (filter.isAnnouncementsOnly()) {
+      // An announcement is a realization declared by a user on a manual quest,
+      // hence the only realization kind carrying a creator (AnnouncementStorage
+      // is the sole writer of that column). Kept as a predicate so the
+      // discrimination happens before pagination.
+      suffixes.add("AnnouncementsOnly");
+      predicates.add("g.creator IS NOT NULL");
+    }
 
     suffixes.add(getSortField(filter));
     suffixes.add(filter.isSortDescending() ? "Descending" : "Ascending");

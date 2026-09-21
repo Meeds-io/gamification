@@ -121,8 +121,27 @@ public class ProgramStorage {
     return ProgramMapper.fromEntity(ruleDAO, programDAO.getProgramByTitle(programTitle));
   }
 
+  /**
+   * The budget-ordered listing. Its five branches mirror
+   * {@code ProgramDAO#buildPredicates}' audience predicates one for one, but
+   * through {@code Rule.getHighestBudget…} <b>named queries</b>: a narrowing
+   * expressed only in those predicates does not reach this path. Two
+   * differences are deliberate and the caller should know them: it is
+   * <b>enabled-only</b> (every query hard-codes {@code domain.isEnabled = true}
+   * and {@code rule.isEnabled = true}), so it honours neither
+   * {@code ProgramFilter#getStatus()} nor
+   * {@code ProgramFilter#isIncludeDeleted()}; and it returns only programs that
+   * <b>have at least one rule</b>, since the queries select through
+   * {@code Rule}. {@code countPrograms} goes through the predicates, so a count
+   * taken beside this list can legitimately differ.
+   */
   public List<Long> findHighestBudgetProgramIdsBySpacesIds(ProgramFilter programFilter, int offset, int limit) {
     if (CollectionUtils.isNotEmpty(programFilter.getSpacesIds())) {
+      if (programFilter.isOpenAudienceOnly()) {
+        return ruleDAO.findHighestBudgetOpenProgramIdsBySpacesIds(programFilter.getSpacesIds(), offset, limit);
+      } else if (programFilter.isExcludeOpen()) {
+        return ruleDAO.findHighestBudgetProgramIdsByStrictSpacesIds(programFilter.getSpacesIds(), offset, limit);
+      }
       return ruleDAO.findHighestBudgetProgramIdsBySpacesIds(programFilter.getSpacesIds(), offset, limit);
     } else if (programFilter.isAllSpaces()) {
       return ruleDAO.findHighestBudgetProgramIds(offset, limit);
