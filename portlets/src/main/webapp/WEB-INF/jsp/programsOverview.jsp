@@ -41,7 +41,7 @@
     </script>
 <% } else { %>
     <script type="text/javascript">
-      require(['SHARED/vue'], () => Vue.prototype.$updateApplicationVisibility(false, document.querySelector('#programsOverview')));
+      require(['SHARED/vue', 'SHARED/commonVueComponents'], () => Vue.prototype.$updateApplicationVisibility(false, document.querySelector('#programsOverview')));
     </script>
 <% } %>
   </div>
