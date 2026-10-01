@@ -317,7 +317,6 @@ input.custom-file.b-form-file {
 
 h5.mt-0 {
     color: #4d5466;
-    font-family: Helvetica, arial, sans-serif;
     line-height: 20px;
     font-size: 1.5em;
     text-transform: uppercase;
