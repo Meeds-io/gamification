@@ -39,7 +39,6 @@ export default {
     color: #fff;
       text-decoration: none;
          font-size: 14px!important;
-         font-family: Helvetica, arial, sans-serif;
 }
  .UIToolbarContainerDark a.dropdown-toggle:hover, .UIToolbarContainerDark a.dropdown-toggle:focus{
       text-decoration: none;
@@ -58,12 +57,10 @@ export default {
     .dropdown-toggle:after {
         display: none;
         font-size: 14px !important;
-        font-family: Helvetica, arial, sans-serif;
     }
 
     .dropdown-menu {
         font-size: 14px !important;
-        font-family: Helvetica, arial, sans-serif;
     }
     .uiBreadcumbsNavigationPortlet .uiBreadcumbsNavigations .navItemSelected {
         font-size: 14px;
@@ -84,7 +81,6 @@ export default {
     }
     .uiCompanyNavigationPortlet .uiCompanyNavigations > li > a, h5 {
         box-sizing: content-box;
-        font-family: Helvetica, arial, sans-serif;
     }
     a:hover{
         text-decoration: none;
