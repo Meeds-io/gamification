@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             outlined
             v-on="on"
             @click="backToConnectorList">
-            <v-icon size="18" class="text-color mx-2">fa-arrow-left</v-icon>
+            <v-icon size="18" class="mx-2">fa-arrow-left</v-icon>
             <span class="text-title">{{ title }}</span>
           </v-btn>
         </template>

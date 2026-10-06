@@ -45,7 +45,7 @@
                   min-width="auto"
                   class="px-1 suggestions-btn-action connexion-refuse-btn"
                   @click="ignoredSuggestionSpace(spaceSuggestion)">
-                  <v-icon color="grey lighten-1" size="20">mdi-close-circle</v-icon>
+                  <v-icon size="20">mdi-close-circle</v-icon>
                 </a>
               </v-btn-toggle>
             </v-list-item-action>
