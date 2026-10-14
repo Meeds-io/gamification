@@ -67,6 +67,8 @@ public class RuleSpaceScopeResolverTest {
   /**
    * A quest of an open campaign belongs to no space. Mutant: the open check
    * removed.
+   * Unreachable through storage today (ProgramMapper keeps no space on an open
+   * program); pins the guard should that change.
    */
   @Test
   public void questOfAnOpenCampaignBelongsToNoSpace() {
