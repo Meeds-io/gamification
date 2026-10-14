@@ -71,7 +71,9 @@ public class GamificationToolDefinitionSpaceScopeTest {
 
   private static final Set<String>           UNSCOPED_READS   = Set.of("get_my_gamification_score",
                                                                        "list_my_realizations",
-                                                                       "list_my_announcements");
+                                                                       "list_my_announcements",
+                                                                       "get_my_points_total",
+                                                                       "get_my_score_breakdown");
 
   private static final Set<String>           SPACE_WRITES     = Set.of("create_campaign");
 
@@ -98,6 +100,8 @@ public class GamificationToolDefinitionSpaceScopeTest {
                                                                            Set.of("campaign_id"),
                                                                            "get_my_gamification_score",
                                                                            Set.of("campaign_id"),
+                                                                           "get_my_points_total",
+                                                                           Set.of("campaign_id"),
                                                                            "list_my_realizations",
                                                                            Set.of("campaign_id"),
                                                                            "list_my_announcements",
@@ -112,8 +116,6 @@ public class GamificationToolDefinitionSpaceScopeTest {
    */
   private static final Set<String>           UNDECLARED       = Set.of("get_my_campaigns",
                                                                        "list_joinable_campaigns",
-                                                                       "get_my_points_total",
-                                                                       "get_my_score_breakdown",
                                                                        "check_quest_availability");
 
   /**
@@ -144,7 +146,7 @@ public class GamificationToolDefinitionSpaceScopeTest {
     expected.addAll(PROGRAM_WRITES.keySet());
     expected.add("cancel_quest_announcement");
     assertEquals(expected, declared.keySet());
-    assertEquals(15, declared.size());
+    assertEquals(17, declared.size());
     declared.forEach((name, tool) -> {
       boolean write = SPACE_WRITES.contains(name) || RULE_WRITES.containsKey(name) || PROGRAM_WRITES.containsKey(name)
           || "cancel_quest_announcement".equals(name);
@@ -173,9 +175,9 @@ public class GamificationToolDefinitionSpaceScopeTest {
   }
 
   /**
-   * The five tools that are personal, platform-wide or run as another person
-   * than the asker stay undeclared, so a call limited to a space never runs
-   * them; in particular {@code check_quest_availability}, whose answer under a
+   * The three tools that are personal across spaces, platform-wide or run as
+   * another person than the asker stay undeclared, so a call limited to a space
+   * never runs them; in particular {@code check_quest_availability}, whose answer under a
    * scope would be the asker's while the announce runs as the worker. Mutant: a
    * space scope declared on one of them.
    */
@@ -321,6 +323,10 @@ public class GamificationToolDefinitionSpaceScopeTest {
     assertAllowed(service, shipped, "get_my_gamification_score", "{}", read);
     assertAllowed(service, shipped, "list_my_realizations", "{\"status\":\"ACCEPTED\",\"limit\":5}", read);
     assertAllowed(service, shipped, "list_my_announcements", "{\"limit\":5,\"offset\":0}", read);
+    assertAllowed(service, shipped, "get_my_points_total", "{\"from_date\":\"2026-01-01\",\"to_date\":\"2026-02-01\"}", read);
+    assertAllowed(service, shipped, "get_my_score_breakdown", "{\"period\":\"MONTH\"}", read);
+    assertRefused(service, shipped, "get_my_points_total", "{\"campaign_id\":6}", read);
+    assertRefused(service, shipped, "get_my_score_breakdown", "{\"campaign_id\":6}", read);
     assertRefused(service, shipped, "get_my_gamification_score", "{\"campaign_id\":6}", read);
     assertRefused(service, shipped, "list_my_realizations", "{\"campaign_id\":6}", read);
     assertRefused(service, shipped, "list_my_announcements", "{\"quest_id\":8}", read);
