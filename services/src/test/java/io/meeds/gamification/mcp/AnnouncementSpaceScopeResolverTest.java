@@ -67,7 +67,7 @@ public class AnnouncementSpaceScopeResolverTest {
     when(announcementService.getAnnouncementById(3L)).thenReturn(announcement(7L));
     when(ruleService.findRuleById(7L)).thenReturn(rule(program(12L, false, false), false));
 
-    assertEquals("announcement", resolver.getName());
+    assertEquals("quest_announcement", resolver.getName());
     assertEquals(Long.valueOf(12L), resolver.spaceOf("3"));
   }
 
