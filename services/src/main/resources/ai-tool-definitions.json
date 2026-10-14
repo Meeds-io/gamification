@@ -646,7 +646,7 @@
       "name": "cancel_quest_announcement",
       "space_scope": { "object_arg": "announcement_id", "resolver": "announcement" },
       "title": "Cancel a quest announcement",
-      "description": "Cancel (delete) a quest announcement previously made by the current user. Only the author can cancel their own announcement. Find the announcement id with list_my_announcements.",
+      "description": "Cancel (delete) a quest announcement previously made by the current user. Only the author can cancel their own announcement. Use the announcement_id returned by announce_quest.",
       "input_schema": {
         "type": "object",
         "properties": {

@@ -191,6 +191,25 @@ public class GamificationToolDefinitionSpaceScopeTest {
   }
 
   /**
+   * {@code cancel_quest_announcement} points to the announcement id that
+   * {@code announce_quest} returns, which the announce result carries as
+   * {@code announcement_id}, and not to {@code list_my_announcements}. Mutant:
+   * the description pointing back to {@code list_my_announcements}.
+   */
+  @Test
+  public void cancelAnnouncementDescriptionPointsToTheAnnounceResult() {
+    String description = McpToolUtils.parseToolDefinitions(definitionsUrl())
+                                     .stream()
+                                     .filter(tool -> "cancel_quest_announcement".equals(tool.getName()))
+                                     .findFirst()
+                                     .orElseThrow()
+                                     .getDescription();
+
+    assertTrue(description, description.contains("announcement_id returned by announce_quest"));
+    assertFalse(description, description.contains("list_my_announcements"));
+  }
+
+  /**
    * A read accepts exactly the tool's schema properties, but for the
    * reference-shaped ones deliberately left out; a write accepts only schema
    * properties, and leaves out only reference-shaped ones. Mutants: an
