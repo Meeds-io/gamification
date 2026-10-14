@@ -346,6 +346,7 @@
     },
     {
       "name": "get_my_points_total",
+      "space_scope": { "unscoped": true, "allowed_args": ["from_date", "to_date"] },
       "title": "Get my points total",
       "description": "Get the total gamification points the current user earned within a date range, optionally within one campaign (program). This returns a single total number; for the per-event breakdown use list_my_realizations, and for the per-campaign split use get_my_score_breakdown. Always scoped to the current user.",
       "input_schema": {
@@ -374,6 +375,7 @@
     },
     {
       "name": "get_my_score_breakdown",
+      "space_scope": { "unscoped": true, "allowed_args": ["period"] },
       "title": "Get my score breakdown",
       "description": "Break down the current user's gamification points by campaign (program) for a period. Returns one entry per campaign with the campaign label and the points earned there. Always scoped to the current user.",
       "input_schema": {
