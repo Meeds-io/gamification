@@ -38,6 +38,7 @@ import io.meeds.gamification.connector.RuleIndexingServiceConnectorTest;
 import io.meeds.gamification.mcp.AnnouncementSpaceScopeResolverTest;
 import io.meeds.gamification.mcp.GamificationMcpToolKernelTest;
 import io.meeds.gamification.mcp.GamificationMcpToolTest;
+import io.meeds.gamification.mcp.GamificationToolDefinitionSpaceScopeTest;
 import io.meeds.gamification.mcp.ProgramSpaceScopeResolverTest;
 import io.meeds.gamification.mcp.RuleSpaceScopeResolverTest;
 import io.meeds.gamification.dao.BadgeDAOTest;
@@ -134,7 +135,8 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     CollaborativeActivityDeclarationTest.class,
     ProgramSpaceScopeResolverTest.class,
     RuleSpaceScopeResolverTest.class,
-    AnnouncementSpaceScopeResolverTest.class
+    AnnouncementSpaceScopeResolverTest.class,
+    GamificationToolDefinitionSpaceScopeTest.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
