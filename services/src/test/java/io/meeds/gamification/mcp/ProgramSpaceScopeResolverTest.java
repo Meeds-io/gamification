@@ -66,6 +66,8 @@ public class ProgramSpaceScopeResolverTest {
   /**
    * An open campaign gives no space even when it carries one: its audience is
    * everyone. Mutant: the open check removed.
+   * Unreachable through storage today (ProgramMapper keeps no space on an open
+   * program); pins the guard should that change.
    */
   @Test
   public void openCampaignBelongsToNoSpace() {
