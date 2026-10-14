@@ -60,7 +60,7 @@ public class RuleSpaceScopeResolverTest {
   public void questOfASpaceCampaignBelongsToItsSpace() {
     when(ruleService.findRuleById(7L)).thenReturn(rule(program(12L, false, false), false));
 
-    assertEquals("rule", resolver.getName());
+    assertEquals("quest", resolver.getName());
     assertEquals(Long.valueOf(12L), resolver.spaceOf("7"));
   }
 
