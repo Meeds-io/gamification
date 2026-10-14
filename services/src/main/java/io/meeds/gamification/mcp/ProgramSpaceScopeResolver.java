@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ProgramSpaceScopeResolver implements SpaceScopeResolver {
 
   /** The name the campaign tools' {@code space_scope.resolver} gives. */
-  public static final String NAME = "program";
+  public static final String NAME = "campaign";
 
   /** The service the program is read from, without access check. */
   private final ProgramService programService;

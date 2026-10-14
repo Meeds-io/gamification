@@ -35,7 +35,7 @@
     },
     {
       "name": "get_campaign",
-      "space_scope": { "object_arg": "campaign_id", "resolver": "program" },
+      "space_scope": { "object_arg": "campaign_id", "resolver": "campaign" },
       "title": "Get a campaign",
       "description": "Get a single campaign (gamification program) by its id. Resolve the campaign id with list_campaigns.",
       "input_schema": {
@@ -59,7 +59,7 @@
     },
     {
       "name": "list_quests",
-      "space_scope": { "object_arg": "campaign_id", "resolver": "program", "allowed_args": ["type", "status", "limit", "offset"] },
+      "space_scope": { "object_arg": "campaign_id", "resolver": "campaign", "allowed_args": ["type", "status", "limit", "offset"] },
       "title": "List quests",
       "description": "List the quests (gamification actions/rules) of a campaign, or across all accessible campaigns when no campaign id is given. A quest is an action inside a campaign that awards points; MANUAL quests are challenges the user announces, AUTOMATIC quests are triggered by platform events. Resolve a campaign id with list_campaigns.",
       "input_schema": {
@@ -106,7 +106,7 @@
     },
     {
       "name": "get_quest",
-      "space_scope": { "object_arg": "quest_id", "resolver": "rule" },
+      "space_scope": { "object_arg": "quest_id", "resolver": "quest" },
       "title": "Get a quest",
       "description": "Get a single quest (a gamification action/rule) by its id, including its prerequisite quests. Resolve the quest id with list_quests.",
       "input_schema": {
@@ -274,7 +274,7 @@
     },
     {
       "name": "list_campaign_badges",
-      "space_scope": { "object_arg": "campaign_id", "resolver": "program" },
+      "space_scope": { "object_arg": "campaign_id", "resolver": "campaign" },
       "title": "List campaign badges",
       "description": "List the badges (levels) of a campaign and the total number of campaign points needed to reach each one. A campaign is a gamification program; a badge is a milestone level a user unlocks by accumulating enough points in that campaign. Badges are returned ordered by the score needed (level 1 = easiest). Resolve the campaign id with list_campaigns.",
       "input_schema": {
@@ -462,7 +462,7 @@
     },
     {
       "name": "create_quest",
-      "space_scope": { "object_arg": "campaign_id", "resolver": "program", "allowed_args": ["title", "description", "score", "type", "start_date", "end_date", "recurrence", "publish"], "space_admin": true },
+      "space_scope": { "object_arg": "campaign_id", "resolver": "campaign", "allowed_args": ["title", "description", "score", "type", "start_date", "end_date", "recurrence", "publish"], "space_admin": true },
       "title": "Create a quest",
       "description": "Create a new quest (a gamification action/rule) inside a campaign. Only MANUAL quests (challenges the user announces) are supported here; AUTOMATIC (event-triggered) quests are rejected. Requires being an owner of the campaign. Resolve the campaign id with list_campaigns. Pass publish=true to also announce it in the campaign's space stream (on your own stream when the campaign is platform-wide).",
       "input_schema": {
@@ -532,7 +532,7 @@
     },
     {
       "name": "update_quest",
-      "space_scope": { "object_arg": "quest_id", "resolver": "rule", "allowed_args": ["title", "description", "score", "start_date", "end_date", "enabled", "recurrence"], "space_admin": true },
+      "space_scope": { "object_arg": "quest_id", "resolver": "quest", "allowed_args": ["title", "description", "score", "start_date", "end_date", "enabled", "recurrence"], "space_admin": true },
       "title": "Update a quest",
       "description": "Update an existing quest (a gamification action/rule). Only the fields you pass are changed; the others keep their current values. Requires being an owner of the quest's campaign. Resolve the quest id with list_quests.",
       "input_schema": {
@@ -592,7 +592,7 @@
     },
     {
       "name": "delete_quest",
-      "space_scope": { "object_arg": "quest_id", "resolver": "rule", "space_admin": true },
+      "space_scope": { "object_arg": "quest_id", "resolver": "quest", "space_admin": true },
       "title": "Delete a quest",
       "description": "Delete a quest (a gamification action/rule). Requires being an owner of the quest's campaign. Resolve the quest id with list_quests.",
       "input_schema": {
@@ -617,7 +617,7 @@
     },
     {
       "name": "announce_quest",
-      "space_scope": { "object_arg": "quest_id", "resolver": "rule", "allowed_args": ["comment"] },
+      "space_scope": { "object_arg": "quest_id", "resolver": "quest", "allowed_args": ["comment"] },
       "title": "Announce a quest",
       "description": "Announce, as the current user, that they completed a manual quest (a challenge), so it can be reviewed and rewarded with points. Only MANUAL quests can be announced. Resolve the quest id with list_quests.",
       "input_schema": {
@@ -646,7 +646,7 @@
     },
     {
       "name": "cancel_quest_announcement",
-      "space_scope": { "object_arg": "announcement_id", "resolver": "announcement" },
+      "space_scope": { "object_arg": "announcement_id", "resolver": "quest_announcement" },
       "title": "Cancel a quest announcement",
       "description": "Cancel (delete) a quest announcement previously made by the current user. Only the author can cancel their own announcement. Use the announcement_id returned by announce_quest.",
       "input_schema": {
