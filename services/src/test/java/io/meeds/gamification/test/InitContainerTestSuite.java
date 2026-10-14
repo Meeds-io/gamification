@@ -35,8 +35,11 @@ import io.meeds.gamification.analytics.AnalyticsRealizationListenerTest;
 import io.meeds.gamification.analytics.AnalyticsRuleListenerTest;
 import io.meeds.gamification.analytics.CollaborativeActivityDeclarationTest;
 import io.meeds.gamification.connector.RuleIndexingServiceConnectorTest;
+import io.meeds.gamification.mcp.AnnouncementSpaceScopeResolverTest;
 import io.meeds.gamification.mcp.GamificationMcpToolKernelTest;
 import io.meeds.gamification.mcp.GamificationMcpToolTest;
+import io.meeds.gamification.mcp.ProgramSpaceScopeResolverTest;
+import io.meeds.gamification.mcp.RuleSpaceScopeResolverTest;
 import io.meeds.gamification.dao.BadgeDAOTest;
 import io.meeds.gamification.dao.ConnectorAccountDAOTest;
 import io.meeds.gamification.dao.ProgramDAOTest;
@@ -128,7 +131,10 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     ProgramImportServiceTest.class,
     GamificationMcpToolTest.class,
     GamificationMcpToolKernelTest.class,
-    CollaborativeActivityDeclarationTest.class
+    CollaborativeActivityDeclarationTest.class,
+    ProgramSpaceScopeResolverTest.class,
+    RuleSpaceScopeResolverTest.class,
+    AnnouncementSpaceScopeResolverTest.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
