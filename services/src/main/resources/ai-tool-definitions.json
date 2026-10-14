@@ -400,7 +400,6 @@
     },
     {
       "name": "check_quest_availability",
-      "space_scope": { "object_arg": "quest_id", "resolver": "rule" },
       "title": "Check quest availability",
       "description": "Check whether the current user can complete/announce a given quest (a gamification action/rule) right now, and explain why not (for example: already announced and pending, outside the quest's dates, current recurrence window already used, a prerequisite quest not yet completed, or the user is not in the audience). Use this as the pre-check before calling announce_quest. Resolve the quest id with list_quests. Always evaluated for the current user. The answer carries the quest's page address in url: link the quest with that url, never with an address you build.",
       "input_schema": {
