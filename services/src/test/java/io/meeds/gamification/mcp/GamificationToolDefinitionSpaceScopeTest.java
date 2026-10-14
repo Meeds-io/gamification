@@ -39,9 +39,6 @@ import java.util.stream.Stream;
 import org.junit.Test;
 import org.springframework.beans.factory.ObjectProvider;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.meeds.mcp.server.constant.Origin;
 import io.meeds.mcp.server.model.ActingIdentity;
 import io.meeds.mcp.server.model.SimpleToolDefinition;
@@ -50,6 +47,8 @@ import io.meeds.mcp.server.model.SpaceScopeRefusedException;
 import io.meeds.mcp.server.plugin.SpaceScopeResolver;
 import io.meeds.mcp.server.service.McpToolSpaceScopeService;
 import io.meeds.mcp.server.util.McpToolUtils;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Pins the {@code space_scope} declarations this module ships: which gamification
@@ -116,7 +115,7 @@ public class GamificationToolDefinitionSpaceScopeTest {
    */
   private static final Pattern               REFERENCE_SHAPED = Pattern.compile("(^|_)ids?$|[a-z]Ids?$|(?i:folder|space)");
 
-  private static final ObjectMapper          MAPPER           = new ObjectMapper();
+  private static final JsonMapper            MAPPER           = JsonMapper.builder().build();
 
   /**
    * Exactly the expected tools declare a space scope, each of the expected
@@ -382,14 +381,8 @@ public class GamificationToolDefinitionSpaceScopeTest {
    * Reads the property names of a tool's input schema.
    */
   private static Set<String> properties(SimpleToolDefinition tool) {
-    try {
-      JsonNode properties = MAPPER.readTree(tool.getInputSchema()).path("properties");
-      Set<String> names = new LinkedHashSet<>();
-      properties.fieldNames().forEachRemaining(names::add);
-      return names;
-    } catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
+    JsonNode properties = MAPPER.readTree(tool.getInputSchema()).path("properties");
+    return new LinkedHashSet<>(properties.propertyNames());
   }
 
   /**
