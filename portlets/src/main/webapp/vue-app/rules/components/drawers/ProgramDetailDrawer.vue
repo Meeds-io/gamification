@@ -44,7 +44,7 @@
     <template v-if="program && drawer" #content>
       <v-card
         v-if="expanded"
-        class="d-flex flex-column light-grey-background-color pa-4"
+        class="d-flex flex-column page-background pa-4"
         min-height="100%"
         flat>
         <v-card
