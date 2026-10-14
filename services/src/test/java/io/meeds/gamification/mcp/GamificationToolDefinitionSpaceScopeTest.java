@@ -67,7 +67,7 @@ public class GamificationToolDefinitionSpaceScopeTest {
                                                                       "list_campaign_badges",
                                                                       "campaign_id");
 
-  private static final Map<String, String>   RULE_READS       = Map.of("get_quest", "quest_id", "check_quest_availability", "quest_id");
+  private static final Map<String, String>   RULE_READS       = Map.of("get_quest", "quest_id");
 
   private static final Set<String>           UNSCOPED_READS   = Set.of("get_my_gamification_score",
                                                                        "list_my_realizations",
@@ -103,11 +103,18 @@ public class GamificationToolDefinitionSpaceScopeTest {
                                                                            "list_my_announcements",
                                                                            Set.of("quest_id"));
 
-  /** The tools that stay undeclared: personal, platform-wide or leaving the space. */
+  /**
+   * The tools that stay undeclared: personal across spaces, platform-wide, or
+   * running as a different person than the call's asker.
+   * {@code check_quest_availability} is undeclared for the last reason: under
+   * a space scope, reads run as the asker while the announce that follows it
+   * runs as the worker, so the pre-check would answer for the wrong person.
+   */
   private static final Set<String>           UNDECLARED       = Set.of("get_my_campaigns",
                                                                        "list_joinable_campaigns",
                                                                        "get_my_points_total",
-                                                                       "get_my_score_breakdown");
+                                                                       "get_my_score_breakdown",
+                                                                       "check_quest_availability");
 
   /**
    * An argument shaped like a reference to a place or an object: an id or
@@ -137,7 +144,7 @@ public class GamificationToolDefinitionSpaceScopeTest {
     expected.addAll(PROGRAM_WRITES.keySet());
     expected.add("cancel_quest_announcement");
     assertEquals(expected, declared.keySet());
-    assertEquals(16, declared.size());
+    assertEquals(15, declared.size());
     declared.forEach((name, tool) -> {
       boolean write = SPACE_WRITES.contains(name) || RULE_WRITES.containsKey(name) || PROGRAM_WRITES.containsKey(name)
           || "cancel_quest_announcement".equals(name);
@@ -166,9 +173,11 @@ public class GamificationToolDefinitionSpaceScopeTest {
   }
 
   /**
-   * The four tools that are personal, platform-wide or leave the space stay
-   * undeclared, so a call limited to a space never runs them. Mutant: a space
-   * scope declared on one of them.
+   * The five tools that are personal, platform-wide or run as another person
+   * than the asker stay undeclared, so a call limited to a space never runs
+   * them; in particular {@code check_quest_availability}, whose answer under a
+   * scope would be the asker's while the announce runs as the worker. Mutant: a
+   * space scope declared on one of them.
    */
   @Test
   public void personalAndPlatformWideToolsStayUndeclared() {
@@ -272,8 +281,7 @@ public class GamificationToolDefinitionSpaceScopeTest {
     for (String[] tool : new String[][] { { "get_campaign", "campaign_id", "5", "6" },
                                           { "list_quests", "campaign_id", "5", "6" },
                                           { "list_campaign_badges", "campaign_id", "5", "6" },
-                                          { "get_quest", "quest_id", "7", "8" },
-                                          { "check_quest_availability", "quest_id", "7", "8" } }) {
+                                          { "get_quest", "quest_id", "7", "8" } }) {
       assertAllowed(service, shipped, tool[0], "{\"" + tool[1] + "\":" + tool[2] + "}", read);
       assertRefused(service, shipped, tool[0], "{\"" + tool[1] + "\":" + tool[3] + "}", read);
       assertRefused(service, shipped, tool[0], "{\"" + tool[1] + "\":9}", read);
