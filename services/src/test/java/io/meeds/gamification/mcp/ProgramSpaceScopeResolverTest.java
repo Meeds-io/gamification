@@ -59,7 +59,7 @@ public class ProgramSpaceScopeResolverTest {
   public void spaceCampaignBelongsToItsSpace() {
     when(programService.getProgramById(5L)).thenReturn(program(12L, false, false));
 
-    assertEquals("program", resolver.getName());
+    assertEquals("campaign", resolver.getName());
     assertEquals(Long.valueOf(12L), resolver.spaceOf("5"));
   }
 

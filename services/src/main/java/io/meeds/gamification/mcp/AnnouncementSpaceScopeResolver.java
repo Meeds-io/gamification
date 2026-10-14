@@ -42,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AnnouncementSpaceScopeResolver implements SpaceScopeResolver {
 
   /** The name the announcement tools' {@code space_scope.resolver} gives. */
-  public static final String NAME = "announcement";
+  public static final String NAME = "quest_announcement";
 
   /** The service the announcement is read from, without access check. */
   private final AnnouncementService announcementService;

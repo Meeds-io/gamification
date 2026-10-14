@@ -40,7 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RuleSpaceScopeResolver implements SpaceScopeResolver {
 
   /** The name the quest tools' {@code space_scope.resolver} gives. */
-  public static final String NAME = "rule";
+  public static final String NAME = "quest";
 
   /** The service the quest is read from, without access check. */
   private final RuleService ruleService;
