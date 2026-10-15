@@ -247,7 +247,7 @@
       "name": "list_my_announcements",
       "space_scope": { "unscoped": true, "allowed_args": ["limit", "offset"] },
       "title": "List my quest announcements",
-      "description": "List the current user's own quest announcements (manual challenges they announced), most recent first, each with the announcement id needed to cancel it. Optionally pass a quest id to only list announcements for that quest. This only ever returns the current user's own announcements. Use this to find the announcement_id before calling cancel_quest_announcement.",
+      "description": "List the current user's own quest announcements (manual challenges they announced), most recent first, each with the announcement id needed to cancel an announcement you made yourself. Optionally pass a quest id to only list announcements for that quest. This only ever returns the current user's own announcements. Use this to find the announcement_id of an announcement you made yourself before calling cancel_quest_announcement.",
       "input_schema": {
         "type": "object",
         "properties": {
