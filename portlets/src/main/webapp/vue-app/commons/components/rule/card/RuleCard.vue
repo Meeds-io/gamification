@@ -21,7 +21,7 @@
   <v-hover v-slot="{ hover }">
     <v-card
       :style="programStyle"
-      class="mx-auto d-flex flex-column rule-card-info mx-2 overflow-hidden"
+      class="mx-auto d-flex flex-column rule-card-info no-background mx-2 overflow-hidden"
       height="230"
       max-height="230"
       outlined
