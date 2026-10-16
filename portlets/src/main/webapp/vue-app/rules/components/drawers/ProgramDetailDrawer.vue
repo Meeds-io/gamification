@@ -48,7 +48,7 @@
         min-height="100%"
         flat>
         <v-card
-          class="singlePageApplication pa-0 flex-grow-1 d-flex flex-column fill-height white overflow-hidden"
+          class="singlePageApplication layout-drawer-application card-border-radius pa-0 flex-grow-1 d-flex flex-column fill-height overflow-hidden"
           min-height="100%"
           flat>
           <gamification-program-detail
