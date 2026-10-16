@@ -31,6 +31,7 @@
       :placeholder="$t('rule.form.label.event.placeholder')"
       :filter="filterTriggers"
       class="pa-0"
+      :menu-props="{ contentClass: 'application-menu layout-drawer' }"
       background-color="white"
       dense
       flat
