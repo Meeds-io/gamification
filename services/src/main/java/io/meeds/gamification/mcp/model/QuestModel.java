@@ -67,4 +67,10 @@ public class QuestModel {
   @JsonProperty("prerequisite_quest_ids")
   private Set<Long> prerequisiteQuestIds;
 
+  /**
+   * Absolute address of the quest's page on the engagement site, the link the
+   * agent gives the user; null when it cannot be resolved.
+   */
+  private String    url;
+
 }

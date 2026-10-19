@@ -19,6 +19,7 @@
 package io.meeds.gamification.mcp;
 
 import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +34,7 @@ import io.meeds.gamification.mcp.model.CampaignModel;
 import io.meeds.gamification.mcp.model.QuestModel;
 import io.meeds.gamification.mock.SpaceServiceMock;
 import io.meeds.gamification.test.AbstractServiceTest;
+import io.meeds.portal.permlink.service.PermanentLinkService;
 
 /**
  * Kernel/DB-backed integration test for {@link GamificationMcpTool}. Unlike the
@@ -55,7 +57,8 @@ public class GamificationMcpToolKernelTest extends AbstractServiceTest {
                                    realizationService,
                                    announcementService,
                                    badgeService,
-                                   identityManager);
+                                   identityManager,
+                                   mock(PermanentLinkService.class));
   }
 
   /**
