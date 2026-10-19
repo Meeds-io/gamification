@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -37,11 +38,13 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -71,12 +74,18 @@ import io.meeds.gamification.model.StandardLeaderboard;
 import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.model.filter.RealizationFilter;
 import io.meeds.gamification.model.filter.RuleFilter;
+import io.meeds.gamification.plugin.ProgramPermanentLinkPlugin;
+import io.meeds.gamification.plugin.RulePermanentLinkPlugin;
 import io.meeds.gamification.rest.model.RealizationValidityContext;
 import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.BadgeService;
 import io.meeds.gamification.service.ProgramService;
 import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
+import io.meeds.portal.permlink.model.PermanentLinkObject;
+import io.meeds.portal.permlink.service.PermanentLinkService;
+
+import lombok.SneakyThrows;
 
 public class GamificationMcpToolTest {
 
@@ -87,6 +96,10 @@ public class GamificationMcpToolTest {
   private static final long   CAMPAIGN_ID = 5L;
 
   private static final long   QUEST_ID    = 7L;
+
+  private static final String DOMAIN      = "https://engage.example.org";
+
+  private static final String SITE        = "dw";
 
   private ProgramService      programService;
 
@@ -100,6 +113,10 @@ public class GamificationMcpToolTest {
 
   private IdentityManager     identityManager;
 
+  private PermanentLinkService permanentLinkService;
+
+  private String              previousDomain;
+
   private Identity            currentIdentity;
 
   private GamificationMcpTool tool;
@@ -112,18 +129,52 @@ public class GamificationMcpToolTest {
     announcementService = mock(AnnouncementService.class);
     badgeService = mock(BadgeService.class);
     identityManager = mock(IdentityManager.class);
+    permanentLinkService = mock(PermanentLinkService.class);
+    stubPermanentLinks();
+    previousDomain = System.getProperty(CommonsUtils.CONFIGURED_DOMAIN_URL_KEY);
+    System.setProperty(CommonsUtils.CONFIGURED_DOMAIN_URL_KEY, DOMAIN);
     currentIdentity = new Identity(USERNAME);
     tool = new GamificationMcpTool(programService,
                                    ruleService,
                                    realizationService,
                                    announcementService,
                                    badgeService,
-                                   identityManager) {
+                                   identityManager,
+                                   permanentLinkService) {
       @Override
       public Identity getCurrentUserAclIdentity() {
         return currentIdentity;
       }
     };
+  }
+
+  /**
+   * Restores the platform domain property this test overrides.
+   */
+  @After
+  public void tearDown() {
+    if (previousDomain == null) {
+      System.clearProperty(CommonsUtils.CONFIGURED_DOMAIN_URL_KEY);
+    } else {
+      System.setProperty(CommonsUtils.CONFIGURED_DOMAIN_URL_KEY, previousDomain);
+    }
+  }
+
+  /**
+   * Answers the permanent link of a program and of a rule the way their
+   * plugins do on a site named {@link #SITE}, so that a link resolved for the
+   * wrong object type shows in the address.
+   */
+  @SneakyThrows
+  private void stubPermanentLinks() {
+    when(permanentLinkService.getLink(any())).thenAnswer(invocation -> {
+      PermanentLinkObject object = invocation.getArgument(0);
+      return switch (object.getObjectType()) {
+      case ProgramPermanentLinkPlugin.OBJECT_TYPE -> String.format(ProgramPermanentLinkPlugin.URL_FORMAT, SITE, object.getObjectId());
+      case RulePermanentLinkPlugin.OBJECT_TYPE -> String.format(RulePermanentLinkPlugin.URL_FORMAT, SITE, object.getObjectId());
+      default -> throw new ObjectNotFoundException("No plugin for " + object.getObjectType());
+      };
+    });
   }
 
   private void stubCurrentUserIdentity() {
@@ -184,6 +235,137 @@ public class GamificationMcpToolTest {
                               "ACCEPTED",
                               EntityType.MANUAL,
                               null);
+  }
+
+  // --- page addresses (EXO-91659) -----------------------------------------
+
+  /**
+   * Each listed campaign carries the absolute address of its program page, the
+   * address the agent links, instead of none.
+   */
+  @Test
+  public void listCampaignsCarriesEachCampaignPageUrl() throws Exception {
+    when(programService.getPrograms(any(), eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(program(CAMPAIGN_ID),
+                                                                                                    program(6L)));
+
+    List<CampaignModel> campaigns = tool.listCampaigns(null, null, null, null);
+
+    assertEquals(DOMAIN + "/portal/dw/contributions/programs/5", campaigns.get(0).getUrl());
+    assertEquals(DOMAIN + "/portal/dw/contributions/programs/6", campaigns.get(1).getUrl());
+  }
+
+  /**
+   * A campaign read by id carries the absolute address of its program page.
+   */
+  @Test
+  public void getCampaignCarriesItsPageUrl() throws Exception {
+    when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program(CAMPAIGN_ID));
+
+    assertEquals(DOMAIN + "/portal/dw/contributions/programs/5", tool.getCampaign(CAMPAIGN_ID).getUrl());
+  }
+
+  /**
+   * A campaign the caller may not view is refused before any address is
+   * resolved: the refusal carries no link to it.
+   */
+  @Test
+  public void getCampaignDeniedResolvesNoUrl() throws Exception {
+    when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenThrow(new IllegalAccessException("denied"));
+
+    assertThrows(IllegalAccessException.class, () -> tool.getCampaign(CAMPAIGN_ID));
+    verify(permanentLinkService, never()).getLink(any());
+  }
+
+  /**
+   * In the caller's own campaigns, one the caller can no longer view is
+   * skipped with its address: only the viewable campaign's link is resolved.
+   */
+  @Test
+  public void getMyCampaignsResolvesNoUrlForAnUnviewableCampaign() throws Exception {
+    when(programService.getMyProgramIds(USERNAME, 0, 10)).thenReturn(List.of(CAMPAIGN_ID, 6L));
+    when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program(CAMPAIGN_ID));
+    when(programService.getProgramById(6L, USERNAME)).thenThrow(new IllegalAccessException("denied"));
+
+    List<CampaignModel> campaigns = tool.getMyCampaigns(null, null);
+
+    assertEquals(1, campaigns.size());
+    assertEquals(DOMAIN + "/portal/dw/contributions/programs/5", campaigns.get(0).getUrl());
+    ArgumentCaptor<PermanentLinkObject> captor = ArgumentCaptor.forClass(PermanentLinkObject.class);
+    verify(permanentLinkService).getLink(captor.capture());
+    assertEquals(String.valueOf(CAMPAIGN_ID), captor.getValue().getObjectId());
+  }
+
+  /**
+   * A campaign whose address cannot be resolved is still listed, with no
+   * address rather than an invented one, and the listing does not fail.
+   */
+  @Test
+  public void listCampaignsWithoutResolvableLinkCarriesNoUrl() throws Exception {
+    when(programService.getPrograms(any(), eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(program(CAMPAIGN_ID)));
+    doThrow(new ObjectNotFoundException("no plugin")).when(permanentLinkService).getLink(any());
+
+    List<CampaignModel> campaigns = tool.listCampaigns(null, null, null, null);
+
+    assertEquals(1, campaigns.size());
+    assertNull(campaigns.get(0).getUrl());
+  }
+
+  /**
+   * An empty path from the permanent link service is no address: the campaign
+   * carries none rather than the bare domain.
+   */
+  @Test
+  public void listCampaignsWithEmptyLinkCarriesNoUrl() throws Exception {
+    when(programService.getPrograms(any(), eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(program(CAMPAIGN_ID)));
+    doReturn("").when(permanentLinkService).getLink(any());
+
+    assertNull(tool.listCampaigns(null, null, null, null).get(0).getUrl());
+  }
+
+  /**
+   * A campaign without an id yet designates no page: no address is asked for
+   * it.
+   */
+  @Test
+  public void campaignWithoutIdCarriesNoUrl() throws Exception {
+    when(programService.getPrograms(any(), eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(program(0L)));
+
+    assertNull(tool.listCampaigns(null, null, null, null).get(0).getUrl());
+    verify(permanentLinkService, never()).getLink(any());
+  }
+
+  /**
+   * Each listed quest carries the absolute address of its action page.
+   */
+  @Test
+  public void listQuestsCarriesEachQuestPageUrl() {
+    when(ruleService.getRules(any(), eq(USERNAME), anyInt(), anyInt())).thenReturn(List.of(rule(QUEST_ID, program(CAMPAIGN_ID))));
+
+    List<QuestModel> quests = tool.listQuests(CAMPAIGN_ID, null, null, null, null);
+
+    assertEquals(DOMAIN + "/portal/dw/contributions/actions/7", quests.get(0).getUrl());
+  }
+
+  /**
+   * A quest read by id carries the absolute address of its action page.
+   */
+  @Test
+  public void getQuestCarriesItsPageUrl() throws Exception {
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(rule(QUEST_ID, program(CAMPAIGN_ID)));
+
+    assertEquals(DOMAIN + "/portal/dw/contributions/actions/7", tool.getQuest(QUEST_ID).getUrl());
+  }
+
+  /**
+   * A quest the caller may not view is refused before any address is
+   * resolved.
+   */
+  @Test
+  public void getQuestDeniedResolvesNoUrl() throws Exception {
+    when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenThrow(new IllegalAccessException("denied"));
+
+    assertThrows(IllegalAccessException.class, () -> tool.getQuest(QUEST_ID));
+    verify(permanentLinkService, never()).getLink(any());
   }
 
   // --- list_campaigns ------------------------------------------------------
