@@ -85,6 +85,7 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     RuleTranslationPluginTest.class,
     RuleAttachmentPluginTest.class,
     ProgramTranslationPluginTest.class,
+    ProgramPermanentLinkPluginTest.class,
     RealizationServiceMockTest.class,
     ConnectorSettingServiceTest.class,
     ConnectorServiceTest.class,

@@ -50,4 +50,10 @@ public class CampaignModel {
 
   private String visibility;
 
+  /**
+   * Absolute address of the campaign's page on the engagement site, the link
+   * the agent gives the user; null when it cannot be resolved.
+   */
+  private String url;
+
 }
