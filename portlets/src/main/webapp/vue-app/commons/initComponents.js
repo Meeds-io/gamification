@@ -20,8 +20,6 @@ import WidgetEmptyRow from './components/overview/WidgetEmptyRow.vue';
 import ProgramSuggester from './components/program/ProgramSuggester.vue';
 import ProgramItem from './components/program/ProgramItem.vue';
 import RuleChip from './components/program/RuleChip.vue';
-import ProgramColorPicker from './components/program/ProgramColorPicker.vue';
-import ProgramColorPickerDrawer from './components/program/ProgramColorPickerDrawer.vue';
 import ProgramDrawer from '../rules/components/drawers/ProgramDrawer.vue';
 import ProgramImageSelector from './components/program/ProgramImageSelector.vue';
 import ProgramImageSelectorButtons from './components/program/ProgramImageSelectorButtons.vue';
@@ -67,8 +65,6 @@ const components = {
   'gamification-program-item': ProgramItem,
   'gamification-card-mask': CardMask,
 
-  'gamification-program-color-picker': ProgramColorPicker,
-  'gamification-program-color-picker-drawer': ProgramColorPickerDrawer,
   'gamification-program-drawer': ProgramDrawer,
   'gamification-program-image-selector': ProgramImageSelector,
   'gamification-program-image-selector-buttons': ProgramImageSelectorButtons,
