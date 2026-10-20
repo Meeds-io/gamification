@@ -86,11 +86,33 @@
                   <span class="d-flex align-center">
                     {{ $t('program.form.programColorTitle') }}
                   </span>
-                  <gamification-program-color-picker
-                    id="engagementCenterProgramColorPicker"
-                    v-model="program.color"
-                    :program="program"
-                    :allow-expand="expanded" />
+                  <!-- Opaque: the colors already used by the other programs are compared as stored -->
+                  <color-picker
+                    :value="program.color"
+                    :label="$t('program.form.programColorSubTitle')"
+                    swatch-size="50px"
+                    opaque
+                    @input="updateColor" />
+                  <div
+                    v-if="colorAlreadyUsed"
+                    class="d-flex align-center mt-2 text-caption text-start warning--text">
+                    <v-icon
+                      size="14"
+                      color="warning"
+                      class="me-2">
+                      fas fa-exclamation-triangle
+                    </v-icon>
+                    {{ $t('program.form.programColor.programColorAlreadyUsed') }}
+                  </div>
+                  <v-card
+                    v-if="ruleCardLoaded"
+                    class="d-flex mx-auto mt-2"
+                    max-width="280"
+                    flat>
+                    <gamification-rule-card
+                      :rule="colorExampleRule"
+                      no-validation />
+                  </v-card>
                 </div>
                 <translation-text-field
                   ref="programTitle"
@@ -321,6 +343,9 @@ export default {
     deleteAvatar: false,
     defaultAvatar: false,
     openSpace: null,
+    colorAlreadyUsed: false,
+    checkedColor: null,
+    ruleCardLoaded: false,
   }),
   computed: {
     showDrawerContent() {
@@ -349,7 +374,19 @@ export default {
       return this.disableNextButton
           || (!this.spaceId && !this.openProgram)
           || !this.programChanged
-          || this.isExternalOwner;
+          || this.isExternalOwner
+          || this.colorAlreadyUsed
+          || !!this.checkedColor;
+    },
+    // A quest of the program, shown with the program's color
+    colorExampleRule() {
+      return {
+        title: this.$t('program.form.programColor.RuleExampleTitle'),
+        description: this.$t('program.form.programColor.RuleExampleDescription'),
+        program: {...this.program},
+        enabled: true,
+        score: 1600,
+      };
     },
     disableNextButton() {
       return !this.isValidForm || !this.validDescription;
@@ -517,6 +554,10 @@ export default {
       this.programTitleTranslations = {};
       this.programDescription = this.program?.description || '';
       this.programDescriptionTranslations = {};
+      this.colorAlreadyUsed = false;
+      this.checkedColor = null;
+      // The quest card of the color example
+      window.require(['PORTLET/gamification-portlets/EngagementCenterActions'], () => this.ruleCardLoaded = true);
       this.deleteCover = false;
       this.deleteAvatar = false;
       this.defaultCover = !this.program?.id || !this.program?.coverUrl || this.program.coverUrl.includes('default');
@@ -557,6 +598,27 @@ export default {
       if (value) {
         this.$set(this.program, 'description', value);
       }
+    },
+    updateColor(color) {
+      this.$set(this.program, 'color', color);
+      this.colorAlreadyUsed = false;
+      if (!color || color.toUpperCase() === this.originalProgram?.color?.toUpperCase()) {
+        this.checkedColor = null;
+        return;
+      }
+      this.checkedColor = color;
+      this.$programService.checkColorValidity(this.program.id, color)
+        .then(canUse => {
+          // An answer about a color the user has since replaced is ignored
+          if (this.checkedColor === color) {
+            this.colorAlreadyUsed = canUse !== 'true';
+          }
+        })
+        .finally(() => {
+          if (this.checkedColor === color) {
+            this.checkedColor = null;
+          }
+        });
     },
     addCover(value) {
       this.deleteCover = false;
