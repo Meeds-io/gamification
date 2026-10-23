@@ -31,11 +31,11 @@
     <template #content>
       <v-card
         v-if="expanded"
-        class="d-flex flex-column light-grey-background-color pa-4"
+        class="d-flex flex-column page-background pa-4"
         min-height="100%"
         flat>
         <v-card
-          class="singlePageApplication pa-0 flex-grow-1 d-flex flex-column fill-height white overflow-hidden"
+          class="singlePageApplication layout-drawer card-border-radius pa-0 flex-grow-1 d-flex flex-column fill-height overflow-hidden"
           min-height="100%"
           flat>
           <gamification-rules

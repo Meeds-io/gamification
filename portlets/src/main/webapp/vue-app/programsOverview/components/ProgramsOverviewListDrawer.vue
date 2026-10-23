@@ -38,17 +38,19 @@
     <template #content>
       <v-card
         v-if="expanded"
-        class="d-flex flex-column light-grey-background-color pa-4"
+        class="d-flex flex-column page-background pa-4"
         min-height="100%"
         flat>
         <v-card
-          class="singlePageApplication pa-0 flex-grow-1 d-flex flex-column fill-height white overflow-hidden"
+          :class="programDetailDisplayed && 'layout-drawer-application' || 'layout-drawer'"
+          class="singlePageApplication card-border-radius pa-0 flex-grow-1 d-flex flex-column fill-height overflow-hidden"
           min-height="100%"
           flat>
           <gamification-programs
             :is-administrator="isAdministrator"
             :is-program-manager="isProgramManager"
-            :can-add-program="canAddProgram" />
+            :can-add-program="canAddProgram"
+            @program-detail-displayed="programDetailDisplayed = $event" />
         </v-card>
       </v-card>
       <gamification-overview-widget v-else height="auto">
@@ -70,6 +72,7 @@ export default {
     loading: false,
     spaceId: eXo.env.portal.spaceId,
     expanded: false,
+    programDetailDisplayed: false,
   }),
   computed: {
     canAddProgram() {
@@ -116,6 +119,7 @@ export default {
     },
     expandedUpdated(event) {
       this.expanded = event;
+      this.programDetailDisplayed = false;
       this.$emit('expand-updated', this.expanded);
     }
   },

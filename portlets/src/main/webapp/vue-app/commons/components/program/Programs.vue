@@ -65,6 +65,7 @@ export default {
   }),
   watch: {
     displayProgramDetail() {
+      this.$emit('program-detail-displayed', this.displayProgramDetail);
       if (this.displayProgramDetail && this.program?.id) {
         window.history.pushState('programs', this.$t('engagementCenter.label.programs'), `${this.programsLinkBasePath}/${this.program.id}`);
       } else {
