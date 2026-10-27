@@ -42,7 +42,7 @@ import jakarta.annotation.PostConstruct;
 @Component
 public class ProgramPermanentLinkPlugin implements PermanentLinkPlugin {
 
-  public static final String      OBJECT_TYPE = "program";
+  public static final String      OBJECT_TYPE = ProgramTranslationPlugin.PROGRAM_OBJECT_TYPE;
 
   public static final String      URL_FORMAT  = "/portal/%s/contributions/programs/%s";
 
