@@ -58,7 +58,7 @@
     {
       "name": "list_quests",
       "title": "List quests",
-      "description": "List the quests (gamification actions/rules) of a campaign, or across all accessible campaigns when no campaign id is given. A quest is an action inside a campaign that awards points; MANUAL quests are challenges the user announces, AUTOMATIC quests are triggered by platform events. Resolve a campaign id with list_campaigns. Each quest carries its page address in url: link a quest with that url, never with an address you build.",
+      "description": "List the quests (gamification actions/rules) of a campaign, or across all accessible campaigns when no campaign id is given. A quest is an action inside a campaign that awards points; MANUAL quests are challenges the user announces, AUTOMATIC quests are triggered by platform events. Resolve a campaign id with list_campaigns. Each quest carries its page address in url and its campaign's in campaign_url: link them with those, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -104,7 +104,7 @@
     {
       "name": "get_quest",
       "title": "Get a quest",
-      "description": "Get a single quest (a gamification action/rule) by its id, including its prerequisite quests. Resolve the quest id with list_quests. The quest carries its page address in url: link it with that url, never with an address you build.",
+      "description": "Get a single quest (a gamification action/rule) by its id, including its prerequisite quests. Resolve the quest id with list_quests. The quest carries its page address in url and its campaign's in campaign_url: link them with those, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
