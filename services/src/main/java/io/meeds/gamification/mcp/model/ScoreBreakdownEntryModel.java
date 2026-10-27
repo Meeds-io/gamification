@@ -40,4 +40,10 @@ public class ScoreBreakdownEntryModel {
 
   private long   points;
 
+  /**
+   * Absolute address of the campaign's page on the engagement site, the link
+   * the agent gives the user; null when it cannot be resolved.
+   */
+  private String url;
+
 }

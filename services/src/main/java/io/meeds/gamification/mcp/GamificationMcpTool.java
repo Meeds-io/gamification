@@ -448,7 +448,8 @@ public class GamificationMcpTool implements McpToolPlugin {
       for (PiechartLeaderboard entry : stats) {
         result.add(new ScoreBreakdownEntryModel(entry.getProgramId(),
                                                  resolveCampaignLabel(entry, currentUser),
-                                                 entry.getValue()));
+                                                 entry.getValue(),
+                                                 getUrl(ProgramPermanentLinkPlugin.OBJECT_TYPE, entry.getProgramId())));
       }
     }
     return result;
@@ -467,7 +468,11 @@ public class GamificationMcpTool implements McpToolPlugin {
     boolean isManual = rule.getType() == EntityType.MANUAL;
     boolean available = isManual && !pending && context.isValidForIdentity();
     String reason = buildAvailabilityReason(context, isManual, pending);
-    return new QuestAvailabilityModel(available, reason, rule.getId() == null ? 0 : rule.getId(), rule.getTitle());
+    return new QuestAvailabilityModel(available,
+                                      reason,
+                                      rule.getId() == null ? 0 : rule.getId(),
+                                      rule.getTitle(),
+                                      rule.getId() == null ? null : getUrl(RulePermanentLinkPlugin.OBJECT_TYPE, rule.getId()));
   }
 
   // --------------------------------------------------------------- WRITES ----
@@ -905,13 +910,17 @@ public class GamificationMcpTool implements McpToolPlugin {
   }
 
   private RealizationModel toRealization(RealizationDTO realization) {
+    long campaignId = realization.getProgram() == null ? 0 : realization.getProgram().getId();
     return new RealizationModel(realization.getId() == null ? 0 : realization.getId(),
                                 realization.getRuleId(),
                                 realization.getActionTitle(),
-                                realization.getProgram() == null ? 0 : realization.getProgram().getId(),
+                                campaignId,
                                 realization.getActionScore(),
                                 realization.getStatus(),
-                                realization.getCreatedDate());
+                                realization.getCreatedDate(),
+                                realization.getRuleId() == null ? null
+                                                                : getUrl(RulePermanentLinkPlugin.OBJECT_TYPE, realization.getRuleId()),
+                                getUrl(ProgramPermanentLinkPlugin.OBJECT_TYPE, campaignId));
   }
 
   private AnnouncementModel toAnnouncement(RealizationDTO realization) {

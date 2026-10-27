@@ -576,6 +576,9 @@ public class GamificationMcpToolTest {
     assertEquals(1, realizations.size());
     assertEquals(QUEST_ID, realizations.get(0).getQuestId().longValue());
     assertEquals("ACCEPTED", realizations.get(0).getStatus());
+    // the quest and its campaign are named with their pages, never by an id the agent turns into an address
+    assertEquals(DOMAIN + String.format(RulePermanentLinkPlugin.URL_FORMAT, SITE, QUEST_ID), realizations.get(0).getQuestUrl());
+    assertEquals(DOMAIN + String.format(ProgramPermanentLinkPlugin.URL_FORMAT, SITE, CAMPAIGN_ID), realizations.get(0).getCampaignUrl());
   }
 
   @Test
@@ -1114,6 +1117,8 @@ public class GamificationMcpToolTest {
     List<CampaignModel> campaigns = tool.listJoinableCampaigns(null, null);
 
     assertEquals(2, campaigns.size());
+    assertEquals(DOMAIN + String.format(ProgramPermanentLinkPlugin.URL_FORMAT, SITE, 5L), campaigns.get(0).getUrl());
+    assertEquals(DOMAIN + String.format(ProgramPermanentLinkPlugin.URL_FORMAT, SITE, 6L), campaigns.get(1).getUrl());
   }
 
   @Test
@@ -1181,6 +1186,7 @@ public class GamificationMcpToolTest {
     assertEquals(CAMPAIGN_ID, breakdown.get(0).getCampaignId());
     assertEquals(80L, breakdown.get(0).getPoints());
     assertEquals("Campaign 5", breakdown.get(0).getLabel());
+    assertEquals(DOMAIN + String.format(ProgramPermanentLinkPlugin.URL_FORMAT, SITE, CAMPAIGN_ID), breakdown.get(0).getUrl());
   }
 
   @Test
@@ -1215,6 +1221,7 @@ public class GamificationMcpToolTest {
     assertTrue(result.isAvailable());
     assertEquals(QUEST_ID, result.getQuestId());
     assertEquals("Quest 7", result.getQuestTitle());
+    assertEquals(DOMAIN + String.format(RulePermanentLinkPlugin.URL_FORMAT, SITE, QUEST_ID), result.getUrl());
   }
 
   @Test
