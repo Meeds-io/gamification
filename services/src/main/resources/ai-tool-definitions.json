@@ -3,7 +3,7 @@
     {
       "name": "list_campaigns",
       "title": "List campaigns",
-      "description": "List the campaigns (gamification programs) the current user can see. A campaign is a gamification program that groups quests (actions/rules) users complete to earn points. Optionally filter by a search term or by a space id (resolve a space with get_my_spaces).",
+      "description": "List the campaigns (gamification programs) the current user can see. A campaign is a gamification program that groups quests (actions/rules) users complete to earn points. Optionally filter by a search term or by a space id (resolve a space with get_my_spaces). Each campaign carries its page address in url: link a campaign with that url, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -35,7 +35,7 @@
     {
       "name": "get_campaign",
       "title": "Get a campaign",
-      "description": "Get a single campaign (gamification program) by its id. Resolve the campaign id with list_campaigns.",
+      "description": "Get a single campaign (gamification program) by its id. Resolve the campaign id with list_campaigns. The campaign carries its page address in url: link it with that url, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -58,7 +58,7 @@
     {
       "name": "list_quests",
       "title": "List quests",
-      "description": "List the quests (gamification actions/rules) of a campaign, or across all accessible campaigns when no campaign id is given. A quest is an action inside a campaign that awards points; MANUAL quests are challenges the user announces, AUTOMATIC quests are triggered by platform events. Resolve a campaign id with list_campaigns.",
+      "description": "List the quests (gamification actions/rules) of a campaign, or across all accessible campaigns when no campaign id is given. A quest is an action inside a campaign that awards points; MANUAL quests are challenges the user announces, AUTOMATIC quests are triggered by platform events. Resolve a campaign id with list_campaigns. Each quest carries its page address in url and its campaign's in campaign_url: link them with those, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -104,7 +104,7 @@
     {
       "name": "get_quest",
       "title": "Get a quest",
-      "description": "Get a single quest (a gamification action/rule) by its id, including its prerequisite quests. Resolve the quest id with list_quests.",
+      "description": "Get a single quest (a gamification action/rule) by its id, including its prerequisite quests. Resolve the quest id with list_quests. The quest carries its page address in url and its campaign's in campaign_url: link them with those, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -193,7 +193,7 @@
     {
       "name": "list_my_realizations",
       "title": "List my realizations",
-      "description": "List the current user's own realizations (gamification achievements: points earned by completing quests), most recent first. Optionally filter by date range (yyyy-MM-dd), campaign and/or status. This only ever returns the current user's own achievements.",
+      "description": "List the current user's own realizations (gamification achievements: points earned by completing quests), most recent first. Optionally filter by date range (yyyy-MM-dd), campaign and/or status. This only ever returns the current user's own achievements. Each realization carries its quest's page address in quest_url and its campaign's in campaign_url, each absent when the user can no longer view that quest or campaign: link them only with those, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -290,7 +290,7 @@
     {
       "name": "get_my_campaigns",
       "title": "Get my campaigns",
-      "description": "List the campaigns (gamification programs) the current user is a member of or owns. Use this to answer 'my campaigns' questions, as opposed to list_campaigns which lists every campaign the user can see. This is always scoped to the current user.",
+      "description": "List the campaigns (gamification programs) the current user is a member of or owns. Use this to answer 'my campaigns' questions, as opposed to list_campaigns which lists every campaign the user can see. This is always scoped to the current user. Each campaign carries its page address in url: link a campaign with that url, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -314,7 +314,7 @@
     {
       "name": "list_joinable_campaigns",
       "title": "List joinable campaigns",
-      "description": "List the open (public) campaigns (gamification programs) the current user can join and participate in to start earning points. Use this to suggest campaigns the user is not yet part of.",
+      "description": "List the open (public) campaigns (gamification programs) the current user can join and participate in to start earning points. Use this to suggest campaigns the user is not yet part of. Each campaign carries its page address in url: link a campaign with that url, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -366,7 +366,7 @@
     {
       "name": "get_my_score_breakdown",
       "title": "Get my score breakdown",
-      "description": "Break down the current user's gamification points by campaign (program) for a period. Returns one entry per campaign with the campaign label and the points earned there. Always scoped to the current user.",
+      "description": "Break down the current user's gamification points by campaign (program) for a period. Returns one entry per campaign with the campaign label and the points earned there. Always scoped to the current user. Each entry carries its campaign's page address in url; an entry for a campaign the user can no longer view has no url and no label: link a campaign only with its url, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -392,7 +392,7 @@
     {
       "name": "check_quest_availability",
       "title": "Check quest availability",
-      "description": "Check whether the current user can complete/announce a given quest (a gamification action/rule) right now, and explain why not (for example: already announced and pending, outside the quest's dates, current recurrence window already used, a prerequisite quest not yet completed, or the user is not in the audience). Use this as the pre-check before calling announce_quest. Resolve the quest id with list_quests. Always evaluated for the current user.",
+      "description": "Check whether the current user can complete/announce a given quest (a gamification action/rule) right now, and explain why not (for example: already announced and pending, outside the quest's dates, current recurrence window already used, a prerequisite quest not yet completed, or the user is not in the audience). Use this as the pre-check before calling announce_quest. Resolve the quest id with list_quests. Always evaluated for the current user. The answer carries the quest's page address in url: link the quest with that url, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {

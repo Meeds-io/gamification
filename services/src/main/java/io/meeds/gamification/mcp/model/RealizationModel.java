@@ -52,4 +52,19 @@ public class RealizationModel {
   @JsonProperty("created_date")
   private String createdDate;
 
+  /**
+   * Absolute address of the quest's page on the engagement site, the link the
+   * agent gives the user; null when it cannot be resolved or the user may no
+   * longer view the quest.
+   */
+  @JsonProperty("quest_url")
+  private String questUrl;
+
+  /**
+   * Absolute address of the campaign's page on the engagement site; null when
+   * it cannot be resolved or the user may no longer view the campaign.
+   */
+  @JsonProperty("campaign_url")
+  private String campaignUrl;
+
 }

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +35,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 
@@ -67,6 +71,8 @@ import io.meeds.gamification.model.filter.LeaderboardFilter;
 import io.meeds.gamification.model.filter.ProgramFilter;
 import io.meeds.gamification.model.filter.RealizationFilter;
 import io.meeds.gamification.model.filter.RuleFilter;
+import io.meeds.gamification.plugin.ProgramPermanentLinkPlugin;
+import io.meeds.gamification.plugin.RulePermanentLinkPlugin;
 import io.meeds.gamification.rest.model.RealizationValidityContext;
 import io.meeds.gamification.service.AnnouncementService;
 import io.meeds.gamification.service.BadgeService;
@@ -75,6 +81,8 @@ import io.meeds.gamification.service.RealizationService;
 import io.meeds.gamification.service.RuleService;
 import io.meeds.gamification.utils.Utils;
 import io.meeds.mcp.server.plugin.McpToolPlugin;
+import io.meeds.portal.permlink.model.PermanentLinkObject;
+import io.meeds.portal.permlink.service.PermanentLinkService;
 
 /**
  * MCP tools exposing the Meeds Gamification add-on to the AI agent (EVA). The
@@ -96,6 +104,8 @@ import io.meeds.mcp.server.plugin.McpToolPlugin;
 @Profile("mcp-server")
 public class GamificationMcpTool implements McpToolPlugin {
 
+  private static final Log          LOG                = ExoLogger.getLogger(GamificationMcpTool.class);
+
   private static final int          DEFAULT_LIST_LIMIT = 10;
 
   private static final int          MAX_LIST_LIMIT     = 50;
@@ -112,18 +122,34 @@ public class GamificationMcpTool implements McpToolPlugin {
 
   private final IdentityManager     identityManager;
 
+  private final PermanentLinkService permanentLinkService;
+
+  /**
+   * Builds the tool plugin over the gamification services it delegates to.
+   *
+   * @param programService campaigns
+   * @param ruleService quests
+   * @param realizationService realizations and leaderboards
+   * @param announcementService announcements
+   * @param badgeService badges
+   * @param identityManager social identities
+   * @param permanentLinkService resolves the page address of a campaign or a
+   *          quest
+   */
   public GamificationMcpTool(ProgramService programService,
                              RuleService ruleService,
                              RealizationService realizationService,
                              AnnouncementService announcementService,
                              BadgeService badgeService,
-                             IdentityManager identityManager) {
+                             IdentityManager identityManager,
+                             PermanentLinkService permanentLinkService) {
     this.programService = programService;
     this.ruleService = ruleService;
     this.realizationService = realizationService;
     this.announcementService = announcementService;
     this.badgeService = badgeService;
     this.identityManager = identityManager;
+    this.permanentLinkService = permanentLinkService;
   }
 
   // ---------------------------------------------------------------- READS ----
@@ -299,9 +325,15 @@ public class GamificationMcpTool implements McpToolPlugin {
                                                                                    getCurrentUserAclIdentity(),
                                                                                    clampOffset(offset),
                                                                                    clampLimit(limit));
+    // The user's own realizations take no program restriction, so their quest
+    // and campaign are linked only while the user may still view them, each
+    // read once for the whole page.
+    String currentUser = getCurrentUserName();
+    Map<Long, String> questUrls = new HashMap<>();
+    Map<Long, String> campaignUrls = new HashMap<>();
     List<RealizationModel> result = new ArrayList<>();
     for (RealizationDTO realization : realizations) {
-      result.add(toRealization(realization));
+      result.add(toRealization(realization, currentUser, questUrls, campaignUrls));
     }
     return result;
   }
@@ -421,9 +453,12 @@ public class GamificationMcpTool implements McpToolPlugin {
     if (stats != null) {
       String currentUser = getCurrentUserName();
       for (PiechartLeaderboard entry : stats) {
+        ProgramDTO program = getViewableProgram(entry.getProgramId(), currentUser);
+        String label = StringUtils.isNotBlank(entry.getLabel()) ? entry.getLabel() : program == null ? null : program.getTitle();
         result.add(new ScoreBreakdownEntryModel(entry.getProgramId(),
-                                                 resolveCampaignLabel(entry, currentUser),
-                                                 entry.getValue()));
+                                                 label,
+                                                 entry.getValue(),
+                                                 program == null ? null : getUrl(ProgramPermanentLinkPlugin.OBJECT_TYPE, program.getId())));
       }
     }
     return result;
@@ -442,7 +477,11 @@ public class GamificationMcpTool implements McpToolPlugin {
     boolean isManual = rule.getType() == EntityType.MANUAL;
     boolean available = isManual && !pending && context.isValidForIdentity();
     String reason = buildAvailabilityReason(context, isManual, pending);
-    return new QuestAvailabilityModel(available, reason, rule.getId() == null ? 0 : rule.getId(), rule.getTitle());
+    return new QuestAvailabilityModel(available,
+                                      reason,
+                                      rule.getId() == null ? 0 : rule.getId(),
+                                      rule.getTitle(),
+                                      rule.getId() == null ? null : getUrl(RulePermanentLinkPlugin.OBJECT_TYPE, rule.getId()));
   }
 
   // --------------------------------------------------------------- WRITES ----
@@ -744,16 +783,35 @@ public class GamificationMcpTool implements McpToolPlugin {
     return result;
   }
 
-  private String resolveCampaignLabel(PiechartLeaderboard entry, String currentUser) {
-    if (StringUtils.isNotBlank(entry.getLabel())) {
-      return entry.getLabel();
-    }
+  /**
+   * @param programId a program id read from the user's own points, which take
+   *          no ACL
+   * @param currentUser the current user
+   * @return the program when the user may still view it, else null: such a
+   *         program gets no link
+   */
+  private ProgramDTO getViewableProgram(long programId, String currentUser) {
     try {
-      ProgramDTO program = programService.getProgramById(entry.getProgramId(), currentUser);
-      return program == null ? null : program.getTitle();
+      return programService.getProgramById(programId, currentUser);
     } catch (ObjectNotFoundException | IllegalAccessException e) {
       return null;
     }
+  }
+
+  /**
+   * Applies the view check of {@link RuleService#findRuleById(long, String)}
+   * without calling it: that read also creates the activity of an enabled
+   * rule that has none, and saves the rule.
+   *
+   * @param ruleId a rule id read from the user's own realizations, which take no
+   *          ACL
+   * @param currentUser the current user
+   * @return the rule when it is not deleted and the user may still view it,
+   *         else null: such a rule gets no link
+   */
+  private RuleDTO getViewableRule(long ruleId, String currentUser) {
+    RuleDTO rule = ruleService.findRuleById(ruleId);
+    return ruleService.canViewRule(rule, currentUser) ? rule : null;
   }
 
   private String buildAvailabilityReason(RealizationValidityContext context, boolean isManual, boolean pending) {
@@ -813,6 +871,13 @@ public class GamificationMcpTool implements McpToolPlugin {
     return Long.parseLong(identity.getId());
   }
 
+  /**
+   * Maps a program the current user may view to its agent-facing view, its
+   * page address included.
+   *
+   * @param program a program already read through the current user's ACL
+   * @return the campaign view
+   */
   private CampaignModel toCampaign(ProgramDTO program) {
     return new CampaignModel(program.getId(),
                              program.getTitle(),
@@ -821,9 +886,17 @@ public class GamificationMcpTool implements McpToolPlugin {
                              program.getBudget(),
                              program.isOpen(),
                              program.isEnabled(),
-                             program.getVisibility() == null ? null : program.getVisibility().name());
+                             program.getVisibility() == null ? null : program.getVisibility().name(),
+                             getUrl(ProgramPermanentLinkPlugin.OBJECT_TYPE, program.getId()));
   }
 
+  /**
+   * Maps a rule the current user may view to its agent-facing view, its page
+   * address included.
+   *
+   * @param rule a rule already read through the current user's ACL
+   * @return the quest view
+   */
   private QuestModel toQuest(RuleDTO rule) {
     ProgramDTO program = rule.getProgram();
     return new QuestModel(rule.getId() == null ? 0 : rule.getId(),
@@ -837,17 +910,82 @@ public class GamificationMcpTool implements McpToolPlugin {
                           rule.getRecurrence() == null ? null : rule.getRecurrence().name(),
                           program == null ? 0 : program.getId(),
                           program == null ? null : program.getTitle(),
-                          rule.getPrerequisiteRuleIds());
+                          rule.getPrerequisiteRuleIds(),
+                          rule.getId() == null ? null : getUrl(RulePermanentLinkPlugin.OBJECT_TYPE, rule.getId()),
+                          program == null ? null : getUrl(ProgramPermanentLinkPlugin.OBJECT_TYPE, program.getId()));
   }
 
-  private RealizationModel toRealization(RealizationDTO realization) {
+  /**
+   * Builds the absolute page address of a gamification object, the same way
+   * the task tools build theirs: the platform's domain followed by the path its
+   * permanent link plugin resolves.
+   *
+   * @param objectType the permanent link object type
+   * @param objectId the object id
+   * @return the absolute address, or null when no address can be resolved for
+   *         that object, so that a listing never fails on a missing link
+   */
+  private String getUrl(String objectType, long objectId) {
+    if (objectId <= 0) {
+      return null;
+    }
+    try {
+      String path = permanentLinkService.getLink(new PermanentLinkObject(objectType, String.valueOf(objectId)));
+      return StringUtils.isBlank(path) ? null : CommonsUtils.getCurrentDomain() + path;
+    } catch (ObjectNotFoundException e) {
+      LOG.debug("No page address for {} {}", objectType, objectId, e);
+      return null;
+    }
+  }
+
+  /**
+   * @param realization one of the user's own realizations
+   * @param currentUser the current user
+   * @param questUrls the quest addresses already resolved for this page, by
+   *          rule id, null for a quest the user may not view
+   * @param campaignUrls the campaign addresses already resolved for this page,
+   *          by program id, null for a campaign the user may not view
+   * @return the realization, which is kept whatever the user may still view
+   */
+  private RealizationModel toRealization(RealizationDTO realization,
+                                         String currentUser,
+                                         Map<Long, String> questUrls,
+                                         Map<Long, String> campaignUrls) {
+    long campaignId = realization.getProgram() == null ? 0 : realization.getProgram().getId();
+    Long ruleId = realization.getRuleId();
     return new RealizationModel(realization.getId() == null ? 0 : realization.getId(),
-                                realization.getRuleId(),
+                                ruleId,
                                 realization.getActionTitle(),
-                                realization.getProgram() == null ? 0 : realization.getProgram().getId(),
+                                campaignId,
                                 realization.getActionScore(),
                                 realization.getStatus(),
-                                realization.getCreatedDate());
+                                realization.getCreatedDate(),
+                                ruleId == null ? null : getViewableQuestUrl(ruleId, currentUser, questUrls),
+                                getViewableCampaignUrl(campaignId, currentUser, campaignUrls));
+  }
+
+  private String getViewableQuestUrl(long ruleId, String currentUser, Map<Long, String> questUrls) {
+    if (ruleId <= 0) {
+      return null;
+    }
+    if (!questUrls.containsKey(ruleId)) {
+      questUrls.put(ruleId,
+                    getViewableRule(ruleId, currentUser) == null ? null : getUrl(RulePermanentLinkPlugin.OBJECT_TYPE, ruleId));
+    }
+    return questUrls.get(ruleId);
+  }
+
+  private String getViewableCampaignUrl(long programId, String currentUser, Map<Long, String> campaignUrls) {
+    if (programId <= 0) {
+      return null;
+    }
+    if (!campaignUrls.containsKey(programId)) {
+      campaignUrls.put(programId,
+                       getViewableProgram(programId, currentUser) == null ? null
+                                                                          : getUrl(ProgramPermanentLinkPlugin.OBJECT_TYPE,
+                                                                                   programId));
+    }
+    return campaignUrls.get(programId);
   }
 
   private AnnouncementModel toAnnouncement(RealizationDTO realization) {
