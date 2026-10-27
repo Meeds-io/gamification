@@ -1244,22 +1244,22 @@ public class GamificationMcpToolTest {
   /**
    * The points a user earned in a program they may no longer view still count,
    * but the entry gets no link to that program: the permanent link checks no
-   * access. Mutant: the url resolved whatever the program read answers.
+   * access. Nor does it get a label: the leaderboard rows carry none, and the
+   * program's title is not read. Mutant: the url resolved whatever the program
+   * read answers.
    */
   @Test
   public void getMyScoreBreakdownLinksNoProgramTheUserMayNoLongerView() throws Exception {
     stubCurrentUserIdentity();
-    PiechartLeaderboard slice = new PiechartLeaderboard(CAMPAIGN_ID, 80L);
-    slice.setLabel("Former campaign");
     when(realizationService.getLeaderboardStatsByIdentityId(eq(String.valueOf(OWN_ID)), isNull(), eq("MONTH"), any(), any()))
-        .thenReturn(List.of(slice));
+        .thenReturn(List.of(new PiechartLeaderboard(CAMPAIGN_ID, 80L)));
     when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenThrow(new IllegalAccessException("not viewable"));
 
     List<ScoreBreakdownEntryModel> breakdown = tool.getMyScoreBreakdown("MONTH");
 
     assertEquals(1, breakdown.size());
     assertEquals(80L, breakdown.get(0).getPoints());
-    assertEquals("Former campaign", breakdown.get(0).getLabel());
+    assertNull(breakdown.get(0).getLabel());
     assertNull(breakdown.get(0).getUrl());
   }
 
