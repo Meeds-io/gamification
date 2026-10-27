@@ -61,6 +61,7 @@ import io.meeds.gamification.storage.RuleStorageTest;
 import io.meeds.gamification.upgrade.ProgramVisibilityUpgradePluginTest;
 import io.meeds.gamification.utils.UtilsTest;
 import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
+import io.meeds.gamification.analytics.CollaborativeActivityDeclarationTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -126,7 +127,8 @@ import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
     ProgramVisibilityUpgradePluginTest.class,
     ProgramImportServiceTest.class,
     GamificationMcpToolTest.class,
-    GamificationMcpToolKernelTest.class
+    GamificationMcpToolKernelTest.class,
+    CollaborativeActivityDeclarationTest.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {

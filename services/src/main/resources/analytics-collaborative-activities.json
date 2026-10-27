@@ -1,0 +1,15 @@
+{
+  "modules": ["gamification"],
+  "excludedActivityTypes": [
+    "gamificationRuleActivity",
+    "challenges-announcement",
+    "gamificationActionAnnouncement"
+  ],
+  "labels": {
+    "notCounted": [
+      "gamification.collaborativeActivity.help.notCounted.rule",
+      "gamification.collaborativeActivity.help.notCounted.announcement",
+      "gamification.collaborativeActivity.help.notCounted.realization"
+    ]
+  }
+}
