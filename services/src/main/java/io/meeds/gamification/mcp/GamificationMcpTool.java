@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -324,9 +325,15 @@ public class GamificationMcpTool implements McpToolPlugin {
                                                                                    getCurrentUserAclIdentity(),
                                                                                    clampOffset(offset),
                                                                                    clampLimit(limit));
+    // The user's own realizations take no program restriction, so their quest
+    // and campaign are linked only while the user may still view them, each
+    // read once for the whole page.
+    String currentUser = getCurrentUserName();
+    Map<Long, String> questUrls = new HashMap<>();
+    Map<Long, String> campaignUrls = new HashMap<>();
     List<RealizationModel> result = new ArrayList<>();
     for (RealizationDTO realization : realizations) {
-      result.add(toRealization(realization));
+      result.add(toRealization(realization, currentUser, questUrls, campaignUrls));
     }
     return result;
   }
@@ -791,6 +798,22 @@ public class GamificationMcpTool implements McpToolPlugin {
     }
   }
 
+  /**
+   * Applies the view check of {@link RuleService#findRuleById(long, String)}
+   * without calling it: that read also creates the activity of an enabled
+   * rule that has none, and saves the rule.
+   *
+   * @param ruleId a rule id read from the user's own realizations, which take no
+   *          ACL
+   * @param currentUser the current user
+   * @return the rule when it is not deleted and the user may still view it,
+   *         else null: such a rule gets no link
+   */
+  private RuleDTO getViewableRule(long ruleId, String currentUser) {
+    RuleDTO rule = ruleService.findRuleById(ruleId);
+    return ruleService.canViewRule(rule, currentUser) ? rule : null;
+  }
+
   private String buildAvailabilityReason(RealizationValidityContext context, boolean isManual, boolean pending) {
     if (!isManual) {
       return "This is an automatic quest: it is awarded by the platform when its event happens, not announced by the user.";
@@ -915,18 +938,54 @@ public class GamificationMcpTool implements McpToolPlugin {
     }
   }
 
-  private RealizationModel toRealization(RealizationDTO realization) {
+  /**
+   * @param realization one of the user's own realizations
+   * @param currentUser the current user
+   * @param questUrls the quest addresses already resolved for this page, by
+   *          rule id, null for a quest the user may not view
+   * @param campaignUrls the campaign addresses already resolved for this page,
+   *          by program id, null for a campaign the user may not view
+   * @return the realization, which is kept whatever the user may still view
+   */
+  private RealizationModel toRealization(RealizationDTO realization,
+                                         String currentUser,
+                                         Map<Long, String> questUrls,
+                                         Map<Long, String> campaignUrls) {
     long campaignId = realization.getProgram() == null ? 0 : realization.getProgram().getId();
+    Long ruleId = realization.getRuleId();
     return new RealizationModel(realization.getId() == null ? 0 : realization.getId(),
-                                realization.getRuleId(),
+                                ruleId,
                                 realization.getActionTitle(),
                                 campaignId,
                                 realization.getActionScore(),
                                 realization.getStatus(),
                                 realization.getCreatedDate(),
-                                realization.getRuleId() == null ? null
-                                                                : getUrl(RulePermanentLinkPlugin.OBJECT_TYPE, realization.getRuleId()),
-                                getUrl(ProgramPermanentLinkPlugin.OBJECT_TYPE, campaignId));
+                                ruleId == null ? null : getViewableQuestUrl(ruleId, currentUser, questUrls),
+                                getViewableCampaignUrl(campaignId, currentUser, campaignUrls));
+  }
+
+  private String getViewableQuestUrl(long ruleId, String currentUser, Map<Long, String> questUrls) {
+    if (ruleId <= 0) {
+      return null;
+    }
+    if (!questUrls.containsKey(ruleId)) {
+      questUrls.put(ruleId,
+                    getViewableRule(ruleId, currentUser) == null ? null : getUrl(RulePermanentLinkPlugin.OBJECT_TYPE, ruleId));
+    }
+    return questUrls.get(ruleId);
+  }
+
+  private String getViewableCampaignUrl(long programId, String currentUser, Map<Long, String> campaignUrls) {
+    if (programId <= 0) {
+      return null;
+    }
+    if (!campaignUrls.containsKey(programId)) {
+      campaignUrls.put(programId,
+                       getViewableProgram(programId, currentUser) == null ? null
+                                                                          : getUrl(ProgramPermanentLinkPlugin.OBJECT_TYPE,
+                                                                                   programId));
+    }
+    return campaignUrls.get(programId);
   }
 
   private AnnouncementModel toAnnouncement(RealizationDTO realization) {

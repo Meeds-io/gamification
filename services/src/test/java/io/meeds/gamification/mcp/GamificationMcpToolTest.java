@@ -33,6 +33,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -573,6 +574,10 @@ public class GamificationMcpToolTest {
     stubCurrentUserIdentity();
     when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt()))
         .thenReturn(List.of(realization(1L, QUEST_ID, program(CAMPAIGN_ID))));
+    RuleDTO quest = rule(QUEST_ID, program(CAMPAIGN_ID));
+    when(ruleService.findRuleById(QUEST_ID)).thenReturn(quest);
+    when(ruleService.canViewRule(quest, USERNAME)).thenReturn(true);
+    when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program(CAMPAIGN_ID));
 
     List<RealizationModel> realizations = tool.listMyRealizations(null, null, null, null, null, null);
 
@@ -582,6 +587,50 @@ public class GamificationMcpToolTest {
     // the quest and its campaign are named with their pages, never by an id the agent turns into an address
     assertEquals(DOMAIN + String.format(RulePermanentLinkPlugin.URL_FORMAT, SITE, QUEST_ID), realizations.get(0).getQuestUrl());
     assertEquals(DOMAIN + String.format(ProgramPermanentLinkPlugin.URL_FORMAT, SITE, CAMPAIGN_ID), realizations.get(0).getCampaignUrl());
+  }
+
+  /**
+   * The user's own realizations take no program restriction: one in a program
+   * or of a rule the user may no longer view is still listed, with no link to
+   * either, since the permanent links check no access. Each program and rule is
+   * read once for the page, and never through the rule read that creates the
+   * rule's activity. Mutants: either url resolved whatever its read answers;
+   * the reads repeated per realization.
+   */
+  @Test
+  public void listMyRealizationsLinksNoQuestOrCampaignTheUserMayNoLongerView() throws Exception {
+    stubCurrentUserIdentity();
+    long formerCampaignId = 6L;
+    long formerQuestId = 8L;
+    ProgramDTO formerProgram = program(formerCampaignId);
+    RuleDTO formerQuest = rule(formerQuestId, formerProgram);
+    RuleDTO quest = rule(QUEST_ID, program(CAMPAIGN_ID));
+    when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt()))
+        .thenReturn(List.of(realization(1L, formerQuestId, formerProgram),
+                            realization(2L, QUEST_ID, program(CAMPAIGN_ID)),
+                            realization(3L, formerQuestId, formerProgram)));
+    when(programService.getProgramById(formerCampaignId, USERNAME)).thenThrow(new IllegalAccessException("not viewable"));
+    when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program(CAMPAIGN_ID));
+    when(ruleService.findRuleById(formerQuestId)).thenReturn(formerQuest);
+    when(ruleService.canViewRule(formerQuest, USERNAME)).thenReturn(false);
+    when(ruleService.findRuleById(QUEST_ID)).thenReturn(quest);
+    when(ruleService.canViewRule(quest, USERNAME)).thenReturn(true);
+
+    List<RealizationModel> realizations = tool.listMyRealizations(null, null, null, null, null, null);
+
+    assertEquals(3, realizations.size());
+    for (int index : new int[] { 0, 2 }) {
+      RealizationModel former = realizations.get(index);
+      assertEquals(formerQuestId, former.getQuestId().longValue());
+      assertEquals(formerCampaignId, former.getCampaignId());
+      assertNull(former.getQuestUrl());
+      assertNull(former.getCampaignUrl());
+    }
+    assertEquals(DOMAIN + String.format(RulePermanentLinkPlugin.URL_FORMAT, SITE, QUEST_ID), realizations.get(1).getQuestUrl());
+    assertEquals(DOMAIN + String.format(ProgramPermanentLinkPlugin.URL_FORMAT, SITE, CAMPAIGN_ID), realizations.get(1).getCampaignUrl());
+    verify(programService, times(1)).getProgramById(formerCampaignId, USERNAME);
+    verify(ruleService, times(1)).findRuleById(formerQuestId);
+    verify(ruleService, never()).findRuleById(anyLong(), any());
   }
 
   @Test
