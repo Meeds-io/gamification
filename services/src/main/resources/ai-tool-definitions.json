@@ -193,7 +193,7 @@
     {
       "name": "list_my_realizations",
       "title": "List my realizations",
-      "description": "List the current user's own realizations (gamification achievements: points earned by completing quests), most recent first. Optionally filter by date range (yyyy-MM-dd), campaign and/or status. This only ever returns the current user's own achievements.",
+      "description": "List the current user's own realizations (gamification achievements: points earned by completing quests), most recent first. Optionally filter by date range (yyyy-MM-dd), campaign and/or status. This only ever returns the current user's own achievements. Each realization carries its quest's page address in quest_url and its campaign's in campaign_url: link them with those, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -366,7 +366,7 @@
     {
       "name": "get_my_score_breakdown",
       "title": "Get my score breakdown",
-      "description": "Break down the current user's gamification points by campaign (program) for a period. Returns one entry per campaign with the campaign label and the points earned there. Always scoped to the current user.",
+      "description": "Break down the current user's gamification points by campaign (program) for a period. Returns one entry per campaign with the campaign label and the points earned there. Always scoped to the current user. Each entry carries its campaign's page address in url: link the campaign with that url, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -392,7 +392,7 @@
     {
       "name": "check_quest_availability",
       "title": "Check quest availability",
-      "description": "Check whether the current user can complete/announce a given quest (a gamification action/rule) right now, and explain why not (for example: already announced and pending, outside the quest's dates, current recurrence window already used, a prerequisite quest not yet completed, or the user is not in the audience). Use this as the pre-check before calling announce_quest. Resolve the quest id with list_quests. Always evaluated for the current user.",
+      "description": "Check whether the current user can complete/announce a given quest (a gamification action/rule) right now, and explain why not (for example: already announced and pending, outside the quest's dates, current recurrence window already used, a prerequisite quest not yet completed, or the user is not in the audience). Use this as the pre-check before calling announce_quest. Resolve the quest id with list_quests. Always evaluated for the current user. The answer carries the quest's page address in url: link the quest with that url, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
