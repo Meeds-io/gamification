@@ -193,7 +193,7 @@
     {
       "name": "list_my_realizations",
       "title": "List my realizations",
-      "description": "List the current user's own realizations (gamification achievements: points earned by completing quests), most recent first. Optionally filter by date range (yyyy-MM-dd), campaign and/or status. This only ever returns the current user's own achievements. Each realization carries its quest's page address in quest_url and its campaign's in campaign_url: link them with those, never with an address you build.",
+      "description": "List the current user's own realizations (gamification achievements: points earned by completing quests), most recent first. Optionally filter by date range (yyyy-MM-dd), campaign and/or status. This only ever returns the current user's own achievements. Each realization carries its quest's page address in quest_url and its campaign's in campaign_url, each absent when the user can no longer view that quest or campaign: link them only with those, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -366,7 +366,7 @@
     {
       "name": "get_my_score_breakdown",
       "title": "Get my score breakdown",
-      "description": "Break down the current user's gamification points by campaign (program) for a period. Returns one entry per campaign with the campaign label and the points earned there. Always scoped to the current user. Each entry carries its campaign's page address in url: link the campaign with that url, never with an address you build.",
+      "description": "Break down the current user's gamification points by campaign (program) for a period. Returns one entry per campaign with the campaign label and the points earned there. Always scoped to the current user. Each entry carries its campaign's page address in url; an entry for a campaign the user can no longer view has no url and no label: link a campaign only with its url, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
