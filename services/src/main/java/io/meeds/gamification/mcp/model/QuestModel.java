@@ -73,4 +73,11 @@ public class QuestModel {
    */
   private String    url;
 
+  /**
+   * Absolute address of the quest's campaign page on the engagement site;
+   * null when it cannot be resolved.
+   */
+  @JsonProperty("campaign_url")
+  private String    campaignUrl;
+
 }

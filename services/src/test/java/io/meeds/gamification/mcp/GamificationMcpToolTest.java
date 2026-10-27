@@ -344,6 +344,7 @@ public class GamificationMcpToolTest {
     List<QuestModel> quests = tool.listQuests(CAMPAIGN_ID, null, null, null, null);
 
     assertEquals(DOMAIN + "/portal/dw/contributions/actions/7", quests.get(0).getUrl());
+    assertEquals(DOMAIN + String.format(ProgramPermanentLinkPlugin.URL_FORMAT, SITE, CAMPAIGN_ID), quests.get(0).getCampaignUrl());
   }
 
   /**
@@ -353,7 +354,9 @@ public class GamificationMcpToolTest {
   public void getQuestCarriesItsPageUrl() throws Exception {
     when(ruleService.findRuleById(QUEST_ID, USERNAME)).thenReturn(rule(QUEST_ID, program(CAMPAIGN_ID)));
 
-    assertEquals(DOMAIN + "/portal/dw/contributions/actions/7", tool.getQuest(QUEST_ID).getUrl());
+    QuestModel quest = tool.getQuest(QUEST_ID);
+    assertEquals(DOMAIN + "/portal/dw/contributions/actions/7", quest.getUrl());
+    assertEquals(DOMAIN + String.format(ProgramPermanentLinkPlugin.URL_FORMAT, SITE, CAMPAIGN_ID), quest.getCampaignUrl());
   }
 
   /**
@@ -1187,6 +1190,28 @@ public class GamificationMcpToolTest {
     assertEquals(80L, breakdown.get(0).getPoints());
     assertEquals("Campaign 5", breakdown.get(0).getLabel());
     assertEquals(DOMAIN + String.format(ProgramPermanentLinkPlugin.URL_FORMAT, SITE, CAMPAIGN_ID), breakdown.get(0).getUrl());
+  }
+
+  /**
+   * The points a user earned in a program they may no longer view still count,
+   * but the entry gets no link to that program: the permanent link checks no
+   * access. Mutant: the url resolved whatever the program read answers.
+   */
+  @Test
+  public void getMyScoreBreakdownLinksNoProgramTheUserMayNoLongerView() throws Exception {
+    stubCurrentUserIdentity();
+    PiechartLeaderboard slice = new PiechartLeaderboard(CAMPAIGN_ID, 80L);
+    slice.setLabel("Former campaign");
+    when(realizationService.getLeaderboardStatsByIdentityId(eq(String.valueOf(OWN_ID)), isNull(), eq("MONTH"), any(), any()))
+        .thenReturn(List.of(slice));
+    when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenThrow(new IllegalAccessException("not viewable"));
+
+    List<ScoreBreakdownEntryModel> breakdown = tool.getMyScoreBreakdown("MONTH");
+
+    assertEquals(1, breakdown.size());
+    assertEquals(80L, breakdown.get(0).getPoints());
+    assertEquals("Former campaign", breakdown.get(0).getLabel());
+    assertNull(breakdown.get(0).getUrl());
   }
 
   @Test

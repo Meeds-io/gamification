@@ -446,10 +446,12 @@ public class GamificationMcpTool implements McpToolPlugin {
     if (stats != null) {
       String currentUser = getCurrentUserName();
       for (PiechartLeaderboard entry : stats) {
+        ProgramDTO program = getViewableProgram(entry.getProgramId(), currentUser);
+        String label = StringUtils.isNotBlank(entry.getLabel()) ? entry.getLabel() : program == null ? null : program.getTitle();
         result.add(new ScoreBreakdownEntryModel(entry.getProgramId(),
-                                                 resolveCampaignLabel(entry, currentUser),
+                                                 label,
                                                  entry.getValue(),
-                                                 getUrl(ProgramPermanentLinkPlugin.OBJECT_TYPE, entry.getProgramId())));
+                                                 program == null ? null : getUrl(ProgramPermanentLinkPlugin.OBJECT_TYPE, program.getId())));
       }
     }
     return result;
@@ -774,13 +776,16 @@ public class GamificationMcpTool implements McpToolPlugin {
     return result;
   }
 
-  private String resolveCampaignLabel(PiechartLeaderboard entry, String currentUser) {
-    if (StringUtils.isNotBlank(entry.getLabel())) {
-      return entry.getLabel();
-    }
+  /**
+   * @param programId a program id read from the user's own points, which take
+   *          no ACL
+   * @param currentUser the current user
+   * @return the program when the user may still view it, else null: such a
+   *         program gets no link
+   */
+  private ProgramDTO getViewableProgram(long programId, String currentUser) {
     try {
-      ProgramDTO program = programService.getProgramById(entry.getProgramId(), currentUser);
-      return program == null ? null : program.getTitle();
+      return programService.getProgramById(programId, currentUser);
     } catch (ObjectNotFoundException | IllegalAccessException e) {
       return null;
     }
@@ -883,7 +888,8 @@ public class GamificationMcpTool implements McpToolPlugin {
                           program == null ? 0 : program.getId(),
                           program == null ? null : program.getTitle(),
                           rule.getPrerequisiteRuleIds(),
-                          rule.getId() == null ? null : getUrl(RulePermanentLinkPlugin.OBJECT_TYPE, rule.getId()));
+                          rule.getId() == null ? null : getUrl(RulePermanentLinkPlugin.OBJECT_TYPE, rule.getId()),
+                          program == null ? null : getUrl(ProgramPermanentLinkPlugin.OBJECT_TYPE, program.getId()));
   }
 
   /**
