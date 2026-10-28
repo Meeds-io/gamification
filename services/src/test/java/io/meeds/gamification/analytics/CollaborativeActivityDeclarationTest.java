@@ -37,11 +37,13 @@ import tools.jackson.databind.ObjectMapper;
 
 /**
  * The collaborative activity declaration analytics reads from this jar: the
- * stream posts and comments the gamification writes for a rule, an
- * announcement and its comment are system activities, not a member's
- * collaboration, so their types are excluded; nothing of the gamification is
- * counted. The types are read from Utils, where the publishers take them; the
- * label keys are matched by hand against the portlets' Portlets_en.properties.
+ * stream activity the gamification posts for a quest and the comment it posts
+ * for a submitted contribution are system activities, not a member's
+ * collaboration, so their types are excluded; so is challenges-announcement,
+ * the type announcements had while they were posts, before 1.5.0, which
+ * events stored then still carry. Nothing of the gamification is counted.
+ * The types are read from Utils, where the publishers take them; the label
+ * keys are matched by hand against the portlets' Portlets_en.properties.
  */
 public class CollaborativeActivityDeclarationTest {
 
