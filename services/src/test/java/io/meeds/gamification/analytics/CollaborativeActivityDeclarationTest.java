@@ -36,14 +36,17 @@ import io.meeds.gamification.utils.Utils;
 import tools.jackson.databind.ObjectMapper;
 
 /**
- * The collaborative activity declaration analytics reads from this jar: the
- * stream activity the gamification posts for a quest and the comment it posts
- * for a submitted contribution are system activities, not a member's
- * collaboration, so their types are excluded; so is challenges-announcement,
- * the type announcements had while they were posts, before 1.5.0, which
- * events stored then still carry. Nothing of the gamification is counted.
- * The types are read from Utils, where the publishers take them; the label
- * keys are matched by hand against the portlets' Portlets_en.properties.
+ * The collaborative activity declaration analytics reads from this jar:
+ * publishing a quest and submitting a contribution are not counted (spec
+ * section 3.6, board task US3), so the type of the stream activity a quest
+ * publishes and the type of the contribution comment are excluded. That
+ * comment carries the member's own text under the member's identity: it is
+ * excluded by the functional rule, not because the system writes it.
+ * challenges-announcement is the type announcements had while they were
+ * posts, before 1.5.0; events stored then keep it whatever happens to the
+ * deprecated constant, so the test names it by its value. Nothing of the
+ * gamification is counted. The label keys are matched by hand against the
+ * portlets' Portlets_en.properties.
  */
 public class CollaborativeActivityDeclarationTest {
 
@@ -51,7 +54,7 @@ public class CollaborativeActivityDeclarationTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void theDeclarationExcludesEverySystemTypeTheGamificationPosts() throws IOException {
+  public void theDeclarationExcludesTheQuestAndContributionTypes() throws IOException {
     Map<String, Object> declaration;
     try (InputStream content = getClass().getClassLoader().getResourceAsStream(DECLARATION_FILE)) {
       assertNotNull("the declaration ships at the root of the gamification services jar, which lands in /lib", content);
@@ -62,16 +65,16 @@ public class CollaborativeActivityDeclarationTest {
     assertFalse("creating a rule or a realization is not collaboration", declaration.containsKey("operations"));
     assertFalse(declaration.containsKey("legacyOperations"));
     assertFalse(declaration.containsKey("browserOperations"));
-    Set<String> expectedTypes = Set.of(Utils.RULE_ACTIVITY_TYPE, Utils.ANNOUNCEMENT_ACTIVITY_TYPE, Utils.ANNOUNCEMENT_COMMENT_TYPE);
+    Set<String> expectedTypes = Set.of(Utils.RULE_ACTIVITY_TYPE, "challenges-announcement", Utils.ANNOUNCEMENT_COMMENT_TYPE);
     List<String> excludedTypes = (List<String>) declaration.get("excludedActivityTypes");
     assertEquals(expectedTypes, new HashSet<>(excludedTypes));
     assertEquals("one entry per type", expectedTypes.size(), excludedTypes.size());
 
     Map<String, Object> labels = (Map<String, Object>) declaration.get("labels");
     assertFalse(labels.containsKey("counted"));
-    assertEquals(List.of("gamification.collaborativeActivity.help.notCounted.rule",
-                         "gamification.collaborativeActivity.help.notCounted.announcement",
-                         "gamification.collaborativeActivity.help.notCounted.realization"),
+    assertEquals(List.of("gamification.collaborativeActivity.help.notCounted.createQuest",
+                         "gamification.collaborativeActivity.help.notCounted.submitContribution",
+                         "gamification.collaborativeActivity.help.notCounted.earnPoints"),
                  labels.get("notCounted"));
   }
 

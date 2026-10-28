@@ -33,6 +33,7 @@ import io.meeds.gamification.analytics.AnalyticsAnnouncementListenerTest;
 import io.meeds.gamification.analytics.AnalyticsProgramListenerTest;
 import io.meeds.gamification.analytics.AnalyticsRealizationListenerTest;
 import io.meeds.gamification.analytics.AnalyticsRuleListenerTest;
+import io.meeds.gamification.analytics.CollaborativeActivityDeclarationTest;
 import io.meeds.gamification.connector.RuleIndexingServiceConnectorTest;
 import io.meeds.gamification.mcp.GamificationMcpToolKernelTest;
 import io.meeds.gamification.mcp.GamificationMcpToolTest;
@@ -61,7 +62,6 @@ import io.meeds.gamification.storage.RuleStorageTest;
 import io.meeds.gamification.upgrade.ProgramVisibilityUpgradePluginTest;
 import io.meeds.gamification.utils.UtilsTest;
 import io.meeds.gamification.web.filter.PublicActionAccessFilterTest;
-import io.meeds.gamification.analytics.CollaborativeActivityDeclarationTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
