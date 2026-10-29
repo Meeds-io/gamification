@@ -45,8 +45,7 @@ import tools.jackson.databind.ObjectMapper;
  * challenges-announcement is the type announcements had while they were
  * posts, before 1.5.0; events stored then keep it whatever happens to the
  * deprecated constant, so the test names it by its value. Nothing of the
- * gamification is counted. The label keys are matched by hand against the
- * portlets' Portlets_en.properties.
+ * gamification is counted.
  */
 public class CollaborativeActivityDeclarationTest {
 
