@@ -58,7 +58,18 @@ public class GamificationToolDefinitionSpaceScopeTest {
 
   private static final String                DEFINITIONS      = "ai-tool-definitions.json";
 
-  private static final Set<String>           SPACE_READS      = Set.of("list_campaigns", "get_gamification_leaderboard");
+  /**
+   * The reads of a space, and the asker's own reads: the answer of the latter
+   * is posted in the space, so they keep to the call's space like the former,
+   * never declared unscoped.
+   */
+  private static final Set<String>           SPACE_READS      = Set.of("list_campaigns",
+                                                                       "get_gamification_leaderboard",
+                                                                       "get_my_gamification_score",
+                                                                       "list_my_realizations",
+                                                                       "list_my_announcements",
+                                                                       "get_my_points_total",
+                                                                       "get_my_score_breakdown");
 
   private static final Map<String, String>   PROGRAM_READS    = Map.of("get_campaign",
                                                                       "campaign_id",
@@ -69,11 +80,12 @@ public class GamificationToolDefinitionSpaceScopeTest {
 
   private static final Map<String, String>   RULE_READS       = Map.of("get_quest", "quest_id");
 
-  private static final Set<String>           UNSCOPED_READS   = Set.of("get_my_gamification_score",
-                                                                       "list_my_realizations",
-                                                                       "list_my_announcements",
-                                                                       "get_my_points_total",
-                                                                       "get_my_score_breakdown");
+  /**
+   * No gamification tool reads nothing that belongs to a space: every
+   * campaign, quest, realization and announcement has the space of its
+   * campaign.
+   */
+  private static final Set<String>           UNSCOPED_READS   = Set.of();
 
   private static final Set<String>           SPACE_WRITES     = Set.of("create_campaign");
 
@@ -130,7 +142,7 @@ public class GamificationToolDefinitionSpaceScopeTest {
    * Exactly the expected tools declare a space scope, each of the expected
    * kind and resolver, and each well formed for what it is. Mutants: a
    * declaration dropped; {@code when_absent} dropped; a resolver renamed; a
-   * personal tool declared.
+   * personal tool declared; a personal read declared unscoped.
    */
   @Test
   public void declaredToolsAreTheExpectedOnes() {
@@ -140,7 +152,6 @@ public class GamificationToolDefinitionSpaceScopeTest {
     expected.addAll(SPACE_READS);
     expected.addAll(PROGRAM_READS.keySet());
     expected.addAll(RULE_READS.keySet());
-    expected.addAll(UNSCOPED_READS);
     expected.addAll(SPACE_WRITES);
     expected.addAll(RULE_WRITES.keySet());
     expected.addAll(PROGRAM_WRITES.keySet());
@@ -166,7 +177,7 @@ public class GamificationToolDefinitionSpaceScopeTest {
       assertEquals(name, "space_id", scope.getSpaceArg());
       assertNull(name, scope.getWhenAbsent());
     });
-    UNSCOPED_READS.forEach(name -> assertTrue(name, declared.get(name).getSpaceScope().isUnscopedKind()));
+    declared.forEach((name, tool) -> assertEquals(name, UNSCOPED_READS.contains(name), tool.getSpaceScope().isUnscopedKind()));
     assertObjectKind(declared, PROGRAM_READS, ProgramSpaceScopeResolver.NAME);
     assertObjectKind(declared, PROGRAM_WRITES, ProgramSpaceScopeResolver.NAME);
     assertObjectKind(declared, RULE_READS, RuleSpaceScopeResolver.NAME);
@@ -319,17 +330,23 @@ public class GamificationToolDefinitionSpaceScopeTest {
     assertRefused(service, shipped, "get_gamification_leaderboard", "{\"space_id\":13}", read);
     assertRefused(service, shipped, "get_gamification_leaderboard", "{\"campaign_id\":6}", read);
     assertRefused(service, shipped, "get_gamification_leaderboard", "{\"campaign_id\":5}", read);
-    // unscoped
-    assertAllowed(service, shipped, "get_my_gamification_score", "{}", read);
-    assertAllowed(service, shipped, "list_my_realizations", "{\"status\":\"ACCEPTED\",\"limit\":5}", read);
-    assertAllowed(service, shipped, "list_my_announcements", "{\"limit\":5,\"offset\":0}", read);
-    assertAllowed(service, shipped, "get_my_points_total", "{\"from_date\":\"2026-01-01\",\"to_date\":\"2026-02-01\"}", read);
-    assertAllowed(service, shipped, "get_my_score_breakdown", "{\"period\":\"MONTH\"}", read);
+    // the asker's own reads, kept to the call's space
+    for (String[] tool : new String[][] { { "get_my_gamification_score", "{}" },
+                                          { "list_my_realizations", "{\"status\":\"ACCEPTED\",\"limit\":5}" },
+                                          { "list_my_announcements", "{\"limit\":5,\"offset\":0}" },
+                                          { "get_my_points_total", "{\"from_date\":\"2026-01-01\",\"to_date\":\"2026-02-01\"}" },
+                                          { "get_my_score_breakdown", "{\"period\":\"MONTH\"}" } }) {
+      filled = service.enforce(tool[0], shipped.get(tool[0]), tool[1], read);
+      assertTrue(tool[0] + " " + filled, filled.contains("\"space_id\":12"));
+      assertRefused(service, shipped, tool[0], "{\"space_id\":13}", read);
+      assertAllowed(service, shipped, tool[0], "{\"space_id\":12}", read);
+    }
     assertRefused(service, shipped, "get_my_points_total", "{\"campaign_id\":6}", read);
     assertRefused(service, shipped, "get_my_score_breakdown", "{\"campaign_id\":6}", read);
     assertRefused(service, shipped, "get_my_gamification_score", "{\"campaign_id\":6}", read);
     assertRefused(service, shipped, "list_my_realizations", "{\"campaign_id\":6}", read);
     assertRefused(service, shipped, "list_my_announcements", "{\"quest_id\":8}", read);
+    assertRefused(service, shipped, "list_my_realizations", "{\"space_id\":12,\"campaign_id\":6}", read);
     // undeclared
     for (String name : UNDECLARED) {
       assertRefused(service, shipped, name, "{}", read);

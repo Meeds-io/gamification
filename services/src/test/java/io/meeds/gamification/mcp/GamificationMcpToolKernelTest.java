@@ -23,15 +23,22 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.constant.EntityVisibility;
 import io.meeds.gamification.entity.ProgramEntity;
+import io.meeds.gamification.entity.RealizationEntity;
 import io.meeds.gamification.entity.RuleEntity;
+import io.meeds.gamification.mcp.model.AnnouncementModel;
 import io.meeds.gamification.mcp.model.CampaignModel;
 import io.meeds.gamification.mcp.model.QuestModel;
+import io.meeds.gamification.mcp.model.RealizationModel;
+import io.meeds.gamification.mcp.model.ScoreBreakdownEntryModel;
+import io.meeds.gamification.mcp.model.ScoreModel;
 import io.meeds.gamification.mock.SpaceServiceMock;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.portal.permlink.service.PermanentLinkService;
@@ -270,5 +277,101 @@ public class GamificationMcpToolKernelTest extends AbstractServiceTest {
     assertEquals("and its visibility is the one the service computes for that space",
                  EntityVisibility.RESTRICTED.name(),
                  created.getVisibility());
+  }
+
+  /**
+   * The user's own reads against the real services and storage, with one
+   * realization in a campaign of space 1, one in a campaign of space 2 and one
+   * in an open campaign: with space 1 they answer with the first only, a
+   * campaign id of space 1 counts and one of space 2 is ignored, with a space
+   * that has no campaign they answer with nothing, and without a space with
+   * all three. Mutants: the space left out of the realization filter, of the
+   * breakdown, of the total or of the per-campaign scores; a space with no
+   * campaign counted as every campaign; the space's own campaign id dropped.
+   */
+  @Test
+  public void testPersonalReadsKeepToTheGivenSpace() throws Exception {
+    long space1 = Long.parseLong(SpaceServiceMock.SPACE_ID_1);
+    long space2 = Long.parseLong(SpaceServiceMock.SPACE_ID_2);
+    long emptySpace = 999L;
+    ProgramEntity inSpace1 = newDomain(EntityType.AUTOMATIC, "personal-space-1", true, Collections.emptySet(), space1);
+    ProgramEntity inSpace2 = newDomain(EntityType.AUTOMATIC, "personal-space-2", true, Collections.emptySet(), space2);
+    ProgramEntity open = newOpenProgram("personal-open");
+    String earnerId = identityManager.getOrCreateUserIdentity("root10").getId();
+    RuleEntity rule1 = newRule("personal-rule-1", inSpace1.getId());
+    RuleEntity rule2 = newRule("personal-rule-2", inSpace2.getId());
+    RuleEntity ruleOpen = newRule("personal-rule-open", open.getId());
+    newRealizationByRuleByEarnerId(rule1, earnerId);
+    newRealizationByRuleByEarnerId(rule2, earnerId);
+    newRealizationByRuleByEarnerId(ruleOpen, earnerId);
+    long score1 = rule1.getScore();
+    long allScores = score1 + rule2.getScore() + ruleOpen.getScore();
+    startSessionAs("root10");
+
+    assertEquals(Set.of(inSpace1.getId()), campaignsOf(tool.listMyRealizations(null, null, null, space1, null, 50, 0)));
+    assertEquals(Set.of(inSpace1.getId(), inSpace2.getId(), open.getId()),
+                 campaignsOf(tool.listMyRealizations(null, null, null, null, null, 50, 0)));
+    assertTrue(tool.listMyRealizations(null, null, null, emptySpace, null, 50, 0).isEmpty());
+
+    assertEquals(Set.of(inSpace1.getId()),
+                 tool.getMyScoreBreakdown("ALL", space1).stream().map(ScoreBreakdownEntryModel::getCampaignId).collect(Collectors.toSet()));
+    assertEquals(3, tool.getMyScoreBreakdown("ALL", null).size());
+
+    assertEquals(score1, tool.getMyPointsTotal(null, null, null, space1).getTotalPoints());
+    assertEquals(score1, tool.getMyPointsTotal(null, null, inSpace1.getId(), space1).getTotalPoints());
+    assertEquals(0, tool.getMyPointsTotal(null, null, null, emptySpace).getTotalPoints());
+    assertEquals(0, tool.getMyPointsTotal(null, null, inSpace2.getId(), space1).getTotalPoints());
+    assertEquals(allScores, tool.getMyPointsTotal(null, null, null, null).getTotalPoints());
+
+    ScoreModel ofSpace1 = tool.getMyGamificationScore(null, space1);
+    assertEquals(score1, ofSpace1.getTotalScore());
+    assertEquals(Set.of(inSpace1.getId()),
+                 ofSpace1.getScoresPerCampaign().stream().map(ScoreModel.CampaignScore::getCampaignId).collect(Collectors.toSet()));
+    assertEquals(Long.valueOf(score1), tool.getMyGamificationScore(inSpace1.getId(), space1).getCampaignScore());
+    assertNull(tool.getMyGamificationScore(inSpace2.getId(), space1).getCampaignId());
+    ScoreModel ofEmptySpace = tool.getMyGamificationScore(null, emptySpace);
+    assertEquals(0, ofEmptySpace.getTotalScore());
+    assertTrue(ofEmptySpace.getScoresPerCampaign().isEmpty());
+    assertEquals(0, ofEmptySpace.getRank());
+    assertEquals(allScores, tool.getMyGamificationScore(null, null).getScoresPerCampaign()
+                                                                   .stream()
+                                                                   .mapToLong(ScoreModel.CampaignScore::getScore)
+                                                                   .sum());
+  }
+
+  /**
+   * An announcement in a campaign of another space is not listed under a
+   * space. Mutant: the space left out of the announcement filter.
+   */
+  @Test
+  public void testMyAnnouncementsKeepToTheGivenSpace() throws Exception {
+    long space1 = Long.parseLong(SpaceServiceMock.SPACE_ID_1);
+    long space2 = Long.parseLong(SpaceServiceMock.SPACE_ID_2);
+    ProgramEntity inSpace1 = newDomain(EntityType.MANUAL, "announce-space-1", true, Collections.emptySet(), space1);
+    ProgramEntity inSpace2 = newDomain(EntityType.MANUAL, "announce-space-2", true, Collections.emptySet(), space2);
+    String earnerId = identityManager.getOrCreateUserIdentity("root10").getId();
+    RuleEntity rule1 = newManualRule("announce-rule-1", inSpace1.getId());
+    announcementOf(rule1, earnerId);
+    announcementOf(newManualRule("announce-rule-2", inSpace2.getId()), earnerId);
+    startSessionAs("root10");
+
+    List<AnnouncementModel> ofSpace1 = tool.listMyAnnouncements(null, space1, 50, 0);
+    List<AnnouncementModel> all = tool.listMyAnnouncements(null, null, 50, 0);
+
+    assertEquals(1, ofSpace1.size());
+    assertEquals(rule1.getId().longValue(), ofSpace1.get(0).getQuestId().longValue());
+    assertEquals(2, all.size());
+  }
+
+  private void announcementOf(RuleEntity rule, String earnerId) {
+    RealizationEntity realization = newRealizationByRuleByEarnerId(rule, earnerId);
+    realization.setCreator(Long.parseLong(earnerId));
+    realization.setType(EntityType.MANUAL);
+    realizationDAO.update(realization);
+    restartTransaction();
+  }
+
+  private static Set<Long> campaignsOf(List<RealizationModel> realizations) {
+    return realizations.stream().map(RealizationModel::getCampaignId).collect(Collectors.toSet());
   }
 }

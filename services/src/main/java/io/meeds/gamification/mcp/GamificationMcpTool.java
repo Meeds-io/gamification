@@ -236,25 +236,34 @@ public class GamificationMcpTool implements McpToolPlugin {
   /**
    * Returns the current user's gamification score: the overall total, the
    * overall leaderboard rank and the score per campaign. When a campaign id is
-   * given, the rank and score for that campaign are added.
+   * given, the rank and score for that campaign are added. When a space id is
+   * given, the total, the rank and the campaigns are those of that space's
+   * campaigns only, the total being the sum of the campaigns listed, and the
+   * id of a campaign of another space is ignored.
    */
-  public ScoreModel getMyGamificationScore(Long campaignId) {
+  public ScoreModel getMyGamificationScore(Long campaignId, Long spaceId) {
     long identityId = currentUserIdentityId();
     String earnerId = String.valueOf(identityId);
-    long total = realizationService.getScoreByIdentityId(earnerId);
+    Set<Long> spaceProgramIds = isPositive(spaceId) ? getSpaceProgramIds(spaceId) : null;
+    Long programId = isPositive(campaignId) && (spaceProgramIds == null || spaceProgramIds.contains(campaignId)) ? campaignId : null;
     List<ProfileReputation> perProgram = realizationService.getScorePerProgramByIdentityId(earnerId);
     List<ScoreModel.CampaignScore> scores = new ArrayList<>();
     Long campaignScore = null;
+    long spaceTotal = 0;
     if (perProgram != null) {
       for (ProfileReputation reputation : perProgram) {
+        if (spaceProgramIds != null && !spaceProgramIds.contains(reputation.getProgramId())) {
+          continue;
+        }
         scores.add(new ScoreModel.CampaignScore(reputation.getProgramId(), reputation.getScore()));
-        if (campaignId != null && reputation.getProgramId() == campaignId) {
+        spaceTotal += reputation.getScore();
+        if (programId != null && reputation.getProgramId() == programId) {
           campaignScore = reputation.getScore();
         }
       }
     }
-    Long programId = (campaignId != null && campaignId > 0) ? campaignId : null;
-    int rank = realizationService.getLeaderboardRank(identityId, null, null, null, programId);
+    long total = spaceProgramIds == null ? realizationService.getScoreByIdentityId(earnerId) : spaceTotal;
+    int rank = realizationService.getLeaderboardRank(identityId, null, null, spaceProgramIds == null ? null : spaceId, programId);
     return new ScoreModel(identityId, total, rank, programId, campaignScore, scores);
   }
 
@@ -298,11 +307,14 @@ public class GamificationMcpTool implements McpToolPlugin {
 
   /**
    * Lists the current user's own realizations (gamification achievements),
-   * optionally filtered by date range, campaign and/or status.
+   * optionally filtered by date range, campaign, space and/or status. A space
+   * keeps the realizations of that space's campaigns only, which leaves out
+   * the open ones.
    */
   public List<RealizationModel> listMyRealizations(String fromDate,
                                                    String toDate,
                                                    Long campaignId,
+                                                   Long spaceId,
                                                    String status,
                                                    Integer limit,
                                                    Integer offset) throws IllegalAccessException {
@@ -317,6 +329,9 @@ public class GamificationMcpTool implements McpToolPlugin {
     filter.setToDate(parseDate(toDate, "to_date"));
     if (campaignId != null && campaignId > 0) {
       filter.setProgramIds(List.of(campaignId));
+    }
+    if (isPositive(spaceId)) {
+      filter.setSpacesIds(List.of(spaceId));
     }
     if (StringUtils.isNotBlank(status)) {
       filter.setStatuses(List.of(parseRealizationStatus(status)));
@@ -342,9 +357,12 @@ public class GamificationMcpTool implements McpToolPlugin {
    * Lists the current user's own quest announcements (challenges they
    * announced), most recent first. Optionally scoped to a single quest. Each
    * entry exposes the announcement id needed by cancel_quest_announcement. This
-   * only ever returns the current user's own announcements.
+   * only ever returns the current user's own announcements. A space keeps the
+   * announcements of that space's campaigns only, which leaves out the open
+   * ones.
    */
   public List<AnnouncementModel> listMyAnnouncements(Long questId,
+                                                     Long spaceId,
                                                      Integer limit,
                                                      Integer offset) throws IllegalAccessException {
     RealizationFilter filter = new RealizationFilter();
@@ -359,6 +377,9 @@ public class GamificationMcpTool implements McpToolPlugin {
     filter.setSortDescending(true);
     if (questId != null && questId > 0) {
       filter.setRuleIds(List.of(questId));
+    }
+    if (isPositive(spaceId)) {
+      filter.setSpacesIds(List.of(spaceId));
     }
     List<RealizationDTO> realizations = realizationService.getRealizationsByFilter(filter,
                                                                                    getCurrentUserAclIdentity(),
@@ -420,32 +441,43 @@ public class GamificationMcpTool implements McpToolPlugin {
 
   /**
    * Returns the total gamification points the current user earned within a date
-   * range, optionally scoped to a single campaign. Always scoped to the current
-   * user. For the per-event list use list_my_realizations.
+   * range, optionally scoped to a single campaign or to a space's campaigns.
+   * Always scoped to the current user. For the per-event list use
+   * list_my_realizations.
    */
-  public PointsTotalModel getMyPointsTotal(String fromDate, String toDate, Long campaignId) {
+  public PointsTotalModel getMyPointsTotal(String fromDate, String toDate, Long campaignId, Long spaceId) {
     Date from = parseDate(fromDate, "from_date");
     Date to = parseDate(toDate, "to_date");
     Long programId = (campaignId != null && campaignId > 0) ? campaignId : null;
-    long total = realizationService.getScoreByIdentityIdAndBetweenDates(String.valueOf(currentUserIdentityId()),
-                                                                        from,
-                                                                        to,
-                                                                        null,
-                                                                        programId);
+    String earnerId = String.valueOf(currentUserIdentityId());
+    long total;
+    if (!isPositive(spaceId)) {
+      total = realizationService.getScoreByIdentityIdAndBetweenDates(earnerId, from, to, null, programId);
+    } else {
+      Set<Long> spaceProgramIds = getSpaceProgramIds(spaceId);
+      if (programId == null) {
+        total = getSpaceScore(earnerId, from, to, spaceId, spaceProgramIds);
+      } else if (spaceProgramIds.contains(programId)) {
+        total = realizationService.getScoreByIdentityIdAndBetweenDates(earnerId, from, to, null, programId);
+      } else {
+        total = 0;
+      }
+    }
     return new PointsTotalModel(total, StringUtils.trimToNull(fromDate), StringUtils.trimToNull(toDate), programId);
   }
 
   /**
    * Breaks down the current user's points by campaign for a period
-   * (WEEK/MONTH/QUARTER/ALL). Always scoped to the current user.
+   * (WEEK/MONTH/QUARTER/ALL). Always scoped to the current user. A space keeps
+   * that space's campaigns only, which leaves out the open ones.
    */
-  public List<ScoreBreakdownEntryModel> getMyScoreBreakdown(String period) {
+  public List<ScoreBreakdownEntryModel> getMyScoreBreakdown(String period, Long spaceId) {
     String resolvedPeriod = parsePeriod(period);
     String earnerId = String.valueOf(currentUserIdentityId());
     Date startDate = Utils.getFromDate(resolvedPeriod, 0);
     Date endDate = Utils.getToDate(resolvedPeriod, 0);
     List<PiechartLeaderboard> stats = realizationService.getLeaderboardStatsByIdentityId(earnerId,
-                                                                                         null,
+                                                                                         isPositive(spaceId) ? spaceId : null,
                                                                                          resolvedPeriod,
                                                                                          startDate,
                                                                                          endDate);
@@ -761,6 +793,35 @@ public class GamificationMcpTool implements McpToolPlugin {
     // ProgramServiceImpl#canEditProgram resolves to the very same
     // isProgramOwner(program, username, true), so it can never add anything.
     return programService.isProgramOwner(program.getId(), username);
+  }
+
+  /**
+   * @param spaceId a space id
+   * @return the ids of the space's own campaigns, open and deleted ones left
+   *         out, as list_campaigns reads them under a space
+   */
+  private Set<Long> getSpaceProgramIds(long spaceId) {
+    ProgramFilter filter = new ProgramFilter();
+    filter.setSpacesIds(List.of(spaceId));
+    filter.setExcludeOpen(true);
+    List<Long> ids = programService.getProgramIds(filter, 0, -1);
+    return ids == null ? Set.of() : new HashSet<>(ids);
+  }
+
+  /**
+   * The user's points in a space's campaigns within the dates. A space with
+   * no campaign answers zero here: the service reads an empty campaign list
+   * as "every campaign".
+   */
+  private long getSpaceScore(String earnerId, Date from, Date to, long spaceId, Set<Long> spaceProgramIds) {
+    if (spaceProgramIds.isEmpty()) {
+      return 0;
+    }
+    return realizationService.getScoreByIdentityIdAndBetweenDates(earnerId, from, to, spaceId, null);
+  }
+
+  private static boolean isPositive(Long id) {
+    return id != null && id > 0;
   }
 
   /**

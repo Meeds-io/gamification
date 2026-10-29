@@ -27,8 +27,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -176,6 +178,11 @@ public class GamificationMcpToolTest {
       default -> throw new ObjectNotFoundException("No plugin for " + object.getObjectType());
       };
     });
+  }
+
+  private void stubSpacePrograms(long spaceId, List<Long> programIds) {
+    when(programService.getProgramIds(argThat(filter -> filter != null && filter.getSpacesIds() != null
+        && filter.getSpacesIds().equals(List.of(spaceId))), eq(0), eq(-1))).thenReturn(programIds);
   }
 
   private void stubCurrentUserIdentity() {
@@ -509,7 +516,7 @@ public class GamificationMcpToolTest {
         .thenReturn(List.of(new ProfileReputation(CAMPAIGN_ID, 80L)));
     when(realizationService.getLeaderboardRank(eq(OWN_ID), isNull(), isNull(), isNull(), eq(CAMPAIGN_ID))).thenReturn(2);
 
-    ScoreModel score = tool.getMyGamificationScore(CAMPAIGN_ID);
+    ScoreModel score = tool.getMyGamificationScore(CAMPAIGN_ID, null);
 
     assertEquals(120L, score.getTotalScore());
     assertEquals(2, score.getRank());
@@ -524,10 +531,62 @@ public class GamificationMcpToolTest {
     when(realizationService.getScorePerProgramByIdentityId(String.valueOf(OWN_ID))).thenReturn(List.of());
     when(realizationService.getLeaderboardRank(eq(OWN_ID), isNull(), isNull(), isNull(), isNull())).thenReturn(9);
 
-    ScoreModel score = tool.getMyGamificationScore(null);
+    ScoreModel score = tool.getMyGamificationScore(null, null);
 
     assertEquals(50L, score.getTotalScore());
     assertEquals(9, score.getRank());
+  }
+
+  /**
+   * Under a space, the total, the rank and the campaigns are the space's: a
+   * campaign of another space is left out of the list and of the total, which
+   * is the sum of the campaigns listed, read once with them; a campaign id of
+   * another space is ignored, one of the space keeps its score and its rank.
+   * Mutants: the list unfiltered; the rank asked platform-wide; the overall
+   * total returned; the space's campaign ignored.
+   */
+  @Test
+  public void getMyGamificationScoreKeepsToTheSpace() {
+    stubCurrentUserIdentity();
+    stubSpacePrograms(12L, List.of(CAMPAIGN_ID, 8L));
+    when(realizationService.getScorePerProgramByIdentityId(String.valueOf(OWN_ID)))
+        .thenReturn(List.of(new ProfileReputation(CAMPAIGN_ID, 80L), new ProfileReputation(6L, 40L), new ProfileReputation(8L, 5L)));
+    when(realizationService.getLeaderboardRank(eq(OWN_ID), isNull(), isNull(), eq(12L), isNull())).thenReturn(3);
+    when(realizationService.getLeaderboardRank(eq(OWN_ID), isNull(), isNull(), eq(12L), eq(CAMPAIGN_ID))).thenReturn(2);
+
+    ScoreModel elsewhere = tool.getMyGamificationScore(6L, 12L);
+    ScoreModel inSpace = tool.getMyGamificationScore(CAMPAIGN_ID, 12L);
+
+    assertEquals(85L, elsewhere.getTotalScore());
+    assertEquals(3, elsewhere.getRank());
+    assertNull(elsewhere.getCampaignId());
+    assertNull(elsewhere.getCampaignScore());
+    assertEquals(List.of(CAMPAIGN_ID, 8L),
+                 elsewhere.getScoresPerCampaign().stream().map(ScoreModel.CampaignScore::getCampaignId).toList());
+    assertEquals(85L, inSpace.getTotalScore());
+    assertEquals(2, inSpace.getRank());
+    assertEquals(Long.valueOf(CAMPAIGN_ID), inSpace.getCampaignId());
+    assertEquals(Long.valueOf(80L), inSpace.getCampaignScore());
+    verify(realizationService, never()).getScoreByIdentityId(any());
+    verify(realizationService, never()).getScoreByIdentityIdAndBetweenDates(any(), any(), any(), any(), any());
+  }
+
+  /**
+   * A space with no campaign of its own answers nothing, not the user's
+   * overall score. Mutant: the list unfiltered, which sums every campaign.
+   */
+  @Test
+  public void getMyGamificationScoreInASpaceWithNoCampaign() {
+    stubCurrentUserIdentity();
+    stubSpacePrograms(13L, List.of());
+    when(realizationService.getScorePerProgramByIdentityId(String.valueOf(OWN_ID)))
+        .thenReturn(List.of(new ProfileReputation(CAMPAIGN_ID, 80L)));
+
+    ScoreModel score = tool.getMyGamificationScore(null, 13L);
+
+    assertEquals(0L, score.getTotalScore());
+    assertTrue(score.getScoresPerCampaign().isEmpty());
+    verify(realizationService, never()).getScoreByIdentityIdAndBetweenDates(any(), any(), any(), any(), any());
   }
 
   // --- get_gamification_leaderboard ----------------------------------------
@@ -559,7 +618,7 @@ public class GamificationMcpToolTest {
     when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt()))
         .thenReturn(List.of(realization(1L, QUEST_ID, program(CAMPAIGN_ID))));
 
-    tool.listMyRealizations(null, null, null, null, null, null);
+    tool.listMyRealizations(null, null, null, null, null, null, null);
 
     ArgumentCaptor<RealizationFilter> captor = ArgumentCaptor.forClass(RealizationFilter.class);
     verify(realizationService).getRealizationsByFilter(captor.capture(), eq(currentIdentity), anyInt(), anyInt());
@@ -579,7 +638,7 @@ public class GamificationMcpToolTest {
     when(ruleService.canViewRule(quest, USERNAME)).thenReturn(true);
     when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program(CAMPAIGN_ID));
 
-    List<RealizationModel> realizations = tool.listMyRealizations(null, null, null, null, null, null);
+    List<RealizationModel> realizations = tool.listMyRealizations(null, null, null, null, null, null, null);
 
     assertEquals(1, realizations.size());
     assertEquals(QUEST_ID, realizations.get(0).getQuestId().longValue());
@@ -616,7 +675,7 @@ public class GamificationMcpToolTest {
     when(ruleService.findRuleById(QUEST_ID)).thenReturn(quest);
     when(ruleService.canViewRule(quest, USERNAME)).thenReturn(true);
 
-    List<RealizationModel> realizations = tool.listMyRealizations(null, null, null, null, null, null);
+    List<RealizationModel> realizations = tool.listMyRealizations(null, null, null, null, null, null, null);
 
     assertEquals(3, realizations.size());
     for (int index : new int[] { 0, 2 }) {
@@ -640,21 +699,39 @@ public class GamificationMcpToolTest {
         .thenReturn(List.of(realization(1L, QUEST_ID, program(CAMPAIGN_ID))));
 
     List<RealizationModel> realizations =
-        tool.listMyRealizations("2026-01-01", "2026-02-01", CAMPAIGN_ID, "ACCEPTED", 20, 0);
+        tool.listMyRealizations("2026-01-01", "2026-02-01", CAMPAIGN_ID, null, "ACCEPTED", 20, 0);
 
     assertEquals(1, realizations.size());
+  }
+
+  /**
+   * A space is a query predicate, and no space leaves the filter without one.
+   * Mutant: the space left out of the filter.
+   */
+  @Test
+  public void listMyRealizationsKeepsToTheSpace() throws Exception {
+    stubCurrentUserIdentity();
+    when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt())).thenReturn(List.of());
+
+    tool.listMyRealizations(null, null, null, 12L, null, null, null);
+    tool.listMyRealizations(null, null, null, null, null, null, null);
+
+    ArgumentCaptor<RealizationFilter> captor = ArgumentCaptor.forClass(RealizationFilter.class);
+    verify(realizationService, times(2)).getRealizationsByFilter(captor.capture(), eq(currentIdentity), anyInt(), anyInt());
+    assertEquals(List.of(12L), captor.getAllValues().get(0).getSpacesIds());
+    assertNull(captor.getAllValues().get(1).getSpacesIds());
   }
 
   @Test
   public void listMyRealizationsInvalidDateFails() {
     stubCurrentUserIdentity();
-    assertThrows(IllegalArgumentException.class, () -> tool.listMyRealizations("nope", null, null, null, null, null));
+    assertThrows(IllegalArgumentException.class, () -> tool.listMyRealizations("nope", null, null, null, null, null, null));
   }
 
   @Test
   public void listMyRealizationsInvalidStatusFails() {
     stubCurrentUserIdentity();
-    assertThrows(IllegalArgumentException.class, () -> tool.listMyRealizations(null, null, null, "BOGUS", null, null));
+    assertThrows(IllegalArgumentException.class, () -> tool.listMyRealizations(null, null, null, null, "BOGUS", null, null));
   }
 
   // --- list_my_announcements -----------------------------------------------
@@ -695,7 +772,7 @@ public class GamificationMcpToolTest {
     when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt()))
         .thenReturn(List.of(announcementRealization(1L, QUEST_ID)));
 
-    List<AnnouncementModel> announcements = tool.listMyAnnouncements(null, null, null);
+    List<AnnouncementModel> announcements = tool.listMyAnnouncements(null, null, null, null);
 
     ArgumentCaptor<RealizationFilter> captor = ArgumentCaptor.forClass(RealizationFilter.class);
     verify(realizationService).getRealizationsByFilter(captor.capture(), eq(currentIdentity), anyInt(), anyInt());
@@ -716,9 +793,28 @@ public class GamificationMcpToolTest {
     when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt()))
         .thenReturn(List.of(announcementRealization(1L, QUEST_ID)));
 
-    List<AnnouncementModel> announcements = tool.listMyAnnouncements(QUEST_ID, 20, 0);
+    List<AnnouncementModel> announcements = tool.listMyAnnouncements(QUEST_ID, null, 20, 0);
 
     assertEquals(1, announcements.size());
+  }
+
+  /**
+   * A space is a query predicate, and no space leaves the filter without one.
+   * Mutant: the space left out of the filter.
+   */
+  @Test
+  public void listMyAnnouncementsKeepsToTheSpace() throws Exception {
+    stubCurrentUserIdentity();
+    when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt())).thenReturn(List.of());
+
+    tool.listMyAnnouncements(null, 12L, null, null);
+    tool.listMyAnnouncements(null, null, null, null);
+
+    ArgumentCaptor<RealizationFilter> captor = ArgumentCaptor.forClass(RealizationFilter.class);
+    verify(realizationService, times(2)).getRealizationsByFilter(captor.capture(), eq(currentIdentity), anyInt(), anyInt());
+    assertEquals(List.of(12L), captor.getAllValues().get(0).getSpacesIds());
+    assertTrue(captor.getAllValues().get(0).isAnnouncementsOnly());
+    assertNull(captor.getAllValues().get(1).getSpacesIds());
   }
 
   @Test
@@ -726,7 +822,7 @@ public class GamificationMcpToolTest {
     stubCurrentUserIdentity();
     when(realizationService.getRealizationsByFilter(any(), eq(currentIdentity), anyInt(), anyInt())).thenReturn(List.of());
 
-    List<AnnouncementModel> announcements = tool.listMyAnnouncements(null, null, null);
+    List<AnnouncementModel> announcements = tool.listMyAnnouncements(null, null, null, null);
 
     assertTrue(announcements.isEmpty());
   }
@@ -1193,7 +1289,7 @@ public class GamificationMcpToolTest {
                                                                 isNull(),
                                                                 eq(CAMPAIGN_ID))).thenReturn(240L);
 
-    PointsTotalModel total = tool.getMyPointsTotal("2026-01-01", "2026-02-01", CAMPAIGN_ID);
+    PointsTotalModel total = tool.getMyPointsTotal("2026-01-01", "2026-02-01", CAMPAIGN_ID, null);
 
     assertEquals(240L, total.getTotalPoints());
     assertEquals("2026-01-01", total.getFromDate());
@@ -1210,7 +1306,7 @@ public class GamificationMcpToolTest {
                                                                 isNull(),
                                                                 isNull())).thenReturn(500L);
 
-    PointsTotalModel total = tool.getMyPointsTotal(null, null, null);
+    PointsTotalModel total = tool.getMyPointsTotal(null, null, null, null);
 
     assertEquals(500L, total.getTotalPoints());
     assertEquals(null, total.getCampaignId());
@@ -1219,7 +1315,36 @@ public class GamificationMcpToolTest {
   @Test
   public void getMyPointsTotalInvalidDateFails() {
     stubCurrentUserIdentity();
-    assertThrows(IllegalArgumentException.class, () -> tool.getMyPointsTotal("not-a-date", null, null));
+    assertThrows(IllegalArgumentException.class, () -> tool.getMyPointsTotal("not-a-date", null, null, null));
+  }
+
+  /**
+   * Under a space, the points are counted in that space's campaigns, open ones
+   * left out; a space with no campaign answers zero without asking the
+   * service, which reads an empty campaign list as every campaign; a campaign
+   * of the space counts that campaign, one of another space answers zero.
+   * Mutants: the space not passed; the empty space handed to the service; the
+   * campaign kept whatever its space; the space's campaign answered zero.
+   */
+  @Test
+  public void getMyPointsTotalKeepsToTheSpace() {
+    stubCurrentUserIdentity();
+    stubSpacePrograms(12L, List.of(CAMPAIGN_ID));
+    stubSpacePrograms(13L, List.of());
+    when(realizationService.getScoreByIdentityIdAndBetweenDates(eq(String.valueOf(OWN_ID)), isNull(), isNull(), eq(12L), isNull()))
+        .thenReturn(70L);
+    when(realizationService.getScoreByIdentityIdAndBetweenDates(eq(String.valueOf(OWN_ID)), isNull(), isNull(), isNull(), eq(CAMPAIGN_ID)))
+        .thenReturn(30L);
+
+    assertEquals(70L, tool.getMyPointsTotal(null, null, null, 12L).getTotalPoints());
+    assertEquals(30L, tool.getMyPointsTotal(null, null, CAMPAIGN_ID, 12L).getTotalPoints());
+    assertEquals(0L, tool.getMyPointsTotal(null, null, null, 13L).getTotalPoints());
+    assertEquals(0L, tool.getMyPointsTotal(null, null, 6L, 12L).getTotalPoints());
+    verify(realizationService, never()).getScoreByIdentityIdAndBetweenDates(any(), any(), any(), eq(13L), any());
+    verify(realizationService, never()).getScoreByIdentityIdAndBetweenDates(any(), any(), any(), any(), eq(6L));
+    ArgumentCaptor<ProgramFilter> captor = ArgumentCaptor.forClass(ProgramFilter.class);
+    verify(programService, atLeastOnce()).getProgramIds(captor.capture(), eq(0), eq(-1));
+    assertTrue(captor.getValue().isExcludeOpen());
   }
 
   // --- get_my_score_breakdown ----------------------------------------------
@@ -1232,7 +1357,7 @@ public class GamificationMcpToolTest {
         .thenReturn(List.of(slice));
     when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenReturn(program(CAMPAIGN_ID));
 
-    List<ScoreBreakdownEntryModel> breakdown = tool.getMyScoreBreakdown("MONTH");
+    List<ScoreBreakdownEntryModel> breakdown = tool.getMyScoreBreakdown("MONTH", null);
 
     assertEquals(1, breakdown.size());
     assertEquals(CAMPAIGN_ID, breakdown.get(0).getCampaignId());
@@ -1255,7 +1380,7 @@ public class GamificationMcpToolTest {
         .thenReturn(List.of(new PiechartLeaderboard(CAMPAIGN_ID, 80L)));
     when(programService.getProgramById(CAMPAIGN_ID, USERNAME)).thenThrow(new IllegalAccessException("not viewable"));
 
-    List<ScoreBreakdownEntryModel> breakdown = tool.getMyScoreBreakdown("MONTH");
+    List<ScoreBreakdownEntryModel> breakdown = tool.getMyScoreBreakdown("MONTH", null);
 
     assertEquals(1, breakdown.size());
     assertEquals(80L, breakdown.get(0).getPoints());
@@ -1269,15 +1394,31 @@ public class GamificationMcpToolTest {
     when(realizationService.getLeaderboardStatsByIdentityId(eq(String.valueOf(OWN_ID)), isNull(), eq("ALL"), isNull(), isNull()))
         .thenReturn(List.of());
 
-    List<ScoreBreakdownEntryModel> breakdown = tool.getMyScoreBreakdown(null);
+    List<ScoreBreakdownEntryModel> breakdown = tool.getMyScoreBreakdown(null, null);
 
     assertTrue(breakdown.isEmpty());
+  }
+
+  /**
+   * Under a space, the breakdown is asked for that space only. Mutant: the
+   * space not passed to the service.
+   */
+  @Test
+  public void getMyScoreBreakdownKeepsToTheSpace() {
+    stubCurrentUserIdentity();
+    when(realizationService.getLeaderboardStatsByIdentityId(eq(String.valueOf(OWN_ID)), eq(12L), eq("ALL"), isNull(), isNull()))
+        .thenReturn(List.of(new PiechartLeaderboard(CAMPAIGN_ID, 80L)));
+
+    List<ScoreBreakdownEntryModel> breakdown = tool.getMyScoreBreakdown(null, 12L);
+
+    assertEquals(1, breakdown.size());
+    verify(realizationService, never()).getLeaderboardStatsByIdentityId(any(), isNull(), any(), any(), any());
   }
 
   @Test
   public void getMyScoreBreakdownInvalidPeriodFails() {
     stubCurrentUserIdentity();
-    assertThrows(IllegalArgumentException.class, () -> tool.getMyScoreBreakdown("DECADE"));
+    assertThrows(IllegalArgumentException.class, () -> tool.getMyScoreBreakdown("DECADE", null));
   }
 
   // --- check_quest_availability --------------------------------------------
