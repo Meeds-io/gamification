@@ -4,12 +4,5 @@
     "gamificationRuleActivity",
     "challenges-announcement",
     "gamificationActionAnnouncement"
-  ],
-  "labels": {
-    "notCounted": [
-      "gamification.collaborativeActivity.help.notCounted.createQuest",
-      "gamification.collaborativeActivity.help.notCounted.submitContribution",
-      "gamification.collaborativeActivity.help.notCounted.earnPoints"
-    ]
-  }
+  ]
 }

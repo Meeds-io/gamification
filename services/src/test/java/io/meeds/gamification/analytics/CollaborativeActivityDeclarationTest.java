@@ -70,12 +70,7 @@ public class CollaborativeActivityDeclarationTest {
     assertEquals(expectedTypes, new HashSet<>(excludedTypes));
     assertEquals("one entry per type", expectedTypes.size(), excludedTypes.size());
 
-    Map<String, Object> labels = (Map<String, Object>) declaration.get("labels");
-    assertFalse(labels.containsKey("counted"));
-    assertEquals(List.of("gamification.collaborativeActivity.help.notCounted.createQuest",
-                         "gamification.collaborativeActivity.help.notCounted.submitContribution",
-                         "gamification.collaborativeActivity.help.notCounted.earnPoints"),
-                 labels.get("notCounted"));
+    assertFalse("nothing of the gamification is counted, so it has no help label", declaration.containsKey("labels"));
   }
 
 }
