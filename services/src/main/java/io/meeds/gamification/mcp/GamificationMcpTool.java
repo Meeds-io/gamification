@@ -110,6 +110,14 @@ public class GamificationMcpTool implements McpToolPlugin {
 
   private static final int          MAX_LIST_LIMIT     = 50;
 
+  /**
+   * How many of a space's campaigns its scores count: the bound the service
+   * reads a space's campaigns with for its space total and rank
+   * ({@code RealizationServiceImpl#getSpaceProgramIds}), so that a score's
+   * campaigns, total and rank are counted over one set.
+   */
+  private static final int          SPACE_PROGRAMS_LIMIT = 100;
+
   private final ProgramService      programService;
 
   private final RuleService         ruleService;
@@ -798,13 +806,14 @@ public class GamificationMcpTool implements McpToolPlugin {
   /**
    * @param spaceId a space id
    * @return the ids of the space's own campaigns, open and deleted ones left
-   *         out, as list_campaigns reads them under a space
+   *         out, as list_campaigns reads them under a space, at most
+   *         {@link #SPACE_PROGRAMS_LIMIT}
    */
   private Set<Long> getSpaceProgramIds(long spaceId) {
     ProgramFilter filter = new ProgramFilter();
     filter.setSpacesIds(List.of(spaceId));
     filter.setExcludeOpen(true);
-    List<Long> ids = programService.getProgramIds(filter, 0, -1);
+    List<Long> ids = programService.getProgramIds(filter, 0, SPACE_PROGRAMS_LIMIT);
     return ids == null ? Set.of() : new HashSet<>(ids);
   }
 
