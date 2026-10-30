@@ -182,7 +182,7 @@ public class GamificationMcpToolTest {
 
   private void stubSpacePrograms(long spaceId, List<Long> programIds) {
     when(programService.getProgramIds(argThat(filter -> filter != null && filter.getSpacesIds() != null
-        && filter.getSpacesIds().equals(List.of(spaceId))), eq(0), eq(-1))).thenReturn(programIds);
+        && filter.getSpacesIds().equals(List.of(spaceId))), eq(0), eq(100))).thenReturn(programIds);
   }
 
   private void stubCurrentUserIdentity() {
@@ -1323,8 +1323,10 @@ public class GamificationMcpToolTest {
    * left out; a space with no campaign answers zero without asking the
    * service, which reads an empty campaign list as every campaign; a campaign
    * of the space counts that campaign, one of another space answers zero.
-   * Mutants: the space not passed; the empty space handed to the service; the
-   * campaign kept whatever its space; the space's campaign answered zero.
+   * The space's campaigns are read with the service's bound, 100, so that a
+   * score's campaigns, total and rank count one set. Mutants: the space not
+   * passed; the empty space handed to the service; the campaign kept whatever
+   * its space; the space's campaign answered zero; the campaigns read unbounded.
    */
   @Test
   public void getMyPointsTotalKeepsToTheSpace() {
@@ -1343,7 +1345,7 @@ public class GamificationMcpToolTest {
     verify(realizationService, never()).getScoreByIdentityIdAndBetweenDates(any(), any(), any(), eq(13L), any());
     verify(realizationService, never()).getScoreByIdentityIdAndBetweenDates(any(), any(), any(), any(), eq(6L));
     ArgumentCaptor<ProgramFilter> captor = ArgumentCaptor.forClass(ProgramFilter.class);
-    verify(programService, atLeastOnce()).getProgramIds(captor.capture(), eq(0), eq(-1));
+    verify(programService, atLeastOnce()).getProgramIds(captor.capture(), eq(0), eq(100));
     assertTrue(captor.getValue().isExcludeOpen());
   }
 
