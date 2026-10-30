@@ -445,7 +445,7 @@
     },
     {
       "name": "create_campaign",
-      "space_scope": { "space_arg": "space_id", "allowed_args": ["title", "description", "budget"], "space_admin": true },
+      "space_scope": { "space_arg": "space_id", "allowed_args": ["title", "description", "budget"], "space_admin": true, "space_role": "manager" },
       "title": "Create a campaign",
       "description": "Create a new campaign (a gamification program that groups quests). With a space id the campaign belongs to that space and requires manager rights on it; without one it is platform-wide and requires rewarding-admin rights. Resolve a space id with get_my_spaces.",
       "input_schema": {
@@ -482,7 +482,7 @@
     },
     {
       "name": "create_quest",
-      "space_scope": { "object_arg": "campaign_id", "resolver": "campaign", "allowed_args": ["title", "description", "score", "type", "start_date", "end_date", "recurrence", "publish"], "space_admin": true },
+      "space_scope": { "object_arg": "campaign_id", "resolver": "campaign", "allowed_args": ["title", "description", "score", "type", "start_date", "end_date", "recurrence", "publish"], "space_admin": true, "space_role": "manager" },
       "title": "Create a quest",
       "description": "Create a new quest (a gamification action/rule) inside a campaign. Only MANUAL quests (challenges the user announces) are supported here; AUTOMATIC (event-triggered) quests are rejected. Requires being an owner of the campaign. Resolve the campaign id with list_campaigns. Pass publish=true to also announce it in the campaign's space stream (on your own stream when the campaign is platform-wide).",
       "input_schema": {
@@ -552,7 +552,7 @@
     },
     {
       "name": "update_quest",
-      "space_scope": { "object_arg": "quest_id", "resolver": "quest", "allowed_args": ["title", "description", "score", "start_date", "end_date", "enabled", "recurrence"], "space_admin": true },
+      "space_scope": { "object_arg": "quest_id", "resolver": "quest", "allowed_args": ["title", "description", "score", "start_date", "end_date", "enabled", "recurrence"], "space_admin": true, "space_role": "manager" },
       "title": "Update a quest",
       "description": "Update an existing quest (a gamification action/rule). Only the fields you pass are changed; the others keep their current values. Requires being an owner of the quest's campaign. Resolve the quest id with list_quests.",
       "input_schema": {
@@ -612,7 +612,7 @@
     },
     {
       "name": "delete_quest",
-      "space_scope": { "object_arg": "quest_id", "resolver": "quest", "space_admin": true },
+      "space_scope": { "object_arg": "quest_id", "resolver": "quest", "space_admin": true, "space_role": "manager" },
       "title": "Delete a quest",
       "description": "Delete a quest (a gamification action/rule). Requires being an owner of the quest's campaign. Resolve the quest id with list_quests.",
       "input_schema": {
@@ -637,7 +637,7 @@
     },
     {
       "name": "announce_quest",
-      "space_scope": { "object_arg": "quest_id", "resolver": "quest", "allowed_args": ["comment"] },
+      "space_scope": { "object_arg": "quest_id", "resolver": "quest", "allowed_args": ["comment"], "space_role": "member" },
       "title": "Announce a quest",
       "description": "Announce, as the current user, that they completed a manual quest (a challenge), so it can be reviewed and rewarded with points. Only MANUAL quests can be announced. Resolve the quest id with list_quests.",
       "input_schema": {
@@ -666,7 +666,7 @@
     },
     {
       "name": "cancel_quest_announcement",
-      "space_scope": { "object_arg": "announcement_id", "resolver": "quest_announcement" },
+      "space_scope": { "object_arg": "announcement_id", "resolver": "quest_announcement", "space_role": "member" },
       "title": "Cancel a quest announcement",
       "description": "Cancel (delete) a quest announcement previously made by the current user. Only the author can cancel their own announcement. Use the announcement_id returned by announce_quest.",
       "input_schema": {
