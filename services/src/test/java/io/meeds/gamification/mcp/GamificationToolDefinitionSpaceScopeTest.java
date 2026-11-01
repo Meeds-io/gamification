@@ -484,10 +484,18 @@ public class GamificationToolDefinitionSpaceScopeTest {
   /**
    * Each space-scoped write declares in {@code space_role} the role the member
    * who asks a digital worker for it must hold in the call's space
-   * (EXO-91405), and no space-scoped read declares one: any member announces a
-   * quest and cancels their own announcement, so {@code member}; a campaign
-   * and its quests are administered by a manager of the space, so
-   * {@code manager}. A {@code space_admin} write declares {@code manager}.
+   * (EXO-91405), and no space-scoped read declares one. Announcing a quest
+   * is open to a member of its audience, and cancelling an announcement to
+   * its creator with no space role at all, so both declare {@code member}.
+   * Creating a campaign in a space is a manager's, so {@code manager}.
+   * Creating, updating and deleting a campaign's quests are,
+   * in person, a campaign owner's ({@code ProgramServiceImpl#isProgramOwner}:
+   * a manager of the space, a rewarding manager, or a member listed among the
+   * campaign's owners); a space role can't tell an owner, so they declare
+   * {@code manager}, as their {@code space_admin} already required, and a
+   * member who owns the campaign but doesn't manage the space is refused
+   * through a digital worker: stricter than in person, never broader. A
+   * {@code space_admin} write declares {@code manager}.
    * Mutants: a write's role dropped or changed, or a read given one.
    *
    * @throws Exception when the shipped definitions can't be read
