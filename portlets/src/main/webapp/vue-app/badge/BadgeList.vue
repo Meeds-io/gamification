@@ -464,7 +464,6 @@ export default {
     .table {
         position: relative;
         border-radius: 3px;
-        background: #fff;
         margin-bottom: 20px;
         width: 96%;
         box-shadow: 0 1px 1px rgba(0,0,0,.1);
