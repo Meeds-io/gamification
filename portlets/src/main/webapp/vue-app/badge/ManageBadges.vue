@@ -207,7 +207,6 @@ export default {
 
 <style>
 section {
-    background: white;
     border-radius: 0 0 3px 3px;
 }
 
