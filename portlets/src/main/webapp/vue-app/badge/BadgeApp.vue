@@ -31,10 +31,6 @@ export default {
 
 <style>
 
-  body {
-    background-color: var(--allPagesLightGrey, #f2f2f2) !important;
-  }
-
      .UIToolbarContainerDark a.dropdown-toggle {
     color: #fff;
       text-decoration: none;
