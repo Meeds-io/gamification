@@ -19,10 +19,7 @@
   <v-hover v-slot="{ hover }">
     <v-card
       flat
-      class="pa-0"
-      :href="ruleUrl"
-      :aria-label="$t('search.access.to.result', {0 :ruleTitle})"
-      @click.stop.prevent="openRuleDetailsDrawer()">
+      class="search-result-card pa-0">
       <v-list class="pa-0" :class="hover && 'light-grey-background-color no-border-radius' || ''">
         <v-list-item>
           <v-list-item-icon class="ms-n1 me-2">
@@ -31,16 +28,26 @@
 
           <v-list-item-content>
             <v-list-item-title class="d-flex flex-row full-width align-center">
-              <h1
-                class="flex-grow-1 title primary--text pt-1 mb-0 ps-0 my-auto align-center text-start text-truncate"
-                v-sanitized-html="ruleTitle"></h1>
-              <div v-show="hover || isMobile" class="ml-2 pt-1">
+              <h1 class="flex-grow-1 title primary--text pt-1 mb-0 ps-0 my-auto align-center text-start text-truncate">
+                <a
+                  :href="ruleUrl"
+                  class="search-result-link"
+                  v-sanitized-html="ruleTitle"
+                  @click.prevent="openRuleDetailsDrawer()"></a>
+              </h1>
+              <div
+                :class="{'search-result-actions-visible': isMobile}"
+                class="search-result-interactive search-result-actions ml-2 pt-1">
                 <span class="d-flex d-inline-flex">
                   <v-btn
+                    :aria-label="$t('challenges.button.announce')"
                     icon
                     small
-                    @click="openRuleDetailsDrawer(true)">
-                    <v-icon class="icon-default-color" size="16">
+                    @click.prevent.stop="openRuleDetailsDrawer(true)">
+                    <v-icon
+                      class="icon-default-color"
+                      size="16"
+                      aria-hidden="true">
                       fa fa-bullhorn
                     </v-icon>
                   </v-btn>
