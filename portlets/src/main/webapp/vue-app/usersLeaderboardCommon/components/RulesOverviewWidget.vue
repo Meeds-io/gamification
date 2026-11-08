@@ -38,6 +38,7 @@
             :icon="hoverEdit"
             :small="hoverEdit"
             :title="$t('gamification.rules.overviewSettings.title')"
+            :aria-label="$t('rules.seeAll')"
             height="auto"
             min-width="auto"
             class="pa-0"
@@ -53,8 +54,10 @@
           </v-btn>
           <v-fab-transition hide-on-leave>
             <v-btn
-              v-if="hoverEdit"
+              v-if="editable"
               :title="$t('gamification.programs.overviewSettings.editTooltip')"
+              :aria-label="$t('gamification.programs.overviewSettings.editTooltip')"
+              :class="!hoverEdit && 'd-sr-only-focusable'"
               class="z-index-one"
               small
               icon
@@ -64,6 +67,7 @@
           </v-fab-transition>
           <v-btn
             v-if="emptyWidget && !!spaceId && activeRulesSize"
+            :aria-label="$t('exoplatform.gamification.close')"
             icon
             @click="hideEmptyWidget">
             <v-icon>fa-times</v-icon>
@@ -143,6 +147,10 @@ export default {
       default: false,
     },
     hoverEdit: {
+      type: Boolean,
+      default: false,
+    },
+    editable: {
       type: Boolean,
       default: false,
     },
