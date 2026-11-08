@@ -11,6 +11,7 @@
       <v-btn
         :class="dark && 'white'"
         :small="small"
+        :aria-label="$t('rule.menu.label')"
         icon
         v-bind="attrs"
         v-on="on">
