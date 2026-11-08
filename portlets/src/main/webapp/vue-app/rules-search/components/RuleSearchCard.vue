@@ -99,7 +99,7 @@
                   <template #activator="{on}">
                     <div
                       v-sanitized-html="recurrenceTitle"
-                      class="text-subtitle"
+                      class="search-result-interactive text-subtitle"
                       v-on="on">
                     </div>
                     <v-icon size="12" class="pe-1">
