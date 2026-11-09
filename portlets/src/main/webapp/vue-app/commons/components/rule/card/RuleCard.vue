@@ -25,14 +25,15 @@
       height="230"
       max-height="230"
       outlined
+      @focusin.native="focused = $event.target.matches(':focus-visible')"
+      @focusout.native="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))"
       @click="$root.$emit('rule-detail-drawer', ruleWithProgram)">
       <div v-if="!isValid">
-        <div v-show="hover" class="d-flex position-absolute full-width z-index-two">
+        <div :class="{'d-sr-only': !hover && !focused}" class="d-flex position-absolute full-width z-index-two">
           <div class="ms-auto mb-auto mt-4 me-4">
             <v-card
               v-if="isProgramMember"
-              v-show="hover"
-              :class="hover && 'd-inline-flex'"
+              :class="(hover || focused) && 'd-inline-flex'"
               width="28"
               height="8"
               class="my-auto position-relative"
@@ -92,8 +93,7 @@
           </div>
           <div v-if="isValid" class="flex-grow-0 d-flex align-center">
             <div
-              v-show="hover"
-              :class="hover && 'd-inline-flex'"
+              :class="(hover || focused) && 'd-inline-flex' || 'd-sr-only'"
               class="my-auto">
               <rule-favorite-button
                 v-if="isProgramMember"
@@ -150,6 +150,7 @@ export default {
   },
   data: () => ({
     showMenu: false,
+    focused: false,
     connectorValueExtensions: []
   }),
   computed: {
