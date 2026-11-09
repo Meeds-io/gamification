@@ -22,7 +22,10 @@
 <template>
   <v-app>
     <v-hover v-model="hover">
-      <gamification-overview-widget :loading="loading">
+      <gamification-overview-widget
+        :loading="loading"
+        @focusin.native="focused = $event.target.matches(':focus-visible')"
+        @focusout.native="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))">
         <template #title>
           <div class="d-flex flex-grow-1 min-width-0 full-width position-relative">
             <div v-if="!neverContributed && !loading" class="text-header">
@@ -40,6 +43,7 @@
                 v-if="!neverContributed"
                 :icon="hoverEdit"
                 :small="hoverEdit"
+                :aria-label="$t('rules.seeAll')"
                 height="auto"
                 min-width="auto"
                 class="pa-0"
@@ -55,9 +59,13 @@
               </v-btn>
               <v-fab-transition hide-on-leave>
                 <v-btn
-                  v-show="hoverEdit"
+                  v-show="$root.canEdit"
                   :title="$t('gamification.programs.overviewSettings.editTooltip')"
-                  :class="neverContributed && 'me-n2 z-index-one'"
+                  :aria-label="$t('gamification.programs.overviewSettings.editTooltip')"
+                  :class="{
+                    'me-n2 z-index-one': neverContributed,
+                    'd-sr-only-focusable': !hoverEdit,
+                  }"
                   small
                   icon
                   @click="$root.$emit('my-contributions-overview-settings')">
@@ -97,6 +105,7 @@ export default {
     user: null,
     userScore: null,
     hover: false,
+    focused: false,
     initialized: false,
   }),
   computed: {
@@ -124,7 +133,7 @@ export default {
       return this.$root.myContributionsDisplayLegend || false;
     },
     hoverEdit() {
-      return this.hover && this.$root.canEdit;
+      return (this.hover || this.focused) && this.$root.canEdit;
     },
     title() {
       return this.$t(`gamification.overview.${this.period}lyLeaderboard`);
