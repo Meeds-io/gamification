@@ -16,7 +16,10 @@
 <template>
   <v-app>
     <v-hover v-model="hover">
-      <gamification-overview-widget :loading="loading">
+      <gamification-overview-widget
+        :loading="loading"
+        @focusin.native="focused = $event.target.matches(':focus-visible')"
+        @focusout.native="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))">
         <template #title>
           <div class="d-flex flex-grow-1 flex-shrink-1 min-width-0 full-width align-center position-relative">
             <div
@@ -36,6 +39,7 @@
                 v-show="programLink"
                 :icon="hoverEdit"
                 :small="hoverEdit"
+                :aria-label="$t('rules.seeAll')"
                 height="auto"
                 min-width="auto"
                 class="pa-0"
@@ -51,8 +55,12 @@
               </v-btn>
               <v-fab-transition hide-on-leave>
                 <v-btn
-                  v-show="displayAddProgram"
-                  :class="!$root.canEdit && 'me-n2'"
+                  v-show="addProgramAllowed"
+                  :class="{
+                    'me-n2': !$root.canEdit,
+                    'd-sr-only-focusable': !displayAddProgram,
+                  }"
+                  :aria-label="$t('programs.button.addProgram')"
                   class="z-index-one"
                   small
                   icon
@@ -62,9 +70,13 @@
               </v-fab-transition>
               <v-fab-transition hide-on-leave>
                 <v-btn
-                  v-show="hoverEdit"
+                  v-show="$root.canEdit"
                   :title="$t('gamification.programs.overviewSettings.editTooltip')"
-                  :class="!programsDisplayed && 'me-n2 z-index-one'"
+                  :aria-label="$t('gamification.programs.overviewSettings.editTooltip')"
+                  :class="{
+                    'me-n2 z-index-one': !programsDisplayed,
+                    'd-sr-only-focusable': !hoverEdit,
+                  }"
                   small
                   icon
                   @click="$root.$emit('programs-overview-settings')">
@@ -114,6 +126,7 @@ export default {
     administrators: null,
     spaceId: eXo.env.portal.spaceId,
     hover: false,
+    focused: false,
     loading: true,
     drawerExpanded: false
   }),
@@ -131,10 +144,13 @@ export default {
       return this.programsDisplayed && this.programURL || null;
     },
     hoverEdit() {
-      return this.hover && this.$root.canEdit;
+      return (this.hover || this.focused) && this.$root.canEdit;
+    },
+    addProgramAllowed() {
+      return this.$root.canAddProgram && !this.programsDisplayed;
     },
     displayAddProgram() {
-      return this.hover && this.$root.canAddProgram && !this.programsDisplayed;
+      return (this.hover || this.focused) && this.addProgramAllowed;
     },
     limit() {
       return this.$root.limit || 4;

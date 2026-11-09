@@ -20,7 +20,10 @@
     <v-hover v-model="hover">
       <gamification-rules-overview-widget
         :hover-edit="hoverEdit"
+        :editable="!!$root.canEdit"
         :hide-empty-placeholder="$root.hideWidgetWhenEmpty"
+        @focusin.native="focused = $event.target.matches(':focus-visible')"
+        @focusout.native="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))"
         @open-list="$refs.listDrawer.open()"
         @hide="hidden = true" />
     </v-hover>
@@ -36,10 +39,11 @@ export default {
   data: () => ({
     hidden: false,
     hover: false,
+    focused: false,
   }),
   computed: {
     hoverEdit() {
-      return this.$root.canEdit && this.hover;
+      return this.$root.canEdit && (this.hover || this.focused);
     }
   },
   watch: {
