@@ -20,18 +20,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
     id="badgesOverview">
     <v-hover v-model="hover">
-      <gamification-overview-widget :loading="loading">
+      <gamification-overview-widget
+        :loading="loading"
+        @focusin.native="focused = $event.target.matches(':focus-visible')"
+        @focusout.native="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))">
         <template #title>
           <div class="d-flex full-width align-center min-width-0 position-relative">
             <div v-if="hasBadges" class="text-header">
               <span class="text-truncate">{{ $t('exoplatform.gamification.badgesByDomain') }}</span>
             </div>
             <v-btn
-              v-if="$root.canEdit && hover"
+              v-if="$root.canEdit"
+              :aria-label="$t('gamification.badges.badgesOverviewSettings.title')"
               :class="{
                 'mt-3': !hasBadges,
                 'l-0': $vuetify.rtl,
                 'r-0': !$vuetify.rtl,
+                'd-sr-only-focusable': !hover && !focused,
               }"
               class="position-absolute absolute-vertical-center z-index-one"
               icon
@@ -90,6 +95,7 @@ export default {
     badges: [],
     loading: true,
     hover: false,
+    focused: false,
     isCurrentUserProfile: eXo.env.portal.userName === eXo.env.portal.profileOwner,
     collator: new Intl.Collator(eXo.env.portal.language, {numeric: true, sensitivity: 'base'}),
   }),

@@ -19,7 +19,9 @@
 -->
 <template>
   <v-hover v-slot="{ hover }">
-    <tr>
+    <tr
+      @focusin="focused = $event.target.matches(':focus-visible')"
+      @focusout="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))">
       <td class="no-border-bottom ps-0">
         <div @click="openRule(false)" class="clickable d-flex flex-row ma-auto">
           <div class="d-flex flex-column align-center justify-center col-2 col-sm-1 pa-0">
@@ -37,9 +39,10 @@
       <td
         cols="2"
         class="align-center no-border-bottom">
-        <div v-if="hover || isMobile" class="d-flex">
+        <div :class="{'d-sr-only': !hover && !focused && !isMobile}" class="d-flex">
           <div v-if="canAnnounce" class="align-center d-none d-sm-block">
             <v-btn
+              :aria-label="$t('challenges.button.announce')"
               icon
               class="me-2"
               @click="openRule(true)">
@@ -94,6 +97,7 @@ export default {
   },
   data() {
     return {
+      focused: false,
       maxAvatarsToShow: 3,
     };
   },
