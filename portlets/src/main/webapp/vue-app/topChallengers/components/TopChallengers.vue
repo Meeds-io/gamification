@@ -24,7 +24,9 @@
     <v-hover v-model="hover">
       <gamification-overview-widget
         :loading="loading"
-        class="d-flex">
+        class="d-flex"
+        @focusin.native="focused = $event.target.matches(':focus-visible')"
+        @focusout.native="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))">
         <template #title>
           <div class="d-flex flex-grow-1 min-width-0 full-width position-relative">
             <div v-if="!displayPlaceholder && !loading" class="text-header">
@@ -43,6 +45,7 @@
                 v-if="!displayPlaceholder && !loading"
                 :icon="hoverEdit"
                 :small="hoverEdit"
+                :aria-label="$t('rules.seeAll')"
                 height="auto"
                 min-width="auto"
                 class="pa-0"
@@ -58,9 +61,13 @@
               </v-btn>
               <v-fab-transition hide-on-leave>
                 <v-btn
-                  v-show="hoverEdit"
+                  v-show="$root.canEdit"
                   :title="$t('gamification.topChallengers.settings.editTooltip')"
-                  :class="displayPlaceholder && 'me-n2 z-index-one'"
+                  :aria-label="$t('gamification.topChallengers.settings.editTooltip')"
+                  :class="{
+                    'me-n2 z-index-one': displayPlaceholder,
+                    'd-sr-only-focusable': !hoverEdit,
+                  }"
                   small
                   icon
                   @click="$root.$emit('topChallengers-overview-settings')">
@@ -87,6 +94,7 @@
 export default {
   data: () => ({
     hover: false,
+    focused: false,
     rankDisplayed: false,
     loading: true,
     spaceId: eXo.env.portal.spaceId,
@@ -100,7 +108,7 @@ export default {
       return !this.rankDisplayed && !this.loading;
     },
     hoverEdit() {
-      return this.hover && this.$root.canEdit;
+      return (this.hover || this.focused) && this.$root.canEdit;
     },
   },
   created() {
