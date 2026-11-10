@@ -19,7 +19,7 @@
   <v-hover v-slot="{ hover }">
     <v-card
       flat
-      class="search-result-card pa-0">
+      class="hover-reveal-parent transparent pa-0">
       <v-list class="pa-0" :class="hover && 'light-grey-background-color no-border-radius' || ''">
         <v-list-item>
           <v-list-item-icon class="ms-n1 me-2">
@@ -31,13 +31,13 @@
               <h1 class="flex-grow-1 title primary--text pt-1 mb-0 ps-0 my-auto align-center text-start text-truncate">
                 <a
                   :href="ruleUrl"
-                  class="search-result-link"
+                  class="stretched-link"
                   v-sanitized-html="ruleTitle"
                   @click.prevent="openRuleDetailsDrawer()"></a>
               </h1>
               <div
-                :class="{'search-result-actions-visible': isMobile}"
-                class="search-result-interactive search-result-actions ml-2 pt-1">
+                :class="!isMobile && 'hover-reveal'"
+                class="stretched-link-above ml-2 pt-1">
                 <span class="d-flex d-inline-flex">
                   <v-btn
                     :aria-label="$t('challenges.button.announce')"
@@ -99,7 +99,7 @@
                   <template #activator="{on}">
                     <div
                       v-sanitized-html="recurrenceTitle"
-                      class="search-result-interactive text-subtitle"
+                      class="stretched-link-above text-subtitle"
                       v-on="on">
                     </div>
                     <v-icon size="12" class="pe-1">
