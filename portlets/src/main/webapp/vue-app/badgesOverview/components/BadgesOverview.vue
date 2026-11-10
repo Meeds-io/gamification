@@ -19,65 +19,61 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     v-if="displayWidget"
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
     id="badgesOverview">
-    <v-hover v-model="hover">
-      <gamification-overview-widget
-        :loading="loading"
-        @focusin.native="focused = $event.target.matches(':focus-visible')"
-        @focusout.native="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))">
-        <template #title>
-          <div class="d-flex full-width align-center min-width-0 position-relative">
-            <div v-if="hasBadges" class="text-header">
-              <span class="text-truncate">{{ $t('exoplatform.gamification.badgesByDomain') }}</span>
-            </div>
-            <v-btn
-              v-if="$root.canEdit"
-              :aria-label="$t('gamification.badges.badgesOverviewSettings.title')"
-              :class="{
-                'mt-3': !hasBadges,
-                'l-0': $vuetify.rtl,
-                'r-0': !$vuetify.rtl,
-                'd-sr-only-focusable': !hover && !focused,
-              }"
-              class="position-absolute absolute-vertical-center z-index-one"
-              icon
-              small
-              @click="$root.$emit('badges-overview-settings')">
-              <v-icon size="18">fa-cog</v-icon>
-            </v-btn>
+    <gamification-overview-widget
+      :loading="loading"
+      class="hover-reveal-parent hover-swap-parent">
+      <template #title>
+        <div class="d-flex full-width align-center min-width-0 position-relative">
+          <div v-if="hasBadges" class="text-header">
+            <span class="text-truncate">{{ $t('exoplatform.gamification.badgesByDomain') }}</span>
           </div>
-        </template>
-        <template #default>
-          <v-card
-            v-if="!loading"
-            :class="!loading && 'd-flex'"
-            class="align-center justify-center transparent flex-grow-0 flex-shrink-0 border-box-sizing px-5 ma-auto"
-            max-width="100%"
-            min-height="90"
-            flat>
-            <card-carousel
-              v-if="hasBadges"
-              class="d-flex width-max-content flex-shrink-0 flex-grow-0 align-center justify-center"
-              dense>
-              <badges-overview-item
-                v-for="(badge, index) in sortedBadges"
-                :key="`${badge.id}_${index}`"
-                :badge="badge" />
-            </card-carousel>
-            <div v-else class="d-flex flex-column align-self-center align-center justify-center full-height full-width">
-              <v-icon 
-                color="tertiary" 
-                :alt="$t('exoplatform.gamification.badge.alt',{0: 'Distinguished'})"
-                size="60">
-                fa-graduation-cap
-              </v-icon>
-              <span
-                v-html="emptyBadgesSummaryText"
-                class="mt-5"></span>
-            </div>
-          </v-card>
-        </template>
-      </gamification-overview-widget>
-    </v-hover>
+          <v-btn
+            v-if="$root.canEdit"
+            :aria-label="$t('gamification.badges.badgesOverviewSettings.title')"
+            :class="{
+              'mt-3': !hasBadges,
+              'l-0': $vuetify.rtl,
+              'r-0': !$vuetify.rtl,
+            }"
+            class="position-absolute absolute-vertical-center z-index-one hover-reveal"
+            icon
+            small
+            @click="$root.$emit('badges-overview-settings')">
+            <v-icon size="18">fa-cog</v-icon>
+          </v-btn>
+        </div>
+      </template>
+      <template #default>
+        <v-card
+          v-if="!loading"
+          :class="!loading && 'd-flex'"
+          class="align-center justify-center transparent flex-grow-0 flex-shrink-0 border-box-sizing px-5 ma-auto"
+          max-width="100%"
+          min-height="90"
+          flat>
+          <card-carousel
+            v-if="hasBadges"
+            class="d-flex width-max-content flex-shrink-0 flex-grow-0 align-center justify-center"
+            dense>
+            <badges-overview-item
+              v-for="(badge, index) in sortedBadges"
+              :key="`${badge.id}_${index}`"
+              :badge="badge" />
+          </card-carousel>
+          <div v-else class="d-flex flex-column align-self-center align-center justify-center full-height full-width">
+            <v-icon 
+              color="tertiary" 
+              :alt="$t('exoplatform.gamification.badge.alt',{0: 'Distinguished'})"
+              size="60">
+              fa-graduation-cap
+            </v-icon>
+            <span
+              v-html="emptyBadgesSummaryText"
+              class="mt-5"></span>
+          </div>
+        </v-card>
+      </template>
+    </gamification-overview-widget>
     <badges-overview-drawer
       v-if="hasBadges" />
     <badges-overview-settings-drawer
@@ -94,8 +90,6 @@ export default {
     emptyBadgesActionName: 'gamification-bagdes-check-actions',
     badges: [],
     loading: true,
-    hover: false,
-    focused: false,
     isCurrentUserProfile: eXo.env.portal.userName === eXo.env.portal.profileOwner,
     collator: new Intl.Collator(eXo.env.portal.language, {numeric: true, sensitivity: 'base'}),
   }),

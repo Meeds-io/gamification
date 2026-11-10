@@ -18,6 +18,7 @@
 <template>
   <gamification-overview-widget
     :loading="loading"
+    class="hover-reveal-parent hover-swap-parent"
     height="auto"
     min-width="auto">
     <template #title>
@@ -35,8 +36,6 @@
           <public-widget-hidden-warning v-if="$root.canEdit" />
           <v-btn
             v-if="hasValidRules"
-            :icon="hoverEdit"
-            :small="hoverEdit"
             :title="$t('gamification.rules.overviewSettings.title')"
             :aria-label="$t('rules.seeAll')"
             height="auto"
@@ -44,21 +43,23 @@
             class="pa-0"
             text
             @click="$emit('open-list')">
+            <span
+              :class="editable && 'hover-swap-default'"
+              class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
             <v-icon
-              v-if="hoverEdit"
+              v-if="editable"
               size="18"
-              color="primary">
+              color="primary"
+              class="hover-swap-alt">
               fa-external-link-alt
             </v-icon>
-            <span v-else class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
           </v-btn>
           <v-fab-transition hide-on-leave>
             <v-btn
               v-if="editable"
               :title="$t('gamification.programs.overviewSettings.editTooltip')"
               :aria-label="$t('gamification.programs.overviewSettings.editTooltip')"
-              :class="!hoverEdit && 'd-sr-only-focusable'"
-              class="z-index-one"
+              class="z-index-one hover-reveal"
               small
               icon
               @click="$root.$emit('rules-overview-settings')">
@@ -143,10 +144,6 @@ export default {
       default: false,
     },
     goBackButton: {
-      type: Boolean,
-      default: false,
-    },
-    hoverEdit: {
       type: Boolean,
       default: false,
     },

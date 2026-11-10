@@ -15,94 +15,89 @@
 -->
 <template>
   <v-app>
-    <v-hover v-model="hover">
-      <gamification-overview-widget
-        :loading="loading"
-        @focusin.native="focused = $event.target.matches(':focus-visible')"
-        @focusout.native="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))">
-        <template #title>
-          <div class="d-flex flex-grow-1 flex-shrink-1 min-width-0 full-width align-center position-relative">
-            <div
-              v-if="programsDisplayed"
-              class="text-header text-none d-flex align-center min-width-0">
-              <span class="text-truncate">{{ $t('gamification.overview.programsOverviewTitle') }}</span>
-            </div>
-            <div
-              :class="{
-                'mt-2 me-2': !programsDisplayed,
-                'l-0': $vuetify.rtl,
-                'r-0': !$vuetify.rtl,
-              }"
-              class="position-absolute absolute-vertical-center z-index-one">
-              <public-widget-hidden-warning v-if="$root.canEdit" />
-              <v-btn
-                v-show="programLink"
-                :icon="hoverEdit"
-                :small="hoverEdit"
-                :aria-label="$t('rules.seeAll')"
-                height="auto"
-                min-width="auto"
-                class="pa-0"
-                text
-                @click="$refs.listDrawer.open()">
-                <v-icon
-                  v-if="hoverEdit"
-                  size="18"
-                  color="primary">
-                  fa-external-link-alt
-                </v-icon>
-                <span v-else class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
-              </v-btn>
-              <v-fab-transition hide-on-leave>
-                <v-btn
-                  v-show="addProgramAllowed"
-                  :class="{
-                    'me-n2': !$root.canEdit,
-                    'd-sr-only-focusable': !displayAddProgram,
-                  }"
-                  :aria-label="$t('programs.button.addProgram')"
-                  class="z-index-one"
-                  small
-                  icon
-                  @click="$root.$emit('program-form-open')">
-                  <v-icon size="18">fa-plus</v-icon>
-                </v-btn>
-              </v-fab-transition>
-              <v-fab-transition hide-on-leave>
-                <v-btn
-                  v-show="$root.canEdit"
-                  :title="$t('gamification.programs.overviewSettings.editTooltip')"
-                  :aria-label="$t('gamification.programs.overviewSettings.editTooltip')"
-                  :class="{
-                    'me-n2 z-index-one': !programsDisplayed,
-                    'd-sr-only-focusable': !hoverEdit,
-                  }"
-                  small
-                  icon
-                  @click="$root.$emit('programs-overview-settings')">
-                  <v-icon size="18">fa-cog</v-icon>
-                </v-btn>
-              </v-fab-transition>
-            </div>
-          </div>
-        </template>
-        <template #default>
+    <gamification-overview-widget
+      :loading="loading"
+      class="hover-reveal-parent hover-swap-parent">
+      <template #title>
+        <div class="d-flex flex-grow-1 flex-shrink-1 min-width-0 full-width align-center position-relative">
           <div
             v-if="programsDisplayed"
-            class="flex-grow-1 flex-shrink-1 overflow-hidden">
-            <gamification-overview-program-item
-              v-for="program in programsToDisplay" 
-              :key="program.id"
-              :program="program"
-              class="flex-grow-1" />
+            class="text-header text-none d-flex align-center min-width-0">
+            <span class="text-truncate">{{ $t('gamification.overview.programsOverviewTitle') }}</span>
           </div>
-          <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
-            <v-icon color="tertiary" size="60">fa-puzzle-piece</v-icon>
-            <span class="mt-5">{{ spaceId && $t('gamification.overview.space.programs') || $t('gamification.overview.programs') }}</span>
+          <div
+            :class="{
+              'mt-2 me-2': !programsDisplayed,
+              'l-0': $vuetify.rtl,
+              'r-0': !$vuetify.rtl,
+            }"
+            class="position-absolute absolute-vertical-center z-index-one">
+            <public-widget-hidden-warning v-if="$root.canEdit" />
+            <v-btn
+              v-show="programLink"
+              :aria-label="$t('rules.seeAll')"
+              height="auto"
+              min-width="auto"
+              class="pa-0"
+              text
+              @click="$refs.listDrawer.open()">
+              <span
+                :class="$root.canEdit && 'hover-swap-default'"
+                class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+              <v-icon
+                v-if="$root.canEdit"
+                size="18"
+                color="primary"
+                class="hover-swap-alt">
+                fa-external-link-alt
+              </v-icon>
+            </v-btn>
+            <v-fab-transition hide-on-leave>
+              <v-btn
+                v-show="addProgramAllowed"
+                :class="!$root.canEdit && 'me-n2'"
+                :aria-label="$t('programs.button.addProgram')"
+                class="z-index-one hover-reveal"
+                small
+                icon
+                @click="$root.$emit('program-form-open')">
+                <v-icon size="18">fa-plus</v-icon>
+              </v-btn>
+            </v-fab-transition>
+            <v-fab-transition hide-on-leave>
+              <v-btn
+                v-show="$root.canEdit"
+                :title="$t('gamification.programs.overviewSettings.editTooltip')"
+                :aria-label="$t('gamification.programs.overviewSettings.editTooltip')"
+                :class="{
+                  'me-n2 z-index-one': !programsDisplayed,
+                }"
+                class="hover-reveal"
+                small
+                icon
+                @click="$root.$emit('programs-overview-settings')">
+                <v-icon size="18">fa-cog</v-icon>
+              </v-btn>
+            </v-fab-transition>
           </div>
-        </template>
-      </gamification-overview-widget>
-    </v-hover>
+        </div>
+      </template>
+      <template #default>
+        <div
+          v-if="programsDisplayed"
+          class="flex-grow-1 flex-shrink-1 overflow-hidden">
+          <gamification-overview-program-item
+            v-for="program in programsToDisplay" 
+            :key="program.id"
+            :program="program"
+            class="flex-grow-1" />
+        </div>
+        <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
+          <v-icon color="tertiary" size="60">fa-puzzle-piece</v-icon>
+          <span class="mt-5">{{ spaceId && $t('gamification.overview.space.programs') || $t('gamification.overview.programs') }}</span>
+        </div>
+      </template>
+    </gamification-overview-widget>
     <div v-if="programsDisplayed">
       <gamification-program-list-drawer
         ref="listDrawer"
@@ -125,8 +120,6 @@ export default {
     programs: [],
     administrators: null,
     spaceId: eXo.env.portal.spaceId,
-    hover: false,
-    focused: false,
     loading: true,
     drawerExpanded: false
   }),
@@ -143,14 +136,8 @@ export default {
     programLink() {
       return this.programsDisplayed && this.programURL || null;
     },
-    hoverEdit() {
-      return (this.hover || this.focused) && this.$root.canEdit;
-    },
     addProgramAllowed() {
       return this.$root.canAddProgram && !this.programsDisplayed;
-    },
-    displayAddProgram() {
-      return (this.hover || this.focused) && this.addProgramAllowed;
     },
     limit() {
       return this.$root.limit || 4;

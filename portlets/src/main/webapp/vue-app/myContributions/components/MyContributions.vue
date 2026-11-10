@@ -21,80 +21,78 @@
 -->
 <template>
   <v-app>
-    <v-hover v-model="hover">
-      <gamification-overview-widget
-        :loading="loading"
-        @focusin.native="focused = $event.target.matches(':focus-visible')"
-        @focusout.native="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))">
-        <template #title>
-          <div class="d-flex flex-grow-1 min-width-0 full-width position-relative">
-            <div v-if="!neverContributed && !loading" class="text-header">
-              <span class="text-truncate">{{ $t('gamification.myContributions.title') }}</span>
-            </div>
-            <div class="spacer"></div>
-            <div
-              :class="{
-                'mt-2 me-2': neverContributed,
-                'l-0': $vuetify.rtl,
-                'r-0': !$vuetify.rtl,
-              }"
-              class="position-absolute absolute-vertical-center z-index-one">
+    <gamification-overview-widget
+      :loading="loading"
+      class="hover-reveal-parent hover-swap-parent">
+      <template #title>
+        <div class="d-flex flex-grow-1 min-width-0 full-width position-relative">
+          <div v-if="!neverContributed && !loading" class="text-header">
+            <span class="text-truncate">{{ $t('gamification.myContributions.title') }}</span>
+          </div>
+          <div class="spacer"></div>
+          <div
+            :class="{
+              'mt-2 me-2': neverContributed,
+              'l-0': $vuetify.rtl,
+              'r-0': !$vuetify.rtl,
+            }"
+            class="position-absolute absolute-vertical-center z-index-one">
+            <v-btn
+              v-if="!neverContributed"
+              :aria-label="$t('rules.seeAll')"
+              height="auto"
+              min-width="auto"
+              class="pa-0"
+              text
+              @click="$refs.detailsDrawer.open(userDetails, period)">
+              <span
+                :class="$root.canEdit && 'hover-swap-default'"
+                class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+              <v-icon
+                v-if="$root.canEdit"
+                size="18"
+                color="primary"
+                class="hover-swap-alt">
+                fa-external-link-alt
+              </v-icon>
+            </v-btn>
+            <v-fab-transition hide-on-leave>
               <v-btn
-                v-if="!neverContributed"
-                :icon="hoverEdit"
-                :small="hoverEdit"
-                :aria-label="$t('rules.seeAll')"
-                height="auto"
-                min-width="auto"
-                class="pa-0"
-                text
-                @click="$refs.detailsDrawer.open(userDetails, period)">
-                <v-icon
-                  v-if="hoverEdit"
-                  size="18"
-                  color="primary">
-                  fa-external-link-alt
-                </v-icon>
-                <span v-else class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
+                v-show="$root.canEdit"
+                :title="$t('gamification.programs.overviewSettings.editTooltip')"
+                :aria-label="$t('gamification.programs.overviewSettings.editTooltip')"
+                :class="{
+                  'me-n2 z-index-one': neverContributed,
+                }"
+                class="hover-reveal"
+                small
+                icon
+                @click="$root.$emit('my-contributions-overview-settings')">
+                <v-icon size="18">fa-cog</v-icon>
               </v-btn>
-              <v-fab-transition hide-on-leave>
-                <v-btn
-                  v-show="$root.canEdit"
-                  :title="$t('gamification.programs.overviewSettings.editTooltip')"
-                  :aria-label="$t('gamification.programs.overviewSettings.editTooltip')"
-                  :class="{
-                    'me-n2 z-index-one': neverContributed,
-                    'd-sr-only-focusable': !hoverEdit,
-                  }"
-                  small
-                  icon
-                  @click="$root.$emit('my-contributions-overview-settings')">
-                  <v-icon size="18">fa-cog</v-icon>
-                </v-btn>
-              </v-fab-transition>
-            </div>
+            </v-fab-transition>
           </div>
-        </template>
-        <template #default>
-          <div v-if="!loading && hasZeroPoints" class="d-flex flex-column full-width full-height align-center justify-center">
-            <v-icon color="tertiary" size="60">fa-chart-pie</v-icon>
-            <span class="mt-5">{{ placeholder }}</span>
-          </div>
-          <my-contributions-profile-chart
-            v-else-if="!loading && user"
-            :identity-id="user.identityId"
-            :score="user.score"
-            :period="period"
-            central-points
-            @open="openAchievementsDrawer" />
-          <users-leaderboard-profile-achievements-drawer
-            ref="detailsDrawer" />
-          <my-contributions-settings-drawer
-            v-if="$root.canEdit" />
-          <engagement-center-rule-extensions />
-        </template>
-      </gamification-overview-widget>
-    </v-hover>
+        </div>
+      </template>
+      <template #default>
+        <div v-if="!loading && hasZeroPoints" class="d-flex flex-column full-width full-height align-center justify-center">
+          <v-icon color="tertiary" size="60">fa-chart-pie</v-icon>
+          <span class="mt-5">{{ placeholder }}</span>
+        </div>
+        <my-contributions-profile-chart
+          v-else-if="!loading && user"
+          :identity-id="user.identityId"
+          :score="user.score"
+          :period="period"
+          central-points
+          @open="openAchievementsDrawer" />
+        <users-leaderboard-profile-achievements-drawer
+          ref="detailsDrawer" />
+        <my-contributions-settings-drawer
+          v-if="$root.canEdit" />
+        <engagement-center-rule-extensions />
+      </template>
+    </gamification-overview-widget>
   </v-app>
 </template>
 <script>
@@ -104,8 +102,6 @@ export default {
     allPeriodUser: null,
     user: null,
     userScore: null,
-    hover: false,
-    focused: false,
     initialized: false,
   }),
   computed: {
@@ -131,9 +127,6 @@ export default {
     },
     displayLegend() {
       return this.$root.myContributionsDisplayLegend || false;
-    },
-    hoverEdit() {
-      return (this.hover || this.focused) && this.$root.canEdit;
     },
     title() {
       return this.$t(`gamification.overview.${this.period}lyLeaderboard`);

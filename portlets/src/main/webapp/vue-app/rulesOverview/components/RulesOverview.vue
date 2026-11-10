@@ -17,16 +17,11 @@
 -->
 <template>
   <v-app v-if="!hidden">
-    <v-hover v-model="hover">
-      <gamification-rules-overview-widget
-        :hover-edit="hoverEdit"
-        :editable="!!$root.canEdit"
-        :hide-empty-placeholder="$root.hideWidgetWhenEmpty"
-        @focusin.native="focused = $event.target.matches(':focus-visible')"
-        @focusout.native="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))"
-        @open-list="$refs.listDrawer.open()"
-        @hide="hidden = true" />
-    </v-hover>
+    <gamification-rules-overview-widget
+      :editable="!!$root.canEdit"
+      :hide-empty-placeholder="$root.hideWidgetWhenEmpty"
+      @open-list="$refs.listDrawer.open()"
+      @hide="hidden = true" />
     <gamification-rules-overview-list-drawer
       ref="listDrawer" />
     <gamification-rules-overview-settings-drawer
@@ -38,14 +33,7 @@
 export default {
   data: () => ({
     hidden: false,
-    hover: false,
-    focused: false,
   }),
-  computed: {
-    hoverEdit() {
-      return this.$root.canEdit && (this.hover || this.focused);
-    }
-  },
   watch: {
     hidden() {
       this.$root.$updateApplicationVisibility(!this.hidden);

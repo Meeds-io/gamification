@@ -18,119 +18,124 @@
 
 -->
 <template>
-  <v-hover v-slot="{ hover }">
-    <v-card
-      :style="programStyle"
-      class="mx-auto d-flex flex-column rule-card-info no-background mx-2 overflow-hidden"
-      height="230"
-      max-height="230"
-      outlined
-      @focusin.native="focused = $event.target.matches(':focus-visible')"
-      @focusout.native="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))"
-      @click="$root.$emit('rule-detail-drawer', ruleWithProgram)">
-      <div v-if="!isValid">
-        <div :class="{'d-sr-only': !hover && !focused}" class="d-flex position-absolute full-width z-index-two">
-          <div class="ms-auto mb-auto mt-4 me-4">
-            <v-card
-              v-if="isProgramMember"
-              :class="(hover || focused) && 'd-inline-flex'"
-              width="28"
-              height="8"
-              class="my-auto position-relative"
-              flat>
-              <rule-favorite-button
-                :rule-id="rule.id"
-                :space-id="rule.spaceId"
-                :favorite.sync="rule.favorite"
-                type="rule"
-                type-label="rules"
-                class="absolute-vertical-center" />
-            </v-card>
-            <engagement-center-rule-menu
-              v-if="canEdit"
-              :rule="ruleWithProgram"
-              dark
-              small />
-          </div>
+  <v-card
+    :style="programStyle"
+    class="mx-auto d-flex flex-column rule-card-info no-background mx-2 overflow-hidden hover-reveal-parent"
+    height="230"
+    max-height="230"
+    outlined>
+    <div v-if="!isValid">
+      <div class="d-flex position-absolute full-width z-index-two">
+        <div class="ms-auto mb-auto mt-4 me-4 hover-reveal stretched-link-above">
+          <v-card
+            v-if="isProgramMember"
+            width="28"
+            height="8"
+            class="my-auto d-inline-flex position-relative"
+            flat>
+            <rule-favorite-button
+              :rule-id="rule.id"
+              :space-id="rule.spaceId"
+              :favorite.sync="rule.favorite"
+              type="rule"
+              type-label="rules"
+              class="absolute-vertical-center" />
+          </v-card>
+          <engagement-center-rule-menu
+            v-if="canEdit"
+            :rule="ruleWithProgram"
+            dark
+            small />
         </div>
-        <gamification-card-mask class="z-index-one pa-2">
-          <gamification-rule-card-mask-content
-            v-if="!isEnabled"
-            :title="rule.title"
-            :text="rule.enabled && $t('actions.label.disabledProgram') || $t('actions.label.disabled')"
-            class="rule-card-mask-disabled" />
-          <gamification-rule-card-mask-audience
-            v-else-if="!isValidAudience"
-            :rule="ruleWithProgram" />
-          <gamification-rule-card-mask-whitelist
-            v-else-if="!isValidWhitelist"
-            :rule="ruleWithProgram" />
-          <gamification-rule-card-mask-remaining-dates
-            v-else-if="!isValidDates"
-            :rule="ruleWithProgram" />
-          <gamification-rule-card-mask-recurrence
-            v-else-if="!isValidRecurrence"
-            :rule="ruleWithProgram" />
-          <gamification-rule-card-mask-prequisite-rules
-            v-else-if="!isValidPrerequities"
-            :rule="ruleWithProgram" />
-          <gamification-rule-card-mask-connector
-            v-else-if="isRequireConnectorConnection"
-            :extension="connectorValueExtension"
-            :title="rule.title" />
-        </gamification-card-mask>
       </div>
-      <v-card
-        :class="!isValid && 'filter-blur-3'"
-        class="d-flex flex-column full-height"
-        flat>
-        <v-card-title class="rule-card-title text-body font-weight-bold d-flex flex-nowrap pb-4 text-break">
-          <div :title="title" class="d-flex align-center flex-grow-1 text-truncate">
-            <rule-icon :rule-event="ruleEvent" class="me-2" />
-            <span class="text-truncate pt-2px">
-              {{ title }}
-            </span>
+      <gamification-card-mask
+        class="z-index-one pa-2">
+        <button
+          type="button"
+          class="btn-reset stretched-link"
+          @click="openDrawer">
+          <span class="d-sr-only">{{ title }}</span>
+        </button>
+        <gamification-rule-card-mask-content
+          v-if="!isEnabled"
+          :title="rule.title"
+          :text="rule.enabled && $t('actions.label.disabledProgram') || $t('actions.label.disabled')"
+          class="rule-card-mask-disabled" />
+        <gamification-rule-card-mask-audience
+          v-else-if="!isValidAudience"
+          :rule="ruleWithProgram" />
+        <gamification-rule-card-mask-whitelist
+          v-else-if="!isValidWhitelist"
+          :rule="ruleWithProgram" />
+        <gamification-rule-card-mask-remaining-dates
+          v-else-if="!isValidDates"
+          :rule="ruleWithProgram" />
+        <gamification-rule-card-mask-recurrence
+          v-else-if="!isValidRecurrence"
+          :rule="ruleWithProgram" />
+        <gamification-rule-card-mask-prequisite-rules
+          v-else-if="!isValidPrerequities"
+          :rule="ruleWithProgram" />
+        <gamification-rule-card-mask-connector
+          v-else-if="isRequireConnectorConnection"
+          :extension="connectorValueExtension"
+          :title="rule.title" />
+      </gamification-card-mask>
+    </div>
+    <v-card
+      :class="!isValid && 'filter-blur-3'"
+      class="d-flex flex-column full-height"
+      flat>
+      <v-card-title class="rule-card-title text-body font-weight-bold d-flex flex-nowrap pb-4 text-break">
+        <div :title="title" class="d-flex align-center flex-grow-1 text-truncate">
+          <rule-icon :rule-event="ruleEvent" class="me-2" />
+          <button
+            :class="isValid && 'stretched-link'"
+            :tabindex="!isValid && -1 || null"
+            type="button"
+            class="btn-reset text-truncate text-start pt-2px"
+            @click="openDrawer">
+            {{ title }}
+          </button>
+        </div>
+        <div v-if="isValid" class="flex-grow-0 d-flex align-center">
+          <div class="my-auto d-inline-flex hover-reveal stretched-link-above">
+            <rule-favorite-button
+              v-if="isProgramMember"
+              :rule-id="rule.id"
+              :space-id="rule.spaceId"
+              :favorite.sync="rule.favorite"
+              type="rule"
+              type-label="rules" />
           </div>
-          <div v-if="isValid" class="flex-grow-0 d-flex align-center">
-            <div
-              :class="(hover || focused) && 'd-inline-flex' || 'd-sr-only'"
-              class="my-auto">
-              <rule-favorite-button
-                v-if="isProgramMember"
-                :rule-id="rule.id"
-                :space-id="rule.spaceId"
-                :favorite.sync="rule.favorite"
-                type="rule"
-                type-label="rules" />
-            </div>
-            <engagement-center-rule-menu
-              v-if="canEdit"
-              :rule="ruleWithProgram"
-              small />
-          </div>
-        </v-card-title>
-        <v-card-text
-          v-sanitized-html-no-embed="description"
-          :class="rule.recurrence && 'text-truncate-2' || 'text-truncate-3'"
-          class="rule-card-description rich-editor-content pb-0" />
-        <template v-if="isEnabled">
+          <engagement-center-rule-menu
+            v-if="canEdit"
+            :rule="ruleWithProgram"
+            class="stretched-link-above"
+            small />
+        </div>
+      </v-card-title>
+      <v-card-text
+        v-sanitized-html-no-embed="description"
+        :class="rule.recurrence && 'text-truncate-2' || 'text-truncate-3'"
+        class="rule-card-description rich-editor-content pb-0" />
+      <template v-if="isEnabled">
+        <v-spacer />
+        <v-card-text class="d-flex align-center pt-0">
+          <gamification-rule-card-points
+            :rule="ruleWithProgram"
+            :target-item-label="targetItemLabel" />
+          <gamification-rule-card-recurrence
+            v-if="rule.recurrence" 
+            :rule="ruleWithProgram"
+            class="ms-2 stretched-link-above" />
           <v-spacer />
-          <v-card-text class="d-flex align-center pt-0">
-            <gamification-rule-card-points
-              :rule="ruleWithProgram"
-              :target-item-label="targetItemLabel" />
-            <gamification-rule-card-recurrence
-              v-if="rule.recurrence" 
-              :rule="ruleWithProgram"
-              class="ms-2" />
-            <v-spacer />
-            <gamification-rule-card-remaining-dates
-              :rule="ruleWithProgram" />
-          </v-card-text>
-        </template>
-      </v-card>
+          <gamification-rule-card-remaining-dates
+            :rule="ruleWithProgram" />
+        </v-card-text>
+      </template>
     </v-card>
-  </v-hover>
+  </v-card>
 </template>
 <script>
 export default {
@@ -150,7 +155,6 @@ export default {
   },
   data: () => ({
     showMenu: false,
-    focused: false,
     connectorValueExtensions: []
   }),
   computed: {
@@ -228,6 +232,11 @@ export default {
     },
     targetItemLabel() {
       return this.actionValueExtension?.targetItemLabel;
+    },
+  },
+  methods: {
+    openDrawer() {
+      this.$root.$emit('rule-detail-drawer', this.ruleWithProgram);
     },
   },
   created() {
