@@ -18,69 +18,65 @@
 
 -->
 <template>
-  <v-hover v-slot="{ hover }">
-    <tr
-      @focusin="focused = $event.target.matches(':focus-visible')"
-      @focusout="focused = !!($event.relatedTarget && $event.currentTarget.contains($event.relatedTarget))">
-      <td class="no-border-bottom ps-0">
-        <div @click="openRule(false)" class="clickable d-flex flex-row ma-auto">
-          <div class="d-flex flex-column align-center justify-center col-2 col-sm-1 pa-0">
-            <rule-icon
-              :rule-event="eventTitle"
-              size="22"
-              class="my-auto" />
-          </div>
-          <div class="d-flex flex-column col-10 col-sm-11 pa-0 text-truncate">
-            <gamification-program-rule-title :rule="rule" />
-            <span class="d-sm-none text-subtitle">{{ ruleScore }} {{ $t('challenges.label.points') }}</span>
-          </div>
+  <tr class="hover-reveal-parent">
+    <td class="no-border-bottom ps-0">
+      <div @click="openRule(false)" class="clickable d-flex flex-row ma-auto">
+        <div class="d-flex flex-column align-center justify-center col-2 col-sm-1 pa-0">
+          <rule-icon
+            :rule-event="eventTitle"
+            size="22"
+            class="my-auto" />
         </div>
-      </td>
-      <td
-        cols="2"
-        class="align-center no-border-bottom">
-        <div :class="{'d-sr-only': !hover && !focused && !isMobile}" class="d-flex">
-          <div v-if="canAnnounce" class="align-center d-none d-sm-block">
-            <v-btn
-              :aria-label="$t('challenges.button.announce')"
-              icon
-              class="me-2"
-              @click="openRule(true)">
-              <v-icon :size="iconSize">fas fa-bullhorn</v-icon>
-            </v-btn>
-          </div>
-          <engagement-center-rule-menu
-            v-if="canManageRule"
-            :rule="rule"
-            :attach-menu="true"
-            top />
+        <div class="d-flex flex-column col-10 col-sm-11 pa-0 text-truncate">
+          <gamification-program-rule-title :rule="rule" />
+          <span class="d-sm-none text-subtitle">{{ ruleScore }} {{ $t('challenges.label.points') }}</span>
         </div>
-      </td>
-      <td class="no-border-bottom d-none d-sm-inline">
-        <div class="align-center">
-          {{ ruleScore }}
+      </div>
+    </td>
+    <td
+      cols="2"
+      class="align-center no-border-bottom">
+      <div :class="!isMobile && 'hover-reveal'" class="d-flex">
+        <div v-if="canAnnounce" class="align-center d-none d-sm-block">
+          <v-btn
+            :aria-label="$t('challenges.button.announce')"
+            icon
+            class="me-2"
+            @click="openRule(true)">
+            <v-icon :size="iconSize">fas fa-bullhorn</v-icon>
+          </v-btn>
         </div>
-      </td>
-      <td class="no-border-bottom  d-none d-sm-table-cell">
-        <div
-          :class="showAllAvatarList && 'AllUsersAvatar'"
-          class="d-flex flex-nowrap my-2 justify-center">
-          <engagement-center-avatars-list
-            v-if="hasParticipants"
-            :avatars="users"
-            :max-avatars-to-show="maxAvatarsToShow"
-            :avatars-count="realizationsCount"
-            :size="27"
-            @open-avatars-drawer="openAchievementsDrawer" />
-          <div v-else>
-            <span>
-              -
-            </span>
-          </div>
+        <engagement-center-rule-menu
+          v-if="canManageRule"
+          :rule="rule"
+          :attach-menu="true"
+          top />
+      </div>
+    </td>
+    <td class="no-border-bottom d-none d-sm-inline">
+      <div class="align-center">
+        {{ ruleScore }}
+      </div>
+    </td>
+    <td class="no-border-bottom  d-none d-sm-table-cell">
+      <div
+        :class="showAllAvatarList && 'AllUsersAvatar'"
+        class="d-flex flex-nowrap my-2 justify-center">
+        <engagement-center-avatars-list
+          v-if="hasParticipants"
+          :avatars="users"
+          :max-avatars-to-show="maxAvatarsToShow"
+          :avatars-count="realizationsCount"
+          :size="27"
+          @open-avatars-drawer="openAchievementsDrawer" />
+        <div v-else>
+          <span>
+            -
+          </span>
         </div>
-      </td>
-    </tr>
-  </v-hover>
+      </div>
+    </td>
+  </tr>
 </template>
 
 <script>
@@ -97,7 +93,6 @@ export default {
   },
   data() {
     return {
-      focused: false,
       maxAvatarsToShow: 3,
     };
   },
