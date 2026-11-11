@@ -18,7 +18,7 @@
 <template>
   <gamification-overview-widget
     :loading="loading"
-    class="hover-reveal-parent hover-swap-parent"
+    class="hover-reveal-parent hover-swap-trigger"
     height="auto"
     min-width="auto">
     <template #title>
@@ -40,7 +40,7 @@
             :aria-label="$t('rules.seeAll')"
             height="auto"
             min-width="auto"
-            class="pa-0"
+            class="pa-0 hover-swap-parent"
             text
             @click="$emit('open-list')">
             <span

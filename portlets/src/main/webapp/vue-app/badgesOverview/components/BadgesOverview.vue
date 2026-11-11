@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     id="badgesOverview">
     <gamification-overview-widget
       :loading="loading"
-      class="hover-reveal-parent hover-swap-parent">
+      class="hover-reveal-parent">
       <template #title>
         <div class="d-flex full-width align-center min-width-0 position-relative">
           <div v-if="hasBadges" class="text-header">

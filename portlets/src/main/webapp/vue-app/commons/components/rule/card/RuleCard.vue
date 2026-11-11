@@ -90,13 +90,15 @@
         <div :title="title" class="d-flex align-center flex-grow-1 text-truncate">
           <rule-icon :rule-event="ruleEvent" class="me-2" />
           <button
-            :class="isValid && 'stretched-link'"
-            :tabindex="!isValid && -1 || null"
+            v-if="isValid"
             type="button"
-            class="btn-reset text-truncate text-start pt-2px"
+            class="btn-reset stretched-link text-truncate text-start pt-2px"
             @click="openDrawer">
             {{ title }}
           </button>
+          <span v-else class="text-truncate text-start pt-2px">
+            {{ title }}
+          </span>
         </div>
         <div v-if="isValid" class="flex-grow-0 d-flex align-center">
           <div class="my-auto d-inline-flex hover-reveal stretched-link-above">

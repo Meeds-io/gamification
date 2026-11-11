@@ -23,7 +23,7 @@
   <v-app>
     <gamification-overview-widget
       :loading="loading"
-      class="d-flex hover-reveal-parent hover-swap-parent">
+      class="d-flex hover-reveal-parent hover-swap-trigger">
       <template #title>
         <div class="d-flex flex-grow-1 min-width-0 full-width position-relative">
           <div v-if="!displayPlaceholder && !loading" class="text-header">
@@ -43,7 +43,7 @@
               :aria-label="$t('rules.seeAll')"
               height="auto"
               min-width="auto"
-              class="pa-0"
+              class="pa-0 hover-swap-parent"
               text
               @click="$refs.detailsDrawer.open(period)">
               <span
