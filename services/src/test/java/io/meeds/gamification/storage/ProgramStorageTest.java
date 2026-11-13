@@ -23,14 +23,27 @@ import static org.junit.Assert.assertThrows;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 import org.junit.Test;
+
+import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.services.cache.CacheService;
+import org.exoplatform.services.cache.ExoCache;
+import org.exoplatform.services.organization.Group;
+import org.exoplatform.services.organization.GroupHandler;
+import org.exoplatform.services.organization.MembershipType;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
+import org.exoplatform.services.organization.UserHandler;
+import org.exoplatform.services.organization.UserStatus;
 
 import io.meeds.gamification.constant.EntityFilterType;
 import io.meeds.gamification.constant.EntityStatusType;
 import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.filter.ProgramFilter;
+import io.meeds.gamification.storage.cached.ProgramCachedStorage;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 
@@ -128,5 +141,91 @@ public class ProgramStorageTest extends AbstractServiceTest {
     assertEquals(1, programStorage.countPrograms(filter));
     filter.setType(EntityFilterType.MANUAL);
     assertEquals(1, programStorage.countPrograms(filter));
+  }
+
+  @Test
+  public void testTheAdministratorsAreReadThroughTheCacheAClusterInvalidates() throws Exception {
+    ExoCache<String, List<String>> cache = ExoContainerContext.getService(CacheService.class)
+                                                              .getCacheInstance(ProgramCachedStorage.ADMINISTRATORS_CACHE_NAME);
+    cache.clearCache();
+
+    List<String> administrators = programStorage.getAdministrators();
+
+    // Held in the declared cache, whose entry a change on another node removes
+    assertEquals(List.of(administrators), cache.getCachedObjects());
+    assertEquals(administrators, programStorage.getAdministrators());
+
+    // A user enabled again may be a rewarding administrator the list lacks
+    UserHandler userHandler = ExoContainerContext.getService(OrganizationService.class).getUserHandler();
+    User user = userHandler.createUserInstance("administratorsCacheUser");
+    user.setFirstName("Administrators");
+    user.setLastName("Cache");
+    user.setEmail("administratorsCacheUser@example.com");
+    userHandler.createUser(user, true);
+    try {
+      programStorage.getAdministrators();
+      userHandler.setEnabled(user.getUserName(), false, true);
+      assertEquals(0, cache.getCacheSize());
+
+      programStorage.getAdministrators();
+      userHandler.removeUser(user.getUserName(), true);
+      assertEquals(0, cache.getCacheSize());
+    } finally {
+      if (userHandler.findUserByName(user.getUserName(), UserStatus.ANY) != null) {
+        userHandler.removeUser(user.getUserName(), true);
+      }
+    }
+  }
+
+  @Test
+  public void testAChangeOfTheRewardingGroupMembersRemovesTheCachedAdministrators() throws Exception {
+    ExoCache<String, List<String>> cache = ExoContainerContext.getService(CacheService.class)
+                                                              .getCacheInstance(ProgramCachedStorage.ADMINISTRATORS_CACHE_NAME);
+    OrganizationService organizationService = ExoContainerContext.getService(OrganizationService.class);
+    GroupHandler groupHandler = organizationService.getGroupHandler();
+    Group rewardingGroup = groupHandler.findGroupById(Utils.REWARDING_GROUP);
+    if (rewardingGroup == null) {
+      Group parent = groupHandler.findGroupById("/platform");
+      rewardingGroup = groupHandler.createGroupInstance();
+      rewardingGroup.setGroupName("rewarding");
+      rewardingGroup.setLabel("Rewarding");
+      groupHandler.addChild(parent, rewardingGroup, true);
+    }
+    UserHandler userHandler = organizationService.getUserHandler();
+    User user = userHandler.createUserInstance("rewardingMembershipUser");
+    user.setFirstName("Rewarding");
+    user.setLastName("Membership");
+    user.setEmail("rewardingMembershipUser@example.com");
+    userHandler.createUser(user, true);
+    MembershipType member = organizationService.getMembershipTypeHandler().findMembershipType("member");
+    try {
+      programStorage.getAdministrators();
+      assertEquals(1, cache.getCacheSize());
+
+      organizationService.getMembershipHandler().linkMembership(user, rewardingGroup, member, true);
+      waitUntilEmpty(cache);
+      assertTrue(programStorage.getAdministrators().contains(user.getUserName()));
+
+      organizationService.getMembershipHandler()
+                         .removeMembership(organizationService.getMembershipHandler()
+                                                              .findMembershipByUserGroupAndType(user.getUserName(),
+                                                                                                Utils.REWARDING_GROUP,
+                                                                                                "member")
+                                                              .getId(),
+                                           true);
+      waitUntilEmpty(cache);
+      assertFalse(programStorage.getAdministrators().contains(user.getUserName()));
+    } finally {
+      userHandler.removeUser(user.getUserName(), true);
+    }
+  }
+
+  private static void waitUntilEmpty(ExoCache<String, List<String>> cache) throws InterruptedException {
+    // The membership listener removes the entry asynchronously
+    long end = System.currentTimeMillis() + 10_000;
+    while (cache.getCacheSize() > 0 && System.currentTimeMillis() < end) {
+      Thread.sleep(50);
+    }
+    assertEquals(0, cache.getCacheSize());
   }
 }

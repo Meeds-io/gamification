@@ -27,15 +27,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import org.apache.commons.lang3.StringUtils;
-
-import org.exoplatform.commons.cache.future.FutureCache;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.RootContainer.PortalContainerPostCreateTask;
-import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.cache.CachedObjectSelector;
 import org.exoplatform.services.cache.ExoCache;
@@ -63,15 +59,21 @@ import lombok.SneakyThrows;
 
 public class ProgramCachedStorage extends ProgramStorage {
 
-  public static final String                        PROGRAM_CACHE_NAME = "gamification.domain";
+  public static final String                         PROGRAM_CACHE_NAME        = "gamification.domain";
 
-  private UserACL                                   userAcl;
+  /**
+   * The cache of the rewarding administrators, which a cluster invalidates on
+   * every node when one of them changes
+   */
+  public static final String                         ADMINISTRATORS_CACHE_NAME = "gamification.administrators";
 
-  private FutureExoCache<Long, ProgramDTO, Object>  programFutureCache;
+  private static final String                        ADMINISTRATORS_KEY        = "administrators";
 
-  private FutureCache<Object, List<String>, Object> administratorsRetrivalTask;
+  private FutureExoCache<Long, ProgramDTO, Object>   programFutureCache;
 
-  private List<String>                              administrators;
+  private ExoCache<String, List<String>>             administratorsCache;
+
+  private FutureExoCache<String, List<String>, Object> administratorsFutureCache;
 
   private ExoCache<Serializable, Object>            ruleCache;
 
@@ -93,22 +95,9 @@ public class ProgramCachedStorage extends ProgramStorage {
       }
     };
     this.programFutureCache = new FutureExoCache<>(programLoader, programCache);
-    this.administratorsRetrivalTask = new FutureCache<Object, List<String>, Object>((c, k) -> getAdministratorsConcurrently()) {
-      @Override
-      protected List<String> get(Object key) {
-        return administrators;
-      }
-
-      @Override
-      protected void put(Object key, List<String> value) {
-        administrators = value;
-      }
-
-      @Override
-      protected void putOnly(Object key, List<String> value) {
-        administrators = value;
-      }
-    };
+    this.administratorsCache = cacheService.getCacheInstance(ADMINISTRATORS_CACHE_NAME);
+    this.administratorsFutureCache = new FutureExoCache<>((context, key) -> getAdministratorsConcurrently(),
+                                                          administratorsCache);
 
     listenerService.addListener(POST_CREATE_RULE_EVENT, new RuleUpdatedListener());
     listenerService.addListener(POST_DELETE_RULE_EVENT, new RuleUpdatedListener());
@@ -161,11 +150,15 @@ public class ProgramCachedStorage extends ProgramStorage {
   @Override
   @SneakyThrows
   public List<String> getAdministrators() {
-    if (this.administrators == null) {
-      return administratorsRetrivalTask.get(null, "administrators");
-    } else {
-      return administrators;
-    }
+    return administratorsFutureCache.get(null, ADMINISTRATORS_KEY);
+  }
+
+  /**
+   * Removes the rewarding administrators from the cache, on every node of a
+   * cluster: the next read loads them again.
+   */
+  public void clearAdministrators() {
+    administratorsCache.remove(ADMINISTRATORS_KEY);
   }
 
   @Override
@@ -199,32 +192,24 @@ public class ProgramCachedStorage extends ProgramStorage {
 
     private void clearCachedAdministrators(Membership m) {
       if (m != null && Utils.REWARDING_GROUP.equals(m.getGroupId())) {
-        administrators = null;
+        clearAdministrators();
       }
     }
   }
 
   public class RewardingAdministratorUserListener extends UserEventListener {
 
+    // A user enabled again, or deleted, can be a member of the rewarding
+    // group whether or not the cached list holds them: the list is loaded
+    // again, which the change of a user's status rarely costs
     @Override
     public void postSetEnabled(User user) throws Exception {
-      CompletableFuture.runAsync(() -> clearCachedAdministrator(user));
+      clearAdministrators();
     }
 
     @Override
     public void postDelete(User user) throws Exception {
-      CompletableFuture.runAsync(() -> clearCachedAdministrator(user));
-    }
-
-    @SneakyThrows
-    @ContainerTransactional
-    public void clearCachedAdministrator(User user) {
-      if (administrators != null
-          && user != null
-          && (administrators.stream().anyMatch(u -> StringUtils.equals(u, user.getUserName()))
-              || userAcl.getUserIdentity(user.getUserName()).isMemberOf(Utils.REWARDING_GROUP))) {
-        administrators = null;
-      }
+      clearAdministrators();
     }
 
   }
