@@ -37,6 +37,7 @@
         <v-tabs-slider color="secondary" />
       </v-tabs>
       <v-btn
+        :aria-label="$t('exoplatform.gamification.leaderboard.filterByProgram')"
         small
         :icon="isAllPrograms"
         :class="!isAllPrograms && 'pa-0' || 'my-auto'"
