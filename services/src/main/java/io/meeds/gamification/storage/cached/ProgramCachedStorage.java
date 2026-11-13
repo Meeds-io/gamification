@@ -155,7 +155,12 @@ public class ProgramCachedStorage extends ProgramStorage {
 
   /**
    * Removes the rewarding administrators from the cache, on every node of a
-   * cluster: the next read loads them again.
+   * cluster: the next read loads them again. The membership listeners call it
+   * asynchronously, which can run before the membership change is committed,
+   * and it does not stop a load already running: either can cache the list read
+   * before the change, which is then kept until the entry expires, at most the
+   * cache's live time, 30 seconds by default. In this add-on the list feeds
+   * the programs' display ({@code ProgramBuilder}) only.
    */
   public void clearAdministrators() {
     administratorsCache.remove(ADMINISTRATORS_KEY);
