@@ -1,0 +1,8 @@
+{
+  "modules": ["gamification"],
+  "excludedActivityTypes": [
+    "gamificationRuleActivity",
+    "challenges-announcement",
+    "gamificationActionAnnouncement"
+  ]
+}
