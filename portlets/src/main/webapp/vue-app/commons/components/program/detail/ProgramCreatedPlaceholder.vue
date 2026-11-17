@@ -42,7 +42,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="d-flex justify-center me-3"
           min-width="50"
           flat>
-          <v-icon color="tertiary" size="30">fa-trophy</v-icon>
+          <v-icon color="secondary" size="30">fa-trophy</v-icon>
         </v-card>
         {{ $t('programs.details.label.manualActionIntroduction') }}
       </div>
@@ -51,7 +51,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="d-flex justify-center me-3"
           min-width="50"
           flat>
-          <v-icon color="tertiary" size="30">fa-award</v-icon>
+          <v-icon color="secondary" size="30">fa-award</v-icon>
         </v-card>
         {{ $t('programs.details.label.automaticActionIntroduction') }}
       </div>

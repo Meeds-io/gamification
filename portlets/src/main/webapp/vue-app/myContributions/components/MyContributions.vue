@@ -69,7 +69,7 @@
         </template>
         <template #default>
           <div v-if="!loading && hasZeroPoints" class="d-flex flex-column full-width full-height align-center justify-center">
-            <v-icon color="tertiary" size="60">fa-chart-pie</v-icon>
+            <v-icon color="secondary" size="60">fa-chart-pie</v-icon>
             <span class="mt-5">{{ placeholder }}</span>
           </div>
           <my-contributions-profile-chart
