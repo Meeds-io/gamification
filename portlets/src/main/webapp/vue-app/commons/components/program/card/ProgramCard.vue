@@ -68,7 +68,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-list>
       <v-spacer />
       <div class="d-flex justify-center py-2">
-        <v-icon size="18" class="pe-2 tertiary--text">fas fa-trophy</v-icon>
+        <v-icon size="18" class="pe-2 secondary--text">fas fa-trophy</v-icon>
         <span v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
       </div>
     </div>

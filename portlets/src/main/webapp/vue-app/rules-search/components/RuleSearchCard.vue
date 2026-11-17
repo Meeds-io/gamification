@@ -83,7 +83,7 @@
                   fas fa-circle
                 </v-icon>
                 <v-chip
-                  color="tertiary"
+                  color="secondary"
                   class="content-box-sizing white--text me-2"
                   justify-center
                   x-small>

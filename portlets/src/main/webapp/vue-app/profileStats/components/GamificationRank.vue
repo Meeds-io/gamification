@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       v-if="displayPlaceholder"
       :class="!isOverviewDisplay && 'mt-n7'"
       class="d-flex flex-column align-center justify-center full-width fill-height">
-      <v-icon color="tertiary" size="60">fa-trophy</v-icon>
+      <v-icon color="secondary" size="60">fa-trophy</v-icon>
       <span class="text-body mt-5">{{ placeholder }}</span>
     </div>
     <template v-else-if="!loading">

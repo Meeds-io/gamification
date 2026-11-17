@@ -74,7 +74,7 @@
         color="primary" />
       <div v-else-if="!displaySearchResult" class="my-auto">
         <div v-if="$root.hideOwnedTab && !filtersCount" class="d-flex flex-column full-width full-height align-center justify-center">
-          <v-icon color="tertiary" size="60">fa-table</v-icon>
+          <v-icon color="secondary" size="60">fa-table</v-icon>
           <span class="mt-5">{{ $t('gamification.myContributions.title') }}</span>
         </div>
         <engagement-center-result-not-found
