@@ -71,7 +71,7 @@
         </div>
         <v-chip
           v-if="ruleScore"
-          color="tertiary"
+          color="secondary"
           class="content-box-sizing white--text"
           small>
           <span class="text-subtitle white--text">+ {{ ruleScore }}</span>

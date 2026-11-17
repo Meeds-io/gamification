@@ -24,7 +24,7 @@
       {{ $t('actions.for') }} {{ totalTargetItem }} {{ targetItemLabel }}
     </div>
     <v-chip
-      color="tertiary"
+      color="secondary"
       class="content-box-sizing white--text align-self-start"
       small>
       + {{ rule.score }}

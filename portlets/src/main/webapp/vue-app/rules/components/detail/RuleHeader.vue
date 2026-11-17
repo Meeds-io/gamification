@@ -47,7 +47,7 @@
       </div>
       <div v-if="reduced" class="rule-score text-subtitle">
         <v-chip
-          color="tertiary"
+          color="secondary"
           class="content-box-sizing white--text"
           small>
           <span>+ {{ rule.score }}</span>

@@ -25,7 +25,7 @@
     </div>
     <div class="d-flex flex-row">
       <v-chip
-        color="tertiary"
+        color="secondary"
         class="content-box-sizing white--text"
         small>
         <span>+ {{ rule.score }}</span>

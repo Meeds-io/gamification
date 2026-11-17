@@ -29,7 +29,7 @@
         </div>
         <v-icon class="flex-grow-0 flex-shrink-0 mx-2" size="2">fa-circle</v-icon>
         <v-chip
-          color="tertiary"
+          color="secondary"
           class="flex-grow-0 flex-shrink-0 content-box-sizing white--text"
           small>
           <span>+ {{ ruleScore }}</span>
