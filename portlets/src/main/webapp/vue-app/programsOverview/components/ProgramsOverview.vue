@@ -85,7 +85,7 @@
               class="flex-grow-1" />
           </div>
           <div v-else-if="!loading" class="d-flex flex-column align-center justify-center full-width full-height">
-            <v-icon color="tertiary" size="60">fa-puzzle-piece</v-icon>
+            <v-icon color="secondary" size="60">fa-puzzle-piece</v-icon>
             <span class="mt-5">{{ spaceId && $t('gamification.overview.space.programs') || $t('gamification.overview.programs') }}</span>
           </div>
         </template>

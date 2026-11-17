@@ -39,7 +39,7 @@
       <v-list-item-action>
         <v-list-item-action-text>
           <v-chip
-            color="tertiary"
+            color="secondary"
             class="content-box-sizing white--text"
             small>
             <span>+ {{ programTotalScore }}</span>

@@ -44,7 +44,7 @@
     </div>
   </gamification-overview-widget-row>
   <div v-else class="d-flex flex-column align-center justify-center full-width full-height">
-    <v-icon color="tertiary" size="60">fa-rocket</v-icon>
+    <v-icon color="secondary" size="60">fa-rocket</v-icon>
     <span class="text-body mt-5">{{ spaceId && $t('gamification.overview.space.actions') || $t('gamification.overview.actions') }}</span>
   </div>
 </template>

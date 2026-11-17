@@ -50,7 +50,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       tile>
       <v-list dense>
         <v-subheader class="pb-4 ps-0">
-          <v-icon size="20" class="tertiary--text">fas fa-bolt</v-icon>
+          <v-icon size="20" class="secondary--text">fas fa-bolt</v-icon>
           <div class="ps-3">{{ triggersSize }} {{ $t('gamification.label.events') }}</div>
           <v-spacer />
           <v-card

@@ -316,7 +316,7 @@ input.custom-file.b-form-file {
 }
 
 h5.mt-0 {
-    color: #4d5466;
+    color: var(--allPagesBaseColorDark, #4d5466);
     line-height: 20px;
     font-size: 1.5em;
     text-transform: uppercase;
@@ -330,14 +330,14 @@ label {
     max-width: 100%;
     margin: 5px 0;
     font-weight: 700;
-    color: #333;
+    color: var(--allPagesBaseColorDark, #333);
 }
 
 input[type="number"] {
     font-size: 15px;
     height: 40px;
     padding: 0 10px;
-    border: 2px solid #e1e8ee;
+    border: 2px solid var(--allPagesBorderColorDark, #e1e8ee);
     border-radius: 5px;
     box-shadow: none;
     max-height: 40px;
@@ -355,7 +355,7 @@ input[type="date"]:focus:invalid:focus {
 .card {
     position: relative;
     border-radius: 3px;
-    background: #ffffff;
+    background: var(--allPagesBaseBackground, #ffffff);
     margin-bottom: 20px;
     width: 100%;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
@@ -388,7 +388,7 @@ msg.alert-dismissible.alert-danger {
 }
 
 .close:hover {
-    color: #000;
+    color: var(--allPagesBaseColor, #000);
 }
 
 .card label {
@@ -403,8 +403,8 @@ form {
 button.btn.secondary {
     padding: 8px 25px;
     margin-left: 25px;
-    border: 1px solid #e1e8ee !important;
-    color: #4d5466;
+    border: 1px solid var(--allPagesBorderColorDark, #e1e8ee) !important;
+    color: var(--allPagesBaseColorDark, #4d5466);
     background-color: transparent !important;
 }
 
@@ -470,7 +470,7 @@ div#collapseOne {
     bottom: 0;
     width: 60px;
     height: 20px;
-    background-color: #f2f2f2;
+    background-color: var(--skinGreyLighten4, #f2f2f2);
     -webkit-transition: .4s;
     transition: .4s;
 }
@@ -549,7 +549,7 @@ input:checked+.slider:after {
 }
 
 input:checked+.slider:before {
-    background-color: #fff;
+    background-color: var(--allPagesBaseBackground, #fff);
     -webkit-transform: translateX(38px);
     -ms-transform: translateX(38px);
     transform: translateX(38px);
@@ -588,7 +588,7 @@ input:checked+.slider:before {
 .uiPopup .popupContent select,
 .modal.uiPopup .popupContent select {
     outline: none;
-    border: 2px solid #e1e8ee;
+    border: 2px solid var(--allPagesBorderColorDark, #e1e8ee);
     border-radius: 5px;
     box-shadow: none;
     height: 40px;
@@ -599,10 +599,10 @@ select:focus {
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 5px #c9d5e6;
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 5px #c9d5e6;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 5px #c9d5e6;
-    color: #333;
+    color: var(--allPagesBaseColorDark, #333);
 }
 .card-body .UIPopupWindow {
-    background: #fff;
+    background: var(--allPagesBaseBackground, #fff);
     overflow: auto;
 }
 .card-body .PopupContent {
@@ -624,7 +624,7 @@ form#programSelectboxGroup {
     display: inline-block;
 }
 textarea#badgeDescription {
-    border:2px solid #e1e8ee
+    border:2px solid var(--allPagesBorderColorDark, #e1e8ee)
 }
 form#enable {
     display: inline-block;

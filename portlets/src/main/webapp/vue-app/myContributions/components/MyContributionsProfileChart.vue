@@ -129,8 +129,52 @@ export default {
   },
   mounted() {
     this.refresh();
+    document.addEventListener('displayModeChanged', this.refreshTooltipColors);
+  },
+  beforeDestroy() {
+    document.removeEventListener('displayModeChanged', this.refreshTooltipColors);
   },
   methods: {
+    isDarkVersion() {
+      // an application kept light (a light scope around it) shows the light version on a dark page
+      if (this.$root?.lightOnly || this.$el?.closest?.('[data-display-mode="light"]:not(html)')) {
+        return false;
+      }
+      const version = this.$displayMode?.getVersion?.();
+      return (version || document.documentElement.getAttribute('data-display-mode')) === 'dark';
+    },
+    // the dark version gets the tooltip's surface, text and border from the theme; light keeps the ECharts defaults
+    tooltipColors() {
+      if (!this.isDarkVersion()) {
+        return {};
+      }
+      const style = window.getComputedStyle(document.documentElement);
+      const read = (name, fallback) => style.getPropertyValue(name)?.trim() || fallback;
+      return {
+        backgroundColor: read('--allPagesBaseBackground', '#ffffff'),
+        borderColor: read('--allPagesBorderColorDark', '#333333'),
+        textStyle: {
+          color: read('--allPagesBaseColorDark', '#666666'),
+        },
+      };
+    },
+    tooltipOption() {
+      return {
+        ...this.tooltipColors(),
+        trigger: 'item',
+        appendToBody: true,
+        formatter: params => `${params.name} <strong style="padding-left: 12px;">${parseInt(params.percent)}%</strong> (${this.format(params.value)})`,
+        position: {
+          top: 0,
+          left: 0,
+        },
+      };
+    },
+    refreshTooltipColors() {
+      // the tooltip is replaced, not merged: back in light no colour of the dark version is left, the ECharts defaults
+      // apply again (the border of an item tooltip is the hovered slice's colour)
+      this.chart?.setOption({tooltip: this.tooltipOption()}, {replaceMerge: ['tooltip']});
+    },
     refresh() {
       this.loading = true;
       this.loadChartData()
@@ -193,15 +237,7 @@ export default {
           height: this.size,
         });
         this.chart.setOption({
-          tooltip: {
-            trigger: 'item',
-            appendToBody: true,
-            formatter: params => `${params.name} <strong style="padding-left: 12px;">${parseInt(params.percent)}%</strong> (${this.format(params.value)})`,
-            position: {
-              top: 0,
-              left: 0,
-            },
-          },
+          tooltip: this.tooltipOption(),
           color: this.colors,
           series: [{
             type: 'pie',
