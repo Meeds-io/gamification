@@ -18,17 +18,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <div>
     <div class="pt-8 d-flex align-center justify-center">
       <v-icon
-        class="px-8 tertiary--text"
+        class="px-8 secondary--text"
         size="30">
         fas fa-award
       </v-icon>
       <v-icon
-        class="px-4 px-sm-12 tertiary--text"
+        class="px-4 px-sm-12 secondary--text"
         size="30">
         fas fa-stream
       </v-icon>
       <v-icon
-        class="px-8 tertiary--text"
+        class="px-8 secondary--text"
         size="30">
         fas fa-trophy
       </v-icon>

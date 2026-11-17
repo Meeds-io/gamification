@@ -484,13 +484,13 @@ export default {
         cursor: pointer;
     }
     .table-striped>tbody>tr:nth-of-type(odd) {
-        background-color: #f9f9f9;
+        background-color: var(--skinGreyLighten4, #f9f9f9);
     }
     .uiGrid.table td, .uiGrid.table th {
         border-left: none;
     }
     .uiGrid.table thead {
-        border: 1px solid #e1e8ee;
+        border: 1px solid var(--allPagesBorderColorDark, #e1e8ee);
     }
     .uiGrid.table {
         border: none;
@@ -524,7 +524,7 @@ export default {
         bottom: 0;
         width: 60px;
         height: 20px;
-        background-color: #f2f2f2;
+        background-color: var(--skinGreyLighten4, #f2f2f2);
         -webkit-transition: .4s;
         transition: .4s;
     }
@@ -620,7 +620,7 @@ export default {
     }
 
     input:checked + .slider:before {
-        background-color: #fff;
+        background-color: var(--allPagesBaseBackground, #fff);
         -webkit-transform: translateX(38px);
         -ms-transform: translateX(38px);
         transform: translateX(38px);
@@ -793,7 +793,7 @@ export default {
         margin: 10px;
         font-size: 15px;
         height: 35px;
-        border: Solid 2px #e1e8ee;
+        border: Solid 2px var(--allPagesBorderColorDark, #e1e8ee);
         border-radius: 5px;
         box-shadow: none;
         width: 90px;
@@ -810,8 +810,8 @@ export default {
         background-color: transparent;
     }
     button.btn.cancel.pull-right {
-        border: 1px solid #e1e8ee !important;
-        color: #4d5466;
+        border: 1px solid var(--allPagesBorderColorDark, #e1e8ee) !important;
+        color: var(--allPagesBaseColorDark, #4d5466);
         background: transparent !important;
     }
     button.btn-primary.pull-right {
@@ -821,8 +821,8 @@ export default {
     button.btn.secondary.pull-right {
         padding: 8px 25px;
         margin-left: 25px;
-        border: 1px solid #e1e8ee !important;
-        color: #4d5466;
+        border: 1px solid var(--allPagesBorderColorDark, #e1e8ee) !important;
+        color: var(--allPagesBaseColorDark, #4d5466);
         background-color: transparent !important;
     }
     div#collapseThree label {
@@ -838,7 +838,7 @@ export default {
     .filter-bar select.mb-4 {
         margin: 18px 12px;
         padding: 0 10px;
-        border: Solid 2px #e1e8ee;
+        border: Solid 2px var(--allPagesBorderColorDark, #e1e8ee);
         height: 40px;
         border-radius: 5px;
         width: auto;
@@ -856,14 +856,14 @@ export default {
     }
     input#neededScoreInput {
         padding: 0 10px;
-        border: Solid 2px #e1e8ee;
+        border: Solid 2px var(--allPagesBorderColorDark, #e1e8ee);
         border-radius: 5px;
         box-shadow: none;
         outline: none;
         height: 40px;
     }
     .card-body .UIPopupWindow {
-        background: #fff;
+        background: var(--allPagesBaseBackground, #fff);
         overflow: auto;
     }
     .card-body .PopupContent {
@@ -879,7 +879,7 @@ export default {
     textarea.form-control {
         height: auto;
         padding: 0 10px;
-        border: Solid 2px #e1e8ee;
+        border: Solid 2px var(--allPagesBorderColorDark, #e1e8ee);
         border-radius: 5px;
         box-shadow: none;
         outline: none;
