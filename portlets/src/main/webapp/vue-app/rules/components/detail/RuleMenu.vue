@@ -184,11 +184,14 @@ export default {
   watch: {
     showMenu() {
       if (this.showMenu) {
+        // a click outside closes the menu: listened to only while it is open, the menu being mounted on every rule row
+        document.addEventListener('mousedown', this.closeMenu);
         document.addEventListener('modalOpened', this.closeMenu);
         document.addEventListener('drawerOpened', this.closeMenu);
         document.addEventListener('closeAllDrawers', this.closeMenu);
         document.addEventListener('closeDisplayedDrawer', this.closeMenu);
       } else {
+        document.removeEventListener('mousedown', this.closeMenu);
         document.removeEventListener('modalOpened', this.closeMenu);
         document.removeEventListener('drawerOpened', this.closeMenu);
         document.removeEventListener('closeAllDrawers', this.closeMenu);
@@ -196,12 +199,12 @@ export default {
       }
     },
   },
-  created() {
-    // Workaround to fix closing menu when clicking outside
-    document.addEventListener('mousedown', this.closeMenu);
-  },
   beforeDestroy() {
     document.removeEventListener('mousedown', this.closeMenu);
+    document.removeEventListener('modalOpened', this.closeMenu);
+    document.removeEventListener('drawerOpened', this.closeMenu);
+    document.removeEventListener('closeAllDrawers', this.closeMenu);
+    document.removeEventListener('closeDisplayedDrawer', this.closeMenu);
   },
   methods: {
     closeMenu() {
