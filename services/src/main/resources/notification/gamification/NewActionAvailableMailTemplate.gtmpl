@@ -17,36 +17,28 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 %>
-<table border="0" cellpadding="0" cellspacing="0" width="600" bgcolor="#ffffff" align="center" style="background-color: #ffffff; font-size: 13px; color: #333333; line-height: 18px; font-family: HelveticaNeue, Helvetica, Arial, sans-serif;">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" align="center" style="width:100%;overflow-wrap:anywhere;word-break:break-word;background-color: #ffffff; font-size: 15px;color: #1d2327;line-height: 1.7;font-family: ${io.meeds.portal.mail.EmailLayout.fontStack()};" dir="${io.meeds.portal.mail.EmailLayout.dir(_ctx.language)}">
   <%
     _templateContext.put("header_title", _ctx.appRes("Notification.title.GamificationNewActionAvailableNotification"));
     _ctx.include("war:/notification/templates/mail/NotificationHeader.gtmpl", _templateContext);
   %>
   <tr>
-    <td bgcolor="#ffffff" style="background-color: #ffffff;">
-      <table cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" style="background-color: #ffffff; border-left: 1px solid #d8d8d8; border-right: 1px solid #d8d8d8;">
+    <td style="padding:0 24px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" style="max-width:600px;margin:0 auto;background-color: #ffffff;">
         <tr>
           <td bgcolor="#ffffff" style="background-color: #ffffff;">
-            <table border="0" cellpadding="0" cellspacing="0" width="92%" bgcolor="#ffffff" align="center" style="background-color: #ffffff; font-size: 13px; color: #333333; line-height: 18px;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" style="background-color: #ffffff; color: #1d2327;line-height: 1.7;">
               <tr>
-                <td align="left" bgcolor="#ffffff" style="background-color: #ffffff; padding: 10px 0;">
-                  <p style="margin: 10px 0;">
+                <td align="${io.meeds.portal.mail.EmailLayout.start(_ctx.language)}" bgcolor="#ffffff" style="background-color: #ffffff; padding: 30px 0 10px 0;">
+                  <p style="margin: 0 0 14px; font-size: 15px; color: #1d2327; font-family: ${io.meeds.portal.mail.EmailLayout.fontStack()};">
                     <%=_ctx.appRes("Notification.label.SayHello")%> <%=_ctx.escapeHTML(FIRSTNAME)%>,
                   </p>
-                  <p style="margin: 10px 0 20px;">
+                  <p style="margin:0 0 14px; color:#1d2327; line-height:1.7; font-size:15px; font-family: ${io.meeds.portal.mail.EmailLayout.fontStack()};" dir="auto">
                     <%=_ctx.appRes("Notification.gamification.mail.content.newActionAvailable1")%> <br />
                     <%=_ctx.appRes("Notification.gamification.mail.content.newActionAvailable2")%>
                   </p>
-                  <table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff" align="center" style="background-color: #ffffff; font-size: 13px; color: #333333; line-height: 18px; margin-bottom: 15px;">
-                    <tbody>
-                      <tr>
-                        <td align="left" bgcolor="#ffffff" style="background-color: #f9f9f9; padding: 0;">
-                          <a href="<%=RULE_URL%>" target="_blank">$RULE_TITLE</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <p style="margin: 10px 0 20px;">
+                  <%=io.meeds.portal.mail.EmailLayout.quoteStart(_ctx.language)%><a href="<%=RULE_URL%>" target="_blank" style="color: ${io.meeds.portal.mail.EmailLayout.linkColor()}; text-decoration: none; font-weight: bold; font-family: ${io.meeds.portal.mail.EmailLayout.fontStack()};">$RULE_TITLE</a><%=io.meeds.portal.mail.EmailLayout.quoteEnd()%><%=io.meeds.portal.mail.EmailLayout.viewAction(String.valueOf(_templateContext.get("header_title")), RULE_TITLE, RULE_URL)%>
+                  <p style="margin:0 0 14px; color:#1d2327; line-height:1.7; font-size:15px; font-family: ${io.meeds.portal.mail.EmailLayout.fontStack()};" dir="auto">
                     <%=_ctx.appRes("Notification.gamification.mail.content.newActionAvailable3")%>
                   </p>
                 </td>
