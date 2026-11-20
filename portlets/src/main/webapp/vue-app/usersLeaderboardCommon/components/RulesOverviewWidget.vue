@@ -18,6 +18,7 @@
 <template>
   <gamification-overview-widget
     :loading="loading"
+    class="hover-reveal-parent hover-swap-trigger"
     height="auto"
     min-width="auto">
     <template #title>
@@ -35,27 +36,30 @@
           <public-widget-hidden-warning v-if="$root.canEdit" />
           <v-btn
             v-if="hasValidRules"
-            :icon="hoverEdit"
-            :small="hoverEdit"
             :title="$t('gamification.rules.overviewSettings.title')"
+            :aria-label="$t('rules.seeAll')"
             height="auto"
             min-width="auto"
-            class="pa-0"
+            class="pa-0 hover-swap-parent"
             text
             @click="$emit('open-list')">
+            <span
+              :class="editable && 'hover-swap-default'"
+              class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
             <v-icon
-              v-if="hoverEdit"
+              v-if="editable"
               size="18"
-              color="primary">
+              color="primary"
+              class="hover-swap-alt">
               fa-external-link-alt
             </v-icon>
-            <span v-else class="primary--text text-none">{{ $t('rules.seeAll') }}</span>
           </v-btn>
           <v-fab-transition hide-on-leave>
             <v-btn
-              v-if="hoverEdit"
+              v-if="editable"
               :title="$t('gamification.programs.overviewSettings.editTooltip')"
-              class="z-index-one"
+              :aria-label="$t('gamification.programs.overviewSettings.editTooltip')"
+              class="z-index-one hover-reveal"
               small
               icon
               @click="$root.$emit('rules-overview-settings')">
@@ -64,6 +68,7 @@
           </v-fab-transition>
           <v-btn
             v-if="emptyWidget && !!spaceId && activeRulesSize"
+            :aria-label="$t('exoplatform.gamification.close')"
             icon
             @click="hideEmptyWidget">
             <v-icon>fa-times</v-icon>
@@ -142,7 +147,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    hoverEdit: {
+    editable: {
       type: Boolean,
       default: false,
     },
