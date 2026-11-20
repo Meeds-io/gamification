@@ -11,6 +11,7 @@
       <v-btn
         :class="dark && 'white'"
         :small="small"
+        :aria-label="$t('rule.menu.label')"
         icon
         v-bind="attrs"
         v-on="on">
@@ -183,11 +184,16 @@ export default {
   watch: {
     showMenu() {
       if (this.showMenu) {
+        // a click anywhere closes the menu 200 ms later: a click, not a mousedown, so that a long press on an item still
+        // reaches it, and in the capture phase, since the items stop their click's propagation. Listened to only while the
+        // menu is open, the menu being mounted on every rule row
+        document.addEventListener('click', this.closeMenu, true);
         document.addEventListener('modalOpened', this.closeMenu);
         document.addEventListener('drawerOpened', this.closeMenu);
         document.addEventListener('closeAllDrawers', this.closeMenu);
         document.addEventListener('closeDisplayedDrawer', this.closeMenu);
       } else {
+        document.removeEventListener('click', this.closeMenu, true);
         document.removeEventListener('modalOpened', this.closeMenu);
         document.removeEventListener('drawerOpened', this.closeMenu);
         document.removeEventListener('closeAllDrawers', this.closeMenu);
@@ -195,12 +201,12 @@ export default {
       }
     },
   },
-  created() {
-    // Workaround to fix closing menu when clicking outside
-    document.addEventListener('mousedown', this.closeMenu);
-  },
   beforeDestroy() {
-    document.removeEventListener('mousedown', this.closeMenu);
+    document.removeEventListener('click', this.closeMenu, true);
+    document.removeEventListener('modalOpened', this.closeMenu);
+    document.removeEventListener('drawerOpened', this.closeMenu);
+    document.removeEventListener('closeAllDrawers', this.closeMenu);
+    document.removeEventListener('closeDisplayedDrawer', this.closeMenu);
   },
   methods: {
     closeMenu() {
