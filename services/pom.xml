@@ -147,6 +147,7 @@
           <configuration>
             <includes>
               <include>**/InitContainerTestSuite.java</include>
+              <include>**/EmailTemplateReferencesTest.java</include>
             </includes>
           </configuration>
         </plugin>
