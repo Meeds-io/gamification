@@ -17,13 +17,11 @@
 -->
 <template>
   <v-app v-if="!hidden">
-    <v-hover v-model="hover">
-      <gamification-rules-overview-widget
-        :hover-edit="hoverEdit"
-        :hide-empty-placeholder="$root.hideWidgetWhenEmpty"
-        @open-list="$refs.listDrawer.open()"
-        @hide="hidden = true" />
-    </v-hover>
+    <gamification-rules-overview-widget
+      :editable="!!$root.canEdit"
+      :hide-empty-placeholder="$root.hideWidgetWhenEmpty"
+      @open-list="$refs.listDrawer.open()"
+      @hide="hidden = true" />
     <gamification-rules-overview-list-drawer
       ref="listDrawer" />
     <gamification-rules-overview-settings-drawer
@@ -35,13 +33,7 @@
 export default {
   data: () => ({
     hidden: false,
-    hover: false,
   }),
-  computed: {
-    hoverEdit() {
-      return this.$root.canEdit && this.hover;
-    }
-  },
   watch: {
     hidden() {
       this.$root.$updateApplicationVisibility(!this.hidden);
