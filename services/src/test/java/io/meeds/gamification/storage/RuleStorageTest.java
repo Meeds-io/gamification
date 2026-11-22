@@ -31,6 +31,10 @@ import io.meeds.gamification.constant.EntityType;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.RuleFilter;
+import io.meeds.gamification.entity.RuleEntity;
+import io.meeds.gamification.storage.cached.RuleCachedStorage;
+import io.meeds.gamification.storage.cached.model.CacheKey;
+import io.meeds.gamification.storage.mapper.RuleMapper;
 import io.meeds.gamification.test.AbstractServiceTest;
 import io.meeds.gamification.utils.Utils;
 
@@ -269,5 +273,40 @@ public class RuleStorageTest extends AbstractServiceTest {
     filter.setProgramId(0);
     filter.setSpaceIds(Collections.singletonList(domain2.getSpaceId()));
     assertEquals(1, ruleStorage.countRulesByFilter(filter));
+  }
+
+  @Test
+  public void testRuleLookupsAndEvictionStayIndependent() {
+    assertEquals(new CacheKey(RuleCachedStorage.RULE_TITLE_CONTEXT, "Aa").hashCode(),
+                 new CacheKey(RuleCachedStorage.RULE_TITLE_CONTEXT, "BB").hashCode());
+    RuleEntity entityAa = newRule("Aa", "independentDomainAa", true);
+    RuleEntity entityBB = newRule("BB", "independentDomainBB", true);
+    Long idAa = entityAa.getId();
+    Long idBB = entityBB.getId();
+    ruleStorage.clearCache();
+
+    assertEquals(idAa, ruleStorage.findRuleByTitle("Aa").getId());
+    assertEquals(idBB, ruleStorage.findRuleByTitle("BB").getId());
+    assertEquals(idAa, ruleStorage.findRuleById(idAa).getId());
+    assertEquals(idBB, ruleStorage.findRuleById(idBB).getId());
+    String oldDescriptionAa = ruleStorage.findRuleByTitle("Aa").getDescription();
+    String oldDescriptionBB = ruleStorage.findRuleByTitle("BB").getDescription();
+
+    // Change both rows behind the cache
+    entityAa.setDescription("new description Aa");
+    ruleDAO.update(entityAa);
+    entityBB.setDescription("new description BB");
+    ruleDAO.update(entityBB);
+
+    // Cached values are still served for both
+    assertEquals(oldDescriptionAa, ruleStorage.findRuleByTitle("Aa").getDescription());
+    assertEquals(oldDescriptionBB, ruleStorage.findRuleByTitle("BB").getDescription());
+
+    // Evicting the first rule evicts its own entries only
+    ruleStorage.clearCache(RuleMapper.fromEntity(programStorage, eventStorage, entityAa));
+    assertEquals("new description Aa", ruleStorage.findRuleByTitle("Aa").getDescription());
+    assertEquals("new description Aa", ruleStorage.findRuleById(idAa).getDescription());
+    assertEquals(oldDescriptionBB, ruleStorage.findRuleByTitle("BB").getDescription());
+    assertEquals(oldDescriptionBB, ruleStorage.findRuleById(idBB).getDescription());
   }
 }
