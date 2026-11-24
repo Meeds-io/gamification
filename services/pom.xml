@@ -30,10 +30,6 @@
   <description>Meeds Gamification services</description>
 
   <properties>
-    <rest.api.doc.title>Gamification Rest Api</rest.api.doc.title>
-    <rest.api.doc.version>1.0</rest.api.doc.version>
-    <rest.api.doc.description>Gamification addon rest endpoints</rest.api.doc.description>
-
     <exo.test.coverage.ratio>0.74</exo.test.coverage.ratio>
   </properties>
 
@@ -115,27 +111,6 @@
           <compilerArgs>
             <arg>-parameters</arg>
           </compilerArgs>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>io.openapitools.swagger</groupId>
-        <artifactId>swagger-maven-plugin</artifactId>
-        <configuration>
-          <useResourcePackagesChildren>true</useResourcePackagesChildren>
-          <resourcePackages>
-            <locations>io.meeds.gamification.rest</locations>
-          </resourcePackages>
-          <swaggerConfig>
-            <info>
-              <title>${rest.api.doc.title}</title>
-              <version>${rest.api.doc.version}</version>
-              <description>${rest.api.doc.description}</description>
-              <license>
-                <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
-                <name>LGPL</name>
-              </license>
-            </info>
-          </swaggerConfig>
         </configuration>
       </plugin>
     </plugins>
