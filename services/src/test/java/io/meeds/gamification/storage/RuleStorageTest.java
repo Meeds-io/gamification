@@ -19,6 +19,7 @@ package io.meeds.gamification.storage;
 
 import static org.junit.Assert.assertThrows;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -26,12 +27,15 @@ import java.util.List;
 import org.junit.Test;
 
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.services.cache.CacheService;
+import org.exoplatform.services.cache.ExoCache;
 
 import io.meeds.gamification.constant.EntityType;
+import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.model.ProgramDTO;
 import io.meeds.gamification.model.RuleDTO;
 import io.meeds.gamification.model.filter.RuleFilter;
-import io.meeds.gamification.entity.RuleEntity;
 import io.meeds.gamification.storage.cached.RuleCachedStorage;
 import io.meeds.gamification.storage.cached.model.CacheKey;
 import io.meeds.gamification.storage.mapper.RuleMapper;
@@ -289,6 +293,13 @@ public class RuleStorageTest extends AbstractServiceTest {
     assertEquals(idBB, ruleStorage.findRuleByTitle("BB").getId());
     assertEquals(idAa, ruleStorage.findRuleById(idAa).getId());
     assertEquals(idBB, ruleStorage.findRuleById(idBB).getId());
+    // Each lookup is cached under its own CacheKey, never under the key's hash, which an id and a title can share
+    ExoCache<Serializable, Object> ruleCache = ExoContainerContext.getService(CacheService.class)
+                                                                  .getCacheInstance(RuleCachedStorage.RULE_CACHE_NAME);
+    assertNotNull(ruleCache.get(new CacheKey(RuleCachedStorage.RULE_ID_CONTEXT, idAa)));
+    assertNotNull(ruleCache.get(new CacheKey(RuleCachedStorage.RULE_ID_CONTEXT, idBB)));
+    assertNotNull(ruleCache.get(new CacheKey(RuleCachedStorage.RULE_TITLE_CONTEXT, "Aa")));
+    assertNotNull(ruleCache.get(new CacheKey(RuleCachedStorage.RULE_TITLE_CONTEXT, "BB")));
     String oldDescriptionAa = ruleStorage.findRuleByTitle("Aa").getDescription();
     String oldDescriptionBB = ruleStorage.findRuleByTitle("BB").getDescription();
 
