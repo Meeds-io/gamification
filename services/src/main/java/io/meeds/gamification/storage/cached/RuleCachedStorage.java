@@ -113,14 +113,14 @@ public class RuleCachedStorage extends RuleStorage {
   @Override
   public RuleDTO findRuleById(Long id) {
     CacheKey key = new CacheKey(RULE_ID_CONTEXT, id);
-    RuleDTO ruleDTO = (RuleDTO) this.ruleFutureCache.get(key, key.hashCode());
+    RuleDTO ruleDTO = (RuleDTO) this.ruleFutureCache.get(key, key);
     return ruleDTO == null ? null : ruleDTO.clone();
   }
 
   @Override
   public RuleDTO findRuleByTitle(String title) {
     CacheKey key = new CacheKey(RULE_TITLE_CONTEXT, title);
-    RuleDTO ruleDTO = (RuleDTO) this.ruleFutureCache.get(key, key.hashCode());
+    RuleDTO ruleDTO = (RuleDTO) this.ruleFutureCache.get(key, key);
     return ruleDTO == null ? null : ruleDTO.clone();
   }
 
@@ -139,8 +139,8 @@ public class RuleCachedStorage extends RuleStorage {
   @Override
   public void clearCache(RuleDTO rule) {
     if (rule != null) {
-      this.ruleFutureCache.remove(new CacheKey(RULE_ID_CONTEXT, rule.getId()).hashCode());
-      this.ruleFutureCache.remove(new CacheKey(RULE_TITLE_CONTEXT, rule.getTitle()).hashCode());
+      this.ruleFutureCache.remove(new CacheKey(RULE_ID_CONTEXT, rule.getId()));
+      this.ruleFutureCache.remove(new CacheKey(RULE_TITLE_CONTEXT, rule.getTitle()));
     }
     clearListCache();
   }
