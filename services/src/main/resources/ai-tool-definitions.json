@@ -2,6 +2,7 @@
   "tools": [
     {
       "name": "list_campaigns",
+      "space_scope": { "space_arg": "space_id", "when_absent": "use_scope", "allowed_args": ["term", "limit", "offset"] },
       "title": "List campaigns",
       "description": "List the campaigns (gamification programs) the current user can see. A campaign is a gamification program that groups quests (actions/rules) users complete to earn points. Optionally filter by a search term or by a space id (resolve a space with get_my_spaces). Each campaign carries its page address in url: link a campaign with that url, never with an address you build.",
       "input_schema": {
@@ -34,6 +35,7 @@
     },
     {
       "name": "get_campaign",
+      "space_scope": { "object_arg": "campaign_id", "resolver": "campaign" },
       "title": "Get a campaign",
       "description": "Get a single campaign (gamification program) by its id. Resolve the campaign id with list_campaigns. The campaign carries its page address in url: link it with that url, never with an address you build.",
       "input_schema": {
@@ -57,6 +59,7 @@
     },
     {
       "name": "list_quests",
+      "space_scope": { "object_arg": "campaign_id", "resolver": "campaign", "allowed_args": ["type", "status", "limit", "offset"] },
       "title": "List quests",
       "description": "List the quests (gamification actions/rules) of a campaign, or across all accessible campaigns when no campaign id is given. A quest is an action inside a campaign that awards points; MANUAL quests are challenges the user announces, AUTOMATIC quests are triggered by platform events. Resolve a campaign id with list_campaigns. Each quest carries its page address in url and its campaign's in campaign_url: link them with those, never with an address you build.",
       "input_schema": {
@@ -103,6 +106,7 @@
     },
     {
       "name": "get_quest",
+      "space_scope": { "object_arg": "quest_id", "resolver": "quest" },
       "title": "Get a quest",
       "description": "Get a single quest (a gamification action/rule) by its id, including its prerequisite quests. Resolve the quest id with list_quests. The quest carries its page address in url and its campaign's in campaign_url: link them with those, never with an address you build.",
       "input_schema": {
@@ -126,14 +130,19 @@
     },
     {
       "name": "get_my_gamification_score",
+      "space_scope": { "space_arg": "space_id", "when_absent": "use_scope" },
       "title": "Get my gamification score",
-      "description": "Get the current user's gamification score: the overall total points, the overall leaderboard rank and the points earned per campaign. Pass a campaign id to also get the user's rank and score within that campaign.",
+      "description": "Get the current user's gamification score: the overall total points, the overall leaderboard rank and the points earned per campaign. Pass a campaign id to also get the user's rank and score within that campaign. Pass a space id to count only the campaigns of that space.",
       "input_schema": {
         "type": "object",
         "properties": {
           "campaign_id": {
             "type": "integer",
             "description": "Optional campaign (program) id to scope the rank and score to that campaign."
+          },
+          "space_id": {
+            "type": "integer",
+            "description": "Optional space technical id to count only the campaigns of that space: the total, the rank and the per-campaign points."
           }
         }
       },
@@ -146,6 +155,7 @@
     },
     {
       "name": "get_gamification_leaderboard",
+      "space_scope": { "space_arg": "space_id", "when_absent": "use_scope", "allowed_args": ["period", "identity_type", "limit"] },
       "title": "Get the gamification leaderboard",
       "description": "Get the gamification leaderboard (top earners ranked by points), optionally scoped to a campaign and/or a space, for a given period. Resolve a campaign id with list_campaigns and a space id with get_my_spaces.",
       "input_schema": {
@@ -192,8 +202,9 @@
     },
     {
       "name": "list_my_realizations",
+      "space_scope": { "space_arg": "space_id", "when_absent": "use_scope", "allowed_args": ["from_date", "to_date", "status", "limit", "offset"] },
       "title": "List my realizations",
-      "description": "List the current user's own realizations (gamification achievements: points earned by completing quests), most recent first. Optionally filter by date range (yyyy-MM-dd), campaign and/or status. This only ever returns the current user's own achievements. Each realization carries its quest's page address in quest_url and its campaign's in campaign_url, each absent when the user can no longer view that quest or campaign: link them only with those, never with an address you build.",
+      "description": "List the current user's own realizations (gamification achievements: points earned by completing quests), most recent first. Optionally filter by date range (yyyy-MM-dd), campaign, space and/or status. This only ever returns the current user's own achievements. Each realization carries its quest's page address in quest_url and its campaign's in campaign_url, each absent when the user can no longer view that quest or campaign: link them only with those, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -208,6 +219,10 @@
           "campaign_id": {
             "type": "integer",
             "description": "Optional campaign (program) id to filter achievements."
+          },
+          "space_id": {
+            "type": "integer",
+            "description": "Optional space technical id to only list achievements in that space's campaigns."
           },
           "status": {
             "type": "string",
@@ -238,14 +253,19 @@
     },
     {
       "name": "list_my_announcements",
+      "space_scope": { "space_arg": "space_id", "when_absent": "use_scope", "allowed_args": ["limit", "offset"] },
       "title": "List my quest announcements",
-      "description": "List the current user's own quest announcements (manual challenges they announced), most recent first, each with the announcement id needed to cancel it. Optionally pass a quest id to only list announcements for that quest. This only ever returns the current user's own announcements. Use this to find the announcement_id before calling cancel_quest_announcement.",
+      "description": "List the current user's own quest announcements (manual challenges they announced), most recent first, each with the announcement id needed to cancel an announcement you made yourself. Optionally pass a quest id to only list announcements for that quest, or a space id to only list those in that space's campaigns. This only ever returns the current user's own announcements. Use this to find the announcement_id of an announcement you made yourself before calling cancel_quest_announcement.",
       "input_schema": {
         "type": "object",
         "properties": {
           "quest_id": {
             "type": "integer",
             "description": "Optional quest (rule) id to only list announcements for that quest. Resolve it with list_quests."
+          },
+          "space_id": {
+            "type": "integer",
+            "description": "Optional space technical id to only list announcements in that space's campaigns."
           },
           "limit": {
             "type": "integer",
@@ -266,6 +286,7 @@
     },
     {
       "name": "list_campaign_badges",
+      "space_scope": { "object_arg": "campaign_id", "resolver": "campaign" },
       "title": "List campaign badges",
       "description": "List the badges (levels) of a campaign and the total number of campaign points needed to reach each one. A campaign is a gamification program; a badge is a milestone level a user unlocks by accumulating enough points in that campaign. Badges are returned ordered by the score needed (level 1 = easiest). Resolve the campaign id with list_campaigns.",
       "input_schema": {
@@ -337,8 +358,9 @@
     },
     {
       "name": "get_my_points_total",
+      "space_scope": { "space_arg": "space_id", "when_absent": "use_scope", "allowed_args": ["from_date", "to_date"] },
       "title": "Get my points total",
-      "description": "Get the total gamification points the current user earned within a date range, optionally within one campaign (program). This returns a single total number; for the per-event breakdown use list_my_realizations, and for the per-campaign split use get_my_score_breakdown. Always scoped to the current user.",
+      "description": "Get the total gamification points the current user earned within a date range, optionally within one campaign (program) or within one space's campaigns. This returns a single total number; for the per-event breakdown use list_my_realizations, and for the per-campaign split use get_my_score_breakdown. Always scoped to the current user.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -353,6 +375,10 @@
           "campaign_id": {
             "type": "integer",
             "description": "Optional campaign (program) id to only count points earned in that campaign."
+          },
+          "space_id": {
+            "type": "integer",
+            "description": "Optional space technical id to only count points earned in that space's campaigns."
           }
         }
       },
@@ -365,8 +391,9 @@
     },
     {
       "name": "get_my_score_breakdown",
+      "space_scope": { "space_arg": "space_id", "when_absent": "use_scope", "allowed_args": ["period"] },
       "title": "Get my score breakdown",
-      "description": "Break down the current user's gamification points by campaign (program) for a period. Returns one entry per campaign with the campaign label and the points earned there. Always scoped to the current user. Each entry carries its campaign's page address in url; an entry for a campaign the user can no longer view has no url and no label: link a campaign only with its url, never with an address you build.",
+      "description": "Break down the current user's gamification points by campaign (program) for a period, optionally only within one space's campaigns. Returns one entry per campaign with the campaign label and the points earned there. Always scoped to the current user. Each entry carries its campaign's page address in url; an entry for a campaign the user can no longer view has no url and no label: link a campaign only with its url, never with an address you build.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -379,6 +406,10 @@
               "ALL"
             ],
             "description": "Period to break the points down over (default ALL)."
+          },
+          "space_id": {
+            "type": "integer",
+            "description": "Optional space technical id to only break down the points of that space's campaigns."
           }
         }
       },
@@ -414,6 +445,7 @@
     },
     {
       "name": "create_campaign",
+      "space_scope": { "space_arg": "space_id", "allowed_args": ["title", "description", "budget"], "space_admin": true, "space_role": "manager" },
       "title": "Create a campaign",
       "description": "Create a new campaign (a gamification program that groups quests). With a space id the campaign belongs to that space and requires manager rights on it; without one it is platform-wide and requires rewarding-admin rights. Resolve a space id with get_my_spaces.",
       "input_schema": {
@@ -450,6 +482,7 @@
     },
     {
       "name": "create_quest",
+      "space_scope": { "object_arg": "campaign_id", "resolver": "campaign", "allowed_args": ["title", "description", "score", "type", "start_date", "end_date", "recurrence", "publish"], "space_admin": true, "space_role": "manager" },
       "title": "Create a quest",
       "description": "Create a new quest (a gamification action/rule) inside a campaign. Only MANUAL quests (challenges the user announces) are supported here; AUTOMATIC (event-triggered) quests are rejected. Requires being an owner of the campaign. Resolve the campaign id with list_campaigns. Pass publish=true to also announce it in the campaign's space stream (on your own stream when the campaign is platform-wide).",
       "input_schema": {
@@ -519,6 +552,7 @@
     },
     {
       "name": "update_quest",
+      "space_scope": { "object_arg": "quest_id", "resolver": "quest", "allowed_args": ["title", "description", "score", "start_date", "end_date", "enabled", "recurrence"], "space_admin": true, "space_role": "manager" },
       "title": "Update a quest",
       "description": "Update an existing quest (a gamification action/rule). Only the fields you pass are changed; the others keep their current values. Requires being an owner of the quest's campaign. Resolve the quest id with list_quests.",
       "input_schema": {
@@ -578,6 +612,7 @@
     },
     {
       "name": "delete_quest",
+      "space_scope": { "object_arg": "quest_id", "resolver": "quest", "space_admin": true, "space_role": "manager" },
       "title": "Delete a quest",
       "description": "Delete a quest (a gamification action/rule). Requires being an owner of the quest's campaign. Resolve the quest id with list_quests.",
       "input_schema": {
@@ -602,6 +637,7 @@
     },
     {
       "name": "announce_quest",
+      "space_scope": { "object_arg": "quest_id", "resolver": "quest", "allowed_args": ["comment"], "space_role": "member" },
       "title": "Announce a quest",
       "description": "Announce, as the current user, that they completed a manual quest (a challenge), so it can be reviewed and rewarded with points. Only MANUAL quests can be announced. Resolve the quest id with list_quests.",
       "input_schema": {
@@ -630,8 +666,9 @@
     },
     {
       "name": "cancel_quest_announcement",
+      "space_scope": { "object_arg": "announcement_id", "resolver": "quest_announcement", "space_role": "member" },
       "title": "Cancel a quest announcement",
-      "description": "Cancel (delete) a quest announcement previously made by the current user. Only the author can cancel their own announcement. Find the announcement id with list_my_announcements.",
+      "description": "Cancel (delete) a quest announcement previously made by the current user. Only the author can cancel their own announcement. Use the announcement_id returned by announce_quest.",
       "input_schema": {
         "type": "object",
         "properties": {
